@@ -1,5 +1,5 @@
 {
-  "name": "db-api",
+  "name": "api",
   "version": "1.0.0",
   "description": "db interface ",
   "main": "index.js",
