@@ -16,7 +16,9 @@ class Editor extends React.Component {
     render() {
         return (
             <div class="grid-container">
-                <div class="topbar">Header</div>
+                <div class="topbar">Header  
+                    <a href={"/play.html"}>Play</a>
+                </div>
                 <div class="leftbar">Leftbar</div>
                 <div class="scene">
                     <img src="./Image360/sample1.jpg"/>
