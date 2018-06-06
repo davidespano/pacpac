@@ -62,7 +62,10 @@ api.use(setAuthUser);
 api.use(neo4jSessionCleanup);
 
 //api routes
-api.post('/scenes', routes.scenes.list);
+api.post('/register', routes.users.register);
+api.post('/login', routes.users.login);
+api.get('/users/me', routes.users.me);
+api.get('/scenes', routes.scenes.list);
 
 //api error handler
 api.use(function(err, req, res, next) {

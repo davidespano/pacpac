@@ -3,12 +3,14 @@ var Scene = require('../models/scenes')
     , writeResponse = require('../helpers/response').writeResponse
     , dbUtils = require('../neo4j/dbUtils');
 
+//TODO definire la struttura delle scene per js e db
+
 /**
  * @swagger
  * definition:
- *   Scene:
+ *   Scenes:
  *     type: object
- *     properties TODO define this and the next:
+ *     properties:
  *       id:
  *         type: integer
  *       name:
@@ -21,10 +23,10 @@ var Scene = require('../models/scenes')
 
 /**
  * @swagger
- * /api/v0/scene:
+ * /api/v0/scenes:
  *   get:
  *     tags:
- *     - scene
+ *     - scenes
  *     description: Returns all scenes
  *     summary: Returns all scenes
  *     produces:
@@ -35,7 +37,7 @@ var Scene = require('../models/scenes')
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/Scene'
+ *             $ref: '#/definitions/Scenes'
  */
 exports.list = function (req, res, next) {
     Scene.getAll(dbUtils.getSession(req))
