@@ -19,7 +19,7 @@ class Editor extends React.Component {
                 <div class="topbar">Header</div>
                 <div class="leftbar">Leftbar</div>
                 <div class="scene">
-                    <img src="ratio-2-1.png"/>
+                    <img src="./Image360/sample1.jpg"/>
                 </div>
                 <div class="rightbar">Rightbar</div>
                 <div class="canvas">Canvas</div>
