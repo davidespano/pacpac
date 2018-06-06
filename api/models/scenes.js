@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var Scene = require('../models/neo4j/scene');
 
-// return many people
+// return many scenes
 function _manyScenes(neo4jResult) {
     return neo4jResult.records.map(r => new Scene(r.get('scene')))
 }
