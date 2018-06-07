@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './style.css';
-
+import './aframe.js';
 
 
 // l'elemento game è definito da questa classe.
@@ -32,7 +32,7 @@ class Editor extends React.Component {
 
 // ========================================
 
-ReactDOM.render(
-    <Editor />,
-    document.getElementById('root')
-);
+//ReactDOM.render(
+  //  <Editor />,
+    //document.getElementById('root')
+//);
