@@ -1,9 +1,14 @@
+import AppContainer from './containers/AppContainer';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './style.css';
-import './aframe.js';
+//import '../public/style.css';
+//import './aframe.js';
 
 
+ReactDOM.render(<AppContainer />, document.getElementById('sceneContainer'));
+
+
+/*
 // l'elemento game è definito da questa classe.
 class Editor extends React.Component {
     constructor(props) {
@@ -36,3 +41,4 @@ class Editor extends React.Component {
   //  <Editor />,
     //document.getElementById('root')
 //);
+*/
