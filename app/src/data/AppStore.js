@@ -1,5 +1,6 @@
 import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
+import ActionTypes from'./ActionTypes';
 
 class AppStore extends ReduceStore {
     constructor() {
@@ -7,11 +8,17 @@ class AppStore extends ReduceStore {
     }
 
     getInitialState() {
-        return '';
+        return ActionTypes.EDIT_MODE_ON;
     }
 
     reduce(state, action) {
         switch (action.type) {
+            case ActionTypes.EDIT_MODE_ON:
+                console.log("EDIT");
+                return ActionTypes.EDIT_MODE_ON;
+            case ActionTypes.PLAY_MODE_ON:
+                console.log("PLAY");
+                return ActionTypes.PLAY_MODE_ON
             default:
                 return state;
         }

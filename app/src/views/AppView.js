@@ -1,51 +1,39 @@
 import React from 'react';
+import TopBar from "../components/topbar";
+import LeftBar from "../components/leftbar";
+import RightBar from "../components/rightbar";
+import Scene from "../components/scene";
+import Canvas from "../components/canvas";
+import PlayTest from "../components/playtest";
 
 /* La cosa migliore è gestire lo stato solo all'interno dello Store, e lasciare nella view solo funzioni*/
 function AppView(props) {
-    return (
-        <div class="grid-container">
-            <TopBar {...props} />
-            <LeftBar {...props} />
-            <RightBar {...props} />
-            <Scene {...props} />
-            <Canvas {...props} />
-        </div>
-    );
-}
 
-function TopBar(props){
-    return (
-        <div class="topbar">
-            Header - <a href={"/play.html"}>Play</a>
-        </div>
-    );
-}
+    console.log('hello' + props.mode);
 
-function LeftBar(props){
-    return(
-        <div class="leftbar">Leftbar</div>
-    );
-}
+    switch(props.mode){
+        case 'EDIT_MODE_ON':
+            return (
+                <div className={'grid-container'}>
+                    <TopBar {...props} />
+                    <LeftBar {...props} />
+                    <RightBar {...props} />
+                    <Scene {...props} />
+                    <Canvas {...props} />
+                </div>
+            );
+        case 'PLAY_MODE_ON':
+            return(
+                <div>
+                    <PlayTest {...props}/>
+                </div>
+            );
+        default:
+            return(
+                <div>SOMETHING WENT WRONG!</div>
+            );
 
-function RightBar(props){
-    return(
-        <div class="rightbar">Rightbar</div>
-    );
+    }
 }
-
-function Scene(props){
-    return(
-        <div class="scene">
-            <img src="./Image360/sample1.jpg"/>
-        </div>
-    );
-}
-
-function Canvas(props){
-    return(
-        <div class="canvas">Canvas</div>
-    );
-}
-
 
 export default AppView;

@@ -1,6 +1,7 @@
 import AppView from '../views/AppView';
 import AppStore from '../data/AppStore';
 import {Container} from 'flux/utils';
+import Actions from '../data/Actions';
 
 function getStores() {
     return [
@@ -10,7 +11,9 @@ function getStores() {
 
 function getState() {
     return {
-        things: AppStore.getState(),
+        mode: AppStore.getState(),
+        switchToPlayMode: Actions.playModeOn,
+        switchToEditMode: Actions.editModeOn,
     };
 }
 

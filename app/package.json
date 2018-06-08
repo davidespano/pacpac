@@ -12,6 +12,7 @@
     "grid": "^3.3.7",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
+    "react-router": "^4.3.1",
     "react-scripts": "1.1.4"
   },
   "scripts": {
