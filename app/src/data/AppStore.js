@@ -1,6 +1,6 @@
 import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
-import ActionTypes from'./ActionTypes';
+import ActionTypes from '../actions/ActionTypes';
 
 class AppStore extends ReduceStore {
     constructor() {

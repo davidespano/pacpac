@@ -1,7 +1,7 @@
 import AppView from '../views/AppView';
 import AppStore from '../data/AppStore';
 import {Container} from 'flux/utils';
-import Actions from '../data/Actions';
+import Actions from '../actions/Actions';
 
 function getStores() {
     return [
