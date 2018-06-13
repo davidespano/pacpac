@@ -9,7 +9,7 @@ import PlayTest from "../components/playtest";
 /* La cosa migliore è gestire lo stato solo all'interno dello Store, e lasciare nella view solo funzioni*/
 function AppView(props) {
 
-    console.log('hello' + props.mode);
+    //console.log('hello' + props.mode);
 
     switch(props.mode){
         case 'EDIT_MODE_ON':

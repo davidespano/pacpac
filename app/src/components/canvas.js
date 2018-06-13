@@ -1,5 +1,4 @@
 import React from 'react';
-import Vis from 'vis';
 
 var nodes = null;
 var edges = null;
