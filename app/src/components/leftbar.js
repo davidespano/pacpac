@@ -1,9 +1,10 @@
 import React from 'react';
 
-function LeftBar(props){
+function Leftbar(props){
+
     return(
         <div className={'leftbar'}>Leftbar</div>
     );
 }
 
-export default LeftBar;
+export default Leftbar;

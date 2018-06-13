@@ -2,7 +2,7 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 
-class AppStore extends ReduceStore {
+class ModeTypeStore extends ReduceStore {
     constructor() {
         super(AppDispatcher);
     }
@@ -25,4 +25,4 @@ class AppStore extends ReduceStore {
     }
 }
 
-export default new AppStore();
+export default new ModeTypeStore();

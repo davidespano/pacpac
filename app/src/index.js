@@ -7,7 +7,6 @@ import ReactDOM from 'react-dom';
 
 ReactDOM.render(<AppContainer />, document.getElementById('sceneContainer'));
 
-
 /*
 // l'elemento game è definito da questa classe.
 class Editor extends React.Component {

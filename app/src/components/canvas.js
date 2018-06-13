@@ -1,10 +1,5 @@
 import React from 'react';
 
-var nodes = null;
-var edges = null;
-var network = null;
-
-
 function Canvas(props){
     return(
         <div id={'canvas'} className={'canvas'}>Canvas</div>

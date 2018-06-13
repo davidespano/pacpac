@@ -13,6 +13,15 @@ const Actions = {
             type: ActionTypes.EDIT_MODE_ON
         })
     },
+
+    addScene(id, name, img){
+        AppDispatcher.dispatch({
+            type: ActionTypes.ADD_SCENE,
+            id: id,
+            name: name,
+            img: img,
+        })
+    },
 };
 
 export default Actions;
