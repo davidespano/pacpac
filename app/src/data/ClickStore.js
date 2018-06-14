@@ -18,6 +18,7 @@ class ClickStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.CLICK_SCENE:
+                //console.log('x: ' + action.x + ' y: ' + action.y);
                 return {
                     x: action.x,
                     y: action.y,

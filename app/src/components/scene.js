@@ -6,7 +6,10 @@ function Scene(props){
             <img id={'scene'}
                  src="./Image360/sample1.jpg"
                  alt={'alena'}
-                 onClick={(event) => props.clickScene(getCoordinates(event).x, getCoordinates(event).y)}
+                 onClick={(event) => {
+                     var p = getCoordinates(event);
+                     props.clickScene(p.x, p.y);
+                 }}
             />
         </div>
     );
