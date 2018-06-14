@@ -37,3 +37,8 @@
     max-height: 100%;
     align-self: center;
 }
+
+.list-img {
+    width: 100px;
+    height: 50px;
+}

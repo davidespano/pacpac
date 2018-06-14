@@ -2,18 +2,18 @@ import React from 'react';
 
 function Leftbar(props){
 
-    console.log(props.leftbar);
+    console.log(props.leftbar.values());
 
     return(
         <div className={'leftbar'}>
-            <ul id="leftBar">
-                {[props.leftbar.values()].map(child => (
-                        <li>
-                            {child.name}
-                        </li>
-                    )
-                )}
-            </ul>
+            {[...props.leftbar.values()].reverse().map(child => (
+                <img
+                    src={child.img}
+                    className={'list-img'}
+                    alt={child.name}
+                    onMouseOver={() => console.log(child.name)}
+                />
+            ))}
         </div>
     )
 }

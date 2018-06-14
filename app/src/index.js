@@ -8,8 +8,9 @@ import Actions from './actions/Actions';
 
 ReactDOM.render(<AppContainer />, document.getElementById('sceneContainer'));
 
-Actions.addScene(1,"chebelu","../public/ratio-2-1.png");
-Actions.addScene(2,"chebelu","../public/ratio-2-1.png");
+Actions.addScene(1,"chebelu","./ratio-2-1.png");
+Actions.addScene(2,"chebelu","./ratio-2-1.png");
+
 /*
 // l'elemento game è definito da questa classe.
 class Editor extends React.Component {
