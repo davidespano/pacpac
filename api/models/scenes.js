@@ -25,7 +25,15 @@ var getAll = function (session) {
 //get scene by name
 var getByName = function (session, name){
     return session.run('MATCH (scene:Scene {name:$name}) RETURN scene', {'name':name})
-        .then(result => _singleSceneWithDetails(result.records[0]));
+        .then(result => {
+            if(!_.isEmpty(result.records))
+            {
+                return _singleSceneWithDetails(result.records[0]);
+            }
+            else
+            {
+                throw {message: 'scene not found', status: 404};
+            }});
 }
 
 module.exports = {

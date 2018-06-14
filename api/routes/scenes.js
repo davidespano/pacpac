@@ -62,6 +62,8 @@ exports.list = function (req, res, next) {
  *         description: A scene
  *         schema:
  *             $ref: '#/definitions/Scenes'
+ *       404:
+ *          description: Scene not found
  */
 exports.getByName = function (req, res, next) {
     var author = req.headers['name'];
