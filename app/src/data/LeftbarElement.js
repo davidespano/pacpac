@@ -1,10 +1,10 @@
 import React from 'react';
+import Immutable from 'immutable';
 
-function LeftbarElement(id,name,img){
-
-    this.key=id;
-    this.name=name;
-    this.img=img;
-}
+const LeftbarElement = Immutable.Record({
+    id: '',
+    name: '',
+    img: '',
+})
 
 export default LeftbarElement;
