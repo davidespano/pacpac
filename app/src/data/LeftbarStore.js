@@ -10,13 +10,14 @@ class LeftbarStore extends ReduceStore {
     }
 
     getInitialState() {
-        return [];
+        return new Array();
     }
 
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.ADD_SCENE:
-                return state.add(
+                //console.log("non funziona")
+                return state.push(
                     new LeftbarElement(action.id, action.name, action.img)
                 );
             default:
