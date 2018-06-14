@@ -66,8 +66,47 @@ exports.list = function (req, res, next) {
  *          description: Scene not found
  */
 exports.getByName = function (req, res, next) {
-    var author = req.headers['name'];
-    Scene.getByName(dbUtils.getSession(req), author)
+    var name = req.headers['name'];
+    Scene.getByName(dbUtils.getSession(req), name)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+};
+
+/**
+ * @swagger
+ * /api/v0/scenes/addScene:
+ *   post:
+ *     tags:
+ *     - scenes
+ *     description: Create a new scene
+ *     summary: Create a new scene
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: name
+ *         type: object
+ *         schema:
+ *           properties:
+ *             name:
+ *               type: string
+ *             description:
+ *               type: string
+ *         required: true
+ *         description: Name of the scene
+ *     responses:
+ *       200:
+ *         description: A scene
+ *         schema:
+ *             $ref: '#/definitions/Scenes'
+ *       422:
+ *          description: Scene already exists
+ */
+exports.addScene = function (req, res, next) {
+    var name = _.get(req.body,'name');
+    var description = _.get(req.body, 'description');
+
+    Scene.addScene(dbUtils.getSession(req), name, description)
         .then(response => writeResponse(res, response))
         .catch(next);
 };

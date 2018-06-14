@@ -36,7 +36,18 @@ var getByName = function (session, name){
             }});
 }
 
+//add a scene
+var addScene = function (session, name, description)
+{
+    return session.run('CREATE (scene:Scene {name: $name, description: $description}) RETURN scene',{name: name, description: description})
+        .then(result => _singleSceneWithDetails(result.records[0]),
+              error => {
+                throw {message: error.message, status: 422};
+              });
+}
+
 module.exports = {
     getAll: getAll,
-    getByName: getByName
+    getByName: getByName,
+    addScene: addScene
 };
