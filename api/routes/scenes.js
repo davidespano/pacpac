@@ -11,13 +11,9 @@ var Scene = require('../models/scenes')
  *   Scenes:
  *     type: object
  *     properties:
- *       id:
- *         type: integer
  *       name:
  *         type: string
- *       born:
- *         type: integer
- *       poster_image:
+ *       description:
  *         type: string
  */
 
@@ -43,4 +39,33 @@ exports.list = function (req, res, next) {
     Scene.getAll(dbUtils.getSession(req))
         .then(response => writeResponse(res, response))
 .catch(next);
+};
+
+/**
+ * @swagger
+ * /api/v0/scenes/getByName:
+ *   get:
+ *     tags:
+ *     - scenes
+ *     description: Returns a scene by name
+ *     summary: Returns a scene by name
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: name
+ *         type: string
+ *         required: true
+ *         description: Name of the scene
+ *     responses:
+ *       200:
+ *         description: A scene
+ *         schema:
+ *             $ref: '#/definitions/Scenes'
+ */
+exports.getByName = function (req, res, next) {
+    var author = req.headers['name'];
+    Scene.getByName(dbUtils.getSession(req), author)
+        .then(response => writeResponse(res, response))
+        .catch(next);
 };
