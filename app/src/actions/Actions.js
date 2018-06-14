@@ -22,6 +22,14 @@ const Actions = {
             img: img,
         })
     },
+
+    clickScene(x, y){
+        AppDispatcher.dispatch({
+            type: ActionTypes.CLICK_SCENE,
+            x: x,
+            y: y,
+        })
+    }
 };
 
 export default Actions;
