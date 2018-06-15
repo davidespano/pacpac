@@ -110,3 +110,58 @@ exports.addScene = function (req, res, next) {
         .then(response => writeResponse(res, response))
         .catch(next);
 };
+
+/**
+ * @swagger
+ * /api/v0/scenes/home:
+ *   get:
+ *     tags:
+ *     - scenes
+ *     description: Returns the home scene
+ *     summary: Returns the home scene
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: A scene
+ *         schema:
+ *             $ref: '#/definitions/Scenes'
+ *       404:
+ *          description: Scene not found
+ */
+exports.getHomeScene = function (req, res, next) {
+    Scene.getHomeScene(dbUtils.getSession(req))
+        .then(response => writeResponse(res, response))
+        .catch(next);
+};
+
+/**
+ * @swagger
+ * /api/v0/scenes/getNeighboursByName:
+ *   get:
+ *     tags:
+ *     - scenes
+ *     description: Returns adjacent scenes
+ *     summary: Returns adjacent scenes
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: header
+ *         name: name
+ *         type: string
+ *         required: true
+ *         description: Name of the scene
+ *     responses:
+ *       200:
+ *         description: A scene
+ *         schema:
+ *             $ref: '#/definitions/Scenes'
+ *       404:
+ *          description: Scene not found
+ */
+exports.getNeighboursByName = function (req, res, next) {
+    var name = req.headers['name'];
+    Scene.getNeighboursByName(dbUtils.getSession(req), name)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+};

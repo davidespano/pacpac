@@ -36,6 +36,20 @@ var getByName = function (session, name){
             }});
 }
 
+//get the home scene
+var getHomeScene = function (session){
+    return session.run('MATCH (scene:Scene:Home) RETURN scene')
+        .then(result => {
+            if(!_.isEmpty(result.records))
+            {
+                return _singleSceneWithDetails(result.records[0]);
+            }
+            else
+            {
+                throw {message: 'scene not found', status: 404};
+            }});
+}
+
 //add a scene
 var addScene = function (session, name, description)
 {
@@ -46,8 +60,16 @@ var addScene = function (session, name, description)
               });
 }
 
+// get adjacent scenes
+var getNeighboursByName = function (session, name) {
+    return session.run('MATCH (:Scene {name: $name})-[]->(scene) RETURN scene', {name: name})
+        .then(result => manyScenes(result));
+};
+
 module.exports = {
     getAll: getAll,
     getByName: getByName,
-    addScene: addScene
+    addScene: addScene,
+    getHomeScene: getHomeScene,
+    getNeighboursByName: getNeighboursByName
 };
