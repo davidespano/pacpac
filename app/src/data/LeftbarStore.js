@@ -17,8 +17,6 @@ class LeftbarStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.ADD_SCENE:
-                console.log("CIAO PASSO DA QUI");
-                console.log(action);
                 return state.set(
                     action.id,
                     new LeftbarElement({

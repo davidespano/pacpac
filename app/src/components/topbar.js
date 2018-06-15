@@ -1,5 +1,6 @@
 import React from 'react';
 import Popup from 'reactjs-popup';
+//import ImageUploader from 'react-images-upload';
 
 function TopBar(props){
     return (
@@ -7,6 +8,7 @@ function TopBar(props){
             Header
             <button onClick={() => props.switchToPlayMode()}>PLAY</button>
             <Popup trigger={<button className={"pop-button"}> Add scene</button>} modal>
+                {close => (
                     <div className="modal">
                         <div className="header"> Aggiungi una scena </div>
                         <div className="content">
@@ -16,11 +18,13 @@ function TopBar(props){
                                 <input type="file" name="image" id="image"/>
                                 <button onClick={()=>{
                                     var input=getInput();
-                                    props.addScene(input.name,input.name,input.img);
+                                    props.addScene(input.name,input.name, input.img);
+                                    close();
                                 }
                                 }>Conferma</button>
                         </div>
                     </div>
+                )}
             </Popup>
         </div>
 
@@ -29,38 +33,40 @@ function TopBar(props){
 
 function getInput() {
 
-    var scene_name=document.getElementById("scene_name").value;
-    var img=document.getElementById("image").value;
-    console.log(scene_name,img);
-    getURL();
+    var scene_name = document.getElementById("scene_name").value;
+    var img = document.getElementById("image").value;
+    console.log(scene_name, img);
+    //getURL();
     return {
         name: scene_name,
         img: img,
+        //Aggiungere libreria per leggere l'URL dell'immagine.
     }
-    //Aggiungere libreria per leggere l'URL dell'immagine.
 }
 
-function getURL(){
-    var img=document.getElementById('image');
+/*
+CODICE DI COSE
 
-    if(img.files && img.files[0]){
-        var reader = new FileReader();
+function getURL() {
+
+    var img = document.getElementById('image');
+    var files = img.files;
+
+    // FileReader support
+    if (files && files.length) {
+        var fr = new FileReader();
+        fr.onload = function () {
+            document.getElementById('').src = fr.result;
+        }
+        fr.readAsDataURL(files[0]);
     }
-
-    console.log(reader.readAsDataURL(img.files[0]));
 }
-
-/*function readURL(input) {
-
-  if (input.files && input.files[0]) {
-    var reader = new FileReader();
-
-    reader.onload = function(e) {
-      $('#blah').attr('src', e.target.result);
-    }
-
-    reader.readAsDataURL(input.files[0]);
-  }
-}*/
+<ImageUploader
+                                withIcon={true}
+                                buttonText='Choose images'
+                                onChange={props.onDrop(this)}
+                                imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                            />
+*/
 
 export default TopBar;

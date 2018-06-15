@@ -45,6 +45,13 @@ const Actions = {
             type: ActionTypes.GET_SCENE_RESPONSE,
             response: response
         })
+    },
+
+    onDrop(picture){
+        AppDispatcher.dispatch({
+            type: ActionTypes.ON_PICTURE_DROP,
+            picture,
+        })
     }
 };
 

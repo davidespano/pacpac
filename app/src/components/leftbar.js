@@ -2,7 +2,7 @@ import React from 'react';
 
 function Leftbar(props){
 
-    console.log(props.leftbar.values());
+    //console.log(props.leftbar.values());
 
     return(
         <div className={'leftbar'}>

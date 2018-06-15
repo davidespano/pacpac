@@ -5,13 +5,15 @@ import ClickStore from '../data/ClickStore';
 import CentralSceneStore from '../data/CentralSceneStore'
 import {Container} from 'flux/utils';
 import Actions from '../actions/Actions';
+import PicturesStore from "../data/PicturesStore";
 
 function getStores() {
     return [
         ModeTypeStore,
         LeftbarStore,
         ClickStore,
-        CentralSceneStore
+        CentralSceneStore,
+        PicturesStore,
     ];
 }
 
@@ -33,7 +35,8 @@ function getState() {
         addScene: Actions.addScene,
         clickScene: Actions.clickScene,
         getScene: Actions.getScene,
-        receiveScene: Actions.receiveScene
+        receiveScene: Actions.receiveScene,
+        onDrop: Actions.onDrop,
     };
 }
 
