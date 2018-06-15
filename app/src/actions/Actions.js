@@ -1,5 +1,6 @@
 import ActionTypes from './ActionTypes';
 import AppDispatcher from '../data/AppDispatcher';
+import SceneAPI from '../utils/SceneAPI';
 
 const Actions = {
     playModeOn(){
@@ -29,6 +30,20 @@ const Actions = {
             type: ActionTypes.CLICK_SCENE,
             x: x,
             y: y,
+        })
+    },
+
+    getScene(name){
+        AppDispatcher.dispatch({
+            type: ActionTypes.GET_SCENE,
+        })
+        SceneAPI.getByName(name);
+    },
+
+    receiveScene(response){
+        AppDispatcher.dispatch({
+            type: ActionTypes.GET_SCENE_RESPONSE,
+            response: response
         })
     }
 };

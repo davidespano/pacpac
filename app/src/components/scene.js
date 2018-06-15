@@ -4,8 +4,8 @@ function Scene(props){
     return(
         <div className={'scene'}>
             <img id={'scene'}
-                 src="./Image360/sample1.jpg"
-                 alt={'alena'}
+                 src={"./Image360/"+props.sceneName}
+                 alt={props.sceneName}
                  onClick={(event) => {
                      var p = getCoordinates(event);
                      props.clickScene(p.x, p.y);
