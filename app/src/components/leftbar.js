@@ -2,11 +2,13 @@ import React from 'react';
 
 function Leftbar(props){
 
-    //console.log(props.leftbar.values());
+    console.log(props.leftbar);
+    //props.leftbar.forEach(function(a) {console.log(a)});
+    //Array.prototype.forEach.call(props.leftbar, a=> {console.log(a); console.log("che bella la vita")});
 
     return(
         <div className={'leftbar'}>
-            {[...props.leftbar.values()].reverse().map(child => (
+            {[...props.leftbar].forEach(child => (
                 <div>
                 <img
                     src={child.img}

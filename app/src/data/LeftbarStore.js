@@ -11,19 +11,18 @@ class LeftbarStore extends ReduceStore {
     }
 
     getInitialState() {
-        return Immutable.OrderedMap();
+       // return Immutable.OrderedMap();
+        return [];
     }
 
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.ADD_SCENE:
-                return state.set(
-                    action.id,
-                    new LeftbarElement({
-                        id: action.id,
-                        name: action.name,
-                        img: action.img})
+                state.push(
+                    new LeftbarElement(action.id,action.name,action.img)
                 );
+                this.setState(state);
+                break;
             default:
                 return state;
         }
