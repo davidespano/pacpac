@@ -1,15 +1,20 @@
-import { registerComponent } from 'aframe'
-
 var AFRAME = require('aframe');
 
 AFRAME.registerComponent('selectable', {
 
+    schema: {
+        target: {type: 'string'}
+    },
+
     init : function () {
 
         var sceneEl = document.querySelector('a-scene');
-        var curv = sceneEl.querySelector('#curved');
+        var elem = this.el;
+        var target = this.data.target;
+
+        /*var curv = sceneEl.querySelector('#curved');
         var template = sceneEl.querySelector('#templateBello');
-        var template2 = sceneEl.querySelector('#templateBello2');
+        var template2 = sceneEl.querySelector('#templateBello2'); */
 
 
         /*curv.addEventListener('mouseenter', function (evt) {
@@ -19,10 +24,19 @@ AFRAME.registerComponent('selectable', {
             feedBackActivator.setAttribute('material', 'visible', false);
         });*/
 
-        curv.addEventListener('click', function(evt){
+       /* curv.addEventListener('click', function(evt){
             template2.setAttribute('visible', true);
             template.setAttribute('visible', false);
             //feedBackActivator.disable();
+        }); */
+
+        elem.addEventListener('click', function(evt){
+            var actualScene = elem.parentElement;
+            var targetID = "#"+target;
+
+            actualScene.setAttribute('visible', false);
+            sceneEl.querySelector(targetID).setAttribute('visible', true);
+
         });
     }
 });
