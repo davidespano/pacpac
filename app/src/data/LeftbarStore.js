@@ -21,8 +21,8 @@ class LeftbarStore extends ReduceStore {
                 state.push(
                     new LeftbarElement(action.id,action.name,action.img)
                 );
-                this.setState(state);
-                break;
+                console.log(state);
+                return state;
             default:
                 return state;
         }

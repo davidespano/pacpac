@@ -8,8 +8,12 @@ import Actions from './actions/Actions';
 
 ReactDOM.render(<AppContainer />, document.getElementById('sceneContainer'));
 
-Actions.addScene(1,"chebelu","./ratio-2-1.png");
-Actions.addScene(2,"chebelu","./ratio-2-1.png");
+console.log('aggiunta di cose');
+
+Actions.addScene(1,"ciao","./ratio-2-1.png");
+
+Actions.addScene(2,"ciao2","./ratio-2-1.png");
+
 
 /*
 // l'elemento game è definito da questa classe.

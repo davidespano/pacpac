@@ -19,6 +19,7 @@ function TopBar(props){
                                 <button onClick={()=>{
                                     var input=getInput();
                                     props.addScene(input.name,input.name, input.img);
+                                    console.log("CLICK");
                                     close();
                                 }
                                 }>Conferma</button>

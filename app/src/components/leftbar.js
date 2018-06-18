@@ -2,7 +2,8 @@ import React from 'react';
 
 function Leftbar(props){
 
-    console.log(props.leftbar);
+    console.log("RENDERING LEFTBAR...");
+
     //props.leftbar.forEach(function(a) {console.log(a)});
     //Array.prototype.forEach.call(props.leftbar, a=> {console.log(a); console.log("che bella la vita")});
 
