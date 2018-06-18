@@ -60,6 +60,18 @@ api.use(function(req, res, next) {
     }
     next();
 });
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, " + customHeaders);
+    if (req.method === "OPTIONS") {
+        return res.status(200).end();
+    }
+    next();
+});
+
+app.use('/media', express.static(path.join(__dirname, 'public')));
 
 //api custom middlewares:
 api.use(setAuthUser);
@@ -74,6 +86,7 @@ api.get('/scenes/getByName', routes.scenes.getByName);
 api.get('/scenes/home', routes.scenes.getHomeScene);
 api.get('/scenes/getNeighboursByName', routes.scenes.getNeighboursByName);
 api.post('/scenes/addScene', routes.scenes.addScene);
+api.post('/public/addMedia', routes.media.addMedia);
 
 //api error handler
 api.use(function(err, req, res, next) {
