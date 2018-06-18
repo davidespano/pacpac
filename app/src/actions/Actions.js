@@ -16,7 +16,7 @@ const Actions = {
     },
 
     addScene(id, name, img){
-        //console.log(id + " " + name + ' ' + img);
+        console.log(id + " " + name + ' ' + img);
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_SCENE,
             id,
