@@ -29,7 +29,7 @@ AFRAME.registerComponent('curved', {
         var event = document.createElement('a-curvedimage');
         event.setAttribute('id', 'prova1');
         event.setAttribute('rotation', this.data.rotation);
-        event.setAttribute('radius', '10');
+        event.setAttribute('radius', '9,5');
         event.setAttribute('theta-length', this.data.theta);
 
         if(this.data.isSelectable) {

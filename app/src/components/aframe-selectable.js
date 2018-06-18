@@ -11,7 +11,7 @@ AFRAME.registerComponent('selectable', {
         var sceneEl = document.querySelector('a-scene');
         var elem = this.el;
         var target = this.data.target;
-
+        console.log(elem)
         /*var curv = sceneEl.querySelector('#curved');
         var template = sceneEl.querySelector('#templateBello');
         var template2 = sceneEl.querySelector('#templateBello2'); */
@@ -31,6 +31,7 @@ AFRAME.registerComponent('selectable', {
         }); */
 
         elem.addEventListener('click', function(evt){
+            console.log('diooooo')
             var actualScene = elem.parentElement;
             var targetID = "#"+target;
 
