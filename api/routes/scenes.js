@@ -3,8 +3,6 @@ var Scene = require('../models/scenes')
     , writeResponse = require('../helpers/response').writeResponse
     , dbUtils = require('../neo4j/dbUtils');
 
-//TODO definire la struttura delle scene per js e db
-
 /**
  * @swagger
  * definition:
@@ -153,8 +151,10 @@ exports.getHomeScene = function (req, res, next) {
  *         description: Name of the scene
  *     responses:
  *       200:
- *         description: A scene
+ *         description: A list of scenes
  *         schema:
+ *           type: array
+ *           items:
  *             $ref: '#/definitions/Scenes'
  *       404:
  *          description: Scene not found
