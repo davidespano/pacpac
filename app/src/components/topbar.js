@@ -1,6 +1,8 @@
 import React from 'react';
 import Popup from 'reactjs-popup';
 //import ImageUploader from 'react-images-upload';
+import SceneAPI from "../utils/SceneAPI";
+import MediaAPI from "../utils/MediaAPI";
 
 function TopBar(props){
     return (
@@ -15,11 +17,10 @@ function TopBar(props){
                                 <label htmlFor={"scene_name"}>Inserisci il nome della scena</label>
                                 <input type="text" id="scene_name" name="scene_name"/>
                                 <label htmlFor={"image"}>Scegli una immagine</label>
-                                <input type="file" name="image" id="image"/>
+                                <input type="file" name="image" id="imageInput"/>
                                 <button onClick={()=>{
-                                    var input=getInput();
-                                    props.addScene(input.name,input.name, input.img);
-                                    console.log("CLICK");
+
+                                    props.addScene(document.getElementById("scene_name").value);
                                     close();
                                 }
                                 }>Conferma</button>
@@ -32,18 +33,25 @@ function TopBar(props){
     );
 }
 
-function getInput() {
 
-    var scene_name = document.getElementById("scene_name").value;
-    var img = document.getElementById("image").value;
-    console.log(scene_name, img);
-    //getURL();
-    return {
-        name: scene_name,
-        img: img,
-        //Aggiungere libreria per leggere l'URL dell'immagine.
-    }
+function nonsappiamoancora(){
+    //FARE CONTROLLI FORM QUI!1!1
+ /* serve: nome; chiama getSceneByName per evitare duplcati, se getScene risponde not found, allora carichiamo media (addMedia), e se
+ * addMedia va a buon fine aggiungiamo la scena*/
+ var name= document.getElementById("scene_name"),
+     media=document.getElementById("imageInput")[0].files[0];
+
+    // if (scenanonduplicata){
+
+    MediaAPI.addMedia(name, media);
+
+
+    // }
+
+
+
 }
+
 
 /*
 CODICE DI COSE

@@ -16,14 +16,8 @@ class LeftbarStore extends ReduceStore {
 
     reduce(state, action) {
         switch (action.type) {
-            case ActionTypes.ADD_SCENE:
-                return state.add(
-                    new LeftbarElement({
-                        key: action.id,
-                        name: action.name,
-                        img: action.img
-                    })
-                );
+            case ActionTypes.GET_SCENE_RESPONSE:
+                return state;
             default:
                 return state;
         }

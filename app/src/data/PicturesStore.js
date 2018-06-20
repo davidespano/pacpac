@@ -3,7 +3,7 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 
 
-class PicturesStore extends ReduceStore {
+class  extends ReduceStore {
 
     constructor() {
         super(AppDispatcher);
@@ -24,4 +24,4 @@ class PicturesStore extends ReduceStore {
     }
 }
 
-export default new PicturesStore();
+export default new ();

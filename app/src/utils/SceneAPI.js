@@ -9,7 +9,9 @@ var getByName = function(name) {
         .set('Accept', 'application/json')
         .set('name', name)
         .end(function(err, response) {
-            if (err) return console.error(err);
+            if (err) {
+                return console.error(err)
+            };
 
             Actions.receiveScene(response.body);
         });

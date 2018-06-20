@@ -15,13 +15,10 @@ const Actions = {
         })
     },
 
-    addScene(id, name, img){
-        console.log(id + " " + name + ' ' + img);
+    addScene(name){
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_SCENE,
-            id,
             name,
-            img,
         })
     },
 
@@ -52,7 +49,9 @@ const Actions = {
             type: ActionTypes.ON_PICTURE_DROP,
             picture,
         })
-    }
+    },
+
+
 };
 
 export default Actions;
