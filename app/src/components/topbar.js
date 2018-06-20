@@ -41,12 +41,13 @@ function nonsappiamoancora(){
  var name= document.getElementById("scene_name"),
      media=document.getElementById("imageInput")[0].files[0];
 
-    // if (scenanonduplicata){
+    if (!SceneAPI.existsByName(name)){
 
-    MediaAPI.addMedia(name, media);
+        MediaAPI.addMedia(name, media);
 
-
-    // }
+    } else {
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    }
 
 
 

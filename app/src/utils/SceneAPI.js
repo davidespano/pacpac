@@ -11,12 +11,22 @@ var getByName = function(name) {
         .end(function(err, response) {
             if (err) {
                 return console.error(err)
-            };
+            }
 
             Actions.receiveScene(response.body);
+        });
+};
+
+function existsByName(name){
+    request.get(`${apiBaseURL}/scenes/getByName`)
+        .set('Accept', 'application/json')
+        .set('name', name)
+        .end(function(err, response){
+            return !(response.status == 404);
         });
 }
 
 export default {
-    getByName: getByName
+    getByName: getByName,
+    existsByName: existsByName,
 };
