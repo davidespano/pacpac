@@ -1,4 +1,7 @@
 var AFRAME = require('aframe');
+var utils = AFRAME.utils;
+var bind = utils.bind;
+
 
 AFRAME.registerComponent('selectable', {
 
@@ -7,37 +10,45 @@ AFRAME.registerComponent('selectable', {
     },
 
     init : function () {
+        this.bindMethods();
+        this.onClick();
+        },
 
+    bindMethods: function () {
+        this.onClick = bind(this.onClick, this);
+    },
+
+    onClick: function(){
         var sceneEl = document.querySelector('a-scene');
         var elem = this.el;
         var target = this.data.target;
-        console.log(elem)
-        /*var curv = sceneEl.querySelector('#curved');
-        var template = sceneEl.querySelector('#templateBello');
-        var template2 = sceneEl.querySelector('#templateBello2'); */
 
-
-        /*curv.addEventListener('mouseenter', function (evt) {
-            feedBackActivator.setAttribute('material', 'visible', true);
-        });
-        curv.addEventListener('mouseleave', function (evt) {
-            feedBackActivator.setAttribute('material', 'visible', false);
-        });*/
-
-       /* curv.addEventListener('click', function(evt){
-            template2.setAttribute('visible', true);
-            template.setAttribute('visible', false);
-            //feedBackActivator.disable();
-        }); */
-
-        elem.addEventListener('click', function(evt){
-            console.log('diooooo')
+        elem.addEventListener('click', function(evt) {
             var actualScene = elem.parentElement;
-            var targetID = "#"+target;
+            var targetID = "#" + target;
+            console.log(targetID);
 
-            actualScene.setAttribute('visible', false);
-            sceneEl.querySelector(targetID).setAttribute('visible', true);
 
-        });
+
+            var trg = sceneEl.querySelector(targetID);
+            console.log(trg);
+
+            var disappearAnimation = document.createElement('a-animation');
+            disappearAnimation.setAttribute('attribute', 'opacity');
+            disappearAnimation.setAttribute('dur', '4000');
+            disappearAnimation.setAttribute('from', '1');
+            disappearAnimation.setAttribute('to', '0');
+
+            var appearAnimation = document.createElement('a-animation');
+            appearAnimation.setAttribute('attribute', 'opacity');
+            appearAnimation.setAttribute('dur', '4000');
+            appearAnimation.setAttribute('from', '0');
+            appearAnimation.setAttribute('to', '1');
+
+
+            actualScene.appendChild(disappearAnimation);
+            trg.appendChild(appearAnimation);
+            //sceneEl.querySelector(targetID).setAttribute('visible', true);
+        })
     }
 });
