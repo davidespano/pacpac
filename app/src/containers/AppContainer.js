@@ -13,7 +13,6 @@ function getStores() {
         LeftbarStore,
         ClickStore,
         CentralSceneStore,
-        PicturesStore,
     ];
 }
 
