@@ -53,6 +53,7 @@ var getHomeScene = function (session){
 //add a scene
 var addScene = function (session, name, description)
 {
+    //Controllare unicità della scena in base al gioco
     return session.run('CREATE (scene:Scene {name: $name, description: $description}) RETURN scene',{name: name, description: description})
         .then(result => _singleSceneWithDetails(result.records[0]),
               error => {

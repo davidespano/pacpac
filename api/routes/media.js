@@ -1,5 +1,6 @@
 var fs = require('fs')
-    , writeResponse = require('../helpers/response').writeResponse;
+    , writeResponse = require('../helpers/response').writeResponse
+    ,_ = require('lodash');
 
 /**
  * @swagger
@@ -9,15 +10,24 @@ var fs = require('fs')
  *     - media
  *     description: Add a new media
  *     summary: Add a new media
+ *     consumes:
+ *        - multipart/form-data
  *     parameters:
- *       - in: body
- *         name: media
- *         type: ???
+ *       - in: formData
+ *         name: upfile
+ *         type: file
+ *       - in: header
+ *         name: name
+ *         type: string
  *         required: true
- *         description: The media
+ *         description: Name of the scene
  *     responses:
  *       422:
  *           description: Another media has already this name
  */
 exports.addMedia = function (req, res, next) {
+    if(req.file)
+        return res.status(200).end();
+    else
+        writeResponse(res, {message: 'Another media has already this name', status: 422},422);
 };

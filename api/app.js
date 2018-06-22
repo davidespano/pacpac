@@ -8,7 +8,9 @@ var express = require('express')
     , bodyParser = require('body-parser')
     , setAuthUser = require('./middlewares/setAuthUser')
     , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup')
-    , writeError = require('./helpers/response').writeError;
+    , writeError = require('./helpers/response').writeError
+    , multer = require('multer')
+    , fs = require('fs');
 
 var app = express()
     , api = express();
@@ -18,7 +20,7 @@ app.use(nconf.get('api_path'), api);
 var swaggerDefinition = {
     info: {
         title: 'Neo4j API for PACPAC (Node/Express)',
-        version: '1.0.0',
+        version: '2.0.0',
         description: '',
     },
     host: 'localhost:3000',
@@ -86,7 +88,26 @@ api.get('/scenes/getByName', routes.scenes.getByName);
 api.get('/scenes/home', routes.scenes.getHomeScene);
 api.get('/scenes/getNeighboursByName', routes.scenes.getNeighboursByName);
 api.post('/scenes/addScene', routes.scenes.addScene);
-api.post('/public/addMedia', routes.media.addMedia);
+
+var storage = multer.diskStorage({
+    destination: "public/",
+    filename: function (req, file, cb) {
+        cb(null, req.headers.name)
+    }
+})
+var upload = multer({
+    storage: storage,
+    fileFilter: function(req, file, cb){
+        fs.access("public/"+req.headers.name, (err)=>
+        {
+            if (!err)
+                cb(null,false);
+            else
+                cb(null,true);
+        });
+    }
+})
+api.post('/public/addMedia', upload.single("upfile"),routes.media.addMedia);
 
 //api error handler
 api.use(function(err, req, res, next) {
