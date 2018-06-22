@@ -3,7 +3,7 @@ var AFRAME = require('aframe');
 AFRAME.registerComponent('create_scene', {
 
     init : function () {
-
+        //Cicleremo su tutti gli oggetti della scena(?)
         var sceneEl = document.querySelector('a-scene');
         var sky = document.createElement('a-sky');
         sky.setAttribute('src', 'http://localhost:3000/media/sample7.jpg');
@@ -11,6 +11,7 @@ AFRAME.registerComponent('create_scene', {
         sky.setAttribute('radius', '10');
         sky.setAttribute('id', 'bolla1');
         sky.setAttribute('curved','theta: 30; rotation: 0 0 0; isSelectable: true; target: bolla2');
+        sky.addEventListener('poba', function(e){});
 
 
         sceneEl.appendChild(sky);
@@ -40,7 +41,5 @@ AFRAME.registerComponent('curved', {
         }
 
         this.el.appendChild(event);
-
-
     }
 });
