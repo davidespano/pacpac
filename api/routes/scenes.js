@@ -41,7 +41,7 @@ exports.list = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/scenes/getByName:
+ * /api/v0/scenes/{name}:
  *   get:
  *     tags:
  *     - scenes
@@ -50,7 +50,7 @@ exports.list = function (req, res, next) {
  *     produces:
  *       - application/json
  *     parameters:
- *       - in: header
+ *       - in: path
  *         name: name
  *         type: string
  *         required: true
@@ -64,7 +64,7 @@ exports.list = function (req, res, next) {
  *          description: Scene not found
  */
 exports.getByName = function (req, res, next) {
-    var name = req.headers['name'];
+    var name = req.params.name;
     Scene.getByName(dbUtils.getSession(req), name)
         .then(response => writeResponse(res, response))
         .catch(next);
@@ -135,7 +135,7 @@ exports.getHomeScene = function (req, res, next) {
 
 /**
  * @swagger
- * /api/v0/scenes/getNeighboursByName:
+ * /api/v0/scenes/{name}/neighbours:
  *   get:
  *     tags:
  *     - scenes
@@ -144,7 +144,7 @@ exports.getHomeScene = function (req, res, next) {
  *     produces:
  *       - application/json
  *     parameters:
- *       - in: header
+ *       - in: path
  *         name: name
  *         type: string
  *         required: true
@@ -160,7 +160,7 @@ exports.getHomeScene = function (req, res, next) {
  *          description: Scene not found
  */
 exports.getNeighboursByName = function (req, res, next) {
-    var name = req.headers['name'];
+    var name = req.params.name;
     Scene.getNeighboursByName(dbUtils.getSession(req), name)
         .then(response => writeResponse(res, response))
         .catch(next);

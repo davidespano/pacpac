@@ -5,9 +5,8 @@ var request = require('superagent')
 const {apiBaseURL} = settings;
 
 var getByName = function(name) {
-    request.get(`${apiBaseURL}/scenes/getByName`)
+    request.get(`${apiBaseURL}/scenes/${name}`)
         .set('Accept', 'application/json')
-        .set('name', name)
         .end(function(err, response) {
             if (err) {
                 return console.error(err)
@@ -18,9 +17,8 @@ var getByName = function(name) {
 };
 
 function existsByName(name){
-    request.get(`${apiBaseURL}/scenes/getByName`)
+    request.get(`${apiBaseURL}/scenes/${name}`)
         .set('Accept', 'application/json')
-        .set('name', name)
         .end(function(err, response){
             return !(response.status == 404);
         });
