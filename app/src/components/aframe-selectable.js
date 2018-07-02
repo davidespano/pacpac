@@ -9,7 +9,7 @@ AFRAME.registerComponent('selectable', {
 
         },
 
-    init : function () {
+    update : function () {
 
         var sceneEl = document.querySelector('a-scene');
         var elem = this.el;
@@ -17,17 +17,17 @@ AFRAME.registerComponent('selectable', {
         var actualScene = elem.parentElement;
         var targetID = "#" + target;
         var trg = sceneEl.querySelector(targetID);
-
-        actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 1000; easing: linear; from: 1; to: 0; startEvents: startTransition');
-        trg.setAttribute('animation__appear', 'property: material.opacity; dur:1000; easing:linear; from: 0; to: 1; startEvents: startTransition');
-
+        //console.log(elem)
+        actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 2000; easing: linear; from: 1; to: 0; startEvents: startTransition'+actualScene.id);
+        trg.setAttribute('animation__appear', 'property: material.opacity; dur:2000; easing:linear; from: 0; to: 1; startEvents: startTransition'+elem.id);
+        console.log()
         elem.addEventListener('click', function (evt) {
             //Per il futuro: Settarla visible prima di fare il dispatch dell'event!
-            var currentEvent = 'startTransition';
-            var e = new CustomEvent(currentEvent);
+            var currentEventB = 'startTransition' + elem.id;
+            var first = new CustomEvent(currentEventB);
 
-            actualScene.dispatchEvent(e);
-            trg.dispatchEvent(e);
+            actualScene.dispatchEvent(first);
+            trg.dispatchEvent(first);
         });
 
         trg.addEventListener('animationbegin', function (evt) {
@@ -38,7 +38,7 @@ AFRAME.registerComponent('selectable', {
             {
                 childrenList[i].setAttribute('visible', true);
             }
-            trg.setAttribute('visible', 'true');
+            trg.setAttribute('visible', true);
 
         });
 
@@ -52,6 +52,8 @@ AFRAME.registerComponent('selectable', {
             }
             actualScene.setAttribute('visible', false);
         });
-    }
+    },
+
+
 });
 
