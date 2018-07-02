@@ -19,8 +19,11 @@ function TopBar(props){
                                 <label htmlFor={"image"}>Scegli una immagine</label>
                                 <input type="file" name="image" id="imageInput"/>
                                 <button onClick={()=>{
+                                    var name= document.getElementById("scene_name").value,
+                                        media=document.getElementById("imageInput").files[0];
 
-                                    props.addScene(document.getElementById("scene_name").value);
+                                    console.log("CLICK");
+                                    nonsappiamoancora(name, media);
                                     close();
                                 }
                                 }>Conferma</button>
@@ -34,15 +37,16 @@ function TopBar(props){
 }
 
 
-function nonsappiamoancora(){
+function nonsappiamoancora(name, media){
     //FARE CONTROLLI FORM QUI!1!1
  /* serve: nome; chiama getSceneByName per evitare duplcati, se getScene risponde not found, allora carichiamo media (addMedia), e se
  * addMedia va a buon fine aggiungiamo la scena*/
- var name= document.getElementById("scene_name"),
+ /*var name= document.getElementById("scene_name"),
      media=document.getElementById("imageInput")[0].files[0];
-
+*/
     if (!SceneAPI.existsByName(name)){
 
+        console.log("nome yeah");
         MediaAPI.addMedia(name, media);
 
     } else {

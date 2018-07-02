@@ -5,14 +5,16 @@ var request = require('superagent');
 
 const {apiBaseURL} = settings;
 
-var addMedia= function (name, media) {
+var addMedia = function (name, media) {
 
-    var data = new FormData();
-    data.append(media);
+    //var data = new FormData();
+    //data.append(media);
     //data.append('file', document.getElementById("imageInput")[0].files[0]);
 
     request.post(`${apiBaseURL}/public/addMedia`)
-        .send({media: data, name: name})
+        .set('name', name)
+        .type('form')
+        .send({media: media})
         .end(function(err, response) {
             if (err) {
                 return console.error(err);
@@ -24,3 +26,6 @@ var addMedia= function (name, media) {
 export default {
     addMedia: addMedia
 };
+
+
+//.field('media', media)

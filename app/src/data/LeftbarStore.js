@@ -17,6 +17,7 @@ class LeftbarStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.GET_SCENE_RESPONSE:
+                console.log("ciao ho ricevuto cose");
                 return state;
             default:
                 return state;
