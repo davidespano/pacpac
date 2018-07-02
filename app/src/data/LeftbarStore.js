@@ -2,7 +2,6 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
-import LeftbarElement from './LeftbarElement';
 
 class LeftbarStore extends ReduceStore {
 

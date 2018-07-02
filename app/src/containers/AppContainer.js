@@ -5,7 +5,6 @@ import ClickStore from '../data/ClickStore';
 import CentralSceneStore from '../data/CentralSceneStore'
 import {Container} from 'flux/utils';
 import Actions from '../actions/Actions';
-import PicturesStore from "../data/PicturesStore";
 
 function getStores() {
     return [
@@ -36,6 +35,7 @@ function getState() {
         getScene: Actions.getScene,
         receiveScene: Actions.receiveScene,
         onDrop: Actions.onDrop,
+
     };
 }
 

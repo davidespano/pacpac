@@ -1,11 +1,11 @@
-import settings from './settings'
-import Actions from "../actions/Actions";
+import settings from './settings';
+import SceneAPI from "./SceneAPI";
 
 var request = require('superagent');
 
 const {apiBaseURL} = settings;
 
-var addMedia = function (name, media) {
+function addMedia(name, media) {
     
     request.post(`${apiBaseURL}/public/addMedia`)
         .set('name', name)
@@ -14,9 +14,12 @@ var addMedia = function (name, media) {
             if (err) {
                 return console.error(err);
             }
-            Actions.receiveScene(response.body);
+
+            //create db node
+            SceneAPI.createScene(name);
+
         });
-};
+}
 
 export default {
     addMedia: addMedia

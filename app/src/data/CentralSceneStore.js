@@ -9,12 +9,13 @@ class CentralSceneStore extends ReduceStore {
     }
 
     getInitialState() {
-        return ""
+        return "";
     }
 
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.GET_SCENE_RESPONSE:
+                console.log(action.response);
                 return action.response.name;
             default:
                 return state;

@@ -1,16 +1,25 @@
 import React from 'react';
 
 function Scene(props){
+
+    if(props.sceneName !== ""){
+        return(
+            <div className={'scene'}>
+                <img id={'scene'}
+                     src={"http://localhost:3000/media/" + props.sceneName}
+                     alt={props.sceneName}
+                     onClick={(event) => {
+                         let p = getCoordinates(event);
+                         props.clickScene(p.x, p.y);
+                     }}
+                />
+            </div>
+        );
+    }
+
     return(
         <div className={'scene'}>
-            <img id={'scene'}
-                 src={"./Image360/"+props.sceneName}
-                 alt={props.sceneName}
-                 onClick={(event) => {
-                     var p = getCoordinates(event);
-                     props.clickScene(p.x, p.y);
-                 }}
-            />
+            <p>Seleziona una scena per iniziare</p>
         </div>
     );
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import Popup from 'reactjs-popup';
-//import ImageUploader from 'react-images-upload';
 import SceneAPI from "../utils/SceneAPI";
 import MediaAPI from "../utils/MediaAPI";
 
@@ -22,8 +21,7 @@ function TopBar(props){
                                     var name= document.getElementById("scene_name").value,
                                         media=document.getElementById("imageInput").files[0];
 
-                                    console.log("CLICK");
-                                    nonsappiamoancora(name, media);
+                                    addMediaAndCreateScene(name, media);
                                     close();
                                 }
                                 }>Conferma</button>
@@ -37,50 +35,27 @@ function TopBar(props){
 }
 
 
-function nonsappiamoancora(name, media){
+function addMediaAndCreateScene(name, media){
     //FARE CONTROLLI FORM QUI!1!1
- /* serve: nome; chiama getSceneByName per evitare duplcati, se getScene risponde not found, allora carichiamo media (addMedia), e se
- * addMedia va a buon fine aggiungiamo la scena*/
- /*var name= document.getElementById("scene_name"),
-     media=document.getElementById("imageInput")[0].files[0];
-*/
+    //lettere accentate e spazi sono ammessi! Yay
+
+    // regex to extract file extension
+    // https://stackoverflow.com/questions/680929/how-to-extract-extension-from-filename-string-in-javascript
+    let re = /(?:\.([^.]+))?$/;
+    let ext = re.exec(media.name)[1];
+    name = name + "." + ext;
+
+
     if (!SceneAPI.existsByName(name)){
 
-        console.log("nome yeah");
         MediaAPI.addMedia(name, media);
 
     } else {
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        console.log("There's already a scene with that name!");
     }
 
 
 
 }
-
-
-/*
-CODICE DI COSE
-
-function getURL() {
-
-    var img = document.getElementById('image');
-    var files = img.files;
-
-    // FileReader support
-    if (files && files.length) {
-        var fr = new FileReader();
-        fr.onload = function () {
-            document.getElementById('').src = fr.result;
-        }
-        fr.readAsDataURL(files[0]);
-    }
-}
-<ImageUploader
-                                withIcon={true}
-                                buttonText='Choose images'
-                                onChange={props.onDrop(this)}
-                                imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                            />
-*/
 
 export default TopBar;
