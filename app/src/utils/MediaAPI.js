@@ -13,8 +13,9 @@ var addMedia = function (name, media) {
 
     request.post(`${apiBaseURL}/public/addMedia`)
         .set('name', name)
-        .type('form')
-        .send({media: media})
+        .set('Content-Type', 'multipart/form-data')
+        //.send({media: media})
+        .field('media', media)
         .end(function(err, response) {
             if (err) {
                 return console.error(err);
