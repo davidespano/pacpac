@@ -41,8 +41,23 @@ function createScene(name){
         });
 }
 
+//reloads all scenes
+function getAllScenes(){
+    request.post(`${apiBaseURL}/scenes`)
+        .set('Accept', 'application/json')
+        .end(function(err, response){
+            if(err){
+                return console.error(err);
+            }
+
+            if(response !== [])
+                Actions.loadAllScenes(response);
+        });
+}
+
 export default {
     getByName: getByName,
     existsByName: existsByName,
     createScene: createScene,
+    getAllScenes: getAllScenes,
 };

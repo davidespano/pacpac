@@ -37,6 +37,13 @@ const Actions = {
         SceneAPI.getByName(name);
     },
 
+    loadAllScenes(response){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOAD_ALL_SCENES,
+            response: response,
+        })
+    },
+
     receiveScene(response){
         AppDispatcher.dispatch({
             type: ActionTypes.GET_SCENE_RESPONSE,

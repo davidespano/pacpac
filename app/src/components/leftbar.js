@@ -9,9 +9,9 @@ function Leftbar(props){
     return(
         <div className={'leftbar'}>
             {[...props.leftbar.values()].map(child => (
-                <div key={child.key}>
+                <div key={child.name}>
                     <img
-                        src={child.img}
+                        src={"http://localhost:3000/media/" + child.img}
                         className={'list-img'}
                         alt={child.name}
                     />
