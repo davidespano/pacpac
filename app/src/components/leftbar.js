@@ -2,22 +2,30 @@ import React from 'react';
 
 function Leftbar(props){
 
-    //console.log("RENDERING LEFTBAR...");
-    //console.log(props.leftbar.values());
-    //console.log(props.leftbar);
-
     return(
         <div className={'leftbar'}>
             {[...props.leftbar.values()].map(child => (
                 <div key={child.name}>
+                    <label>{child.name}</label>
                     <img
                         src={"http://localhost:3000/media/" + child.img}
                         className={'list-img'}
                         alt={child.name}
+                        title={title(child)}
                     />
                 </div>
             ))}
         </div>
     )
 }
+
+function title(child){
+    let label = "nessuna"
+    return (
+        "Scena: " + child.name +
+        "\nEtichetta: " + label
+    );
+}
+
+
 export default Leftbar;

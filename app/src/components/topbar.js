@@ -38,6 +38,8 @@ function TopBar(props){
 function addMediaAndCreateScene(name, media){
     //FARE CONTROLLI FORM QUI!1!1
     //lettere accentate e spazi sono ammessi! Yay
+    //MA NON ALL'INIZIO DELLA FRASE
+    name = name.trim();
 
     // regex to extract file extension
     // https://stackoverflow.com/questions/680929/how-to-extract-extension-from-filename-string-in-javascript

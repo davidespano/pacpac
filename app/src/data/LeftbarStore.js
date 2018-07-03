@@ -25,15 +25,15 @@ class LeftbarStore extends ReduceStore {
 
                         console.log(name + ": " + img);
 
-                        return state.add(new LeftbarElement({
+                        state = state.add(new LeftbarElement({
                                 name: name,
                                 img: img,
                             })
                         );
                     });
                 }
-
                 return state;
+
             case ActionTypes.GET_SCENE_RESPONSE:
                 let img = action.response.name;
                 let name = action.response.name.replace(/\.[^/.]+$/, "");

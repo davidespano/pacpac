@@ -33,7 +33,7 @@ const Actions = {
     getScene(name){
         AppDispatcher.dispatch({
             type: ActionTypes.GET_SCENE,
-        })
+        });
         SceneAPI.getByName(name);
     },
 

@@ -43,15 +43,15 @@ function createScene(name){
 
 //reloads all scenes
 function getAllScenes(){
-    request.post(`${apiBaseURL}/scenes`)
+    request.get(`${apiBaseURL}/scenes`)
         .set('Accept', 'application/json')
         .end(function(err, response){
             if(err){
                 return console.error(err);
             }
 
-            if(response !== [])
-                Actions.loadAllScenes(response);
+            if(response.body !== [])
+                Actions.loadAllScenes(response.body);
         });
 }
 
