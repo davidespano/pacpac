@@ -5,6 +5,7 @@ import ClickStore from '../data/ClickStore';
 import CentralSceneStore from '../data/CentralSceneStore'
 import {Container} from 'flux/utils';
 import Actions from '../actions/Actions';
+import ColorPickerStore from "../data/ColorPickerStore";
 
 function getStores() {
     return [
@@ -12,6 +13,7 @@ function getStores() {
         LeftbarStore,
         ClickStore,
         CentralSceneStore,
+        ColorPickerStore,
     ];
 }
 
@@ -19,21 +21,30 @@ function getState() {
     //props
     return {
 
-        //states
+        //STATES
 
         mode: ModeTypeStore.getState(),
         leftbar: LeftbarStore.getState(),
         click: ClickStore.getState(),
         sceneName: CentralSceneStore.getState(),
+        sceneLabels: ColorPickerStore.getState(),
 
-        //functions
+        //FUNCTIONS
+
+        //page modes
 
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
+
+        //scenes
+
         addScene: Actions.addScene,
         clickScene: Actions.clickScene,
         getScene: Actions.getScene,
         receiveScene: Actions.receiveScene,
+
+        //other
+
         onDrop: Actions.onDrop,
 
     };

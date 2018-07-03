@@ -1,9 +1,9 @@
 import React from 'react';
-import TopBar from "../components/topbar";
-import LeftBar from "../components/leftbar";
-import RightBar from "../components/rightbar";
-import Scene from "../components/scene";
-import Canvas from "../components/canvas";
+import TopBar from "../components/interface/Topbar";
+import LeftBar from "../components/interface/Leftbar";
+import RightBar from "../components/interface/Rightbar";
+import Scene from "../components/interface/Scene";
+import Canvas from "../components/interface/Canvas";
 import PlayTest from "../components/playtest";
 
 /* La cosa migliore è gestire lo stato solo all'interno dello Store, e lasciare nella view solo funzioni*/

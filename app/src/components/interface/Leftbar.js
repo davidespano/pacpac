@@ -20,7 +20,7 @@ function Leftbar(props){
 }
 
 function title(child){
-    let label = "nessuna"
+    let label = "---"
     return (
         "Scena: " + child.name +
         "\nEtichetta: " + label
