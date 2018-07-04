@@ -44,7 +44,7 @@ function getState() {
         getScene: Actions.getScene,
         receiveScene: Actions.receiveScene,
 
-        //other
+        //OTHER
 
         onDrop: Actions.onDrop,
 

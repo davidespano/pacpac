@@ -26,7 +26,6 @@ class LabelsStore extends ReduceStore {
             case ActionTypes.LOAD_ALL_LABELS:
                 return state;
             default:
-                console.log('PASSO QUI');
                 return state;
         }
     }

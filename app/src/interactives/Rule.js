@@ -1,4 +1,4 @@
-class GenericRule {
+class Rule {
 
     constructor({event = {}, condition = {}, action = {}}){
         this.event = event;
@@ -7,4 +7,4 @@ class GenericRule {
     }
 }
 
-export default GenericRule;
+export default Rule;

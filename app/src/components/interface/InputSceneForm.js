@@ -5,9 +5,6 @@ import MediaAPI from "../../utils/MediaAPI";
 
 function InputSceneForm(props){
 
-    console.log(props.sceneLabels);
-    console.log(props.sceneLabels.values());
-
     return(
         <Popup trigger={<button className={"pop-button"}> Add scene </button>} modal>
             {close => (

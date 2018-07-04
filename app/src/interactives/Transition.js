@@ -1,9 +1,22 @@
-class Transition{
+import EventTypes from "./EventTypes";
+import RuleActionTypes from "./RuleActionTypes"
+import InteractiveObject from "./InteractiveObject";
+import Rule from "./Rule";
 
-    constructor(media = "", target = "", duration = 0, rotation = '0 0 0', theta = 10, height = 2){
+class Transition extends InteractiveObject {
+
+    constructor(media = "", duration = 0, rotation = '0 0 0', theta = 10, height = 2) {
+
+        //default rule is passed to superclass
+        super(new Rule({
+            event: EventTypes.CLICK,
+            action: {
+                type: RuleActionTypes.TRANSITION,
+                target: '',
+            }
+        }));
 
         this.media = media;
-        this.target = target;
         this.duration = duration;
         this.rotation = rotation; // format stringa con tre numeri separati da uno spazio, mettere tre campi diversi
         this.theta = theta;
