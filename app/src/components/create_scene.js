@@ -44,6 +44,7 @@ AFRAME.registerComponent('create_scene', {
         curvedImage(bolla1, 'bolla2', '0 -90 0', '9.5', '30', true);
         curvedImage(bolla1, 'bolla4', '0 0 0', '9.5', '30', true);
         curvedImage(bolla2, 'bolla3', '0 90 0', '9.5', '30', true);
+        curvedImage(bolla4, 'bolla1', '0 180 0', '9.5', '30', true);
 
 
         sceneEl.appendChild(bolla1);
@@ -60,7 +61,7 @@ AFRAME.registerComponent('curved', {
         theta: {type: 'int'},
         rotation: {type: 'string'},
         isSelectable: {type: 'bool', default: false},
-        target: {type: 'string', default: ""}
+        target: {type: 'string', default: ''}
     },
 
     init : function () {
