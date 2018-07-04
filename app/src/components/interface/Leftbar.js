@@ -1,4 +1,7 @@
 import React from 'react';
+import settings from '../../utils/settings';
+
+const {mediaURL} = settings;
 
 function Leftbar(props){
 
@@ -8,7 +11,7 @@ function Leftbar(props){
                 <div key={child.name}>
                     <label>{child.name}</label>
                     <img
-                        src={"http://localhost:3000/media/" + child.img}
+                        src={`${mediaURL}` + child.img}
                         className={'list-img'}
                         alt={child.name}
                         title={title(child)}

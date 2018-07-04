@@ -3,6 +3,9 @@ import AppDispatcher from '../data/AppDispatcher';
 import SceneAPI from '../utils/SceneAPI';
 
 const Actions = {
+
+    //EDITOR MODE
+
     playModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.PLAY_MODE_ON
@@ -14,6 +17,8 @@ const Actions = {
             type: ActionTypes.EDIT_MODE_ON
         })
     },
+
+    //SCENES
 
     addScene(name){
         AppDispatcher.dispatch({
@@ -50,6 +55,18 @@ const Actions = {
             response: response
         })
     },
+
+    //LABELS
+
+    addNewLabel(title, color){
+        AppDispatcher.dispatch({
+            type: ActionTypes.ADD_NEW_LABEL,
+            title: title,
+            color: color,
+        })
+    },
+
+    //OTHER
 
     onDrop(picture){
         AppDispatcher.dispatch({
