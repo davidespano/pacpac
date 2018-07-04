@@ -4,7 +4,7 @@ import LeftBar from "../components/interface/Leftbar";
 import RightBar from "../components/interface/Rightbar";
 import Scene from "../components/interface/Scene";
 import Canvas from "../components/interface/Canvas";
-import PlayTest from "../components/playtest";
+import PlayTest from "../components/aframe/playtest";
 
 /* La cosa migliore è gestire lo stato solo all'interno dello Store, e lasciare nella view solo funzioni*/
 function AppView(props) {

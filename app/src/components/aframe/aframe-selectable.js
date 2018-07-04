@@ -54,7 +54,6 @@ function enableChild (trg) {
 }
 
 function disableChild(actualScene) {
-    console.log("Dio merda")
     setTimeout(function () {
         var childrenList = actualScene.children;
         for(var i=0; i<childrenList.length; i++)
