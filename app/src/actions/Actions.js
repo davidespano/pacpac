@@ -56,6 +56,7 @@ const Actions = {
         })
     },
 
+
     //LABELS
 
     addNewLabel(title, color){
@@ -65,6 +66,17 @@ const Actions = {
             color: color,
         })
     },
+
+
+    //INTERACTIVE OBJECTS
+
+    addNewObject(object){
+        AppDispatcher.dispatch({
+            type: ActionTypes.ADD_NEW_OBJECT,
+            obj: object,
+        })
+    },
+
 
     //OTHER
 

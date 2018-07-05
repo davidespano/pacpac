@@ -6,6 +6,7 @@ import CentralSceneStore from '../data/CentralSceneStore'
 import {Container} from 'flux/utils';
 import Actions from '../actions/Actions';
 import LabelsStore from "../data/LabelsStore";
+import ObjectsStore from "../data/ObjectsStore";
 
 
 function getStores() {
@@ -15,6 +16,7 @@ function getStores() {
         ClickStore,
         CentralSceneStore,
         LabelsStore,
+        ObjectsStore,
     ];
 }
 
@@ -29,6 +31,7 @@ function getState() {
         click: ClickStore.getState(),
         sceneName: CentralSceneStore.getState(),
         sceneLabels: LabelsStore.getState(),
+        interactiveObjects: ObjectsStore.getState(),
 
         //FUNCTIONS
 
@@ -43,6 +46,10 @@ function getState() {
         clickScene: Actions.clickScene,
         getScene: Actions.getScene,
         receiveScene: Actions.receiveScene,
+
+        //interactive objects
+
+        addNewObject: Actions.addNewObject,
 
         //OTHER
 
