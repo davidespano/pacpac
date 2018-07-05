@@ -9,11 +9,17 @@ AFRAME.registerComponent('create_scene', {
         var bolla2 = document.createElement('a-sky');
         var bolla3 = document.createElement('a-sky');
         var bolla4 = document.createElement('a-sky');
+        var bolla5 = document.createElement('a-sky');
 
         bolla1.setAttribute('src', 'http://localhost:3000/media/bolla1.jpg');
         bolla2.setAttribute('src', 'http://localhost:3000/media/bolla2.jpg');
         bolla3.setAttribute('src', 'http://localhost:3000/media/bolla3.jpg');
         bolla4.setAttribute('src', 'http://localhost:3000/media/bolla4.jpg');
+
+        /*bolla1.setAttribute('src', 'http://192.168.0.221:3000/media/prova.mp4');
+        bolla2.setAttribute('src', 'http://192.168.0.221:3000/media/prova2.mp4');
+        bolla3.setAttribute('src', 'http://192.168.0.221:3000/media/bolla3.jpg');
+        bolla4.setAttribute('src', 'http://192.168.0.221:3000/media/bolla4.jpg');*/
 
         bolla2.setAttribute('visible', 'false');
         bolla3.setAttribute('visible', 'false');

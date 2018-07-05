@@ -17,9 +17,16 @@ AFRAME.registerComponent('selectable', {
         var actualScene = elem.parentElement;
         var targetID = "#" + target;
         var trg = sceneEl.querySelector(targetID);
-
+        var cursor = sceneEl.querySelector('#cursor');
         actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 2000; easing: linear; from: 1; to: 0; startEvents: startTransition'+actualScene.id + 'dis');
         trg.setAttribute('animation__appear', 'property: material.opacity; dur:2000; easing:linear; from: 0; to: 1; startEvents: startTransition' + target + 'app');
+
+        elem.addEventListener('mouseenter',function () {
+            cursor.setAttribute('color', 'green');
+        });
+        elem.addEventListener('mouseleave',function () {
+            cursor.setAttribute('color', 'black');
+        });
 
         elem.addEventListener('click', function (evt) {
 
