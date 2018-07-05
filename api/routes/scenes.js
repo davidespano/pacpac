@@ -1,4 +1,4 @@
-var Scene = require('../models/scenes')
+var Scenes = require('../models/scenes')
     , _ = require('lodash')
     , writeResponse = require('../helpers/response').writeResponse
     , dbUtils = require('../neo4j/dbUtils');
@@ -34,7 +34,7 @@ var Scene = require('../models/scenes')
  *             $ref: '#/definitions/Scenes'
  */
 exports.list = function (req, res, next) {
-    Scene.getAll(dbUtils.getSession(req))
+    Scenes.getAll(dbUtils.getSession(req))
         .then(response => writeResponse(res, response))
 .catch(next);
 };
@@ -65,7 +65,7 @@ exports.list = function (req, res, next) {
  */
 exports.getByName = function (req, res, next) {
     var name = req.params.name;
-    Scene.getByName(dbUtils.getSession(req), name)
+    Scenes.getByName(dbUtils.getSession(req), name)
         .then(response => writeResponse(res, response))
         .catch(next);
 };
@@ -104,7 +104,7 @@ exports.addScene = function (req, res, next) {
     var name = _.get(req.body,'name');
     var description = _.get(req.body, 'description');
 
-    Scene.addScene(dbUtils.getSession(req), name, description)
+    Scenes.addScene(dbUtils.getSession(req), name, description)
         .then(response => writeResponse(res, response))
         .catch(next);
 };
@@ -128,7 +128,7 @@ exports.addScene = function (req, res, next) {
  *          description: Scene not found
  */
 exports.getHomeScene = function (req, res, next) {
-    Scene.getHomeScene(dbUtils.getSession(req))
+    Scenes.getHomeScene(dbUtils.getSession(req))
         .then(response => writeResponse(res, response))
         .catch(next);
 };
@@ -161,7 +161,7 @@ exports.getHomeScene = function (req, res, next) {
  */
 exports.getNeighboursByName = function (req, res, next) {
     var name = req.params.name;
-    Scene.getNeighboursByName(dbUtils.getSession(req), name)
+    Scenes.getNeighboursByName(dbUtils.getSession(req), name)
         .then(response => writeResponse(res, response))
         .catch(next);
 };

@@ -83,12 +83,18 @@ api.use(neo4jSessionCleanup);
 api.post('/register', routes.users.register);
 api.post('/login', routes.users.login);
 api.get('/users/me', routes.users.me);
+
+/**SCENES**/
 api.get('/scenes', routes.scenes.list);
 api.get('/scenes/:name', routes.scenes.getByName);
 api.get('/scenes/home', routes.scenes.getHomeScene);
 api.get('/scenes/:name/neighbours', routes.scenes.getNeighboursByName);
 api.post('/scenes/addScene', routes.scenes.addScene);
 
+/**TAGS**/
+api.get('/tags', routes.tags.list);
+
+/**MEDIA**/
 var storage = multer.diskStorage({
     destination: "public/",
     filename: function (req, file, cb) {
