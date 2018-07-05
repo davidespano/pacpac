@@ -7,6 +7,7 @@ import {Container} from 'flux/utils';
 import Actions from '../actions/Actions';
 import LabelsStore from "../data/LabelsStore";
 import ObjectsStore from "../data/ObjectsStore";
+import RightbarStore from "../data/RightbarStore";
 
 
 function getStores() {
@@ -17,6 +18,7 @@ function getStores() {
         CentralSceneStore,
         LabelsStore,
         ObjectsStore,
+        RightbarStore,
     ];
 }
 
@@ -32,6 +34,7 @@ function getState() {
         sceneName: CentralSceneStore.getState(),
         sceneLabels: LabelsStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
+        rightbar: RightbarStore.getState(),
 
         //FUNCTIONS
 

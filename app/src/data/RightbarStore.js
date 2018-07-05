@@ -2,19 +2,22 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 
-class ObjectsStore extends ReduceStore {
+class RightbarStore extends ReduceStore {
 
     constructor(){
         super(AppDispatcher);
     }
 
     getInitialState(){
-        return [];
+        return {
+            currentObject: null,
+        };
     }
 
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
+                state['currentObject'] = action.obj;
                 return state;
             default:
                 return state;
@@ -22,4 +25,4 @@ class ObjectsStore extends ReduceStore {
     }
 }
 
-export default new ObjectsStore();
+export default new RightbarStore();
