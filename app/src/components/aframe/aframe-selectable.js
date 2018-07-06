@@ -37,7 +37,7 @@ AFRAME.registerComponent('selectable', {
             actualScene.dispatchEvent(startEvent);
             trg.dispatchEvent(arriveEvent);
 
-            trg.addEventListener('animationbegin', enableChild(trg));
+            trg.addEventListener('animationbegin', enableChild(trg, target));
             actualScene.addEventListener('animationbegin', disableChild(actualScene));
 
             trg.removeEventListener('animationbegin', enableChild);
@@ -48,26 +48,30 @@ AFRAME.registerComponent('selectable', {
     }
 });
 
-function enableChild (trg) {
-    var childrenList = trg.children;
+function enableChild (trg, target) {
+
+    trg.setAttribute('visible', true);
+    console.log('')
+    //console.log(map.prototype.get(target))
+    /*var childrenList = trg.children;
 
     //Non è possibile usare il foreach con un HtmlCollection
     for(var i=0; i<childrenList.length; i++)
-    {
+{
         childrenList[i].setAttribute('visible', true);
     }
     trg.setAttribute('visible', true);
-
+    */
 }
 
 function disableChild(actualScene) {
-    setTimeout(function () {
-        var childrenList = actualScene.children;
-        for(var i=0; i<childrenList.length; i++)
-        {
-            childrenList[i].setAttribute('visible', false);
-        }
-        actualScene.setAttribute('visible', false);
-    },2000)
+
+    var childrenList = actualScene.children;
+    var children = childrenList.length;
+
+    for(var i=0; i<children; i++) {
+        actualScene.removeChild(childrenList[0]);
+    }
+    actualScene.setAttribute('visible', false);
 
 }
