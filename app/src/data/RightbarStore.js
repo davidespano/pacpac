@@ -17,8 +17,9 @@ class RightbarStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
-                state['currentObject'] = action.obj;
-                return state;
+                return {
+                    currentObject: action.obj,
+                };
             default:
                 return state;
         }

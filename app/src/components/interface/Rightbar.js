@@ -1,15 +1,31 @@
 import React from 'react';
 
 function RightBar(props){
+    
     return(
         <div className={'rightbar'}>Proprietà
-            <div className={'currentObjectOptions'}>
-                {[...props.rightbar].map( value => (
-                    <p>{value.currentObject}</p>
-                ))}
-            </div>
+            {optionsView(props.rightbar.currentObject)}
         </div>
     );
 }
+
+function optionsView(object){
+    //let object = rightbar.currentObject;
+    console.log(object);
+    if(object){
+        return(
+            <div className={'currentObjectOptions'}>
+                <p>{object.name}</p>
+            </div>
+        );
+    }else{
+        return (
+            <div className={'currentObjectOptions'}>
+               <p>Nessun oggetto selezionato</p>
+            </div>
+        );
+    }
+}
+
 
 export default RightBar;

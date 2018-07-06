@@ -9,12 +9,13 @@ class ObjectsStore extends ReduceStore {
     }
 
     getInitialState(){
-        return [];
+        return new Set();
     }
 
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
+                state.add(action.obj);
                 return state;
             default:
                 return state;

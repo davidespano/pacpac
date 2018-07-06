@@ -2,7 +2,7 @@ import Rule from "./Rule";
 
 class InteractiveObject {
 
-    constructor(name, rules = []){
+    constructor(rules = [], name){
         this.name = name;
         this.rules = rules;
     }
