@@ -1,15 +1,22 @@
 var _ = require('lodash');
 var Scene = require('../models/neo4j/scene');
+var Tag = require('../models/neo4j/tag');
 
 // return many scenes
 function manyScenes(neo4jResult) {
-    return neo4jResult.records.map(r => new Scene(r.get('scene')))
+    return neo4jResult.records.map(record => {
+        var result = {};
+        _.extend(result, new Scene(record.get('scene')));
+        result.tag = new Tag(record.get('tag'));
+        return result;
+    })
 }
 
 var _singleSceneWithDetails = function (record) {
     if (record.length) {
         var result = {};
         _.extend(result, new Scene(record.get('scene')));
+        result.tag = new Tag(record.get('tag'));
         return result;
     } else {
         return null;
@@ -18,13 +25,19 @@ var _singleSceneWithDetails = function (record) {
 
 // get all scenes
 var getAll = function (session) {
-    return session.run('MATCH (scene:Scene) RETURN scene')
+    return session.run(
+        'MATCH (scene:Scene) ' +
+        'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
+        'RETURN scene,tag')
         .then(result => manyScenes(result));
 };
 
 //get scene by name
 var getByName = function (session, name){
-    return session.run('MATCH (scene:Scene {name:$name}) RETURN scene', {'name':name})
+    return session.run(
+        'MATCH (scene:Scene {name:$name}) ' +
+        'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
+        'RETURN scene,tag', {'name':name})
         .then(result => {
             if(!_.isEmpty(result.records))
             {
@@ -38,7 +51,10 @@ var getByName = function (session, name){
 
 //get the home scene
 var getHomeScene = function (session){
-    return session.run('MATCH (scene:Scene:Home) RETURN scene')
+    return session.run(
+        'MATCH (scene:Scene:Home) ' +
+        'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
+        'RETURN scene,tag')
         .then(result => {
             if(!_.isEmpty(result.records))
             {
@@ -51,18 +67,23 @@ var getHomeScene = function (session){
 }
 
 //add a scene
-var addScene = function (session, name, description)
+var addScene = function (session, name, tagColor, tagName)
 {
-    //Controllare unicità della scena in base al gioco
-    return session.run('CREATE (scene:Scene {name: $name, description: $description}) RETURN scene',{name: name, description: description})
+    //TODO Controllare unicità della scena in base al nome
+    return session.run(
+        'MERGE (tag:Tag {color: $tagColor, name:$tagName}) ' +
+        'CREATE (scene:Scene {name: $name}) -[:TAGGED_AS]-> (tag) ' +
+        'RETURN scene,tag', {name: name, tagColor: tagColor, tagName: tagName})
         .then(result => _singleSceneWithDetails(result.records[0]),
               error => {
                 throw {message: error.message, status: 422};
               });
+
 }
 
 // get adjacent scenes
 var getNeighboursByName = function (session, name) {
+    //TODO Questa sarà da rifare con il sistema delle regole
     return session.run('MATCH (:Scene {name: $name})-[]->(scene) RETURN scene', {name: name})
         .then(result => manyScenes(result));
 };

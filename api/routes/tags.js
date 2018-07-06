@@ -9,8 +9,6 @@ var Tags = require('../models/tags')
  *   Tags:
  *     type: object
  *     properties:
- *       id:
- *         type: int
  *       color:
  *         type: string
  *       name:
@@ -33,7 +31,7 @@ var Tags = require('../models/tags')
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/Scenes'
+ *             $ref: '#/definitions/Tags'
  */
 exports.list = function (req, res, next) {
     Tags.getAll(dbUtils.getSession(req))

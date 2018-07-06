@@ -11,8 +11,8 @@ var Scenes = require('../models/scenes')
  *     properties:
  *       name:
  *         type: string
- *       description:
- *         type: string
+ *       tag:
+ *         $ref: '#/definitions/Tags'
  */
 
 /**
@@ -82,16 +82,23 @@ exports.getByName = function (req, res, next) {
  *       - application/json
  *     parameters:
  *       - in: body
- *         name: name
+ *         name: scene
  *         type: object
  *         schema:
  *           properties:
  *             name:
  *               type: string
- *             description:
+ *               required: true
+ *               description: Name of the scene
+ *             tagColor:
  *               type: string
+ *               description: color of the tag
+ *               required: true
+ *             tagName:
+ *               type: string
+ *               description: name of the tag
+ *               required: true
  *         required: true
- *         description: Name of the scene
  *     responses:
  *       200:
  *         description: A scene
@@ -102,9 +109,10 @@ exports.getByName = function (req, res, next) {
  */
 exports.addScene = function (req, res, next) {
     var name = _.get(req.body,'name');
-    var description = _.get(req.body, 'description');
+    var tagColor = _.get(req.body, 'tagColor');
+    var tagName = _.get(req.body, 'tagName');
 
-    Scenes.addScene(dbUtils.getSession(req), name, description)
+    Scenes.addScene(dbUtils.getSession(req), name, tagColor, tagName)
         .then(response => writeResponse(res, response))
         .catch(next);
 };
