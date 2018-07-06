@@ -27,10 +27,10 @@ function existsByName(name){
 }
 
 //create new scene inside db
-function createScene(name){
+function createScene(name, tagColor, tagName){
     request.post(`${apiBaseURL}/scenes/addScene`)
         .set('Accept', 'application/json')
-        .send({name: name, description: ""})
+        .send({name: name, tagColor: tagColor, tagName: tagName})
         .end(function(err, response){
             if(err){
                 return console.error(err);
