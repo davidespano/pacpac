@@ -3,7 +3,7 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 
 
-class LabelsStore extends ReduceStore {
+class TagsStore extends ReduceStore {
 
     constructor() {
         super(AppDispatcher);
@@ -11,19 +11,20 @@ class LabelsStore extends ReduceStore {
 
     getInitialState() {
         return [{
-            title: 'Nessuna',
-            color: 'black',
+            tagName: '---',
+            tagColor: 'black',
         }];
     }
 
     reduce(state, action) {
         switch (action.type) {
-            case ActionTypes.ADD_NEW_LABEL:
-                return state.push({
-                    title: action.title,
-                    color: action.color,
+            case ActionTypes.ADD_NEW_TAG:
+                state.push({
+                    tagName: action.name,
+                    tagColor: action.color,
                 });
-            case ActionTypes.LOAD_ALL_LABELS:
+                return state;
+            case ActionTypes.LOAD_ALL_TAGS:
                 return state;
             default:
                 return state;
@@ -31,4 +32,4 @@ class LabelsStore extends ReduceStore {
     }
 }
 
-export default new LabelsStore();
+export default new TagsStore();

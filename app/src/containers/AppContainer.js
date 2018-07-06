@@ -5,9 +5,9 @@ import ClickStore from '../data/ClickStore';
 import CentralSceneStore from '../data/CentralSceneStore'
 import {Container} from 'flux/utils';
 import Actions from '../actions/Actions';
-import LabelsStore from "../data/LabelsStore";
 import ObjectsStore from "../data/ObjectsStore";
 import RightbarStore from "../data/RightbarStore";
+import TagsStore from "../data/TagsStore";
 
 
 function getStores() {
@@ -16,7 +16,7 @@ function getStores() {
         LeftbarStore,
         ClickStore,
         CentralSceneStore,
-        LabelsStore,
+        TagsStore,
         ObjectsStore,
         RightbarStore,
     ];
@@ -32,7 +32,7 @@ function getState() {
         leftbar: LeftbarStore.getState(),
         click: ClickStore.getState(),
         sceneName: CentralSceneStore.getState(),
-        sceneLabels: LabelsStore.getState(),
+        sceneTags: TagsStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
         rightbar: RightbarStore.getState(),
 

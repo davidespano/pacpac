@@ -23,10 +23,10 @@ function Leftbar(props){
 }
 
 function title(child){
-    let label = "---"
+
     return (
         "Scena: " + child.name +
-        "\nEtichetta: " + label
+        "\nEtichetta: " + child.tag.tagName
     );
 }
 

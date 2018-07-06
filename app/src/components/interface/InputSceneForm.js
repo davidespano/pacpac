@@ -16,12 +16,10 @@ function InputSceneForm(props){
                                id="scene_name"
                                name="scene_name"
                         />
-                        <label htmlFor={"scene_label"}>Etichetta</label>
-                        <select id={'scene_label'} name={'scene_label'}>
-                            {[...props.sceneLabels.values()].map( child => (
-                                <option key={child.title}>
-                                    {child.title}
-                                </option>
+                        <label htmlFor={"scene_tag"}>Etichetta</label>
+                        <select id={'scene_tag'} name={'scene_tag'}>
+                            {[...props.sceneTags.values()].map( child => (
+                                tagOption(child)
                             ))}
                         </select>
                         <label htmlFor={"image"}>Scegli un'immagine</label>
@@ -64,6 +62,16 @@ function addMediaAndCreateScene(name, media){
     } else {
         console.log("There's already a scene with that name!");
     }
+}
+
+function tagOption(tag){
+
+    // AGGIUNGERE COLORE AL TAG DA SELEZIONARE
+    //https://github.com/aslamswt/Responsive-Select-Dropdown-with-Images
+
+    return (
+        <option key={tag.tagName}>{tag.tagName}</option>
+    );
 }
 
 export default InputSceneForm;

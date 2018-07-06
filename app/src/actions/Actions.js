@@ -20,10 +20,11 @@ const Actions = {
 
     //SCENES
 
-    addScene(name){
+    addScene(name, tag){
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_SCENE,
-            name,
+            name: name,
+            tag: tag,
         })
     },
 
@@ -59,10 +60,10 @@ const Actions = {
 
     //LABELS
 
-    addNewLabel(title, color){
+    addNewTag(name, color){
         AppDispatcher.dispatch({
-            type: ActionTypes.ADD_NEW_LABEL,
-            title: title,
+            type: ActionTypes.ADD_NEW_TAG,
+            name: name,
             color: color,
         })
     },

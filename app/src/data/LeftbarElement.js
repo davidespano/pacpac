@@ -3,9 +3,9 @@ import Immutable from 'immutable';
 const LeftbarElement = Immutable.Record({
     name: '',
     img: '',
-    label: {
-        title: '---',
-        color: 'black',
+    tag: {
+        tagName: '---',
+        tagColor: 'black',
     },
 });
 
