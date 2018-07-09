@@ -1,7 +1,7 @@
 # pacpac
 Source code for the PACPAC game editor
 
-###Prerequisites
+### Prerequisites
 - Install Neo4j. 
 - Install node.js
 
@@ -10,7 +10,7 @@ Set username and password to, respectively, neo4j and password. If you wish to u
 different username and password, just modify the default values in the file
 ``./api/config.js`` with your credentials. DO NOT PUSH ANY CHANGE TO THAT FILE.
 
-###Set up
+### Set up
 These steps are mandatory before the first execution of the project, and should also be repeated
 after pulling a new version.
 - Open a terminal inside the folder of the project. Move to the folder api, and run
@@ -18,7 +18,7 @@ after pulling a new version.
 - Open a terminal inside the folder of the project. Move to the folder app, and run
 ``npm install``.
 
-###Execution
+### Execution
 To execute the project
 - Open a terminal inside the folder of the project. Move to the folder api, and run
 ``node app.js``.
