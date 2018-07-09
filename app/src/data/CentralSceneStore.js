@@ -1,6 +1,7 @@
 import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
+import Scene from '../scene/Scene';
 
 class CentralSceneStore extends ReduceStore {
 
@@ -9,13 +10,13 @@ class CentralSceneStore extends ReduceStore {
     }
 
     getInitialState() {
-        return "";
+        return null;
     }
 
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.GET_SCENE_RESPONSE:
-                return action.response.name;
+                return new Scene(action.response.name);
             default:
                 return state;
         }

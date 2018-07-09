@@ -43,8 +43,7 @@ function InputSceneForm(props){
                                 let name = document.getElementById("scene_name").value,
                                     media = document.getElementById("imageInput").files[0],
                                     tag= JSON.parse(document.getElementById("scene_tag").value);
-                                addMediaAndCreateScene(name, media,tag.tagColor,tag.tagName)
-                                
+                                addMediaAndCreateScene(name, media,tag.tagColor,tag.tagName);
                             }
                             } data-dismiss="modal" >Conferma</button>
                         </div>

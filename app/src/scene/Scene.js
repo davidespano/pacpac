@@ -2,7 +2,7 @@ import Transition from "../interactives/Transition";
 
 class Scene {
 
-    constructor(transitions = [], tagName='---', tagColor='black', img){
+    constructor(img, transitions = [], tagName='---', tagColor='black'){
         this.img = img;
         this.name = img.replace(/\.[^/.]+$/, "");
         this.transitions = transitions;
