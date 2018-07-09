@@ -9,7 +9,7 @@ function Leftbar(props){
         <div className={'leftbar'}>
             {[...props.leftbar.values()].map(child => (
                 <div key={child.name}>
-                    <label>{child.name}</label>
+                    <label className={"list-title"}>{child.name}</label>
                     <img
                         src={`${mediaURL}` + child.img}
                         className={'list-img'}
