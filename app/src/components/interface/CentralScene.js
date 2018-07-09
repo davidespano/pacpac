@@ -2,12 +2,12 @@ import React from 'react';
 
 function CentralScene(props){
 
-    if(props.sceneName !== null){
+    if(props.currentScene !== null){
         return(
             <div className={'scene'}>
                 <img id={'scene'}
-                     src={"http://localhost:3000/media/" + props.sceneName.img}
-                     alt={props.sceneName.name}
+                     src={"http://localhost:3000/media/" + props.currentScene.img}
+                     alt={props.currentScene.name}
                      onClick={(event) => {
                          let p = getCoordinates(event);
                          props.clickScene(p.x, p.y);

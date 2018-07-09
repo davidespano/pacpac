@@ -31,7 +31,7 @@ function getState() {
         mode: ModeTypeStore.getState(),
         leftbar: LeftbarStore.getState(),
         click: ClickStore.getState(),
-        sceneName: CentralSceneStore.getState(),
+        currentScene: CentralSceneStore.getState(),
         sceneTags: TagsStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
         rightbar: RightbarStore.getState(),
