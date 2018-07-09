@@ -3,15 +3,23 @@ import React from 'react';
 function Canvas(props){
     return(
         <div id={'canvas'} className={'canvas'}>
-            {[...props.currentScene.transitions.values()].map( element  => (
-                generateTransitionRule(element);
-            ))}
+            {generateRules(props.currentScene)}
         </div>
     );
 }
 
-function generateTransitionRule(obj){
-    
+function generateRules(currentScene){
+    if(currentScene != null) {
+        //currentScene.transitions.forEach(transition => (generateTransitionRule(transition)));
+    }
+}
+
+function generateTransitionRule(transition){
+    return (
+        <div className={'rules'}>
+            Quando il giocatore seleziona
+        </div>
+    );
 }
 
 
