@@ -20,6 +20,7 @@ after pulling a new version.
 
 ### Execution
 To execute the project
+- Run neo4j.
 - Open a terminal inside the folder of the project. Move to the folder api, and run
 ``node app.js``.
 - Open a terminal inside the folder of the project. Move to the folder app, and run
