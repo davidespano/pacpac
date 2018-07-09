@@ -28,10 +28,10 @@ function InputSceneForm(props){
                                id="imageInput"
                         />
                         <button onClick={()=>{
-                            let name= document.getElementById("scene_name").value,
-                                media=document.getElementById("imageInput").files[0];
-
-                            addMediaAndCreateScene(name, media);
+                            let name = document.getElementById("scene_name").value,
+                                media = document.getElementById("imageInput").files[0],
+                                tag= JSON.parse(document.getElementById("scene_tag").value);
+                            addMediaAndCreateScene(name, media,tag.tagColor,tag.tagName);
                             close();
                         }
                         }>Conferma</button>
@@ -42,7 +42,7 @@ function InputSceneForm(props){
     );
 }
 
-function addMediaAndCreateScene(name, media){
+function addMediaAndCreateScene(name, media,tagColor,tagName){
     //FARE CONTROLLI FORM QUI!1!1
     //lettere accentate e spazi sono ammessi! Yay
     //MA NON ALL'INIZIO DELLA FRASE
@@ -57,7 +57,7 @@ function addMediaAndCreateScene(name, media){
 
     if (!SceneAPI.existsByName(name)){
 
-        MediaAPI.addMedia(name, media);
+        MediaAPI.addMedia(name, media,tagColor,tagName);
 
     } else {
         console.log("There's already a scene with that name!");
@@ -70,7 +70,7 @@ function tagOption(tag){
     //https://github.com/aslamswt/Responsive-Select-Dropdown-with-Images
 
     return (
-        <option key={tag.tagName}>{tag.tagName}</option>
+        <option value={JSON.stringify(tag)}>{tag.tagName}</option>
     );
 }
 

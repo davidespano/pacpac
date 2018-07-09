@@ -14,10 +14,10 @@ function addMedia(name, media, tagColor, tagName) {
             if (err) {
                 return console.error(err);
             }
-
-            //create db node
-            SceneAPI.createScene(name, tagColor, tagName);
-
+            else {
+                //create db node
+                SceneAPI.createScene(name, tagColor, tagName);
+            }
         });
 }
 
