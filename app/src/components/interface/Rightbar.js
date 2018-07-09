@@ -11,7 +11,6 @@ function RightBar(props){
 
 function optionsView(object){
     //let object = rightbar.currentObject;
-    console.log(object);
     if(object){
         return(
             <div className={'currentObjectOptions'}>
