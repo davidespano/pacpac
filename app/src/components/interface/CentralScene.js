@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Scene(props){
+function CentralScene(props){
 
     if(props.sceneName !== ""){
         return(
@@ -34,6 +34,6 @@ function getCoordinates(event){
     };
 }
 
-export default Scene;
+export default CentralScene;
 
 //props.clickScene(getCoordinates(event).x, getCoordinates(event).y)

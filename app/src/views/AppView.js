@@ -2,9 +2,9 @@ import React from 'react';
 import TopBar from "../components/interface/Topbar";
 import LeftBar from "../components/interface/Leftbar";
 import RightBar from "../components/interface/Rightbar";
-import Scene from "../components/interface/Scene";
 import Canvas from "../components/interface/Canvas";
 import PlayTest from "../components/aframe/playtest";
+import CentralScene from "../components/interface/CentralScene";
 
 /* La cosa migliore è gestire lo stato solo all'interno dello Store, e lasciare nella view solo funzioni*/
 function AppView(props) {
@@ -18,7 +18,7 @@ function AppView(props) {
                     <TopBar {...props} />
                     <LeftBar {...props} />
                     <RightBar {...props} />
-                    <Scene {...props} />
+                    <CentralScene {...props} />
                     <Canvas {...props} />
                 </div>
             );
