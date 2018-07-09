@@ -19,7 +19,12 @@ class CentralSceneStore extends ReduceStore {
                 return new Scene(action.response.name);
             case ActionTypes.ADD_NEW_TRANSITION:
                 state.addNewTransitionToScene();
-                return state;
+                return new Scene(
+                    state.img,
+                    state.transitions,
+                    state.tagName,
+                    state.tagColor
+                );
             default:
                 return state;
         }

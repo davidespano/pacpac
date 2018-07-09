@@ -9,20 +9,29 @@ function Canvas(props){
 }
 
 function generateRules(currentScene){
+
     if(currentScene != null) {
-        console.log(currentScene.transitions);
-        currentScene.transitions.forEach(transition => (generateTransitionRule(transition)));
+        cleanCanvas();
+        let canvas = document.getElementById('canvas');
+        currentScene.transitions.forEach(transition => (canvas.appendChild(generateTransitionRule(transition))));
     }
+
+
 }
 
 function generateTransitionRule(transition){
-    return (
-        <div className={'rules'}>
-            Quando il giocatore seleziona
-        </div>
-    );
+
+    let r = document.createElement('p');
+    r.class = 'rules';
+    r.innerHTML = 'Nuova transizione';
+    return r;
 }
 
-
+function cleanCanvas(){
+    let canvas = document.getElementById('canvas');
+    while (canvas.firstChild) {
+        canvas.removeChild(canvas.firstChild);
+    }
+}
 
 export default Canvas;

@@ -2,8 +2,6 @@ import React from 'react';
 
 function CentralScene(props){
 
-    console.log(props.currentScene);
-
     if(props.currentScene !== null){
         return(
             <div className={'scene'}>
