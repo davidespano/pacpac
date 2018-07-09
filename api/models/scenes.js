@@ -70,15 +70,23 @@ var getHomeScene = function (session){
 //add a scene
 var addScene = function (session, name, tagColor, tagName)
 {
-    //TODO Controllare unicità della scena in base al nome
     return session.run(
-        'MERGE (tag:Tag {color: $tagColor, name:$tagName}) ' +
-        'CREATE (scene:Scene {name: $name}) -[:TAGGED_AS]-> (tag) ' +
-        'RETURN scene,tag', {name: name, tagColor: tagColor, tagName: tagName})
-        .then(result => _singleSceneWithDetails(result.records[0]),
-              error => {
-                throw {message: error.message, status: 422};
-              });
+        'MATCH (scene:Scene {name: $name})' +
+        'RETURN scene', {name: name, tagColor: tagColor, tagName: tagName})
+        .then(result => {
+            if(!_.isEmpty(result.records))
+            {
+                throw {message: "Scene already exists", status: 422};
+            }
+            else
+            {
+                return session.run(
+                    'MERGE (tag:Tag {color: $tagColor, name:$tagName}) ' +
+                    'CREATE (scene:Scene {name: $name}) -[:TAGGED_AS]-> (tag) ' +
+                    'RETURN scene,tag', {name: name, tagColor: tagColor, tagName: tagName})
+            }
+        })
+        .then(result => _singleSceneWithDetails(result.records[0]));
 
 }
 
