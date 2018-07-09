@@ -90,6 +90,7 @@ api.get('/scenes/:name', routes.scenes.getByName);
 api.get('/scenes/home', routes.scenes.getHomeScene);
 api.get('/scenes/:name/neighbours', routes.scenes.getNeighboursByName);
 api.post('/scenes/addScene', routes.scenes.addScene);
+api.delete('/scenes/:name', routes.scenes.deleteScene);
 
 /**TAGS**/
 api.get('/tags', routes.tags.list);

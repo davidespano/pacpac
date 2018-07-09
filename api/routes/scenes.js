@@ -173,3 +173,30 @@ exports.getNeighboursByName = function (req, res, next) {
         .then(response => writeResponse(res, response))
         .catch(next);
 };
+
+/**
+ * @swagger
+ * /api/v0/scenes/{name}:
+ *   delete:
+ *     tags:
+ *     - scenes
+ *     description: Delete the scene
+ *     summary: Delete a scene by name
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         type: string
+ *         required: true
+ *         description: Name of the scene
+ *     responses:
+ *       200:
+ *         description: The number of deleted nodes
+ */
+exports.deleteScene = function (req, res, next) {
+    var name = req.params.name;
+    Scenes.deleteScene(dbUtils.getSession(req), name)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+};

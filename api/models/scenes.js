@@ -46,7 +46,8 @@ var getByName = function (session, name){
             else
             {
                 throw {message: 'scene not found', status: 404};
-            }});
+            }
+        });
 }
 
 //get the home scene
@@ -88,10 +89,20 @@ var getNeighboursByName = function (session, name) {
         .then(result => manyScenes(result));
 };
 
+//delete a scene
+var deleteScene = function (session, name) {
+    return session.run(
+        'MATCH (scene:Scene {name: $name}) ' +
+        'DETACH DELETE scene ' +
+        'RETURN COUNT(scene)', {name: name})
+        .then(result => result.records[0].get('COUNT(scene)').low)
+};
+
 module.exports = {
     getAll: getAll,
     getByName: getByName,
     addScene: addScene,
     getHomeScene: getHomeScene,
-    getNeighboursByName: getNeighboursByName
+    getNeighboursByName: getNeighboursByName,
+    deleteScene: deleteScene
 };
