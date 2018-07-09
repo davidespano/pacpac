@@ -11,7 +11,7 @@ function TopBar(props){
             <InputSceneForm {...props} />
             <button type="button" class="btn btn-primary" id={'transition'}
                     title={'Aggiungi una transizione'}
-                    onClick={() => Actions.addNewObject(new Transition())}
+                    onClick={() => props.currentScene(Actions.addNewTransition(new Transition()))}
             >+</button>
         </div>
     );

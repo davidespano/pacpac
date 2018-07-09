@@ -71,13 +71,12 @@ const Actions = {
 
     //INTERACTIVE OBJECTS
 
-    addNewObject(object){
+    addNewTransition(object){
         AppDispatcher.dispatch({
-            type: ActionTypes.ADD_NEW_OBJECT,
+            type: ActionTypes.ADD_NEW_TRANSITION,
             obj: object,
         })
     },
-
 
     //OTHER
 

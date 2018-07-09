@@ -12,7 +12,7 @@ class Scene {
         }
     }
 
-    addNewTransition(transition = new Transition()){
+    addNewTransitionToScene(transition = new Transition()){
         this.transitions.push(transition);
     }
 
