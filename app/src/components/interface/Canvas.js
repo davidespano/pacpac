@@ -10,7 +10,8 @@ function Canvas(props){
 
 function generateRules(currentScene){
     if(currentScene != null) {
-        //currentScene.transitions.forEach(transition => (generateTransitionRule(transition)));
+        console.log(currentScene.transitions);
+        currentScene.transitions.forEach(transition => (generateTransitionRule(transition)));
     }
 }
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import Popup from 'reactjs-popup';
 import SceneAPI from "../../utils/SceneAPI";
 import MediaAPI from "../../utils/MediaAPI";
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import settings from '../../utils/settings';
-import Actions from "../../actions/Actions";
 import SceneAPI from "../../utils/SceneAPI";
 
 const {mediaURL} = settings;
