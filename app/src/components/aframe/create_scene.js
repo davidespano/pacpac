@@ -1,4 +1,5 @@
 import Transition from "../../interactives/Transition";
+import Scene from "../../scene/Scene";
 import React from 'react';
 
 import InteractiveObject from "../../interactives/InteractiveObject";
@@ -64,6 +65,7 @@ function removeEventListeners (el, eventName, handlers) {
 AFRAME.registerComponent('create_scene', {
 
     init : function () {
+        sceneFactoryProv();
         //Cicleremo su tutti gli oggetti della scena(?)
         var sceneEl = document.querySelector('a-scene');
         var bolla1 = document.createElement('a-sky');
@@ -213,6 +215,23 @@ function disableChild(actualScene) {
     actualScene.setAttribute('visible', false);
 
 }
+
+
+function sceneFactoryProv()
+{
+    var sceneList = [];
+
+    var scene1 = new Scene([],'---','black',"bolla1.jpg");
+    scene1.img = "bolla1.jpg";
+    console.log("Mi piace la fava:" + scene1.name);
+}
+
+
+
+
+
+
+
 
 
 /*AFRAME.registerComponent('curved', {
