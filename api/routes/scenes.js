@@ -17,6 +17,18 @@ var Scenes = require('../models/scenes')
 
 /**
  * @swagger
+ * definition:
+ *   DetailedScenes:
+ *     type: object
+ *     properties:
+ *       name:
+ *         type: string
+ *       tag:
+ *         $ref: '#/definitions/Tags'
+ */
+
+/**
+ * @swagger
  * /api/v0/scenes:
  *   get:
  *     tags:
@@ -59,7 +71,7 @@ exports.list = function (req, res, next) {
  *       200:
  *         description: A scene
  *         schema:
- *             $ref: '#/definitions/Scenes'
+ *             $ref: '#/definitions/DetailedScenes'
  *       404:
  *          description: Scene not found
  */
@@ -131,7 +143,7 @@ exports.addScene = function (req, res, next) {
  *       200:
  *         description: A scene
  *         schema:
- *             $ref: '#/definitions/Scenes'
+ *             $ref: '#/definitions/DetailedScenes'
  *       404:
  *          description: Scene not found
  */
@@ -163,7 +175,7 @@ exports.getHomeScene = function (req, res, next) {
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/Scenes'
+ *             $ref: '#/definitions/DetailedScenes'
  *       404:
  *          description: Scene not found
  */
