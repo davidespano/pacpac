@@ -1,4 +1,6 @@
 import Transition from "../../interactives/Transition";
+import React from 'react';
+
 import InteractiveObject from "../../interactives/InteractiveObject";
 
 
@@ -15,6 +17,50 @@ tr4.rules.target='bolla1';
 var transitions = [tr1, tr2];
 let map = new Map();
 
+/**
+ * Register event handlers for an event name to ref.
+ *
+ * @param {Element} el - DOM element.
+ * @param {string} eventName
+ * @param {array|function} eventHandlers - Handler function or array of handler functions.
+ */
+function addEventListeners (el, eventName, handlers) {
+    var handler;
+    var i;
+
+    if (!handlers) { return; }
+
+    // Convert to array.
+    if (handlers.constructor === Function) { handlers = [handlers]; }
+
+    // Register.
+    for (i = 0; i < handlers.length; i++) {
+        el.addEventListener(eventName, handlers[i]);
+    }
+}
+
+/**
+ * Unregister event handlers for an event name to ref.
+ *
+ * @param {Element} el - DOM element.
+ * @param {string} eventName
+ * @param {array|function} eventHandlers - Handler function or array of handler functions.
+ */
+function removeEventListeners (el, eventName, handlers) {
+    var handler;
+    var i;
+
+    if (!handlers) { return; }
+
+    // Convert to array.
+    if (handlers.constructor === Function) { handlers = [handlers]; }
+
+    // Unregister.
+    for (i = 0; i < handlers.length; i++) {
+        el.removeEventListener(eventName, handlers[i]);
+    }
+}
+
 AFRAME.registerComponent('create_scene', {
 
     init : function () {
@@ -29,10 +75,10 @@ AFRAME.registerComponent('create_scene', {
         map.set('bolla2', tr3);
         map.set('bolla4', tr4);
 
-        bolla1.setAttribute('src', 'http://localhost:3000/media/bolla1.jpg');
+        bolla1.setAttribute('src', 'http://localhost:3000/media/prova2.mp4');
         bolla2.setAttribute('src', 'http://localhost:3000/media/bolla2.jpg');
         bolla3.setAttribute('src', 'http://localhost:3000/media/bolla3.jpg');
-        bolla4.setAttribute('src', 'http://localhost:3000/media/bolla4.jpg');
+        bolla4.setAttribute('src', 'http://localhost:3000/media/prova.mp4');
 
         /*bolla1.setAttribute('src', 'http://192.168.0.221:3000/media/prova.mp4');
         bolla2.setAttribute('src', 'http://192.168.0.221:3000/media/prova2.mp4');
@@ -79,31 +125,6 @@ AFRAME.registerComponent('create_scene', {
     }
 });
 
-AFRAME.registerComponent('curved', {
-
-    schema: {
-        theta: {type: 'int'},
-        rotation: {type: 'string'},
-        isSelectable: {type: 'bool', default: false},
-        target: {type: 'string', default: ''}
-    },
-
-    init : function () {
-
-        var event = document.createElement('a-curvedimage');
-        event.setAttribute('id', 'curv'+this.data.target);
-        event.setAttribute('rotation', this.data.rotation);
-        event.setAttribute('radius', '9.5');
-        event.setAttribute('theta-length', this.data.theta);
-
-        if(this.data.isSelectable) {
-            event.setAttribute('selectable', 'target: ' + this.data.target);
-        }
-
-        this.el.appendChild(event);
-    }
-});
-
 function curvedImage(bolla, target, rot, rad, theta, sel) {
     var event = document.createElement('a-curvedimage');
     event.setAttribute('id', 'curv'+target);
@@ -116,12 +137,14 @@ function curvedImage(bolla, target, rot, rad, theta, sel) {
 
     bolla.appendChild(event);
 }
+function foo(props){
+    console.log("Dio " +props.ref)
+}
 
 AFRAME.registerComponent('selectable', {
 
     schema: {
         target: {type: 'string'}
-
     },
 
     update : function () {
@@ -151,17 +174,17 @@ AFRAME.registerComponent('selectable', {
             var arriveEvent = new CustomEvent('startTransition' + target + 'app');
             actualScene.dispatchEvent(startEvent);
             trg.dispatchEvent(arriveEvent);
+            addEventListeners(trg,'animationbegin', enableChild(trg, target));
+            addEventListeners(actualScene, 'animationbegin', disableChild(actualScene));
 
-            trg.addEventListener('animationbegin', enableChild(trg, target));
-            actualScene.addEventListener('animationbegin', disableChild(actualScene));
-
-            trg.removeEventListener('animationbegin', enableChild);
-            actualScene.removeEventListener('animationbegin', disableChild);
+            removeEventListeners(trg, 'animationbegin', enableChild);
+            removeEventListeners(actualScene, 'animationbegin', disableChild);
 
 
         });
     }
 });
+
 
 function enableChild (trg, target) {
 
@@ -170,16 +193,12 @@ function enableChild (trg, target) {
     var bubble = sceneEl.querySelector('#'+target);
     var entity = map.get(target)
     if(entity instanceof Array){
-        console.log(entity.length)
         for(var i=0;i<entity.length;i++){
-            console.log(entity[i].rules.target)
             curvedImage(bubble, entity[i].rules.target, entity[i].rotation, '9.5', entity[i].theta, true)
-
         }
     } else {
         if(entity != null)
             curvedImage(bubble, entity.rules.target, entity.rotation, '9.5', entity.theta, true)
-
     }
 }
 
@@ -194,3 +213,29 @@ function disableChild(actualScene) {
     actualScene.setAttribute('visible', false);
 
 }
+
+
+/*AFRAME.registerComponent('curved', {
+
+    schema: {
+        theta: {type: 'int'},
+        rotation: {type: 'string'},
+        isSelectable: {type: 'bool', default: false},
+        target: {type: 'string', default: ''}
+    },
+
+    init : function () {
+
+        var event = document.createElement('a-curvedimage');
+        event.setAttribute('id', 'curv'+this.data.target);
+        event.setAttribute('rotation', this.data.rotation);
+        event.setAttribute('radius', '9.5');
+        event.setAttribute('theta-length', this.data.theta);
+
+        if(this.data.isSelectable) {
+            event.setAttribute('selectable', 'target: ' + this.data.target);
+        }
+
+        this.el.appendChild(event);
+    }
+});*/
