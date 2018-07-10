@@ -17,7 +17,7 @@ var Tags = require('../models/tags')
 
 /**
  * @swagger
- * /api/v0/tags:
+ * /api/v0/{gameID}/tags:
  *   get:
  *     tags:
  *     - tags
@@ -25,6 +25,12 @@ var Tags = require('../models/tags')
  *     summary: Returns all tags
  *     produces:
  *       - application/json
+ *     parameters:
+ *      - in : path
+ *        name : gameID
+ *        type : string
+ *        required : true
+ *        description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
  *     responses:
  *       200:
  *         description: A list of tags
@@ -34,7 +40,9 @@ var Tags = require('../models/tags')
  *             $ref: '#/definitions/Tags'
  */
 exports.list = function (req, res, next) {
-    Tags.getAll(dbUtils.getSession(req))
+    var gameID = req.params.gameID;
+
+    Tags.getAll(dbUtils.getSession(req), gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 };

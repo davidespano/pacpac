@@ -17,8 +17,8 @@ var _singleTagWithDetails = function (record) {
 };
 
 // get all tags
-var getAll = function (session) {
-    return session.run('MATCH (tag:Tag) RETURN tag')
+var getAll = function (session, gameID) {
+    return session.run('MATCH (tag:Tag:`'+ gameID +'`) RETURN tag')
         .then(result => manyTag(result));
 };
 

@@ -12,7 +12,7 @@ function Leftbar(props){
                 <div key={child.name}>
                     <label className={"list-title"}>{child.name}</label>
                     <img
-                        src={`${mediaURL}` + child.img}
+                        src={`${mediaURL}${window.sessionStorage.getItem("gameID")}/` + child.img}
                         className={'list-img'}
                         alt={child.name}
                         title={title(child)}

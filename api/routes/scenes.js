@@ -29,7 +29,7 @@ var Scenes = require('../models/scenes')
 
 /**
  * @swagger
- * /api/v0/scenes:
+ * /api/v0/{gameID}/scenes:
  *   get:
  *     tags:
  *     - scenes
@@ -37,6 +37,12 @@ var Scenes = require('../models/scenes')
  *     summary: Returns all scenes
  *     produces:
  *       - application/json
+ *     parameters:
+ *      - in : path
+ *        name : gameID
+ *        type : string
+ *        required : true
+ *        description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
  *     responses:
  *       200:
  *         description: A list of scenes
@@ -46,14 +52,15 @@ var Scenes = require('../models/scenes')
  *             $ref: '#/definitions/Scenes'
  */
 exports.list = function (req, res, next) {
-    Scenes.getAll(dbUtils.getSession(req))
+    var gameID = req.params.gameID;
+    Scenes.getAll(dbUtils.getSession(req), gameID)
         .then(response => writeResponse(res, response))
 .catch(next);
 };
 
 /**
  * @swagger
- * /api/v0/scenes/{name}:
+ * /api/v0/{gameID}/scenes/{name}:
  *   get:
  *     tags:
  *     - scenes
@@ -67,6 +74,11 @@ exports.list = function (req, res, next) {
  *         type: string
  *         required: true
  *         description: Name of the scene
+ *       - in : path
+ *         name : gameID
+ *         type : string
+ *         required : true
+ *         description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
  *     responses:
  *       200:
  *         description: A scene
@@ -77,14 +89,15 @@ exports.list = function (req, res, next) {
  */
 exports.getByName = function (req, res, next) {
     var name = req.params.name;
-    Scenes.getByName(dbUtils.getSession(req), name)
+    var gameID = req.params.gameID;
+    Scenes.getByName(dbUtils.getSession(req), name, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 };
 
 /**
  * @swagger
- * /api/v0/scenes/addScene:
+ * /api/v0/{gameID}/scenes/addScene:
  *   post:
  *     tags:
  *     - scenes
@@ -111,6 +124,11 @@ exports.getByName = function (req, res, next) {
  *               description: name of the tag
  *               required: true
  *         required: true
+ *       - in : path
+ *         name : gameID
+ *         type : string
+ *         required : true
+ *         description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
  *     responses:
  *       200:
  *         description: A scene
@@ -123,15 +141,16 @@ exports.addScene = function (req, res, next) {
     var name = _.get(req.body,'name');
     var tagColor = _.get(req.body, 'tagColor');
     var tagName = _.get(req.body, 'tagName');
+    var gameID = req.params.gameID;
 
-    Scenes.addScene(dbUtils.getSession(req), name, tagColor, tagName)
+    Scenes.addScene(dbUtils.getSession(req), name, tagColor, tagName, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 };
 
 /**
  * @swagger
- * /api/v0/scenes/home:
+ * /api/v0/{gameID}/scenes/home:
  *   get:
  *     tags:
  *     - scenes
@@ -139,6 +158,12 @@ exports.addScene = function (req, res, next) {
  *     summary: Returns the home scene
  *     produces:
  *       - application/json
+ *     parameters:
+ *      - in : path
+ *        name : gameID
+ *        type : string
+ *        required : true
+ *        description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
  *     responses:
  *       200:
  *         description: A scene
@@ -148,14 +173,16 @@ exports.addScene = function (req, res, next) {
  *          description: Scene not found
  */
 exports.getHomeScene = function (req, res, next) {
-    Scenes.getHomeScene(dbUtils.getSession(req))
+    var gameID = req.params.gameID;
+
+    Scenes.getHomeScene(dbUtils.getSession(req), gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 };
 
 /**
  * @swagger
- * /api/v0/scenes/{name}/neighbours:
+ * /api/v0/{gameID}/scenes/{name}/neighbours:
  *   get:
  *     tags:
  *     - scenes
@@ -169,6 +196,11 @@ exports.getHomeScene = function (req, res, next) {
  *         type: string
  *         required: true
  *         description: Name of the scene
+ *       - in : path
+ *         name : gameID
+ *         type : string
+ *         required : true
+ *         description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
  *     responses:
  *       200:
  *         description: A list of scenes
@@ -181,14 +213,15 @@ exports.getHomeScene = function (req, res, next) {
  */
 exports.getNeighboursByName = function (req, res, next) {
     var name = req.params.name;
-    Scenes.getNeighboursByName(dbUtils.getSession(req), name)
+    var gameID = req.params.gameID;
+    Scenes.getNeighboursByName(dbUtils.getSession(req), name, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 };
 
 /**
  * @swagger
- * /api/v0/scenes/{name}:
+ * /api/v0/{gameID}/scenes/{name}:
  *   delete:
  *     tags:
  *     - scenes
@@ -202,13 +235,19 @@ exports.getNeighboursByName = function (req, res, next) {
  *         type: string
  *         required: true
  *         description: Name of the scene
+ *       - in : path
+ *         name : gameID
+ *         type : string
+ *         required : true
+ *         description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
  *     responses:
  *       200:
  *         description: The number of deleted nodes
  */
 exports.deleteScene = function (req, res, next) {
     var name = req.params.name;
-    Scenes.deleteScene(dbUtils.getSession(req), name)
+    var gameID = req.params.gameID;
+    Scenes.deleteScene(dbUtils.getSession(req), name, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 };

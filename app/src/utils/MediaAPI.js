@@ -7,7 +7,7 @@ const {apiBaseURL} = settings;
 
 function addMedia(name, media, tagColor, tagName) {
     
-    request.post(`${apiBaseURL}/public/addMedia`)
+    request.post(`${apiBaseURL}/public/${window.sessionStorage.getItem("gameID")}/addMedia`)
         .set('name', name)
         .attach('upfile', media)
         .end(function(err, response) {

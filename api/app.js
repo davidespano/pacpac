@@ -10,7 +10,8 @@ var express = require('express')
     , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup')
     , writeError = require('./helpers/response').writeError
     , multer = require('multer')
-    , fs = require('fs');
+    , fs = require('fs')
+    , checkGameID = require('./middlewares/checkGameID');
 
 var app = express()
     , api = express();
@@ -78,6 +79,7 @@ app.use('/media', express.static(path.join(__dirname, 'public')));
 //api custom middlewares:
 api.use(setAuthUser);
 api.use(neo4jSessionCleanup);
+api.param('gameID', checkGameID);
 
 //api routes
 api.post('/register', routes.users.register);
@@ -85,19 +87,21 @@ api.post('/login', routes.users.login);
 api.get('/users/me', routes.users.me);
 
 /**SCENES**/
-api.get('/scenes', routes.scenes.list);
-api.get('/scenes/:name', routes.scenes.getByName);
-api.get('/scenes/home', routes.scenes.getHomeScene);
-api.get('/scenes/:name/neighbours', routes.scenes.getNeighboursByName);
-api.post('/scenes/addScene', routes.scenes.addScene);
-api.delete('/scenes/:name', routes.scenes.deleteScene);
+api.get('/:gameID/scenes', routes.scenes.list);
+api.get('/:gameID/scenes/:name', routes.scenes.getByName);
+api.get('/:gameID/scenes/home', routes.scenes.getHomeScene);
+api.get('/:gameID/scenes/:name/neighbours', routes.scenes.getNeighboursByName);
+api.post('/:gameID/scenes/addScene', routes.scenes.addScene);
+api.delete('/:gameID/scenes/:name', routes.scenes.deleteScene);
 
 /**TAGS**/
-api.get('/tags', routes.tags.list);
+api.get('/:gameID/tags', routes.tags.list);
 
 /**MEDIA**/
 var storage = multer.diskStorage({
-    destination: "public/",
+    destination: function (req, file, cb) {
+        cb(null, "public/"+req.params.gameID+"/")
+    },
     filename: function (req, file, cb) {
         cb(null, req.headers.name)
     }
@@ -105,7 +109,7 @@ var storage = multer.diskStorage({
 var upload = multer({
     storage: storage,
     fileFilter: function(req, file, cb){
-        fs.access("public/"+req.headers.name, (err)=>
+        fs.access("public/"+req.params.gameID+"/"+req.headers.name, (err)=>
         {
             if (!err)
                 cb(null,false);
@@ -114,7 +118,7 @@ var upload = multer({
         });
     }
 })
-api.post('/public/addMedia', upload.single("upfile"),routes.media.addMedia);
+api.post('/public/:gameID/addMedia', upload.single("upfile"),routes.media.addMedia);
 
 //api error handler
 api.use(function(err, req, res, next) {

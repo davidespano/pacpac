@@ -8,4 +8,5 @@ import SceneAPI from './utils/SceneAPI';
 
 ReactDOM.render(<AppContainer />, document.getElementById('sceneContainer'));
 
+window.sessionStorage.setItem("gameID", "3f585c1514024e9391954890a61d0a04");
 SceneAPI.getAllScenes();
