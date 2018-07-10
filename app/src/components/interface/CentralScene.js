@@ -6,7 +6,7 @@ function CentralScene(props){
         return(
             <div className={'scene'}>
                 <img id={'scene'}
-                     src={"http://localhost:3000/media/" + props.currentScene.img}
+                     src={"http://localhost:3000/media/"+ window.sessionStorage.getItem('gameID')+'/' + props.currentScene.img}
                      alt={props.currentScene.name}
                      onClick={(event) => {
                          let p = getCoordinates(event);
