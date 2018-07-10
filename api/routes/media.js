@@ -4,7 +4,7 @@ var fs = require('fs')
 
 /**
  * @swagger
- * /api/v0/public/addMedia:
+ * /api/v0/public/{gameID}/addMedia:
  *   post:
  *     tags:
  *     - media
@@ -21,6 +21,11 @@ var fs = require('fs')
  *         type: string
  *         required: true
  *         description: Name of the scene
+ *       - in : path
+ *         name : gameID
+ *         type : string
+ *         required : true
+ *         description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
  *     responses:
  *       422:
  *           description: Another media has already this name
