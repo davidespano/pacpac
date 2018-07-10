@@ -1,4 +1,7 @@
 import React from 'react';
+import settings from '../../utils/settings';
+
+const {mediaURL} = settings;
 
 function CentralScene(props){
 
@@ -6,7 +9,7 @@ function CentralScene(props){
         return(
             <div className={'scene'}>
                 <img id={'scene'}
-                     src={"http://localhost:3000/media/"+ window.sessionStorage.getItem('gameID')+'/' + props.currentScene.img}
+                     src={`${mediaURL}${window.sessionStorage.getItem("gameID")}/` + props.currentScene.img}
                      alt={props.currentScene.name}
                      onClick={(event) => {
                          let p = getCoordinates(event);
