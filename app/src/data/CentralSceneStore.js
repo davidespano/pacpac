@@ -21,10 +21,7 @@ class CentralSceneStore extends ReduceStore {
             case ActionTypes.ADD_NEW_TRANSITION:
 
                 if(state != null) {
-
-                    let tr = new Transition();
-                    tr.setName(state.name + '_tr' + (state.transitions.length + 1));
-                    state.addNewTransitionToScene(tr);
+                    state.addNewTransitionToScene(action.obj);
 
                     return new Scene(
                         state.img,
