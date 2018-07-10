@@ -1,4 +1,5 @@
 import React from 'react';
+import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 
 function RightBar(props){
     
@@ -10,6 +11,9 @@ function RightBar(props){
 }
 
 function optionsView(object,type){
+
+    console.log(object)
+    console.log(type)
     //let object = rightbar.currentObject;
     if(!object){
         return (
@@ -19,15 +23,27 @@ function optionsView(object,type){
         );
     }
     //lista visualizzazione per tipo ti oggetto
-    if(type == 'TRANSITION'){
-        <div className={'rightbarelement'}>
+
+    if(type === InteractiveObjectsTypes.TRANSITION){
+        console.log("dfiohs")
+        return(
+        <div className={'currentObjectOptions'}>
             <label>media che fa cose</label>
+            <input value={"non ho ancora idea"}/>
             <label>Duration</label>
             <input value={object.duration}/>
             <label>Rotation</label>
-            <input value={}/>
+            <input className={"rotationInput"} value={object.rotationX}/>
+            <input className={"rotationInput"} value={object.rotationY}/>
+            <input className={"rotationInput"} value={object.rotationZ}/>
+            <label>Theta</label>
+            <input value={object.theta}/>
+            <label>Height</label>
+            <input value={object.height}/>
         </div>
+        )
     }
+
 
 }
 
