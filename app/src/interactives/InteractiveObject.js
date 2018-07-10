@@ -15,6 +15,10 @@ class InteractiveObject {
         }));
     }
 
+    setName(name){
+        this.name = name;
+    }
+
 }
 
 export default InteractiveObject;

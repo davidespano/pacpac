@@ -16,14 +16,12 @@ function generateRules(currentScene){
         currentScene.transitions.forEach(transition => (canvas.appendChild(generateTransitionRule(transition))));
     }
 
-
 }
 
 function generateTransitionRule(transition){
-
     let r = document.createElement('p');
     r.class = 'rules';
-    r.innerHTML = 'Nuova transizione';
+    r.innerHTML = 'Nuova transizione:' + transition.name;
     return r;
 }
 
