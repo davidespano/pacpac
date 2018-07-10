@@ -2,50 +2,23 @@ import Transition from "../../interactives/Transition";
 import Scene from "../../scene/Scene";
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Entity, Scene} from 'aframe-react';
-
+import {Entity} from 'aframe-react';
 import InteractiveObject from "../../interactives/InteractiveObject";
-
-
 var AFRAME = require('aframe');
 
-AFRAME.registerComponent('create_scene', {
+function curvedImageFact(transitions)
+{
+    var curvedContainer = [];
 
-    init: function (){
-        sceneCreator();
-    }
-});
+    transitions.forEach(trans =>
+    {
+        var event = <a-curvedimage id={"curv" + trans.rules.target} rotation={trans.rotation} radius = "9.5" theta-length={trans.theta}
+                                                                       height={trans.height} selectable={'target:' + trans.rules.target}></a-curvedimage>
 
-function curvedImageFact(bolla, transitions, sel) {
-
-    transitions.forEach(function(x){
-        var event = document.createElement('a-curvedimage');
-        event.setAttribute('id', 'curv' + x.rules.target);
-        event.setAttribute('rotation', x.rotation);
-        event.setAttribute('radius', '9.5');
-        event.setAttribute('theta-length', x.theta);
-        event.setAttribute('height', x.height);
-        if(sel)
-        {
-            event.setAttribute('selectable', 'target: ' + x.rules.target)
-            console.log("Pippo:" + x.rules.target);
-        }
-
-        bolla.appendChild(event);
+        curvedContainer.push(event);
     });
-}
 
-function curvedImage(bolla, target, rot, rad, theta, sel) {
-    var event = document.createElement('a-curvedimage');
-    event.setAttribute('id', 'curv'+target);
-    event.setAttribute('rotation', rot);
-    event.setAttribute('radius', rad);
-    event.setAttribute('theta-length', theta);
-    if(sel) {
-        event.setAttribute('selectable', 'target: ' + target);
-    }
-
-    bolla.appendChild(event);
+    return curvedContainer;
 }
 
 AFRAME.registerComponent('selectable', {
@@ -75,7 +48,6 @@ AFRAME.registerComponent('selectable', {
 
         elem.addEventListener('click', function (evt) {
 
-
             //Per il futuro: Settarla visible prima di fare il dispatch dell'event!
             var startEvent = new CustomEvent('startTransition' + actualScene.id + 'dis');
             var arriveEvent = new CustomEvent('startTransition' + target + 'app');
@@ -86,13 +58,11 @@ AFRAME.registerComponent('selectable', {
 
             //removeEventListeners(trg, 'animationbegin', enableChild);
             //removeEventListeners(actualScene, 'animationbegin', disableChild);
-
-
         });
     }
 });
 
-function sceneFactoryProv()
+function sceneFactory()
 {
     var sceneList = [];
 
@@ -116,75 +86,49 @@ function sceneFactoryProv()
     return sceneList;
 }
 
+function cameraCreator()
+{
+    var camera;
+    var mouse;
+    var cursor;
+
+    cursor = <a-cursor id="cursor"></a-cursor>;
+    mouse = <Entity mouse-cursor> {cursor} </Entity>;
+    camera = <Entity camera look-controls_us="pointerLockEnabled: true">{mouse}</Entity>;
+
+    return camera;
+}
+
+function bubbleCreator (factory)
+{
+    var scene = [];
+    var skyContainer = [];
+    var first = true;
+
+    factory.forEach(scena =>
+    {
+        if(first)
+        {
+            first = false;
+            var curved = curvedImageFact(scena.transitions);
+            skyContainer.push(<a-sky key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10">
+                {curved}
+            </a-sky>);
+        }
+        else
+            skyContainer.push(<a-sky key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10" visible="false"></a-sky>);
+    });
+
+    skyContainer.push(cameraCreator());
+    scene.push(<a-scene>{skyContainer}</a-scene>);
+    return scene;
+}
 
 export function sceneCreator()
 {
-    var factory = sceneFactoryProv();
-    var element;
-
-    var sceneEl = document.querySelector('a-scene');
-    var first = true;
-    var array;
-    var i=0;
-    //Fallo diventare un bel foreach per cortesia
-    //for(element in factory)
-   // for(var i=0; i<factory.length; i++)
-    //{
-        //var bolla = document.createElement('a-sky');
-
-         //array = (<Entity geometry = {{primitive: 'a-sky'}} id={{id: factory[i].name}}  material={{src: 'http://localhost:3000/media/' + factory[i].img}}
-           // geometry ={{scale: '-1 1 1'}} radius = {{radius: 10}} />);
-         //console.log(array);
-        /*bolla.setAttribute('primitive', 'a-sky');
-        bolla.setAttribute('id', factory[i].name);
-        bolla.setAttribute('src', 'http://localhost:3000/media/' + factory[i].img);
-        bolla.setAttribute('scale', '-1 1 1');
-        bolla.setAttribute('radius', '10');
-        if(!first)
-        {
-            bolla.setAttribute('visible', false);
-            bolla.setAttribute('opacity', '0');
-        }
-        else
-        {
-            curvedImageFact(bolla, factory[i].transitions, true);
-            first = false;
-        }*/
-
-        function Sky(props) {
-
-            console.log(props)
-            return (<Scene>
-                    <script type="type/javascript">
-                        function skys(props) {
-                        var  lenght = props.length;
-                        for (var z = 0; z < lenght; z++) {
-                        <a-sky id={props.name} src={'http://localhost:3000/media/bolla' + z +'.jpg'}/>
-
-                        }
-                    }
-                    </script>
-                    <script >
-                        skys(props);
-
-
-                    </script>
-                        <a-sky id={props.name} src={'http://localhost:3000/media/bolla1.jpg'}/>
-                        <Entity camera look-controls_us="pointerLockEnabled: true">
-                            <Entity mouse-cursor>
-                                <a-cursor id="cursor"></a-cursor>
-                        </Entity>
-
-
-                    </Entity>
-                    </Scene>
-            )
-        }
-        const pollo =<Sky props={factory[0]}/>;
-
-        ReactDOM.render(pollo, document.getElementById("mainscene"));
-    //}
-
+   var factory = sceneFactory();
+   var tables = bubbleCreator(factory);
+   ReactDOM.render(tables, document.getElementById("mainscene"));
 }
 
 /*function enableChild (trg, target) {
@@ -201,8 +145,8 @@ export function sceneCreator()
         if(entity != null)
             curvedImage(bubble, entity.rules.target, entity.rotation, '9.5', entity.theta, true)
     }
-}
-*/
+}*/
+
 function disableChild(actualScene) {
 
     var childrenList = actualScene.children;
@@ -214,13 +158,7 @@ function disableChild(actualScene) {
     actualScene.setAttribute('visible', false);
 
 }
-/**
- * Register event handlers for an event name to ref.
- *
- * @param {Element} el - DOM element.
- * @param {string} eventName
- * @param {array|function} eventHandlers - Handler function or array of handler functions.
- */
+
 function addEventListeners (el, eventName, handlers) {
     var handler;
     var i;
@@ -236,13 +174,6 @@ function addEventListeners (el, eventName, handlers) {
     }
 }
 
-/**
- * Unregister event handlers for an event name to ref.
- *
- * @param {Element} el - DOM element.
- * @param {string} eventName
- * @param {array|function} eventHandlers - Handler function or array of handler functions.
- */
 function removeEventListeners (el, eventName, handlers) {
     var handler;
     var i;
@@ -258,37 +189,3 @@ function removeEventListeners (el, eventName, handlers) {
     }
 }
 
-/*class Sky extends React.Component{
-    constructor(props){
-        super(props);
-    }
-    render() {
-        console.log(this.props)
-        return (<Entity geometry = {{primitive: 'a-sky'}} id={{id: this.props.name}}  material={{src: 'http://localhost:3000/media/' + this.props.img}}/>)
-    }
-}*/
-
-/*AFRAME.registerComponent('curved', {
-
-    schema: {
-        theta: {type: 'int'},
-        rotation: {type: 'string'},
-        isSelectable: {type: 'bool', default: false},
-        target: {type: 'string', default: ''}
-    },
-
-    init : function () {
-
-        var event = document.createElement('a-curvedimage');
-        event.setAttribute('id', 'curv'+this.data.target);
-        event.setAttribute('rotation', this.data.rotation);
-        event.setAttribute('radius', '9.5');
-        event.setAttribute('theta-length', this.data.theta);
-
-        if(this.data.isSelectable) {
-            event.setAttribute('selectable', 'target: ' + this.data.target);
-        }
-
-        this.el.appendChild(event);
-    }
-});*/

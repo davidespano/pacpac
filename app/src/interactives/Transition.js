@@ -45,7 +45,7 @@ class Transition extends InteractiveObject {
         this.rotationX = x;
         this.rotationY = y;
         this.rotationZ = z;
-        this.rotation = rotationX + " " + rotationY + " " + rotationZ;;
+        this.rotation = x + " " + y + " " + z;;
     }
 
 }
