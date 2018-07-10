@@ -9,6 +9,11 @@ class Transition extends InteractiveObject {
 
         super();
 
+        this.media = media;
+        this.duration = duration;
+        this.theta = theta;
+        this.height = height;
+
         //default rule is passed to superclass
         this.addNewRule(new Rule({
             event: EventTypes.CLICK,
@@ -18,16 +23,30 @@ class Transition extends InteractiveObject {
             }
         }));
 
-        this.media = media;
-        this.duration = duration;
-        this.rotation = rotationX + " " + rotationY + " " + rotationZ;
-        this.rotationX = rotationX;
-        this.rotationY = rotationY;
-        this.rotationZ = rotationZ;
-        this.theta = theta;
-        this.height = height;
-
+        this.setRotation(rotationX, rotationY, rotationZ);
     };
+
+    setRotationX(x){
+        this.rotationX = x;
+        this.rotation = x + " " + this.rotationY + " " + this.rotationZ;
+    }
+
+    setRotationY(y){
+        this.rotationY = y;
+        this.rotation = this.rotationX + " " + y + " " + this.rotationZ;
+    }
+
+    setRotationZ(z){
+        this.rotationZ = z;
+        this.rotation = this.rotationX + " " + this.rotationY + " " + z;
+    }
+
+    setRotation(x, y, z){
+        this.rotationX = x;
+        this.rotationY = y;
+        this.rotationZ = z;
+        this.rotation = rotationX + " " + rotationY + " " + rotationZ;;
+    }
 
 }
 
