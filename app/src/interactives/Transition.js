@@ -5,7 +5,7 @@ import Rule from "./Rule";
 
 class Transition extends InteractiveObject {
 
-    constructor(media = "", duration = 0, rotation = '0 0 0', theta = 10, height = 2) {
+    constructor(media = "", duration = 0, rotationX = 0, rotationY = 0, rotationZ = 0, theta = 10, height = 2) {
 
         super();
 
@@ -20,7 +20,10 @@ class Transition extends InteractiveObject {
 
         this.media = media;
         this.duration = duration;
-        this.rotation = rotation; // format stringa con tre numeri separati da uno spazio, mettere tre campi diversi
+        this.rotation = rotationX + " " + rotationY + " " + rotationZ;
+        this.rotationX = rotationX;
+        this.rotationY = rotationY;
+        this.rotationZ = rotationZ;
         this.theta = theta;
         this.height = height;
 
