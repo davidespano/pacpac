@@ -5,67 +5,83 @@ var randomstring = require("randomstring");
 var _ = require('lodash');
 var dbUtils = require('../neo4j/dbUtils');
 var User = require('../models/neo4j/user');
+var bcrypt = require('bcrypt');
 var crypto = require('crypto');
 
+const saltRounds = 10;
+
 var register = function (session, username, password) {
-  return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
-    .then(results => {
-      if (!_.isEmpty(results.records)) {
-        throw {username: 'username already in use', status: 400}
-      }
-      else {
-        return session.run('CREATE (user:User {id: {id}, username: {username}, password: {password}, api_key: {api_key}}) RETURN user',
-          {
-            id: uuid.v4(),
-            username: username,
-            password: hashPassword(username, password),
-            api_key: randomstring.generate({
-              length: 20,
-              charset: 'hex'
-            })
-          }
+    return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
+        .then(results => {
+            if (!_.isEmpty(results.records)) {
+                throw {username: 'username already in use', status: 400}
+            }
+            else {
+                return bcrypt.hash(password, saltRounds);
+            }
+        }).then(hash => {
+                return session.run('CREATE (user:User {id: {id}, username: {username}, password: {password}}) RETURN user',
+                    {
+                        id: uuid.v4(),
+                        username: username,
+                        password: hash,
+                    }
+                )
+            }
         ).then(results => {
-            return new User(results.records[0].get('user'));
-          }
-        )
-      }
-    });
+                return new User(results.records[0].get('user'));
+            }
+        );
 };
 
 var me = function (session, apiKey) {
-  return session.run('MATCH (user:User {api_key: {api_key}}) RETURN user', {api_key: apiKey})
-    .then(results => {
-      if (_.isEmpty(results.records)) {
-        throw {message: 'invalid authorization key', status: 401};
-      }
-      return new User(results.records[0].get('user'));
-    });
+    return session.run('MATCH (user:User {api_key: {api_key}}) RETURN user', {api_key: apiKey})
+        .then(results => {
+            if (_.isEmpty(results.records)) {
+                throw {message: 'invalid authorization key', status: 401};
+            }
+            return new User(results.records[0].get('user'));
+        });
 };
 
 var login = function (session, username, password) {
-  return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
-    .then(results => {
-        if (_.isEmpty(results.records)) {
-          throw {username: 'username does not exist', status: 400}
-        }
-        else {
-          var dbUser = _.get(results.records[0].get('user'), 'properties');
-          if (dbUser.password != hashPassword(username, password)) {
-            throw {password: 'wrong password', status: 400}
-          }
-          return {token: _.get(dbUser, 'api_key')};
-        }
-      }
-    );
+    return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
+        .then(results => {
+                if (_.isEmpty(results.records)) {
+                    throw {username: 'Username or password wrong', status: 400}
+                }
+                else {
+                    var dbUser = _.get(results.records[0].get('user'), 'properties');
+
+                    return bcrypt.compare(password, dbUser.password);
+
+                }
+            }
+        ).then(res => {
+            if (!res) {
+                throw {password: 'Username or password wrong', status: 400}
+            }
+            return crypto.randomBytes(32);
+        } ).then(buf =>{
+            var token = buf.toString('hex');
+            var tokenExp = new Date().getTime()+7200000; //2hours in milliseconds
+
+            return session.run('MATCH (user:User {username: {username}})'+
+                        'SET user += {token: {token}, tokenExpire: {tokenExp}}'+
+                        'RETURN user', {username: username, token: token, tokenExp: tokenExp})
+                .then(results => {
+                        if (_.isEmpty(results.records)) {
+                            throw {username: 'Username or password wrong', status: 400}
+                        }
+                        else {
+                            return token;
+                        }
+                    })
+        });
 };
 
-function hashPassword(username, password) {
-  var s = username + ':' + password;
-  return crypto.createHash('sha256').update(s).digest('hex');
-}
-
 module.exports = {
-  register: register,
-  me: me,
-  login: login
+    register: register,
+    me: me,
+    login: login
 };
