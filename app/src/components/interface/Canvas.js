@@ -13,16 +13,19 @@ function generateRules(currentScene){
     if(currentScene != null) {
         cleanCanvas();
         let canvas = document.getElementById('canvas');
-        currentScene.transitions.forEach(transition => (canvas.appendChild(generateTransitionRule(transition))));
+        currentScene.transitions.forEach(transition => ((generateTransitionRule(canvas, transition))));
     }
 
 }
 
-function generateTransitionRule(transition){
-    let r = document.createElement('p');
-    r.class = 'rules';
-    r.innerHTML = 'Nuova transizione:' + transition.name;
-    return r;
+function generateTransitionRule(canvas, transition){
+
+    transition.rules.forEach(() => {
+        let r = document.createElement('p');
+        r.class = 'rules';
+        r.innerHTML = 'Nuova transizione:' + transition.name;
+        canvas.appendChild(r);
+    });
 }
 
 function cleanCanvas(){

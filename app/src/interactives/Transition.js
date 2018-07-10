@@ -7,8 +7,10 @@ class Transition extends InteractiveObject {
 
     constructor(media = "", duration = 0, rotation = '0 0 0', theta = 10, height = 2) {
 
+        super();
+
         //default rule is passed to superclass
-        super(new Rule({
+        this.addNewRule(new Rule({
             event: EventTypes.CLICK,
             action: {
                 type: RuleActionTypes.TRANSITION,

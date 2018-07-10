@@ -19,7 +19,7 @@ class CentralSceneStore extends ReduceStore {
             case ActionTypes.GET_SCENE_RESPONSE:
                 return new Scene(action.response.name);
             case ActionTypes.ADD_NEW_TRANSITION:
-                
+
                 if(state != null) {
 
                     let tr = new Transition();
