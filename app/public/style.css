@@ -13,7 +13,7 @@
             'leftbar scene scene rightbar'
             'leftbar canvas canvas rightbar';
     grid-gap: 10px;
-    background-color: #2196F3;
+    background-color: #5EC8E5;
     padding: 10px;
     height: 95vh;
 }
@@ -87,4 +87,19 @@
 
 .topbar{
     display: flex;
+}
+
+/*prove rightbar*/
+
+.currentObjectOptions label {
+    font-size: 20px;
+}
+
+.rotationInput{
+    max-width: 10%;
+    display: inline-block;
+}
+
+.transitionInput{
+    max-width: 90%;
 }
