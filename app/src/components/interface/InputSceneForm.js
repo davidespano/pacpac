@@ -5,10 +5,10 @@ import MediaAPI from "../../utils/MediaAPI";
 function InputSceneForm(props){
 
     return(
-        <div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        <div id={"addSceneDiv"}>
+            <a class="nav-item navbar-toggler" data-toggle="modal" data-target="#exampleModal">
             AddScene
-        </button>
+        </a>
             <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
