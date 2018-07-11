@@ -1,6 +1,6 @@
 import Transition from "../interactives/Transition";
 
-class Scene {
+class MyScene {
 
     constructor(img, transitions = [], tagName='---', tagColor='black'){
         this.img = img;
@@ -18,4 +18,4 @@ class Scene {
 
 }
 
-export default Scene;
+export default MyScene;
