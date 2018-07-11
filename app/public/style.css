@@ -12,9 +12,9 @@
             'topbar topbar topbar topbar'
             'leftbar scene scene rightbar'
             'leftbar canvas canvas rightbar';
-    grid-gap: 10px;
-    padding: 10px;
-    background-color: #6CD1EF;
+    grid-gap: 5px;
+    padding: 5px;
+    background-color: #71DBD4;
     height: 95vh;
 }
 
@@ -26,7 +26,12 @@
 }
 .navbar{
     justify-content: left;
-    padding: 0;
+    padding-left: 5px;
+}
+
+.navbar-toggler{
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .scene{
