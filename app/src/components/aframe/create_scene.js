@@ -1,5 +1,5 @@
 import Transition from "../../interactives/Transition";
-import Scene from "../../scene/Scene";
+import Scene from "../../scene/MyScene";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Entity} from 'aframe-react';

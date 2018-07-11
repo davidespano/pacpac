@@ -1,7 +1,7 @@
 import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
-import Scene from '../scene/Scene';
+import MyScene from '../scene/MyScene';
 import Transition from "../interactives/Transition";
 
 class CentralSceneStore extends ReduceStore {
@@ -17,13 +17,13 @@ class CentralSceneStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.GET_SCENE_RESPONSE:
-                return new Scene(action.response.name);
+                return new MyScene(action.response.name);
             case ActionTypes.ADD_NEW_TRANSITION:
 
                 if(state != null) {
                     state.addNewTransitionToScene(action.obj);
 
-                    return new Scene(
+                    return new MyScene(
                         state.img,
                         state.transitions,
                         state.tagName,
