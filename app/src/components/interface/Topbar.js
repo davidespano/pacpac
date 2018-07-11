@@ -20,9 +20,13 @@ function TopBar(props){
 }
 
 function createTransition(props) {
-    let tr = new Transition();
-    tr.setName(props.currentScene.name + '_tr' + (props.currentScene.transitions.length + 1));
-    Actions.addNewTransition(tr);
+    if(props.currentScene != null){
+        let tr = new Transition();
+        tr.setName(props.currentScene.name + '_tr' + (props.currentScene.transitions.length + 1));
+        Actions.addNewTransition(tr);
+    } else {
+        alert("Nessuna scena selezionata!");
+    }
 }
 
 export default TopBar;

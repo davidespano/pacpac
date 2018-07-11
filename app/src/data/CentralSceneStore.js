@@ -20,19 +20,14 @@ class CentralSceneStore extends ReduceStore {
                 return new MyScene(action.response.name);
             case ActionTypes.ADD_NEW_TRANSITION:
 
-                if(state != null) {
-                    state.addNewTransitionToScene(action.obj);
+                state.addNewTransitionToScene(action.obj);
 
-                    return new MyScene(
-                        state.img,
-                        state.transitions,
-                        state.tagName,
-                        state.tagColor
-                    );
-
-                }
-
-                alert("Nessuna scena selezionata!");
+                return new MyScene(
+                    state.img,
+                    state.transitions,
+                    state.tagName,
+                    state.tagColor
+                );
 
             default:
                 return state;

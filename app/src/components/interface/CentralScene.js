@@ -29,7 +29,7 @@ function CentralScene(props){
 
 function getCoordinates(event){
 
-    var img = document.getElementById('scene');
+    let img = document.getElementById('scene');
 
     return {
         x: event.pageX - img.offsetLeft,
