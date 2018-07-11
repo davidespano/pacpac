@@ -1,8 +1,8 @@
 import Transition from "../../interactives/Transition";
-import Scene from "../../scene/MyScene";
+import MyScene from "../../scene/MyScene";
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Entity} from 'aframe-react';
+import {Entity, Scene} from 'aframe-react';
 import InteractiveObject from "../../interactives/InteractiveObject";
 var AFRAME = require('aframe');
 var factory = sceneFactory();
@@ -65,7 +65,7 @@ function sceneFactory()
 {
     var sceneList = [];
 
-    var scene1 = new Scene("bolla1.jpg");
+    var scene1 = new MyScene("bolla1.jpg");
     var tr1 = new Transition('', 2000, '0 -90 0');
     tr1.rules.target='bolla2';
     //var tr2 = new Transition('', 2000, '0 0 0');
@@ -76,7 +76,7 @@ function sceneFactory()
     //scene1.transitions.push(tr2);
     sceneList.push(scene1);
 
-    var scene2 = new Scene("bolla2.jpg");
+    var scene2 = new MyScene("bolla2.jpg");
     var tr3 = new Transition('', 2000, '0 90 0');
     tr3.rules.target='bolla1';
     scene2.transitions.push(tr3);
@@ -91,7 +91,7 @@ function cameraCreator()
     var mouse;
     var cursor;
 
-    cursor = <a-cursor id="cursor"></a-cursor>;
+    cursor = <Entity primitive="a-cursor" id="cursor"></Entity>;
     mouse = <Entity mouse-cursor> {cursor} </Entity>;
     camera = <Entity camera look-controls_us="pointerLockEnabled: true">{mouse}</Entity>;
 
@@ -110,16 +110,16 @@ function bubbleCreator (factory)
         {
             first = false;
             var curved = curvedImageFact(scena.transitions);
-            skyContainer.push(<a-sky key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10">
+            skyContainer.push(<Entity primitive="a-sky" key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10">
                 {curved}
-            </a-sky>);
+            </Entity>);
         }
         else
-            skyContainer.push(<a-sky key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10" material = "opacity: 0"></a-sky>);
+            skyContainer.push(<Entity primitive="a-sky" key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10" material = "opacity: 0"></Entity>);
     });
 
     skyContainer.push(cameraCreator());
-    scene.push(<a-scene>{skyContainer}</a-scene>);
+    scene.push(<Scene>{skyContainer}</Scene>);
     return scene;
 }
 
