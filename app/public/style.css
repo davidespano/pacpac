@@ -13,17 +13,20 @@
             'leftbar scene scene rightbar'
             'leftbar canvas canvas rightbar';
     grid-gap: 10px;
-    background-color: #5EC8E5;
     padding: 10px;
+    background-color: #6CD1EF;
     height: 95vh;
 }
 
 .grid-container > div {
     background-color: rgba(255, 255, 255, 0.8);
     text-align: center;
-    padding: 20px 0;
     font-size: 30px;
 
+}
+.navbar{
+    justify-content: left;
+    padding: 0;
 }
 
 .scene{
@@ -86,7 +89,8 @@
 }
 
 .topbar{
-    display: flex;
+    display: block;
+    padding: 0;
 }
 
 /*prove rightbar*/
@@ -102,4 +106,8 @@
 
 .transitionInput{
     max-width: 90%;
+}
+
+#addSceneDiv{
+    display: flex;
 }

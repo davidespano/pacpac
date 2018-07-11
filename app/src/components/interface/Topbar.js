@@ -6,14 +6,16 @@ import Actions from "../../actions/Actions";
 function TopBar(props){
     return (
          <div className={'topbar'}>
-            Header
-            <button type="button" className={"btn btn-primary"} onClick={() => props.switchToPlayMode()}>PLAY</button>
-            <InputSceneForm {...props} />
-            <button type="button" className={"btn btn-primary"} id={'transition'}
-                    title={'Aggiungi una transizione'}
-                    onClick={() => (createTransition(props))}
-            >+</button>
-        </div>
+                 <nav className="navbar  navbar-light">
+                     <a className="navbar-brand">PacPac</a>
+                     <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
+                     <InputSceneForm {...props} />
+                     <a className={"nav-item navbar-toggler"} id={'transition'}
+                             title={'Aggiungi una transizione'}
+                             onClick={() => (createTransition(props))}
+                     >+</a>
+                 </nav>
+             </div>
     );
 }
 
@@ -24,3 +26,10 @@ function createTransition(props) {
 }
 
 export default TopBar;
+/* Header
+<button type="button" className={"btn btn-primary"} onClick={() => props.switchToPlayMode()}>PLAY</button>
+<InputSceneForm {...props} />
+<button type="button" className={"btn btn-primary"} id={'transition'}
+        title={'Aggiungi una transizione'}
+        onClick={() => (createTransition(props))}
+>+</button> */
