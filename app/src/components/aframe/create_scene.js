@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import {Entity} from 'aframe-react';
 import InteractiveObject from "../../interactives/InteractiveObject";
 var AFRAME = require('aframe');
+var factory = sceneFactory();
 
 function curvedImageFact(transitions)
 {
@@ -21,14 +22,14 @@ function curvedImageFact(transitions)
     return curvedContainer;
 }
 
-AFRAME.registerComponent('selectable', {
-
+AFRAME.registerComponent('selectable',
+{
     schema: {
-        target: {type: 'string'}
+        target:{type: 'string'}
     },
 
-    update : function () {
-
+    init: function ()
+    {
         var sceneEl = document.querySelector('a-scene');
         var elem = this.el;
         var target = this.data.target;
@@ -36,8 +37,9 @@ AFRAME.registerComponent('selectable', {
         var targetID = "#" + target;
         var trg = sceneEl.querySelector(targetID);
         var cursor = sceneEl.querySelector('#cursor');
-        actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 2000; easing: linear; from: 1; to: 0; startEvents: startTransition'+actualScene.id + 'dis');
-        trg.setAttribute('animation__appear', 'property: material.opacity; dur:2000; easing:linear; from: 0; to: 1; startEvents: startTransition' + target + 'app');
+
+        actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 2000; easing: linear; from: 1; to: 0; startEvents:' + elem.id);
+        trg.setAttribute('animation__appear', 'property: material.opacity; dur:2000; easing:linear; from: 0; to: 1; startEvents:' + elem.id);
 
         elem.addEventListener('mouseenter',function () {
             cursor.setAttribute('color', 'green');
@@ -47,20 +49,17 @@ AFRAME.registerComponent('selectable', {
         });
 
         elem.addEventListener('click', function (evt) {
-
-            //Per il futuro: Settarla visible prima di fare il dispatch dell'event!
-            var startEvent = new CustomEvent('startTransition' + actualScene.id + 'dis');
-            var arriveEvent = new CustomEvent('startTransition' + target + 'app');
+            var startEvent = new CustomEvent('' + elem.id);
             actualScene.dispatchEvent(startEvent);
-            trg.dispatchEvent(arriveEvent);
-            //addEventListeners(trg,'animationbegin', enableChild(trg, target));
-            //addEventListeners(actualScene, 'animationbegin', disableChild(actualScene));
+            trg.dispatchEvent(startEvent);
 
-            //removeEventListeners(trg, 'animationbegin', enableChild);
-            //removeEventListeners(actualScene, 'animationbegin', disableChild);
+            enableChild(trg);
+            disableChilds(actualScene);
+
         });
     }
 });
+
 
 function sceneFactory()
 {
@@ -116,7 +115,7 @@ function bubbleCreator (factory)
             </a-sky>);
         }
         else
-            skyContainer.push(<a-sky key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10" visible="false"></a-sky>);
+            skyContainer.push(<a-sky key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10" material = "opacity: 0"></a-sky>);
     });
 
     skyContainer.push(cameraCreator());
@@ -126,66 +125,23 @@ function bubbleCreator (factory)
 
 export function sceneCreator()
 {
-   var factory = sceneFactory();
    var tables = bubbleCreator(factory);
    ReactDOM.render(tables, document.getElementById("mainscene"));
 }
 
-/*function enableChild (trg, target) {
+function enableChild(trg)
+{
+    var element = factory.find(el => el.name == trg.id)
 
-    trg.setAttribute('visible', true);
-    var sceneEl = document.querySelector('a-scene');
-    var bubble = sceneEl.querySelector('#'+target);
-    var entity = map.get(target)
-    if(entity instanceof Array){
-        for(var i=0;i<entity.length;i++){
-            curvedImage(bubble, entity[i].rules.target, entity[i].rotation, '9.5', entity[i].theta, true)
-        }
-    } else {
-        if(entity != null)
-            curvedImage(bubble, entity.rules.target, entity.rotation, '9.5', entity.theta, true)
-    }
-}*/
-
-function disableChild(actualScene) {
-
-    var childrenList = actualScene.children;
-    var children = childrenList.length;
-
-    for(var i=0; i<children; i++) {
-        actualScene.removeChild(childrenList[0]);
-    }
-    actualScene.setAttribute('visible', false);
-
-}
-
-function addEventListeners (el, eventName, handlers) {
-    var handler;
-    var i;
-
-    if (!handlers) { return; }
-
-    // Convert to array.
-    if (handlers.constructor === Function) { handlers = [handlers]; }
-
-    // Register.
-    for (i = 0; i < handlers.length; i++) {
-        el.addEventListener(eventName, handlers[i]);
+    if(element != null)
+    {
+        ReactDOM.render(curvedImageFact(element.transitions), trg);
     }
 }
 
-function removeEventListeners (el, eventName, handlers) {
-    var handler;
-    var i;
-
-    if (!handlers) { return; }
-
-    // Convert to array.
-    if (handlers.constructor === Function) { handlers = [handlers]; }
-
-    // Unregister.
-    for (i = 0; i < handlers.length; i++) {
-        el.removeEventListener(eventName, handlers[i]);
-    }
+function disableChilds(actualScene)
+{
+    ReactDOM.render([], actualScene);
 }
+
 
