@@ -9,7 +9,7 @@
     display: grid;
     grid-template-columns: 15% auto auto 15%;
     grid-template-rows: 10vh 60vh 30%;
-    grid-template-areas:
+    grid-template-areas: 
             'topbar topbar topbar topbar'
             'leftbar scene scene rightbar'
             'leftbar canvas canvas rightbar';
