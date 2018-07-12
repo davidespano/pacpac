@@ -4,7 +4,8 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 function RightBar(props){
     
     return(
-        <div className={'rightbar'}>Proprietà
+        <div className={'rightbar'}>
+            <a>Proprietà</a>
             {optionsView(props.rightbar.currentObject, props.rightbar.currentType)}
         </div>
     );
