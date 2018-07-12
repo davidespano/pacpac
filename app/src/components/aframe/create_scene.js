@@ -7,20 +7,7 @@ import InteractiveObject from "../../interactives/InteractiveObject";
 var AFRAME = require('aframe');
 var factory = sceneFactory();
 
-function curvedImageFact(transitions)
-{
-    var curvedContainer = [];
 
-    transitions.forEach(trans =>
-    {
-        var event = <a-curvedimage id={"curv" + trans.rules.target} rotation={trans.rotation} radius = "9.5" theta-length={trans.theta}
-                                                                       height={trans.height} selectable={'target:' + trans.rules.target}></a-curvedimage>
-
-        curvedContainer.push(event);
-    });
-
-    return curvedContainer;
-}
 
 AFRAME.registerComponent('selectable',
 {
@@ -28,8 +15,7 @@ AFRAME.registerComponent('selectable',
         target:{type: 'string'}
     },
 
-    init: function ()
-    {
+    init: function () {
         var sceneEl = document.querySelector('a-scene');
         var elem = this.el;
         var target = this.data.target;
@@ -38,27 +24,53 @@ AFRAME.registerComponent('selectable',
         var trg = sceneEl.querySelector(targetID);
         var cursor = sceneEl.querySelector('#cursor');
 
-        actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 2000; easing: linear; from: 1; to: 0; startEvents:' + elem.id);
-        trg.setAttribute('animation__appear', 'property: material.opacity; dur:2000; easing:linear; from: 0; to: 1; startEvents:' + elem.id);
+        actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 2000; easing: linear; from: 1; to: 0; startEvents: ' + actualScene.id + "dis");
+        trg.setAttribute('animation__appear', 'property: material.opacity; dur: 2000; easing: linear; from: 0; to: 1; startEvents: ' + trg.id + "app");
 
-        elem.addEventListener('mouseenter',function () {
+        elem.addEventListener('mouseenter', function () {
             cursor.setAttribute('color', 'green');
         });
-        elem.addEventListener('mouseleave',function () {
+        elem.addEventListener('mouseleave', function () {
             cursor.setAttribute('color', 'black');
         });
 
         elem.addEventListener('click', function (evt) {
-            var startEvent = new CustomEvent('' + elem.id);
-            actualScene.dispatchEvent(startEvent);
-            trg.dispatchEvent(startEvent);
+            var disappear = new CustomEvent(actualScene.id + "dis");
+            var appear = new CustomEvent(trg.id + "app");
+            actualScene.dispatchEvent(disappear);
+            trg.dispatchEvent(appear);
 
-            enableChild(trg);
+            trg.addEventListener("animationcomplete", function _listener(evt)
+            {
+                console.log("Animation");
+                if(evt.detail.name == "animation__appear") enableChild(trg);
+
+                trg.removeEventListener("animationcomplete", _listener);
+                this.components[evt.detail.name].animation.reset();
+            });
+
             disableChilds(actualScene);
-
         });
     }
+
+
 });
+
+
+function curvedImageFact(transitions)
+{
+    var curvedContainer = [];
+
+    transitions.forEach(trans =>
+    {
+        var event = <Entity primitive="a-curvedimage" key={"keyC"+ trans.rules.target} id={"curv" + trans.rules.target} rotation={trans.rotation} radius = "9.5" theta-length={trans.theta}
+                                                                       height={trans.height} selectable={'target:' + trans.rules.target}/>
+
+        curvedContainer.push(event);
+    });
+
+    return curvedContainer;
+}
 
 
 function sceneFactory()
@@ -68,12 +80,12 @@ function sceneFactory()
     var scene1 = new MyScene("bolla1.jpg");
     var tr1 = new Transition('', 2000, '0 -90 0');
     tr1.rules.target='bolla2';
-    //var tr2 = new Transition('', 2000, '0 0 0');
-    //tr2.rules.target='bolla2';
-    var tr4 = new Transition('', 2000, '0 180 0');
+    var tr2 = new Transition('', 2000, '0 0 0');
+    tr2.rules.target='bolla3';
+
 
     scene1.transitions.push(tr1);
-    //scene1.transitions.push(tr2);
+    scene1.transitions.push(tr2);
     sceneList.push(scene1);
 
     var scene2 = new MyScene("bolla2.jpg");
@@ -81,6 +93,12 @@ function sceneFactory()
     tr3.rules.target='bolla1';
     scene2.transitions.push(tr3);
     sceneList.push(scene2);
+
+    var scene3 = new MyScene("bolla3.jpg");
+    var tr4 = new Transition('', 2000, '0 180 0');
+    tr4.rules.target= 'bolla1';
+    scene3.transitions.push(tr4);
+    sceneList.push(scene3);
 
     return sceneList;
 }
@@ -93,14 +111,14 @@ function cameraCreator()
 
     cursor = <Entity primitive="a-cursor" id="cursor"></Entity>;
     mouse = <Entity mouse-cursor> {cursor} </Entity>;
-    camera = <Entity camera look-controls_us="pointerLockEnabled: true">{mouse}</Entity>;
+    camera = <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">{mouse}</Entity>;
 
     return camera;
 }
 
 function bubbleCreator (factory)
 {
-    var scene = [];
+    var scene;
     var skyContainer = [];
     var first = true;
 
@@ -110,16 +128,16 @@ function bubbleCreator (factory)
         {
             first = false;
             var curved = curvedImageFact(scena.transitions);
-            skyContainer.push(<Entity primitive="a-sky" key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10">
+            skyContainer.push(<Entity primitive="a-sky" key={"key" + scena.name} id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10">
                 {curved}
             </Entity>);
         }
         else
-            skyContainer.push(<Entity primitive="a-sky" key="prova" id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10" material = "opacity: 0"></Entity>);
+            skyContainer.push(<Entity primitive="a-sky" key={"key" + scena.name} id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10" material = "opacity: 0"></Entity>);
     });
 
     skyContainer.push(cameraCreator());
-    scene.push(<Scene>{skyContainer}</Scene>);
+    scene = <Scene>{skyContainer}</Scene>;
     return scene;
 }
 
