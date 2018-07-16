@@ -6,7 +6,7 @@ function InputSceneForm(props){
 
     return(
         <div id={"addSceneDiv"}>
-            <a class="nav-item navbar-toggler" data-toggle="modal" data-target="#exampleModal">
+            <a className="nav-item navbar-toggler" data-toggle="modal" data-target="#exampleModal">
             AddScene
         </a>
             <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

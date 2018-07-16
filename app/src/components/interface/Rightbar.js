@@ -1,13 +1,12 @@
 import React from 'react';
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
-import Actions from "../../actions/Actions";
 
 function RightBar(props){
     
     return(
         <div className={'rightbar'}>
             <a>Proprietà</a>
-            <button onClick={()=> culoDiGallina(props.interactiveObjects)}>ObjectList</button>
+            <button onClick={()=> showObjects(props.interactiveObjects)}>ObjectList</button>
             <div id={'rbContainer'}>
                 <div id={'rightbarView'}>
                     {optionsView(props.rightbar.currentObject, props.rightbar.currentType)}
@@ -100,12 +99,12 @@ function optionsView(object,type){
 }
 //https://stackoverflow.com/questions/8808590/html5-number-input-type-that-takes-only-integers/17208628
 function onlyNumbers(id) {
-    let prova =document.getElementById(id);
-    prova.value = prova.value.replace(/[^0-9.]/g, '');
-    prova.value = prova.value.replace(/(\..*)\./g, '$1');
+    let text = document.getElementById(id);
+    text.value = text.value.replace(/[^0-9.]/g, '');
+    text.value = text.value.replace(/(\..*)\./g, '$1');
 }
 
-function culoDiGallina(lista) {
+function showObjects(lista) {
     var view= document.getElementById('rightbarView');
 
     lista.forEach(child => {
@@ -118,10 +117,10 @@ function culoDiGallina(lista) {
 
 
 function cleanRightBar(id){
-    let canvas = document.getElementById(id);
-    if(canvas != null) {
-        while (canvas.firstChild) {
-            canvas.removeChild(canvas.firstChild);
+    let element = document.getElementById(id);
+    if(element != null) {
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
         }
     }
 }

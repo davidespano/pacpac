@@ -125,3 +125,7 @@
 #addSceneDiv{
     display: flex;
 }
+
+#leftbar{
+    overflow: scroll;
+}

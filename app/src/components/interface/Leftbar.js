@@ -36,23 +36,30 @@ function Leftbar(props){
 function graph(props, path) {
 
     if(props.leftbar) {
-        console.log('initializing nodes and edges')
+        //console.log('initializing nodes and edges')
         let nodes = new DataSet();
         let edges = new DataSet();
-        [...props.leftbar.values()].forEach(child => {
-            nodes.add(new SceneNode(child.name, child.img, child.tag, path, title(child)));
-            //child.transitions.forEach(transition => {
-            //    transition.rules.forEach(rule => {
-            //        let target = rule.action.target;
-            //        if (target !== '') {
-            //            edges.add({from: child.name, to: rule.action.target});
-            //        }
-            //    })
+        let container = document.getElementById('leftbar');
+
+        if(container != null){
+            let x = container.offsetWidth / 2;
+            let i = 0;
+            [...props.leftbar.values()].forEach(child => {
+                nodes.add(new SceneNode(child.name, child.img, child.tag, path, title(child), x, i));
+                //child.transitions.forEach(transition => {
+                //    transition.rules.forEach(rule => {
+                //        let target = rule.action.target;
+                //        if (target !== '') {
+                //            edges.add({from: child.name, to: rule.action.target});
+                //        }
+                //    })
+                i++;
             });
-        //});
-        console.log(nodes);
-        console.log(edges);
-        generateNewNetwork(nodes, edges);
+            //});
+            //console.log(nodes);
+            //console.log(edges);
+            generateNewNetwork(container, nodes, edges);
+        }
     }
 }
 
@@ -65,49 +72,56 @@ function title(child){
     );
 }
 
-function generateNewNetwork(nodes, edges){
+function generateNewNetwork(container, nodes, edges){
 
-    let container = document.getElementById('leftbar');
+    let data = {
+        nodes: nodes,
+        edges: edges
+    };
 
-    if(container != null){
-        let data = {
-            nodes: nodes,
-            edges: edges
-        };
-
-        let options = {
-            width: container.offsetWidth + 'px',
-            nodes: {
-                fixed: true,
-            },
+    let options = {
+        width: container.offsetWidth + 'px',
+        //height: (nodes.length * 100) + 'px',
+        nodes: {
+            fixed: true,
             borderWidth: 1,
             borderWidthSelected: 2,
-            physics: false,
-            interaction: {
-                dragNodes: true,
-                zoomView: false,
-                dragView: false
-            }
-        };
+            scaling: {
+                min: 50,
+                max: 50,
+            },
+        },
+        physics: false,
+        interaction: {
+            zoomView: false,
+            dragView: false,
+        },
+        autoResize: false,
+    };
 
-        let network = new Network(container, data, options);
+    let network = new Network(container, data, options);
 
-        network.moveTo({
-            position: {x:0, y:0}
-        })
-    }
+    network.on('selectNode', (object) =>{
+        let node = nodes.get(object.nodes)[0]; //get selected node
+        console.log(node);
+        SceneAPI.getByName(node.img);
+    })
+
 }
 
-function SceneNode(name, img, tag, path, title){
+function SceneNode(name, img, tag, path, title, x, i){
     this.id = name;
+    this.img = img;
     this.image = path + img;
     this.label = name;
     this.shape = 'image';
-    this.size = 25;
+    this.size = 30;
     this.color = {
         border: tag.tagColor
     };
-    this.title = title;
+    this.hover = title,
+    this.x = x;
+    this.y = 100 * i;
 }
 
 export default Leftbar;
