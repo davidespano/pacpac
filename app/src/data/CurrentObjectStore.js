@@ -3,7 +3,7 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import InteractiveObjectsTypes from '../interactives/InteractiveObjectsTypes';
 
-class RightbarStore extends ReduceStore {
+class CurrentObjectStore extends ReduceStore {
 
     constructor(){
         super(AppDispatcher);
@@ -11,8 +11,8 @@ class RightbarStore extends ReduceStore {
 
     getInitialState(){
         return {
-            currentObject: null,
-            currentType: null,
+            object: null,
+            type: null,
         };
     }
 
@@ -20,8 +20,8 @@ class RightbarStore extends ReduceStore {
         switch(action.type){
             case ActionTypes.ADD_NEW_TRANSITION:
                 return {
-                    currentObject: action.obj,
-                    currentType: InteractiveObjectsTypes.TRANSITION,
+                    object: action.obj,
+                    type: InteractiveObjectsTypes.TRANSITION,
                 };
 
             default:
@@ -30,4 +30,4 @@ class RightbarStore extends ReduceStore {
     }
 }
 
-export default new RightbarStore();
+export default new CurrentObjectStore();

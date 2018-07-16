@@ -4,7 +4,7 @@ import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
 import LeftbarElement from "./LeftbarElement";
 
-class LeftbarStore extends ReduceStore {
+class ScenesStore extends ReduceStore {
 
     constructor() {
         super(AppDispatcher);
@@ -49,4 +49,4 @@ class LeftbarStore extends ReduceStore {
     }
 }
 
-export default new LeftbarStore();
+export default new ScenesStore();
