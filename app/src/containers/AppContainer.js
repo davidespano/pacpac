@@ -1,24 +1,24 @@
 import AppView from '../views/AppView';
 import ModeTypeStore from '../data/ModeTypeStore';
-import LeftbarStore from '../data/LeftbarStore';
+import ScenesStore from '../data/ScenesStore';
 import ClickStore from '../data/ClickStore';
 import CentralSceneStore from '../data/CentralSceneStore'
 import {Container} from 'flux/utils';
 import Actions from '../actions/Actions';
 import ObjectsStore from "../data/ObjectsStore";
-import RightbarStore from "../data/RightbarStore";
+import CurrentObjectStore from "../data/CurrentObjectStore";
 import TagsStore from "../data/TagsStore";
 
 
 function getStores() {
     return [
         ModeTypeStore,
-        LeftbarStore,
+        ScenesStore,
         ClickStore,
         CentralSceneStore,
         TagsStore,
         ObjectsStore,
-        RightbarStore,
+        CurrentObjectStore,
     ];
 }
 
@@ -29,12 +29,12 @@ function getState() {
         //STATES
 
         mode: ModeTypeStore.getState(),
-        leftbar: LeftbarStore.getState(),
+        scenes: ScenesStore.getState(),
         click: ClickStore.getState(),
         currentScene: CentralSceneStore.getState(),
         sceneTags: TagsStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
-        rightbar: RightbarStore.getState(),
+        currentObject: CurrentObjectStore.getState(),
 
         //FUNCTIONS
 

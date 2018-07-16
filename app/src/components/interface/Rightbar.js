@@ -9,7 +9,7 @@ function RightBar(props){
             <button onClick={()=> showObjects(props.interactiveObjects)}>ObjectList</button>
             <div id={'rbContainer'}>
                 <div id={'rightbarView'}>
-                    {optionsView(props.rightbar.currentObject, props.rightbar.currentType)}
+                    {optionsView(props.currentObject.object, props.currentObject.type)}
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@ function optionsView(object,type){
     }
     //lista visualizzazione per tipo di oggetto
     if(type === InteractiveObjectsTypes.TRANSITION){
-    cleanRightBar('righbarView');
+    cleanRightBar('rightbarView');
         return(
         <div className={'currentObjectOptions'}>
             <label>media che fa cose</label>

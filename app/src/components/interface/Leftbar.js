@@ -20,7 +20,7 @@ function Leftbar(props){
 
 /**
  *
- [...props.leftbar.values()].map(child => (
+ [...props.scenes.values()].map(child => (
  <div key={child.name}>
  <label className={"list-title"}>{child.name}</label>
  <img
@@ -35,7 +35,7 @@ function Leftbar(props){
 
 function graph(props, path) {
 
-    if(props.leftbar) {
+    if(props.scenes) {
         //console.log('initializing nodes and edges')
         let nodes = new DataSet();
         let edges = new DataSet();
@@ -44,7 +44,7 @@ function graph(props, path) {
         if(container != null){
             let x = container.offsetWidth / 2;
             let i = 0;
-            [...props.leftbar.values()].forEach(child => {
+            [...props.scenes.values()].forEach(child => {
                 nodes.add(new SceneNode(child.name, child.img, child.tag, path, title(child), x, i));
                 //child.transitions.forEach(transition => {
                 //    transition.rules.forEach(rule => {
@@ -115,11 +115,11 @@ function SceneNode(name, img, tag, path, title, x, i){
     this.image = path + img;
     this.label = name;
     this.shape = 'image';
-    this.size = 30;
+    this.size = 50;
     this.color = {
         border: tag.tagColor
     };
-    this.hover = title,
+    this.hover = title;
     this.x = x;
     this.y = 100 * i;
 }
