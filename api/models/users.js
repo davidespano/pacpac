@@ -74,9 +74,9 @@ var login = function (session, username, password) {
                             throw {username: 'Username or password wrong', status: 400}
                         }
                         else {
-                            return token;
-                        }
-                    })
+                            return results.records[0].get('user').properties.token;
+
+                    }})
         });
 };
 
