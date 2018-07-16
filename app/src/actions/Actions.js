@@ -53,7 +53,7 @@ const Actions = {
     receiveScene(response){
         AppDispatcher.dispatch({
             type: ActionTypes.GET_SCENE_RESPONSE,
-            response: response
+            response: response,
         })
     },
 
@@ -76,6 +76,14 @@ const Actions = {
             type: ActionTypes.ADD_NEW_TRANSITION,
             obj: transition,
         })
+    },
+
+
+    addNewObject(object){
+      AppDispatcher.dispatch({
+          type: ActionTypes.ADD_NEW_OBJECT,
+          object: object,
+      })
     },
 
     //OTHER

@@ -23,6 +23,7 @@ class RightbarStore extends ReduceStore {
                     currentObject: action.obj,
                     currentType: InteractiveObjectsTypes.TRANSITION,
                 };
+
             default:
                 return state;
         }

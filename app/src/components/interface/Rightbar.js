@@ -1,20 +1,24 @@
 import React from 'react';
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
+import Actions from "../../actions/Actions";
 
 function RightBar(props){
     
     return(
         <div className={'rightbar'}>
             <a>Proprietà</a>
-            {optionsView(props.rightbar.currentObject, props.rightbar.currentType)}
+            <button onClick={()=> culoDiGallina(props.interactiveObjects)}>ObjectList</button>
+            <div id={'rbContainer'}>
+                <div id={'rightbarView'}>
+                    {optionsView(props.rightbar.currentObject, props.rightbar.currentType)}
+                </div>
+            </div>
         </div>
     );
 }
 
 function optionsView(object,type){
 
-    console.log(object)
-    console.log(type)
     //let object = rightbar.currentObject;
     if(!object){
         return (
@@ -23,9 +27,9 @@ function optionsView(object,type){
             </div>
         );
     }
-    //lista visualizzazione per tipo ti oggetto
-
+    //lista visualizzazione per tipo di oggetto
     if(type === InteractiveObjectsTypes.TRANSITION){
+    cleanRightBar('righbarView');
         return(
         <div className={'currentObjectOptions'}>
             <label>media che fa cose</label>
@@ -93,7 +97,6 @@ function optionsView(object,type){
         )
     }
 
-
 }
 //https://stackoverflow.com/questions/8808590/html5-number-input-type-that-takes-only-integers/17208628
 function onlyNumbers(id) {
@@ -102,5 +105,25 @@ function onlyNumbers(id) {
     prova.value = prova.value.replace(/(\..*)\./g, '$1');
 }
 
+function culoDiGallina(lista) {
+    var view= document.getElementById('rightbarView');
+
+    lista.forEach(child => {
+        let r = document.createElement('a');
+        r.class = 'object-element';
+        r.innerHTML = child.name;
+        view.appendChild(r);
+    })
+}
+
+
+function cleanRightBar(id){
+    let canvas = document.getElementById(id);
+    if(canvas != null) {
+        while (canvas.firstChild) {
+            canvas.removeChild(canvas.firstChild);
+        }
+    }
+}
 export default RightBar;
 
