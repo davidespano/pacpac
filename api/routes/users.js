@@ -132,16 +132,5 @@ exports.login = function (req, res, next) {
  *         description: invalid / missing authentication
  */
 exports.me = function (req, res, next) {
-  loginRequired(req, res, () => {
-    var authHeader = req.headers['authorization'];
-    var match = authHeader.match(/^Token (\S+)/);
-    if (!match || !match[1]) {
-      throw {message: 'invalid authorization format. Follow `Token <token>`', status: 401};
-    }
-
-    var token = match[1];
-    Users.me(dbUtils.getSession(req), token)
-      .then(response => writeResponse(res, response))
-      .catch(next);
-  })
+  writeResponse(res, req.user);
 };

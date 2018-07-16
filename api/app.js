@@ -11,7 +11,8 @@ var express = require('express')
     , writeError = require('./helpers/response').writeError
     , multer = require('multer')
     , fs = require('fs')
-    , checkGameID = require('./middlewares/checkGameID');
+    , checkGameID = require('./middlewares/checkGameID')
+    , loginRequired = require('./middlewares/loginRequired');
 
 var app = express()
     , api = express();
@@ -87,7 +88,7 @@ api.post('/login', routes.users.login);
 api.get('/users/me', routes.users.me);
 
 /**SCENES**/
-api.get('/:gameID/scenes', routes.scenes.list);
+api.get('/:gameID/scenes', loginRequired, routes.scenes.list);
 api.get('/:gameID/scenes/:name', routes.scenes.getByName);
 api.get('/:gameID/scenes/home', routes.scenes.getHomeScene);
 api.get('/:gameID/scenes/:name/neighbours', routes.scenes.getNeighboursByName);
@@ -105,7 +106,7 @@ var storage = multer.diskStorage({
     filename: function (req, file, cb) {
         cb(null, req.headers.name)
     }
-})
+});
 var upload = multer({
     storage: storage,
     fileFilter: function(req, file, cb){
@@ -117,8 +118,8 @@ var upload = multer({
                 cb(null,true);
         });
     }
-})
-api.post('/public/:gameID/addMedia', upload.single("upfile"),routes.media.addMedia);
+});
+api.post('/public/:gameID/addMedia', upload.single("upfile"), routes.media.addMedia);
 
 //api error handler
 api.use(function(err, req, res, next) {

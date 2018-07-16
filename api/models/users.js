@@ -34,13 +34,21 @@ var register = function (session, username, password) {
         );
 };
 
-var me = function (session, apiKey) {
-    return session.run('MATCH (user:User {api_key: {api_key}}) RETURN user', {api_key: apiKey})
+var me = function (session, token) {
+    return session.run(
+        'MATCH (user:User {token: {token}}) ' +
+        'OPTIONAL MATCH (user)-[:OWN_GAME]->(game:Game) ' +
+        'RETURN user, ' +
+        'collect(DISTINCT game) AS games', {token: token})
         .then(results => {
             if (_.isEmpty(results.records)) {
                 throw {message: 'invalid authorization key', status: 401};
             }
-            return new User(results.records[0].get('user'));
+            let u = new User(results.records[0].get('user'));
+            u.games = _.map(results.records[0].get('games'), record => {
+                return record.properties.gameID;
+                })
+            return u;
         });
 };
 
