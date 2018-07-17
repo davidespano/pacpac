@@ -6,17 +6,17 @@ function RightBar(props){
     return(
         <div className={'rightbar'}>
             <a>Proprietà</a>
-            <button onClick={()=> showObjects(props.interactiveObjects)}>ObjectList</button>
+            <button onClick={()=> showObjects(props.interactiveObjects, 'rightbarView')}>ObjectList</button>
             <div id={'rbContainer'}>
                 <div id={'rightbarView'}>
-                    {optionsView(props.currentObject.object, props.currentObject.type)}
+                    {optionsView(props.currentObject.object, props.currentObject.type, 'rightbarView')}
                 </div>
             </div>
         </div>
     );
 }
 
-function optionsView(object,type){
+function optionsView(object, type, rightbarId){
 
     //let object = rightbar.currentObject;
     if(!object){
@@ -28,71 +28,73 @@ function optionsView(object,type){
     }
     //lista visualizzazione per tipo di oggetto
     if(type === InteractiveObjectsTypes.TRANSITION){
-    cleanRightBar('rightbarView');
+
+        cleanRightBar(rightbarId);
+
         return(
-        <div className={'currentObjectOptions'}>
-            <label>media che fa cose</label>
-            <div>
-                <label>Nome</label>
-                <input
-                    id={"transitionName"}
-                    className={"transitionInput"}
-                    type={"text"}
-                    defaultValue={object.name}
-                />
-                <label>Duration</label>
-                <input id={"transitionDuration"}
-                       className={"transitionInput"}
-                       defaultValue={object.duration}
-                       type={"text"}
-                       onInput={()=> { onlyNumbers("transitionDuration")} }
-                />
+            <div className={'currentObjectOptions'}>
+                <label>media che fa cose</label>
+                <div>
+                    <label>Nome</label>
+                    <input
+                        id={"transitionName"}
+                        className={"transitionInput"}
+                        type={"text"}
+                        defaultValue={object.name}
+                    />
+                    <label>Duration</label>
+                    <input id={"transitionDuration"}
+                           className={"transitionInput"}
+                           defaultValue={object.duration}
+                           type={"text"}
+                           onInput={()=> { onlyNumbers("transitionDuration")} }
+                    />
+                </div>
+                <div>
+                    <label>Rotation</label>
+                    <input
+                           id={"rotationX"}
+                           className={"rotationInput"}
+                           defaultValue={object.rotationX}
+                           type={"text"}
+                           onInput={()=> { onlyNumbers("rotationX")} }
+                    />
+                    <input
+                        id={"rotationY"}
+                        className={"rotationInput"}
+                        defaultValue={object.rotationY}
+                        type={"text"}
+                        onInput={()=> { onlyNumbers("rotationY")} }
+                    />
+                    <input
+                        id={"rotationZ"}
+                        className={"rotationInput"}
+                        defaultValue={object.rotationZ}
+                        type={"text"}
+                        onInput={()=> { onlyNumbers("rotationZ")} }
+                    />
+                </div>
+                <div>
+                    <label>Theta</label>
+                    <input
+                        id={"transitionTheta"}
+                        className={"transitionInput"}
+                        defaultValue={object.theta}
+                        type={"text"}
+                        onInput={()=> { onlyNumbers("transitionTheta")} }
+                    />
+                </div>
+                <div>
+                    <label>Height</label>
+                    <input
+                        id={"transitionHeight"}
+                        className={"transitionInput"}
+                        defaultValue={object.height}
+                        type={"text"}
+                        onInput={()=> { onlyNumbers("transitionHeight")} }
+                    />
+                </div>
             </div>
-            <div>
-                <label>Rotation</label>
-                <input
-                       id={"rotationX"}
-                       className={"rotationInput"}
-                       defaultValue={object.rotationX}
-                       type={"text"}
-                       onInput={()=> { onlyNumbers("rotationX")} }
-                />
-                <input
-                    id={"rotationY"}
-                    className={"rotationInput"}
-                    defaultValue={object.rotationY}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("rotationY")} }
-                />
-                <input
-                    id={"rotationZ"}
-                    className={"rotationInput"}
-                    defaultValue={object.rotationZ}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("rotationZ")} }
-                />
-            </div>
-            <div>
-                <label>Theta</label>
-                <input
-                    id={"transitionTheta"}
-                    className={"transitionInput"}
-                    defaultValue={object.theta}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("transitionTheta")} }
-                />
-            </div>
-            <div>
-                <label>Height</label>
-                <input
-                    id={"transitionHeight"}
-                    className={"transitionInput"}
-                    defaultValue={object.height}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("transitionHeight")} }
-                />
-            </div>
-        </div>
         )
     }
 
@@ -104,8 +106,12 @@ function onlyNumbers(id) {
     text.value = text.value.replace(/(\..*)\./g, '$1');
 }
 
-function showObjects(lista) {
-    var view= document.getElementById('rightbarView');
+function showObjects(lista, rightbarId) {
+
+    cleanRightBar(rightbarId);
+    let view= document.getElementById(rightbarId);
+
+    //lista is a set and it's updated correctly, forEach isn't working properly
 
     lista.forEach(child => {
         let r = document.createElement('a');
