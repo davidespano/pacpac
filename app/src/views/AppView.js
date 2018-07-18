@@ -3,6 +3,7 @@ import TopBar from "../components/interface/Topbar";
 import LeftBar from "../components/interface/Leftbar";
 import RightBar from "../components/interface/Rightbar";
 import Canvas from "../components/interface/Canvas";
+import VRScene from "../components/aframe/create_scene";
 import PlayTest from "../components/aframe/playtest";
 import CentralScene from "../components/interface/CentralScene";
 
@@ -25,7 +26,7 @@ function AppView(props) {
         case 'PLAY_MODE_ON':
             return(
                 <div>
-                    <PlayTest {...props}/>
+                    <VRScene {...props}/>
                 </div>
             );
         default:

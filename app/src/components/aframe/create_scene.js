@@ -1,27 +1,12 @@
 import Transition from "../../interactives/Transition";
 import MyScene from "../../scene/MyScene";
+import 'aframe';
 import './aframe-selectable'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
 import InteractiveObject from "../../interactives/InteractiveObject";
 var AFRAME = require('aframe');
-var factory = sceneFactory();
-
-function curvedImageFact(transitions)
-{
-    var curvedContainer = [];
-
-    transitions.forEach(trans =>
-    {
-        var event = <Entity primitive="a-curvedimage" key={"keyC"+ trans.rules.target} id={"curv" + trans.rules.target} rotation={trans.rotation} radius = "9.5" theta-length={trans.theta}
-                                                                       height={trans.height} selectable={'target:' + trans.rules.target}/>
-
-        curvedContainer.push(event);
-    });
-
-    return curvedContainer;
-}
 
 
 function sceneFactory()
@@ -33,7 +18,6 @@ function sceneFactory()
     tr1.rules.target='bolla2';
     var tr2 = new Transition('', 2000, '0 0 0');
     tr2.rules.target='bolla3';
-
 
     scene1.transitions.push(tr1);
     scene1.transitions.push(tr2);
@@ -54,63 +38,121 @@ function sceneFactory()
     return sceneList;
 }
 
-function cameraCreator()
+function Curved(props)
 {
-    var camera;
-    var mouse;
-    var cursor;
-
-    cursor = <Entity primitive="a-cursor" id="cursor"></Entity>;
-    mouse = <Entity mouse-cursor> {cursor} </Entity>;
-    camera = <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">{mouse}</Entity>;
-
-    return camera;
+    return(
+        <Entity primitive="a-curvedimage"  id={"curv" + props.target} rotation={props.rotation} radius = "9.5" theta-length={props.theta}
+                height={props.height} selectable={'target:' + props.target}/>
+    );
 }
 
-function bubbleCreator (factory)
+class Bubble extends React.Component
 {
-    var scene;
-    var skyContainer = [];
-    var first = true;
-
-    factory.forEach(scena =>
+    componentDidMount()
     {
-        if(first)
-        {
-            first = false;
-            var curved = curvedImageFact(scena.transitions);
-            skyContainer.push(<Entity primitive="a-sky" key={"key" + scena.name} id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10">
-                {curved}
-            </Entity>);
-        }
-        else
-            skyContainer.push(<Entity primitive="a-sky" key={"key" + scena.name} id={scena.name} src={"http://localhost:3000/media/" + scena.img} radius="10" material = "opacity: 0"></Entity>);
-    });
+        let el = this;
+        this.nv.addEventListener("animationcomplete", function animationListener(evt){
+            if(evt.detail.name == "animation__appear")
+            {
+                el.props.handler(el.props.name)
+            };
 
-    skyContainer.push(cameraCreator());
-    scene = <Scene>{skyContainer}</Scene>;
-    return scene;
-}
-
-export function sceneCreator()
-{
-   var tables = bubbleCreator(factory);
-   ReactDOM.render(tables, document.getElementById("mainscene"));
-}
-
-export function enableChild(trg)
-{
-    var element = factory.find(el => el.name == trg.id)
-
-    if(element != null)
-    {
-        ReactDOM.render(curvedImageFact(element.transitions), trg);
+            this.components[evt.detail.name].animation.reset();
+        });
     }
+
+    render()
+    {
+        const curves = this.props.transitions.map(curve =>
+        {
+            return(
+                <Curved key={"keyC"+ curve.rules.target} target={curve.rules.target} rotation={curve.rotation} theta={curve.theta} height={curve.height}/>
+            );
+        });
+
+        return(
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material}>
+                {curves}
+            </Entity>
+        );
+    }
+
 }
 
-export function disableChilds(actualScene)
-{
-    ReactDOM.render([], actualScene);
+export default class VRScene extends React.Component{
+
+    constructor(props)
+    {
+        super(props);
+        const fact = sceneFactory();
+        this.state = {
+            scenes: fact,
+            activeScene: 0,
+        };
+    }
+
+    handleSceneChange(newActiveScene)
+    {
+        const index = this.state.scenes.findIndex(el => {return el.name == newActiveScene});
+
+        this.setState({
+            activeScene: index
+        })
+    }
+
+    render()
+    {
+        let skies = this.state.scenes.map((sky, index) =>
+        {
+            let opacity;
+            let curvedImages = [];
+
+            if(index == this.state.activeScene)
+            {
+                curvedImages = sky.transitions;
+                opacity = "opacity: 1";
+            }
+            else opacity = "opacity: 0";
+
+            return(
+                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img} material={opacity} transitions={curvedImages} handler={ (newActiveScene) => this.handleSceneChange(newActiveScene) }/>
+            );
+        });
+
+        return(
+            <div id="mainscene">
+                <button onClick={() => this.props.switchToEditMode()}>EDIT</button>
+                <Scene>
+                    {skies}
+
+                    <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
+                        <Entity mouse-cursor>
+                            <Entity primitive="a-cursor" id="cursor"></Entity>
+                        </Entity>
+                    </Entity>
+                </Scene>
+            </div>
+        );
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
