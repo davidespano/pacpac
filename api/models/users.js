@@ -42,13 +42,22 @@ var me = function (session, token) {
         'collect(DISTINCT game) AS games', {token: token})
         .then(results => {
             if (_.isEmpty(results.records)) {
-                throw {message: 'invalid authorization key', status: 401};
+                throw {message: 'invalid authorization', status: 403};
             }
             let u = new User(results.records[0].get('user'));
-            u.games = _.map(results.records[0].get('games'), record => {
-                return record.properties.gameID;
+            var now = new Date().getTime();
+            if (u.tokenExpire < now) {
+                throw {message: 'expired authorization', status: 403}
+            }
+            return session.run(
+                'MATCH (user:User {token: {token}}) ' +
+                'SET user.tokenExpire = {tokenExp} ', {token: token, tokenExp: now + 7200000}).
+            then(res => {
+                u.games = _.map(results.records[0].get('games'), record => {
+                    return record.properties.gameID;
                 })
-            return u;
+                return u;
+            })
         });
 };
 
@@ -70,21 +79,22 @@ var login = function (session, username, password) {
                 throw {password: 'Username or password wrong', status: 400}
             }
             return crypto.randomBytes(32);
-        } ).then(buf =>{
+        }).then(buf => {
             var token = buf.toString('hex');
-            var tokenExp = new Date().getTime()+7200000; //2hours in milliseconds
+            var tokenExp = new Date().getTime() + 7200000; //2hours in milliseconds
 
-            return session.run('MATCH (user:User {username: {username}})'+
-                        'SET user += {token: {token}, tokenExpire: {tokenExp}}'+
-                        'RETURN user', {username: username, token: token, tokenExp: tokenExp})
+            return session.run('MATCH (user:User {username: {username}})' +
+                'SET user += {token: {token}, tokenExpire: {tokenExp}}' +
+                'RETURN user', {username: username, token: token, tokenExp: tokenExp})
                 .then(results => {
-                        if (_.isEmpty(results.records)) {
-                            throw {username: 'Username or password wrong', status: 400}
-                        }
-                        else {
-                            return results.records[0].get('user').properties.token;
+                    if (_.isEmpty(results.records)) {
+                        throw {username: 'Username or password wrong', status: 400}
+                    }
+                    else {
+                        return results.records[0].get('user').properties.token;
 
-                    }})
+                    }
+                })
         });
 };
 

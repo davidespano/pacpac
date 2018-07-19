@@ -88,7 +88,7 @@ api.post('/login', routes.users.login);
 api.get('/users/me', routes.users.me);
 
 /**SCENES**/
-api.get('/:gameID/scenes', loginRequired, routes.scenes.list);
+api.get('/:gameID/scenes', routes.scenes.list);
 api.get('/:gameID/scenes/:name', routes.scenes.getByName);
 api.get('/:gameID/scenes/home', routes.scenes.getHomeScene);
 api.get('/:gameID/scenes/:name/neighbours', routes.scenes.getNeighboursByName);
