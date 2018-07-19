@@ -2,7 +2,7 @@ import React from 'react';
 import TopBar from "../components/interface/Topbar";
 import LeftBar from "../components/interface/Leftbar";
 import RightBar from "../components/interface/Rightbar";
-import Canvas from "../components/interface/Canvas";
+import RulesCanvas from "../components/interface/RulesCanvas";
 import VRScene from "../components/aframe/create_scene";
 import PlayTest from "../components/aframe/playtest";
 import CentralScene from "../components/interface/CentralScene";
@@ -20,7 +20,7 @@ function AppView(props) {
                     <LeftBar {...props} />
                     <RightBar {...props} />
                     <CentralScene {...props} />
-                    <Canvas {...props} />
+                    <RulesCanvas {...props} />
                 </div>
             );
         case 'PLAY_MODE_ON':

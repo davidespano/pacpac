@@ -1,6 +1,7 @@
 import React from 'react';
+import L from "../../utils/L";
 
-function Canvas(props){
+function RulesCanvas(props){
     return(
         <div id={'canvas'} className={'canvas'}>
             {generateRules(props.currentScene)}
@@ -20,10 +21,13 @@ function generateRules(currentScene){
 
 function generateTransitionRule(canvas, transition){
 
-    transition.rules.forEach(() => {
+    transition.rules.forEach((rule) => {
+        console.log(rule)
         let r = document.createElement('p');
         r.class = 'rules';
-        r.innerHTML = 'Nuova transizione:' + transition.name;
+        //r.innerHTML = 'Nuova transizione:' + transition.name;
+        r.innerHTML = L.WHEN + ' ' + L.PLAYER + ' ' + L[rule.event] + ' ' + transition.name + ' ' + L.EX + ' ' +
+                      L[rule.action.type] + ' ' + L.TOWARDS + ' ' + rule.action.target;
         canvas.appendChild(r);
     });
 }
@@ -35,4 +39,4 @@ function cleanCanvas(){
     }
 }
 
-export default Canvas;
+export default RulesCanvas;

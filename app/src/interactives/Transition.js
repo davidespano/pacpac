@@ -1,7 +1,6 @@
 import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes"
 import InteractiveObject from "./InteractiveObject";
-import Rule from "./Rule";
 
 class Transition extends InteractiveObject {
 
@@ -15,13 +14,11 @@ class Transition extends InteractiveObject {
         this.height = height;
 
         //default rule is passed to superclass
-        this.addNewRule(new Rule({
-            event: EventTypes.CLICK,
-            action: {
-                type: RuleActionTypes.TRANSITION,
-                target: '',
-            }
-        }));
+        this.addNewRule(
+            EventTypes.CLICK, //event
+            {}, //condition
+            {type: RuleActionTypes.TRANSITION, target: '',} //action
+        );
 
         this.setRotation(rotationX, rotationY, rotationZ);
     };

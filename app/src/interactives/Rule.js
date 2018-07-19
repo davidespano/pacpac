@@ -1,6 +1,6 @@
 class Rule {
 
-    constructor({event = {}, condition = {}, action = {}}){
+    constructor({event = null, condition = {}, action = {}}){
         this.event = event;
         this.condition = condition;
         this.action = action;
