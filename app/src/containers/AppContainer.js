@@ -53,6 +53,7 @@ function getState() {
         //interactive objects
 
         addNewObject: Actions.addNewObject,
+        selectAllObjects: Actions.selectAllObjects,
 
         //OTHER
 

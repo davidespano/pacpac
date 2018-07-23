@@ -22,7 +22,6 @@ function generateRules(currentScene){
 function generateTransitionRule(canvas, transition){
 
     transition.rules.forEach((rule) => {
-        console.log(rule)
         let r = document.createElement('p');
         r.class = 'rules';
         //r.innerHTML = 'Nuova transizione:' + transition.name;

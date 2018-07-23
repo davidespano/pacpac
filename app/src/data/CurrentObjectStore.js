@@ -23,7 +23,11 @@ class CurrentObjectStore extends ReduceStore {
                     object: action.obj,
                     type: InteractiveObjectsTypes.TRANSITION,
                 };
-
+            case ActionTypes.SELECT_ALL_OBJECTS:
+                return {
+                    object: null,
+                    type: null,
+                };
             default:
                 return state;
         }

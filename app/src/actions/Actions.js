@@ -86,6 +86,12 @@ const Actions = {
       })
     },
 
+    selectAllObjects(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_ALL_OBJECTS,
+        })
+    },
+
     //OTHER
 
     onDrop(picture){
