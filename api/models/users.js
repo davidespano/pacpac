@@ -91,7 +91,7 @@ var login = function (session, username, password) {
                         throw {username: 'Username or password wrong', status: 400}
                     }
                     else {
-                        return results.records[0].get('user').properties.token;
+                        return {token: results.records[0].get('user').properties.token};
 
                     }
                 })

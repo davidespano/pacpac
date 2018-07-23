@@ -1,12 +1,12 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
-var request = require('superagent')
+var request = require('superagent');
 
 const {apiBaseURL} = settings;
 
 //get scene by name
 function getByName(name){
-    request.get(`${apiBaseURL}/${window.sessionStorage.getItem("gameID")}/scenes/${name}`)
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
         .set('Accept', 'application/json')
         .end(function(err, response) {
             if (err) {
@@ -19,7 +19,7 @@ function getByName(name){
 
 //check if a scene already exists
 function existsByName(name){
-    request.get(`${apiBaseURL}/${window.sessionStorage.getItem("gameID")}/scenes/${name}`)
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
         .set('Accept', 'application/json')
         .end(function(err, response){
             return response.status === 200;
@@ -28,7 +28,7 @@ function existsByName(name){
 
 //create new scene inside db
 function createScene(name, tagColor, tagName){
-    request.post(`${apiBaseURL}/${window.sessionStorage.getItem("gameID")}/scenes/addScene`)
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .send({name: name, tagColor: tagColor, tagName: tagName})
         .end(function(err, response){
@@ -43,7 +43,7 @@ function createScene(name, tagColor, tagName){
 
 //reloads all scenes
 function getAllScenes(){
-    request.get(`${apiBaseURL}/${window.sessionStorage.getItem("gameID")}/scenes`)
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes`)
         .set('Accept', 'application/json')
         .end(function(err, response){
             if(err){
