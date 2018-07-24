@@ -50,10 +50,10 @@ const Actions = {
         })
     },
 
-    receiveScene(response){
+    receiveScene(scene){
         AppDispatcher.dispatch({
             type: ActionTypes.GET_SCENE_RESPONSE,
-            response: response,
+            scene: scene,
         })
     },
 

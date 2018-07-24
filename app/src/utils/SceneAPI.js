@@ -1,5 +1,6 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
+import MyScene from "../scene/MyScene";
 var request = require('superagent');
 
 const {apiBaseURL} = settings;
@@ -36,8 +37,15 @@ function createScene(name, tagColor, tagName){
                 return console.error(err);
             }
 
+            let newScene = new MyScene(
+                response.body.name,
+                [], //transition list
+                response.body.tagName,
+                response.body.tagColor,
+            );
+
             //update scene visualization
-            Actions.receiveScene(response.body);
+            Actions.receiveScene(newScene);
         });
 }
 

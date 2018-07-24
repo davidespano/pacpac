@@ -1,10 +1,12 @@
 import Rule from "./Rule";
+let uuid = require('uuid');
 
 class InteractiveObject {
 
     constructor(rules = [], name){
         this.name = name;
         this.rules = rules;
+        this.uid = uuid.v4();
     }
 
     addNewRule(event, condition, action){

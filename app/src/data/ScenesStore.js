@@ -35,14 +35,7 @@ class ScenesStore extends ReduceStore {
                 return state;
 
             case ActionTypes.GET_SCENE_RESPONSE:
-                let img = action.response.name;
-                let name = action.response.name.replace(/\.[^/.]+$/, "");
-
-                return state.add(new LeftbarElement({
-                        name: name,
-                        img: img,
-                    })
-                );
+                return state.add(action.scene);
             default:
                 return state;
         }

@@ -13,26 +13,32 @@ function Leftbar(props){
 
     return(
         <div className={'leftbar'} id={'leftbar'}>
-            {graph(props, path)}
+            {
+                //graph(props, path)
+                list(props, path)
+            }
         </div>
     )
 }
 
-/**
- *
- [...props.scenes.values()].map(child => (
- <div key={child.name}>
- <label className={"list-title"}>{child.name}</label>
- <img
- src={`${mediaURL}${window.sessionStorage.getItem("gameID")}/` + child.img}
- className={'list-img'}
- alt={child.name}
- title={title(child)}
- onClick={()=> SceneAPI.getByName(child.img)}
- />
- </div>
- ))**/
 
+//generate simple list
+function list(props, path){
+    return ([...props.scenes.values()].map(child => (
+        <div key={child.name}>
+            <label className={"list-title"}>{child.name}</label>
+            <img
+                src={path + child.img}
+                className={'list-img'}
+                alt={child.name}
+                title={title(child)}
+                onClick={()=> SceneAPI.getByName(child.img)}
+            />
+        </div>
+    )));
+}
+
+//generate graph
 function graph(props, path) {
 
     if(props.scenes) {
