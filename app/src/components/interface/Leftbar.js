@@ -9,7 +9,7 @@ const {mediaURL} = settings;
 
 function Leftbar(props){
 
-    let path =`${mediaURL}${window.sessionStorage.getItem("gameID")}/`;
+    let path =`${mediaURL}${window.localStorage.getItem("gameID")}/`;
 
     return(
         <div className={'leftbar'} id={'leftbar'}>
@@ -101,11 +101,7 @@ function generateNewNetwork(container, nodes, edges){
 
     let network = new Network(container, data, options);
 
-    network.on('selectNode', (object) =>{
-        let node = nodes.get(object.nodes)[0]; //get selected node
-        console.log(node);
-        SceneAPI.getByName(node.img);
-    })
+    setNetworkProperties(network, nodes, edges);
 
 }
 
@@ -122,6 +118,16 @@ function SceneNode(name, img, tag, path, title, x, i){
     this.hover = title;
     this.x = x;
     this.y = 100 * i;
+}
+
+function setNetworkProperties(network, nodes, edges){
+
+    //scene selection
+    network.on('selectNode', (object) =>{
+        let node = nodes.get(object.nodes)[0]; //get selected node
+        console.log(node);
+        SceneAPI.getByName(node.img);
+    })
 }
 
 export default Leftbar;

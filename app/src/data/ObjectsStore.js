@@ -2,8 +2,6 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
-import InteractiveObject from "../interactives/InteractiveObject";
-import Transition from "../interactives/Transition";
 
 
 class ObjectsStore extends ReduceStore {

@@ -32,15 +32,15 @@ function optionsView(props){
 function showObjects(interactiveObjects) {
     if(interactiveObjects.size > 0){
         return (
-            <ul id={'objectsList'}>
+            <div id={'objectsList'}>
                 {interactiveObjects.map( value => {
                     //console.log(value);
-                    return (<li>{value.name}</li>);
+                    return (<div key={value.name} className={'objectsList-element'}>{value.name}</div>);
                 })}
-            </ul>
+            </div>
         );
     } else {
-        console.log('????');
+        //console.log('????');
         return (
             <div id={'objectsList'}>
                 Non ci sono oggetti!
