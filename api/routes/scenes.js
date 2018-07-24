@@ -5,7 +5,7 @@ var Scenes = require('../models/scenes')
 
 /**
  * @swagger
- * definition:
+ * definitions:
  *   Scenes:
  *     type: object
  *     properties:
@@ -17,14 +17,11 @@ var Scenes = require('../models/scenes')
 
 /**
  * @swagger
- * definition:
+ * definitions:
  *   DetailedScenes:
  *     type: object
- *     properties:
- *       name:
- *         type: string
- *       tag:
- *         $ref: '#/definitions/Tags'
+ *     allOf:
+ *       - $ref: '#definitions/Scenes'
  */
 
 /**

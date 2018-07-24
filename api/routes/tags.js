@@ -5,7 +5,7 @@ var Tags = require('../models/tags')
 
 /**
  * @swagger
- * definition:
+ * definitions:
  *   Tags:
  *     type: object
  *     properties:

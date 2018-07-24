@@ -1,6 +1,6 @@
 /**
  * @swagger
- * definition:
+ * definitions:
  *   Rules:
  *     type: object
  *     properties:
@@ -14,7 +14,7 @@
 
 /**
  * @swagger
- * definition:
+ * definitions:
  *   InteractiveObjects:
  *     type: object
  *     properties:

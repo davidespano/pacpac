@@ -8,7 +8,7 @@ var Users = require('../models/users')
 
 /**
  * @swagger
- * definition:
+ * definitions:
  *   User:
  *     type: object
  *     properties:
