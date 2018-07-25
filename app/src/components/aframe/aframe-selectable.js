@@ -24,10 +24,12 @@ AFRAME.registerComponent('selectable',
 
         elem.addEventListener('mouseenter', function () {
             cursor.setAttribute('color', 'green');
+            cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:2 2 2;');
         });
 
         elem.addEventListener('mouseleave', function () {
             cursor.setAttribute('color', 'black');
+            cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         });
 
         elem.addEventListener('click', function (evt) {
@@ -41,3 +43,17 @@ AFRAME.registerComponent('selectable',
 
 });
 
+AFRAME.registerComponent('mySound',{
+    schema: {
+        src:{type: 'string'}
+    },
+
+    init: function () {
+        var elem = this.el;
+        var actualScene = elem.parentElement;
+        var sound = document.createElement('a-sound')
+
+        actualScene.setAttribute('sound', 'http://localhost:3000/media/2k/provaSound.mp3');
+        actualScene.setAttribute('autoplay', 'true')
+    }
+});
