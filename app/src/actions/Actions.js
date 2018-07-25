@@ -57,6 +57,13 @@ const Actions = {
         })
     },
 
+    updateCurrentScene(scene){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_CURRENT_SCENE,
+            scene: scene,
+        })
+
+    },
 
     //LABELS
 

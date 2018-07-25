@@ -17,6 +17,8 @@ class CentralSceneStore extends ReduceStore {
         switch (action.type) {
             case ActionTypes.GET_SCENE_RESPONSE:
                 return action.scene;
+            case ActionTypes.UPDATE_CURRENT_SCENE:
+                return action.scene;
             case ActionTypes.ADD_NEW_TRANSITION:
 
                 state.addNewTransitionToScene(action.obj);

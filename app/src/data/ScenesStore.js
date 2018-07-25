@@ -3,6 +3,7 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
 import LeftbarElement from "./LeftbarElement";
+import MyScene from "../scene/MyScene";
 
 class ScenesStore extends ReduceStore {
 
@@ -19,21 +20,17 @@ class ScenesStore extends ReduceStore {
             case ActionTypes.LOAD_ALL_SCENES:
                 // if state isn't undefined
                 if(state) {
+                    // for each scene in db create new MyScene object
                     action.response.forEach(function(scene){
-                        let img = scene.name;
-                        let name = scene.name.replace(/\.[^/.]+$/, "");
-
-                        //console.log(name + ": " + img);
-
-                        state = state.add(new LeftbarElement({
-                                name: name,
-                                img: img,
-                            })
-                        );
+                        state = state.add(new MyScene(
+                            scene.name,
+                            [], //transition list
+                            scene.tagName,
+                            scene.tagColor,
+                        ));
                     });
                 }
                 return state;
-
             case ActionTypes.GET_SCENE_RESPONSE:
                 return state.add(action.scene);
             default:

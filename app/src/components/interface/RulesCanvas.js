@@ -12,23 +12,23 @@ function RulesCanvas(props){
 function generateRules(currentScene){
 
     if(currentScene != null) {
-        cleanCanvas();
-        let canvas = document.getElementById('canvas');
-        currentScene.transitions.forEach(transition => ((generateTransitionRule(canvas, transition))));
+        console.log(currentScene);
+        //return (currentScene.transitions.forEach(transition => ((generateTransitionRule(canvas, transition)))));
     }
-
 }
 
 function generateTransitionRule(canvas, transition){
 
-    transition.rules.forEach((rule) => {
-        let r = document.createElement('p');
-        r.class = 'rules';
-        //r.innerHTML = 'Nuova transizione:' + transition.name;
-        r.innerHTML = L.WHEN + ' ' + L.PLAYER + ' ' + L[rule.event] + ' ' + transition.name + ' ' + L.EX + ' ' +
-                      L[rule.action.type] + ' ' + L.TOWARDS + ' ' + rule.action.target;
-        canvas.appendChild(r);
-    });
+    return (
+        transition.rules.forEach((rule) => {
+            return (
+                <p className={'rules'}>
+                    {L.WHEN + ' ' + L.PLAYER + ' ' + L[rule.event] + ' ' + transition.name + ' ' + L.EX + ' ' +
+                    L[rule.action.type] + ' ' + L.TOWARDS + ' ' + rule.action.target}
+                </p>
+            );
+        })
+    );
 }
 
 function cleanCanvas(){

@@ -14,7 +14,19 @@ function getByName(name){
                 return console.error(err)
             }
 
-            Actions.receiveScene(response.body);
+            /**TODO: FIX THIS IF**/
+            if(scene == null){
+                //new Scene object
+                let newScene = new MyScene(
+                    response.body.name,
+                    [], //transition list
+                    response.body.tagName,
+                    response.body.tagColor,
+                );
+                Actions.receiveScene(newScene);
+            } else {
+                Actions.updateCurrentScene(scene);
+            }
         });
 }
 
@@ -37,6 +49,7 @@ function createScene(name, tagColor, tagName){
                 return console.error(err);
             }
 
+            // new Scene object
             let newScene = new MyScene(
                 response.body.name,
                 [], //transition list
@@ -45,6 +58,7 @@ function createScene(name, tagColor, tagName){
             );
 
             //update scene visualization
+
             Actions.receiveScene(newScene);
         });
 }
