@@ -9,7 +9,7 @@ function RightBar(props){
     return(
         <div className={'rightbar'}>
             <a>Proprietà</a>
-            <button onClick={()=> props.selectAllObjects()}>ObjectList</button>
+            <button onClick={()=> props.selectAllObjects()} className={"btn"}>ObjectList</button>
             <div id={'rbContainer'}>
                 <div id={'rightbarView'}>
                     {optionsView(props)}
@@ -56,65 +56,80 @@ function generateTransitionOptions(object){
     return(
         <div className={'currentObjectOptions'}>
             <label>media che fa cose</label>
-            <div>
-                <label>Nome</label>
-                <input
-                    id={"transitionName"}
-                    className={"transitionInput"}
-                    type={"text"}
-                    defaultValue={object.name}
-                />
+                <label>Nome:</label>
+                <div id={"transitionName"}
+                     className={"propertyForm"}
+                     contentEditable={true}
+                     onBlur={()=> setProperty(object,'name',"transitionName")}
+                >
+                    {object.name}
+                </div>
+
                 <label>Duration</label>
-                <input id={"transitionDuration"}
-                       className={"transitionInput"}
-                       defaultValue={object.duration}
-                       type={"text"}
-                       onInput={()=> { onlyNumbers("transitionDuration")} }
-                />
-            </div>
-            <div>
-                <label>Rotation</label>
-                <input
+                <div id={"transitionDuration"}
+                     className={"propertyForm"}
+                     contentEditable={true}
+                     onBlur={()=> setProperty(object,'duration',"transitionDuration")}
+                     onInput={() => onlyNumbers("transitionDuration")}
+                >
+                    {object.duration}
+                </div>
+            <label>Rotation</label>
+            <div className={"propertyForm"}>
+                <div
                     id={"rotationX"}
                     className={"rotationInput"}
-                    defaultValue={object.rotationX}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("rotationX")} }
-                />
-                <input
+                    contentEditable={true}
+                    onBlur={()=> setProperty(object,'rotationX',"rotationX")}
+                    onInput={() => onlyNumbers("rotationX")}
+                >
+                    {object.rotationX}
+                </div>
+
+                <div
                     id={"rotationY"}
                     className={"rotationInput"}
-                    defaultValue={object.rotationY}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("rotationY")} }
-                />
-                <input
+                    contentEditable={true}
+                    onBlur={()=> setProperty(object,'rotationY',"rotationY")}
+                    onInput={() => onlyNumbers("rotationY")}
+                >
+                    {object.rotationY}
+                </div>
+                <div
                     id={"rotationZ"}
                     className={"rotationInput"}
-                    defaultValue={object.rotationZ}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("rotationZ")} }
-                />
+                    contentEditable={true}
+                    onBlur={()=> setProperty(object,'rotationZ',"rotationZ")}
+                    onInput={() => onlyNumbers("rotationZ")}
+                >
+                    {object.rotationZ}
+                </div>
             </div>
             <div>
                 <label>Theta</label>
-                <input
+                <div
                     id={"transitionTheta"}
-                    className={"transitionInput"}
+                    className={"propertyForm"}
                     defaultValue={object.theta}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("transitionTheta")} }
-                />
+                    contentEditable={true}
+                    onBlur={()=> setProperty(object,'theta',"transitionTheta")}
+                    onInput={() => onlyNumbers("transitionTheta")}
+                >
+                    {object.theta}
+                </div>
             </div>
             <div>
                 <label>Height</label>
-                <input
+                <div
                     id={"transitionHeight"}
-                    className={"transitionInput"}
+                    className={"propertyForm"}
                     defaultValue={object.height}
-                    type={"text"}
-                    onInput={()=> { onlyNumbers("transitionHeight")} }
-                />
+                    contentEditable={true}
+                    onBlur={() => setProperty(object,'height',"transitionHeight")}
+                    onInput={() => onlyNumbers("transitionHeight")}
+                >
+                    {object.height}
+                </div>
             </div>
         </div>
     );
@@ -127,6 +142,12 @@ function onlyNumbers(id) {
     text.value = text.value.replace(/(\..*)\./g, '$1');
 }
 
+function setProperty(object, property, id){
+    let prova = document.getElementById(id).textContent;
+    object[property]=prova;
+    
+
+}
 
 export default RightBar;
 
