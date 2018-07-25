@@ -6,7 +6,7 @@ var request = require('superagent');
 const {apiBaseURL} = settings;
 
 //get scene by name
-function getByName(name){
+function getByName(name, scene=null){
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
         .set('Accept', 'application/json')
         .end(function(err, response) {
