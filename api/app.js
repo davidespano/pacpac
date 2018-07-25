@@ -98,6 +98,9 @@ api.delete('/:gameID/scenes/:name', routes.scenes.deleteScene);
 /**TAGS**/
 api.get('/:gameID/tags', routes.tags.list);
 
+/**INTERACTIVE OBJECTS**/
+api.put('/:gameID/scenes/:name/transitions', routes.interactiveObjects.putTransition);
+
 /**MEDIA**/
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
