@@ -19,17 +19,6 @@ class CentralSceneStore extends ReduceStore {
                 return action.scene;
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 return action.scene;
-            case ActionTypes.ADD_NEW_TRANSITION:
-
-                state.addNewTransitionToScene(action.obj);
-
-                return new MyScene(
-                    state.img,
-                    state.transitions,
-                    state.tagName,
-                    state.tagColor
-                );
-
             default:
                 return state;
         }

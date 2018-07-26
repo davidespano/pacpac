@@ -2,6 +2,7 @@ import React from 'react';
 import InputSceneForm from './InputSceneForm';
 import Transition from "../../interactives/Transition";
 import Actions from "../../actions/Actions";
+import MyScene from "../../scene/MyScene";
 
 function TopBar(props){
     return (
@@ -23,7 +24,16 @@ function createTransition(props) {
     if(props.currentScene != null){
         let tr = new Transition();
         tr.setName(props.currentScene.name + '_tr' + (props.currentScene.transitions.length + 1));
-        Actions.addNewTransition(tr);
+        let newScene = new MyScene(
+            props.currentScene.img,
+            props.currentScene.tagName,
+            props.currentScene.tagColor,
+            props.currentScene.transitions,
+        );
+
+        newScene.addNewTransitionToScene(tr);
+        props.addNewTransition(newScene, tr);
+
     } else {
         alert("Nessuna scena selezionata!");
     }

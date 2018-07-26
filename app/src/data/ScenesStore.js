@@ -12,7 +12,7 @@ class ScenesStore extends ReduceStore {
     }
 
     getInitialState() {
-        return Immutable.Set();
+        return Immutable.Map();
     }
 
     reduce(state, action) {
@@ -22,17 +22,21 @@ class ScenesStore extends ReduceStore {
                 if(state) {
                     // for each scene in db create new MyScene object
                     action.response.forEach(function(scene){
-                        state = state.add(new MyScene(
+                        let newScene = new MyScene(
                             scene.name,
-                            [], //transition list
                             scene.tagName,
                             scene.tagColor,
-                        ));
+                        );
+                        state = state.set(newScene.name, newScene);
                     });
                 }
                 return state;
             case ActionTypes.GET_SCENE_RESPONSE:
-                return state.add(action.scene);
+                /**TO DO: populate Scene with data from db here**/
+                return state;
+            case ActionTypes.UPDATE_SCENE:
+                state = state.set(action.scene.name, action.scene);
+                return state;
             default:
                 return state;
         }

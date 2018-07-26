@@ -32,7 +32,7 @@ function list(props, path){
                 className={'list-img'}
                 alt={child.name}
                 title={title(child)}
-                onClick={()=> SceneAPI.getByName(child.img)}
+                onClick={()=> {props.updateCurrentScene(props.scenes.get(child.name))}}
             />
         </div>
     )));

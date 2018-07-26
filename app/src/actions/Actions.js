@@ -65,6 +65,13 @@ const Actions = {
 
     },
 
+    updateScene(scene){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SCENE,
+            scene: scene,
+        })
+    },
+
     //LABELS
 
     addNewTag(name, color){
@@ -78,13 +85,14 @@ const Actions = {
 
     //INTERACTIVE OBJECTS
 
-    addNewTransition(transition){
+    addNewTransition(scene, transition){
+        Actions.updateScene(scene);
+        Actions.updateCurrentScene(scene);
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_TRANSITION,
             obj: transition,
         })
     },
-
 
     addNewObject(object){
       AppDispatcher.dispatch({

@@ -14,19 +14,19 @@ function getByName(name, scene=null){
                 return console.error(err)
             }
 
-            /**TODO: FIX THIS IF**/
-            if(scene == null){
-                //new Scene object
-                let newScene = new MyScene(
-                    response.body.name,
-                    [], //transition list
-                    response.body.tagName,
-                    response.body.tagColor,
-                );
-                Actions.receiveScene(newScene);
-            } else {
-                Actions.updateCurrentScene(scene);
-            }
+            // /**TODO: FIX THIS IF**/
+            // if(scene == null){
+            //     //new Scene object
+            //     let newScene = new MyScene(
+            //         response.body.name,
+            //         response.body.tagName,
+            //         response.body.tagColor,
+            //         [], //transition list
+            //     );
+            //     Actions.receiveScene(newScene);
+            // } else {
+            //     Actions.updateCurrentScene(scene);
+            // }
         });
 }
 
