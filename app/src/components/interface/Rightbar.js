@@ -75,29 +75,32 @@ function generateTransitionOptions(object){
                     {object.duration}
                 </div>
             <label>Rotation</label>
-            <div className={"propertyForm"}>
+            <div className={"rotationInput"}>
                 <div
                     id={"rotationX"}
-                    className={"rotationInput"}
+                    className={"propertyForm"}
                     contentEditable={true}
                     onBlur={()=> setProperty(object,'rotationX',"rotationX")}
                     onInput={() => onlyNumbers("rotationX")}
                 >
                     {object.rotationX}
                 </div>
-
+            </div>
+            <div  className={"rotationInput"}>
                 <div
                     id={"rotationY"}
-                    className={"rotationInput"}
+                    className={"propertyForm"}
                     contentEditable={true}
                     onBlur={()=> setProperty(object,'rotationY',"rotationY")}
                     onInput={() => onlyNumbers("rotationY")}
                 >
                     {object.rotationY}
                 </div>
+            </div>
+            <div   className={"rotationInput"}>
                 <div
                     id={"rotationZ"}
-                    className={"rotationInput"}
+                    className={"propertyForm"}
                     contentEditable={true}
                     onBlur={()=> setProperty(object,'rotationZ',"rotationZ")}
                     onInput={() => onlyNumbers("rotationZ")}

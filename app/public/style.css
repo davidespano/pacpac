@@ -144,10 +144,5 @@
     margin-right: auto;
     margin-left: auto;
     background-color: #FFFFFF;
-    border-color: #000000;
-}
-
-[contenteditable="true"]:active,
-[contenteditable="true"]:default{
-    border-color: #0F6AB4;
+    border: 1px solid #71DBD4;
 }
