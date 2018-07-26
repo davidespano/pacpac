@@ -141,15 +141,13 @@ function generateTransitionOptions(object){
 //https://stackoverflow.com/questions/8808590/html5-number-input-type-that-takes-only-integers/17208628
 function onlyNumbers(id) {
     let text = document.getElementById(id);
-    text.value = text.value.replace(/[^0-9.]/g, '');
-    text.value = text.value.replace(/(\..*)\./g, '$1');
+    text.textContent = text.textContent.replace(/[^0-9.]/g, '');
+    text.textContent = text.textContent.replace(/(\..*)\./g, '$1');
 }
 
 function setProperty(object, property, id){
     let prova = document.getElementById(id).textContent;
     object[property]=prova;
-    
-
 }
 
 export default RightBar;
