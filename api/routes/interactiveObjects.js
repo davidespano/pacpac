@@ -66,6 +66,7 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *        - in: body
  *          name: transition
  *          type: object
+ *          required: true
  *          schema:
  *              $ref: '#/definitions/Transitions'
  *      responses:
@@ -79,7 +80,8 @@ const InteractiveObjects = require('../models/interactiveObjects')
 function putTransition(req, res, next) {
     const sceneName = req.params.name;
     const gameID = req.params.gameID;
-    InteractiveObjects.createUpdateTransition(dbUtils.getSession(req), sceneName, gameID)
+    const transition = req.body.transition;
+    InteractiveObjects.createUpdateTransition(dbUtils.getSession(req), transition, sceneName, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
