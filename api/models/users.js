@@ -1,16 +1,14 @@
-"use strict"
-
-var uuid = require('node-uuid');
-var randomstring = require("randomstring");
-var _ = require('lodash');
-var dbUtils = require('../neo4j/dbUtils');
-var User = require('../models/neo4j/user');
-var bcrypt = require('bcrypt');
-var crypto = require('crypto');
+const uuid = require('node-uuid');
+const randomstring = require("randomstring");
+const _ = require('lodash');
+const dbUtils = require('../neo4j/dbUtils');
+const User = require('../models/neo4j/user');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const saltRounds = 10;
 
-var register = function (session, username, password) {
+function register(session, username, password) {
     return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
         .then(results => {
             if (!_.isEmpty(results.records)) {
@@ -32,9 +30,9 @@ var register = function (session, username, password) {
                 return new User(results.records[0].get('user'));
             }
         );
-};
+}
 
-var me = function (session, token) {
+function me(session, token) {
     return session.run(
         'MATCH (user:User {token: {token}}) ' +
         'OPTIONAL MATCH (user)-[:OWN_GAME]->(game:Game) ' +
@@ -51,24 +49,23 @@ var me = function (session, token) {
             }
             return session.run(
                 'MATCH (user:User {token: {token}}) ' +
-                'SET user.tokenExpire = {tokenExp} ', {token: token, tokenExp: now + 7200000}).
-            then(res => {
+                'SET user.tokenExpire = {tokenExp} ', {token: token, tokenExp: now + 7200000}).then(res => {
                 u.games = _.map(results.records[0].get('games'), record => {
                     return record.properties.gameID;
-                })
+                });
                 return u;
             })
         });
-};
+}
 
-var login = function (session, username, password) {
+function login(session, username, password) {
     return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
         .then(results => {
                 if (_.isEmpty(results.records)) {
                     throw {username: 'Username or password wrong', status: 400}
                 }
                 else {
-                    var dbUser = _.get(results.records[0].get('user'), 'properties');
+                    const dbUser = _.get(results.records[0].get('user'), 'properties');
 
                     return bcrypt.compare(password, dbUser.password);
 
@@ -80,8 +77,8 @@ var login = function (session, username, password) {
             }
             return crypto.randomBytes(32);
         }).then(buf => {
-            var token = buf.toString('hex');
-            var tokenExp = new Date().getTime() + 7200000; //2hours in milliseconds
+            const token = buf.toString('hex');
+            const tokenExp = new Date().getTime() + 7200000; //2hours in milliseconds
 
             return session.run('MATCH (user:User {username: {username}})' +
                 'SET user += {token: {token}, tokenExpire: {tokenExp}}' +
@@ -96,7 +93,7 @@ var login = function (session, username, password) {
                     }
                 })
         });
-};
+}
 
 module.exports = {
     register: register,

@@ -1,7 +1,5 @@
-var writeError = require('../helpers/response').writeResponse;
-
-module.exports = function loginRequired(req, res, next) {
-    user = req.user;
+function loginRequired(req, res, next) {
+    const user = req.user;
     if (user.id == null) {
         res.sendStatus(403)
     } else {
@@ -12,4 +10,8 @@ module.exports = function loginRequired(req, res, next) {
             next()
         }
     }
+}
+
+module.exports = {
+    loginRequired: loginRequired
 };

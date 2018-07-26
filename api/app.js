@@ -1,4 +1,4 @@
-var express = require('express')
+const express = require('express')
     , path = require('path')
     , routes = require('./routes')
     , nconf = require('./config')
@@ -6,20 +6,20 @@ var express = require('express')
     , methodOverride = require('method-override')
     , errorHandler = require('errorhandler')
     , bodyParser = require('body-parser')
-    , setAuthUser = require('./middlewares/setAuthUser')
-    , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup')
+    , setAuthUser = require('./middlewares/setAuthUser').setAuthUser
+    , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup').neo4jSessionCleanup
     , writeError = require('./helpers/response').writeError
     , multer = require('multer')
     , fs = require('fs')
-    , checkGameID = require('./middlewares/checkGameID')
-    , loginRequired = require('./middlewares/loginRequired');
+    , checkGameID = require('./middlewares/checkGameID').checkGameID
+    , loginRequired = require('./middlewares/loginRequired').loginRequired;
 
-var app = express()
+const app = express()
     , api = express();
 
 app.use(nconf.get('api_path'), api);
 
-var swaggerDefinition = {
+const swaggerDefinition = {
     info: {
         title: 'Neo4j API for PACPAC (Node/Express)',
         version: '2.0.0',
@@ -30,7 +30,7 @@ var swaggerDefinition = {
 };
 
 // options for the swagger docs
-var options = {
+const options = {
     // import swaggerDefinitions
     swaggerDefinition: swaggerDefinition,
     // path to the API docs
@@ -38,10 +38,10 @@ var options = {
 };
 
 // initialize swagger-jsdoc
-var swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(options);
 
 // serve swagger
-api.get('/swagger.json', function(req, res) {
+api.get('/swagger.json', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
 });
@@ -53,8 +53,8 @@ api.use(bodyParser.json());
 api.use(methodOverride());
 
 //enable CORS
-var customHeaders = "name"; //headers we use for our api
-api.use(function(req, res, next) {
+const customHeaders = "name"; //headers we use for our api
+api.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
@@ -64,7 +64,7 @@ api.use(function(req, res, next) {
     }
     next();
 });
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
@@ -102,36 +102,35 @@ api.get('/:gameID/tags', routes.tags.list);
 api.put('/:gameID/scenes/:name/transitions', routes.interactiveObjects.putTransition);
 
 /**MEDIA**/
-var storage = multer.diskStorage({
+const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "public/"+req.params.gameID+"/")
+        cb(null, "public/" + req.params.gameID + "/")
     },
     filename: function (req, file, cb) {
         cb(null, req.headers.name)
     }
 });
-var upload = multer({
+const upload = multer({
     storage: storage,
-    fileFilter: function(req, file, cb){
-        fs.access("public/"+req.params.gameID+"/"+req.headers.name, (err)=>
-        {
+    fileFilter: function (req, file, cb) {
+        fs.access("public/" + req.params.gameID + "/" + req.headers.name, (err) => {
             if (!err)
-                cb(null,false);
+                cb(null, false);
             else
-                cb(null,true);
+                cb(null, true);
         });
     }
 });
 api.post('/public/:gameID/addMedia', upload.single("upfile"), routes.media.addMedia);
 
 //api error handler
-api.use(function(err, req, res, next) {
-    if(err && err.status) {
+api.use(function (err, req, res, next) {
+    if (err && err.status) {
         writeError(res, err);
     }
     else next(err);
 });
 
 app.listen(app.get('port'), () => {
-    console.log('Express server listening on port ' + app.get('port') );
+    console.log('Express server listening on port ' + app.get('port'));
 });

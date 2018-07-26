@@ -2,6 +2,10 @@
  * GET home page.
  */
 
-exports.index = function(req, res){
+function index(req, res) {
     res.render('index');
+}
+
+module.exports = {
+    index: index
 };
