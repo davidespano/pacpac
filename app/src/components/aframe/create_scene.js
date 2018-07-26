@@ -2,11 +2,14 @@ import Transition from "../../interactives/Transition";
 import MyScene from "../../scene/MyScene";
 import 'aframe';
 import './aframe-selectable'
+import './aframe-pointSaver'
+import './aframe-newGeometry'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
 import InteractiveObject from "../../interactives/InteractiveObject";
 var AFRAME = require('aframe');
+var THREE = require('three');
 
 
 function sceneFactory()
@@ -41,7 +44,7 @@ function sceneFactory()
 function Curved(props)
 {
     return(
-        <Entity primitive="a-curvedimage"  id={"curv" + props.target} rotation={props.rotation} radius = "9.5" theta-length={props.theta}
+        <Entity primitive="a-curvedimage" id={"curv" + props.target} rotation={props.rotation} radius = "9.5" theta-length={props.theta}
                 height={props.height} selectable={'target:' + props.target}/>
     );
 }
@@ -71,12 +74,79 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material}>
+            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material}>
                 {curves}
             </Entity>
         );
     }
+}
 
+
+function provaPunti()
+{
+    let cursor = document.querySelector('a-cursor');
+    let puntisalvati = cursor.getAttribute("pointsaver").points;
+
+    let peppeio = document.querySelector("#rapeme");
+    console.log("prova ftoString")
+    console.log(JSON.stringify(puntisalvati));
+
+    puntisalvati = puntisalvati.map(punto =>
+        punto.toArray().join(" ")
+    );
+
+
+    peppeio.setAttribute('geometry', 'primitive: mygeo; vertices: ' + puntisalvati.join());
+
+    /*
+    let prova = new THREE.Geometry();
+    console.log("puntiSalvati");
+    console.log(puntisalvati);
+
+    puntisalvati.forEach((punto) => {
+        prova.vertices.push(punto);
+    });
+
+    console.log("Prova");
+    console.log(prova);
+
+    let facess = THREE.ShapeUtils.triangulateShape(prova.vertices, []);
+
+    for( var i = 0; i < facess.length; i++){
+        prova.faces.push( new THREE.Face3( facess[i][0], facess[i][1], facess[i][2]));
+    }
+
+    var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+    var mesh = new THREE.Mesh(prova, material );
+
+    console.log(mesh);
+
+    let peppeio = document.querySelector("#rapeme");
+    console.log(peppeio);
+    */
+    //peppeio.setAttribute('geometry', 'primitive: mesh');
+}
+
+class Prova extends React.Component
+{
+
+    constructor(props)
+    {
+        super(props);
+    }
+
+    componentDidMount()
+    {
+        this.nv.addEventListener("click", function clickListener(evt){
+           provaPunti();
+       });
+    }
+
+    render() {
+        return (
+            <Entity _ref={elem => this.nv = elem} id="rapeme" geometry="primitive: box" position="3 7 5"></Entity>
+        );
+    }
 }
 
 export default class VRScene extends React.Component{
@@ -115,26 +185,27 @@ export default class VRScene extends React.Component{
             else opacity = "opacity: 0";
 
             return(
-                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img} material={opacity} transitions={curvedImages} handler={ (newActiveScene) => this.handleSceneChange(newActiveScene) }/>
+                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img} material={opacity} transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
             );
         });
 
         return(
             <div id="mainscene">
                 <button onClick={() => this.props.switchToEditMode()}>EDIT</button>
+
                 <Scene>
                     {skies}
+                    <Prova ></Prova>
 
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor"></Entity>
+                            <Entity primitive="a-cursor" id="cursor" pointsaver></Entity>
                         </Entity>
                     </Entity>
                 </Scene>
             </div>
         );
     }
-
 }
 
 
