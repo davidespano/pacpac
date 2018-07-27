@@ -9,6 +9,8 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *  Rules:
  *      type: object
  *      properties:
+ *          uuid:
+ *              type: string
  *          event:
  *              type: string
  *          condition:
@@ -80,7 +82,7 @@ const InteractiveObjects = require('../models/interactiveObjects')
 function putTransition(req, res, next) {
     const sceneName = req.params.name;
     const gameID = req.params.gameID;
-    const transition = req.body.transition;
+    const transition = req.body;
     InteractiveObjects.createUpdateTransition(dbUtils.getSession(req), transition, sceneName, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
