@@ -32,7 +32,7 @@ class ScenesStore extends ReduceStore {
                 }
                 return state;
             case ActionTypes.GET_SCENE_RESPONSE:
-                /**TO DO: populate Scene with data from db here**/
+                state = state.set(action.scene.name, action.scene);
                 return state;
             case ActionTypes.UPDATE_SCENE:
                 state = state.set(action.scene.name, action.scene);

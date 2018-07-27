@@ -52,9 +52,9 @@ function createScene(name, tagColor, tagName){
             // new Scene object
             let newScene = new MyScene(
                 response.body.name,
-                [], //transition list
                 response.body.tagName,
                 response.body.tagColor,
+                [], //transition list
             );
 
             //update scene visualization

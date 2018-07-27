@@ -1,5 +1,7 @@
 import React from 'react';
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
+import Actions from "../../actions/Actions";
+import InteractiveObject from "../../interactives/InteractiveObject";
 
 function RightBar(props){
 
@@ -25,17 +27,17 @@ function optionsView(props){
         case InteractiveObjectsTypes.TRANSITION:
             return generateTransitionOptions(props.currentObject.object);
         default:
-            return showObjects(props.interactiveObjects);
+            return showObjects(props.interactiveObjects,props);
     }
 }
 
-function showObjects(interactiveObjects) {
+function showObjects(interactiveObjects,props) {
     if(interactiveObjects.size > 0){
         return (
             <div id={'objectsList'}>
                 {interactiveObjects.map( value => {
                     //console.log(value);
-                    return (<div key={value.name} className={'objectsList-element'}>{value.name}</div>);
+                    return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
                 })}
             </div>
         );
@@ -50,8 +52,6 @@ function showObjects(interactiveObjects) {
 }
 
 function generateTransitionOptions(object){
-
-    console.log(object.name);
 
     return(
         <div className={'currentObjectOptions'}>
