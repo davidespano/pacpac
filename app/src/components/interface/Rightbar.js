@@ -32,7 +32,7 @@ function optionsView(props){
 }
 
 function showObjects(interactiveObjects,props) {
-    if(interactiveObjects.size > 0){
+    /*if(interactiveObjects.size > 0){
         return (
             <div id={'objectsList'}>
                 {interactiveObjects.map( value => {
@@ -46,6 +46,16 @@ function showObjects(interactiveObjects,props) {
         return (
             <div id={'objectsList'}>
                 Non ci sono oggetti!
+            </div>
+        );
+    }*/
+    if(props.currentScene != null){
+        return (
+            <div id={'objectsList'}>
+                {[...props.currentScene.transitions.values()].map( value => {
+                    //console.log(value);
+                    return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
+                })}
             </div>
         );
     }
