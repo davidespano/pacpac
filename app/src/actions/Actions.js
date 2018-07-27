@@ -107,6 +107,14 @@ const Actions = {
         })
     },
 
+    updateCurrentObject(object, objectType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_CURRENT_OBJECT,
+            obj: object,
+            objType: objectType,
+        })
+    },
+
     //OTHER
 
     onDrop(picture){

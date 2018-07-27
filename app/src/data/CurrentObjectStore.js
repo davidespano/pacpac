@@ -33,6 +33,11 @@ class CurrentObjectStore extends ReduceStore {
                     object: null,
                     type: null,
                 };
+            case ActionTypes.UPDATE_CURRENT_OBJECT:
+                return {
+                    object: action.obj,
+                    type: action.objType,
+                };
             default:
                 return state;
         }

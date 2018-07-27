@@ -25,7 +25,7 @@ function optionsView(props){
 
     switch(props.currentObject.type){
         case InteractiveObjectsTypes.TRANSITION:
-            return generateTransitionOptions(props.currentObject.object);
+            return generateTransitionOptions(props.currentObject.object, props);
         default:
             return showObjects(props.interactiveObjects,props);
     }
@@ -61,7 +61,7 @@ function showObjects(interactiveObjects,props) {
     }
 }
 
-function generateTransitionOptions(object){
+function generateTransitionOptions(object, props){
 
     return(
         <div className={'currentObjectOptions'}>
@@ -70,7 +70,7 @@ function generateTransitionOptions(object){
                 <div id={"transitionName"}
                      className={"propertyForm"}
                      contentEditable={true}
-                     onBlur={()=> setProperty(object,'name',"transitionName")}
+                     onBlur={()=> setProperty(object,'name',"transitionName", props)}
                 >
                     {object.name}
                 </div>
@@ -79,7 +79,7 @@ function generateTransitionOptions(object){
                 <div id={"transitionDuration"}
                      className={"propertyForm"}
                      contentEditable={true}
-                     onBlur={()=> setProperty(object,'duration',"transitionDuration")}
+                     onBlur={()=> setProperty(object,'duration',"transitionDuration", props)}
                      onInput={() => onlyNumbers("transitionDuration")}
                 >
                     {object.duration}
@@ -90,7 +90,7 @@ function generateTransitionOptions(object){
                     id={"rotationX"}
                     className={"propertyForm"}
                     contentEditable={true}
-                    onBlur={()=> setProperty(object,'rotationX',"rotationX")}
+                    onBlur={()=> setProperty(object,'rotationX',"rotationX", props)}
                     onInput={() => onlyNumbers("rotationX")}
                 >
                     {object.rotationX}
@@ -101,7 +101,7 @@ function generateTransitionOptions(object){
                     id={"rotationY"}
                     className={"propertyForm"}
                     contentEditable={true}
-                    onBlur={()=> setProperty(object,'rotationY',"rotationY")}
+                    onBlur={()=> setProperty(object,'rotationY',"rotationY", props)}
                     onInput={() => onlyNumbers("rotationY")}
                 >
                     {object.rotationY}
@@ -112,7 +112,7 @@ function generateTransitionOptions(object){
                     id={"rotationZ"}
                     className={"propertyForm"}
                     contentEditable={true}
-                    onBlur={()=> setProperty(object,'rotationZ',"rotationZ")}
+                    onBlur={()=> setProperty(object,'rotationZ',"rotationZ", props)}
                     onInput={() => onlyNumbers("rotationZ")}
                 >
                     {object.rotationZ}
@@ -125,7 +125,7 @@ function generateTransitionOptions(object){
                     className={"propertyForm"}
                     defaultValue={object.theta}
                     contentEditable={true}
-                    onBlur={()=> setProperty(object,'theta',"transitionTheta")}
+                    onBlur={()=> setProperty(object,'theta',"transitionTheta", props)}
                     onInput={() => onlyNumbers("transitionTheta")}
                 >
                     {object.theta}
@@ -138,7 +138,7 @@ function generateTransitionOptions(object){
                     className={"propertyForm"}
                     defaultValue={object.height}
                     contentEditable={true}
-                    onBlur={() => setProperty(object,'height',"transitionHeight")}
+                    onBlur={() => setProperty(object,'height',"transitionHeight", props)}
                     onInput={() => onlyNumbers("transitionHeight")}
                 >
                     {object.height}
@@ -155,9 +155,10 @@ function onlyNumbers(id) {
     text.textContent = text.textContent.replace(/(\..*)\./g, '$1');
 }
 
-function setProperty(object, property, id){
+function setProperty(object, property, id, props){
     let prova = document.getElementById(id).textContent;
     object[property]=prova;
+    props.updateCurrentObject(props.currentObject.type, object);
 }
 
 export default RightBar;

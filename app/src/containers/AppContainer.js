@@ -57,6 +57,7 @@ function getState() {
         addNewTransition: Actions.addNewTransition,
         addNewObject: Actions.addNewObject,
         selectAllObjects: Actions.selectAllObjects,
+        updateCurrentObject: Actions.updateCurrentObject,
 
         //OTHER
 
