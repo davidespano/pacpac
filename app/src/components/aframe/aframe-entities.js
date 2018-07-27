@@ -14,7 +14,7 @@ function Curved(props)
 function Sound(props)
 {
     return(
-        <Entity sound="src: http://localhost:3000/media/2k/provaSound.mp3; autoplay: true" />
+        <Entity sound={"src: http://localhost:3000/media/2k/" + props.track + "; autoplay: true"} />
     );
 }
 

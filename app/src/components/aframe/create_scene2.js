@@ -4,10 +4,10 @@ import 'aframe';
 import './aframe-selectable'
 import {Curved, Sound} from './aframe-entities';
 import React from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
 import InteractiveObject from "../../interactives/InteractiveObject";
-var AFRAME = require('aframe');
+//var AFRAME = require('aframe');
 
 function createTransation(tr, target, theta){
 
@@ -25,6 +25,7 @@ function sceneFactory()
     var tr1 = new Transition('', 2000, '0 156 0');
     createTransation(tr1, 'bolla06', 50);
     scene1.transitions.push(tr1);
+    scene1.tag.tagName='provaSound.mp3'
     sceneList.push(scene1);
 
     var scene2 = new MyScene("bolla06.mp4");
@@ -111,12 +112,7 @@ class Bubble extends React.Component
                 <Curved key={"keyC"+ curve.rules.target} target={curve.rules.target} rotation={curve.rotation} theta={curve.theta} height={curve.height}/>
             );
         });
-        const sound = () =>
-        {
-            return(
-                <Sound />
-            );
-        };
+
         return(
             <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/2k/" + this.props.img} radius="10" material = {this.props.material}>
                 {curves}
