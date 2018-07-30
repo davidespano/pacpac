@@ -11,14 +11,15 @@ class ObjectsStore extends ReduceStore {
     }
 
     getInitialState(){
-        return Immutable.Set();
+        return Immutable.Map();
     }
 
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_TRANSITION:
                 //console.log(action.obj)
-                return state.add(action.obj);
+                state = state.set(action.obj.name, action.obj);
+                return state;
             default:
                 return state;
         }
