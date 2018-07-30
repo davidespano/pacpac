@@ -14,9 +14,9 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *          event:
  *              type: string
  *          condition:
- *              type: object
+ *              type: string
  *          action:
- *              type: object
+ *              type: string
  */
 
 /**
