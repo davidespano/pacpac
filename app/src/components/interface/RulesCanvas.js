@@ -36,17 +36,17 @@ function chooseObj(object, rule, props){
 
     return (
         <div className={"ruleObjSelection"}>
-            <input list={'ruleObjSelection-'+rule.uid} defaultValue={object.name} />
-            <datalist id={'ruleObjSelection-'+rule.uid}
-                    onInput={ () => {
-                        let e = document.getElementById('ruleObjSelection-'+rule.uid);
+            <input list={'ruleObjSelection-'+rule.uuid} value={object.name} />
+            <datalist id={'ruleObjSelection-'+rule.uuid}
+                    onChange={ () => {
+                        let e = document.getElementById('ruleObjSelection-'+rule.uuid);
                         let selected = e.options[e.selectedIndex].value;
                         console.log(selected);
                         modifyRule(object, rule, selected , props)
                     }}>
                 {[...props.interactiveObjects.values()].map((obj) => {
                     return (
-                        <option key={obj.name} value={obj.name}>{obj.name}</option>
+                        <option key={obj.uuid} value={obj.name}>{obj.name}</option>
                     );
                 })}
             </datalist>
@@ -55,7 +55,7 @@ function chooseObj(object, rule, props){
 }
 
 function modifyRule(fstObject, rule, sndObjectName, props){
-    console.log('onChange:');
+    console.log('onSelect:');
     console.log(fstObject);
     console.log(rule);
     console.log(sndObjectName);

@@ -6,7 +6,7 @@ class InteractiveObject {
     constructor(rules = [], name){
         this.name = name;
         this.rules = rules;
-        this.uid = uuid.v4();
+        this.uuid = uuid.v4();
     }
 
     addNewRule(event, condition, action){

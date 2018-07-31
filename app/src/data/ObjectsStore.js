@@ -18,7 +18,7 @@ class ObjectsStore extends ReduceStore {
         switch(action.type){
             case ActionTypes.ADD_NEW_TRANSITION:
                 //console.log(action.obj)
-                state = state.set(action.obj.name, action.obj);
+                state = state.set(action.obj.uuid, action.obj);
                 return state;
             default:
                 return state;

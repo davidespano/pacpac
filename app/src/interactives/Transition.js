@@ -1,6 +1,7 @@
 import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes"
 import InteractiveObject from "./InteractiveObject";
+let uuid = require('uuid');
 
 class Transition extends InteractiveObject {
 
@@ -17,7 +18,7 @@ class Transition extends InteractiveObject {
         this.addNewRule(
             EventTypes.CLICK, //event
             {}, //condition
-            {type: RuleActionTypes.TRANSITION, target: '',} //action
+            [{type: RuleActionTypes.TRANSITION, target: '', uuid: uuid.v4()}] //action
         );
 
         this.setRotation(rotationX, rotationY, rotationZ);
