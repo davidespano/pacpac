@@ -37,8 +37,8 @@ function InputSceneForm(props){
                             />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-secondary" onClick={()=>{
+                            <button type="button" className="btn btn-secondary buttonClose" data-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
                                 let name = document.getElementById("scene_name").value,
                                     media = document.getElementById("imageInput").files[0],
                                     tag= JSON.parse(document.getElementById("scene_tag").value);

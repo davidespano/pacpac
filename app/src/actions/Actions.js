@@ -115,6 +115,13 @@ const Actions = {
         })
     },
 
+    filterObject(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.OBJECTS_FILTER,
+            filter: filterType,
+        })
+    },
+
     //OTHER
 
     onDrop(picture){

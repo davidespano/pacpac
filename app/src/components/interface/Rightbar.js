@@ -10,8 +10,6 @@ function RightBar(props){
     
     return(
         <div className={'rightbar'}>
-            <a>Proprietà</a>
-            <button onClick={()=> props.selectAllObjects()} className={"btn"}>ObjectList</button>
             <div id={'rbContainer'}>
                 <div id={'rightbarView'}>
                     {optionsView(props)}
@@ -22,7 +20,6 @@ function RightBar(props){
 }
 
 function optionsView(props){
-
     switch(props.currentObject.type){
         case InteractiveObjectsTypes.TRANSITION:
             return generateTransitionOptions(props.currentObject.object, props);
@@ -32,40 +29,25 @@ function optionsView(props){
 }
 
 function showObjects(interactiveObjects,props) {
-    /*if(interactiveObjects.size > 0){
-        return (
-            <div id={'objectsList'}>
-                {interactiveObjects.map( value => {
-                    //console.log(value);
-                    return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
-                })}
+
+    return (
+        <div id={'objectsList'}>
+            <a>Oggetti</a>
+            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+                    <button className={"btn"} onClick={() => props.filterObjectFunction('all')}> All</button>
+                <button className={"btn"}  onClick={() => props.filterObjectFunction('scene')}> Scene Object </button>
             </div>
-        );
-    } else {
-        //console.log('????');
-        return (
-            <div id={'objectsList'}>
-                Non ci sono oggetti!
-            </div>
-        );
-    }*/
-    if(props.currentScene != null){
-        return (
-            <div id={'objectsList'}>
-                {[...props.currentScene.transitions.values()].map( value => {
-                    //console.log(value);
-                    return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
-                })}
-            </div>
-        );
-    }
+            {generateObjectsList(props)}
+        </div>
+    );
 }
 
 function generateTransitionOptions(object, props){
-
     return(
         <div className={'currentObjectOptions'}>
-            <label>media che fa cose</label>
+            <a>Proprietà</a>
+            <button onClick={()=> props.selectAllObjects()} className={"btn"}>Show Objects</button>
+            <label>Target:</label>
                 <label>Nome:</label>
                 <div id={"transitionName"}
                      className={"propertyForm"}
@@ -156,9 +138,53 @@ function onlyNumbers(id) {
 }
 
 function setProperty(object, property, id, props){
-    let prova = document.getElementById(id).textContent;
-    object[property]=prova;
-    props.updateCurrentObject(props.currentObject.type, object);
+    let value = document.getElementById(id).textContent;
+    switch (property) {
+
+        case "rotationX":
+            object.setRotationX(value);
+            break;
+        case "rotationY":
+            object.setRotationY(value);
+            break;
+        case "rotationZ":
+            object.setRotationZ(value);
+            break;
+        default:
+            object[property] = value;
+    }
+    props.updateCurrentObject(object,props.currentObject.type);
+
+}
+
+function generateObjectsList(props) {
+    console.log(props.objectsFilter);
+
+    if (props.currentScene == null || props.objectsFilter === 'all'){
+        if (props.interactiveObjects.size === 0 ){
+            return (<div>Non ci sono oggetti</div>)
+        }
+
+        return ([...props.interactiveObjects.values()].map( value => {
+                //console.log(value);
+                return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
+            }
+        ));
+    }
+
+    else if (props.objectsFilter ==='scene'){
+
+        if (props.currentScene.transitions.length === 0 ){
+            return (<div>Non ci sono oggetti associati a questa scena</div>)
+        }
+
+        return ([...props.currentScene.transitions.values()].map( value => {
+                //console.log(value);
+                return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
+            }
+        ));
+    }
+
 }
 
 export default RightBar;

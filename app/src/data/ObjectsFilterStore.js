@@ -3,25 +3,24 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 
 
-class PicturesStore  extends ReduceStore {
+class ObjectsFilterStore  extends ReduceStore {
 
     constructor() {
         super(AppDispatcher);
     }
 
     getInitialState() {
-        return [];
+        return "scene";
     }
 
     reduce(state, action) {
         switch (action.type) {
-            case ActionTypes.ON_PICTURE_DROP:
-                console.log("PICTUREZZZZ");
-                return state.concat(action.picture);
+            case ActionTypes.OBJECTS_FILTER:
+                return action.filter;
             default:
                 return state;
         }
     }
 }
 
-export default new PicturesStore();
+export default new ObjectsFilterStore();

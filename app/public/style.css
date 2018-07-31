@@ -13,11 +13,10 @@
             'topbar topbar topbar topbar'
             'leftbar scene scene rightbar'
             'leftbar canvas canvas rightbar';
-    grid-gap: 5px;
-    padding: 5px;
-    background-color: #71DBD4;
+    grid-gap: 1.5px;
+    padding: 1px;
+    background-color: #ADB0B1;
     min-height: 99vh;
-    border-radius: 5px;
 }
 
 .grid-container > div {
@@ -26,6 +25,14 @@
     font-size: 30px;
 
 }
+.grid-container > .topbar{
+    background-color: #FFFFFF;
+}
+
+.grid-container > .scene{
+    background-color: #FFFFFF;
+}
+
 .navbar{
     justify-content: left;
     padding-left: 10px;
@@ -91,13 +98,13 @@
 }
 
 .pop-button{
-    border-radius: 8px;
-    border-color: #0A0A0A;
+    border-radius: 5px;
 }
 
 .topbar{
     display: block;
-    padding: 0;
+    padding-top: 5px;
+    padding-left: 20px;
 }
 
 /*prove rightbar*/
@@ -111,15 +118,16 @@
 
 .currentObjectOptions label {
     font-size: 20px;
+    width: 100%;
 }
 
 .currentObjectOptions{
-    max-width: 80%;
+    width: 80%;
     display: inline-block;
 }
 
 .rotationInput{
-    max-width: 10%;
+    max-width: 20%;
     margin-right: auto;
     margin-left: auto;
     display: inline-block;
@@ -145,4 +153,30 @@
     margin-left: auto;
     background-color: #FFFFFF;
     border: 1px solid #71DBD4;
+}
+
+
+.navbar-brand{
+    font-size: 22px;
+    background-color: #FFFFFF;
+    color: #FE5000 !important;
+}
+
+.navbar-toggler{
+    background-color: #FE5000;
+    color: #FFFFFF !important;
+
+}
+.nav-item{
+    border-radius: 10px;
+    text-align: center;
+}
+
+.buttonClose{
+    border-color: #E4002B;
+    background-color: #E4002B;
+}
+
+.buttonConferm{
+    background-color: #2DC84D;
 }

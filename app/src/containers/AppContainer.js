@@ -8,6 +8,7 @@ import Actions from '../actions/Actions';
 import ObjectsStore from "../data/ObjectsStore";
 import CurrentObjectStore from "../data/CurrentObjectStore";
 import TagsStore from "../data/TagsStore";
+import ObjectsFilterStore from "../data/ObjectsFilterStore";
 
 
 function getStores() {
@@ -19,6 +20,7 @@ function getStores() {
         TagsStore,
         ObjectsStore,
         CurrentObjectStore,
+        ObjectsFilterStore,
     ];
 }
 
@@ -35,6 +37,7 @@ function getState() {
         sceneTags: TagsStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
         currentObject: CurrentObjectStore.getState(),
+        objectsFilter: ObjectsFilterStore.getState(),
 
         //FUNCTIONS
 
@@ -58,6 +61,7 @@ function getState() {
         addNewObject: Actions.addNewObject,
         selectAllObjects: Actions.selectAllObjects,
         updateCurrentObject: Actions.updateCurrentObject,
+        filterObjectFunction: Actions.filterObject,
 
         //OTHER
 
