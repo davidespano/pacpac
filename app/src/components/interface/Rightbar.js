@@ -34,7 +34,7 @@ function showObjects(interactiveObjects,props) {
         <div id={'objectsList'}>
             <a>Oggetti</a>
             <div className="btn-group btn-group-toggle" data-toggle="buttons">
-                    <button className={"btn"} onClick={() => props.filterObjectFunction('all')}> All</button>
+                <button className={"btn"} onClick={() => props.filterObjectFunction('all')}> All</button>
                 <button className={"btn"}  onClick={() => props.filterObjectFunction('scene')}> Scene Object </button>
             </div>
             {generateObjectsList(props)}
@@ -158,7 +158,7 @@ function setProperty(object, property, id, props){
 }
 
 function generateObjectsList(props) {
-    console.log(props.objectsFilter);
+    //console.log(props.objectsFilter);
 
     if (props.currentScene == null || props.objectsFilter === 'all'){
         if (props.interactiveObjects.size === 0 ){

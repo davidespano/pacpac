@@ -12,7 +12,7 @@ function RulesCanvas(props){
 function generateRules(currentScene, props){
 
     if(currentScene != null) {
-        console.log(currentScene);
+        //console.log(currentScene);
         if(currentScene.transitions.length === 0){
             return (<div>Non ci sono regole associate a questa scena</div>);
         }
@@ -26,8 +26,16 @@ function generateRule(object, props){
     return ([...object.rules.values()].map((rule) => {
         return (
             <p className={'rules'} key={rule.uid}>
-                {L.WHEN} {L.PLAYER} {L[rule.event]} {chooseObj(object, rule, props)} {L.EX} {L[rule.action.type]} {L.TOWARDS} {rule.action.target}
+                {L.WHEN} {L.PLAYER} {L[rule.event]} {chooseObj(object, rule, props)} {L.EX} {generateActions(rule.action)}
             </p>
+        );
+    }));
+}
+
+function generateActions(actions){
+    return ([...actions.values()].map((action) => {
+        return (
+            <p className="actions" key={action.uuid}>{L[action.type]} {L.TOWARDS} {action.target}</p>
         );
     }));
 }
@@ -36,29 +44,22 @@ function chooseObj(object, rule, props){
 
     return (
         <div className={"ruleObjSelection"}>
-            <input list={'ruleObjSelection-'+rule.uuid} value={object.name} />
-            <datalist id={'ruleObjSelection-'+rule.uuid}
-                    onChange={ () => {
-                        let e = document.getElementById('ruleObjSelection-'+rule.uuid);
-                        let selected = e.options[e.selectedIndex].value;
-                        console.log(selected);
-                        modifyRule(object, rule, selected , props)
-                    }}>
+            <input list={'ruleObjSelection-'+rule.uuid} defaultValue={object.name} />
+            <datalist id={'ruleObjSelection-'+rule.uuid}>
+                <select>
                 {[...props.interactiveObjects.values()].map((obj) => {
                     return (
                         <option key={obj.uuid} value={obj.name}>{obj.name}</option>
                     );
                 })}
+                </select>
             </datalist>
         </div>
     );
 }
 
 function modifyRule(fstObject, rule, sndObjectName, props){
-    console.log('onSelect:');
-    console.log(fstObject);
-    console.log(rule);
-    console.log(sndObjectName);
+
 }
 
 export default RulesCanvas;
