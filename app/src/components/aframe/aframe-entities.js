@@ -6,7 +6,7 @@ import {Entity} from 'aframe-react';
 function Curved(props)
 {
     return(
-        <Entity primitive="a-curvedimage"  id={"curv" + props.target} opacity="0" rotation={props.rotation} radius = "9.5" theta-length={props.theta}
+        <Entity primitive="a-curvedimage"  id={"curv" + props.target} material={"alphaTest: 1"} rotation={props.rotation} radius = "9.5" theta-length={props.theta}
                 height={props.height} selectable={'target:' + props.target}/>
     );
 }

@@ -1,12 +1,13 @@
 import Transition from "../../interactives/Transition";
 import MyScene from "../../scene/MyScene";
 import 'aframe';
+import 'aframe-chromakey-material';
 import './aframe-selectable'
-import {Curved, Sound} from './aframe-entities';
+import {Curved} from './aframe-entities';
 import React from 'react';
 //import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
-import InteractiveObject from "../../interactives/InteractiveObject";
+//import InteractiveObject from "../../interactives/InteractiveObject";
 //var AFRAME = require('aframe');
 
 function createTransation(tr, target, theta){
@@ -85,6 +86,7 @@ function sceneFactory()
     scene7.transitions.push(tr10);
     sceneList.push(scene7);
 
+    // var travel = new MyScene("travel.mp4")
 
     return sceneList;
 }
@@ -95,7 +97,7 @@ class Bubble extends React.Component
     {
         let el = this;
         this.nv.addEventListener("animationcomplete", function animationListener(evt){
-            if(evt.detail.name == "animation__appear")
+            if(evt.detail.name === "animation__appear")
             {
                 el.props.handler(el.props.name)
             };
@@ -114,7 +116,7 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/2k/" + this.props.img} radius="10" material = {this.props.material}>
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/2k/" + this.props.img} radius="10" material = {this.props.material} >
                 {curves}
             </Entity>
         );
@@ -136,7 +138,7 @@ export default class VRScene extends React.Component{
 
     handleSceneChange(newActiveScene)
     {
-        const index = this.state.scenes.findIndex(el => {return el.name == newActiveScene});
+        const index = this.state.scenes.findIndex(el => {return el.name === newActiveScene});
 
         this.setState({
             activeScene: index
@@ -150,7 +152,7 @@ export default class VRScene extends React.Component{
             let opacity;
             let curvedImages = [];
 
-            if(index == this.state.activeScene)
+            if(index === this.state.activeScene)
             {
                 curvedImages = sky.transitions;
                 opacity = "opacity: 1";
@@ -165,7 +167,7 @@ export default class VRScene extends React.Component{
         return(
             <div id="mainscene">
                 <button onClick={() => this.props.switchToEditMode()}>EDIT</button>
-                <Scene>
+                <Scene stats>
                     {skies}
 
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
