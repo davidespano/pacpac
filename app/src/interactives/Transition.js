@@ -5,7 +5,7 @@ let uuid = require('uuid');
 
 class Transition extends InteractiveObject {
 
-    constructor(media = "", duration = 0, rotationX = 0, rotationY = 0, rotationZ = 0, theta = 10, height = 2) {
+    constructor(media = "", duration = 0, rotationX = 0, rotationY = 0, rotationZ = 0, theta = 10, height = 2, vertices="") {
 
         super();
 
@@ -13,6 +13,7 @@ class Transition extends InteractiveObject {
         this.duration = duration;
         this.theta = theta;
         this.height = height;
+        this.vertices = vertices;
 
         //default rule is passed to superclass
         this.addNewRule(

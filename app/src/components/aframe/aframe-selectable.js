@@ -9,7 +9,6 @@ AFRAME.registerComponent('selectable',
     },
 
     init: function () {
-        console.log("ciao");
         var sceneEl = document.querySelector('a-scene');
         var elem = this.el;
         var target = this.data.target;

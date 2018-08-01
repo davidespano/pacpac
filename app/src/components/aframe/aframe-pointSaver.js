@@ -1,6 +1,5 @@
 var AFRAME = require('aframe');
 
-
 AFRAME.registerComponent('pointsaver',
 {
     schema:{
@@ -8,13 +7,19 @@ AFRAME.registerComponent('pointsaver',
     },
 
     init: function () {
-
-        let a_point = this.data.points;
-
-        this.el.addEventListener('click', function (evt) {
-            console.log(a_point);
-            a_point.push(evt.detail.intersection.point);
-            console.log(evt.detail.intersection.point);
-        });
+        this.el.addEventListener('click', pointSaver);
+    },
+    
+    remove: function () {
+        let cursor = document.querySelector('#cursor');
+        cursor.removeEventListener('click', pointSaver);
     }
 });
+
+function pointSaver(evt)
+{
+    let a_point = document.querySelector('#cursor').getAttribute('pointsaver').points;
+    a_point.push(evt.detail.intersection.point);
+    console.log(evt.detail.intersection.point);
+}
+

@@ -74,77 +74,9 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material}>
+            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material} prova>
                 {curves}
             </Entity>
-        );
-    }
-}
-
-
-function provaPunti()
-{
-    let cursor = document.querySelector('a-cursor');
-    let puntisalvati = cursor.getAttribute("pointsaver").points;
-
-    let peppeio = document.querySelector("#rapeme");
-    console.log("prova ftoString")
-    console.log(JSON.stringify(puntisalvati));
-
-    puntisalvati = puntisalvati.map(punto =>
-        punto.toArray().join(" ")
-    );
-
-
-    peppeio.setAttribute('geometry', 'primitive: mygeo; vertices: ' + puntisalvati.join());
-
-    /*
-    let prova = new THREE.Geometry();
-    console.log("puntiSalvati");
-    console.log(puntisalvati);
-
-    puntisalvati.forEach((punto) => {
-        prova.vertices.push(punto);
-    });
-
-    console.log("Prova");
-    console.log(prova);
-
-    let facess = THREE.ShapeUtils.triangulateShape(prova.vertices, []);
-
-    for( var i = 0; i < facess.length; i++){
-        prova.faces.push( new THREE.Face3( facess[i][0], facess[i][1], facess[i][2]));
-    }
-
-    var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-    var mesh = new THREE.Mesh(prova, material );
-
-    console.log(mesh);
-
-    let peppeio = document.querySelector("#rapeme");
-    console.log(peppeio);
-    */
-    //peppeio.setAttribute('geometry', 'primitive: mesh');
-}
-
-class Prova extends React.Component
-{
-
-    constructor(props)
-    {
-        super(props);
-    }
-
-    componentDidMount()
-    {
-        this.nv.addEventListener("click", function clickListener(evt){
-           provaPunti();
-       });
-    }
-
-    render() {
-        return (
-            <Entity _ref={elem => this.nv = elem} id="rapeme" geometry="primitive: box" position="3 7 5"></Entity>
         );
     }
 }
@@ -195,7 +127,6 @@ export default class VRScene extends React.Component{
 
                 <Scene>
                     {skies}
-                    <Prova ></Prova>
 
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
