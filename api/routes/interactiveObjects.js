@@ -15,8 +15,11 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *              type: string
  *          condition:
  *              type: string
- *          action:
- *              type: string
+ *          actions:
+ *              type: array
+ *              items:
+ *                  $ref: '#/definitions/Actions'
+ *
  */
 
 /**
@@ -43,6 +46,21 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *      allOf:
  *          - $ref: '#/definitions/InteractiveObjects'
  */
+
+/**
+ * @swagger
+ * definitions:
+ *  Actions:
+ *      type: object
+ *      properties:
+ *          uuid:
+ *              type: string
+ *          type:
+ *              type: string
+ *          target:
+ *              type: string
+ */
+
 
 /**
  * @swagger
