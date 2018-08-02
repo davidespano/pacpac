@@ -25,7 +25,7 @@ function Leftbar(props){
 //generate simple list
 function list(props, path){
     return ([...props.scenes.values()].map(child => (
-        <div key={child.name}>
+        <div key={child.name} className={'node_element'}>
             <label className={"list-title"}>{child.name}</label>
             <img
                 src={path + child.img}

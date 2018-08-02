@@ -194,4 +194,17 @@
     background-color: #2DC84D;
 }
 
+.rules{
+    font-size: 25px;
+}
 
+.node_element{
+    display: inline-block;
+    margin: 11px;
+}
+
+.btn{
+    color: #FFFFFF;
+    border-color: #DD4124;
+    background-color: #EF562D;
+}
