@@ -45,6 +45,7 @@ function getState() {
 
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
+        switchToGeometryMode: Actions.geometryModeOn,
 
         //scenes
 

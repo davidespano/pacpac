@@ -5,6 +5,15 @@
 .topbar {grid-area: topbar;}
 
 
+@font-face {
+    font-family: 'playregular';
+    src: url('play-regular-webfont.woff2') format('woff2'),
+    url('play-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: 15% auto auto 15%;
@@ -35,12 +44,13 @@
 
 .navbar{
     justify-content: left;
-    padding-left: 10px;
+
 }
 
 .navbar-toggler{
     margin-left: 5px;
     margin-right: 5px;
+    font-family: playregular;
 }
 
 .scene{
@@ -103,8 +113,6 @@
 
 .topbar{
     display: block;
-    padding-top: 5px;
-    padding-left: 20px;
 }
 
 /*prove rightbar*/
@@ -160,6 +168,7 @@
     font-size: 22px;
     background-color: #FFFFFF;
     color: #EF562D !important;
+    font-family: playregular;
 }
 
 .navbar-toggler{
@@ -180,3 +189,5 @@
 .buttonConferm{
     background-color: #2DC84D;
 }
+
+

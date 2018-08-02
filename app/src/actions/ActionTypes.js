@@ -4,7 +4,7 @@ const ActionTypes = {
 
     PLAY_MODE_ON : 'PLAY_MODE_ON',
     EDIT_MODE_ON : 'EDIT_MODE_ON',
-
+    GEOMETRY_MODE_ON: 'GEOMETRY_MODE_ON',
     //SCENES
 
     ADD_SCENE : 'ADD_SCENE',

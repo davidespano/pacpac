@@ -18,6 +18,12 @@ const Actions = {
         })
     },
 
+    geometryModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.GEOMETRY_MODE_ON
+        })
+    },
+
     //SCENES
 
     addScene(name, tag){

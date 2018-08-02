@@ -18,7 +18,10 @@ class ModeTypeStore extends ReduceStore {
                 return ActionTypes.EDIT_MODE_ON;
             case ActionTypes.PLAY_MODE_ON:
                 console.log("PLAY");
-                return ActionTypes.PLAY_MODE_ON
+                return ActionTypes.PLAY_MODE_ON;
+            case ActionTypes.GEOMETRY_MODE_ON:
+                console.log("Edit Geometry");
+                return ActionTypes.GEOMETRY_MODE_ON;
             default:
                 return state;
         }

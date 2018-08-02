@@ -125,6 +125,13 @@ function generateTransitionOptions(object, props){
                 >
                     {object.height}
                 </div>
+                <label>Geometry</label>
+                <button
+                    className={"propertyForm"}
+                    onClick={() => props.switchToGeometryMode()}
+                >
+                    Edit Geometry
+                </button>
             </div>
         </div>
     );

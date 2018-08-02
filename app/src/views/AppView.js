@@ -7,6 +7,7 @@ import VRScene from "../components/aframe/create_scene";
 import '../components/look-controls_us';
 //import PlayTest from "../components/aframe/playtest";
 import CentralScene from "../components/interface/CentralScene";
+import GeometryScene from "../components/aframe/geometryScene";
 
 function AppView(props) {
 
@@ -27,6 +28,13 @@ function AppView(props) {
                     <VRScene {...props}/>
                 </div>
             );
+        case 'GEOMETRY_MODE_ON':
+            return(
+                <div>
+                    <GeometryScene {...props}/>
+                </div>
+            );
+
         default:
             return(
                 <div>SOMETHING WENT WRONG!</div>
