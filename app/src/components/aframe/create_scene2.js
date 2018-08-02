@@ -22,7 +22,7 @@ function sceneFactory()
 {
     var sceneList = [];
 
-    var scene1 = new MyScene("bolla02.mp4");
+    var scene1 = new MyScene("prova.webm");
     var tr1 = new Transition('', 2000, '0 156 0');
     createTransation(tr1, 'bolla06', 50);
     scene1.transitions.push(tr1);

@@ -41,6 +41,16 @@ AFRAME.registerComponent('selectable',
 
 });
 
+AFRAME.registerComponent('muted', {
+
+    init: function () {
+        var vid = document.getElementById("bolla02");
+        console.log(vid)
+        vid.muted = true;
+    }
+
+});
+
 AFRAME.registerComponent('mySound',{
     schema: {
         src:{type: 'string'}
