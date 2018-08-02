@@ -125,7 +125,7 @@ export function provaPunti()
     console.log(fact[0]);
 }
 
-export default class VRScene extends React.Component{
+export default class GeometryScene extends React.Component{
 
     constructor(props)
     {
