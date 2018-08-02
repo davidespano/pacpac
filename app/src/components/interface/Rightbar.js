@@ -31,7 +31,7 @@ function optionsView(props){
 function showObjects(interactiveObjects,props) {
 
     return (
-        <div id={'objectsList'}>
+        <div id={'objectsList'} className={'currentObjectOptions'}>
             <a>Oggetti</a>
             <div className="btn-group btn-group-toggle" data-toggle="buttons">
                 <button className={"btn"} onClick={() => props.filterObjectFunction('all')}> All</button>
