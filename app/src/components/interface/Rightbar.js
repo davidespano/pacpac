@@ -66,7 +66,82 @@ function generateTransitionOptions(object, props){
                 >
                     {object.duration}
                 </div>
-            <label>Rotation</label>
+                <label>Geometry</label>
+                <button
+                    className={"propertyForm geometryBtn"}
+                    onClick={() => props.switchToGeometryMode()}
+                >
+                    Edit Geometry
+                </button>
+            </div>
+    );
+}
+
+//https://stackoverflow.com/questions/8808590/html5-number-input-type-that-takes-only-integers/17208628
+function onlyNumbers(id) {
+    let text = document.getElementById(id);
+    text.textContent = text.textContent.replace(/[^0-9.]/g, '');
+    text.textContent = text.textContent.replace(/(\..*)\./g, '$1');
+}
+
+function setProperty(object, property, id, props){
+    let value = document.getElementById(id).textContent;
+    switch (property) {
+
+        case "rotationX":
+            object.setRotationX(value);
+            break;
+        case "rotationY":
+            object.setRotationY(value);
+            break;
+        case "rotationZ":
+            object.setRotationZ(value);
+            break;
+        case "name":
+            object.setName(value);
+            object.rules.forEach(rule => {props.updateDatalist(rule.uuid,value)});
+            break;
+        default:
+            object[property] = value;
+    }
+    props.updateCurrentObject(object,props.currentObject.type);
+
+
+}
+
+function generateObjectsList(props) {
+    //console.log(props.objectsFilter);
+
+    if (props.currentScene == null || props.objectsFilter === 'all'){
+        if (props.interactiveObjects.size === 0 ){
+            return (<div>Non ci sono oggetti</div>)
+        }
+
+        return ([...props.interactiveObjects.values()].map( value => {
+                //console.log(value);
+                return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
+            }
+        ));
+    }
+
+    else if (props.objectsFilter ==='scene'){
+
+        if (props.currentScene.transitions.length === 0 ){
+            return (<div>Non ci sono oggetti associati a questa scena</div>)
+        }
+
+        return ([...props.currentScene.transitions.values()].map( value => {
+                //console.log(value);
+                return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
+            }
+        ));
+    }
+
+}
+
+export default RightBar;
+
+/*<label>Rotation</label>
             <div className={"rotationInput"}>
                 <div
                     id={"rotationX"}
@@ -124,75 +199,4 @@ function generateTransitionOptions(object, props){
                     onInput={() => onlyNumbers("transitionHeight")}
                 >
                     {object.height}
-                </div>
-                <label>Geometry</label>
-                <button
-                    className={"propertyForm"}
-                    onClick={() => props.switchToGeometryMode()}
-                >
-                    Edit Geometry
-                </button>
-            </div>
-        </div>
-    );
-}
-
-//https://stackoverflow.com/questions/8808590/html5-number-input-type-that-takes-only-integers/17208628
-function onlyNumbers(id) {
-    let text = document.getElementById(id);
-    text.textContent = text.textContent.replace(/[^0-9.]/g, '');
-    text.textContent = text.textContent.replace(/(\..*)\./g, '$1');
-}
-
-function setProperty(object, property, id, props){
-    let value = document.getElementById(id).textContent;
-    switch (property) {
-
-        case "rotationX":
-            object.setRotationX(value);
-            break;
-        case "rotationY":
-            object.setRotationY(value);
-            break;
-        case "rotationZ":
-            object.setRotationZ(value);
-            break;
-        default:
-            object[property] = value;
-    }
-    props.updateCurrentObject(object,props.currentObject.type);
-
-}
-
-function generateObjectsList(props) {
-    //console.log(props.objectsFilter);
-
-    if (props.currentScene == null || props.objectsFilter === 'all'){
-        if (props.interactiveObjects.size === 0 ){
-            return (<div>Non ci sono oggetti</div>)
-        }
-
-        return ([...props.interactiveObjects.values()].map( value => {
-                //console.log(value);
-                return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
-            }
-        ));
-    }
-
-    else if (props.objectsFilter ==='scene'){
-
-        if (props.currentScene.transitions.length === 0 ){
-            return (<div>Non ci sono oggetti associati a questa scena</div>)
-        }
-
-        return ([...props.currentScene.transitions.values()].map( value => {
-                //console.log(value);
-                return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
-            }
-        ));
-    }
-
-}
-
-export default RightBar;
-
+                </div>*/

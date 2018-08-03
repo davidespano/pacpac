@@ -23,7 +23,9 @@ function TopBar(props){
 function createTransition(props) {
     if(props.currentScene != null){
         let tr = new Transition();
-        tr.setName(props.currentScene.name + '_tr' + (props.currentScene.transitions.length + 1));
+        let name = props.currentScene.name + '_tr' + (props.currentScene.transitions.length + 1);
+        tr.setName(name);
+        rulesToDatalist(tr,props);
         let newScene = new MyScene(
             props.currentScene.img,
             props.currentScene.tagName,
@@ -33,10 +35,14 @@ function createTransition(props) {
 
         newScene.addNewTransitionToScene(tr);
         props.addNewTransition(newScene, tr);
-
     } else {
         alert("Nessuna scena selezionata!");
     }
+}
+
+function rulesToDatalist(object,props){
+
+    object.rules.forEach((rule) => {props.updateDatalist(rule.uuid, object.name)} )
 }
 
 export default TopBar;

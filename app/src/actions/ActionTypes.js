@@ -32,6 +32,7 @@ const ActionTypes = {
 
     //OTHER
     ON_PICTURE_DROP : 'ON_PICTURE_DROP',
+    UPDATE_DATALIST : 'UPDATE_DATALIST',
 };
 
 export default ActionTypes;

@@ -137,6 +137,14 @@ const Actions = {
         })
     },
 
+    updateDatalist(id,value){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_DATALIST,
+            id: id,
+            value: value,
+        })
+    },
+
 
 };
 

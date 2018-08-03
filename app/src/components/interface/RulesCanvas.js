@@ -41,11 +41,18 @@ function generateActions(actions){
 }
 
 function chooseObj(object, rule, props){
-
+    let id="ruleObjSelection";
+    let dataListId=id+"-"+rule.uuid;
+    let v = props.datalists.get(rule.uuid);
     return (
-        <div className={"ruleObjSelection"}>
-            <input list={'ruleObjSelection-'+rule.uuid} defaultValue={object.name} />
-            <datalist id={'ruleObjSelection-'+rule.uuid}>
+        <div className={id}>
+            <input
+                   id={id}
+                   list={dataListId}
+                   value={v}
+                   onKeyDown={(event) => handleKeys(event,v,rule.uuid,object.uuid,props)}
+            />
+            <datalist id={dataListId}>
                 <select>
                 {[...props.interactiveObjects.values()].map((obj) => {
                     return (
@@ -60,6 +67,26 @@ function chooseObj(object, rule, props){
 
 function modifyRule(fstObject, rule, sndObjectName, props){
 
+}
+
+function handleKeys(event,value,ruleId,objectId,props) {
+
+    if(event.key.length === 1)
+        value = value + event.key;
+    else {
+        switch (event.key) {
+            case 'Backspace':
+                if(value.length >= 1)
+                    value = value.slice(0,-1);
+                break;
+            default:
+                break;
+        }
+    }
+    props.updateDatalist(ruleId,value);
+   /* if(props.interactiveObjects.has(objectId)){
+
+    }*/
 }
 
 export default RulesCanvas;

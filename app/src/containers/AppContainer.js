@@ -9,6 +9,7 @@ import ObjectsStore from "../data/ObjectsStore";
 import CurrentObjectStore from "../data/CurrentObjectStore";
 import TagsStore from "../data/TagsStore";
 import ObjectsFilterStore from "../data/ObjectsFilterStore";
+import DatalistStore from "../data/DatalistStore";
 
 
 function getStores() {
@@ -21,6 +22,7 @@ function getStores() {
         ObjectsStore,
         CurrentObjectStore,
         ObjectsFilterStore,
+        DatalistStore,
     ];
 }
 
@@ -38,6 +40,7 @@ function getState() {
         interactiveObjects: ObjectsStore.getState(),
         currentObject: CurrentObjectStore.getState(),
         objectsFilter: ObjectsFilterStore.getState(),
+        datalists: DatalistStore.getState(),
 
         //FUNCTIONS
 
@@ -65,8 +68,8 @@ function getState() {
         filterObjectFunction: Actions.filterObject,
 
         //OTHER
-
         onDrop: Actions.onDrop,
+        updateDatalist: Actions.updateDatalist,
 
     };
 }

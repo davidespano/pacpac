@@ -72,6 +72,10 @@
     position: relative;
 }
 
+.list-img:hover{
+    cursor: pointer;
+}
+
 /*prove pop up*/
 .modal {
     font-size: 12px;
@@ -194,6 +198,12 @@
     background-color: #2DC84D;
 }
 
+.geometryBtn:hover{
+    background-color: #EF562D;
+    cursor: pointer;
+    color: #FFFFFF;
+}
+
 .rules{
     font-size: 25px;
 }
@@ -207,4 +217,13 @@
     color: #FFFFFF;
     border-color: #DD4124;
     background-color: #EF562D;
+}
+.objectsList-element{
+    margin-top: 5px;
+}
+.objectsList-element:hover{
+    background-color: #EF562D;
+    border: solid #EF562D 2px;
+    cursor: pointer;
+    color: #FFFFFF;
 }
