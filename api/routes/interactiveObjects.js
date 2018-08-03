@@ -1,6 +1,7 @@
 const InteractiveObjects = require('../models/interactiveObjects')
     , _ = require('lodash')
     , writeResponse = require('../helpers/response').writeResponse
+    , writeError = require('../helpers/response').writeError
     , dbUtils = require('../neo4j/dbUtils');
 
 /**
@@ -102,8 +103,8 @@ function putTransition(req, res, next) {
     const gameID = req.params.gameID;
     const transition = req.body;
     InteractiveObjects.createUpdateTransition(dbUtils.getSession(req), transition, sceneName, gameID)
-        .then(response => writeResponse(res, response))
-        .catch(next);
+        .then(response => writeResponse(res, response[0], response[1]?201:200)) //the function return true if created, so 201
+        .catch(error => writeError(res, error, 500));
 }
 
 module.exports = {
