@@ -8,6 +8,7 @@ async function createUpdateTransition(session, transition, sceneName, gameID) {
     const transaction = session.beginTransaction();
     delete transition.rules;
     try {
+        console.log("crea transizione");
         const res_transition = await transaction.run(
             'MATCH (s:Scene:`' + gameID + '` {name: $sceneName}) ' +
             'MERGE (s)-[:CONTAINS]->(t:InteractiveObject:Transition:`' + gameID + '` {uuid: $uuid}) ' +
@@ -16,10 +17,11 @@ async function createUpdateTransition(session, transition, sceneName, gameID) {
             'RETURN t',
             {sceneName: sceneName, uuid: transition.uuid, transition: transition}
         );
-        const rul_acts = {};
+        const rul_acts = [];
         const res_rules = await Promise.all(rules.map(rule => {
-            rul_acts[rule.uuid] = rule.actions;
+            rule.actions.forEach(action => {rul_acts.push([rule.uuid, action])});
             delete rule.actions;
+            console.log('crea rule');
             return transaction.run(
                 'MATCH (t:InteractiveObject:Transition:`' + gameID + '` {uuid: $tuuid}) ' +
                 'MERGE (t)-[:CONTAINS_RULE]->(r:Rule:`' + gameID + '` {uuid: $ruuid}) ' +
@@ -29,15 +31,24 @@ async function createUpdateTransition(session, transition, sceneName, gameID) {
                 {tuuid: transition.uuid, ruuid: rule.uuid, rule: rule}
             );
         }));
-        const res_actions = await Promise.all(_.map(rul_acts, (action, rule_uuid) => {
-            console.log(rule_uuid);console.log(action)
+        const res_actions = await Promise.all(rul_acts.map(rul_act => {
+            const rule_uuid = rul_act[0];
+            const action = rul_act[1];
+            console.log('crea action')
             return transaction.run(
                 'MATCH (r:Rule:`' + gameID + '` {uuid: $ruuid}) ' +
                 'MERGE (r)-[:CONTAINS_ACTION]->(a:Action:`' + gameID + '` {uuid: $auuid}) ' +
                 'ON CREATE SET a += $act , a.new = TRUE ' +
                 'ON MATCH SET a += $act, a.new = FALSE ' +
-                'RETURN a',
-                {ruuid: rule_uuid, auuid: action.uuid, act: action}
+                'WITH a ' +
+                'MATCH (aa:Action {uuid: a.uuid})-[t:TARGET]->(:Scene) ' +
+                'DELETE t ' +
+                'WITH aa ' +
+                'MATCH (aaa:Action {uuid: aa.uuid}) ' +
+                'MATCH (s:Scene {name: $sceneName}) ' +
+                'CREATE (aaa)-[:TARGET]->(s) ' +
+                'RETURN aaa',
+                {ruuid: rule_uuid, auuid: action.uuid, act: action, sceneName: action.target}
             )
         }));
         transaction.commit();
