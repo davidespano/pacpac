@@ -91,4 +91,3 @@ function handleKeys(event,value,ruleId,objectId,props) {
 
 export default RulesCanvas;
 
-/**/

@@ -211,6 +211,13 @@
 .node_element{
     display: inline-block;
     margin: 11px;
+    width: 80%;
+}
+
+.node_element > label{
+    display: inline-block;
+    font-size: 25px;
+    font-family: Arial, sans-serif;
 }
 
 .btn{
@@ -226,4 +233,8 @@
     border: solid #EF562D 2px;
     cursor: pointer;
     color: #FFFFFF;
+}
+.rules {
+    display: flex;
+    margin: 5px;
 }
