@@ -43,6 +43,7 @@ function existsByName(name){
 function createScene(name, tagColor, tagName){
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send({name: name, tagColor: tagColor, tagName: tagName})
         .end(function(err, response){
             if(err){

@@ -9,6 +9,7 @@ function addMedia(name, media, tagColor, tagName) {
     
     request.post(`${apiBaseURL}/public/${window.localStorage.getItem("gameID")}/addMedia`)
         .set('name', name)
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .attach('upfile', media)
         .end(function(err, response) {
             if (err) {
