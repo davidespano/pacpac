@@ -238,3 +238,7 @@
     display: flex;
     margin: 5px;
 }
+
+.custom-select{
+    border-color: #EF562D;
+}

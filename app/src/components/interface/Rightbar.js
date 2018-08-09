@@ -48,6 +48,10 @@ function generateTransitionOptions(object, props){
             <a>Proprietà</a>
             <button onClick={()=> props.selectAllObjects()} className={"btn"}>Show Objects</button>
             <label>Target:</label>
+            <select id={"target"} className={"custom-select"} onChange={() => setProperty(object, 'media' , "target", props)}>
+                <option key={"void_target"}>--</option>
+                {generateTargetOptions(props)}
+            </select>
                 <label>Nome:</label>
                 <div id={"transitionName"}
                      className={"propertyForm"}
@@ -101,6 +105,14 @@ function setProperty(object, property, id, props){
             object.setName(value);
             object.rules.forEach(rule => {props.updateDatalist(rule.uuid,value)});
             break;
+        case "media":
+            let target = document.getElementById(id);
+            object[property] = target.options[target.selectedIndex].text;
+            object.rules.forEach(rule => {
+                rule.action.forEach(action => action.target = object[property])
+            } );
+
+            break;
         default:
             object[property] = value;
     }
@@ -136,6 +148,22 @@ function generateObjectsList(props) {
             }
         ));
     }
+
+}
+
+function generateTargetOptions(props) {
+    console.log(props.currentObject.object.rules);
+    return ([...props.scenes.values()].map(child => {
+        if(child.name != props.currentScene.name) {
+            if (child.name === props.currentObject.object.media) {
+                return (<option key={child.name + "target"} selected={"selected"}>{child.name}</option>)
+            }
+            else {
+                return (<option key={child.name + "target"}>{child.name}</option>)
+            }
+        }
+
+    }));
 
 }
 

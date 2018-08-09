@@ -19,7 +19,7 @@ class Transition extends InteractiveObject {
         this.addNewRule(
             EventTypes.CLICK, //event
             {}, //condition
-            [{type: RuleActionTypes.TRANSITION, target: '', uuid: uuid.v4()}] //action
+            [{type: RuleActionTypes.TRANSITION, target: media, uuid: uuid.v4()}] //action
         );
 
         this.setRotation(rotationX, rotationY, rotationZ);
