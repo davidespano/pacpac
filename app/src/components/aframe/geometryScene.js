@@ -113,7 +113,7 @@ export default class GeometryScene extends React.Component{
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             console.log("ciao");
             const keyName = event.key;
-            if(keyName === 's' || keyName === 'S')
+            if(keyName === 'c' || keyName === 'C')
             {
                 let pointsaver = document.querySelector('#cursor').getAttribute('pointsaver');
                 if(pointsaver != null && pointsaver.points.length != 0) {
@@ -165,8 +165,19 @@ export default class GeometryScene extends React.Component{
 
         return(
             <div id="mainscene" tabIndex="0">
-                <button style={{"zIndex": "99999", "position": "absolute"}} onClick={() => this.props.switchToEditMode()}>EDIT</button>
+                <div id="UI">
+                    <button style={{"zIndex": "99999", "position": "absolute"}} onClick={() => this.props.switchToEditMode()}>EDIT</button>
+                    <div id="keyMap">
+                        <h1>Keys</h1>
+                        <li class="keyElements">
+                            <ul>E: Start Edit</ul>
+                            <ul>C: Create Geometry</ul>
+                            <ul>U: Undo</ul>
+                            <ul>Esc: Go Back</ul>
+                        </li>
 
+                    </div>
+                </div>
                 <Scene>
                     {skies}
 

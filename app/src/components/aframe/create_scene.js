@@ -43,7 +43,6 @@ var THREE = require('three');
 
 function Curved(props)
 {
-    console.log(props.vertices);
     return(
         <Entity material="opacity: 0; visible: false" geometry={"primitive: mygeo; vertices: " + props.vertices} id={"curv" + props.target} radius = "9.5" selectable={'target:' + props.target} scale="-1 1 1"/>
     );
