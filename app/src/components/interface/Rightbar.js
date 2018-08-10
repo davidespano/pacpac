@@ -29,12 +29,11 @@ function optionsView(props){
 }
 
 function showObjects(interactiveObjects,props) {
-
     return (
         <div id={'objectsList'} className={'currentObjectOptions'}>
             <a>Oggetti</a>
             <div className="btn-group btn-group-toggle" data-toggle="buttons">
-                <button className={"btn"} onClick={() => props.filterObjectFunction('all')}> All</button>
+                <button className={"btn"} onClick={() => props.filterObjectFunction('all') }> All</button>
                 <button className={"btn"}  onClick={() => props.filterObjectFunction('scene')}> Scene Object </button>
             </div>
             {generateObjectsList(props)}
@@ -228,3 +227,7 @@ export default RightBar;
                 >
                     {object.height}
                 </div>*/
+
+/*FILTRO PER TUTTI GLI OGGETTI
+       <button className={"btn"} onClick={() => props.filterObjectFunction('all') }> All</button>
+ */

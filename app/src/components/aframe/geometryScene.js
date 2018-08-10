@@ -60,7 +60,7 @@ class Bubble extends React.Component
     }
 }
 
-export function givePoints()
+export function givePoints(props)
 {
     let cursor = document.querySelector('a-cursor');
     let puntisalvati = cursor.getAttribute("pointsaver").points;
@@ -70,8 +70,11 @@ export function givePoints()
     );
 
     //Trovare un modo per farsi passare la transizione dall'editor
-    let tr = new Transition('', 2000, '0 -90 0', '', '', 10, 2, puntisalvati.join());
-    fact[0].transitions.push(tr);
+    console.log( props.currentObject.object.vertices);
+    props.currentObject.object.vertices = puntisalvati.join();
+    console.log( props.currentObject.object.vertices);
+   // let tr = new Transition('', 2000, '0 -90 0', '', '', 10, 2, puntisalvati.join());
+    fact[0].transitions.push(props.currentObject.object);
 }
 
 export default class GeometryScene extends React.Component{
@@ -96,7 +99,6 @@ export default class GeometryScene extends React.Component{
     handleFeedbackChange() {
         if(document.querySelector('#cursor').getAttribute('pointsaver') != null) {
             let a_point = document.querySelector('#cursor').getAttribute('pointsaver').points;
-            console.log(a_point);
 
             //Punti
             let length = a_point.length;
@@ -109,7 +111,6 @@ export default class GeometryScene extends React.Component{
             tmp.setAttribute('id', idPoint);
             tmp.setAttribute('material', 'color: green; shader: flat');
             tmp.setAttribute('class', 'points');
-            console.log(a_point[(length - 1)].toArray().join(" "));
             document.querySelector('a-sky').appendChild(tmp);
 
 
@@ -138,17 +139,14 @@ export default class GeometryScene extends React.Component{
                 let pointsaver = document.querySelector('#cursor').getAttribute('pointsaver');
                 if(pointsaver != null && pointsaver.points.length != 0) {
                     let cursor = document.querySelector('#cursor');
-                    givePoints();
+                    givePoints(this.props);
                     this.handleSceneChange();
                     cursor.removeEventListener('click', function pointSaver(evt) {
                     });
                     cursor.removeEventListener('click', this.handleFeedbackChange);
                     cursor.removeAttribute("pointsaver");
                     let scene = document.querySelector("a-sky");
-                    console.log(scene);
-                    console.log("removeSphere");
                     let removeSphere = scene.querySelectorAll(".points");
-                    console.log(removeSphere);
                     removeSphere.forEach(point => {
                         scene.removeChild(point);
                     });
@@ -195,7 +193,7 @@ export default class GeometryScene extends React.Component{
             else opacity = "opacity: 0";
 
             return(
-                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img} material={opacity} transitions={curvedImages} handler={() => this.handleSceneChange()}/>
+                <Bubble key={"key" + sky.name} name={sky.name} img={`${window.localStorage.getItem("gameID")}/` + this.props.currentScene.img} material={opacity} transitions={curvedImages} handler={() => this.handleSceneChange()}/>
             );
         });
 
