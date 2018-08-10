@@ -9,25 +9,6 @@ import {Entity, Scene} from 'aframe-react';
 import InteractiveObject from "../../interactives/InteractiveObject";
 var AFRAME = require('aframe');
 var THREE = require('three');
-const fact = sceneFactory();
-
-function sceneFactory()
-{
-    //In questo caso bisognerà prendere la bolla attiva dall'editor(?)
-    let sceneList = [];
-
-    let scene1 = new MyScene("bolla1.jpg");
-    let tr1 = new Transition('', 2000, '0 -90 0');
-    tr1.rules.target='bolla2';
-    let tr2 = new Transition('', 2000, '0 0 0');
-    tr2.rules.target='bolla3';
-
-    //scene1.transitions.push(tr1);
-    //scene1.transitions.push(tr2);
-    sceneList.push(scene1);
-
-    return sceneList;
-}
 
 function Curved(props)
 {
@@ -53,7 +34,7 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material}>
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10">
                 {curves}
             </Entity>
         );
@@ -74,7 +55,7 @@ export function givePoints(props)
     props.currentObject.object.vertices = puntisalvati.join();
     console.log( props.currentObject.object.vertices);
    // let tr = new Transition('', 2000, '0 -90 0', '', '', 10, 2, puntisalvati.join());
-    fact[0].transitions.push(props.currentObject.object);
+    //fact[0].transitions.push(props.currentObject.object);
 }
 
 export default class GeometryScene extends React.Component{
@@ -83,16 +64,14 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         this.state = {
-            scenes: fact,
-            activeScene: 0,
-            i: 0
+            scenes: this.props.currentScene,
         };
     }
 
     handleSceneChange()
     {
         this.setState({
-            scenes: fact
+            scenes: this.props.currentScene
         })
     }
 
@@ -141,8 +120,7 @@ export default class GeometryScene extends React.Component{
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
                     this.handleSceneChange();
-                    cursor.removeEventListener('click', function pointSaver(evt) {
-                    });
+                    cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange);
                     cursor.removeAttribute("pointsaver");
                     let scene = document.querySelector("a-sky");
@@ -150,6 +128,8 @@ export default class GeometryScene extends React.Component{
                     removeSphere.forEach(point => {
                         scene.removeChild(point);
                     });
+                    this.props.updateCurrentObject(this.props.currentObject.object, this.props.currentObject.type);
+                    this.handleSceneChange();
                 }
             }
 
@@ -168,10 +148,7 @@ export default class GeometryScene extends React.Component{
                     let lastID = points.length - 1;
                     let scene = document.querySelector('a-sky');
                     let lastChild = scene.querySelector('#point' + lastID.toString());
-                    console.log(points);
                     points.splice(-1);
-                    console.log(points);
-                    console.log(lastChild);
                     scene.removeChild(lastChild);
                 }
             }
@@ -180,22 +157,11 @@ export default class GeometryScene extends React.Component{
 
     render()
     {
-        let skies = this.state.scenes.map((sky, index) =>
-        {
-            let opacity;
-            let curvedImages = [];
+        let sky = this.state.scenes;
+        let curvedImages = [];
+        curvedImages = sky.transitions;
 
-            if(index == this.state.activeScene)
-            {
-                curvedImages = sky.transitions;
-                opacity = "opacity: 1";
-            }
-            else opacity = "opacity: 0";
-
-            return(
-                <Bubble key={"key" + sky.name} name={sky.name} img={`${window.localStorage.getItem("gameID")}/` + this.props.currentScene.img} material={opacity} transitions={curvedImages} handler={() => this.handleSceneChange()}/>
-            );
-        });
+        let skies = <Bubble key={"key" + sky.name} name={sky.name} img={`${window.localStorage.getItem("gameID")}/` + sky.img} transitions={curvedImages} handler={() => this.handleSceneChange()}/>
 
         return(
             <div id="mainscene" tabIndex="0">

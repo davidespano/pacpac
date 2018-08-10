@@ -12,7 +12,7 @@ var AFRAME = require('aframe');
 var THREE = require('three');
 
 
-function sceneFactory()
+/*function sceneFactory()
 {
     var sceneList = [];
 
@@ -39,13 +39,13 @@ function sceneFactory()
     sceneList.push(scene3);
 
     return sceneList;
-}
+} */
 
 function Curved(props)
 {
+    console.log(props.vertices);
     return(
-        <Entity primitive="a-curvedimage" id={"curv" + props.target} rotation={props.rotation} radius = "9.5" theta-length={props.theta}
-                height={props.height} selectable={'target:' + props.target}/>
+        <Entity material="opacity: 0; visible: false" geometry={"primitive: mygeo; vertices: " + props.vertices} id={"curv" + props.target} radius = "9.5" selectable={'target:' + props.target} scale="-1 1 1"/>
     );
 }
 
@@ -69,12 +69,12 @@ class Bubble extends React.Component
         const curves = this.props.transitions.map(curve =>
         {
             return(
-                <Curved key={"keyC"+ curve.rules.target} target={curve.rules.target} rotation={curve.rotation} theta={curve.theta} height={curve.height}/>
+                <Curved key={"keyC"+ curve.rules[0].action[0].target} target={curve.rules[0].action[0].target} vertices={curve.vertices}/>
             );
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material} prova>
+            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material={this.props.material} prova>
                 {curves}
             </Entity>
         );
@@ -86,9 +86,11 @@ export default class VRScene extends React.Component{
     constructor(props)
     {
         super(props);
-        const fact = sceneFactory();
+        console.log("QuaauasuduadX");
+        console.log(this.props.scenes.toArray());
+        //const fact = sceneFactory();
         this.state = {
-            scenes: fact,
+            scenes: this.props.scenes.toArray(),
             activeScene: 0,
         };
     }
@@ -99,7 +101,7 @@ export default class VRScene extends React.Component{
 
         this.setState({
             activeScene: index
-        })
+        });
     }
 
     render()
@@ -117,7 +119,7 @@ export default class VRScene extends React.Component{
             else opacity = "opacity: 0";
 
             return(
-                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img} material={opacity} transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
+                <Bubble key={"key" + sky.name} name={sky.name} img={`${window.localStorage.getItem("gameID")}/` + sky.img} material={opacity} transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
             );
         });
 
