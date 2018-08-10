@@ -12,7 +12,8 @@ AFRAME.registerComponent('pointsaver',
     
     remove: function () {
         let cursor = document.querySelector('#cursor');
-        cursor.removeEventListener('click', pointSaver);
+        if(cursor)
+            cursor.removeEventListener('click', pointSaver);
     }
 });
 

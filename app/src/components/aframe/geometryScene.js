@@ -1,7 +1,6 @@
 import Transition from "../../interactives/Transition";
 import MyScene from "../../scene/MyScene";
 import 'aframe';
-import 'aframe-point-component'
 import './aframe-selectable'
 import './aframe-newGeometry'
 import React from 'react';
@@ -130,7 +129,9 @@ export default class GeometryScene extends React.Component{
     }
 
     componentDidMount () {
-        document.addEventListener('keydown', (event) => {
+        console.log(document.querySelector('#mainscene'));
+        document.querySelector('#mainscene').addEventListener('keydown', (event) => {
+            console.log("ciao");
             const keyName = event.key;
             if(keyName === 's' || keyName === 'S')
             {
@@ -152,7 +153,7 @@ export default class GeometryScene extends React.Component{
                         scene.removeChild(point);
                     });
                 }
-            };
+            }
 
             if(keyName === 'e' || keyName === 'E')
             {
@@ -175,7 +176,6 @@ export default class GeometryScene extends React.Component{
                     console.log(lastChild);
                     scene.removeChild(lastChild);
                 }
-
             }
         });
     }
@@ -200,7 +200,7 @@ export default class GeometryScene extends React.Component{
         });
 
         return(
-            <div id="mainscene">
+            <div id="mainscene" tabIndex="0">
                 <button style={{"zIndex": "99999", "position": "absolute"}} onClick={() => this.props.switchToEditMode()}>EDIT</button>
 
                 <Scene>
