@@ -1,8 +1,8 @@
 import Transition from "../../interactives/Transition";
 import MyScene from "../../scene/MyScene";
 import 'aframe';
+import 'aframe-point-component'
 import './aframe-selectable'
-import './aframe-pointSaver'
 import './aframe-newGeometry'
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -11,7 +11,6 @@ import InteractiveObject from "../../interactives/InteractiveObject";
 var AFRAME = require('aframe');
 var THREE = require('three');
 const fact = sceneFactory();
-
 
 function sceneFactory()
 {
@@ -33,55 +32,16 @@ function sceneFactory()
 
 function Curved(props)
 {
-    console.log("Curved vertices");
-    console.log(props.vertices);
-    //Perchè non ti crei come dovresti??
-    //Non viene attaccato selectable in questa scena. -Non ci sono altre bolle e non vogliamo che l'utente faccia transizioni per sbaglio
     return(
-        <Entity geometry={"primitive: mygeo; vertices: " + props.vertices} scale= "-1 1 1" id={"curv" + props.target} material="side: double"/>
+        <Entity geometry={"primitive: mygeo; vertices: " + props.vertices} scale= "-1 1 1" material="side: double; opacity: 0.50"/>
     );
 }
-
-function Edit(props)
-{
-    return(
-        <Entity id="Edit" primitive="a-text" value="Edit" geometry="primitive: plane;" rotation="0 70 0" scale="-2.500 1 1" position=" -4 3 -3" material="color: black; opacity: 0.20" edit/>
-    );
-
-}
-
-class Done extends React.Component
-{
-    constructor(props)
-    {
-        super(props);
-    }
-
-    componentDidMount()
-    {
-        let el = this;
-        this.nv.addEventListener('click', function(evt){
-            provaPunti();
-            el.props.handler();
-        });
-    }
-
-    render() {
-        return (
-            <Entity _ref={elem => this.nv = elem} id="Done" primitive="a-text" value="Done" geometry="primitive: plane;"
-                    rotation="0 110 0" scale="-2.500 1 1" position=" -4 3 3" material="color: black; opacity: 0.20"
-                    done/>
-        );
-    }
-}
-
 
 class Bubble extends React.Component
 {
     constructor(props)
     {
         super(props);
-        this.func = props.handler;
     }
 
     render()
@@ -89,40 +49,30 @@ class Bubble extends React.Component
         const curves = this.props.transitions.map(curve =>
         {
             return(
-                <Curved key={"keyC"+ curve.rules.target} vertices={curve.vertices} target={curve.rules.target} rotation={curve.rotation} theta={curve.theta} height={curve.height}/>
+                <Curved vertices={curve.vertices}/>
             );
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material}>
-                <Edit />
-                <Done handler={this.func}/>
-
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material = {this.props.material}>
                 {curves}
             </Entity>
         );
     }
 }
 
-export function provaPunti()
+export function givePoints()
 {
     let cursor = document.querySelector('a-cursor');
     let puntisalvati = cursor.getAttribute("pointsaver").points;
-
-    console.log("Prima del splice");
-    console.log(puntisalvati);
-    puntisalvati.splice(-1, 1);
-    console.log("After splice");
-    console.log(puntisalvati);
 
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
 
+    //Trovare un modo per farsi passare la transizione dall'editor
     let tr = new Transition('', 2000, '0 -90 0', '', '', 10, 2, puntisalvati.join());
-    console.log(fact[0]);
     fact[0].transitions.push(tr);
-    console.log(fact[0]);
 }
 
 export default class GeometryScene extends React.Component{
@@ -133,20 +83,101 @@ export default class GeometryScene extends React.Component{
         this.state = {
             scenes: fact,
             activeScene: 0,
+            i: 0
         };
     }
 
     handleSceneChange()
     {
-        //Fa effettivamente qualcosa? React capisce che deve aggiungere roba? Strange.
-        console.log("doing stuffs");
-        console.log(this.state.scenes[0].transitions);
-        console.log(this.state);
         this.setState({
             scenes: fact
         })
+    }
 
-        console.log(this.state);
+    handleFeedbackChange() {
+        if(document.querySelector('#cursor').getAttribute('pointsaver') != null) {
+            let a_point = document.querySelector('#cursor').getAttribute('pointsaver').points;
+            console.log(a_point);
+
+            //Punti
+            let length = a_point.length;
+            let idPoint = "point" + (length - 1).toString();
+            let tmp = document.createElement('a-entity');
+            tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
+            a_point[(length-1)].x *= -1;
+            tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
+            a_point[(length-1)].x *= -1;
+            tmp.setAttribute('id', idPoint);
+            tmp.setAttribute('material', 'color: green; shader: flat');
+            tmp.setAttribute('class', 'points');
+            console.log(a_point[(length - 1)].toArray().join(" "));
+            document.querySelector('a-sky').appendChild(tmp);
+
+
+            //Linee, purtroppo è poco intuitivo.
+            /*
+            console.log(a_point.length);
+            let length = a_point.length;
+            if (length >= 2) {
+                let tmp = document.createElement('a-entity');
+                tmp.setAttribute('scale', '-1 1 1');
+                tmp.setAttribute('line', 'start: ' + a_point[(length - 2)].toArray().join(" "));
+                tmp.setAttribute('line', 'end: ' + a_point[(length - 1)].toArray().join(" "));
+                document.querySelector('a-sky').appendChild(tmp);
+            }
+            */
+        }
+    }
+
+    componentDidMount () {
+        document.addEventListener('keydown', (event) => {
+            const keyName = event.key;
+            if(keyName === 's' || keyName === 'S')
+            {
+                let pointsaver = document.querySelector('#cursor').getAttribute('pointsaver');
+                if(pointsaver != null && pointsaver.points.length != 0) {
+                    let cursor = document.querySelector('#cursor');
+                    givePoints();
+                    this.handleSceneChange();
+                    cursor.removeEventListener('click', function pointSaver(evt) {
+                    });
+                    cursor.removeEventListener('click', this.handleFeedbackChange);
+                    cursor.removeAttribute("pointsaver");
+                    let scene = document.querySelector("a-sky");
+                    console.log(scene);
+                    console.log("removeSphere");
+                    let removeSphere = scene.querySelectorAll(".points");
+                    console.log(removeSphere);
+                    removeSphere.forEach(point => {
+                        scene.removeChild(point);
+                    });
+                }
+            };
+
+            if(keyName === 'e' || keyName === 'E')
+            {
+                let cursor = document.querySelector('#cursor');
+                cursor.setAttribute('pointsaver', true);
+                cursor.addEventListener('click', this.handleFeedbackChange);
+            }
+
+            if(keyName === 'u' || keyName === 'U')
+            {
+                let pointsaver = document.querySelector('#cursor').getAttribute('pointsaver');
+                if(pointsaver != null && pointsaver.points.length != 0){
+                    let points = pointsaver.points;
+                    let lastID = points.length - 1;
+                    let scene = document.querySelector('a-sky');
+                    let lastChild = scene.querySelector('#point' + lastID.toString());
+                    console.log(points);
+                    points.splice(-1);
+                    console.log(points);
+                    console.log(lastChild);
+                    scene.removeChild(lastChild);
+                }
+
+            }
+        });
     }
 
     render()
@@ -170,10 +201,11 @@ export default class GeometryScene extends React.Component{
 
         return(
             <div id="mainscene">
-                <button style={{"z-index": "99999", "position": "absolute"}} onClick={() => this.props.switchToEditMode()}>EDIT</button>
+                <button style={{"zIndex": "99999", "position": "absolute"}} onClick={() => this.props.switchToEditMode()}>EDIT</button>
 
                 <Scene>
                     {skies}
+
 
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
@@ -185,3 +217,6 @@ export default class GeometryScene extends React.Component{
         );
     }
 }
+//Aggiungere due text, button, qualcosa che indichi all'utente come utilizzare salvataggio e edit.
+//Meglio non usare le linee, usa semplicemente i punti che indicano come fare
+

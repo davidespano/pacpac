@@ -1,7 +1,7 @@
 import Transition from "../../interactives/Transition";
 import MyScene from "../../scene/MyScene";
 import 'aframe';
-import 'aframe-chromakey-material';
+//import 'aframe-chromakey-material';
 import './aframe-selectable'
 import {Curved} from './aframe-entities';
 import React from 'react';
