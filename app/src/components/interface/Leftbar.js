@@ -39,7 +39,9 @@ function list(props, path){
                     alt={child.name}
                     title={title(child)}
                     onClick={() => {
-                        props.updateCurrentScene(props.scenes.get(child.name))
+                        let scene = props.scenes.get(child.name);
+                        SceneAPI.getByName(child.name,scene);
+                        props.updateCurrentScene(scene);
                     }}
 
                 />

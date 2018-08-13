@@ -109,7 +109,7 @@ function setProperty(object, property, id, props){
             let target = document.getElementById(id);
             object[property] = target.options[target.selectedIndex].text;
             object.rules.forEach(rule => {
-                rule.action.forEach(action => action.target = object[property])
+                rule.actions.forEach(action => action.target = object[property])
             } );
 
             break;

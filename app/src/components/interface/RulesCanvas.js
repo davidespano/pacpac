@@ -26,18 +26,19 @@ function generateRule(object, props){
     return ([...object.rules.values()].map((rule) => {
         return (
             <p className={'rules'} key={rule.uid}>
-                {L.WHEN} {L.PLAYER} {L[rule.event]} {chooseObj(object, rule, props)} {L.EX} {generateActions(rule.action)}
+                {L.WHEN} {L.PLAYER} {L[rule.event]} {chooseObj(object, rule, props)} {L.EX} {generateActions(rule.actions)}
             </p>
         );
     }));
 }
 
 function generateActions(actions){
-    return ([...actions.values()].map((action) => {
-        return (
-            <p className="actions" key={action.uuid}>{L[action.type]} {L.TOWARDS} {action.target}</p>
-        );
-    }));
+    if(actions)
+        return ([...actions.values()].map((action) => {
+            return (
+                <p className="actions" key={action.uuid}>{L[action.type]} {L.TOWARDS} {action.target}</p>
+            );
+        }));
 }
 
 function chooseObj(object, rule, props){
