@@ -24,19 +24,40 @@ function Leftbar(props){
 
 //generate simple list
 function list(props, path){
-    return ([...props.scenes.values()].map(child => (
-        <div key={child.name} className={'node_element'}>
-            <label className={"list-title"}>{child.name}</label>
-            <img
-                src={path + child.img}
-                className={'list-img'}
-                alt={child.name}
-                title={title(child)}
-                onClick={()=> {props.updateCurrentScene(props.scenes.get(child.name))}}
+    let regex = RegExp('.*\.mp4$');
 
-            />
-        </div>
-    )));
+  return ([...props.scenes.values()].map(child => {
+      console.log(!regex.test(child.img));
+
+      if (!(regex.test(child.img))){
+      return(
+      <div key={child.name} className={'node_element'}>
+                <label className={"list-title"}>{child.name}</label>
+                <img
+                    src={path + child.img}
+                    className={'list-img'}
+                    alt={child.name}
+                    title={title(child)}
+                    onClick={() => {
+                        props.updateCurrentScene(props.scenes.get(child.name))
+                    }}
+
+                />
+      </div>)}
+      else {
+          return(
+              <div key={child.name} className={'node_element'}>
+                <label className={"list-title"}>{child.name}</label>
+                  <video muted preload={"metadata"} className={'video_element'} onClick={() => {
+                      props.updateCurrentScene(props.scenes.get(child.name))
+                  }}>
+                      <source src={path + child.img} type="video/mp4"/>
+                  </video>
+              </div>
+          )
+      }
+    }));
+
 }
 
 //generate graph

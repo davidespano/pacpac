@@ -4,8 +4,9 @@ import settings from '../../utils/settings';
 const {mediaURL} = settings;
 
 function CentralScene(props){
+    let regex = RegExp('.*\.mp4$');
 
-    if(props.currentScene !== null){
+    if(props.currentScene !== null && !(regex.test(props.currentScene.img))){
         return(
             <div className={'scene'}>
                 <img id={'scene'}
@@ -19,12 +20,23 @@ function CentralScene(props){
             </div>
         );
     }
-
-    return(
-        <div className={'scene'}>
-            <p>Seleziona una scena per iniziare</p>
-        </div>
-    );
+    if(props.currentScene !== null && (regex.test(props.currentScene.img))){
+        return(
+            <div className={'scene'}>
+                <video muted preload={"metadata"} className={'video'}
+                >
+                    <source src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img} type="video/mp4"/>
+                </video>
+            </div>
+        );
+    }
+    else {
+        return (
+            <div className={'scene'}>
+                <p>Seleziona una scena per iniziare</p>
+            </div>
+        );
+    }
 }
 
 function getCoordinates(event){

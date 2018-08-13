@@ -42,6 +42,7 @@ function showObjects(interactiveObjects,props) {
 }
 
 function generateTransitionOptions(object, props){
+
     return(
         <div className={'currentObjectOptions'}>
             <a>Proprietà</a>
@@ -72,7 +73,7 @@ function generateTransitionOptions(object, props){
                 <label>Geometry</label>
                 <button
                     className={"propertyForm geometryBtn"}
-                    onClick={() => props.switchToGeometryMode()}
+                    onClick={() => checkGeometryMode(props) }
                 >
                     Edit Geometry
                 </button>
@@ -163,6 +164,20 @@ function generateTargetOptions(props) {
         }
 
     }));
+
+}
+
+function checkGeometryMode(props) {
+
+    let target = document.getElementById('target').value;
+
+    if (target != '--'){
+        props.switchToGeometryMode()
+    }
+    else{alert("Nessun target selezionato")}
+
+
+
 
 }
 
