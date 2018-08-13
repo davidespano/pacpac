@@ -80,9 +80,30 @@ function getAllScenes(){
         });
 }
 
+
+//Save object into database
+function saveObject(scene, object){
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.name}/transitions`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send(
+            {
+                uuid: object.uuid,
+                name: object.name,
+                rules: object.rules,
+                vertices: object.vertices
+            })
+        .end(function(err, response){
+            if(err){
+                return console.error(err);
+            }
+        });
+}
+
 export default {
     getByName: getByName,
     existsByName: existsByName,
     createScene: createScene,
     getAllScenes: getAllScenes,
+    saveObject: saveObject
 };
