@@ -48,7 +48,7 @@ function list(props, path){
           return(
               <div key={child.name} className={'node_element'}>
                 <label className={"list-title"}>{child.name}</label>
-                  <video muted preload={"metadata"} className={'video_element'} onClick={() => {
+                  <video muted preload={"auto"} className={'video_element'} onClick={() => {
                       props.updateCurrentScene(props.scenes.get(child.name))
                   }}>
                       <source src={path + child.img} type="video/mp4"/>

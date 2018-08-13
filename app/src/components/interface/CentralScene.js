@@ -9,24 +9,22 @@ function CentralScene(props){
     if(props.currentScene !== null && !(regex.test(props.currentScene.img))){
         return(
             <div className={'scene'}>
-                <img id={'scene'}
-                     src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}
-                     alt={props.currentScene.name}
-                     onClick={(event) => {
-                         let p = getCoordinates(event);
-                         props.clickScene(p.x, p.y);
-                     }}
-                />
+                    <img id={'scene'}
+                         src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}
+                         alt={props.currentScene.name}
+                         onClick={(event) => {
+                             let p = getCoordinates(event);
+                             props.clickScene(p.x, p.y);
+                         }}
+                    />
             </div>
         );
     }
     if(props.currentScene !== null && (regex.test(props.currentScene.img))){
         return(
             <div className={'scene'}>
-                <video muted preload={"metadata"} className={'video'}
-                >
-                    <source src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img} type="video/mp4"/>
-                </video>
+                    <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}>
+                    </video>
             </div>
         );
     }
@@ -47,6 +45,13 @@ function getCoordinates(event){
         x: event.pageX - img.offsetLeft,
         y: event.pageY - img.offsetTop,
     };
+}
+
+function videoPlayer() {
+    let vid = document.getElementById('video');
+
+    vid.play();
+    vid.pause();
 }
 
 export default CentralScene;
