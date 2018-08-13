@@ -37,6 +37,8 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *              type: array
  *              items:
  *                  $ref: '#/definitions/Rules'
+ *          vertices:
+ *              type: string
  */
 
 /**

@@ -51,24 +51,21 @@ function getByName(session, name, gameID) {
         'OPTIONAL MATCH (object)-[:CONTAINS_RULE]->(rule:Rule)' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action)' +
         'WITH scene, tag, object, ' +
-        '           { ' +
-        '                  condition: rule.condition, ' +
-        '                  event: rule.event,' +
-        '                  uuid: rule.uuid,' +
+        '          rule { ' +
+        '                  .*,' +
         '                  actions: COLLECT(properties(action))' +
-        '           } AS rule ' +
+        '           } ' +
         'WITH scene, tag, ' +
-        '           { ' +
-        '                  name: object.name, ' +
-        '                  uuid: object.uuid,' +
+        '          object { ' +
+        '                  .*, ' +
         '                  rules: COLLECT(rule)' +
-        '           } AS object ' +
-        'RETURN {' +
+        '           } ' +
+        'RETURN scene {' +
         '           properties: {' +
-        '                           name: scene.name, ' +
+        '                           .*, ' +
         '                           objects: COLLECT(object)' +
         '                        }' +
-        '       } AS scene, tag', {'name': name})
+        '       }, tag', {'name': name})
         .then(result => {
             if (!_.isEmpty(result.records)) {
                 return singleSceneWithDetails(result.records[0]);
