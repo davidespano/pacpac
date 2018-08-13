@@ -16,10 +16,8 @@ AFRAME.registerComponent('selectable',
         var targetID = "#" + target;
         var trg = sceneEl.querySelector(targetID);
         var cursor = sceneEl.querySelector('#cursor');
-
         actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 2000; easing: linear; from: 1; to: 0; startEvents: ' + actualScene.id + "dis");
         trg.setAttribute('animation__appear', 'property: material.opacity; dur: 2000; easing: linear; from: 0; to: 1; startEvents: ' + trg.id + "app");
-
         elem.addEventListener('mouseenter', function () {
             cursor.setAttribute('color', 'green');
             cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:2 2 2;');
@@ -31,6 +29,10 @@ AFRAME.registerComponent('selectable',
         });
 
         elem.addEventListener('click', function (evt) {
+            //Diminuisco la dimensione del raycast in modo che non sia spammabile
+            cursor.setAttribute('material', 'opacity: 0');
+            cursor.setAttribute('raycaster', 'far: 0.1');
+            trg.setAttribute('material', 'visible: true');
             var disappear = new CustomEvent(actualScene.id + "dis");
             var appear = new CustomEvent(trg.id + "app");
             actualScene.dispatchEvent(disappear);
@@ -45,7 +47,6 @@ AFRAME.registerComponent('muted', {
 
     init: function () {
         var vid = document.getElementById("bolla02");
-        console.log(vid)
         vid.muted = true;
     }
 

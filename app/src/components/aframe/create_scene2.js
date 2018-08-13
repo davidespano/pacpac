@@ -22,12 +22,13 @@ function sceneFactory()
 {
     var sceneList = [];
 
-    var scene1 = new MyScene("prova.webm");
+    var scene1 = new MyScene("bolla02.mp4");
     var tr1 = new Transition('', 2000, '0 156 0');
     createTransation(tr1, 'bolla06', 50);
     scene1.transitions.push(tr1);
-    scene1.tag.tagName='provaSound.mp3'
+    scene1.tag.tagName='provaSound.mp3';
     sceneList.push(scene1);
+
 
     var scene2 = new MyScene("bolla06.mp4");
     var tr2 = new Transition('', 2000, '0 126 0');
@@ -116,7 +117,7 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/2k/" + this.props.img} radius="10" material = {this.props.material} >
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/2k/" + this.props.img} radius="10" material={this.props.material} >
                 {curves}
             </Entity>
         );
@@ -149,18 +150,22 @@ export default class VRScene extends React.Component{
     {
         let skies = this.state.scenes.map((sky, index) =>
         {
-            let opacity;
+            let mats;
             let curvedImages = [];
 
             if(index === this.state.activeScene)
             {
                 curvedImages = sky.transitions;
-                opacity = "opacity: 1";
+                mats = "opacity: 1; visible: true";
             }
-            else opacity = "opacity: 0";
+            else
+            {
+
+                mats = "opacity: 0; visible: false3";
+            }
 
             return(
-                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img} material={opacity} transitions={curvedImages} handler={ (newActiveScene) => this.handleSceneChange(newActiveScene) }/>
+                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img} material={mats} transitions={curvedImages} handler={ (newActiveScene) => this.handleSceneChange(newActiveScene) }/>
             );
         });
 

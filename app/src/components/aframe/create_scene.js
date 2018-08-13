@@ -44,7 +44,7 @@ var THREE = require('three');
 function Curved(props)
 {
     return(
-        <Entity material="opacity: 0; visible: false" geometry={"primitive: mygeo; vertices: " + props.vertices} id={"curv" + props.target} radius = "9.5" selectable={'target:' + props.target} scale="-1 1 1"/>
+        <Entity material="opacity: 0; visible: false; side: double" geometry={"primitive: mygeo; vertices: " + props.vertices} id={"curv" + props.target} selectable={'target:' + props.target} scale="-1 1 1"/>
     );
 }
 
@@ -56,8 +56,15 @@ class Bubble extends React.Component
         this.nv.addEventListener("animationcomplete", function animationListener(evt){
             if(evt.detail.name == "animation__appear")
             {
-                el.props.handler(el.props.name)
-            };
+                //Riattivo la lunghezza del raycast
+                let cursor = document.querySelector("#cursor");
+                cursor.setAttribute('raycaster', 'far: 10000');
+                cursor.setAttribute('material', 'opacity: 0.80');
+                cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                cursor.setAttribute('color', 'black');
+
+                el.props.handler(el.props.name);
+            }
 
             this.components[evt.detail.name].animation.reset();
         });
@@ -73,7 +80,7 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material={this.props.material} prova>
+            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material={this.props.material}>
                 {curves}
             </Entity>
         );
@@ -85,9 +92,6 @@ export default class VRScene extends React.Component{
     constructor(props)
     {
         super(props);
-        console.log("QuaauasuduadX");
-        console.log(this.props.scenes.toArray());
-        //const fact = sceneFactory();
         this.state = {
             scenes: this.props.scenes.toArray(),
             activeScene: 0,
@@ -124,7 +128,6 @@ export default class VRScene extends React.Component{
 
         return(
             <div id="mainscene">
-                <button onClick={() => this.props.switchToEditMode()}>EDIT</button>
 
                 <Scene>
                     {skies}

@@ -50,12 +50,7 @@ export function givePoints(props)
         punto.toArray().join(" ")
     );
 
-    //Trovare un modo per farsi passare la transizione dall'editor
-    console.log( props.currentObject.object.vertices);
     props.currentObject.object.vertices = puntisalvati.join();
-    console.log( props.currentObject.object.vertices);
-   // let tr = new Transition('', 2000, '0 -90 0', '', '', 10, 2, puntisalvati.join());
-    //fact[0].transitions.push(props.currentObject.object);
 }
 
 export default class GeometryScene extends React.Component{
@@ -109,9 +104,7 @@ export default class GeometryScene extends React.Component{
     }
 
     componentDidMount () {
-        console.log(document.querySelector('#mainscene'));
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
-            console.log("ciao");
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
             {
@@ -120,6 +113,7 @@ export default class GeometryScene extends React.Component{
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
                     this.handleSceneChange();
+                    cursor.setAttribute('color', 'black');
                     cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange);
                     cursor.removeAttribute("pointsaver");
@@ -135,7 +129,14 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'e' || keyName === 'E')
             {
+                let scene = document.querySelector("a-sky");
+                let removeSphere = scene.querySelectorAll(".points");
+                removeSphere.forEach(point => {
+                    scene.removeChild(point);
+                });
+
                 let cursor = document.querySelector('#cursor');
+                cursor.setAttribute('color', 'green');
                 cursor.setAttribute('pointsaver', true);
                 cursor.addEventListener('click', this.handleFeedbackChange);
             }
@@ -152,6 +153,11 @@ export default class GeometryScene extends React.Component{
                     scene.removeChild(lastChild);
                 }
             }
+
+            if(keyName === 'q' || keyName === 'Q')
+            {
+                this.props.switchToEditMode();
+            }
         });
     }
 
@@ -166,14 +172,13 @@ export default class GeometryScene extends React.Component{
         return(
             <div id="mainscene" tabIndex="0">
                 <div id="UI">
-                    <button style={{"zIndex": "99999", "position": "absolute"}} onClick={() => this.props.switchToEditMode()}>EDIT</button>
                     <div id="keyMap">
                         <h1>Keys</h1>
                         <li class="keyElements">
                             <ul>E: Start Edit</ul>
                             <ul>C: Create Geometry</ul>
                             <ul>U: Undo</ul>
-                            <ul>Esc: Go Back</ul>
+                            <ul>Q: Go Back</ul>
                         </li>
 
                     </div>

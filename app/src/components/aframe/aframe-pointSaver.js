@@ -21,6 +21,5 @@ function pointSaver(evt)
 {
     let a_point = document.querySelector('#cursor').getAttribute('pointsaver').points;
     a_point.push(evt.detail.intersection.point);
-    console.log(evt.detail.intersection.point);
 }
 

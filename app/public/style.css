@@ -246,10 +246,9 @@
 /* Geometry Scene */
 #keyMap{
     position: absolute;
-    background-color: black;
+    background-color: rgba(0,0,0,0.6);
     top: 1rem;
     right: 1rem;
-    opacity: 0.4;
     z-index: 99999;
     height: 15rem;
     width: 13rem;
@@ -260,7 +259,6 @@
     margin-top:20px;
     text-align: center;
     color: white;
-    opacity: 1;
     font-size: 25px;
 }
 
