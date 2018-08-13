@@ -21,6 +21,11 @@ const fs = require('fs')
  *          type: string
  *          required: true
  *          description: Name of the scene
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
  *        - in : path
  *          name : gameID
  *          type : string

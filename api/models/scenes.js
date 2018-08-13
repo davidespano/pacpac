@@ -47,7 +47,28 @@ function getByName(session, name, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name:$name}) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
-        'RETURN scene,tag', {'name': name})
+        'OPTIONAL MATCH (scene)-[:CONTAINS]->(object:InteractiveObject)' +
+        'OPTIONAL MATCH (object)-[:CONTAINS_RULE]->(rule:Rule)' +
+        'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action)' +
+        'WITH scene, tag, object, ' +
+        '           { ' +
+        '                  condition: rule.condition, ' +
+        '                  event: rule.event,' +
+        '                  uuid: rule.uuid,' +
+        '                  actions: COLLECT(properties(action))' +
+        '           } AS rule ' +
+        'WITH scene, tag, ' +
+        '           { ' +
+        '                  name: object.name, ' +
+        '                  uuid: object.uuid,' +
+        '                  rules: COLLECT(rule)' +
+        '           } AS object ' +
+        'RETURN {' +
+        '           properties: {' +
+        '                           name: scene.name, ' +
+        '                           objects: COLLECT(object)' +
+        '                        }' +
+        '       } AS scene, tag', {'name': name})
         .then(result => {
             if (!_.isEmpty(result.records)) {
                 return singleSceneWithDetails(result.records[0]);

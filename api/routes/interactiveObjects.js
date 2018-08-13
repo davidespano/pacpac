@@ -84,6 +84,11 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *          type : string
  *          required : true
  *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
  *        - in: body
  *          name: transition
  *          type: object
