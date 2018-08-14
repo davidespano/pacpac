@@ -203,6 +203,10 @@
     color: #FFFFFF !important;
 
 }
+.navbar-toggler:hover{
+    background-color: #8C9093;
+}
+
 .nav-item{
     border-radius: 10px;
     text-align: center;
