@@ -89,6 +89,17 @@ function getAllScenes(){
         });
 }
 
+//delete scene
+function deleteScene(name){
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .end(function(err, response) {
+            if (err) {
+                return console.error(err)
+            }
+        });
+}
 
 //Save object into database
 function saveObject(scene, object){
@@ -117,5 +128,6 @@ export default {
     existsByName: existsByName,
     createScene: createScene,
     getAllScenes: getAllScenes,
-    saveObject: saveObject
+    saveObject: saveObject,
+    deleteScene: deleteScene
 };
