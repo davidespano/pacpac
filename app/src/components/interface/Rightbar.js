@@ -84,14 +84,8 @@ function generateTransitionOptions(object, props){
             <button
                 className={"propertyForm saveBtn"}
                 onClick={() => {
-                    let temp = SceneAPI.saveObject(props.currentScene, props.currentObject.object)
-                    console.log(temp)
-                    if(temp){
-                        alert("Hai salvato correttamente");
-                    }
-                    else{
-                        alert("Salvataggio fallito, controlla che tutti i campi siano validi");
-                    }
+                    SceneAPI.saveObject(props.currentScene, props.currentObject.object)
+                    alert("Hai salvato!")
                 }
                 }
             >
