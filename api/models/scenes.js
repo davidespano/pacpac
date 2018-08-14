@@ -123,7 +123,13 @@ function getNeighboursByName(session, name, gameID) {
 function deleteScene(session, name, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name}) ' +
-        'DETACH DELETE scene ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS]->(o:InteractiveObject)' +
+        'OPTIONAL MATCH (o)-[:CONTAIN_RULE]->(r:Rule)' +
+        'OPTIONAL MATCH (r)-[CONTAINS_ACTION]->(a:Action)' +
+        'OPTIONAL MATCH (scene)<-[:TARGET]-(a2:Action)' +
+        'OPTIONAL MATCH (a2)<-[:CONTAINS_ACTION]-(r2:Rule)' +
+        'OPTIONAL MATCH (r2)<-[:CONTAINS_RULE]-(o2:InteractiveObject)' +
+        'DETACH DELETE scene,o,r,a,o2,r2,a2 ' +
         'RETURN COUNT(scene)', {name: name})
         .then(result => result.records[0].get('COUNT(scene)').low)
 }
