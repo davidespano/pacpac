@@ -90,14 +90,15 @@ function getAllScenes(){
 }
 
 //delete scene
-function deleteScene(name){
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
+function deleteScene(scene){
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function(err, response) {
             if (err) {
                 return console.error(err)
             }
+            Actions.removeScene(scene.name);
         });
 }
 

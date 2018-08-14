@@ -3,6 +3,7 @@ import InputSceneForm from './InputSceneForm';
 import Transition from "../../interactives/Transition";
 import Actions from "../../actions/Actions";
 import MyScene from "../../scene/MyScene";
+import SceneAPI from "../../utils/SceneAPI";
 
 function TopBar(props){
     return (
@@ -11,10 +12,24 @@ function TopBar(props){
                      <a className="navbar-brand">PacPac</a>
                      <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
                      <InputSceneForm {...props} />
+                     <a className={"nav-item navbar-toggler"} id={'remove_scene'}
+                        title={'Rimuovi una scena'}
+                        onClick={() => {
+                            if(props.currentScene != null){
+                                SceneAPI.deleteScene(props.currentScene);
+                                props.updateCurrentScene(null);
+
+                            }
+                            else{
+                                alert("Devi aver già selezionato la scena da rimuovere.")
+                            }
+                        }}
+                     >RemoveScene</a>
                      <a className={"nav-item navbar-toggler"} id={'transition'}
                              title={'Aggiungi una transizione'}
                              onClick={() => (createTransition(props))}
                      >+</a>
+
                  </nav>
              </div>
     );
