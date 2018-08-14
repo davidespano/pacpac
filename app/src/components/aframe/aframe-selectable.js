@@ -12,6 +12,7 @@ AFRAME.registerComponent('selectable',
         var sceneEl = document.querySelector('a-scene');
         var elem = this.el;
         var target = this.data.target;
+        target = target.replace(/\.[^/.]+$/, "");
         var actualScene = elem.parentElement;
         var targetID = "#" + target;
         var trg = sceneEl.querySelector(targetID);
