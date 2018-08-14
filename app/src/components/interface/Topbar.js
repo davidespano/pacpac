@@ -7,31 +7,50 @@ import SceneAPI from "../../utils/SceneAPI";
 
 function TopBar(props){
     return (
-         <div className={'topbar'}>
-                 <nav className="navbar  navbar-light">
-                     <a className="navbar-brand">PacPac</a>
-                     <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
-                     <InputSceneForm {...props} />
-                     <a className={"nav-item navbar-toggler"} id={'remove_scene'}
-                        title={'Rimuovi una scena'}
-                        onClick={() => {
-                            if(props.currentScene != null){
-                                SceneAPI.deleteScene(props.currentScene);
-                                props.updateCurrentScene(null);
+        <div className={'topbar'}>
+            <nav className="navbar  navbar-light">
+                <a className="navbar-brand">PacPac</a>
+                <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
+                <InputSceneForm {...props} />
+                <ul className={"nav"}>
+                <li className="nav-item dropdown">
+                <a className={"dropdown-toggle navbar-toggler"}  data-toggle="dropdown" role={"button"} aria-haspopup="true" aria-expanded="false">Edit Scene</a>
+                <div className="dropdown-menu">
+                    <a className="dropdown-item" data-toggle="modal" data-target="#exampleModal">
+                        AddScene
+                    </a>
+                    <a className={"dropdown-item"} id={'remove_scene'}
+                       title={'Rimuovi una scena'}
+                       onClick={() => {
+                           if(props.currentScene != null){
+                               SceneAPI.deleteScene(props.currentScene);
+                               props.updateCurrentScene(null);
+                               props.updateCurrentObject(null);
 
-                            }
-                            else{
-                                alert("Devi aver già selezionato la scena da rimuovere.")
-                            }
-                        }}
-                     >RemoveScene</a>
-                     <a className={"nav-item navbar-toggler"} id={'transition'}
-                             title={'Aggiungi una transizione'}
-                             onClick={() => (createTransition(props))}
-                     >+</a>
 
-                 </nav>
-             </div>
+                           }
+                           else{
+                               alert("Devi aver già selezionato la scena da rimuovere.")
+                           }
+                       }}
+                    >RemoveScene</a>
+                </div>
+                </li>
+                </ul>
+                <ul className={"nav"}>
+                    <li className="nav-item dropdown">
+                        <a className={"dropdown-toggle navbar-toggler"}  data-toggle="dropdown" role={"button"} aria-haspopup="true" aria-expanded="false">Add Object</a>
+                        <div className="dropdown-menu">
+                            <a className={"dropdown-item"} id={'transition'}
+                               title={'Aggiungi una transizione'}
+                               onClick={() => (createTransition(props))}
+                            >transition</a>
+                        </div>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
     );
 }
 
@@ -68,3 +87,30 @@ export default TopBar;
         title={'Aggiungi una transizione'}
         onClick={() => (createTransition(props))}
 >+</button> */
+
+/* <div className={'topbar'}>
+                 <nav className="navbar  navbar-light">
+                     <a className="navbar-brand">PacPac</a>
+                     <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
+                     <InputSceneForm {...props} />
+                     <a className={"nav-item navbar-toggler"} id={'remove_scene'}
+                        title={'Rimuovi una scena'}
+                        onClick={() => {
+                            if(props.currentScene != null){
+                                SceneAPI.deleteScene(props.currentScene);
+                                props.updateCurrentScene(null);
+
+                            }
+                            else{
+                                alert("Devi aver già selezionato la scena da rimuovere.")
+                            }
+                        }}
+                     >RemoveScene</a>
+                     <a className={"nav-item navbar-toggler"} id={'transition'}
+                             title={'Aggiungi una transizione'}
+                             onClick={() => (createTransition(props))}
+                     >+</a>
+
+                 </nav>
+             </div>
+       */

@@ -190,12 +190,12 @@
 }
 
 .buttonClose{
-    border-color: #E4002B;
-    background-color: #E4002B;
+    background-color: #E4002B !important;
 }
 
 .buttonConferm{
-    background-color: #2DC84D;
+    background-color: #2DC84D !important;
+    border-color: #2DC84D !important;
 }
 
 .geometryBtn:hover{
@@ -294,4 +294,24 @@
     color: #FFFFFF;
 }
 
+.nav-link{
+    background-color: #EF562D;
+    color: #FFFFFF !important;
+}
 
+.dropdown-menu.show {
+    min-width: 11rem;
+    margin-left: 5px;
+}
+.dropdown{
+    margin-bottom: 12px !important;
+}
+.dropdown-toggle {
+    border-radius: 10px;
+}
+
+.dropdown-item:hover{
+    background-color: #EF562D;
+    color: #FFFFFF !important;
+    cursor: pointer;
+}

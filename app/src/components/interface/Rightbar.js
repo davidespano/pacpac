@@ -150,9 +150,9 @@ function generateObjectsList(props) {
         ));
     }
 
-    else if (props.objectsFilter ==='scene'){
+    else if (props.objectsFilter === 'scene'){
 
-        if (props.currentScene.transitions.length === 0 ){
+        if (props.currentScene.transitions.length == 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
         }
 
