@@ -10,9 +10,11 @@ function TopBar(props){
         <div className={'topbar'}>
             <nav className="navbar  navbar-light">
                 <a className="navbar-brand">PacPac</a>
-                <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
                 <InputSceneForm {...props} />
                 <ul className={"nav"}>
+                    <li className="nav-item dropdown">
+                        <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
+                    </li>
                 <li className="nav-item dropdown">
                 <a className={"dropdown-toggle navbar-toggler"}  data-toggle="dropdown" role={"button"} aria-haspopup="true" aria-expanded="false">Edit Scene</a>
                 <div className="dropdown-menu">

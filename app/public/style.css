@@ -14,6 +14,24 @@
 
 }
 
+@font-face {
+    font-family: 'latolight';
+    src: url('lato-light-webfont.woff2') format('woff2'),
+    url('lato-light-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'latoregular';
+    src: url('lato-regular-webfont.woff2') format('woff2'),
+    url('lato-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: 15% auto auto 15%;
@@ -50,7 +68,8 @@
 .navbar-toggler{
     margin-left: 5px;
     margin-right: 5px;
-    font-family: playregular;
+    font-family: latoregular;
+    font-size: 16px;
 }
 
 .scene{
@@ -305,8 +324,10 @@
 }
 .dropdown{
     margin-bottom: 12px !important;
+
 }
 .dropdown-toggle {
+    height: 80%;
     border-radius: 10px;
 }
 
