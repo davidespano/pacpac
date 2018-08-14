@@ -20,7 +20,6 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *              type: array
  *              items:
  *                  $ref: '#/definitions/Actions'
- *
  */
 
 /**
@@ -46,6 +45,9 @@ const InteractiveObjects = require('../models/interactiveObjects')
  * definitions:
  *  Transitions:
  *      type: object
+ *      properties:
+ *          duration:
+ *              type: string
  *      allOf:
  *          - $ref: '#/definitions/InteractiveObjects'
  */

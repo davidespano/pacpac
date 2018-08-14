@@ -25,6 +25,7 @@ async function createUpdateTransition(session, transition, sceneName, gameID) {
         const res_rules = await Promise.all(rules.map(rule => {
             rule.actions.forEach(action => {rul_acts.push([rule.uuid, action])});
             delete rule.actions;
+            rule.condition = JSON.stringify(rule.condition)
             return transaction.run(
                 'MATCH (t:InteractiveObject:Transition:`' + gameID + '` {uuid: $tuuid}) ' +
                 'MERGE (t)-[:CONTAINS_RULE]->(r:Rule:`' + gameID + '` {uuid: $ruuid}) ' +
@@ -39,6 +40,7 @@ async function createUpdateTransition(session, transition, sceneName, gameID) {
         const res_actions = await Promise.all(rul_acts.map(rul_act => {
             const rule_uuid = rul_act[0];
             const action = rul_act[1];
+            console.log(action)
             return transaction.run(
                 'MATCH (r:Rule:`' + gameID + '` {uuid: $ruuid}) ' +
                 'MERGE (r)-[:CONTAINS_ACTION]->(a:Action:`' + gameID + '` {uuid: $auuid}) ' +
@@ -56,6 +58,7 @@ async function createUpdateTransition(session, transition, sceneName, gameID) {
                 {ruuid: rule_uuid, auuid: action.uuid, act: action, sceneName: action.target}
             )
         }));
+        console.log(res_actions)
         res_actions.forEach(result => {newObjs = newObjs || result.records[0].get('isNew');});
         transaction.commit();
         return [return_transition, newObjs];

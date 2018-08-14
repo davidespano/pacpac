@@ -284,5 +284,14 @@
     align-self: center;
 }
 
+.saveBtn{
+    margin-top: 50px;
+}
+
+.saveBtn:hover{
+    background-color: #EF562D;
+    cursor: pointer;
+    color: #FFFFFF;
+}
 
 

@@ -2,6 +2,9 @@ import React from 'react';
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import Actions from "../../actions/Actions";
 import InteractiveObject from "../../interactives/InteractiveObject";
+import SceneAPI from "../../utils/SceneAPI";
+
+let THREE = require('three');
 
 function RightBar(props){
 
@@ -77,6 +80,23 @@ function generateTransitionOptions(object, props){
                 >
                     Edit Geometry
                 </button>
+
+            <button
+                className={"propertyForm saveBtn"}
+                onClick={() => {
+                    let temp = SceneAPI.saveObject(props.currentScene, props.currentObject.object)
+                    console.log(temp)
+                    if(temp){
+                        alert("Hai salvato correttamente");
+                    }
+                    else{
+                        alert("Salvataggio fallito, controlla che tutti i campi siano validi");
+                    }
+                }
+                }
+            >
+                Save
+            </button>
             </div>
     );
 }
@@ -155,13 +175,14 @@ function generateTargetOptions(props) {
     console.log(props.currentObject.object.rules);
     return ([...props.scenes.values()].map(child => {
         if(child.name != props.currentScene.name) {
-            if (child.name === props.currentObject.object.media) {
-                return (<option key={child.name + "target"} selected={"selected"}>{child.name}</option>)
+            if (child.img === props.currentObject.object.media) {
+                return (<option key={child.img + "target"} selected={"selected"}>{child.img}</option>)
             }
             else {
-                return (<option key={child.name + "target"}>{child.name}</option>)
+                return (<option key={child.img + "target"}>{child.img}</option>)
             }
         }
+
 
     }));
 
@@ -171,15 +192,28 @@ function checkGeometryMode(props) {
 
     let target = document.getElementById('target').value;
 
-    if (target != '--'){
+    if (target != '--') {
         props.switchToGeometryMode()
     }
-    else{alert("Nessun target selezionato")}
-
-
-
-
+    else {
+        alert("Nessun target selezionato")
+    }
 }
+
+// function geometryData (props) {
+//    // let c=document.getElementById("myCanvas");
+//
+//     let geometry = [];
+//
+//     geometry = [...props.currentObject.object.vertices].map(function (vertex) {
+//         let points = vertex.split(' ').map(function(x){return parseFloat(x);});
+//         return new THREE.Vector3(points[0], points[1], points[2]);
+//     });
+//
+//     console.log(geometry);
+//
+//
+// }
 
 export default RightBar;
 

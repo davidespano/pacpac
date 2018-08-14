@@ -75,7 +75,7 @@ class Bubble extends React.Component
         const curves = this.props.transitions.map(curve =>
         {
             return(
-                <Curved key={"keyC"+ curve.rules[0].action[0].target} target={curve.rules[0].action[0].target} vertices={curve.vertices}/>
+                <Curved key={"keyC"+ curve.rules[0].actions[0].target} target={curve.rules[0].actions[0].target} vertices={curve.vertices}/>
             );
         });
 

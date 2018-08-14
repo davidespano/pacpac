@@ -5,10 +5,10 @@ const {mediaURL} = settings;
 
 function CentralScene(props){
     let regex = RegExp('.*\.mp4$');
-
     if(props.currentScene !== null && !(regex.test(props.currentScene.img))){
         return(
             <div className={'scene'}>
+
                     <img id={'scene'}
                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}
                          alt={props.currentScene.name}
@@ -17,6 +17,7 @@ function CentralScene(props){
                              props.clickScene(p.x, p.y);
                          }}
                     />
+
             </div>
         );
     }
@@ -47,12 +48,7 @@ function getCoordinates(event){
     };
 }
 
-function videoPlayer() {
-    let vid = document.getElementById('video');
 
-    vid.play();
-    vid.pause();
-}
 
 export default CentralScene;
 

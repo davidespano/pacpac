@@ -5,7 +5,7 @@ class Rule {
     constructor({event = null, condition = {}, action = []}){
         this.event = event;
         this.condition = condition;
-        this.action = action;
+        this.actions = action;
         this.uuid = uuid.v4();
     }
 }

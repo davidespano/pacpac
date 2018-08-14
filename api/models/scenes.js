@@ -62,7 +62,7 @@ function getByName(session, name, gameID) {
         '           } ' +
         'RETURN scene {' +
         '           properties: {' +
-        '                           .*, ' +
+        '                           name: scene.name, ' +
         '                           objects: COLLECT(object)' +
         '                        }' +
         '       }, tag', {'name': name})

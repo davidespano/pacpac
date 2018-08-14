@@ -14,18 +14,27 @@ function getByName(name, scene=null){
                 return console.error(err)
             }
 
+            let transitions = response.body.objects;
 
+            console.log(transitions)
+            if(transitions)
+                transitions = transitions.map((transition)=>{
+                    transition.media = transition.rules[0].actions[0].target
+                    return transition;
+                } )
+            console.log(transitions)
              if(scene == null){
                  //new Scene object
                  let newScene = new MyScene(
                      response.body.name,
                      response.body.tagName,
                      response.body.tagColor,
-                     response.body.objects //transition list
+                     transitions //transition list
                  );
                  Actions.receiveScene(newScene);
              } else {
-                 scene.transitions = response.body.objects;
+                 scene.transitions = transitions;
+                 Actions.updateScene(scene);
                  Actions.updateCurrentScene(scene);
              }
 
@@ -83,7 +92,7 @@ function getAllScenes(){
 
 //Save object into database
 function saveObject(scene, object){
-    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.name}/transitions`)
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/transitions`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send(
@@ -91,12 +100,15 @@ function saveObject(scene, object){
                 uuid: object.uuid,
                 name: object.name,
                 rules: object.rules,
+                duration: object.duration,
                 vertices: object.vertices
             })
         .end(function(err, response){
             if(err){
-                return console.error(err);
+                console.error(err);
+                return false;
             }
+             return true;
         });
 }
 

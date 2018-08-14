@@ -40,7 +40,7 @@ function list(props, path){
                     title={title(child)}
                     onClick={() => {
                         let scene = props.scenes.get(child.name);
-                        SceneAPI.getByName(child.name,scene);
+                        SceneAPI.getByName(child.img,scene);
                         props.updateCurrentScene(scene);
                     }}
 
@@ -51,7 +51,9 @@ function list(props, path){
               <div key={child.name} className={'node_element'}>
                 <label className={"list-title"}>{child.name}</label>
                   <video muted preload={"auto"} className={'video_element'} onClick={() => {
-                      props.updateCurrentScene(props.scenes.get(child.name))
+                      let scene = props.scenes.get(child.name);
+                      SceneAPI.getByName(child.img,scene);
+                      props.updateCurrentScene(scene);
                   }}>
                       <source src={path + child.img} type="video/mp4"/>
                   </video>
