@@ -4,42 +4,12 @@ import 'aframe';
 import './aframe-selectable'
 import './aframe-pointSaver'
 import './aframe-newGeometry'
+import SceneAPI from '../../utils/SceneAPI'
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
 import InteractiveObject from "../../interactives/InteractiveObject";
 var AFRAME = require('aframe');
 var THREE = require('three');
-
-
-/*function sceneFactory()
-{
-    var sceneList = [];
-
-    var scene1 = new MyScene("bolla1.jpg");
-    var tr1 = new Transition('', 2000, '0 -90 0');
-    tr1.rules.target='bolla2';
-    var tr2 = new Transition('', 2000, '0 0 0');
-    tr2.rules.target='bolla3';
-
-    scene1.transitions.push(tr1);
-    scene1.transitions.push(tr2);
-    sceneList.push(scene1);
-
-    var scene2 = new MyScene("bolla2.jpg");
-    var tr3 = new Transition('', 2000, '0 90 0');
-    tr3.rules.target='bolla1';
-    scene2.transitions.push(tr3);
-    sceneList.push(scene2);
-
-    var scene3 = new MyScene("bolla3.jpg");
-    var tr4 = new Transition('', 2000, '0 180 0');
-    tr4.rules.target= 'bolla1';
-    scene3.transitions.push(tr4);
-    sceneList.push(scene3);
-
-    return sceneList;
-} */
 
 function Curved(props)
 {
@@ -92,6 +62,8 @@ export default class VRScene extends React.Component{
     constructor(props)
     {
         super(props);
+        let scene = this.props.scenes.toArray()[0];
+        SceneAPI.getByName(scene.img, scene);
         this.state = {
             scenes: this.props.scenes.toArray(),
             activeScene: 0,
@@ -101,8 +73,10 @@ export default class VRScene extends React.Component{
     handleSceneChange(newActiveScene)
     {
         const index = this.state.scenes.findIndex(el => {return el.name == newActiveScene});
-
+        let scene = this.props.scenes.get(newActiveScene);
+        SceneAPI.getByName(scene.img, scene);
         this.setState({
+            scene: this.props.scenes.toArray(),
             activeScene: index
         });
     }
