@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Scene = require('../models/neo4j/scene');
 const Tag = require('../models/neo4j/tag');
+const fs = require('fs');
 
 // return many scenes
 function manyScenes(neo4jResult) {
@@ -121,6 +122,12 @@ function getNeighboursByName(session, name, gameID) {
 
 //delete a scene
 function deleteScene(session, name, gameID) {
+
+    fs.unlink("public/" + gameID + "/" + name, (err) => {
+        if (err) throw err;
+        console.log('successfully deleted /tmp/hello');
+    });
+
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name}) ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS]->(o:InteractiveObject)' +
