@@ -89,6 +89,21 @@ function getAllScenes(){
         });
 }
 
+//get neighbours of given scene
+function getNeighbours(name)
+{
+    return request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}/neighbours`)
+    .set('Accept', 'application/json')
+    .end(function(err, response){
+        if(err){
+            return console.error(err);
+        }
+
+        if(response.body !== [])
+            Actions.loadAllScenes(response.body);
+    });
+}
+
 //delete scene
 function deleteScene(scene){
     request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}`)
@@ -130,5 +145,6 @@ export default {
     createScene: createScene,
     getAllScenes: getAllScenes,
     saveObject: saveObject,
-    deleteScene: deleteScene
+    deleteScene: deleteScene,
+    getNeighbours: getNeighbours
 };
