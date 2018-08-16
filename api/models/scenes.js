@@ -134,7 +134,7 @@ function deleteScene(session, name, gameID) {
         'MATCH (scene:Scene:`' + gameID + '` {name: $name}) ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS]->(o:InteractiveObject)' +
         'OPTIONAL MATCH (o)-[:CONTAIN_RULE]->(r:Rule)' +
-        'OPTIONAL MATCH (r)-[CONTAINS_ACTION]->(a:Action)' +
+        'OPTIONAL MATCH (r)-[:CONTAINS_ACTION]->(a:Action)' +
         'OPTIONAL MATCH (scene)<-[:TARGET]-(a2:Action)' +
         'OPTIONAL MATCH (a2)<-[:CONTAINS_ACTION]-(r2:Rule)' +
         'OPTIONAL MATCH (r2)<-[:CONTAINS_RULE]-(o2:InteractiveObject)' +

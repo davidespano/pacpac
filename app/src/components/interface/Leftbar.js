@@ -42,6 +42,7 @@ function list(props, path){
                         let scene = props.scenes.get(child.name);
                         SceneAPI.getByName(child.img,scene);
                         props.updateCurrentScene(scene);
+                        console.log(props.scenes);
                     }}
 
                 />

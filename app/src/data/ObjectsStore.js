@@ -20,6 +20,9 @@ class ObjectsStore extends ReduceStore {
                 //console.log(action.obj)
                 state = state.set(action.obj.uuid, action.obj);
                 return state;
+            case ActionTypes.REMOVE_TRANSITION:
+                state = state.delete(action.obj.uuid);
+                return state;
             default:
                 return state;
         }

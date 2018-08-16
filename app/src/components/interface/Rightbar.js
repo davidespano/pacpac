@@ -35,10 +35,7 @@ function showObjects(interactiveObjects,props) {
     return (
         <div id={'objectsList'} className={'currentObjectOptions'}>
             <a>Oggetti</a>
-            <div className="btn-group btn-group-toggle" data-toggle="buttons">
-                <button className={"btn"} onClick={() => props.filterObjectFunction('all') }> All</button>
                 <button className={"btn"}  onClick={() => props.filterObjectFunction('scene')}> Scene Object </button>
-            </div>
             {generateObjectsList(props)}
         </div>
     );
@@ -65,6 +62,7 @@ function generateTransitionOptions(object, props){
                 </div>
 
                 <label>Duration</label>
+                <div className={"durationContainer"}>
                 <div id={"transitionDuration"}
                      className={"propertyForm"}
                      contentEditable={true}
@@ -72,6 +70,7 @@ function generateTransitionOptions(object, props){
                      onInput={() => onlyNumbers("transitionDuration")}
                 >
                     {object.duration}
+                </div><span className={"measureUnit"}>ms</span>
                 </div>
                 <label>Geometry</label>
                 <button
@@ -90,6 +89,16 @@ function generateTransitionOptions(object, props){
                 }
             >
                 Save
+            </button>
+            <button
+                className={"propertyForm deleteBtn"}
+                onClick={() => {
+                    SceneAPI.removeTransition(props.currentScene, props.currentObject.object);
+                    props.updateCurrentObject(null);
+                }
+                }
+            >
+                Delete
             </button>
             </div>
     );
@@ -272,5 +281,8 @@ export default RightBar;
                 </div>*/
 
 /*FILTRO PER TUTTI GLI OGGETTI
+ <div className="btn-group btn-group-toggle" data-toggle="buttons">
+                <button className={"btn"} onClick={() => props.filterObjectFunction('all') }> All</button>
        <button className={"btn"} onClick={() => props.filterObjectFunction('all') }> All</button>
+       <div>
  */

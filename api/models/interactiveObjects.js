@@ -69,6 +69,19 @@ async function createUpdateTransition(session, transition, sceneName, gameID) {
     }
 }
 
+function deleteTransition(session, name, tuuid, gameID) {
+
+    return session.run(
+        'MATCH (scene:Scene:`' + gameID + '` {name: $name})-[:CONTAINS]->(transition:InteractiveObject:Transition:`' + gameID + '` {uuid: $uuid}) ' +
+        'OPTIONAL MATCH (transition)-[:CONTAINS_RULE]->(r:Rule)' +
+        'OPTIONAL MATCH (r)-[:CONTAINS_ACTION]->(a:Action)' +
+        'DETACH DELETE transition,r,a ' +
+        'RETURN COUNT(transition)', {name: name, uuid: tuuid})
+        .then(result => result.records[0].get('COUNT(transition)').low)
+}
+
+
 module.exports = {
-    createUpdateTransition: createUpdateTransition
+    createUpdateTransition: createUpdateTransition,
+    deleteTransition: deleteTransition
 };

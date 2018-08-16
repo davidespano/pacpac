@@ -34,6 +34,15 @@ function TopBar(props){
                            }
                        }}
                     >RemoveScene</a>
+                    <a className={"dropdown-item"} id={'remove_scene'}
+                       title={'Rimuovi una scena'}
+                       onClick={() => {
+                               props.removeAllScene();
+                               props.updateCurrentScene(null);
+                               console.log(props.scenes);
+                               props.updateCurrentObject(null);
+                       }}
+                    >RemoveALL</a>
                 </div>
                 </li>
                 </ul>

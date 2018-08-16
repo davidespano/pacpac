@@ -78,6 +78,19 @@ const Actions = {
         })
     },
 
+    removeScene(scene_name){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_SCENE,
+            scene_name: scene_name,
+        })
+    },
+
+    removeAllScene(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_ALL_SCENES,
+        })
+    },
+
     //LABELS
 
     addNewTag(name, color){
@@ -100,6 +113,14 @@ const Actions = {
         })
     },
 
+    removeTransition(scene, transition){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_TRANSITION,
+            scene: scene,
+            obj: transition,
+        })
+    },
+
     addNewObject(object){
       AppDispatcher.dispatch({
           type: ActionTypes.ADD_NEW_OBJECT,
@@ -110,19 +131,6 @@ const Actions = {
     selectAllObjects(){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_ALL_OBJECTS,
-        })
-    },
-
-    removeScene(scene_name){
-        AppDispatcher.dispatch({
-            type: ActionTypes.REMOVE_SCENE,
-            scene_name: scene_name,
-        })
-    },
-
-    removeAllScene(){
-        AppDispatcher.dispatch({
-            type: ActionTypes.REMOVE_ALL_SCENES,
         })
     },
 

@@ -5,7 +5,7 @@ let uuid = require('uuid');
 
 class Transition extends InteractiveObject {
 
-    constructor(media = "", duration = 0, rotationX = 0, rotationY = 0, rotationZ = 0, theta = 10, height = 2, vertices="") {
+    constructor(media = "", duration = 2000, rotationX = 0, rotationY = 0, rotationZ = 0, theta = 10, height = 2, vertices="") {
 
         super();
 

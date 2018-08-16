@@ -100,6 +100,8 @@ api.get('/:gameID/tags', routes.tags.list);
 
 /**INTERACTIVE OBJECTS**/
 api.put('/:gameID/scenes/:name/transitions', loginRequired, routes.interactiveObjects.putTransition);
+api.delete('/:gameID/scenes/:name/transitions/:tuuid', loginRequired, routes.interactiveObjects.deleteTransition);
+
 
 /**MEDIA**/
 const storage = multer.diskStorage({

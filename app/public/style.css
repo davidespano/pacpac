@@ -171,6 +171,10 @@
 .transitionInput{
     max-width: 50%;
 }
+#transitionDuration{
+    display: inline-block;
+    min-width: 88%;
+}
 
 #addSceneDiv{
     display: flex;
@@ -221,10 +225,16 @@
     border-color: #2DC84D !important;
 }
 
-.geometryBtn:hover{
+.geometryBtn{
     background-color: #EF562D;
-    cursor: pointer;
     color: #FFFFFF;
+}
+
+.geometryBtn:hover{
+    background-color: #7e7b6d;
+    cursor: pointer;
+    border-color: #7e7b6d;
+
 }
 
 .rules{
@@ -308,13 +318,16 @@
 }
 
 .saveBtn{
-    margin-top: 50px;
+    background-color: #10a54a;
+    border-color: #10a54a;
+    color: #FFFFFF;
+    margin-top: 150px;
 }
 
 .saveBtn:hover{
-    background-color: #EF562D;
     cursor: pointer;
-    color: #FFFFFF;
+    background-color: #7e7b6d;
+    border-color: #7e7b6d;
 }
 
 .nav-link{
@@ -339,4 +352,21 @@
     background-color: #EF562D;
     color: #FFFFFF !important;
     cursor: pointer;
+}
+
+.deleteBtn{
+    background-color: #cc0000;
+    color: #FFFFFF !important;
+    margin-top: 20px;
+}
+
+.deleteBtn:hover{
+    cursor: pointer;
+    background-color: #7e7b6d;
+    border-color: #7e7b6d;
+}
+
+.measureUnit{
+    font-size: 10px;
+    margin-left:3px;
 }

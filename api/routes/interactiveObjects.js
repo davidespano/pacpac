@@ -116,6 +116,54 @@ function putTransition(req, res, next) {
         .catch(error => writeError(res, error, 500));
 }
 
+
+/**
+ * @swagger
+ * /api/v0/{gameID}/scenes/{name}/transitions/{tuuid}:
+ *  delete:
+ *      tags:
+ *      - interactive objects
+ *      description: Delete the transition
+ *      summary: Delete a transition by name
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in: path
+ *          name: name
+ *          type: string
+ *          required: true
+ *          description: Name of the scene
+ *        - in: path
+ *          name: tuuid
+ *          type: string
+ *          required: true
+ *          description: Uuid of the transition
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
+ *        - in : path
+ *          name : gameID
+ *          type : string
+ *          required : true
+ *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *      responses:
+ *          200:
+ *              type: integer
+ *              description: The number of deleted nodes
+ */
+function deleteTransition(req, res, next) {
+    const name = req.params.name;
+    const tuuid = req.params.tuuid;
+    const gameID = req.params.gameID;
+    InteractiveObjects.deleteTransition(dbUtils.getSession(req), name,tuuid, gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
+
 module.exports = {
-    putTransition: putTransition
+    putTransition: putTransition,
+    deleteTransition: deleteTransition
 };

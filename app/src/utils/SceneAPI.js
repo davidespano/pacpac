@@ -139,6 +139,19 @@ function saveObject(scene, object){
         });
 }
 
+/*TODO: spostare in un possibile InteractiveObjectAPI*/
+function removeTransition(scene,transition){
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/transitions/${transition.uuid}`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .end(function(err, response) {
+            if (err) {
+                return console.error(err)
+            }
+            Actions.removeTransition(scene,transition);
+        });
+}
+
 export default {
     getByName: getByName,
     existsByName: existsByName,
@@ -146,5 +159,6 @@ export default {
     getAllScenes: getAllScenes,
     saveObject: saveObject,
     deleteScene: deleteScene,
-    getNeighbours: getNeighbours
+    getNeighbours: getNeighbours,
+    removeTransition: removeTransition
 };

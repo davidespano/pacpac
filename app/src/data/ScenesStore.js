@@ -43,6 +43,12 @@ class ScenesStore extends ReduceStore {
             case ActionTypes.REMOVE_ALL_SCENES:
                 state = state.clear();
                 return state;
+            case ActionTypes.REMOVE_TRANSITION:
+                const scene = action.scene;
+                const newTransiotions = scene.transitions.filter((transition) => transition.uuid != action.obj.uuid);
+                scene.transitions = newTransiotions;
+                state = state.set(scene.name,scene);
+                return state;
             default:
                 return state;
         }
