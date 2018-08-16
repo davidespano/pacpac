@@ -28,8 +28,6 @@ function TopBar(props){
                                SceneAPI.deleteScene(props.currentScene);
                                props.updateCurrentScene(null);
                                props.updateCurrentObject(null);
-
-
                            }
                            else{
                                alert("Devi aver già selezionato la scena da rimuovere.")

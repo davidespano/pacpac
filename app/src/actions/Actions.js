@@ -120,6 +120,12 @@ const Actions = {
         })
     },
 
+    removeAllScene(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_ALL_SCENES,
+        })
+    },
+
     updateCurrentObject(object, objectType){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_OBJECT,

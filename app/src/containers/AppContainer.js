@@ -57,6 +57,7 @@ function getState() {
         getScene: Actions.getScene,
         receiveScene: Actions.receiveScene,
         removeScene: Actions.removeScene,
+        removeAllScene: Actions.removeAllScene,
         updateCurrentScene: Actions.updateCurrentScene,
         updateScene: Actions.updateScene,
 
