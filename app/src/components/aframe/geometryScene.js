@@ -167,7 +167,7 @@ export default class GeometryScene extends React.Component{
         let curvedImages = [];
         curvedImages = sky.transitions;
 
-        let skies = <Bubble key={"key" + sky.name} name={sky.name} img={`${window.localStorage.getItem("gameID")}/` + sky.img} transitions={curvedImages} handler={() => this.handleSceneChange()}/>
+        let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img} transitions={curvedImages} handler={() => this.handleSceneChange()}/>
 
         return(
             <div id="mainscene" tabIndex="0">

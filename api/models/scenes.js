@@ -116,7 +116,9 @@ function addScene(session, name, tagColor, tagName, gameID) {
 // get adjacent scenes
 function getNeighboursByName(session, name, gameID) {
     //TODO Questa sarà da rifare con il sistema delle regole
-    return session.run('MATCH (:Scene:`' + gameID + '` {name: $name})-[]->(scene) RETURN scene', {name: name})
+    return session.run('MATCH (:Scene:`' + gameID + '` {name: $name})-[:TARGET|:CONTAINS|:CONTAINS_RULE|:CONTAINS_ACTION *4]->(scene) ' +
+        'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag)' +
+        'RETURN scene, tag', {name: name})
         .then(result => manyScenes(result));
 }
 
