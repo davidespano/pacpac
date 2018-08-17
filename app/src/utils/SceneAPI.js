@@ -51,11 +51,11 @@ function existsByName(name){
 }
 
 //create new scene inside db
-function createScene(name, tagColor, tagName){
+function createScene(name,index, tagColor, tagName){
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({name: name, tagColor: tagColor, tagName: tagName})
+        .send({name: name, index: index, tagColor: tagColor, tagName: tagName})
         .end(function(err, response){
             if(err){
                 return console.error(err);
@@ -83,8 +83,8 @@ function getAllScenes(){
             if(err){
                 return console.error(err);
             }
-
-            if(response.body !== [])
+            console.log(response.body)
+            if(response.body && response.body !== [])
                 Actions.loadAllScenes(response.body);
         });
 }
@@ -114,6 +114,7 @@ function deleteScene(scene){
                 return console.error(err)
             }
             Actions.removeScene(scene.name);
+            Actions.updateCurrentScene(null);
         });
 }
 

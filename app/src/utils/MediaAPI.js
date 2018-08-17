@@ -5,7 +5,7 @@ var request = require('superagent');
 
 const {apiBaseURL} = settings;
 
-function addMedia(name, media, tagColor, tagName) {
+function addMedia(name, index, media, tagColor, tagName) {
     
     request.post(`${apiBaseURL}/public/${window.localStorage.getItem("gameID")}/addMedia`)
         .set('name', name)
@@ -17,7 +17,7 @@ function addMedia(name, media, tagColor, tagName) {
             }
             else {
                 //create db node
-                SceneAPI.createScene(name, tagColor, tagName);
+                SceneAPI.createScene(name, index, tagColor, tagName);
             }
         });
 }

@@ -29,7 +29,8 @@ function getAll(session, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '`) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
-        'RETURN scene,tag')
+        'RETURN scene,tag ' +
+        'ORDER BY scene.index')
         .then(result => {
                 if (!_.isEmpty(result.records)) {
                     return manyScenes(result);
@@ -94,7 +95,7 @@ function getHomeScene(session, gameID) {
 }
 
 //add a scene
-function addScene(session, name, tagColor, tagName, gameID) {
+function addScene(session, name, index, tagColor, tagName, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name})' +
         'RETURN scene', {name: name, tagColor: tagColor, tagName: tagName})
@@ -105,8 +106,8 @@ function addScene(session, name, tagColor, tagName, gameID) {
             else {
                 return session.run(
                     'MERGE (tag:Tag:`' + gameID + '` {color: $tagColor, name:$tagName}) ' +
-                    'CREATE (scene:Scene:`' + gameID + '` {name: $name}) -[:TAGGED_AS]-> (tag) ' +
-                    'RETURN scene,tag', {name: name, tagColor: tagColor, tagName: tagName})
+                    'CREATE (scene:Scene:`' + gameID + '` {name: $name, index:$index}) -[:TAGGED_AS]-> (tag) ' +
+                    'RETURN scene,tag', {name: name, index: index, tagColor: tagColor, tagName: tagName})
             }
         })
         .then(result => singleSceneWithDetails(result.records[0]));
@@ -118,7 +119,8 @@ function getNeighboursByName(session, name, gameID) {
     //TODO Questa sarà da rifare con il sistema delle regole
     return session.run('MATCH (:Scene:`' + gameID + '` {name: $name})-[:TARGET|:CONTAINS|:CONTAINS_RULE|:CONTAINS_ACTION *4]->(scene) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag)' +
-        'RETURN scene, tag', {name: name})
+        'RETURN scene, tag ' +
+        'ORDER BY scene.index', {name: name})
         .then(result => manyScenes(result));
 }
 

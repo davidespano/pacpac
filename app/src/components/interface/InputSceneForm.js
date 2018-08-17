@@ -40,7 +40,7 @@ function InputSceneForm(props){
                                 let name = document.getElementById("scene_name").value,
                                     media = document.getElementById("imageInput").files[0],
                                     tag= JSON.parse(document.getElementById("scene_tag").value);
-                                addMediaAndCreateScene(name, media,tag.tagColor,tag.tagName);
+                                addMediaAndCreateScene(name,props.scenes._map.last()+1, media,tag.tagColor,tag.tagName);
                             }
                             } data-dismiss="modal" >Conferma</button>
                         </div>
@@ -53,7 +53,7 @@ function InputSceneForm(props){
     );
 }
 
-function addMediaAndCreateScene(name, media,tagColor,tagName){
+function addMediaAndCreateScene(name, index, media,tagColor,tagName){
     //FARE CONTROLLI FORM QUI!1!1
     //lettere accentate e spazi sono ammessi! Yay
     //MA NON ALL'INIZIO DELLA FRASE
@@ -67,8 +67,9 @@ function addMediaAndCreateScene(name, media,tagColor,tagName){
 
 
     if (!SceneAPI.existsByName(name)){
-
-        MediaAPI.addMedia(name, media,tagColor,tagName);
+        if(!index)
+            index = 0;
+        MediaAPI.addMedia(name,index, media,tagColor,tagName);
 
     } else {
         console.log("There's already a scene with that name!");

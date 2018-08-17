@@ -112,6 +112,10 @@ function getByName(req, res, next) {
  *                      type: string
  *                      required: true
  *                      description: Name of the scene
+ *                  index:
+ *                      type: integer
+ *                      required: true
+ *                      description: Index of the scene
  *                  tagColor:
  *                      type: string
  *                      description: color of the tag
@@ -140,12 +144,13 @@ function getByName(req, res, next) {
  *              description: Scene already exists
  */
 function addScene(req, res, next) {
-    const name = _.get(req.body, 'name');
-    const tagColor = _.get(req.body, 'tagColor');
-    const tagName = _.get(req.body, 'tagName');
+    const name = req.body.name;
+    const index = req.body.index;
+    const tagColor = req.body.tagColor;
+    const tagName = req.body.tagName;
     const gameID = req.params.gameID;
 
-    Scenes.addScene(dbUtils.getSession(req), name, tagColor, tagName, gameID)
+    Scenes.addScene(dbUtils.getSession(req), name, index, tagColor, tagName, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
@@ -209,7 +214,7 @@ function getHomeScene(req, res, next) {
  *              schema:
  *                  type: array
  *                  items:
- *                  $ref: '#/definitions/DetailedScenes'
+ *                  $ref: '#/definitions/Scenes'
  *          404:
  *              description: Scene not found
  */

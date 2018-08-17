@@ -12,7 +12,7 @@ class ScenesStore extends ReduceStore {
     }
 
     getInitialState() {
-        return Immutable.Map();
+        return Immutable.OrderedMap();
     }
 
     reduce(state, action) {
