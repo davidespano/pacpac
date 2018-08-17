@@ -125,10 +125,14 @@ function getNeighboursByName(session, name, gameID) {
 //delete a scene
 function deleteScene(session, name, gameID) {
 
-    fs.unlink("public/" + gameID + "/" + name, (err) => {
-        if (err) throw err;
-        console.log('successfully deleted /tmp/hello');
-    });
+    let path = "public/" + gameID + "/" + name;
+    fs.access(path,(err)=> {
+        if(!err)
+            fs.unlink(path, (err) => {
+                if (err) throw err;
+                console.log('successfully deleted '+path);
+            })
+        });
 
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name}) ' +
