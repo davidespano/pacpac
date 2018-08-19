@@ -161,7 +161,7 @@ export default class VRScene extends React.Component{
             else
             {
 
-                mats = "opacity: 0; visible: false3";
+                mats = "opacity: 0; visible: false";
             }
 
             return(

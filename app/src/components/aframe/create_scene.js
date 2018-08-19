@@ -85,25 +85,25 @@ export default class VRScene extends React.Component{
     {
         let skies = this.state.scenes.map((sky, index) =>
         {
-            let opacity;
+            let mats;;
             let curvedImages = [];
 
             if(index == this.state.activeScene)
             {
                 curvedImages = sky.transitions;
-                opacity = "opacity: 1";
+                mats = "opacity: 1; visible: true";
             }
-            else opacity = "opacity: 0";
+            else mats = "opacity: 0; visible: false";
 
             return(
-                <Bubble key={"key" + sky.name} name={sky.name} img={`${window.localStorage.getItem("gameID")}/` + sky.img} material={opacity} transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
+                <Bubble key={"key" + sky.name} name={sky.name} img={`${window.localStorage.getItem("gameID")}/` + sky.img} material={mats} transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
             );
         });
 
         return(
             <div id="mainscene">
 
-                <Scene>
+                <Scene stats>
                     {skies}
 
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
