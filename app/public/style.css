@@ -212,17 +212,15 @@
 }
 
 .nav-item{
-    border-radius: 10px;
+    border-radius: .25rem;
     text-align: center;
 }
 
-.buttonClose{
-    background-color: #E4002B !important;
-}
-
 .buttonConferm{
-    background-color: #2DC84D !important;
-    border-color: #2DC84D !important;
+    color: #FFFFFF;
+    border-color: #DD4124;
+    background-color: #EF562D;
+    width: 40%;
 }
 
 .geometryBtn{
@@ -238,7 +236,8 @@
 }
 
 .rules{
-    font-size: 25px;
+    font-size: 20px;
+    font-family: latoregular;
 }
 
 .node_element{
@@ -268,7 +267,6 @@
     color: #FFFFFF;
 }
 .rules {
-    display: flex;
     margin: 5px;
 }
 
@@ -317,18 +315,6 @@
     align-self: center;
 }
 
-.saveBtn{
-    background-color: #10a54a;
-    border-color: #10a54a;
-    color: #FFFFFF;
-    margin-top: 150px;
-}
-
-.saveBtn:hover{
-    cursor: pointer;
-    background-color: #7e7b6d;
-    border-color: #7e7b6d;
-}
 
 .nav-link{
     background-color: #EF562D;
@@ -345,7 +331,7 @@
 }
 .dropdown-toggle {
     height: 80%;
-    border-radius: 10px;
+    border-radius: .25rem;
 }
 
 .dropdown-item:hover{
@@ -354,19 +340,64 @@
     cursor: pointer;
 }
 
-.deleteBtn{
-    background-color: #cc0000;
-    color: #FFFFFF !important;
-    margin-top: 20px;
-}
-
-.deleteBtn:hover{
-    cursor: pointer;
-    background-color: #7e7b6d;
-    border-color: #7e7b6d;
-}
-
 .measureUnit{
     font-size: 10px;
     margin-left:3px;
+}
+
+.durationContainer{
+    padding-left: 8%;
+}
+
+#ruleObjSelection{
+    border: 1px solid #EF562D;
+    border-radius: 5px;
+    width: 30%;
+}
+
+.modalOptions > label{
+    font-size: 20px;
+    width: 100%;
+}
+.modalOptions > select{
+    width: 20%;
+    height: 26px;
+}
+
+#scene_name{
+    background-color: #FFFFFF;
+    border: 1px solid #EF562D;
+    border-radius: 5px;
+    height: 26px;
+    width: 30%;
+}
+
+.modal-footer{
+    display: inline;
+}
+
+.transitionBtn{
+    width: 20px;
+    height: 20px;
+}
+
+.BtnTransitionContainer{
+    border: solid 1px #8C9093;
+    border-radius: .25rem;
+    background-color: transparent;
+    margin-right: 3px;
+
+}
+
+.BtnTransitionContainer:hover{
+    cursor: pointer;
+    background-color: #8C9093;
+}
+
+.buttonGroup{
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #8C9093;
 }

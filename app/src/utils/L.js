@@ -26,7 +26,7 @@ const L = {
 
     TO: 'a',
     TOWARDS: 'verso',
-    WHEN: 'quando',
+    WHEN: 'Quando',
 
 
 };

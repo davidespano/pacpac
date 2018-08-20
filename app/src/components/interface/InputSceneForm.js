@@ -11,31 +11,30 @@ function InputSceneForm(props){
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Aggiungi Scena</h5>
+                            <h5 className="modal-title" id="exampleModalLabel">Add Scene</h5>
                             <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div className="modal-body">
-                            <label htmlFor={"scene_name"}>Inserisci il nome della scena</label>
+                        <div className="modal-body modalOptions">
+                            <label htmlFor={"scene_name"}>Choose the scene name</label>
                             <input type="text"
                                    id="scene_name"
                                    name="scene_name"
                             />
-                            <label htmlFor={"scene_tag"}>Etichetta</label>
-                            <select id={'scene_tag'} name={'scene_tag'}>
+                            <label htmlFor={"scene_tag"}>Tag</label>
+                            <select id={'scene_tag'} name={'scene_tag'} className={"custom-select"}>
                                 {[...props.sceneTags.values()].map( child => (
                                     tagOption(child)
                                 ))}
                             </select>
-                            <label htmlFor={"image"}>Scegli un'immagine</label>
+                            <label htmlFor={"image"}>Choose an image</label>
                             <input type="file"
                                    name="image"
                                    id="imageInput"
                             />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary buttonClose" data-dismiss="modal">Close</button>
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
                                 let name = document.getElementById("scene_name").value,
                                     media = document.getElementById("imageInput").files[0],
