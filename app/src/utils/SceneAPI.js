@@ -118,6 +118,18 @@ function deleteScene(scene){
         });
 }
 
+//set home scene
+function setHome(scene){
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/setHome`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .end(function(err, response) {
+            if (err) {
+                return console.error(err)
+            }
+        });
+}
+
 //Save object into database
 function saveObject(scene, object){
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/transitions`)

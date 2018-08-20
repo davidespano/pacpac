@@ -149,11 +149,27 @@ function deleteScene(session, name, gameID) {
         .then(result => result.records[0].get('COUNT(scene)').low)
 }
 
+//Set home scene
+function setHome(session, name, gameID){
+    return session.run(
+        'MATCH (scene:Scene:`' + gameID + '` {name: $name}) ' +
+        'OPTIONAL MATCH (home:Scene:Home:`' + gameID + '`)' +
+        'REMOVE home:Home ' +
+        'SET scene:Home ' +
+        'RETUrN scene', {name: name})
+        .then(result =>{
+            if (_.isEmpty(result.records)) {
+                throw {message: 'scene not found', status: 404};
+            }
+        })
+}
+
 module.exports = {
     getAll: getAll,
     getByName: getByName,
     addScene: addScene,
     getHomeScene: getHomeScene,
     getNeighboursByName: getNeighboursByName,
-    deleteScene: deleteScene
+    deleteScene: deleteScene,
+    setHome: setHome
 };

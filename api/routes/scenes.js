@@ -266,11 +266,52 @@ function deleteScene(req, res, next) {
         .catch(next);
 }
 
+/**
+ * @swagger
+ * /api/v0/{gameID}/scenes/{name}/setHome:
+ *  post:
+ *      tags:
+ *      - scenes
+ *      description: Set the home Scene
+ *      summary: Set scene passed as Home scene
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in: path
+ *          name: name
+ *          type: string
+ *          required: true
+ *          description: Name of the scene
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
+ *        - in : path
+ *          name : gameID
+ *          type : string
+ *          required : true
+ *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *      responses:
+ *          200:
+ *              description: Home setted
+ *          404:
+ *              description: Scene not found
+ */
+function setHome(req, res, next) {
+    const name = req.params.name;
+    const gameID = req.params.gameID;
+    Scenes.setHome(dbUtils.getSession(req), name, gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
 module.exports = {
     list: list,
     getByName: getByName,
     addScene: addScene,
     getHomeScene: getHomeScene,
     getNeighboursByName: getNeighboursByName,
-    deleteScene: deleteScene
+    deleteScene: deleteScene,
+    setHome: setHome
 };
