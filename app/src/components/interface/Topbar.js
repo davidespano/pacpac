@@ -53,7 +53,7 @@ function TopBar(props){
                             <a className={"dropdown-item"} id={'transition'}
                                title={'Aggiungi una transizione'}
                                onClick={() => (createTransition(props))}
-                            >transition</a>
+                            >Transition</a>
                         </div>
                     </li>
                 </ul>
