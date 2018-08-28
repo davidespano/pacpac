@@ -131,7 +131,7 @@ function setHome(scene){
 }
 
 //Save object into database
-function saveObject(scene, object){
+function saveTransition(scene, object){
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/transitions`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -170,7 +170,7 @@ export default {
     existsByName: existsByName,
     createScene: createScene,
     getAllScenes: getAllScenes,
-    saveObject: saveObject,
+    saveTransitions: saveTransition,
     deleteScene: deleteScene,
     getNeighbours: getNeighbours,
     removeTransition: removeTransition

@@ -157,7 +157,7 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'q' || keyName === 'Q')
             {
-                SceneAPI.saveObject(this.props.currentScene, this.props.currentObject.object);
+                SceneAPI.saveTransitions(this.props.currentScene, this.props.currentObject.object);
                 this.props.switchToEditMode();
             }
         });

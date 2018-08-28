@@ -50,7 +50,7 @@ function generateTransitionOptions(object, props){
                         title={"Save"}
                         className={"BtnTransitionContainer"}
                         onClick={() => {
-                            SceneAPI.saveObject(props.currentScene, props.currentObject.object);
+                            SceneAPI.saveTransitions(props.currentScene, props.currentObject.object);
                             alert("Hai salvato!")
                         }
                         }
