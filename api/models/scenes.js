@@ -116,7 +116,6 @@ function addScene(session, name, index, tagColor, tagName, gameID) {
 
 // get adjacent scenes
 function getNeighboursByName(session, name, gameID) {
-    //TODO Questa sarà da rifare con il sistema delle regole
     return session.run('MATCH (:Scene:`' + gameID + '` {name: $name})-[:TARGET|:CONTAINS|:CONTAINS_RULE|:CONTAINS_ACTION *4]->(scene) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag)' +
         'RETURN scene, tag ' +
@@ -156,7 +155,7 @@ function setHome(session, name, gameID){
         'OPTIONAL MATCH (home:Scene:Home:`' + gameID + '`)' +
         'REMOVE home:Home ' +
         'SET scene:Home ' +
-        'RETUrN scene', {name: name})
+        'RETURN scene', {name: name})
         .then(result =>{
             if (_.isEmpty(result.records)) {
                 throw {message: 'scene not found', status: 404};

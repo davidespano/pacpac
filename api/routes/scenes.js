@@ -219,7 +219,6 @@ function getHomeScene(req, res, next) {
  *              description: Scene not found
  */
 function getNeighboursByName(req, res, next) {
-    //TODO da rifare in seguito!
     const name = req.params.name;
     const gameID = req.params.gameID;
     Scenes.getNeighboursByName(dbUtils.getSession(req), name, gameID)
