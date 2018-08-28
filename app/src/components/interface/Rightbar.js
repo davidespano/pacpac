@@ -3,6 +3,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import Actions from "../../actions/Actions";
 import InteractiveObject from "../../interactives/InteractiveObject";
 import SceneAPI from "../../utils/SceneAPI";
+import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 
 let THREE = require('three');
 
@@ -57,7 +58,7 @@ function generateTransitionOptions(object, props){
                     title={"Save"}
                     className={"BtnTransitionContainer"}
                     onClick={() => {
-                        SceneAPI.saveTransitions(props.currentScene, props.currentObject.object);
+                        InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject.object);
                         alert("Hai salvato!")
                     }
                     }
@@ -68,7 +69,7 @@ function generateTransitionOptions(object, props){
                     title={"Delete"}
                     className={"BtnTransitionContainer"}
                     onClick={() => {
-                        SceneAPI.removeTransition(props.currentScene, props.currentObject.object);
+                        InteractiveObjectAPI.removeTransition(props.currentScene, props.currentObject.object);
                         props.updateCurrentObject(null);
                     }
                     }

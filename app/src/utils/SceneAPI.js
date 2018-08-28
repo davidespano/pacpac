@@ -1,7 +1,8 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
 import MyScene from "../scene/MyScene";
-var request = require('superagent');
+
+const request = require('superagent');
 
 const {apiBaseURL} = settings;
 
@@ -130,48 +131,11 @@ function setHome(scene){
         });
 }
 
-//Save object into database
-function saveTransition(scene, object){
-    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/transitions`)
-        .set('Accept', 'application/json')
-        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send(
-            {
-                uuid: object.uuid,
-                name: object.name,
-                rules: object.rules,
-                duration: object.duration,
-                vertices: object.vertices
-            })
-        .end(function(err, response){
-            if(err){
-                console.error(err);
-                return false;
-            }
-             return true;
-        });
-}
-
-/*TODO: spostare in un possibile InteractiveObjectAPI*/
-function removeTransition(scene,transition){
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/transitions/${transition.uuid}`)
-        .set('Accept', 'application/json')
-        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .end(function(err, response) {
-            if (err) {
-                return console.error(err)
-            }
-            Actions.removeTransition(scene,transition);
-        });
-}
-
 export default {
     getByName: getByName,
     existsByName: existsByName,
     createScene: createScene,
     getAllScenes: getAllScenes,
-    saveTransitions: saveTransition,
     deleteScene: deleteScene,
     getNeighbours: getNeighbours,
-    removeTransition: removeTransition
 };

@@ -1,7 +1,7 @@
 import settings from './settings';
 import SceneAPI from "./SceneAPI";
 
-var request = require('superagent');
+const request = require('superagent');
 
 const {apiBaseURL} = settings;
 

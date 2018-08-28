@@ -4,6 +4,7 @@ import 'aframe';
 import './aframe-selectable'
 import './aframe-newGeometry'
 import SceneAPI from '../../utils/SceneAPI'
+import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
@@ -157,7 +158,7 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'q' || keyName === 'Q')
             {
-                SceneAPI.saveTransitions(this.props.currentScene, this.props.currentObject.object);
+                InteractiveObjectAPI.saveTransitions(this.props.currentScene, this.props.currentObject.object);
                 this.props.switchToEditMode();
             }
         });
