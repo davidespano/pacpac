@@ -46,36 +46,38 @@ function generateTransitionOptions(object, props){
     return(
         <div className={'currentObjectOptions'}>
             <div className={"buttonGroup"}>
-                    <button
-                        title={"Save"}
-                        className={"BtnTransitionContainer"}
-                        onClick={() => {
-                            SceneAPI.saveTransitions(props.currentScene, props.currentObject.object);
-                            alert("Hai salvato!")
-                        }
-                        }
-                    >
-                        <img className={"transitionBtn"} src={"saveIcon.png"}/>
-                    </button>
-                    <button
-                        title={"Delete"}
-                        className={"BtnTransitionContainer"}
-                        onClick={() => {
-                            SceneAPI.removeTransition(props.currentScene, props.currentObject.object);
-                            props.updateCurrentObject(null);
-                        }
-                        }
-                    >
-                        <img  className={"transitionBtn"} src={"trash.png"}/>
-                    </button>
+                <button
+                    title={"Back"}
+                    className={"BtnTransitionContainer"}
+                    onClick={()=> props.selectAllObjects()}
+                >
+                    <img  className={"transitionBtn"} src={"icons8-go-back-50.png"}/>
+                </button>
+                <button
+                    title={"Save"}
+                    className={"BtnTransitionContainer"}
+                    onClick={() => {
+                        SceneAPI.saveTransitions(props.currentScene, props.currentObject.object);
+                        alert("Hai salvato!")
+                    }
+                    }
+                >
+                    <img className={"transitionBtn"} src={"icons8-save-as-50.png"}/>
+                </button>
+                <button
+                    title={"Delete"}
+                    className={"BtnTransitionContainer"}
+                    onClick={() => {
+                        SceneAPI.removeTransition(props.currentScene, props.currentObject.object);
+                        props.updateCurrentObject(null);
+                    }
+                    }
+                >
+                    <img  className={"transitionBtn"} src={"icons8-waste-50.png"}/>
+                </button>
             </div>
             <label>Proprietà</label>
-            <button onClick={()=> props.selectAllObjects()} className={"btn"}>Show Objects</button>
-            <label>Target:</label>
-            <select id={"target"} className={"custom-select"} onChange={() => setProperty(object, 'media' , "target", props)}>
-                <option key={"void_target"}>--</option>
-                {generateTargetOptions(props)}
-            </select>
+            <label>Tipologia: Transizione</label>
             <label>Nome:</label>
             <div id={"transitionName"}
                  className={"propertyForm"}
@@ -84,7 +86,11 @@ function generateTransitionOptions(object, props){
             >
                 {object.name}
             </div>
-
+            <label>Target:</label>
+            <select id={"target"} className={"custom-select"} onChange={() => setProperty(object, 'media' , "target", props)}>
+                <option key={"void_target"}>--</option>
+                {generateTargetOptions(props)}
+            </select>
             <label>Duration</label>
             <div className={"durationContainer"}>
                 <div id={"transitionDuration"}
