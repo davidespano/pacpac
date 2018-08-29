@@ -35,15 +35,17 @@
 .grid-container {
     display: grid;
     grid-template-columns: 15% auto auto 15%;
-    grid-template-rows: 10vh 60vh 30%;
     grid-template-areas:
-            'topbar topbar topbar topbar'
             'leftbar scene scene rightbar'
             'leftbar canvas canvas rightbar';
     grid-gap: 1.5px;
     padding: 1px;
     background-color: #ADB0B1;
     min-height: 99vh;
+}
+
+.topbar{
+    min-height: 100px !important;
 }
 
 .grid-container > div {
@@ -318,7 +320,11 @@
 
 .nav-link{
     background-color: #EF562D;
-    color: #FFFFFF !important;
+    color: #FFFFFF;
+}
+
+.nav-link:hover{
+    color: #FFFFFF;
 }
 
 .dropdown-menu.show {
@@ -400,4 +406,32 @@
     margin-bottom: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid #8C9093;
+}
+
+.navbar-brand{
+    margin-left: 1rem;
+}
+
+.nav-item {
+    height: 50px;
+    font-size: 1.3em !important;
+    font-weight: bold;
+}
+
+.tab-content {
+    height: 100px;
+    font-size: 1em !important;
+    padding: 0;
+}
+
+.flex-container{
+    display: flex;
+    height: 100%;
+}
+
+.nav-figures{
+    max-width: 10%;
+    height: 100%;
+    text-align: center;
+    padding-top: 15px;
 }

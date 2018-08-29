@@ -14,12 +14,14 @@ function AppView(props) {
     switch(props.mode){
         case 'EDIT_MODE_ON':
             return (
-                <div className={'grid-container'}>
+                <div>
                     <TopBar {...props} />
-                    <LeftBar {...props} />
-                    <RightBar {...props} />
-                    <CentralScene {...props} />
-                    <RulesCanvas {...props} />
+                    <div className={'grid-container'}>
+                        <LeftBar {...props} />
+                        <RightBar {...props} />
+                        <CentralScene {...props} />
+                        <RulesCanvas {...props} />
+                    </div>
                 </div>
             );
         case 'PLAY_MODE_ON':
