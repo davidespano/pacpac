@@ -13,6 +13,8 @@ const Scenes = require('../models/scenes')
  *              type: string
  *          tag:
  *              $ref: '#/definitions/Tags'
+ *          type:
+ *              type: string
  */
 
 /**
@@ -116,6 +118,10 @@ function getByName(req, res, next) {
  *                      type: integer
  *                      required: true
  *                      description: Index of the scene
+ *                  type:
+ *                      type: string
+ *                      required: true
+ *                      description: Type of the scene (3D / 2D)
  *                  tagColor:
  *                      type: string
  *                      description: color of the tag
@@ -148,9 +154,10 @@ function addScene(req, res, next) {
     const index = req.body.index;
     const tagColor = req.body.tagColor;
     const tagName = req.body.tagName;
+    const type = req.body.type;
     const gameID = req.params.gameID;
 
-    Scenes.addScene(dbUtils.getSession(req), name, index, tagColor, tagName, gameID)
+    Scenes.addScene(dbUtils.getSession(req), name, index, type, tagColor, tagName, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }

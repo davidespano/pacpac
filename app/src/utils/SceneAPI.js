@@ -17,17 +17,18 @@ function getByName(name, scene=null){
 
             let transitions = response.body.objects;
 
-            console.log(transitions)
+            console.log(transitions);
             if(transitions)
                 transitions = transitions.map((transition)=>{
-                    transition.media = transition.rules[0].actions[0].target
+                    transition.media = transition.rules[0].actions[0].target;
                     return transition;
-                } )
-            console.log(transitions)
+                } );
+            console.log(transitions);
              if(scene == null){
                  //new Scene object
                  let newScene = new MyScene(
                      response.body.name,
+                     response.body.type,
                      response.body.tagName,
                      response.body.tagColor,
                      transitions //transition list
@@ -52,11 +53,11 @@ function existsByName(name){
 }
 
 //create new scene inside db
-function createScene(name,index, tagColor, tagName){
+function createScene(name, index, type, tagColor, tagName){
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({name: name, index: index, tagColor: tagColor, tagName: tagName})
+        .send({name: name, index: index, type: type, tagColor: tagColor, tagName: tagName})
         .end(function(err, response){
             if(err){
                 return console.error(err);
@@ -65,6 +66,7 @@ function createScene(name,index, tagColor, tagName){
             // new Scene object
             let newScene = new MyScene(
                 response.body.name,
+                response.body.type,
                 response.body.tagName,
                 response.body.tagColor,
                 [], //transition list

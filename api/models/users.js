@@ -43,7 +43,7 @@ function me(session, token) {
                 throw {message: 'invalid authorization', status: 403};
             }
             let u = new User(results.records[0].get('user'));
-            var now = new Date().getTime();
+            const now = new Date().getTime();
             if (u.tokenExpire < now) {
                 throw {message: 'expired authorization', status: 403}
             }

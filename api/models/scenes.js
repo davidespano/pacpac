@@ -95,7 +95,7 @@ function getHomeScene(session, gameID) {
 }
 
 //add a scene
-function addScene(session, name, index, tagColor, tagName, gameID) {
+function addScene(session, name, index, type, tagColor, tagName, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name})' +
         'RETURN scene', {name: name, tagColor: tagColor, tagName: tagName})
@@ -106,8 +106,8 @@ function addScene(session, name, index, tagColor, tagName, gameID) {
             else {
                 return session.run(
                     'MERGE (tag:Tag:`' + gameID + '` {color: $tagColor, name:$tagName}) ' +
-                    'CREATE (scene:Scene:`' + gameID + '` {name: $name, index:$index}) -[:TAGGED_AS]-> (tag) ' +
-                    'RETURN scene,tag', {name: name, index: index, tagColor: tagColor, tagName: tagName})
+                    'CREATE (scene:Scene:`' + gameID + '` {name: $name, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
+                    'RETURN scene,tag', {name: name, index: index, type: type, tagColor: tagColor, tagName: tagName})
             }
         })
         .then(result => singleSceneWithDetails(result.records[0]));
