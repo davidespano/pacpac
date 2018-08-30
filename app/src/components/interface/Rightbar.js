@@ -35,6 +35,20 @@ function optionsView(props){
 function showObjects(interactiveObjects,props) {
     return (
         <div id={'objectsList'} className={'currentObjectOptions'}>
+            <div className={"buttonGroup"}>
+                <button
+                    title={"Cerca"}
+                    className={"BtnTransitionContainer"}
+                >
+                    <img className={"transitionBtn"} src={"icons8-search-filled-50.png"}/>
+                </button>
+                <button
+                    title={"Filtra"}
+                    className={"BtnTransitionContainer"}
+                >
+                    <img className={"transitionBtn"} src={"icons8-search-filled-50.png"}/>
+                </button>
+            </div>
             <a>Oggetti</a>
                 <button className={"btn"}  onClick={() => props.filterObjectFunction('scene')}> Scene Object </button>
             {generateObjectsList(props)}

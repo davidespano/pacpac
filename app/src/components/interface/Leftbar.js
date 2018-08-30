@@ -7,11 +7,11 @@ import {DataSet} from "vis";
 
 const {mediaURL} = settings;
 
-function Leftbar(props){
+function Leftbar(props) {
 
-    let path =`${mediaURL}${window.localStorage.getItem("gameID")}/`;
+    let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
 
-    return(
+    return (
         <div className={'leftbar'} id={'leftbar'}>
             {
                 //graph(props, path)
@@ -23,44 +23,44 @@ function Leftbar(props){
 
 
 //generate simple list
-function list(props, path){
+function list(props, path) {
     let regex = RegExp('.*\.mp4$');
 
-  return ([...props.scenes.values()].map(child => {
-      console.log(!regex.test(child.img));
+    return ([...props.scenes.values()].map(child => {
+        console.log(!regex.test(child.img));
 
-      if (!(regex.test(child.img))){
-      return(
-      <div key={child.name} className={'node_element'}>
-                <label className={"list-title"}>{child.name}</label>
-                <img
-                    src={path + child.img}
-                    className={'list-img'}
-                    alt={child.name}
-                    title={title(child)}
-                    onClick={() => {
+        if (!(regex.test(child.img))) {
+            return (
+                <div key={child.name} className={'node_element'}>
+                    <label className={"list-title"}>{child.name}</label>
+                    <img
+                        src={path + child.img}
+                        className={'list-img'}
+                        alt={child.name}
+                        title={title(child)}
+                        onClick={() => {
+                            let scene = props.scenes.get(child.name);
+                            SceneAPI.getByName(child.img, scene);
+                            props.updateCurrentScene(scene);
+                            console.log(props.scenes);
+                        }}
+
+                    />
+                </div>)
+        } else {
+            return (
+                <div key={child.name} className={'node_element'}>
+                    <label className={"list-title"}>{child.name}</label>
+                    <video muted preload={"auto"} className={'video_element'} onClick={() => {
                         let scene = props.scenes.get(child.name);
-                        SceneAPI.getByName(child.img,scene);
+                        SceneAPI.getByName(child.img, scene);
                         props.updateCurrentScene(scene);
-                        console.log(props.scenes);
-                    }}
-
-                />
-      </div>)}
-      else {
-          return(
-              <div key={child.name} className={'node_element'}>
-                <label className={"list-title"}>{child.name}</label>
-                  <video muted preload={"auto"} className={'video_element'} onClick={() => {
-                      let scene = props.scenes.get(child.name);
-                      SceneAPI.getByName(child.img,scene);
-                      props.updateCurrentScene(scene);
-                  }}>
-                      <source src={path + child.img} type="video/mp4"/>
-                  </video>
-              </div>
-          )
-      }
+                    }}>
+                        <source src={path + child.img} type="video/mp4"/>
+                    </video>
+                </div>
+            )
+        }
     }));
 
 }
@@ -68,13 +68,13 @@ function list(props, path){
 //generate graph
 function graph(props, path) {
 
-    if(props.scenes) {
+    if (props.scenes) {
         //console.log('initializing nodes and edges')
         let nodes = new DataSet();
         let edges = new DataSet();
         let container = document.getElementById('leftbar');
 
-        if(container != null){
+        if (container != null) {
             let x = container.offsetWidth / 2;
             let i = 0;
             [...props.scenes.values()].forEach(child => {
@@ -97,7 +97,7 @@ function graph(props, path) {
 }
 
 
-function title(child){
+function title(child) {
 
     return (
         "Scena: " + child.name +
@@ -105,7 +105,7 @@ function title(child){
     );
 }
 
-function generateNewNetwork(container, nodes, edges){
+function generateNewNetwork(container, nodes, edges) {
 
     let data = {
         nodes: nodes,
@@ -138,7 +138,7 @@ function generateNewNetwork(container, nodes, edges){
 
 }
 
-function SceneNode(name, img, tag, path, title, x, i){
+function SceneNode(name, img, tag, path, title, x, i) {
     this.id = name;
     this.img = img;
     this.image = path + img;
@@ -153,10 +153,10 @@ function SceneNode(name, img, tag, path, title, x, i){
     this.y = 100 * i;
 }
 
-function setNetworkProperties(network, nodes, edges){
+function setNetworkProperties(network, nodes, edges) {
 
     //scene selection
-    network.on('selectNode', (object) =>{
+    network.on('selectNode', (object) => {
         let node = nodes.get(object.nodes)[0]; //get selected node
         console.log(node);
         SceneAPI.getByName(node.img);

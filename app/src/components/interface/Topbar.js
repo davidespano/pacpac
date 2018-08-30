@@ -128,27 +128,27 @@ function TopBar(props){
     return (
         <div className={'topbar'}>
             <nav>
-                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <div className="nav nav-tabs" id="nav-tab" role="tablist">
                     <a className="navbar-brand">PacPac</a>
-                    <a class="nav-item nav-link active"
+                    <a className="nav-item nav-link active"
                        id="nav-game-tab" data-toggle="tab" href="#nav-game" role="tab" aria-controls="nav-game"
                        aria-selected="true" onClick={() => handleNavbarSelection()}>Gioco</a>
-                    <a class="nav-item nav-link" id="nav-objects-tab" data-toggle="tab" href="#nav-objects" role="tab"
+                    <a className="nav-item nav-link" id="nav-objects-tab" data-toggle="tab" href="#nav-objects" role="tab"
                        aria-controls="nav-objects" aria-selected="false" onClick={() => handleNavbarSelection()}>Oggetti</a>
                     <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
                 </div>
             </nav>
-            <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
+            <div className="tab-content" id="nav-tabContent">
+                <div className="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
                     <InputSceneForm {...props} />
-                    <figure className={'nav-figures'} data-toggle="modal" data-target="#exampleModal">
-                        <img src={"icons8-add-image-50.png"}/>
-                        <figcaption>Aggiungi una scena</figcaption>
+                    <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
+                        <img src={"icons8-add-image-64.png"}/>
+                        <figcaption>Nuova scena</figcaption>
                     </figure>
                 </div>
-                <div class="tab-pane fade flex-container" id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
+                <div className="tab-pane fade flex-container" id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
                     <figure className={'nav-figures'} onClick={() => (createTransition(props))}>
-                        <img src={"icons8-one-way-transition-50.png"}/>
+                        <img src={"icons8-add-one-way-transition-50.png"}/>
                         <figcaption>Transizione</figcaption>
                     </figure>
                 </div>
