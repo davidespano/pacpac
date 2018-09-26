@@ -1,7 +1,6 @@
 import Transition from "../../interactives/Transition";
 import MyScene from "../../scene/MyScene";
 import 'aframe';
-//import 'aframe-chromakey-material';
 import './aframe-selectable'
 import {Curved, Sound} from './aframe-entities';
 import React from 'react';
@@ -9,6 +8,7 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 //import InteractiveObject from "../../interactives/InteractiveObject";
 //var AFRAME = require('aframe');
+
 
 function createTransation(tr, target, theta){
 
@@ -25,9 +25,8 @@ function sceneFactory() {
     let tr1 = new Transition('', 2000, '0 156 0');
     createTransation(tr1, 'bolla06', 50);
     scene1.transitions.push(tr1);
-    scene1.tag.tagName='ingresso.mp3';
+    //scene1.tag.tagName='ingresso.mp3';
     sceneList.push(scene1);
-
 
     let scene2 = new MyScene("bolla06.mp4");
     let tr2 = new Transition('', 2000, '0 126 0');
@@ -36,7 +35,7 @@ function sceneFactory() {
     createTransation(tr12, 'bolla02', 50);
     scene2.transitions.push(tr2);
     scene2.transitions.push(tr12);
-    scene2.tag.tagName='ficus.mp3';
+//scene2.tag.tagName='ficus.mp3';
     sceneList.push(scene2);
 
     let scene3 = new MyScene("bolla10.mp4");
@@ -124,13 +123,23 @@ class Bubble extends React.Component {
         const sound = <Sound track={this.props.track} id = {this.props.name}/>;
 
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name}
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} muted
                     src={"http://localhost:3000/media/2k/" + this.props.img} radius="10" material={this.props.material} >
                 {curves} {sound}
             </Entity>
         );
     }
+}
 
+class PlanarScene extends React.Component{
+    render() {
+
+        return(
+            <Entity primitive="a-video" id={this.props.name}
+                    src={"http://localhost:3000/media/2k/" + "provaPlane.mp4"} position={"0 0 -43"} geometry={"height: 9; width: 16"}>
+            </Entity>
+        );
+    }
 }
 
 export default class VRScene extends React.Component{
@@ -141,6 +150,8 @@ export default class VRScene extends React.Component{
         this.state = {
             scenes: fact,
             activeScene: 0,
+            planeScene: false,
+            cameraType: "",
         };
     }
 
@@ -157,19 +168,33 @@ export default class VRScene extends React.Component{
         {
             let mats;
             let curvedImages = [];
-
+            let sceneType;
             if(index === this.state.activeScene) {
                 curvedImages = sky.transitions;
                 mats = "opacity: 1; visible: true";
             }
             else {
                 mats = "opacity: 0; visible: false";
+
             }
-
+            if(!this.state.planeScene){
+                sceneType = <Bubble key={"key" + sky.name} name={sky.name} img={sky.img}
+                                    material={mats} transitions={curvedImages} track = {sky.tag.tagName }
+                                    handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>;
+                this.state.cameraType = <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true" >
+                    <Entity mouse-cursor>
+                        <Entity primitive="a-cursor" id="cursor" pointsaver/>
+                    </Entity>
+                </Entity>;
+            } else {
+                sceneType = <PlanarScene/>
+                this.state.cameraType = <Entity key="keycamera" id="camera" camera="fov: 12"  look-controls_us="enabled: false" >
+                                <Entity mouse-cursor>
+                                </Entity>
+                            </Entity>;
+            }
             return(
-                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img}
-                        material={mats} transitions={curvedImages} track = {sky.tag.tagName } handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
-
+                sceneType
             );
         });
 
@@ -179,11 +204,8 @@ export default class VRScene extends React.Component{
                 <Scene stats>
                     {skies}
 
-                    <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
-                        <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor" pointsaver/>
-                        </Entity>
-                    </Entity>
+
+                    {this.state.cameraType}
                 </Scene>
             </div>
         );

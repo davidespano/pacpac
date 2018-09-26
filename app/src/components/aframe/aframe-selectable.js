@@ -38,6 +38,9 @@ AFRAME.registerComponent('selectable',
             var appear = new CustomEvent(trg.id + "app");
             actualScene.dispatchEvent(disappear);
             trg.dispatchEvent(appear);
+            trg.components.material.material.map.image.play();
+            actualScene.components.material.material.map.image.pause();
+            trg.components.material.material.map.image.muted=true;
         });
     }
 
@@ -47,8 +50,18 @@ AFRAME.registerComponent('selectable',
 AFRAME.registerComponent('muted', {
 
     init: function () {
-        var vid = document.getElementById("bolla02");
-        vid.muted = true;
+        var sceneEl = document.querySelector('a-scene');
+        console.log("sono qui")
+        var elem = this.el;
+        var boh = sceneEl.querySelector("#bolla02");
+        console.log(boh.components)
+        setTimeout(function() {
+            elem.components.material.material.map.image.pause();
+            //boh.components.material.material.map.image.autoplay=false;
+            elem.components.material.material.map.image.defaultMuted=true;
+        }, 1000);
+        //vid.mute;
+        //vid.pause();
     }
 
 });
