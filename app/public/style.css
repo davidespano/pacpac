@@ -37,6 +37,9 @@
     grid-template-columns: 15% auto auto 15%;
     grid-template-areas:
             'leftbar scene scene rightbar'
+            'leftbar scene scene rightbar'
+            'leftbar scene scene rightbar'
+            'leftbar canvas canvas rightbar'
             'leftbar canvas canvas rightbar';
     grid-gap: 1.5px;
     padding: 1px;
