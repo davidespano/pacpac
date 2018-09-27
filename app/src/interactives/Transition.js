@@ -1,6 +1,7 @@
 import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes"
 import InteractiveObject from "./InteractiveObject";
+import Actions from "../actions/Actions";
 let uuid = require('uuid');
 
 class Transition extends InteractiveObject {
@@ -15,12 +16,15 @@ class Transition extends InteractiveObject {
         this.height = height;
         this.vertices = vertices;
 
-        //default rule is passed to superclass
+        //default rule is passed to superclass, datalistStore is updated
+        let id = uuid.v4();
         this.addNewRule(
             EventTypes.CLICK, //event
             {}, //condition
-            [{type: RuleActionTypes.TRANSITION, target: media, uuid: uuid.v4()}] //action
+            [{type: RuleActionTypes.TRANSITION, target: '', uuid: id}] //action
         );
+
+        Actions.updateDatalist(id, '');
 
         this.setRotation(rotationX, rotationY, rotationZ);
     };

@@ -71,6 +71,7 @@ function createTransition(props) {
         rulesToDatalist(tr,props);
         let newScene = new MyScene(
             props.currentScene.img,
+            props.currentScene.type,
             props.currentScene.tagName,
             props.currentScene.tagColor,
             props.currentScene.transitions,
@@ -84,7 +85,6 @@ function createTransition(props) {
 }
 
 function rulesToDatalist(object,props){
-
     object.rules.forEach((rule) => {props.updateDatalist(rule.uuid, object.name)} )
 }
 
@@ -142,13 +142,13 @@ function TopBar(props){
                 <div className="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
                     <InputSceneForm {...props} />
                     <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
-                        <img src={"icons8-add-image-64.png"}/>
+                        <img src={"icons8-add-image-100.png"}/>
                         <figcaption>Nuova scena</figcaption>
                     </figure>
                 </div>
                 <div className="tab-pane fade flex-container" id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
-                    <figure className={'nav-figures'} onClick={() => (createTransition(props))}>
-                        <img src={"icons8-add-one-way-transition-50.png"}/>
+                    <figure className={'nav-figures'} onClick={() => {createTransition(props); console.log(props.scenes)}}>
+                        <img src={"icons8-add-one-way-transition-100.png"}/>
                         <figcaption>Transizione</figcaption>
                     </figure>
                 </div>

@@ -27,7 +27,7 @@ function list(props, path) {
     let regex = RegExp('.*\.mp4$');
 
     return ([...props.scenes.values()].map(child => {
-        console.log(!regex.test(child.img));
+        //console.log(!regex.test(child.img));
 
         if (!(regex.test(child.img))) {
             return (

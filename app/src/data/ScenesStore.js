@@ -24,6 +24,7 @@ class ScenesStore extends ReduceStore {
                     action.response.forEach(function(scene){
                         let newScene = new MyScene(
                             scene.name,
+                            scene.type,
                             scene.tagName,
                             scene.tagColor,
                         );
@@ -35,7 +36,7 @@ class ScenesStore extends ReduceStore {
                 state = state.set(action.scene.name, action.scene);
                 return state;
             case ActionTypes.REMOVE_SCENE:
-                state = state.delete(action.scene_name);
+                state = state.delete(action.scene.name);
                 return state;
             case ActionTypes.UPDATE_SCENE:
                 state = state.set(action.scene.name, action.scene);
@@ -45,8 +46,8 @@ class ScenesStore extends ReduceStore {
                 return state;
             case ActionTypes.REMOVE_TRANSITION:
                 const scene = action.scene;
-                const newTransiotions = scene.transitions.filter((transition) => transition.uuid != action.obj.uuid);
-                scene.transitions = newTransiotions;
+                const newTransitions = scene.transitions.filter((transition) => transition.uuid !== action.obj.uuid);
+                scene.transitions = newTransitions;
                 state = state.set(scene.name,scene);
                 return state;
             default:

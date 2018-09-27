@@ -29,8 +29,8 @@ function InputSceneForm(props){
                             </select>
                             <label htmlFor={'select-scene-type'}>Tipo</label>
                             <div id={'select-scene-type'} name={"select-scene-name"}>
-                                <input type={'radio'} name={'scene-type'} value={'3D'} defaultChecked={'true'}/>3D
-                                <input type={'radio'} name={'scene-type'} value={'2D'}/>2D
+                                <input id={'scene-type-3d'} type={'radio'} name={'scene-type'} value={'3D'} defaultChecked={'checked'}/>3D
+                                <input id={'scene-type-2d'} type={'radio'} name={'scene-type'} value={'2D'}/>2D
                             </div>
                             <label htmlFor={"image"}>Media</label>
                             <input type="file"
@@ -41,9 +41,9 @@ function InputSceneForm(props){
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
                                 let name = document.getElementById("scene_name").value,
-                                    type = document.getElementById("select-scene-type").value,
                                     media = document.getElementById("imageInput").files[0],
                                     tag= JSON.parse(document.getElementById("scene_tag").value);
+                                let type = (document.getElementById("scene-type-3d").checked)? '3D' : '2D';
                                 addMediaAndCreateScene(name,props.scenes._map.last()+1, type, media, tag.tagColor, tag.tagName);
                             }
                             } data-dismiss="modal" >Conferma</button>
@@ -68,7 +68,6 @@ function addMediaAndCreateScene(name, index, type, media, tagColor, tagName){
     let re = /(?:\.([^.]+))?$/;
     let ext = re.exec(media.name)[1];
     name = name + "." + ext;
-
 
     if (!SceneAPI.existsByName(name)){
         if(!index)

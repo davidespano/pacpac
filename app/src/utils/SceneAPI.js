@@ -72,6 +72,8 @@ function createScene(name, index, type, tagColor, tagName){
                 [], //transition list
             );
 
+            console.log('createScene');
+
             //update scene visualization
 
             Actions.receiveScene(newScene);

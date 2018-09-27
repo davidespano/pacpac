@@ -41,11 +41,11 @@
     grid-gap: 1.5px;
     padding: 1px;
     background-color: #ADB0B1;
-    min-height: 99vh;
+    min-height: 88.5vh !important;
 }
 
 .topbar{
-    min-height: 100px !important;
+    min-height: 11.5vh !important;
 }
 
 .grid-container > div {
@@ -327,25 +327,6 @@
     color: #FFFFFF;
 }
 
-.dropdown-menu.show {
-    min-width: 11rem;
-    margin-left: 5px;
-}
-.dropdown{
-    margin-bottom: 12px !important;
-
-}
-.dropdown-toggle {
-    height: 80%;
-    border-radius: .25rem;
-}
-
-.dropdown-item:hover{
-    background-color: #EF562D;
-    color: #FFFFFF !important;
-    cursor: pointer;
-}
-
 .measureUnit{
     font-size: 10px;
     margin-left:3px;
@@ -382,12 +363,12 @@
     display: inline;
 }
 
-.transitionBtn{
+.action-buttons{
     width: 20px;
     height: 20px;
 }
 
-.BtnTransitionContainer{
+.action-buttons-container{
     border: solid 1px #8C9093;
     border-radius: .25rem;
     background-color: transparent;
@@ -395,7 +376,7 @@
 
 }
 
-.BtnTransitionContainer:hover{
+.action-buttons-container:hover{
     cursor: pointer;
     background-color: #8C9093;
 }
@@ -421,7 +402,7 @@
 .tab-content {
     height: 100px;
     font-size: 1em !important;
-    padding-top: 15px;
+    padding-top: 1.5vh;
 }
 
 .flex-container{

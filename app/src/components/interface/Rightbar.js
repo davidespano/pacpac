@@ -37,20 +37,27 @@ function showObjects(interactiveObjects,props) {
         <div id={'objectsList'} className={'currentObjectOptions'}>
             <div className={"buttonGroup"}>
                 <button
-                    title={"Cerca"}
-                    className={"BtnTransitionContainer"}
+                    title={"Cerca un oggetto"}
+                    className={"action-buttons-container"}
                 >
-                    <img className={"transitionBtn"} src={"icons8-search-filled-50.png"}/>
+                    <img className={"action-buttons"} src={"icons8-search-filled-50.png"}/>
                 </button>
                 <button
-                    title={"Filtra"}
-                    className={"BtnTransitionContainer"}
+                    title={"Filtra per scena corrente"}
+                    className={"action-buttons-container"}
+                    onClick={() => props.filterObjectFunction('scene')}
                 >
-                    <img className={"transitionBtn"} src={"icons8-search-filled-50.png"}/>
+                    <img className={"action-buttons"} src={"icons8-image-100.png"}/>
                 </button>
+                <button
+                    title={"Tutti gli oggetti"}
+                    className={"action-buttons-container"}
+                    onClick={()=> props.filterObjectFunction('all')}
+                >
+                    <img className={"action-buttons"} src={"icons8-gallery-50.png"}/>
+                </button>
+
             </div>
-            <a>Oggetti</a>
-                <button className={"btn"}  onClick={() => props.filterObjectFunction('scene')}> Scene Object </button>
             {generateObjectsList(props)}
         </div>
     );
@@ -62,33 +69,33 @@ function generateTransitionOptions(object, props){
         <div className={'currentObjectOptions'}>
             <div className={"buttonGroup"}>
                 <button
-                    title={"Back"}
-                    className={"BtnTransitionContainer"}
+                    title={"Torna all'elenco degli oggetti"}
+                    className={"action-buttons-container"}
                     onClick={()=> props.selectAllObjects()}
                 >
-                    <img  className={"transitionBtn"} src={"icons8-go-back-50.png"}/>
+                    <img  className={"action-buttons"} src={"icons8-go-back-50.png"}/>
                 </button>
                 <button
                     title={"Save"}
-                    className={"BtnTransitionContainer"}
+                    className={"action-buttons-container"}
                     onClick={() => {
                         InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject.object);
                         alert("Hai salvato!")
                     }
                     }
                 >
-                    <img className={"transitionBtn"} src={"icons8-save-as-50.png"}/>
+                    <img className={"action-buttons"} src={"icons8-save-as-50.png"}/>
                 </button>
                 <button
                     title={"Delete"}
-                    className={"BtnTransitionContainer"}
+                    className={"action-buttons-container"}
                     onClick={() => {
                         InteractiveObjectAPI.removeTransition(props.currentScene, props.currentObject.object);
                         props.updateCurrentObject(null);
                     }
                     }
                 >
-                    <img  className={"transitionBtn"} src={"icons8-waste-50.png"}/>
+                    <img  className={"action-buttons"} src={"icons8-waste-50.png"}/>
                 </button>
             </div>
             <label>Proprietà</label>
@@ -181,11 +188,9 @@ function generateObjectsList(props) {
                 return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
             }
         ));
-    }
+    } else if (props.objectsFilter === 'scene'){
 
-    else if (props.objectsFilter === 'scene'){
-
-        if (props.currentScene.transitions.length == 0 ){
+        if (props.currentScene.transitions.length === 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
         }
 
@@ -201,7 +206,7 @@ function generateObjectsList(props) {
 function generateTargetOptions(props) {
     console.log(props.currentObject.object.rules);
     return ([...props.scenes.values()].map(child => {
-        if(child.name != props.currentScene.name) {
+        if(child.name !== props.currentScene.name) {
             if (child.img === props.currentObject.object.media) {
                 return (<option key={child.img + "target"} selected={"selected"}>{child.img}</option>)
             }
