@@ -76,7 +76,7 @@
 .canvas{
     min-height: 33vh;
     max-height: 33vh;
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 .scene{
@@ -90,6 +90,14 @@
     align-self: center;
     min-height: 55vh;
     max-height: 55vh;
+}
+
+.sceneButtons {
+    display: none;
+}
+
+.scene > img:hover + .sceneButtons, .sceneButtons:hover {
+    display: inline-block;
 }
 
 .list-img{
@@ -148,15 +156,15 @@
 
 .leftbar, .rightbar{
     max-height: 88.5vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
-.rightbar > a{
+.rightbar > a, .leftbar > a{
     font-size: 20px;
 
 }
 
-.rightbar > div{
+.rightbar > div, .leftbar > div{
     font-size: 15px;
 }
 
@@ -429,3 +437,4 @@
     max-height: 50px;
     max-width: 50px;
 }
+

@@ -13,6 +13,7 @@ function Leftbar(props) {
 
     return (
         <div className={'leftbar'} id={'leftbar'}>
+            {buttonsBar()}
             {
                 //graph(props, path)
                 list(props, path)
@@ -65,6 +66,29 @@ function list(props, path) {
 
 }
 
+function title(child) {
+
+    return (
+        "Scena: " + child.name +
+        "\nEtichetta: " + child.tag.tagName
+    );
+}
+
+function buttonsBar(){
+    return(
+        <div className={'currentObjectOptions'}>
+            <div className={"buttonGroup"}>
+                <button
+                    title={"Cerca una scena"}
+                    className={"action-buttons-container"}
+                >
+                    <img className={"action-buttons"} src={"icons8-search-filled-50.png"}/>
+                </button>
+            </div>
+        </div>
+    );
+}
+
 //generate graph
 function graph(props, path) {
 
@@ -94,15 +118,6 @@ function graph(props, path) {
             generateNewNetwork(container, nodes, edges);
         }
     }
-}
-
-
-function title(child) {
-
-    return (
-        "Scena: " + child.name +
-        "\nEtichetta: " + child.tag.tagName
-    );
 }
 
 function generateNewNetwork(container, nodes, edges) {

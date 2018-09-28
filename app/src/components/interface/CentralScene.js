@@ -8,15 +8,20 @@ function CentralScene(props){
     if(props.currentScene !== null && !(regex.test(props.currentScene.img))){
         return(
             <div className={'scene'}>
-
-                    <img id={'scene'}
-                         src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}
-                         alt={props.currentScene.name}
-                         onClick={(event) => {
-                             let p = getCoordinates(event);
-                             props.clickScene(p.x, p.y);
-                         }}
-                    />
+                <a
+                    title={"Elimina la scena corrente"}
+                    className={"action-buttons-container sceneButtons"}
+                >
+                    <img className={"action-buttons"} src={"icons8-waste-50.png"}/>
+                </a>
+                <img id={'scene'}
+                     src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}
+                     alt={props.currentScene.name}
+                     onClick={(event) => {
+                         let p = getCoordinates(event);
+                         props.clickScene(p.x, p.y);
+                     }}
+                />
 
             </div>
         );
