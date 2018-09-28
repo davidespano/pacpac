@@ -37,14 +37,11 @@
     grid-template-columns: 15% auto auto 15%;
     grid-template-areas:
             'leftbar scene scene rightbar'
-            'leftbar scene scene rightbar'
-            'leftbar scene scene rightbar'
-            'leftbar canvas canvas rightbar'
             'leftbar canvas canvas rightbar';
     grid-gap: 1.5px;
     padding: 1px;
     background-color: #ADB0B1;
-    min-height: 88.5vh !important;
+    height: 88.5vh !important;
 }
 
 .topbar{
@@ -67,7 +64,6 @@
 
 .navbar{
     justify-content: left;
-
 }
 
 .navbar-toggler{
@@ -75,6 +71,12 @@
     margin-right: 5px;
     font-family: latoregular;
     font-size: 16px;
+}
+
+.canvas{
+    min-height: 33vh;
+    max-height: 33vh;
+    overflow: scroll;
 }
 
 .scene{
@@ -85,8 +87,9 @@
 
 .scene > img{
     max-width: 100%;
-    max-height: 100%;
     align-self: center;
+    min-height: 55vh;
+    max-height: 55vh;
 }
 
 .list-img{
@@ -143,9 +146,14 @@
     display: block;
 }
 
-/*prove rightbar*/
+.leftbar, .rightbar{
+    max-height: 88.5vh;
+    overflow-y: scroll;
+}
+
 .rightbar > a{
     font-size: 20px;
+
 }
 
 .rightbar > div{
@@ -185,13 +193,8 @@
     display: flex;
 }
 
-#leftbar{
-    overflow: scroll;
-}
-
 /*prove rightbar*/
 .propertyForm{
-
     margin-right: auto;
     margin-left: auto;
     background-color: #FFFFFF;

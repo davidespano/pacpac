@@ -32,7 +32,10 @@ function CentralScene(props){
     else {
         return (
             <div className={'scene'}>
-                <p>Seleziona una scena per iniziare</p>
+                <img id={'scene'}
+                     src={"blank.png"}
+                     alt={'Seleziona una scena per iniziare'}
+                />
             </div>
         );
     }
