@@ -4,10 +4,7 @@ import 'aframe';
 import './aframe-selectable'
 import {Curved, Sound} from './aframe-entities';
 import React from 'react';
-//import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
-//import InteractiveObject from "../../interactives/InteractiveObject";
-//var AFRAME = require('aframe');
 
 
 function createTransation(tr, target, theta){
@@ -35,7 +32,7 @@ function sceneFactory() {
     createTransation(tr12, 'bolla02', 50);
     scene2.transitions.push(tr2);
     scene2.transitions.push(tr12);
-//scene2.tag.tagName='ficus.mp3';
+    //scene2.tag.tagName='ficus.mp3';
     sceneList.push(scene2);
 
     let scene3 = new MyScene("bolla10.mp4");
