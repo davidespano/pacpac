@@ -51,7 +51,7 @@ export default class VRScene extends React.Component{
             else mats = "opacity: 0; visible: false";
 
             return(
-                <Bubble key={"key" + sky.name} name={sky.name} img={`${window.localStorage.getItem("gameID")}/` + sky.img} material={mats} transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
+                <Bubble key={"key" + sky.name} name={sky.name} img={sky.img} material={mats} transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
             );
         });
 

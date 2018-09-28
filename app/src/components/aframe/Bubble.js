@@ -1,6 +1,9 @@
 import React from "react";
 import {Entity} from 'aframe-react';
-import {Curved} from './aframe-entities';
+import {Curved, Sound} from './aframe-entities';
+import settings from "../../utils/settings";
+const {mediaURL} = settings;
+
 
 export default class Bubble extends React.Component
 {
@@ -8,7 +11,7 @@ export default class Bubble extends React.Component
     {
         let el = this;
         this.nv.addEventListener("animationcomplete", function animationListener(evt){
-            if(evt.detail.name == "animation__appear")
+            if(evt.detail.name === "animation__appear")
             {
                 //Riattivo la lunghezza del raycast
                 let cursor = document.querySelector("#cursor");
@@ -24,17 +27,16 @@ export default class Bubble extends React.Component
         });
     }
 
-    render()
-    {
-        const curves = this.props.transitions.map(curve =>
-        {
+    render() {
+        const curves = this.props.transitions.map(curve => {
             return(
                 <Curved key={"keyC"+ curve.rules[0].actions[0].target} target={curve.rules[0].actions[0].target} vertices={curve.vertices}/>
             );
         });
+        const sound = <Sound track={this.props.track} id = {this.props.name}/>;
 
         return(
-            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10" material={this.props.material}>
+            <Entity _ref={elem => this.nv = elem}  primitive="a-sky" id={this.props.name} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.props.img} radius="10" material={this.props.material}>
                 {curves}
             </Entity>
         );
