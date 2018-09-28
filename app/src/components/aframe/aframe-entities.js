@@ -1,13 +1,12 @@
 import 'aframe';
 import React from 'react';
 import {Entity} from 'aframe-react';
-
+import './aframe-selectable'
 
 function Curved(props)
 {
     return(
-        <Entity primitive="a-curvedimage"  id={"curv" + props.target} material="opacity: 0; visible: false" rotation={props.rotation} radius = "9.5" theta-length={props.theta}
-                height={props.height} selectable={'target:' + props.target}/>
+        <Entity material="opacity: 0; visible: false; side: double" geometry={"primitive: polyline; vertices: " + props.vertices} id={"curv" + props.target} selectable={'target:' + props.target} scale="-1 1 1"/>
     );
 }
 
