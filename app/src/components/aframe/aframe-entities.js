@@ -18,6 +18,4 @@ function Sound(props)
     );
 }
 
-
-
 export {Curved, Sound}

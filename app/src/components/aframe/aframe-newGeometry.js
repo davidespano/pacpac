@@ -3,7 +3,7 @@ import './aframe-pointSaver'
 var AFRAME = require('aframe');
 var THREE = require('three');
 
-AFRAME.registerGeometry('mygeo', {
+AFRAME.registerGeometry('polyline', {
     schema: {
         vertices: {type: 'array'}
         },

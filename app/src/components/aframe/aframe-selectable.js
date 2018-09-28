@@ -39,10 +39,12 @@ AFRAME.registerComponent('selectable',
             actualScene.dispatchEvent(disappear);
             trg.dispatchEvent(appear);
             trg.components.material.material.map.image.play();
-            actualScene.components.material.material.map.image.pause();
             trg.components.material.material.map.image.muted=true;
+            actualScene.components.material.material.map.image.pause();
         });
-    }
+    },
+
+    
 
 
 });
@@ -50,33 +52,14 @@ AFRAME.registerComponent('selectable',
 AFRAME.registerComponent('muted', {
 
     init: function () {
-        var sceneEl = document.querySelector('a-scene');
         console.log("sono qui")
         var elem = this.el;
-        var boh = sceneEl.querySelector("#bolla02");
-        console.log(boh.components)
         setTimeout(function() {
-            elem.components.material.material.map.image.pause();
-            //boh.components.material.material.map.image.autoplay=false;
+            //elem.components.material.material.map.image.pause();
+            elem.components.material.material.map.image.autoplay=false;
             elem.components.material.material.map.image.defaultMuted=true;
         }, 1000);
-        //vid.mute;
-        //vid.pause();
     }
 
 });
 
-AFRAME.registerComponent('mySound',{
-    schema: {
-        src:{type: 'string'}
-    },
-
-    init: function () {
-        var elem = this.el;
-        var actualScene = elem.parentElement;
-        var sound = document.createElement('a-sound')
-
-        actualScene.setAttribute('sound', 'http://localhost:3000/media/2k/provaSound.mp3');
-        actualScene.setAttribute('autoplay', 'true')
-    }
-});

@@ -15,7 +15,7 @@ var THREE = require('three');
 function Curved(props)
 {
     return(
-        <Entity geometry={"primitive: mygeo; vertices: " + props.vertices} scale= "-1 1 1" material="side: double; opacity: 0.50"/>
+        <Entity geometry={"primitive: polyline; vertices: " + props.vertices} scale= "-1 1 1" material="side: double; opacity: 0.50"/>
     );
 }
 
