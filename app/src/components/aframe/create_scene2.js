@@ -16,9 +16,9 @@ export default class VRScene extends React.Component{
         super(props);
         let scene = this.props.scenes.toArray()[0];
         let gameGraph;
-        SceneAPI.getAllDetailedScenes(gameGraph);
+        //SceneAPI.getAllDetailedScenes(gameGraph);
         SceneAPI.getByName(scene.img, scene);
-        this.state = {
+        this.state = {                                  //forse aggiungerei le l'intorno corrente che aggiorno ogni volta, cosi sotto posso usare la funzione che già esiste
             scenes: this.props.scenes.toArray(),
             activeScene: 0,
         };
@@ -26,17 +26,17 @@ export default class VRScene extends React.Component{
 
     handleSceneChange(newActiveScene)
     {
-        const index = this.state.scenes.findIndex(el => {return el.name == newActiveScene});
-        let scene = this.props.scenes.get(newActiveScene);
-        SceneAPI.getByName(scene.img, scene);
+        const index = this.state.scenes.findIndex(el => {return el.name == newActiveScene});    //questo lo eliminerei
+        let scene = this.props.scenes.get(newActiveScene);                                      //prendo tutto dalla mappa usando il nome
+        SceneAPI.getByName(scene.img, scene);                                                   //questo non servirà più, avrò tutto
         this.setState({
-            scene: this.props.scenes.toArray(),
-            activeScene: index
+            scenes: this.props.scenes.toArray(), //dalla mappa si caricano solo i vicini e non tutte--non capisco perché è scene e non scenes--
+            activeScene: index                  //index non sarà più numerico ma il nome della scena corrente
         });
     }
 
     render() {
-        let skies = this.state.scenes.map((sky, index) =>
+        let skies = this.state.scenes.map((sky, index) =>   //questo resterà pressochè identico, ma ciclo solo sull'intorno
         {
             let mats;
             let curvedImages = [];
