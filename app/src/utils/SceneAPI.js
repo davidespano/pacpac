@@ -15,7 +15,7 @@ function getByName(name, scene=null){
                 return console.error(err)
             }
 
-            let transitions = response.body.objects;
+            let transitions = response.body.transitions;
 
             console.log(transitions);
             if(transitions)
@@ -136,7 +136,7 @@ function setHome(scene){
 }
 
 //get a detailed list of all the scenes
-function getAllDetailedScenes() {
+function getAllDetailedScenes(gameGraph) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes-all`)
         .set('Accept', 'application/json')
         .end(function(err, response){
@@ -144,7 +144,20 @@ function getAllDetailedScenes() {
                 return console.error(err);
             }
             console.log(response.body);
-            
+            const raw_scenes = response.body;
+            raw_scenes.forEach(s => {
+                // new Scene object
+                const newScene = new MyScene(
+                    s.name,
+                    s.type,
+                    s.tagName,
+                    s.tagColor,
+                    [], //transition list
+                );
+                gameGraph['scenes'][newScene.name] = newScene;
+            })
+
+
         });
 }
 export default {
@@ -154,4 +167,5 @@ export default {
     getAllScenes: getAllScenes,
     deleteScene: deleteScene,
     getNeighbours: getNeighbours,
+    getAllDetailedScenes: getAllDetailedScenes
 };
