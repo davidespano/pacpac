@@ -17,15 +17,16 @@ function generateRules(currentScene, props){
             return (<div>Non ci sono regole associate a questa scena</div>);
         }
         return ([...currentScene.transitions.values()].map((transition) => { return generateRule(transition, props)}));
+    } else {
+        return (<div>Nessuna scena selezionata</div>);
     }
 }
 
 function generateRule(object, props){
 
-
     return ([...object.rules.values()].map((rule) => {
         return (
-            <p className={'rules'} key={rule.uid}>
+            <p className={'rules'} key={rule.uuid}>
                 {L.WHEN} {L.PLAYER} {L[rule.event]} {chooseObj(object, rule, props)} {L.EX} {generateActions(rule.actions)}
             </p>
         );

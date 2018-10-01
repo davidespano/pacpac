@@ -1,7 +1,6 @@
 import React from 'react';
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import Actions from "../../actions/Actions";
-import InteractiveObject from "../../interactives/InteractiveObject";
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 
@@ -40,21 +39,21 @@ function showObjects(interactiveObjects,props) {
                     title={"Cerca un oggetto"}
                     className={"action-buttons-container"}
                 >
-                    <img className={"action-buttons"} src={"icons8-search-filled-50.png"}/>
+                    <img className={"action-buttons"} src={"icons8-search-filled-50.png"} alt={'Cerca un oggetto'}/>
                 </button>
                 <button
                     title={"Filtra per scena corrente"}
                     className={"action-buttons-container"}
                     onClick={() => props.filterObjectFunction('scene')}
                 >
-                    <img className={"action-buttons"} src={"icons8-image-100.png"}/>
+                    <img className={"action-buttons"} src={"icons8-image-100.png"} alt={'Filtra per scena corrente'}/>
                 </button>
                 <button
                     title={"Tutti gli oggetti"}
                     className={"action-buttons-container"}
                     onClick={()=> props.filterObjectFunction('all')}
                 >
-                    <img className={"action-buttons"} src={"icons8-gallery-50.png"}/>
+                    <img className={"action-buttons"} src={"icons8-gallery-50.png"} alt={'Tutti gli oggetti'}/>
                 </button>
 
             </div>
@@ -73,10 +72,10 @@ function generateTransitionOptions(object, props){
                     className={"action-buttons-container"}
                     onClick={()=> props.selectAllObjects()}
                 >
-                    <img  className={"action-buttons"} src={"icons8-go-back-50.png"}/>
+                    <img  className={"action-buttons"} src={"icons8-go-back-50.png"} alt={'Torna all\'elenco degli oggetti'}/>
                 </button>
                 <button
-                    title={"Save"}
+                    title={"Salva"}
                     className={"action-buttons-container"}
                     onClick={() => {
                         InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject.object);
@@ -84,10 +83,10 @@ function generateTransitionOptions(object, props){
                     }
                     }
                 >
-                    <img className={"action-buttons"} src={"icons8-save-as-50.png"}/>
+                    <img className={"action-buttons"} src={"icons8-save-as-50.png"} alt={'Salva'}/>
                 </button>
                 <button
-                    title={"Delete"}
+                    title={"Cancella"}
                     className={"action-buttons-container"}
                     onClick={() => {
                         InteractiveObjectAPI.removeTransition(props.currentScene, props.currentObject.object);
@@ -95,7 +94,7 @@ function generateTransitionOptions(object, props){
                     }
                     }
                 >
-                    <img  className={"action-buttons"} src={"icons8-waste-50.png"}/>
+                    <img  className={"action-buttons"} src={"icons8-waste-50.png"} alt={'Cancella'}/>
                 </button>
             </div>
             <label>Proprietà</label>
@@ -135,13 +134,6 @@ function generateTransitionOptions(object, props){
     );
 }
 
-//https://stackoverflow.com/questions/8808590/html5-number-input-type-that-takes-only-integers/17208628
-function onlyNumbers(id) {
-    let text = document.getElementById(id);
-    text.textContent = text.textContent.replace(/[^0-9.]/g, '');
-    text.textContent = text.textContent.replace(/(\..*)\./g, '$1');
-}
-
 function setProperty(object, property, id, props){
     let value = document.getElementById(id).textContent;
     switch (property) {
@@ -171,8 +163,7 @@ function setProperty(object, property, id, props){
             object[property] = value;
     }
     props.updateCurrentObject(object,props.currentObject.type);
-
-
+    InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject.object);
 }
 
 function generateObjectsList(props) {
@@ -224,12 +215,19 @@ function checkGeometryMode(props) {
 
     let target = document.getElementById('target').value;
 
-    if (target != '--') {
+    if (target !== '--') {
         props.switchToGeometryMode()
     }
     else {
         alert("Nessun target selezionato")
     }
+}
+
+//https://stackoverflow.com/questions/8808590/html5-number-input-type-that-takes-only-integers/17208628
+function onlyNumbers(id) {
+    let text = document.getElementById(id);
+    text.textContent = text.textContent.replace(/[^0-9.]/g, '');
+    text.textContent = text.textContent.replace(/(\..*)\./g, '$1');
 }
 
 // function geometryData (props) {

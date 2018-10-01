@@ -33,7 +33,6 @@ function list(props, path) {
         if (!(regex.test(child.img))) {
             return (
                 <div key={child.name} className={'node_element'}>
-                    <label className={"list-title"}>{child.name}</label>
                     <img
                         src={path + child.img}
                         className={'list-img'}
@@ -47,6 +46,11 @@ function list(props, path) {
                         }}
 
                     />
+                    <div className={'list-labels'}>
+                        <div className={'label-text'}>
+                            {child.name}
+                        </div>
+                    </div>
                 </div>)
         } else {
             return (
@@ -89,6 +93,7 @@ function buttonsBar(){
     );
 }
 
+/*
 //generate graph
 function graph(props, path) {
 
@@ -177,5 +182,6 @@ function setNetworkProperties(network, nodes, edges) {
         SceneAPI.getByName(node.img);
     })
 }
+*/
 
 export default Leftbar;
