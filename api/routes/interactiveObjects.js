@@ -46,10 +46,18 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *  Transitions:
  *      type: object
  *      properties:
+ *          uuid:
+ *              type: string
+ *          name:
+ *              type: string
+ *          rules:
+ *              type: array
+ *              items:
+ *                  $ref: '#/definitions/Rules'
+ *          vertices:
+ *              type: string
  *          duration:
  *              type: string
- *      allOf:
- *          - $ref: '#/definitions/InteractiveObjects'
  */
 
 /**

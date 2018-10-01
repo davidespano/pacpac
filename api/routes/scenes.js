@@ -22,8 +22,13 @@ const Scenes = require('../models/scenes')
  * definitions:
  *  DetailedScenes:
  *      type: object
- *      allOf:
- *          - $ref: '#definitions/Scenes'
+ *      properties:
+ *          name:
+ *              type: string
+ *          tag:
+ *              $ref: '#/definitions/Tags'
+ *          type:
+ *              type: string
  */
 
 /**
