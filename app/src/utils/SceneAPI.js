@@ -7,10 +7,10 @@ const request = require('superagent');
 const {apiBaseURL} = settings;
 
 //get scene by name
-function getByName(name, scene=null){
+function getByName(name, scene = null) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
         .set('Accept', 'application/json')
-        .end(function(err, response) {
+        .end(function (err, response) {
             if (err) {
                 return console.error(err)
             }
@@ -18,48 +18,49 @@ function getByName(name, scene=null){
             let transitions = response.body.transitions;
 
             console.log(transitions);
-            if(transitions)
-                transitions = transitions.map((transition)=>{
+            if (transitions)
+                transitions = transitions.map((transition) => {
                     transition.media = transition.rules[0].actions[0].target;
                     return transition;
-                } );
+                });
             console.log(transitions);
-             if(scene == null){
-                 //new Scene object
-                 let newScene = new MyScene(
-                     response.body.name,
-                     response.body.type,
-                     response.body.tagName,
-                     response.body.tagColor,
-                     transitions //transition list
-                 );
-                 Actions.receiveScene(newScene);
-             } else {
-                 scene.transitions = transitions;
-                 Actions.updateScene(scene);
-                 Actions.updateCurrentScene(scene);
-             }
+            transitions = transitions ? [] : transitions;
+            if (scene == null) {
+                //new Scene object
+                let newScene = new MyScene(
+                    response.body.name,
+                    response.body.type,
+                    response.body.tagName,
+                    response.body.tagColor,
+                    transitions //transition list
+                );
+                Actions.receiveScene(newScene);
+            } else {
+                scene.transitions = transitions;
+                Actions.updateScene(scene);
+                Actions.updateCurrentScene(scene);
+            }
 
         });
 }
 
 //check if a scene already exists
-function existsByName(name){
+function existsByName(name) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
         .set('Accept', 'application/json')
-        .end(function(err, response){
+        .end(function (err, response) {
             return response.status === 200;
         });
 }
 
 //create new scene inside db
-function createScene(name, index, type, tagColor, tagName){
+function createScene(name, index, type, tagColor, tagName) {
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send({name: name, index: index, type: type, tagColor: tagColor, tagName: tagName})
-        .end(function(err, response){
-            if(err){
+        .end(function (err, response) {
+            if (err) {
                 return console.error(err);
             }
 
@@ -81,40 +82,39 @@ function createScene(name, index, type, tagColor, tagName){
 }
 
 //reloads all scenes
-function getAllScenes(){
+function getAllScenes() {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes`)
         .set('Accept', 'application/json')
-        .end(function(err, response){
-            if(err){
+        .end(function (err, response) {
+            if (err) {
                 return console.error(err);
             }
             console.log(response.body)
-            if(response.body && response.body !== [])
+            if (response.body && response.body !== [])
                 Actions.loadAllScenes(response.body);
         });
 }
 
 //get neighbours of given scene
-function getNeighbours(name)
-{
+function getNeighbours(name) {
     return request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}/neighbours`)
-    .set('Accept', 'application/json')
-    .end(function(err, response){
-        if(err){
-            return console.error(err);
-        }
+        .set('Accept', 'application/json')
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
 
-        if(response.body !== [])
-            Actions.loadAllScenes(response.body);
-    });
+            if (response.body !== [])
+                Actions.loadAllScenes(response.body);
+        });
 }
 
 //delete scene
-function deleteScene(scene){
+function deleteScene(scene) {
     request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .end(function(err, response) {
+        .end(function (err, response) {
             if (err) {
                 return console.error(err)
             }
@@ -124,11 +124,11 @@ function deleteScene(scene){
 }
 
 //set home scene
-function setHome(scene){
+function setHome(scene) {
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/setHome`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .end(function(err, response) {
+        .end(function (err, response) {
             if (err) {
                 return console.error(err)
             }
@@ -139,8 +139,8 @@ function setHome(scene){
 function getAllDetailedScenes(gameGraph) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes-all`)
         .set('Accept', 'application/json')
-        .end(function(err, response){
-            if(err){
+        .end(function (err, response) {
+            if (err) {
                 return console.error(err);
             }
             console.log(response.body);
@@ -160,6 +160,7 @@ function getAllDetailedScenes(gameGraph) {
 
         });
 }
+
 export default {
     getByName: getByName,
     existsByName: existsByName,
