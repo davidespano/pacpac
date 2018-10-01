@@ -89,7 +89,7 @@
 .scene > img, .scene > video{
     transition: .1s ease;
     backface-visibility: hidden;
-    max-width: 100%;
+    width: 100%;
     align-self: center;
     min-height: 55vh;
     max-height: 55vh;
@@ -447,7 +447,7 @@
     position: relative;
 }
 
-.list-img {
+.list-img, .list-video {
     opacity: 1;
     transition: .1s ease;
     backface-visibility: hidden;
@@ -476,7 +476,7 @@
     margin: 2%;
 }
 
-.node_element:hover .list-img {
+.node_element:hover .list-img, .node_element:hover .list-video {
     opacity: 0.8;
 }
 

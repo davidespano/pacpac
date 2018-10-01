@@ -55,14 +55,18 @@ function list(props, path) {
         } else {
             return (
                 <div key={child.name} className={'node_element'}>
-                    <label className={"list-title"}>{child.name}</label>
-                    <video muted preload={"auto"} className={'video_element'} onClick={() => {
+                    <video muted preload={"auto"} className={'video_element list-video'} onClick={() => {
                         let scene = props.scenes.get(child.name);
                         SceneAPI.getByName(child.img, scene);
                         props.updateCurrentScene(scene);
                     }}>
                         <source src={path + child.img} type="video/mp4"/>
                     </video>
+                    <div className={'list-labels'}>
+                        <div className={'label-text'}>
+                            {child.name}
+                        </div>
+                    </div>
                 </div>
             )
         }

@@ -33,8 +33,8 @@ function CentralScene(props){
     if(props.currentScene !== null && (regex.test(props.currentScene.img))){
         return(
             <div className={'scene'}>
-                    <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}>
-                    </video>
+                <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}>
+                </video>
             </div>
         );
     }
