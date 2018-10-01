@@ -15,6 +15,8 @@ export default class VRScene extends React.Component{
     {
         super(props);
         let scene = this.props.scenes.toArray()[0];
+        let gameGraph;
+        SceneAPI.getAllDetailedScenes(gameGraph);
         SceneAPI.getByName(scene.img, scene);
         this.state = {
             scenes: this.props.scenes.toArray(),
