@@ -49,23 +49,23 @@ function getByName(session, name, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name:$name}) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS]->(object:InteractiveObject)' +
-        'OPTIONAL MATCH (object)-[:CONTAINS_RULE]->(rule:Rule)' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS]->(transition:InteractiveObject:Transition)' +
+        'OPTIONAL MATCH (transition)-[:CONTAINS_RULE]->(rule:Rule)' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action)' +
-        'WITH scene, tag, object, ' +
+        'WITH scene, tag, transition, ' +
         '          rule { ' +
         '                  .*,' +
         '                  actions: COLLECT(properties(action))' +
         '           } ' +
         'WITH scene, tag, ' +
-        '          object { ' +
+        '          transition { ' +
         '                  .*, ' +
         '                  rules: COLLECT(rule)' +
         '           } ' +
         'RETURN scene {' +
         '           properties: {' +
         '                           name: scene.name, ' +
-        '                           objects: COLLECT(object)' +
+        '                           transitions: COLLECT(transition)' +
         '                        }' +
         '       }, tag', {'name': name})
         .then(result => {
@@ -82,23 +82,23 @@ function getAllDetailed(session, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` ) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS]->(object:InteractiveObject)' +
-        'OPTIONAL MATCH (object)-[:CONTAINS_RULE]->(rule:Rule)' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS]->(transition:InteractiveObject:Transition)' +
+        'OPTIONAL MATCH (transition)-[:CONTAINS_RULE]->(rule:Rule)' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action)' +
-        'WITH scene, tag, object, ' +
+        'WITH scene, tag, transition, ' +
         '          rule { ' +
         '                  .*,' +
         '                  actions: COLLECT(properties(action))' +
         '           } ' +
         'WITH scene, tag, ' +
-        '          object { ' +
+        '          transition { ' +
         '                  .*, ' +
         '                  rules: COLLECT(rule)' +
         '           } ' +
         'RETURN scene {' +
         '           properties: {' +
         '                           name: scene.name, ' +
-        '                           objects: COLLECT(object)' +
+        '                           transitions: COLLECT(transition)' +
         '                        }' +
         '       }, tag')
         .then(result => {
