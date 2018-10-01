@@ -24,7 +24,7 @@ function getByName(name, scene = null) {
                     return transition;
                 });
             console.log(transitions);
-            transitions = transitions ? [] : transitions;
+            transitions = transitions ? transitions:[];
             if (scene == null) {
                 //new Scene object
                 let newScene = new MyScene(
