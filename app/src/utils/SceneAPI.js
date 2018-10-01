@@ -135,6 +135,18 @@ function setHome(scene){
         });
 }
 
+//get a detailed list of all the scenes
+function getAllDetailedScenes() {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes-all`)
+        .set('Accept', 'application/json')
+        .end(function(err, response){
+            if(err){
+                return console.error(err);
+            }
+            console.log(response.body);
+            
+        });
+}
 export default {
     getByName: getByName,
     existsByName: existsByName,

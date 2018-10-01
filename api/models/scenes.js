@@ -78,6 +78,43 @@ function getByName(session, name, gameID) {
         });
 }
 
+function getAllDetailed(session, gameID) {
+    return session.run(
+        'MATCH (scene:Scene:`' + gameID + '` ) ' +
+        'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS]->(object:InteractiveObject)' +
+        'OPTIONAL MATCH (object)-[:CONTAINS_RULE]->(rule:Rule)' +
+        'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action)' +
+        'WITH scene, tag, object, ' +
+        '          rule { ' +
+        '                  .*,' +
+        '                  actions: COLLECT(properties(action))' +
+        '           } ' +
+        'WITH scene, tag, ' +
+        '          object { ' +
+        '                  .*, ' +
+        '                  rules: COLLECT(rule)' +
+        '           } ' +
+        'RETURN scene {' +
+        '           properties: {' +
+        '                           name: scene.name, ' +
+        '                           objects: COLLECT(object)' +
+        '                        }' +
+        '       }, tag')
+        .then(result => {
+                if (!_.isEmpty(result.records)) {
+                    return manyScenes(result);
+                }
+                else {
+                    throw {message: "gameID not found", status: 404}
+                }
+            }
+
+            , error => {
+            });
+}
+
+
 //get the home scene
 function getHomeScene(session, gameID) {
     return session.run(
@@ -170,5 +207,6 @@ module.exports = {
     getHomeScene: getHomeScene,
     getNeighboursByName: getNeighboursByName,
     deleteScene: deleteScene,
-    setHome: setHome
+    setHome: setHome,
+    getAllDetailed: getAllDetailed
 };

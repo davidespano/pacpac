@@ -96,6 +96,37 @@ function getByName(req, res, next) {
 
 /**
  * @swagger
+ * /api/v0/{gameID}/scenes-all:
+ *  get:
+ *      tags:
+ *      - scenes
+ *      description: Returns all scenes with their details
+ *      summary: Returns all scenes with their details
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in : path
+ *          name : gameID
+ *          type : string
+ *          required : true
+ *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *      responses:
+ *          200:
+ *              description: A list of detailed scenes
+ *              schema:
+ *                  type: array
+ *                  items:
+ *                      $ref: '#/definitions/DetailedScenes'
+ */
+function detailedList(req, res, next) {
+    const gameID = req.params.gameID;
+    Scenes.getAllDetailed(dbUtils.getSession(req), gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
+/**
+ * @swagger
  * /api/v0/{gameID}/scenes/addScene:
  *  post:
  *      tags:
@@ -164,7 +195,7 @@ function addScene(req, res, next) {
 
 /**
  * @swagger
- * /api/v0/{gameID}/scenes/home:
+ * /api/v0/{gameID}/scenes-home:
  *  get:
  *      tags:
  *      - scenes
@@ -319,5 +350,6 @@ module.exports = {
     getHomeScene: getHomeScene,
     getNeighboursByName: getNeighboursByName,
     deleteScene: deleteScene,
-    setHome: setHome
+    setHome: setHome,
+    detailedList: detailedList
 };

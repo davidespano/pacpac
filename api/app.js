@@ -89,8 +89,9 @@ api.get('/users/me', routes.users.me);
 
 /**SCENES**/
 api.get('/:gameID/scenes', routes.scenes.list);
+api.get('/:gameID/scenes-all', routes.scenes.detailedList);
 api.get('/:gameID/scenes/:name', routes.scenes.getByName);
-api.get('/:gameID/scenes/home', routes.scenes.getHomeScene);
+api.get('/:gameID/scenes-home', routes.scenes.getHomeScene);
 api.get('/:gameID/scenes/:name/neighbours', routes.scenes.getNeighboursByName);
 api.post('/:gameID/scenes/addScene', loginRequired, routes.scenes.addScene);
 api.delete('/:gameID/scenes/:name', loginRequired, routes.scenes.deleteScene);
