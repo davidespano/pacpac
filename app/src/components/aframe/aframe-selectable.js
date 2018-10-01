@@ -33,6 +33,7 @@ AFRAME.registerComponent('muted', {
         console.log("sono qui")
         var elem = this.el;
         setTimeout(function() {
+            console.log(elem.components)
             elem.components.material.material.map.image.autoplay=false;
             elem.components.material.material.map.image.defaultMuted=true;
         }, 5000);

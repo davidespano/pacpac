@@ -31,4 +31,8 @@ function transition(element){
     })
 };
 
-export {transition}
+function transition2D(element){
+
+};
+
+export {transition, transition2D}
