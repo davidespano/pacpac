@@ -78,10 +78,10 @@ const Actions = {
         })
     },
 
-    removeScene(scene_name){
+    removeScene(scene){
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_SCENE,
-            scene_name: scene_name,
+            scene: scene,
         })
     },
 

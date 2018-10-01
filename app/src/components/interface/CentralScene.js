@@ -1,5 +1,7 @@
 import React from 'react';
 import settings from '../../utils/settings';
+import SceneAPI from "../../utils/SceneAPI";
+
 
 const {mediaURL} = settings;
 
@@ -13,6 +15,11 @@ function CentralScene(props){
                         <button
                             title={"Elimina la scena corrente"}
                             className={"action-buttons-container"}
+                            onClick={() => {
+                                SceneAPI.deleteScene(props.currentScene);
+                                props.updateCurrentScene(null);
+                                props.updateCurrentObject(null);
+                            }}
                         >
                             <img className={"action-buttons"} src={"icons8-waste-50.png"}/>
                         </button>
