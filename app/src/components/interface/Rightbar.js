@@ -108,8 +108,8 @@ function generateTransitionOptions(object, props){
                 {object.name}
             </div>
             <label>Target:</label>
-            <select id={"target"} className={"custom-select"} onChange={() => setProperty(object, 'media' , "target", props)}>
-                <option key={"void_target"}>--</option>
+            <select id={"target"} className={"custom-select"} onChange={() => setProperty(object, 'target' , "target", props)}>
+                <option key={"void_target"}>---</option>
                 {generateTargetOptions(props)}
             </select>
             <label>Duration</label>
@@ -137,27 +137,19 @@ function generateTransitionOptions(object, props){
 function setProperty(object, property, id, props){
     let value = document.getElementById(id).textContent;
     switch (property) {
-
-        case "rotationX":
-            object.setRotationX(value);
-            break;
-        case "rotationY":
-            object.setRotationY(value);
-            break;
-        case "rotationZ":
-            object.setRotationZ(value);
-            break;
         case "name":
             object.setName(value);
             object.rules.forEach(rule => {props.updateDatalist(rule.uuid,value)});
             break;
-        case "media":
+        case "target":
             let target = document.getElementById(id);
-            object[property] = target.options[target.selectedIndex].text;
             object.rules.forEach(rule => {
-                rule.actions.forEach(action => action.target = object[property])
+                rule.actions.forEach(action => action.target = target.options[target.selectedIndex].text)
             } );
 
+            console.log('setting target');
+            console.log(object);
+            console.log(props.currentObject);
             break;
         default:
             object[property] = value;
@@ -205,8 +197,6 @@ function generateTargetOptions(props) {
                 return (<option key={child.img + "target"}>{child.img}</option>)
             }
         }
-
-
     }));
 
 }

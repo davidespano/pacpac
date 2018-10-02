@@ -16,6 +16,12 @@ class ObjectsStore extends ReduceStore {
 
     reduce(state, action){
         switch(action.type){
+            case ActionTypes.ADD_NEW_OBJECT:
+                state = state.set(action.obj.uuid, action.obj);
+                return state;
+            case ActionTypes.REMOVE_OBJECT:
+                state = state.delete(action.obj.uuid);
+                return state;
             case ActionTypes.ADD_NEW_TRANSITION:
                 //console.log(action.obj)
                 state = state.set(action.obj.uuid, action.obj);

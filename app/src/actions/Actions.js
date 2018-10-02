@@ -53,14 +53,18 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.LOAD_ALL_SCENES,
             response: response,
+        });
+        response.forEach(scene => {
+            SceneAPI.getByName(scene.name);
         })
+
     },
 
     receiveScene(scene){
         AppDispatcher.dispatch({
             type: ActionTypes.GET_SCENE_RESPONSE,
             scene: scene,
-        })
+        });
     },
 
     updateCurrentScene(scene){

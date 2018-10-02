@@ -46,7 +46,14 @@ function list(props, path) {
                         }}
 
                     />
-                    <div className={'list-labels'}>
+                    <div className={'list-labels'}
+                         onClick={() => {
+                            let scene = props.scenes.get(child.name);
+                            SceneAPI.getByName(child.img, scene);
+                            props.updateCurrentScene(scene);
+                            console.log(props.scenes);
+                            }}
+                    >
                         <div className={'label-text'}>
                             {child.name}
                         </div>
