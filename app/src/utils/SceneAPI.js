@@ -1,6 +1,9 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
 import MyScene from "../scene/MyScene";
+import Transition from "../interactives/Transition";
+import Rule from "../interactives/Rule";
+import RuleActionTypes from "../interactives/RuleActionTypes";
 
 const request = require('superagent');
 
@@ -24,7 +27,7 @@ function getByName(name, scene = null) {
                     return transition;
                 });
             console.log(transitions);
-            transitions = transitions ? transitions:[];
+            transitions = transitions ? transitions : [];
             if (scene == null) {
                 //new Scene object
                 let newScene = new MyScene(
@@ -89,7 +92,6 @@ function getAllScenes() {
             if (err) {
                 return console.error(err);
             }
-            console.log(response.body)
             if (response.body && response.body !== [])
                 Actions.loadAllScenes(response.body);
         });
@@ -143,22 +145,32 @@ function getAllDetailedScenes(gameGraph) {
             if (err) {
                 return console.error(err);
             }
-            console.log(response.body);
             const raw_scenes = response.body;
+            gameGraph['scenes'] = {};
+            gameGraph['neighbours'] = [];
             raw_scenes.forEach(s => {
+                const adj = [];
+                const transitions = s.transitions.map(t => {
+                    new Transition(t.name, t.uuid, t.media, t.duration, t.vertices, t.rules.map(r => {
+                        r.actions.forEach(a => {
+                            if (a.type = RuleActionTypes.TRANSITION && a.target)
+                                adj.push(a.target);
+                        });
+                        return new Rule({id: r.uuid, event: r.event, condition: r.condition, action: r.actions})
+                    }))
+                });
                 // new Scene object
                 const newScene = new MyScene(
                     s.name,
                     s.type,
                     s.tagName,
                     s.tagColor,
-                    [], //transition list
+                    transitions
                 );
-                gameGraph['scenes'][newScene.name] = newScene;
-            })
-
-
-        });
+                gameGraph['scenes'][newScene.img] = newScene;
+                gameGraph['neighbours'][newScene.img] = adj;
+            });
+        })
 }
 
 export default {
