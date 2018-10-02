@@ -14,11 +14,10 @@ class Transition extends InteractiveObject {
         //default rule is passed to superclass, datalistStore is updated
 
         if(this.rules.length === 0){
-            console.log('MA CI ENTRI?');
             this.addNewRule(
                 EventTypes.CLICK, //event
                 {}, //condition
-                [{type: RuleActionTypes.TRANSITION, target: '', uuid: this.uuid}] //action
+                [{type: RuleActionTypes.TRANSITION, target: '---', uuid: this.uuid}] //action
             );
         }
 

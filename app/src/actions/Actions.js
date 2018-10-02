@@ -128,7 +128,7 @@ const Actions = {
     addNewObject(object){
       AppDispatcher.dispatch({
           type: ActionTypes.ADD_NEW_OBJECT,
-          object: object,
+          obj: object,
       })
     },
 

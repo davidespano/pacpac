@@ -20,13 +20,13 @@ function getByName(name, scene = null) {
 
             let transitions = response.body.transitions;
 
-            console.log(transitions);
+            //console.log(transitions);
             if (transitions)
                 transitions = transitions.map((transition) => {
                     transition.media = transition.rules[0].actions[0].target;
                     return transition;
                 });
-            console.log(transitions);
+            //console.log(transitions);
             transitions = transitions ? transitions : [];
             if (scene == null) {
                 //new Scene object
@@ -38,6 +38,11 @@ function getByName(name, scene = null) {
                     transitions //transition list
                 );
                 Actions.receiveScene(newScene);
+                console.log(transitions);
+                transitions.forEach(t => {
+                    Actions.addNewObject(t);
+                });
+
             } else {
                 scene.transitions = transitions;
                 Actions.updateScene(scene);
@@ -158,6 +163,9 @@ function getAllDetailedScenes(gameGraph) {
                         });
                         return new Rule({id: r.uuid, event: r.event, condition: r.condition, action: r.actions})
                     }))
+                });
+                transitions.forEach(t => {
+                    Actions.addNewObject(t);
                 });
                 // new Scene object
                 const newScene = new MyScene(

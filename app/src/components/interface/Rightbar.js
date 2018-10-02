@@ -110,7 +110,7 @@ function generateTransitionOptions(object, props){
             <label>Target:</label>
             <select id={"target"} className={"custom-select"} onChange={() => setProperty(object, 'target' , "target", props)}>
                 <option key={"void_target"}>---</option>
-                {generateTargetOptions(props)}
+                {generateTargetOptions(props, object.rules)}
             </select>
             <label>Duration</label>
             <div className={"durationContainer"}>
@@ -138,7 +138,7 @@ function setProperty(object, property, id, props){
     let value = document.getElementById(id).textContent;
     switch (property) {
         case "name":
-            object.setName(value);
+            object.name = value;
             object.rules.forEach(rule => {props.updateDatalist(rule.uuid,value)});
             break;
         case "target":
@@ -186,11 +186,14 @@ function generateObjectsList(props) {
 
 }
 
-function generateTargetOptions(props) {
-    console.log(props.currentObject.object.rules);
+function generateTargetOptions(props, rules) {
+
+    console.log('qui');
+    console.log(rules);
+
     return ([...props.scenes.values()].map(child => {
         if(child.name !== props.currentScene.name) {
-            if (child.img === props.currentObject.object.media) {
+            if (child.img === rules[0].actions[0].target) {
                 return (<option key={child.img + "target"} selected={"selected"}>{child.img}</option>)
             }
             else {
