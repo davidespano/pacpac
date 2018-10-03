@@ -23,16 +23,24 @@ function TopBar(props){
             <div className="tab-content" id="nav-tabContent">
                 <div className="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
                     <InputSceneForm {...props} />
-                    <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
-                        <img src={"icons8-add-image-100.png"}/>
-                        <figcaption>Nuova scena</figcaption>
-                    </figure>
+                    <div className={"flex-container"}>
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
+                            <img src={"icons8-add-image-100.png"}/>
+                            <figcaption>Nuova scena</figcaption>
+                        </figure>
+                    </div>
                 </div>
-                <div className="tab-pane fade flex-container" id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
-                    <figure className={'nav-figures'} onClick={() => {createTransition(props); console.log(props.scenes)}}>
-                        <img src={"icons8-add-one-way-transition-100.png"}/>
-                        <figcaption>Transizione</figcaption>
-                    </figure>
+                <div className="tab-pane fade" id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
+                    <div className={"flex-container"}>
+                        <figure className={'nav-figures'} onClick={() => {createTransition(props)}}>
+                            <img src={"icons8-add-one-way-transition-100.png"}/>
+                            <figcaption>Transizione</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'} onClick={() => {createSwitch(props)}}>
+                            <img src={"icons8-toggle-on-filled-100.png"}/>
+                            <figcaption>Interruttore</figcaption>
+                        </figure>
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,6 +82,10 @@ function createTransition(props) {
     } else {
         alert("Nessuna scena selezionata!");
     }
+}
+
+function createSwitch(props){
+
 }
 
 function rulesToDatalist(object,props){

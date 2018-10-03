@@ -21,7 +21,7 @@ function CentralScene(props){
                                 props.updateCurrentObject(null);
                             }}
                         >
-                            <img className={"action-buttons"} src={"icons8-waste-50.png"}/>
+                            <img className={"action-buttons scene-buttons-img"} src={"icons8-waste-50.png"}/>
                         </button>
                     </div>
                 </div>
