@@ -17,14 +17,14 @@ class ObjectsStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
-                state = state.set(action.obj.uuid, action.obj);
+                state = state.set(action.obj.uuid, action.obj).sort(comparator);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
                 state = state.delete(action.obj.uuid);
                 return state;
             case ActionTypes.ADD_NEW_TRANSITION:
                 //console.log(action.obj)
-                state = state.set(action.obj.uuid, action.obj);
+                state = state.set(action.obj.uuid, action.obj).sort();
                 return state;
             case ActionTypes.REMOVE_TRANSITION:
                 state = state.delete(action.obj.uuid);
@@ -36,3 +36,10 @@ class ObjectsStore extends ReduceStore {
 }
 
 export default new ObjectsStore();
+
+
+function comparator(a, b){
+    if(a.name < b.name) return -1;
+    if(a.name > b.name) return 1;
+    return 0;
+}

@@ -125,7 +125,7 @@ function deleteScene(scene) {
             if (err) {
                 return console.error(err)
             }
-            Actions.removeScene(scene.name);
+            Actions.removeScene(scene);
             Actions.updateCurrentScene(null);
         });
 }
