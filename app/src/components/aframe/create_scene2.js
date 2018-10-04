@@ -15,8 +15,9 @@ export default class VRScene extends React.Component{
     {
         super(props);
         let scene = this.props.scenes.toArray()[0];
-        let gameGraph;
-        //SceneAPI.getAllDetailedScenes(gameGraph);
+        let gameGraph={};
+        SceneAPI.getAllDetailedScenes(gameGraph);
+        //console.log(gameGraph);
         SceneAPI.getByName(scene.img, scene);
         this.state = {                                  //forse aggiungerei le l'intorno corrente che aggiorno ogni volta, cosi sotto posso usare la funzione che già esiste
             scenes: this.props.scenes.toArray(),
