@@ -155,6 +155,8 @@ function getAllDetailedScenes(gameGraph) {
             gameGraph['neighbours'] = [];
             raw_scenes.forEach(s => {
                 const adj = [];
+                console.log(s.transitions)
+
                 const transitions = s.transitions.map(t => {
                     new Transition(t.name, t.uuid, t.media, t.duration, t.vertices, t.rules.map(r => {
                         r.actions.forEach(a => {
@@ -164,7 +166,10 @@ function getAllDetailedScenes(gameGraph) {
                         return new Rule({id: r.uuid, event: r.event, condition: r.condition, action: r.actions})
                     }))
                 });
+                console.log(s.name)
+                console.log(transitions)
                 transitions.forEach(t => {
+                    console.log(t)
                     Actions.addNewObject(t);
                 });
                 // new Scene object
