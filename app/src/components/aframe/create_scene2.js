@@ -16,14 +16,29 @@ export default class VRScene extends React.Component{
         super(props);
         let scene = this.props.scenes.toArray()[0];
         let gameGraph={};
-        SceneAPI.getAllDetailedScenes(gameGraph);
-        console.log(gameGraph)
+        //SceneAPI.getAllDetailedScenes(gameGraph);
+        //console.log(gameGraph)
         //SceneAPI.getByName(scene.img, scene);
         this.state = {                                  //forse aggiungerei le l'intorno corrente che aggiorno ogni volta, cosi sotto posso usare la funzione che già esiste
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene.img,
         };
+    }
+
+    componentDidMount(){
+        this.loadEverything();
+    }
+
+    async loadEverything(){
+        let scene = this.props.scenes.toArray()[0];
+        let gameGraph={};
+        await SceneAPI.getAllDetailedScenes(gameGraph);
+        this.setState({
+            scenes: this.props.scenes.toArray(), //dalla mappa si caricano solo i vicini e non tutte--non capisco perché è scene e non scenes--
+            graph: gameGraph,
+            activeScene: scene.img,                  //index non sarà più numerico ma il nome della scena corrente
+        });
     }
 
     handleSceneChange(newActiveScene)
@@ -52,9 +67,8 @@ export default class VRScene extends React.Component{
             );
         } else {
             if (this.state.graph.neighbours[this.state.activeScene] !== undefined) {
-                let skies = 
 
-                    this.state.graph.neighbours[this.state.activeScene].forEach((sky) =>
+                let skies = this.state.graph.neighbours[this.state.activeScene].forEach((sky) =>
                 //let skies = this.state.scenes.map((sky) =>   //questo resterà pressochè identico, ma ciclo solo sull'intorno
                 {
                     console.log(this.state.graph)
