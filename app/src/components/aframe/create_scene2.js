@@ -17,6 +17,7 @@ export default class VRScene extends React.Component{
         let scene = this.props.scenes.toArray()[0];
         let gameGraph={};
         SceneAPI.getAllDetailedScenes(gameGraph);
+        console.log(gameGraph)
         //SceneAPI.getByName(scene.img, scene);
         this.state = {                                  //forse aggiungerei le l'intorno corrente che aggiorno ogni volta, cosi sotto posso usare la funzione che già esiste
             scenes: this.props.scenes.toArray(),
@@ -27,14 +28,12 @@ export default class VRScene extends React.Component{
 
     handleSceneChange(newActiveScene)
     {
-        console.log(newActiveScene)
         const index = newActiveScene + '.mp4';    //questo lo eliminerei
         let scene = this.props.scenes.get(newActiveScene);                                      //prendo tutto dalla mappa usando il nome
         SceneAPI.getByName(scene.img, scene);                                                   //questo non servirà più, avrò tutto
-        let boh = this.state.graph.scenes
-        console.log(boh)
         this.setState({
             scenes: this.props.scenes.toArray(), //dalla mappa si caricano solo i vicini e non tutte--non capisco perché è scene e non scenes--
+            graph: this.state.graph,
             activeScene: index                  //index non sarà più numerico ma il nome della scena corrente
         });
 
@@ -52,58 +51,71 @@ export default class VRScene extends React.Component{
                 </div>
             );
         } else {
-            console.log(this.state.graph.neighbours[this.state.activeScene])
-            //let skies = this.state.graph.neighbours[this.state.activeScene].forEach(sky =>
-            let skies = this.state.scenes.map((sky) =>   //questo resterà pressochè identico, ma ciclo solo sull'intorno
-            {
-                //console.log(this.state.graph)
-                let mats;
-                let curvedImages = [];
-                let sceneType;
-                //let currentScene = this.state.graph.scenes[sky];
-                //console.log(currentScene)
-                if (sky.img === this.state.activeScene) {
-                    curvedImages = sky.transitions;
-                    mats = "opacity: 1; visible: true";
-                }
-                else {
-                    mats = "opacity: 0; visible: false";
+            if (this.state.graph.neighbours[this.state.activeScene] !== undefined) {
+                let skies = 
 
-                }
-                if (true) {
-                    sceneType = <Bubble key={"key" + sky.name} name={sky.name} img={sky.img}
-                                        material={mats} transitions={curvedImages} track={sky.tag.tagName}
-                                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>;
-                    this.state.cameraType =
-                        <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
-                            <Entity mouse-cursor>
-                                <Entity primitive="a-cursor" id="cursor" pointsaver/>
-                            </Entity>
-                        </Entity>;
-                } else {
-                    sceneType = <PlanarScene/>
-                    this.state.cameraType =
-                        <Entity key="keycamera" id="camera" camera="fov: 12" look-controls_us="enabled: false">
-                            <Entity mouse-cursor>
-                            </Entity>
-                        </Entity>;
-                }
+                    this.state.graph.neighbours[this.state.activeScene].forEach((sky) =>
+                //let skies = this.state.scenes.map((sky) =>   //questo resterà pressochè identico, ma ciclo solo sull'intorno
+                {
+                    console.log(this.state.graph)
+                    let mats;
+                    let sceneType;
+                    let curvedImages = [];
+
+                    if (sky === this.state.activeScene) {
+                        curvedImages = this.state.graph.scenes[sky];
+                        mats = "opacity: 1; visible: true";
+                    }
+                    else {
+                        mats = "opacity: 0; visible: false";
+
+                    }
+                    console.log(this.state.graph)
+                    if (true) {
+                        sceneType = <Bubble key={"key" + sky.name} name={sky.name} img={sky.img}
+                                            material={mats} transitions={curvedImages} track={sky.tag.tagName}
+                                            handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>;
+                        this.state.cameraType =
+                            <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
+                                <Entity mouse-cursor>
+                                    <Entity primitive="a-cursor" id="cursor" pointsaver/>
+                                </Entity>
+                            </Entity>;
+                    } else {
+                        sceneType = <PlanarScene/>
+                        this.state.cameraType =
+                            <Entity key="keycamera" id="camera" camera="fov: 12" look-controls_us="enabled: false">
+                                <Entity mouse-cursor>
+                                </Entity>
+                            </Entity>;
+                    }
+                    return (
+                        sceneType
+                    );
+                });
+
                 return (
-                    sceneType
+                    <div id="mainscene">
+
+                        <Scene stats>
+                            {skies}
+
+
+                            {this.state.cameraType}
+                        </Scene>
+                    </div>
                 );
-            });
+            } else {
+                return (
+                    <div id="mainscene">
 
-            return (
-                <div id="mainscene">
+                        <Scene stats>
 
-                    <Scene stats>
-                        {skies}
-
-
-                        {this.state.cameraType}
-                    </Scene>
-                </div>
-            );
+                            {this.state.cameraType}
+                        </Scene>
+                    </div>
+                );
+            }
         }
     }
 
