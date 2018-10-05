@@ -143,42 +143,38 @@ function setHome(scene) {
 }
 
 //get a detailed list of all the scenes
-function getAllDetailedScenes(gameGraph) {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes-all`)
-        .set('Accept', 'application/json')
-        .end(function (err, response) {
-            if (err) {
-                return console.error(err);
-            }
-            const raw_scenes = response.body;
-            gameGraph['scenes'] = {};
-            gameGraph['neighbours'] = [];
-            raw_scenes.forEach(s => {
-                const adj = [];
-                const transitions = s.transitions.map(t => {
-                    return new Transition(t.name, t.uuid, t.media, t.duration, t.vertices, t.rules.map(r => {
-                        r.actions.forEach(a => {
-                            if (a.type = RuleActionTypes.TRANSITION && a.target)
-                                adj.push(a.target);
-                        });
-                        return new Rule({id: r.uuid, event: r.event, condition: r.condition, action: r.actions})
-                    }))
+async function getAllDetailedScenes(gameGraph) {
+    const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes-all`)
+        .set('Accept', 'application/json');
+    const raw_scenes = response.body;
+    gameGraph['scenes'] = {};
+    gameGraph['neighbours'] = [];
+    raw_scenes.forEach(s => {
+        const adj = [];
+        const transitions = s.transitions.map(t => {
+            return new Transition(t.name, t.uuid, t.media, t.duration, t.vertices, t.rules.map(r => {
+                r.actions.forEach(a => {
+                    if (a.type = RuleActionTypes.TRANSITION && a.target)
+                        adj.push(a.target);
                 });
-                transitions.forEach(t => {
-                    Actions.addNewObject(t);
-                });
-                // new Scene object
-                const newScene = new MyScene(
-                    s.name,
-                    s.type,
-                    s.tagName,
-                    s.tagColor,
-                    transitions
-                );
-                gameGraph['scenes'][newScene.img] = newScene;
-                gameGraph['neighbours'][newScene.img] = adj;
-            });
-        })
+                return new Rule({id: r.uuid, event: r.event, condition: r.condition, action: r.actions})
+            }))
+        });
+        transitions.forEach(t => {
+            Actions.addNewObject(t);
+        });
+        // new Scene object
+        const newScene = new MyScene(
+            s.name,
+            s.type,
+            s.tagName,
+            s.tagColor,
+            transitions
+        );
+        gameGraph['scenes'][newScene.img] = newScene;
+        gameGraph['neighbours'][newScene.img] = adj;
+    })
+    //console.log(gameGraph);
 }
 
 export default {
