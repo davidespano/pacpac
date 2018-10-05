@@ -9,13 +9,12 @@ import Bubble from './Bubble';
 import PlanarScene from './PlanarScene'
 import SceneAPI from "../../utils/SceneAPI";
 
-export default class VRScene extends React.Component{
+export default class VRScene extends React.Component {
 
-    constructor(props)
-    {
+    constructor(props) {
         super(props);
         let scene = this.props.scenes.toArray()[0];
-        let gameGraph={};
+        let gameGraph = {};
         //SceneAPI.getAllDetailedScenes(gameGraph);
         //console.log(gameGraph)
         //SceneAPI.getByName(scene.img, scene);
@@ -26,13 +25,13 @@ export default class VRScene extends React.Component{
         };
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.loadEverything();
     }
 
-    async loadEverything(){
+    async loadEverything() {
         let scene = this.props.scenes.toArray()[0];
-        let gameGraph={};
+        let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         this.setState({
             scenes: this.props.scenes.toArray(), //dalla mappa si caricano solo i vicini e non tutte--non capisco perché è scene e non scenes--
@@ -41,11 +40,10 @@ export default class VRScene extends React.Component{
         });
     }
 
-    handleSceneChange(newActiveScene)
-    {
+    handleSceneChange(newActiveScene) {
         const index = newActiveScene + '.mp4';    //questo lo eliminerei
-        let scene = this.props.scenes.get(newActiveScene);                                      //prendo tutto dalla mappa usando il nome
-        SceneAPI.getByName(scene.img, scene);                                                   //questo non servirà più, avrò tutto
+        //let scene = this.props.scenes.get(newActiveScene);                                      //prendo tutto dalla mappa usando il nome
+        //SceneAPI.getByName(scene.img, scene);                                                   //questo non servirà più, avrò tutto
         this.setState({
             scenes: this.props.scenes.toArray(), //dalla mappa si caricano solo i vicini e non tutte--non capisco perché è scene e non scenes--
             graph: this.state.graph,
@@ -55,58 +53,42 @@ export default class VRScene extends React.Component{
     }
 
     render() {
-        if(this.state.graph.neighbours === undefined) {
+        if (this.state.graph.neighbours === undefined) {
             return (
                 <div id="mainscene">
 
                     <Scene stats>
 
-                        {this.state.cameraType}
+                        <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
+                            <Entity mouse-cursor>
+                                <Entity primitive="a-cursor" id="cursor" pointsaver/>
+                            </Entity>
+                        </Entity>;
                     </Scene>
                 </div>
             );
         } else {
             if (this.state.graph.neighbours[this.state.activeScene] !== undefined) {
 
-                let skies = this.state.graph.neighbours[this.state.activeScene].forEach((sky) =>
-                //let skies = this.state.scenes.map((sky) =>   //questo resterà pressochè identico, ma ciclo solo sull'intorno
-                {
-                    console.log(this.state.graph)
+                let currentLevel = this.state.graph.neighbours[this.state.activeScene].slice();
+                currentLevel.push(this.state.activeScene)
+                let skies = currentLevel.map((sky) => {
+
                     let mats;
-                    let sceneType;
                     let curvedImages = [];
 
+                    let scene = this.state.graph.scenes[sky];
                     if (sky === this.state.activeScene) {
-                        curvedImages = this.state.graph.scenes[sky];
+                        curvedImages = scene.transitions;
                         mats = "opacity: 1; visible: true";
                     }
-                    else {
-                        mats = "opacity: 0; visible: false";
-
-                    }
-                    console.log(this.state.graph)
-                    if (true) {
-                        sceneType = <Bubble key={"key" + sky.name} name={sky.name} img={sky.img}
-                                            material={mats} transitions={curvedImages} track={sky.tag.tagName}
-                                            handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>;
-                        this.state.cameraType =
-                            <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
-                                <Entity mouse-cursor>
-                                    <Entity primitive="a-cursor" id="cursor" pointsaver/>
-                                </Entity>
-                            </Entity>;
-                    } else {
-                        sceneType = <PlanarScene/>
-                        this.state.cameraType =
-                            <Entity key="keycamera" id="camera" camera="fov: 12" look-controls_us="enabled: false">
-                                <Entity mouse-cursor>
-                                </Entity>
-                            </Entity>;
-                    }
+                    else mats = "opacity: 0; visible: false";
                     return (
-                        sceneType
+                        <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
+                                transitions={curvedImages}
+                                handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
                     );
-                });
+                })
 
                 return (
                     <div id="mainscene">
@@ -114,26 +96,35 @@ export default class VRScene extends React.Component{
                         <Scene stats>
                             {skies}
 
-
-                            {this.state.cameraType}
+                            <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
+                                <Entity mouse-cursor>
+                                    <Entity primitive="a-cursor" id="cursor" pointsaver/>
+                                </Entity>
+                            </Entity>;
                         </Scene>
                     </div>
-                );
+                )
+
             } else {
                 return (
                     <div id="mainscene">
 
                         <Scene stats>
 
-                            {this.state.cameraType}
+                            <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
+                                <Entity mouse-cursor>
+                                    <Entity primitive="a-cursor" id="cursor" pointsaver/>
+                                </Entity>
+                            </Entity>;
                         </Scene>
                     </div>
                 );
             }
         }
     }
-
 }
+
+
 
 
 

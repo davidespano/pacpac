@@ -22,7 +22,7 @@ export default class Bubble extends React.Component
 
                 el.props.handler(el.props.name);
             }
-
+            console.log(this)
             this.components[evt.detail.name].animation.reset();
         });
     }
