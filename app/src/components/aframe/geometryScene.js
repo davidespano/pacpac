@@ -1,16 +1,16 @@
-import Transition from "../../interactives/Transition";
-import MyScene from "../../scene/MyScene";
+//import Transition from "../../interactives/Transition";
+//import MyScene from "../../scene/MyScene";
 import 'aframe';
 import './aframe-selectable'
 import './aframe-newGeometry'
-import SceneAPI from '../../utils/SceneAPI'
+//import SceneAPI from '../../utils/SceneAPI'
 import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
-import InteractiveObject from "../../interactives/InteractiveObject";
-var AFRAME = require('aframe');
-var THREE = require('three');
+//import InteractiveObject from "../../interactives/InteractiveObject";
+//var AFRAME = require('aframe');
+//var THREE = require('three');
 
 function Curved(props)
 {
