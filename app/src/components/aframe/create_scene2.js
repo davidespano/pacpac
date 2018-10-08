@@ -23,6 +23,7 @@ export default class VRScene extends React.Component {
             graph: gameGraph,
             activeScene: scene.img,
         };
+        document.querySelector('link[href*="bootstrap"]').remove();
     }
 
     componentDidMount() {
@@ -53,26 +54,12 @@ export default class VRScene extends React.Component {
     }
 
     render() {
-        if (this.state.graph.neighbours === undefined) {
-            return (
-                <div id="mainscene">
-
-                    <Scene stats>
-
-                        <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
-                            <Entity mouse-cursor>
-                                <Entity primitive="a-cursor" id="cursor" pointsaver/>
-                            </Entity>
-                        </Entity>;
-                    </Scene>
-                </div>
-            );
-        } else {
+        let skies = [];
+        if (this.state.graph.neighbours !== undefined) {
             if (this.state.graph.neighbours[this.state.activeScene] !== undefined) {
-
                 let currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
                     this.state.graph.neighbours[this.state.activeScene].includes(name) || name === this.state.activeScene);
-                let skies = currentLevel.map((sky) => {
+                skies = currentLevel.map((sky) => {
 
                     let mats;
                     let curvedImages = [];
@@ -89,38 +76,20 @@ export default class VRScene extends React.Component {
                                 handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
                     );
                 })
-
-                return (
-                    <div id="mainscene">
-
-                        <Scene stats>
-                            {skies}
-
-                            <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
-                                <Entity mouse-cursor>
-                                    <Entity primitive="a-cursor" id="cursor" pointsaver/>
-                                </Entity>
-                            </Entity>;
-                        </Scene>
-                    </div>
-                )
-
-            } else {
-                return (
-                    <div id="mainscene">
-
-                        <Scene stats>
-
-                            <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
-                                <Entity mouse-cursor>
-                                    <Entity primitive="a-cursor" id="cursor" pointsaver/>
-                                </Entity>
-                            </Entity>;
-                        </Scene>
-                    </div>
-                );
             }
         }
+        return (
+            <div id="mainscene">
+                <Scene stats>
+                    {skies}
+                    <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
+                        <Entity mouse-cursor>
+                            <Entity primitive="a-cursor" id="cursor" pointsaver/>
+                        </Entity>
+                    </Entity>;
+                </Scene>
+            </div>
+        )
     }
 }
 

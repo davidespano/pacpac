@@ -16,7 +16,7 @@ export default class Bubble extends React.Component
                 //Riattivo la lunghezza del raycast
                 let cursor = document.querySelector("#cursor");
                 cursor.setAttribute('raycaster', 'far: 10000');
-                cursor.setAttribute('material', 'opacity: 0.80');
+                cursor.setAttribute('material', 'visible: true');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                 cursor.setAttribute('color', 'black');
                 el.props.handler(el.props.name);
