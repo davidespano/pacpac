@@ -18,8 +18,11 @@ function transition(element){
 
     elem.addEventListener('click', function (evt) {
         //Diminuisco la dimensione del raycast in modo che non sia spammabile
+        var sceneEl = document.querySelector('a-scene');
+        var cursor = sceneEl.querySelector('#cursor');
         cursor.setAttribute('material', 'opacity: 0');
         cursor.setAttribute('raycaster', 'far: 0.1');
+        console.log(cursor)
         trg.setAttribute('material', 'visible: true');
         var disappear = new CustomEvent(actualScene.id + "dis");
         var appear = new CustomEvent(trg.id + "app");

@@ -6,7 +6,8 @@ import './aframe-selectable'
 function Curved(props)
 {
     return(
-        <Entity material="opacity: 0; visible: false; side: double" geometry={"primitive: polyline; vertices: " + props.vertices} id={"curv" + props.target} selectable={'target:' + props.target} scale="-1 1 1"/>
+        <Entity material="opacity: 0; visible: false; side: double" geometry={"primitive: polyline; vertices: " +
+        props.vertices} id={"curv" + props.target} selectable={'target:' + props.target} scale="-1 1 1"/>
     );
 }
 

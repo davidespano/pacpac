@@ -19,11 +19,9 @@ export default class Bubble extends React.Component
                 cursor.setAttribute('material', 'opacity: 0.80');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                 cursor.setAttribute('color', 'black');
-
                 el.props.handler(el.props.name);
             }
-            console.log(this)
-            this.components[evt.detail.name].animation.reset();
+            //this.components[evt.detail.name].animation.reset();
         });
     }
 
