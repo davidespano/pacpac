@@ -70,8 +70,8 @@ export default class VRScene extends React.Component {
         } else {
             if (this.state.graph.neighbours[this.state.activeScene] !== undefined) {
 
-                let currentLevel = this.state.graph.neighbours[this.state.activeScene].slice();
-                currentLevel.push(this.state.activeScene)
+                let currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
+                    this.state.graph.neighbours[this.state.activeScene].includes(name) || name === this.state.activeScene);
                 let skies = currentLevel.map((sky) => {
 
                     let mats;
