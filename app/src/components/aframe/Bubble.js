@@ -21,7 +21,7 @@ export default class Bubble extends React.Component
                 cursor.setAttribute('color', 'black');
                 el.props.handler(el.props.name);
             }
-            //this.components[evt.detail.name].animation.reset();
+            this.components[evt.detail.name].animation.reset();
         });
     }
 

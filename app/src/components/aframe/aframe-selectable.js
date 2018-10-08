@@ -34,7 +34,7 @@ AFRAME.registerComponent('muted', {
         setTimeout(function() {
             elem.components.material.material.map.image.autoplay=false;
             elem.components.material.material.map.image.defaultMuted=true;
-        }, 5000);
+        }, 1000);
     }
 })
 
