@@ -15,10 +15,7 @@ export default class VRScene extends React.Component {
         super(props);
         let scene = this.props.scenes.toArray()[0];
         let gameGraph = {};
-        //SceneAPI.getAllDetailedScenes(gameGraph);
-        //console.log(gameGraph)
-        //SceneAPI.getByName(scene.img, scene);
-        this.state = {                                  //forse aggiungerei le l'intorno corrente che aggiorno ogni volta, cosi sotto posso usare la funzione che già esiste
+        this.state = {
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene.img,
@@ -35,20 +32,18 @@ export default class VRScene extends React.Component {
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         this.setState({
-            scenes: this.props.scenes.toArray(), //dalla mappa si caricano solo i vicini e non tutte--non capisco perché è scene e non scenes--
+            scenes: this.props.scenes.toArray(),
             graph: gameGraph,
-            activeScene: scene.img,                  //index non sarà più numerico ma il nome della scena corrente
+            activeScene: scene.img,
         });
     }
 
     handleSceneChange(newActiveScene) {
-        const index = newActiveScene + '.mp4';    //questo lo eliminerei
-        //let scene = this.props.scenes.get(newActiveScene);                                      //prendo tutto dalla mappa usando il nome
-        //SceneAPI.getByName(scene.img, scene);                                                   //questo non servirà più, avrò tutto
+        const index = newActiveScene + '.mp4';
         this.setState({
-            scenes: this.props.scenes.toArray(), //dalla mappa si caricano solo i vicini e non tutte--non capisco perché è scene e non scenes--
+            scenes: this.props.scenes.toArray(),
             graph: this.state.graph,
-            activeScene: index                  //index non sarà più numerico ma il nome della scena corrente
+            activeScene: index                  
         });
 
     }
