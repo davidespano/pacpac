@@ -29,12 +29,19 @@ AFRAME.registerComponent('selectable', {
 
 AFRAME.registerComponent('muted', {
 
+    schema:{
+        active: {type: 'boolean', default: 'false'},
+    },
+
     init: function () {
-        var elem = this.el;
+        let elem = this.el;
+        let data = this.data.active;
         setTimeout(function() {
-            elem.components.material.material.map.image.autoplay=false;
-            elem.components.material.material.map.image.defaultMuted=true;
-        }, 1000);
+            if(data) {
+                elem.components.material.material.map.image.pause();
+            }
+            elem.components.material.material.map.image.muted=true;
+        }, 500);
     }
 })
 

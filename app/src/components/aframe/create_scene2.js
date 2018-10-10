@@ -43,7 +43,7 @@ export default class VRScene extends React.Component {
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: this.state.graph,
-            activeScene: index                  
+            activeScene: index
         });
 
     }
@@ -57,17 +57,19 @@ export default class VRScene extends React.Component {
                 skies = currentLevel.map((sky) => {
 
                     let mats;
+                    let active = true;
                     let curvedImages = [];
 
                     let scene = this.state.graph.scenes[sky];
                     if (sky === this.state.activeScene) {
                         curvedImages = scene.transitions;
                         mats = "opacity: 1; visible: true";
+                        active = false;
                     }
                     else mats = "opacity: 0; visible: false";
                     return (
                         <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
-                                transitions={curvedImages}
+                                transitions={curvedImages} activeScene={active}
                                 handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
                     );
                 })
