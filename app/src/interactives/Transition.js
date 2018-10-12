@@ -1,5 +1,5 @@
-import EventTypes from "./EventTypes";
-import RuleActionTypes from "./RuleActionTypes"
+import EventTypes from "./rules/EventTypes";
+import RuleActionTypes from "./rules/RuleActionTypes"
 import InteractiveObject from "./InteractiveObject";
 
 

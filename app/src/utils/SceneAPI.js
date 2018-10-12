@@ -2,8 +2,8 @@ import Actions from '../actions/Actions'
 import settings from './settings'
 import MyScene from "../scene/MyScene";
 import Transition from "../interactives/Transition";
-import Rule from "../interactives/Rule";
-import RuleActionTypes from "../interactives/RuleActionTypes";
+import Rule from "../interactives/rules/Rule";
+import RuleActionTypes from "../interactives/rules/RuleActionTypes";
 
 const request = require('superagent');
 

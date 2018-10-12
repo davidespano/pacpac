@@ -1,6 +1,6 @@
 import InteractiveObject from "./InteractiveObject";
-import EventTypes from "./EventTypes";
-import RuleActionTypes from "./RuleActionTypes";
+import EventTypes from "./rules/EventTypes";
+import RuleActionTypes from "./rules/RuleActionTypes";
 
 class Switch extends InteractiveObject {
 
@@ -13,7 +13,7 @@ class Switch extends InteractiveObject {
             this.addNewRule(
                 EventTypes.CLICK, //event
                 {}, //condition
-                [{type: RuleActionTypes.FLIP_SWITCH, uuid: this.uuid, newState: this.flip()}] //action
+                [{type: RuleActionTypes.FLIP_SWITCH, uuid: this.uuid}] //action
             );
         }
     };
