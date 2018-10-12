@@ -9,6 +9,9 @@ function eval(c, gameState) {
             case SuperOperators.AND: return eval(c.condition1, gameState) && eval(c.condition2, gameState);
             case SuperOperators.OR: return eval(c.condition1, gameState) || eval(c.condition2, gameState);
             case SuperOperators.NOT: return !eval(c.condition1, gameState);
+            default:
+                console.log('Super operator not yet implemented');
+                console.log(c.operator);
         }
     }else if(c instanceof Condition){
         const state = gameState[c.uuid].state;
