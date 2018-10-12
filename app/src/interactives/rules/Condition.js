@@ -5,6 +5,14 @@ class Condition {
     constructor(uuid = "", operator = Operators.EQUAL, state = ""){
         this.uuid = uuid;
         this.operator = operator;
-        this.state = state;
+
+        if(operator === Operators.IN){
+            let s = state.split("");
+            this.lower = s[0];
+            this.upper = s[1];
+        } else {
+            this.state = state;
+        }
+
     }
 }
