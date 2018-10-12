@@ -1,7 +1,7 @@
 import 'aframe-animation-component';
 import {transition} from "./aframe-objects";
 
-var AFRAME = require('aframe');
+let AFRAME = require('aframe');
 
 AFRAME.registerComponent('selectable', {
     schema: {
@@ -9,9 +9,9 @@ AFRAME.registerComponent('selectable', {
     },
 
     init: function () {
-        var sceneEl = document.querySelector('a-scene');
-        var elem = this.el;
-        var cursor = sceneEl.querySelector('#cursor');
+        let sceneEl = document.querySelector('a-scene');
+        let elem = this.el;
+        let cursor = sceneEl.querySelector('#cursor');
 
         elem.addEventListener('mouseenter', function () {
             cursor.setAttribute('color', 'green');

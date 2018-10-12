@@ -4,14 +4,14 @@
  * @param element Curvedimage
  */
 function transition(element){
-    var sceneEl = document.querySelector('a-scene');
-    var elem = element.el;
-    var target = element.data.target;
+    let sceneEl = document.querySelector('a-scene');
+    let elem = element.el;
+    let target = element.data.target;
     target = target.replace(/\.[^/.]+$/, "");
-    var actualScene = elem.parentElement;
-    var targetID = "#" + target;
-    var trg = sceneEl.querySelector(targetID);
-    var cursor = sceneEl.querySelector('#cursor');
+    let actualScene = elem.parentElement;
+    let targetID = "#" + target;
+    let trg = sceneEl.querySelector(targetID);
+    let cursor = sceneEl.querySelector('#cursor');
     actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: 2000; easing: linear; from: 1; to: 0; startEvents: ' + actualScene.id + "dis");
     trg.setAttribute('animation__appear', 'property: material.opacity; dur: 2000; easing: linear; from: 0; to: 1; startEvents: ' + trg.id + "app");
 
@@ -28,10 +28,10 @@ function transition(element){
         trg.components.material.material.map.image.muted=true;
         actualScene.components.material.material.map.image.pause();
     })
-};
+}
 
 function transition2D(element){
 
-};
+}
 
 export {transition, transition2D}
