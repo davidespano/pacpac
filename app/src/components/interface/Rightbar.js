@@ -15,12 +15,68 @@ function RightBar(props){
         <div className={'rightbar'}>
             <div id={'rbContainer'}>
                 <div id={'rightbarView'}>
-                    {optionsView(props)}
+                    {
+                        view(props)
+                    }
                 </div>
             </div>
         </div>
     );
 }
+
+function view(props){
+    return(
+        <div className={'rightbarView'}>
+            <nav>
+                <div className="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a className="nav-item nav-link active"
+                       id="nav-scene-tab" data-toggle="tab" href="#nav-scene" role="tab" aria-controls="nav-scene"
+                       aria-selected="true" >Scena</a>
+                    <a className="nav-item nav-link" id="nav-interactives-tab" data-toggle="tab" href="#nav-interactives" role="tab"
+                       aria-controls="nav-interactives" aria-selected="false">Oggetti</a>
+                </div>
+            </nav>
+            <div className="tab-content" id="nav-tabContent">
+                <div className="tab-pane fade show active flex-container" id="nav-scene" role="tabpanel" aria-labelledby="nav-scene-tab">
+                    {sceneView(props)}
+                </div>
+                <div className="tab-pane fade" id="nav-interactives" role="tabpanel" aria-labelledby="nav-interactives-tab">
+                    {optionsView(props)}
+                </div>
+            </div>
+        </div>);
+}
+
+function sceneView(props){
+    if(props.currentScene){
+        let scene = props.currentScene;
+        return(
+            <div>
+                <div id={'objectsList'} className={'currentObjectOptions'}>
+                    <div className={"buttonGroup"}>
+                        <button
+                            title={"Elimina la scena corrente"}
+                            className={"action-buttons-container"}
+                            onClick={() => {
+                                SceneAPI.deleteScene(props.currentScene);
+                                props.updateCurrentScene(null);
+                                props.updateCurrentObject(null);
+                            }}
+                        >
+                            <img className={"action-buttons scene-buttons-img"} src={"icons8-waste-50.png"}/>
+                        </button>
+                    </div>
+                </div>
+                Nome: {scene.name}
+            </div>
+        );
+    } else {
+        return(
+            <div>Nessuna scena selezionata</div>
+        );
+    }
+}
+
 
 function optionsView(props){
     switch(props.currentObject.type){

@@ -10,21 +10,6 @@ function CentralScene(props){
     if(props.currentScene !== null && !(regex.test(props.currentScene.img))){
         return(
             <div className={'scene'}>
-                <div id={'scene-buttons-container'}>
-                    <div className={"buttonGroup"}>
-                        <button
-                            title={"Elimina la scena corrente"}
-                            className={"action-buttons-container"}
-                            onClick={() => {
-                                SceneAPI.deleteScene(props.currentScene);
-                                props.updateCurrentScene(null);
-                                props.updateCurrentObject(null);
-                            }}
-                        >
-                            <img className={"action-buttons scene-buttons-img"} src={"icons8-waste-50.png"}/>
-                        </button>
-                    </div>
-                </div>
                 <img id={'scene'}
                      src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}
                      alt={props.currentScene.name}
