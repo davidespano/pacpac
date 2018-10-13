@@ -14,11 +14,7 @@ function RightBar(props){
     return(
         <div className={'rightbar'}>
             <div id={'rbContainer'}>
-                <div id={'rightbarView'}>
-                    {
-                        view(props)
-                    }
-                </div>
+                {view(props)}
             </div>
         </div>
     );
@@ -26,7 +22,7 @@ function RightBar(props){
 
 function view(props){
     return(
-        <div className={'rightbarView'}>
+        <div id={'rightbarView'}>
             <nav>
                 <div className="nav nav-tabs" id="nav-tab" role="tablist">
                     <a className="nav-item nav-link active"
@@ -51,8 +47,8 @@ function sceneView(props){
     if(props.currentScene){
         let scene = props.currentScene;
         return(
-            <div>
-                <div id={'objectsList'} className={'currentObjectOptions'}>
+            <div className={'currentObjectOptions'}>
+                <div>
                     <div className={"buttonGroup"}>
                         <button
                             title={"Elimina la scena corrente"}
@@ -67,7 +63,13 @@ function sceneView(props){
                         </button>
                     </div>
                 </div>
-                Nome: {scene.name}
+                <label>Nome:</label>
+                <div id={"sceneName"}
+                     className={"propertyForm"}
+                     contentEditable={true}
+                >
+                    {scene.name}
+                </div>
             </div>
         );
     } else {

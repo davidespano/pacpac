@@ -44,7 +44,8 @@ function InputSceneForm(props){
                                     media = document.getElementById("imageInput").files[0],
                                     tag= JSON.parse(document.getElementById("scene_tag").value);
                                 let type = (document.getElementById("scene-type-3d").checked)? '3D' : '2D';
-                                addMediaAndCreateScene(name,props.scenes._map.last()+1, type, media, tag.tagColor, tag.tagName);
+                                if(!props.scenes.has(name))
+                                    addMediaAndCreateScene(name,props.scenes._map.last()+1, type, media, tag.tagColor, tag.tagName);
                             }
                             } data-dismiss="modal" >Conferma</button>
                         </div>
@@ -69,6 +70,10 @@ function addMediaAndCreateScene(name, index, type, media, tagColor, tagName){
     let ext = re.exec(media.name)[1];
     name = name + "." + ext;
 
+    if(!index) index = 0;
+    MediaAPI.addMedia(name, index, type, media, tagColor, tagName);
+
+    /*
     if (!SceneAPI.existsByName(name)){
         if(!index)
             index = 0;
@@ -77,6 +82,7 @@ function addMediaAndCreateScene(name, index, type, media, tagColor, tagName){
     } else {
         console.log("There's already a scene with that name!");
     }
+    */
 }
 
 function tagOption(tag){
