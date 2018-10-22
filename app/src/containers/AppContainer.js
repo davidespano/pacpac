@@ -62,7 +62,7 @@ function getState() {
         updateScene: Actions.updateScene,
 
         //interactive objects
-        
+
         removeTransition: Actions.removeTransition,
         addNewObject: Actions.addNewObject,
         selectAllObjects: Actions.selectAllObjects,
