@@ -3,9 +3,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import Actions from "../../actions/Actions";
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import utils from "./interface_utils";
-//import onlyNumbers from "./utils";
-//import utils.setProperty from "./utils";
+import interface_utils from "./interface_utils";
 
 let THREE = require('three');
 
@@ -152,7 +150,7 @@ function generateProperties(object, props){
             <div id={"transitionName"}
                  className={"propertyForm"}
                  contentEditable={true}
-                 onBlur={()=> utils.setProperty(object,'name',"transitionName", props)}
+                 onBlur={()=> interface_utils.setProperty(object,'name',"transitionName", props)}
             >
                 {object.name}
             </div>
@@ -168,6 +166,12 @@ function generateProperties(object, props){
     );
 }
 
+/**
+ * Generate options according to the object type
+ * @param object
+ * @param props
+ * @returns {*}
+ */
 function generateSpecificProperties(object, props){
     switch(object.type){
         case InteractiveObjectsTypes.TRANSITION:
@@ -178,8 +182,8 @@ function generateSpecificProperties(object, props){
                         <div id={"transitionDuration"}
                              className={"propertyForm"}
                              contentEditable={true}
-                             onBlur={()=> utils.setProperty(object,'duration',"transitionDuration", props)}
-                             onInput={() => utils.onlyNumbers("transitionDuration")}
+                             onBlur={()=> interface_utils.setProperty(object,'duration',"transitionDuration", props)}
+                             onInput={() => interface_utils.onlyNumbers("transitionDuration")}
                         >
                             {object.duration}
                         </div><span className={"measureUnit"}>ms</span>
@@ -240,33 +244,53 @@ function objectButtons(props){
                 {generateTargetOptions(props, object.rules)}
             </select>*/
 
+/**
+ * Generate objects list according to the chosen filter ('scene','all', etc)
+ * @param props
+ * @returns {*}
+ */
 function generateObjectsList(props) {
-    //console.log(props.objectsFilter);
 
-    if (props.currentScene == null || props.objectsFilter === 'all'){
-        if (props.interactiveObjects.size === 0 ){
+    // filter "all" or no scene selected
+    if(props.currentScene == null || props.objectsFilter === 'all'){
+
+        // no objects
+        if(props.interactiveObjects.size === 0)
             return (<div>Non ci sono oggetti</div>)
-        }
 
-        return ([...props.interactiveObjects.values()].map( value => {
-            //console.log(value);
-            return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
-        }
-        ));
-    } else if (props.objectsFilter === 'scene'){
+        // objects mapping
+        return ([...props.interactiveObjects.values()].map( obj => {
+            return (
+                <div key={obj.name}
+                     className={'objectsList-element'}
+                     onClick={()=> Actions.updateCurrentObject(obj)}>
+                    {obj.name}
+                 </div>
+            );
+        }));
+    }
 
-        console.log(props.currentScene.objects.transitions);
+    // filter "scene"
+    if (props.objectsFilter === 'scene'){
 
+        // no objects in scene
         if (props.currentScene.objects.transitions.length === 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
         }
 
-        return ([...props.currentScene.objects.transitions.values()].map( value => {
-            return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
-        }
+        // scene objects mapping
+        return ([...props.currentScene.objects.transitions.values()].map( obj => {
+                return (
+                    <div key={obj.name}
+                         className={'objectsList-element'}
+                         onClick={()=> Actions.updateCurrentObject(obj)}>
+                        {obj.name}
+                    </div>
+                );
+            }
         ));
-    }
 
+    }
 }
 
 function generateTargetOptions(props, rules) {
@@ -283,6 +307,7 @@ function generateTargetOptions(props, rules) {
     }));
 }
 
+/*TO DO: remove target (it's not there anymore)*/
 function checkGeometryMode(props) {
 
     let target = document.getElementById('target').value;
@@ -295,26 +320,4 @@ function checkGeometryMode(props) {
     }
 }
 
-// function geometryData (props) {
-//    // let c=document.getElementById("myCanvas");
-//
-//     let geometry = [];
-//
-//     geometry = [...props.currentObject.vertices].map(function (vertex) {
-//         let points = vertex.split(' ').map(function(x){return parseFloat(x);});
-//         return new THREE.Vector3(points[0], points[1], points[2]);
-//     });
-//
-//     console.log(geometry);
-//
-//
-// }
-
 export default RightBar;
-
-/*FILTRO PER TUTTI GLI OGGETTI
- <div className="btn-group btn-group-toggle" data-toggle="buttons">
-                <button className={"btn"} onClick={() => props.filterObjectFunction('all') }> All</button>
-       <button className={"btn"} onClick={() => props.filterObjectFunction('all') }> All</button>
-       <div>
- */

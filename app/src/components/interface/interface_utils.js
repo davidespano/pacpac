@@ -42,7 +42,20 @@ function onlyNumbers(id) {
     text.textContent = text.textContent.replace(/(\..*)\./g, '$1');
 }
 
+/**
+ * Generates title for a scene
+ * @param child
+ * @returns {string}
+ */
+function title(scene) {
+    return (
+        "Scena: " + scene.name +
+        "\nEtichetta: " + scene.tag.tagName
+    );
+}
+
 export default {
     onlyNumbers : onlyNumbers,
     setProperty : setProperty,
+    title : title,
 }
