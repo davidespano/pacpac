@@ -16,8 +16,10 @@ class DatalistStore extends ReduceStore {
 
     reduce(state, action){
         switch(action.type){
+            case ActionTypes.ADD_NEW_OBJECT:
+                state = state.set(action.obj.uuid, action.obj);
+                return state;
             case ActionTypes.UPDATE_DATALIST:
-                //console.log(action.obj)
                 state = state.set(action.id, action.value);
                 return state;
             default:

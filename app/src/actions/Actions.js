@@ -62,7 +62,7 @@ const Actions = {
 
     receiveScene(scene){
         AppDispatcher.dispatch({
-            type: ActionTypes.GET_SCENE_RESPONSE,
+            type: ActionTypes.RECEIVE_SCENE,
             scene: scene,
         });
     },
@@ -109,8 +109,8 @@ const Actions = {
     //INTERACTIVE OBJECTS
 
     addNewTransition(scene, transition){
-        Actions.updateScene(scene);
-        Actions.updateCurrentScene(scene);
+        //Actions.updateScene(scene);
+        // Actions.updateCurrentScene(scene);
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_TRANSITION,
             obj: transition,
@@ -126,10 +126,10 @@ const Actions = {
     },
 
     addNewObject(object){
-      AppDispatcher.dispatch({
-          type: ActionTypes.ADD_NEW_OBJECT,
-          obj: object,
-      })
+        AppDispatcher.dispatch({
+            type: ActionTypes.ADD_NEW_OBJECT,
+            obj: object,
+        })
     },
 
     selectAllObjects(){
@@ -138,11 +138,10 @@ const Actions = {
         })
     },
 
-    updateCurrentObject(object, objectType){
+    updateCurrentObject(object){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_OBJECT,
             obj: object,
-            objType: objectType,
         })
     },
 

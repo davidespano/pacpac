@@ -11,15 +11,18 @@ function RulesCanvas(props){
 
 function generateRules(currentScene, props){
 
+    /*
+
     if(currentScene != null) {
         //console.log(currentScene);
-        if(currentScene.transitions.length === 0){
+        if(currentScene.objects.transitions.length === 0){
             return (<div>Non ci sono regole associate a questa scena</div>);
         }
-        return ([...currentScene.transitions.values()].map((transition) => { return generateRule(transition, props)}));
+        return ([...currentScene.objects.transitions.values()].map((transition) => { return generateRule(transition, props)}));
     } else {
         return (<div>Nessuna scena selezionata</div>);
     }
+    */
 }
 
 function generateRule(object, props){

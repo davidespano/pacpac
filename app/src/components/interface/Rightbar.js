@@ -3,14 +3,13 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import Actions from "../../actions/Actions";
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
+import utils from "./interface_utils";
+//import onlyNumbers from "./utils";
+//import utils.setProperty from "./utils";
 
 let THREE = require('three');
 
 function RightBar(props){
-
-    //console.log(props.currentObject);
-    //console.log(props.interactiveObjects);
-    
     return(
         <div className={'rightbar'}>
             <div id={'rbContainer'}>
@@ -43,6 +42,11 @@ function view(props){
         </div>);
 }
 
+/**
+ * Generates current scene options
+ * @param props
+ * @returns {*}
+ */
 function sceneView(props){
     if(props.currentScene){
         let scene = props.currentScene;
@@ -79,16 +83,26 @@ function sceneView(props){
     }
 }
 
-
+/**
+ * Generates currently selected object's options
+ * If no objects is selected, generates objects list
+ * @param props
+ * @returns {*}
+ */
 function optionsView(props){
-    switch(props.currentObject.type){
-        case InteractiveObjectsTypes.TRANSITION:
-            return generateTransitionOptions(props.currentObject.object, props);
-        default:
-            return showObjects(props.interactiveObjects,props);
+    if(props.currentObject){
+        return generateProperties(props.currentObject, props);
+    } else {
+        return showObjects(props.interactiveObjects,props);
     }
 }
 
+/**
+ * Generates list of objects associated to the scene or to the entire project, depending on user's choice
+ * @param interactiveObjects
+ * @param props
+ * @returns {*}
+ */
 function showObjects(interactiveObjects,props) {
     return (
         <div id={'objectsList'} className={'currentObjectOptions'}>
@@ -120,67 +134,29 @@ function showObjects(interactiveObjects,props) {
     );
 }
 
-function generateTransitionOptions(object, props){
+
+/**
+ * Generates options of currently selected object
+ * @param object
+ * @param props
+ * @returns {*}
+ */
+function generateProperties(object, props){
 
     return(
         <div className={'currentObjectOptions'}>
-            <div className={"buttonGroup"}>
-                <button
-                    title={"Torna all'elenco degli oggetti"}
-                    className={"action-buttons-container"}
-                    onClick={()=> props.selectAllObjects()}
-                >
-                    <img  className={"action-buttons"} src={"icons8-go-back-50.png"} alt={'Torna all\'elenco degli oggetti'}/>
-                </button>
-                <button
-                    title={"Salva"}
-                    className={"action-buttons-container"}
-                    onClick={() => {
-                        InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject.object);
-                        alert("Hai salvato!")
-                    }
-                    }
-                >
-                    <img className={"action-buttons"} src={"icons8-save-as-50.png"} alt={'Salva'}/>
-                </button>
-                <button
-                    title={"Cancella"}
-                    className={"action-buttons-container"}
-                    onClick={() => {
-                        InteractiveObjectAPI.removeTransition(props.currentScene, props.currentObject.object);
-                        props.updateCurrentObject(null);
-                    }
-                    }
-                >
-                    <img  className={"action-buttons"} src={"icons8-waste-50.png"} alt={'Cancella'}/>
-                </button>
-            </div>
+            {objectButtons(props)}
             <label>Proprietà</label>
             <label>Tipologia: Transizione</label>
             <label>Nome:</label>
             <div id={"transitionName"}
                  className={"propertyForm"}
                  contentEditable={true}
-                 onBlur={()=> setProperty(object,'name',"transitionName", props)}
+                 onBlur={()=> utils.setProperty(object,'name',"transitionName", props)}
             >
                 {object.name}
             </div>
-            <label>Target:</label>
-            <select id={"target"} className={"custom-select"} onChange={() => setProperty(object, 'target' , "target", props)}>
-                <option key={"void_target"}>---</option>
-                {generateTargetOptions(props, object.rules)}
-            </select>
-            <label>Duration</label>
-            <div className={"durationContainer"}>
-                <div id={"transitionDuration"}
-                     className={"propertyForm"}
-                     contentEditable={true}
-                     onBlur={()=> setProperty(object,'duration',"transitionDuration", props)}
-                     onInput={() => onlyNumbers("transitionDuration")}
-                >
-                    {object.duration}
-                </div><span className={"measureUnit"}>ms</span>
-            </div>
+            {generateSpecificProperties(object, props)}
             <label>Geometry</label>
             <button
                 className={"propertyForm geometryBtn"}
@@ -192,29 +168,77 @@ function generateTransitionOptions(object, props){
     );
 }
 
-function setProperty(object, property, id, props){
-    let value = document.getElementById(id).textContent;
-    switch (property) {
-        case "name":
-            object.name = value;
-            object.rules.forEach(rule => {props.updateDatalist(rule.uuid,value)});
-            break;
-        case "target":
-            let target = document.getElementById(id);
-            object.rules.forEach(rule => {
-                rule.actions.forEach(action => action.target = target.options[target.selectedIndex].text)
-            } );
-
-            console.log('setting target');
-            console.log(object);
-            console.log(props.currentObject);
-            break;
+function generateSpecificProperties(object, props){
+    switch(object.type){
+        case InteractiveObjectsTypes.TRANSITION:
+            return (
+                <div>
+                    <label>Duration</label>
+                    <div className={"durationContainer"}>
+                        <div id={"transitionDuration"}
+                             className={"propertyForm"}
+                             contentEditable={true}
+                             onBlur={()=> utils.setProperty(object,'duration',"transitionDuration", props)}
+                             onInput={() => utils.onlyNumbers("transitionDuration")}
+                        >
+                            {object.duration}
+                        </div><span className={"measureUnit"}>ms</span>
+                    </div>
+                </div>
+            );
         default:
-            object[property] = value;
+            return(<div>Error!</div>);
     }
-    props.updateCurrentObject(object,props.currentObject.type);
-    InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject.object);
 }
+
+
+/**
+ * Generates buttons for currently selected object options
+ * @param props
+ * @returns {*}
+ */
+function objectButtons(props){
+    return(
+        <div className={"buttonGroup"}>
+            <button
+                title={"Torna all'elenco degli oggetti"}
+                className={"action-buttons-container"}
+                onClick={()=> props.selectAllObjects()}
+            >
+                <img  className={"action-buttons"} src={"icons8-go-back-50.png"} alt={'Torna all\'elenco degli oggetti'}/>
+            </button>
+            <button
+                title={"Salva"}
+                className={"action-buttons-container"}
+                onClick={() => {
+                    InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject);
+                    alert("Hai salvato!")
+                }
+                }
+            >
+                <img className={"action-buttons"} src={"icons8-save-as-50.png"} alt={'Salva'}/>
+            </button>
+            <button
+                title={"Cancella"}
+                className={"action-buttons-container"}
+                onClick={() => {
+                    InteractiveObjectAPI.removeTransition(props.currentScene, props.currentObject);
+                    props.updateCurrentObject(null);
+                }
+                }
+            >
+                <img  className={"action-buttons"} src={"icons8-waste-50.png"} alt={'Cancella'}/>
+            </button>
+        </div>
+    );
+}
+
+/*
+*             <label>Target:</label>
+            <select id={"target"} className={"custom-select"} onChange={() => utils.setProperty(object, 'target' , "target", props)}>
+                <option key={"void_target"}>---</option>
+                {generateTargetOptions(props, object.rules)}
+            </select>*/
 
 function generateObjectsList(props) {
     //console.log(props.objectsFilter);
@@ -225,29 +249,27 @@ function generateObjectsList(props) {
         }
 
         return ([...props.interactiveObjects.values()].map( value => {
-                //console.log(value);
-                return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
-            }
+            //console.log(value);
+            return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
+        }
         ));
     } else if (props.objectsFilter === 'scene'){
 
-        if (props.currentScene.transitions.length === 0 ){
+        console.log(props.currentScene.objects.transitions);
+
+        if (props.currentScene.objects.transitions.length === 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
         }
 
-        return ([...props.currentScene.transitions.values()].map( value => {
-                //console.log(value);
-                return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
-            }
+        return ([...props.currentScene.objects.transitions.values()].map( value => {
+            return (<div key={value.name} className={'objectsList-element'} onClick={()=> Actions.addNewTransition(props.currentScene,value)}> {value.name} </div>);
+        }
         ));
     }
 
 }
 
 function generateTargetOptions(props, rules) {
-
-    console.log('qui');
-    console.log(rules);
 
     return ([...props.scenes.values()].map(child => {
         if(child.name !== props.currentScene.name) {
@@ -259,14 +281,13 @@ function generateTargetOptions(props, rules) {
             }
         }
     }));
-
 }
 
 function checkGeometryMode(props) {
 
     let target = document.getElementById('target').value;
 
-    if (target !== '--') {
+    if (target !== '---') {
         props.switchToGeometryMode()
     }
     else {
@@ -274,19 +295,12 @@ function checkGeometryMode(props) {
     }
 }
 
-//https://stackoverflow.com/questions/8808590/html5-number-input-type-that-takes-only-integers/17208628
-function onlyNumbers(id) {
-    let text = document.getElementById(id);
-    text.textContent = text.textContent.replace(/[^0-9.]/g, '');
-    text.textContent = text.textContent.replace(/(\..*)\./g, '$1');
-}
-
 // function geometryData (props) {
 //    // let c=document.getElementById("myCanvas");
 //
 //     let geometry = [];
 //
-//     geometry = [...props.currentObject.object.vertices].map(function (vertex) {
+//     geometry = [...props.currentObject.vertices].map(function (vertex) {
 //         let points = vertex.split(' ').map(function(x){return parseFloat(x);});
 //         return new THREE.Vector3(points[0], points[1], points[2]);
 //     });
@@ -297,66 +311,6 @@ function onlyNumbers(id) {
 // }
 
 export default RightBar;
-
-/*<label>Rotation</label>
-            <div className={"rotationInput"}>
-                <div
-                    id={"rotationX"}
-                    className={"propertyForm"}
-                    contentEditable={true}
-                    onBlur={()=> setProperty(object,'rotationX',"rotationX", props)}
-                    onInput={() => onlyNumbers("rotationX")}
-                >
-                    {object.rotationX}
-                </div>
-            </div>
-            <div  className={"rotationInput"}>
-                <div
-                    id={"rotationY"}
-                    className={"propertyForm"}
-                    contentEditable={true}
-                    onBlur={()=> setProperty(object,'rotationY',"rotationY", props)}
-                    onInput={() => onlyNumbers("rotationY")}
-                >
-                    {object.rotationY}
-                </div>
-            </div>
-            <div   className={"rotationInput"}>
-                <div
-                    id={"rotationZ"}
-                    className={"propertyForm"}
-                    contentEditable={true}
-                    onBlur={()=> setProperty(object,'rotationZ',"rotationZ", props)}
-                    onInput={() => onlyNumbers("rotationZ")}
-                >
-                    {object.rotationZ}
-                </div>
-            </div>
-            <div>
-                <label>Theta</label>
-                <div
-                    id={"transitionTheta"}
-                    className={"propertyForm"}
-                    defaultValue={object.theta}
-                    contentEditable={true}
-                    onBlur={()=> setProperty(object,'theta',"transitionTheta", props)}
-                    onInput={() => onlyNumbers("transitionTheta")}
-                >
-                    {object.theta}
-                </div>
-            </div>
-            <div>
-                <label>Height</label>
-                <div
-                    id={"transitionHeight"}
-                    className={"propertyForm"}
-                    defaultValue={object.height}
-                    contentEditable={true}
-                    onBlur={() => setProperty(object,'height',"transitionHeight", props)}
-                    onInput={() => onlyNumbers("transitionHeight")}
-                >
-                    {object.height}
-                </div>*/
 
 /*FILTRO PER TUTTI GLI OGGETTI
  <div className="btn-group btn-group-toggle" data-toggle="buttons">

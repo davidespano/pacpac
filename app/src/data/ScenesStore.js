@@ -3,7 +3,7 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
 import LeftbarElement from "./LeftbarElement";
-import MyScene from "../scene/MyScene";
+import Scene from "../scene/Scene";
 
 class ScenesStore extends ReduceStore {
 
@@ -20,19 +20,23 @@ class ScenesStore extends ReduceStore {
             case ActionTypes.LOAD_ALL_SCENES:
                 // if state isn't undefined
                 if(state) {
-                    // for each scene in db create new MyScene object
+                    // for each scene in db create new Scene object
                     action.response.forEach(function(scene){
-                        let newScene = new MyScene(
-                            scene.name,
-                            scene.type,
-                            scene.tagName,
-                            scene.tagColor,
-                        );
+                        let newScene = Scene({
+                            name : scene.name.replace(/\.[^/.]+$/, ""),
+                            img : scene.name,
+                            index : scene.index,
+                            type : scene.type,
+                            tag : {
+                                tagName : scene.tagName,
+                                tagColor : scene.tagColor,
+                            },
+                        });
                         state = state.set(newScene.name, newScene);
                     });
                 }
                 return state;
-            case ActionTypes.GET_SCENE_RESPONSE:
+            case ActionTypes.RECEIVE_SCENE:
                 state = state.set(action.scene.name, action.scene);
                 return state;
             case ActionTypes.REMOVE_SCENE:
@@ -46,8 +50,8 @@ class ScenesStore extends ReduceStore {
                 return state;
             case ActionTypes.REMOVE_TRANSITION:
                 const scene = action.scene;
-                const newTransitions = scene.transitions.filter((transition) => transition.uuid !== action.obj.uuid);
-                scene.transitions = newTransitions;
+                const newTransitions = scene.objects.transitions.filter((transition) => transition.uuid !== action.obj.uuid);
+                scene.objects.transitions = newTransitions;
                 state = state.set(scene.name,scene);
                 return state;
             default:

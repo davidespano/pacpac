@@ -1,6 +1,6 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
-import MyScene from "../scene/MyScene";
+import Scene from "../scene/Scene";
 import Transition from "../interactives/Transition";
 import Rule from "../interactives/rules/Rule";
 import RuleActionTypes from "../interactives/rules/RuleActionTypes";
@@ -20,31 +20,37 @@ function getByName(name, scene = null) {
 
             let transitions = response.body.transitions;
 
-            //console.log(transitions);
             if (transitions)
                 transitions = transitions.map((transition) => {
                     transition.media = transition.rules[0].actions[0].target;
                     return transition;
                 });
-            //console.log(transitions);
+
             transitions = transitions ? transitions : [];
             if (scene == null) {
-                //new Scene object
-                let newScene = new MyScene(
-                    response.body.name,
-                    response.body.type,
-                    response.body.tagName,
-                    response.body.tagColor,
-                    transitions //transition list
-                );
+
+                // new Scene object
+                let newScene = Scene({
+                    name : response.body.name.replace(/\.[^/.]+$/, ""),
+                    img : response.body.name,
+                    type : response.body.type,
+                    index : response.body.index,
+                    tag : {
+                        tagName : response.body.tagName,
+                        tagColor : response.body.tagColor,
+                    },
+                    objects : {
+                        transitions : transitions,
+                    },
+                });
+
                 Actions.receiveScene(newScene);
-                console.log(transitions);
                 transitions.forEach(t => {
                     Actions.addNewObject(t);
                 });
 
             } else {
-                scene.transitions = transitions;
+                scene.objects.transitions = transitions;
                 Actions.updateScene(scene);
                 Actions.updateCurrentScene(scene);
             }
@@ -52,6 +58,7 @@ function getByName(name, scene = null) {
         });
 }
 
+/*
 //check if a scene already exists
 function existsByName(name) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
@@ -60,6 +67,7 @@ function existsByName(name) {
             return response.status === 200;
         });
 }
+*/
 
 //create new scene inside db
 function createScene(name, index, type, tagColor, tagName) {
@@ -73,17 +81,16 @@ function createScene(name, index, type, tagColor, tagName) {
             }
 
             // new Scene object
-            let newScene = new MyScene(
-                response.body.name,
-                response.body.type,
-                response.body.tagName,
-                response.body.tagColor,
-                [], //transition list
-            );
-
-            console.log('createScene');
-
-            //update scene visualization
+            const newScene = Scene({
+                name : response.body.name.replace(/\.[^/.]+$/, ""),
+                img : response.body.name,
+                type : response.body.type,
+                index : response.body.index,
+                tag : {
+                    tagName : response.body.tagName,
+                    tagColor : response.body.tagColor,
+                },
+            });
 
             Actions.receiveScene(newScene);
         });
@@ -98,20 +105,6 @@ function getAllScenes() {
                 return console.error(err);
             }
             if (response.body && response.body !== [])
-                Actions.loadAllScenes(response.body);
-        });
-}
-
-//get neighbours of given scene
-function getNeighbours(name) {
-    return request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}/neighbours`)
-        .set('Accept', 'application/json')
-        .end(function (err, response) {
-            if (err) {
-                return console.error(err);
-            }
-
-            if (response.body !== [])
                 Actions.loadAllScenes(response.body);
         });
 }
@@ -163,14 +156,22 @@ async function getAllDetailedScenes(gameGraph) {
         transitions.forEach(t => {
             Actions.addNewObject(t);
         });
+
         // new Scene object
-        const newScene = new MyScene(
-            s.name,
-            s.type,
-            s.tagName,
-            s.tagColor,
-            transitions
-        );
+        const newScene = Scene({
+            name : s.name.replace(/\.[^/.]+$/, ""),
+            img : s.name,
+            type : s.type,
+            index : s.index,
+            tag : {
+                tagName : s.tagName,
+                tagColor : s.tagColor,
+            },
+            objects : {
+                transitions : transitions,
+            },
+        });
+
         gameGraph['scenes'][newScene.img] = newScene;
         gameGraph['neighbours'][newScene.img] = adj;
     })
@@ -179,10 +180,8 @@ async function getAllDetailedScenes(gameGraph) {
 
 export default {
     getByName: getByName,
-    existsByName: existsByName,
     createScene: createScene,
     getAllScenes: getAllScenes,
     deleteScene: deleteScene,
-    getNeighbours: getNeighbours,
     getAllDetailedScenes: getAllDetailedScenes
 };

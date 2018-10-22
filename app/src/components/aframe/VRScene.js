@@ -1,5 +1,5 @@
 import Transition from "../../interactives/Transition";
-import MyScene from "../../scene/MyScene";
+import MyScene from "../../scene/Scene";
 import 'aframe';
 import './aframe-selectable'
 import './aframe-pointSaver'

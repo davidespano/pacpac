@@ -1,7 +1,7 @@
 import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
-import MyScene from '../scene/MyScene';
+import Scene from '../scene/Scene';
 
 class CentralSceneStore extends ReduceStore {
 
@@ -15,7 +15,7 @@ class CentralSceneStore extends ReduceStore {
 
     reduce(state, action) {
         switch (action.type) {
-            case ActionTypes.GET_SCENE_RESPONSE:
+            case ActionTypes.RECEIVE_SCENE:
                 return action.scene;
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 return action.scene;

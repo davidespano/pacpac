@@ -1,27 +1,17 @@
 import InteractiveObject from "./InteractiveObject";
-import EventTypes from "./rules/EventTypes";
-import RuleActionTypes from "./rules/RuleActionTypes";
+import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
-class Switch extends InteractiveObject {
-
-    constructor(name = "", uuid = null, media = "", vertices = "", rules = [], defaultState = 'OFF'){
-
-        super(uuid, name, media, vertices, rules);
-        this.state = defaultState;
-
-        if(this.rules.length === 0){
-            this.addNewRule(
-                EventTypes.CLICK, //event
-                {}, //condition
-                [{type: RuleActionTypes.FLIP_SWITCH, uuid: this.uuid}] //action
-            );
-        }
-    };
-
-    flip(){
-        this.state = (this.state === 'OFF')? 'ON' : 'OFF';
-        return this.state;
-    };
-}
+/**
+ * @param defaultValues for generic and specific properties
+ * @returns {Immutable.Map<K, V>}
+ * @constructor
+ */
+const Switch = defaultValues => InteractiveObject({
+    type : InteractiveObjectsTypes.SWITCH,
+    properties : {
+        state : 'OFF',
+    },
+    ...defaultValues
+});
 
 export default Switch;

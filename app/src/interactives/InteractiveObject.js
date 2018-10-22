@@ -1,50 +1,23 @@
-import Rule from "./rules/Rule";
-let uuid = require('uuid');
+import Immutable from "immutable"
 
-class InteractiveObject {
+/**
+ * @type {*|Immutable.Record.Class}
+ * @param uuid default null
+ * @param name default null
+ * @param type default null
+ * @param media default empty string
+ * @param vertices default empty string
+ * @param properties default null, will contain specific properties of the object such as the state
+ */
+const InteractiveObject = Immutable.Record({
 
-    constructor(id = null, name = null, media = "", vertices = "", rules = []){
+    uuid : null,
+    name : null,
+    type : null,
+    media : "",
+    vertices : "",
+    properties : null,
 
-        if(id === null){
-            this.uuid = uuid.v4();
-        } else {
-            this.uuid = uuid;
-        }
-
-        this.name = name;
-        this.media = media;
-        this.vertices = vertices;
-        this.rules = rules;
-    }
-
-    addNewRule(event, condition, action){
-        this.rules.push(new Rule({
-            event: event,
-            condition: condition,
-            action: action
-        }));
-    }
-
-    setUuid(uuid){
-        this.uuid = uuid;
-    }
-
-    setName(name){
-        this.name = name;
-    }
-
-    setMedia(media){
-        this.media = media;
-    }
-
-    setVertices(vertices){
-        this.vertices = vertices;
-    }
-
-    setRules(rules){
-        this.rules = rules;
-    }
-
-}
+});
 
 export default InteractiveObject;

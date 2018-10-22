@@ -2,9 +2,11 @@ import React from 'react';
 import InputSceneForm from './InputSceneForm';
 import Transition from "../../interactives/Transition";
 import Actions from "../../actions/Actions";
-import MyScene from "../../scene/MyScene";
-import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
+import rules_utils from "../../interactives/rules/rules_utils";
+import scene_utils from "../../scene/scene_utils";
+
+let uuid = require('uuid');
 
 function TopBar(props){
     return (
@@ -32,11 +34,23 @@ function TopBar(props){
                 </div>
                 <div className="tab-pane fade" id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
                     <div className={"flex-container"}>
-                        <figure className={'nav-figures'} onClick={() => {createTransition(props)}}>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createTransition(props);
+                                    // selection object section in rightbar
+                                    if(document.getElementById('nav-interactives-tab'))
+                                        document.getElementById('nav-interactives-tab').click();
+                                }}>
                             <img src={"icons8-add-one-way-transition-100.png"}/>
                             <figcaption>Transizione</figcaption>
                         </figure>
-                        <figure className={'nav-figures'} onClick={() => {createSwitch(props)}}>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createSwitch(props);
+                                    // selection object section in rightbar
+                                    if(document.getElementById('nav-interactives-tab'))
+                                        document.getElementById('nav-interactives-tab').click();
+                                }}>
                             <img src={"icons8-toggle-on-filled-100.png"}/>
                             <figcaption>Interruttore</figcaption>
                         </figure>
@@ -61,23 +75,22 @@ function handleNavbarSelection(){
 function createTransition(props) {
     if(props.currentScene != null){
 
-        let name = props.currentScene.name + '_tr' + (props.currentScene.transitions.length + 1);
-        let tr = new Transition(name);
+        let name = props.currentScene.name + '_tr' + (props.currentScene.objects.transitions.length + 1);
+        let tr = Transition({
+            uuid : uuid.v4(),
+            name : name,
+        });
 
-        Actions.updateDatalist(tr.uuid, tr);
-        rulesToDatalist(tr,props);
+        // updates the scene with the newly created object
+        scene_utils.addInteractiveObjectToScene(props.currentScene, tr);
 
-        let newScene = new MyScene(
-            props.currentScene.img,
-            props.currentScene.type,
-            props.currentScene.tagName,
-            props.currentScene.tagColor,
-            props.currentScene.transitions,
-        );
+        // generates default rule associated to transition object and updates the scene
+        rules_utils.generateDefaultRule(props.currentScene, tr);
 
-        newScene.addNewTransitionToScene(tr);
-        props.addNewTransition(newScene, tr);
-        InteractiveObjectAPI.saveTransitions(newScene, tr);
+        // updates stores with new object
+        props.addNewObject(tr);
+
+        // InteractiveObjectAPI.saveTransitions(props.currentScene, tr);
 
     } else {
         alert("Nessuna scena selezionata!");
@@ -88,102 +101,4 @@ function createSwitch(props){
 
 }
 
-function rulesToDatalist(object,props){
-    object.rules.forEach((rule) => {props.updateDatalist(rule.uuid, object.uuid)} )
-}
-
 export default TopBar;
-
-
-// function TopBar(props){
-//     return (
-//         <div className={'topbar'}>
-//             <nav className="navbar  navbar-light">
-//                 <a className="navbar-brand">PacPac</a>
-//                 <InputSceneForm {...props} />
-//                 <ul className={"nav"}>
-//                     <li className="nav-item dropdown">
-//                         <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
-//                     </li>
-//                 <li className="nav-item dropdown">
-//                 <a className={"dropdown-toggle navbar-toggler"}  data-toggle="dropdown" role={"button"} aria-haspopup="true" aria-expanded="false">Edit Scene</a>
-//                 <div className="dropdown-menu">
-//                     <a className="dropdown-item" data-toggle="modal" data-target="#exampleModal">
-//                         AddScene
-//                     </a>
-//                     <a className={"dropdown-item"} id={'remove_scene'}
-//                        title={'Rimuovi una scena'}
-//                        onClick={() => {
-//                            if(props.currentScene != null){
-//                                SceneAPI.deleteScene(props.currentScene);
-//                                props.updateCurrentScene(null);
-//                                props.updateCurrentObject(null);
-//                            }
-//                            else{
-//                                alert("Devi aver già selezionato la scena da rimuovere.")
-//                            }
-//                        }}
-//                     >RemoveScene</a>
-//                     <a className={"dropdown-item"} id={'remove_scene'}
-//                        title={'Rimuovi una scena'}
-//                        onClick={() => {
-//                                props.removeAllScene();
-//                                props.updateCurrentScene(null);
-//                                console.log(props.scenes);
-//                                props.updateCurrentObject(null);
-//                        }}
-//                     >RemoveALL</a>
-//                 </div>
-//                 </li>
-//                 </ul>
-//                 <ul className={"nav"}>
-//                     <li className="nav-item dropdown">
-//                         <a className={"dropdown-toggle navbar-toggler"}  data-toggle="dropdown" role={"button"} aria-haspopup="true" aria-expanded="false">Add Object</a>
-//                         <div className="dropdown-menu">
-//                             <a className={"dropdown-item"} id={'transition'}
-//                                title={'Aggiungi una transizione'}
-//                                onClick={() => (createTransition(props))}
-//                             >Transition</a>
-//                         </div>
-//                     </li>
-//                 </ul>
-//
-//             </nav>
-//         </div>
-//     );
-// }
-
-/* Header
-<button type="button" className={"btn btn-primary"} onClick={() => props.switchToPlayMode()}>PLAY</button>
-<InputSceneForm {...props} />
-<button type="button" className={"btn btn-primary"} id={'transition'}
-        title={'Aggiungi una transizione'}
-        onClick={() => (createTransition(props))}
->+</button> */
-
-/* <div className={'topbar'}>
-                 <nav className="navbar  navbar-light">
-                     <a className="navbar-brand">PacPac</a>
-                     <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
-                     <InputSceneForm {...props} />
-                     <a className={"nav-item navbar-toggler"} id={'remove_scene'}
-                        title={'Rimuovi una scena'}
-                        onClick={() => {
-                            if(props.currentScene != null){
-                                SceneAPI.deleteScene(props.currentScene);
-                                props.updateCurrentScene(null);
-
-                            }
-                            else{
-                                alert("Devi aver già selezionato la scena da rimuovere.")
-                            }
-                        }}
-                     >RemoveScene</a>
-                     <a className={"nav-item navbar-toggler"} id={'transition'}
-                             title={'Aggiungi una transizione'}
-                             onClick={() => (createTransition(props))}
-                     >+</a>
-
-                 </nav>
-             </div>
-       */

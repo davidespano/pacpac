@@ -10,34 +10,21 @@ class CurrentObjectStore extends ReduceStore {
     }
 
     getInitialState(){
-        return {
-            object: null,
-            type: null,
-        };
+        return null;
     }
 
     reduce(state, action){
         switch(action.type){
+            case ActionTypes.ADD_NEW_OBJECT:
+                return action.obj;
             case ActionTypes.ADD_NEW_TRANSITION:
-                return {
-                    object: action.obj,
-                    type: InteractiveObjectsTypes.TRANSITION,
-                };
+                return action.obj;
             case ActionTypes.SELECT_ALL_OBJECTS:
-                return {
-                    object: null,
-                    type: null,
-                };
+                return null;
             case ActionTypes.UPDATE_CURRENT_SCENE:
-                return {
-                    object: null,
-                    type: null,
-                };
+                return null;
             case ActionTypes.UPDATE_CURRENT_OBJECT:
-                return {
-                    object: action.obj,
-                    type: action.objType,
-                };
+                return action.obj;
             default:
                 return state;
         }

@@ -7,7 +7,6 @@ import AuthenticationApi from './utils/AuthenticationAPI';
 //import '../public/style.css';
 //import './aframe.js';
 
-
 ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
 
 window.localStorage.removeItem("gameID");

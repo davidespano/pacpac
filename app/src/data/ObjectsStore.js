@@ -17,7 +17,9 @@ class ObjectsStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
+                console.log(state);
                 state = state.set(action.obj.uuid, action.obj).sort(comparator);
+                console.log(state);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
                 state = state.delete(action.obj.uuid);
