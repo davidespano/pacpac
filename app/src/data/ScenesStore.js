@@ -4,6 +4,7 @@ import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
 import Scene from "../scene/Scene";
 import scene_utils from '../scene/scene_utils';
+import rules_utils from "../interactives/rules/rules_utils";
 
 class ScenesStore extends ReduceStore {
 
@@ -47,6 +48,10 @@ class ScenesStore extends ReduceStore {
                 return state;
             case ActionTypes.REMOVE_ALL_SCENES:
                 state = state.clear();
+                return state;
+            case ActionTypes.ADD_NEW_OBJECT:
+                scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
+                rules_utils.generateDefaultRule(action.scene, action.obj);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
                 scene_utils.removeInteractiveObject(action.scene, action.obj);

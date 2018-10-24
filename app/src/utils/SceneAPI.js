@@ -18,15 +18,17 @@ function getByName(name, scene = null) {
                 return console.error(err)
             }
 
-            let transitions = response.body.transitions;
-
-            if (transitions)
-                transitions = transitions.map((transition) => {
-                    transition.media = transition.rules[0].actions[0].target;
-                    return transition;
+            const transitions = response.body.transitions.map((transition) => {
+                return Transition({
+                    uuid: transition.uuid,
+                    name: transition.name,
+                    type: transition.type,
+                    media: transition.media,
+                    vertices: transition.vertices,
+                    properties: transition.properties,
                 });
+            });
 
-            transitions = transitions ? transitions : [];
             if (scene == null) {
 
                 // new Scene object
@@ -50,6 +52,7 @@ function getByName(name, scene = null) {
                 });
 
             } else {
+                console.log('È entrato qui ma pensavo non ci sarebbe entrato mai, incredibile')
                 scene.objects.transitions = transitions;
                 Actions.updateScene(scene);
                 Actions.updateCurrentScene(scene);
@@ -57,17 +60,6 @@ function getByName(name, scene = null) {
 
         });
 }
-
-/*
-//check if a scene already exists
-function existsByName(name) {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
-        .set('Accept', 'application/json')
-        .end(function (err, response) {
-            return response.status === 200;
-        });
-}
-*/
 
 //create new scene inside db
 function createScene(name, index, type, tagColor, tagName) {
@@ -143,21 +135,41 @@ async function getAllDetailedScenes(gameGraph) {
     gameGraph['scenes'] = {};
     gameGraph['neighbours'] = [];
     raw_scenes.forEach(s => {
+        // neighbours list
         const adj = [];
-        const transitions = s.transitions.map(t => {
-            return new Transition(t.name, t.uuid, t.media, t.duration, t.vertices, t.rules.map(r => {
-                r.actions.forEach(a => {
-                    if (a.type = RuleActionTypes.TRANSITION && a.target)
-                        adj.push(a.target);
-                });
-                return new Rule({id: r.uuid, event: r.event, condition: r.condition, action: r.actions})
-            }))
-        });
-        transitions.forEach(t => {
-            Actions.addNewObject(t);
+
+        // generates transitions
+        const transitions = s.transitions.map(transition => {
+           return Transition({
+               uuid: transition.uuid,
+               name: transition.name,
+               type: transition.type,
+               media: transition.media,
+               vertices: transition.vertices,
+               properties: transition.properties,
+           });
         });
 
-        // new Scene object
+        // generates rules
+        const rules = s.rules.map(rule => {
+            // check actions to find scene neighbours
+            rule.actions.forEach(a => {
+                if (a.type = RuleActionTypes.TRANSITION && a.target)
+                    adj.push(a.target);
+            });
+
+            // new Rule
+            return Rule({
+                uuid: rule.uuid,
+                object_uuid: rule.object_uuid,
+                event: rule.event,
+                condition: rule.condition,
+                actions: rule.actions,
+            });
+        });
+
+
+        // new Scene
         const newScene = Scene({
             name : s.name.replace(/\.[^/.]+$/, ""),
             img : s.name,
@@ -170,6 +182,7 @@ async function getAllDetailedScenes(gameGraph) {
             objects : {
                 transitions : transitions,
             },
+            rules: rules,
         });
 
         gameGraph['scenes'][newScene.img] = newScene;

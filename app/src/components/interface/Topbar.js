@@ -72,6 +72,11 @@ function handleNavbarSelection(){
     }
 }
 
+/**
+ * Generates a new Transition with default values and calls the function for stores update (including association
+ * between scene and object and generation of the default rule)
+ * @param props
+ */
 function createTransition(props) {
     if(props.currentScene != null){
 
@@ -81,14 +86,8 @@ function createTransition(props) {
             name : name,
         });
 
-        // updates the scene with the newly created object
-        scene_utils.addInteractiveObjectToScene(props.currentScene, tr);
-
-        // generates default rule associated to transition object and updates the scene
-        rules_utils.generateDefaultRule(props.currentScene, tr);
-
-        // updates stores with new object
-        props.addNewObject(tr);
+        // updates stores with new object (stores will add the object to the scene and generate the default rule)
+        props.addNewObject(props.currentScene, tr);
 
         // InteractiveObjectAPI.saveTransitions(props.currentScene, tr);
 
