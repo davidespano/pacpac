@@ -33,6 +33,28 @@ function removeInteractiveObject(scene, object){
 }
 
 /**
+ * Updates the scene saving the given Rule
+ * @param scene
+ * @param rule
+ */
+function addRuleToScene(scene, rule){
+    let rules = scene.get('rules');
+    rules.push(rule);
+    scene.set('rules', rules);
+}
+
+/**
+ * Removes given Rule from the Scene
+ * @param scene
+ * @param rule
+ */
+function removeRuleFromScene(scene, rule){
+    let rules = scene.get('rules');
+    rules.filter((element) => element.uuid !== rule.uuid);
+    scene.set('rules', rules);
+}
+
+/**
  * Returns the name of the field where the given object is saved (a Transition returns "transitions", a Switch returns
  * "switches", and so on. It is used to remove and add objects to the proper field
  * @param object
@@ -44,7 +66,6 @@ function defineField(object){
             return 'transitions';
         case InteractiveObjectsTypes.SWITCH:
             return 'switches';
-            break;
         default:
             return null;
     }
@@ -53,4 +74,7 @@ function defineField(object){
 export default {
     addInteractiveObjectToScene: addInteractiveObjectToScene,
     removeInteractiveObject: removeInteractiveObject,
+    addRuleToScene: addRuleToScene,
+    removeRuleFromScene: removeRuleFromScene,
+    defineField: defineField,
 }

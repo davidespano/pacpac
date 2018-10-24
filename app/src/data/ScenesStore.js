@@ -56,6 +56,12 @@ class ScenesStore extends ReduceStore {
             case ActionTypes.REMOVE_OBJECT:
                 scene_utils.removeInteractiveObject(action.scene, action.obj);
                 return state;
+            case ActionTypes.ADD_NEW_RULE:
+                scene_utils.addRuleToScene(action.scene, action.rule);
+                return state;
+            case ActionTypes.REMOVE_RULE:
+                scene_utils.removeRuleFromScene(action.scene, action.rule);
+                return state;
             default:
                 return state;
         }

@@ -12,8 +12,10 @@ function saveTransition(scene, object) {
             {
                 uuid: object.uuid,
                 name: object.name,
-                duration: object.properties.duration,
-                vertices: object.vertices
+                type: object.type,
+                media: object.media,
+                vertices: object.vertices,
+                properties: object.properties,
             })
         .end(function (err, response) {
             if (err) {
@@ -36,16 +38,17 @@ function removeTransition(scene, transition) {
         });
 }
 
-function saveRule(scene, object) {
+function saveRule(scene, rule) {
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/rules`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send(
             {
-                uuid: object.uuid,
-                event: object.event,
-                condition: object.condition,
-                actions: object.actions
+                uuid: rule.uuid,
+                object_uuid: rule.object_uuid,
+                event: rule.event,
+                condition: rule.condition,
+                actions: rule.actions
             })
         .end(function (err, response) {
             if (err) {

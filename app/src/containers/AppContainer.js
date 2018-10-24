@@ -52,9 +52,7 @@ function getState() {
 
         //scenes
 
-        addScene: Actions.addScene,
         clickScene: Actions.clickScene,
-        getScene: Actions.getScene,
         receiveScene: Actions.receiveScene,
         removeScene: Actions.removeScene,
         removeAllScene: Actions.removeAllScene,
