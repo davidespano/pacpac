@@ -12,8 +12,7 @@ function saveTransition(scene, object) {
             {
                 uuid: object.uuid,
                 name: object.name,
-                rules: object.rules,
-                duration: object.duration,
+                duration: object.properties.duration,
                 vertices: object.vertices
             })
         .end(function (err, response) {
@@ -37,7 +36,41 @@ function removeTransition(scene, transition) {
         });
 }
 
+function saveRule(scene, object) {
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/rules`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send(
+            {
+                uuid: object.uuid,
+                event: object.event,
+                condition: object.condition,
+                actions: object.actions
+            })
+        .end(function (err, response) {
+            if (err) {
+                console.error(err);
+                return false;
+            }
+            return true;
+        });
+}
+
+function removeRule(scene, rule) {
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/rules/${rule.uuid}`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+            Actions.removeRule(scene, rule);
+        });
+}
+
 export default {
     saveTransitions: saveTransition,
-    removeTransition: removeTransition
+    removeTransition: removeTransition,
+    saveRule: saveRule,
+    removeRule: removeRule,
 };
