@@ -6,6 +6,10 @@ const Actions = {
 
     //EDITOR MODE
 
+    /**
+     * This functions handle editor mode selection
+     **/
+
     playModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.PLAY_MODE_ON
@@ -26,15 +30,12 @@ const Actions = {
 
     //SCENES
 
-    addScene(name, tag){
-        AppDispatcher.dispatch({
-            type: ActionTypes.ADD_SCENE,
-            name: name,
-            tag: tag,
-        })
-    },
-
-    clickScene(x, y){
+    /**
+     * Updates store with coordinates of last point clicked (over central scene)
+     * @param x
+     * @param y
+     */
+    clickScene(x, y) {
         AppDispatcher.dispatch({
             type: ActionTypes.CLICK_SCENE,
             x: x,
@@ -42,13 +43,11 @@ const Actions = {
         })
     },
 
-    getScene(name){
-        AppDispatcher.dispatch({
-            type: ActionTypes.GET_SCENE,
-        });
-        SceneAPI.getByName(name);
-    },
-
+    /**
+     * Retrieves scenes' basic data from db and sends it to the stores, then calls asynchronous update for each scene in
+     * order to get complete data
+     * @param response
+     */
     loadAllScenes(response){
         AppDispatcher.dispatch({
             type: ActionTypes.LOAD_ALL_SCENES,
@@ -60,6 +59,10 @@ const Actions = {
 
     },
 
+    /**
+     * Dispatch to the stores the Scene received from db
+     * @param scene
+     */
     receiveScene(scene){
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_SCENE,
@@ -67,6 +70,10 @@ const Actions = {
         });
     },
 
+    /**
+     * Dispatch current scene update
+     * @param scene
+     */
     updateCurrentScene(scene){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
@@ -75,6 +82,10 @@ const Actions = {
 
     },
 
+    /**
+     * Dispatch generic scene update
+     * @param scene
+     */
     updateScene(scene){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE,
@@ -82,6 +93,10 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch generic scene removal
+     * @param scene
+     */
     removeScene(scene){
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_SCENE,
@@ -89,14 +104,22 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch all scenes removal
+     */
     removeAllScene(){
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_ALL_SCENES,
         })
     },
 
-    //LABELS
+    //TAGS
 
+    /**
+     * Dispatch creation of new tag
+     * @param name
+     * @param color
+     */
     addNewTag(name, color){
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_TAG,
@@ -108,13 +131,24 @@ const Actions = {
 
     //INTERACTIVE OBJECTS
 
-    addNewObject(object){
+    /**
+     * Adds new object to the scene (stores also handle generation of default rule)
+     * @param scene
+     * @param object
+     */
+    addNewObject(scene, object){
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_OBJECT,
+            scene: scene,
             obj: object,
         })
     },
 
+    /**
+     * Dispatch object removal
+     * @param scene
+     * @param object
+     */
     removeObject(scene, object){
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_OBJECT,
@@ -123,12 +157,19 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch all object selection (rightbar)
+     */
     selectAllObjects(){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_ALL_OBJECTS,
         })
     },
 
+    /**
+     * Dispatch current object update (rightbar)
+     * @param object
+     */
     updateCurrentObject(object){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_OBJECT,
@@ -136,12 +177,45 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
     filterObject(filterType){
         AppDispatcher.dispatch({
             type: ActionTypes.OBJECTS_FILTER,
             filter: filterType,
         })
     },
+
+    //RULES
+
+    /**
+     * Dispatch new Rule (stores also handle scene update)
+     * @param scene
+     * @param rule
+     */
+    addNewRule(scene, rule){
+        AppDispatcher.dispatch({
+            type: ActionTypes.ADD_NEW_RULE,
+            scene: scene,
+            rule: rule,
+        })
+    },
+
+    /**
+     * Dispatch rule removal (stores also handle scene update)
+     * @param scene
+     * @param rule
+     */
+    removeRule(scene, rule){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_RULE,
+            scene: scene,
+            rule: rule,
+        })
+    },
+
 
     //OTHER
 
