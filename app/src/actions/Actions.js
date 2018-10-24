@@ -108,14 +108,6 @@ const Actions = {
 
     //INTERACTIVE OBJECTS
 
-    removeTransition(scene, transition){
-        AppDispatcher.dispatch({
-            type: ActionTypes.REMOVE_TRANSITION,
-            scene: scene,
-            obj: transition,
-        })
-    },
-
     addNewObject(object){
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_OBJECT,

@@ -2,8 +2,8 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
-import LeftbarElement from "./LeftbarElement";
 import Scene from "../scene/Scene";
+import scene_utils from '../scene/scene_utils';
 
 class ScenesStore extends ReduceStore {
 
@@ -48,11 +48,8 @@ class ScenesStore extends ReduceStore {
             case ActionTypes.REMOVE_ALL_SCENES:
                 state = state.clear();
                 return state;
-            case ActionTypes.REMOVE_TRANSITION:
-                const scene = action.scene;
-                const newTransitions = scene.objects.transitions.filter((transition) => transition.uuid !== action.obj.uuid);
-                scene.objects.transitions = newTransitions;
-                state = state.set(scene.name,scene);
+            case ActionTypes.REMOVE_OBJECT:
+                scene_utils.removeInteractiveObject(action.scene, action.obj);
                 return state;
             default:
                 return state;

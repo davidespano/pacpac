@@ -2,6 +2,7 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
+import stores_utils from "./stores_utils";
 
 
 class ObjectsStore extends ReduceStore {
@@ -17,16 +18,10 @@ class ObjectsStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
-                console.log(state);
-                state = state.set(action.obj.uuid, action.obj).sort(comparator);
-                console.log(state);
+                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
                 state = state.delete(action.obj.uuid);
-                return state;
-            case ActionTypes.ADD_NEW_TRANSITION:
-                //console.log(action.obj)
-                state = state.set(action.obj.uuid, action.obj).sort();
                 return state;
             case ActionTypes.REMOVE_TRANSITION:
                 state = state.delete(action.obj.uuid);
@@ -38,10 +33,3 @@ class ObjectsStore extends ReduceStore {
 }
 
 export default new ObjectsStore();
-
-
-function comparator(a, b){
-    if(a.name < b.name) return -1;
-    if(a.name > b.name) return 1;
-    return 0;
-}

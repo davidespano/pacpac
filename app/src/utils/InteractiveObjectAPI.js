@@ -33,7 +33,7 @@ function removeTransition(scene, transition) {
             if (err) {
                 return console.error(err)
             }
-            Actions.removeTransition(scene, transition);
+            Actions.removeObject(scene, transition);
         });
 }
 

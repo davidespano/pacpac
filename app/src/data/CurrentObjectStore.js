@@ -17,8 +17,6 @@ class CurrentObjectStore extends ReduceStore {
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
                 return action.obj;
-            case ActionTypes.ADD_NEW_TRANSITION:
-                return action.obj;
             case ActionTypes.SELECT_ALL_OBJECTS:
                 return null;
             case ActionTypes.UPDATE_CURRENT_SCENE:
