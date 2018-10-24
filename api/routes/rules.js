@@ -1,4 +1,4 @@
-const InteractiveObjects = require('../models/interactiveObjects')
+const Rules = require('../models/rules')
     , _ = require('lodash')
     , writeResponse = require('../helpers/response').writeResponse
     , writeError = require('../helpers/response').writeError
@@ -7,41 +7,44 @@ const InteractiveObjects = require('../models/interactiveObjects')
 /**
  * @swagger
  * definitions:
- *  InteractiveObjects:
+ *  Actions:
  *      type: object
  *      properties:
  *          uuid:
  *              type: string
- *          name:
+ *          type:
  *              type: string
- *          vertices:
+ *          target:
  *              type: string
  */
 
 /**
  * @swagger
  * definitions:
- *  Transitions:
+ *  Rules:
  *      type: object
  *      properties:
  *          uuid:
  *              type: string
- *          name:
+ *          event:
  *              type: string
- *          vertices:
+ *          condition:
  *              type: string
- *          duration:
- *              type: string
+ *          actions:
+ *              type: array
+ *              items:
+ *                  $ref: '#/definitions/Actions'
  */
+
 
 /**
  * @swagger
- * /api/v0/{gameID}/scenes/{name}/transitions:
+ * /api/v0/{gameID}/scenes/{name}/rules:
  *  put:
  *      tags:
- *      - interactive objects
- *      description: Create a new transition or modify an existing one
- *      summary: Create or modify a transition
+ *      - rules
+ *      description: Create a new rule or modify an existing one
+ *      summary: Create or modify a rule
  *      produces:
  *          - application/json
  *      parameters:
@@ -61,36 +64,35 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *          required: true
  *          description: Token (token goes here)
  *        - in: body
- *          name: transition
+ *          name: rule
  *          type: object
  *          required: true
  *          schema:
- *              $ref: '#/definitions/Transitions'
+ *              $ref: '#/definitions/Rules'
  *      responses:
  *          200:
- *              description: Transition updated
+ *              description: Rule updated
  *          201:
- *              description: Transition created
+ *              description: Rule created
  *          404:
  *              description: Scene not found
  */
-function putTransition(req, res, next) {
+function putRule(req, res, next) {
     const sceneName = req.params.name;
     const gameID = req.params.gameID;
-    const transition = req.body;
-    InteractiveObjects.createUpdateTransition(dbUtils.getSession(req), transition, sceneName, gameID)
+    const rule = req.body;
+    Rules.createUpdateRule(dbUtils.getSession(req), rule, sceneName, gameID)
         .then(response => writeResponse(res, response[0], response[1]?201:200)) //the function return true if created, so 201
         .catch(error => writeError(res, error, 500));
 }
 
-
 /**
  * @swagger
- * /api/v0/{gameID}/scenes/{name}/transitions/{tuuid}:
+ * /api/v0/{gameID}/scenes/{name}/rules/{ruuid}:
  *  delete:
  *      tags:
- *      - interactive objects
- *      description: Delete the transition
+ *      - rules
+ *      description: Delete the rule
  *      summary: Delete a transition by uuid
  *      produces:
  *          - application/json
@@ -101,10 +103,10 @@ function putTransition(req, res, next) {
  *          required: true
  *          description: Name of the scene
  *        - in: path
- *          name: tuuid
+ *          name: ruuid
  *          type: string
  *          required: true
- *          description: Uuid of the transition
+ *          description: Uuid of the rule
  *        - name: Authorization
  *          in: header
  *          type: string
@@ -118,19 +120,18 @@ function putTransition(req, res, next) {
  *      responses:
  *          200:
  *              type: integer
- *              description: The number of deleted objects (should be 1)
+ *              description: The number of deleted rules (should be 1)
  */
-function deleteTransition(req, res, next) {
+function deleteRule(req, res, next) {
     const name = req.params.name;
-    const tuuid = req.params.tuuid;
+    const ruuid = req.params.ruuid;
     const gameID = req.params.gameID;
-    InteractiveObjects.deleteTransition(dbUtils.getSession(req), name, tuuid, gameID)
+    Rules.deleteRule(dbUtils.getSession(req), name, ruuid, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
 
-
 module.exports = {
-    putTransition: putTransition,
-    deleteTransition: deleteTransition
+    putRule: putRule,
+    deleteRule: deleteRule
 };

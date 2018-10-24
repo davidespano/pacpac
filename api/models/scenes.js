@@ -1,27 +1,41 @@
 const _ = require('lodash');
 const Scene = require('../models/neo4j/scene');
 const Tag = require('../models/neo4j/tag');
+const Rule = require('../models/neo4j/rule');
+const Interactiveobject = require('../models/neo4j/interactiveObject');
 const fs = require('fs');
 
-// return many scenes
-function manyScenes(neo4jResult) {
-    return neo4jResult.records.map(record => {
-        const result = {};
-        _.extend(result, new Scene(record.get('scene')));
-        result.tag = new Tag(record.get('tag'));
-        return result;
-    })
-}
-
-function singleSceneWithDetails(record) {
-    if (record.length) {
-        const result = {};
-        _.extend(result, new Scene(record.get('scene')));
-        result.tag = new Tag(record.get('tag'));
-        return result;
-    } else {
+function singleScene(results) {
+    if(results.records.length && results.records.length === 1){
+        //build the scene
+        return buildScene(results.records[0]);
+    } else { //too many or no scenes
         return null;
     }
+}
+
+function multipleScenes(results){
+    return results.records.map(record => buildScene(record));
+}
+
+function buildScene(record) {
+    const scene = new Scene(record.get('scene'));
+    try {
+        scene.tag = new Tag(record.get('tag'));
+    }catch (error){
+        scene.tag = null;
+        console.log(scene);
+        console.log('this scene has no tag');
+    }
+    try{
+        const rules = record.get('rules');
+        scene.rules = rules.map(r => new Rule(r));
+    }catch (error){}
+    try {
+        const transitions = record.get('transitions');
+        scene.transitions = transitions.map(t => new Interactiveobject(t));
+    }catch (error){}
+    return scene;
 }
 
 // get all scenes
@@ -33,7 +47,7 @@ function getAll(session, gameID) {
         'ORDER BY scene.index')
         .then(result => {
                 if (!_.isEmpty(result.records)) {
-                    return manyScenes(result);
+                    return multipleScenes(result);
                 }
                 else {
                     throw {message: "gameID not found", status: 404}
@@ -45,32 +59,23 @@ function getAll(session, gameID) {
 }
 
 //get scene by name
-function getByName(session, name, gameID) {
+function getByName(session, name, gameID){
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name:$name}) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS]->(transition:InteractiveObject:Transition)' +
-        'OPTIONAL MATCH (transition)-[:CONTAINS_RULE]->(rule:Rule)' +
-        'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action)' +
-        'WITH scene, tag, transition, ' +
-        '          rule { ' +
-        '                  .*,' +
-        '                  actions: COLLECT(properties(action))' +
-        '           } ' +
-        'WITH scene, tag, ' +
-        '          transition { ' +
-        '                  .*, ' +
-        '                  rules: COLLECT(rule)' +
-        '           } ' +
-        'RETURN scene {' +
-        '           properties: {' +
-        '                           name: scene.name, ' +
-        '                           transitions: COLLECT(transition)' +
-        '                        }' +
-        '       }, tag', {'name': name})
+        'WITH scene, tag ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition)' +
+        'WITH scene, tag, COLLECT(transition) as transitions ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) ' +
+        'WITH scene, tag, transitions, rule ' +
+        'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
+        'WITH scene, tag, transitions, rule, collect(action) as acts ' +
+        'RETURN scene, tag, transitions, collect(rule { .*,  actions :acts}) as rules',
+        {'name': name})
         .then(result => {
-            if (!_.isEmpty(result.records)) {
-                return singleSceneWithDetails(result.records[0]);
+            const scene = singleScene(result);
+            if (scene) {
+                return scene;
             }
             else {
                 throw {message: 'scene not found', status: 404};
@@ -82,28 +87,17 @@ function getAllDetailed(session, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` ) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS]->(transition:InteractiveObject:Transition)' +
-        'OPTIONAL MATCH (transition)-[:CONTAINS_RULE]->(rule:Rule)' +
-        'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action)' +
-        'WITH scene, tag, transition, ' +
-        '          rule { ' +
-        '                  .*,' +
-        '                  actions: COLLECT(properties(action))' +
-        '           } ' +
-        'WITH scene, tag, ' +
-        '          transition { ' +
-        '                  .*, ' +
-        '                  rules: COLLECT(rule)' +
-        '           } ' +
-        'RETURN scene {' +
-        '           properties: {' +
-        '                           name: scene.name, ' +
-        '                           transitions: COLLECT(transition)' +
-        '                        }' +
-        '       }, tag')
+        'WITH scene, tag ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition)' +
+        'WITH scene, tag, COLLECT(transition) as transitions ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) ' +
+        'WITH scene, tag, transitions, rule ' +
+        'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
+        'WITH scene, tag, transitions, rule, collect(action) as acts ' +
+        'RETURN scene, tag, transitions, collect(rule { .*,  actions :acts}) as rules',)
         .then(result => {
                 if (!_.isEmpty(result.records)) {
-                    return manyScenes(result);
+                    return multipleScenes(result);
                 }
                 else {
                     throw {message: "gameID not found", status: 404}
@@ -123,7 +117,7 @@ function getHomeScene(session, gameID) {
         'RETURN scene,tag')
         .then(result => {
             if (!_.isEmpty(result.records)) {
-                return singleSceneWithDetails(result.records[0]);
+                return singleScene(result);
             }
             else {
                 throw {message: 'scene not found', status: 404};
@@ -147,17 +141,8 @@ function addScene(session, name, index, type, tagColor, tagName, gameID) {
                     'RETURN scene,tag', {name: name, index: index, type: type, tagColor: tagColor, tagName: tagName})
             }
         })
-        .then(result => singleSceneWithDetails(result.records[0]));
+        .then(result => singleScene(result.records[0]));
 
-}
-
-// get adjacent scenes
-function getNeighboursByName(session, name, gameID) {
-    return session.run('MATCH (:Scene:`' + gameID + '` {name: $name})-[:TARGET|:CONTAINS|:CONTAINS_RULE|:CONTAINS_ACTION *4]->(scene) ' +
-        'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag)' +
-        'RETURN scene, tag ' +
-        'ORDER BY scene.index', {name: name})
-        .then(result => manyScenes(result));
 }
 
 //delete a scene
@@ -174,13 +159,10 @@ function deleteScene(session, name, gameID) {
 
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name}) ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS]->(o:InteractiveObject)' +
-        'OPTIONAL MATCH (o)-[:CONTAIN_RULE]->(r:Rule)' +
-        'OPTIONAL MATCH (r)-[:CONTAINS_ACTION]->(a:Action)' +
-        'OPTIONAL MATCH (scene)<-[:TARGET]-(a2:Action)' +
-        'OPTIONAL MATCH (a2)<-[:CONTAINS_ACTION]-(r2:Rule)' +
-        'OPTIONAL MATCH (r2)<-[:CONTAINS_RULE]-(o2:InteractiveObject)' +
-        'DETACH DELETE scene,o,r,a,o2,r2,a2 ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(o:InteractiveObject) ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(r:Rule) ' +
+        'OPTIONAL MATCH (r)-[:CONTAINS_ACTION]->(a:Action) ' +
+        'DETACH DELETE scene,o,r,a ' +
         'RETURN COUNT(scene)', {name: name})
         .then(result => result.records[0].get('COUNT(scene)').low)
 }
@@ -205,7 +187,6 @@ module.exports = {
     getByName: getByName,
     addScene: addScene,
     getHomeScene: getHomeScene,
-    getNeighboursByName: getNeighboursByName,
     deleteScene: deleteScene,
     setHome: setHome,
     getAllDetailed: getAllDetailed

@@ -92,7 +92,6 @@ api.get('/:gameID/scenes', routes.scenes.list);
 api.get('/:gameID/scenes-all', routes.scenes.detailedList);
 api.get('/:gameID/scenes/:name', routes.scenes.getByName);
 api.get('/:gameID/scenes-home', routes.scenes.getHomeScene);
-api.get('/:gameID/scenes/:name/neighbours', routes.scenes.getNeighboursByName);
 api.post('/:gameID/scenes/addScene', loginRequired, routes.scenes.addScene);
 api.delete('/:gameID/scenes/:name', loginRequired, routes.scenes.deleteScene);
 api.post('/:gameID/scenes/:name/setHome', loginRequired, routes.scenes.setHome);
@@ -104,6 +103,9 @@ api.get('/:gameID/tags', routes.tags.list);
 api.put('/:gameID/scenes/:name/transitions', loginRequired, routes.interactiveObjects.putTransition);
 api.delete('/:gameID/scenes/:name/transitions/:tuuid', loginRequired, routes.interactiveObjects.deleteTransition);
 
+/**RULES**/
+api.put('/:gameID/scenes/:name/rules', loginRequired, routes.rules.putRule);
+api.delete('/:gameID/scenes/:name/rules/:ruuid', loginRequired, routes.rules.deleteRule);
 
 /**MEDIA**/
 const storage = multer.diskStorage({

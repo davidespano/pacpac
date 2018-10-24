@@ -36,10 +36,16 @@ const fs = require('fs')
  *              description: Another media has already this name
  */
 function addMedia(req, res, next) {
-    if(req.file)
+    if (req.file) {
+        console.log(req.file);
+        if(req.file.mimeType.includes('video')) {
+
+        }
         return res.status(200).end();
-    else
-        writeResponse(res, {message: 'Another media has already this name', status: 422},422);
+    }
+    else {
+        writeResponse(res, {message: 'Another media has already this name', status: 422}, 422);
+    }
 }
 
 module.exports = {
