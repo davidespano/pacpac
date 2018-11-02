@@ -6,7 +6,7 @@ const Interactiveobject = require('../models/neo4j/interactiveObject');
 const fs = require('fs');
 
 function singleScene(results) {
-    if(results.records.length && results.records.length === 1){
+    if(results.records && results.records.length && results.records.length === 1){
         //build the scene
         return buildScene(results.records[0]);
     } else { //too many or no scenes

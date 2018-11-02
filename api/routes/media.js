@@ -38,7 +38,7 @@ const fs = require('fs')
 function addMedia(req, res, next) {
     if (req.file) {
         console.log(req.file);
-        if(req.file.mimeType.includes('video')) {
+        if(req.file.mimetype.includes('video')) {
 
         }
         return res.status(200).end();
