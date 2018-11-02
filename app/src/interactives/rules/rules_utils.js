@@ -14,7 +14,7 @@ function generateDefaultRule(scene, object){
     let r;
     switch(object.type){
         case InteractiveObjectsTypes.TRANSITION:
-            r =  Rule({
+            r = Rule({
                 uuid : uuid.v4(),
                 object_uuid : object.uuid,
                 event : EventTypes.CLICK,

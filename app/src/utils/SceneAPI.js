@@ -10,7 +10,7 @@ const request = require('superagent');
 const {apiBaseURL} = settings;
 
 //get scene by name
-function getByName(name, scene = null) {
+function getByName(name) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
@@ -18,6 +18,9 @@ function getByName(name, scene = null) {
                 return console.error(err)
             }
 
+            const adj = [];
+
+            // generates transitions
             const transitions = response.body.transitions.map((transition) => {
                 return Transition({
                     uuid: transition.uuid,
@@ -29,34 +32,45 @@ function getByName(name, scene = null) {
                 });
             });
 
-            if (scene == null) {
-
-                // new Scene object
-                let newScene = Scene({
-                    name : response.body.name.replace(/\.[^/.]+$/, ""),
-                    img : response.body.name,
-                    type : response.body.type,
-                    index : response.body.index,
-                    tag : {
-                        tagName : response.body.tagName,
-                        tagColor : response.body.tagColor,
-                    },
-                    objects : {
-                        transitions : transitions,
-                    },
+            // generates rules
+            const rules = response.body.rules.map(rule => {
+                // check actions to find scene neighbours
+                rule.actions.forEach(a => {
+                    if (a.type = RuleActionTypes.TRANSITION && a.target)
+                        adj.push(a.target);
                 });
 
-                Actions.receiveScene(newScene);
-                transitions.forEach(t => {
-                    Actions.addNewObject(t);
+                // new Rule
+                return Rule({
+                    uuid: rule.uuid,
+                    object_uuid: rule.object_uuid,
+                    event: rule.event,
+                    condition: rule.condition,
+                    actions: rule.actions,
                 });
+            });
 
-            } else {
-                console.log('È entrato qui ma pensavo non ci sarebbe entrato mai, incredibile')
-                scene.objects.transitions = transitions;
-                Actions.updateScene(scene);
-                Actions.updateCurrentScene(scene);
-            }
+
+            // new Scene object
+            let newScene = Scene({
+                name : response.body.name.replace(/\.[^/.]+$/, ""),
+                img : response.body.name,
+                type : response.body.type,
+                index : response.body.index,
+                tag : {
+                    tagName : response.body.tagName,
+                    tagColor : response.body.tagColor,
+                },
+                objects : {
+                    transitions : transitions,
+                },
+                rules : rules,
+            });
+
+            Actions.receiveScene(newScene);
+            transitions.forEach(t => {
+                Actions.addNewObject(t);
+            });
 
         });
 }

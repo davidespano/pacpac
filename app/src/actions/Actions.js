@@ -178,6 +178,17 @@ const Actions = {
     },
 
     /**
+     * Dispatch update of any object to the objects store
+     * @param object
+     */
+    updateObject(object){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OBJECT,
+            obj: object,
+        })
+    },
+
+    /**
      * Dispatch new filter selection
      * @param filterType
      */

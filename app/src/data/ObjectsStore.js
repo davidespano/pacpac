@@ -23,8 +23,8 @@ class ObjectsStore extends ReduceStore {
             case ActionTypes.REMOVE_OBJECT:
                 state = state.delete(action.obj.uuid);
                 return state;
-            case ActionTypes.REMOVE_TRANSITION:
-                state = state.delete(action.obj.uuid);
+            case ActionTypes.UPDATE_OBJECT:
+                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
                 return state;
             default:
                 return state;

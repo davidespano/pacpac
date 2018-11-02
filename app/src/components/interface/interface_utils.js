@@ -10,24 +10,25 @@ import Transition from "../../interactives/Transition";
  */
 function setProperty(object, property, id, props){
     let value = document.getElementById(id).textContent;
+    let newObject;
 
     switch (property) {
         // generic properties belonging to any interactive object
         case "name":
         case "media":
         case "vertices":
-            object.set(property, value);
+            newObject = object.set(property, value);
             break;
         // specific properties
         default:
             let properties = object.get('properties');
             properties[property] = value;
-            object.setIn(['properties'], properties);
+            newObject = object.setIn(['properties'], properties);
     }
-    props.updateCurrentObject(object);
-    InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject);
 
-    console.log(object);
+    props.updateCurrentObject(newObject);
+    props.updateObject(newObject);
+    InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject);
 }
 
 

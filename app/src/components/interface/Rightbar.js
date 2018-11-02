@@ -264,7 +264,7 @@ function generateObjectsList(props) {
                 <div key={obj.name}
                      className={'objectsList-element'}
                      onClick={()=> Actions.updateCurrentObject(obj)}>
-                    {obj.name}
+                     {obj.name}
                  </div>
             );
         }));
@@ -291,20 +291,6 @@ function generateObjectsList(props) {
         ));
 
     }
-}
-
-function generateTargetOptions(props, rules) {
-
-    return ([...props.scenes.values()].map(child => {
-        if(child.name !== props.currentScene.name) {
-            if (child.img === rules[0].actions[0].target) {
-                return (<option key={child.img + "target"} selected={"selected"}>{child.img}</option>)
-            }
-            else {
-                return (<option key={child.img + "target"}>{child.img}</option>)
-            }
-        }
-    }));
 }
 
 /*TO DO: remove target (it's not there anymore)*/
