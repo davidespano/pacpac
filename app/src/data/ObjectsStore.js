@@ -20,6 +20,9 @@ class ObjectsStore extends ReduceStore {
             case ActionTypes.ADD_NEW_OBJECT:
                 state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
                 return state;
+            case ActionTypes.RECEIVE_OBJECT:
+                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
+                return state;
             case ActionTypes.REMOVE_OBJECT:
                 state = state.delete(action.obj.uuid);
                 return state;

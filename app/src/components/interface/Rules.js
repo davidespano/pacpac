@@ -1,5 +1,6 @@
 import React from 'react';
 import L from "../../utils/L";
+import rules_utils from "../../interactives/rules/rules_utils";
 
 function Rules(props){
     return(
@@ -19,25 +20,32 @@ function generateRules(currentScene, props){
         }
 
         //each rule
-        return ([...currentScene.get('rules').values()].map((rule) => {
+        return ([...currentScene.get('rules').values()].map((rule_uuid) => {
+            let rule = props.rules.get(rule_uuid);
             let object = props.interactiveObjects.get(rule.object_uuid).name;
             let index = -1;
             //each action in rule
             return([...rule.get('actions').values()].map(action => {
-                index++;
+                index++; //action index in array
                 return (
                     <div className={'single-action'} key={rule.uuid + index}>
                         {rule.event} {object}:
-                        <select>
-                            <option key={"void_target"}>---</option>
-                            {generateTargetOptions(props, action)}
+                        <select id={'target'}
+                                onChange={() => {
+                                    let e = document.getElementById('target');
+                                    let value = e.options[e.selectedIndex].text;
+                                    let i = e.value;
+                                    let r = rules_utils.setAction(rule, i, 'target', value); //returns updated rule
+                                    props.updateRule(r); //send update to stores
+                                }}>
+                            <option key={"void_target"} value={index}>---</option>
+                            {generateTargetOptions(props, action, index)}
                         </select>
                     </div>
                 );
                 })
             );
         }));
-
     }else {
         return "Nessuna scena selezionata";
     }
@@ -47,17 +55,18 @@ function generateRules(currentScene, props){
  * Generates target options for transitions
  * @param props
  * @param action
+ * @param index is the action index in actions array belonging to a Rule
  * @returns {any[]}
  */
-function generateTargetOptions(props, action) {
+function generateTargetOptions(props, action, index) {
 
     return ([...props.scenes.values()].map(child => {
         if(child.name !== props.currentScene.name) {
             if (child.img === action.target) {
-                return (<option key={child.img + "target"} selected={"selected"}>{child.name}</option>)
+                return (<option key={child.img + index} value={index} selected={"selected"}>{child.name}</option>)
             }
             else {
-                return (<option key={child.img + "target"}>{child.name}</option>)
+                return (<option key={child.img + index} value={index}>{child.name}</option>)
             }
         }
     }));

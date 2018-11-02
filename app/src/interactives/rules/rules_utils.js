@@ -6,11 +6,10 @@ import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 let uuid = require('uuid');
 
 /**
- * Generates a default rule depending on the given object and assigns it to the given scene
- * @param scene
+ * Generates a default rule depending on the given object
  * @param object
  */
-function generateDefaultRule(scene, object){
+function generateDefaultRule(object){
     let r;
     switch(object.type){
         case InteractiveObjectsTypes.TRANSITION:
@@ -24,17 +23,34 @@ function generateDefaultRule(scene, object){
                 }],
             });
 
-            // updating current scene
-            let rules = scene.get('rules');
-            rules.push(r);
-            scene.setIn(['rules'], rules);
             break;
         default:
             return;
     }
-    InteractiveObjectAPI.saveRule(scene, r);
+    return r;
+}
+
+/**
+ * Set property of a specific action belonging to the Rule and returns updated Rule
+ * @param rule
+ * @param index is the index of the action inside the actions array
+ * @param property to set
+ * @param value of the property
+ */
+function setAction(rule, index, property, value){
+
+    let actions = rule.get('actions');
+    let a = actions[index];
+    a[property] = value;
+    actions[index] = a;
+    return rule.set('actions', actions);
+}
+
+function setProperty(rule, property, value){
+    return rule.set(property, value);
 }
 
 export default {
     generateDefaultRule : generateDefaultRule,
+    setAction : setAction,
 };

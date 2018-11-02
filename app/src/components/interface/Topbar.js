@@ -86,10 +86,15 @@ function createTransition(props) {
             name : name,
         });
 
-        // updates stores with new object (stores will add the object to the scene and generate the default rule)
-        props.addNewObject(props.currentScene, tr);
+        // generates default rule for the object
+        let defaultRule = rules_utils.generateDefaultRule(tr);
 
-        // InteractiveObjectAPI.saveTransitions(props.currentScene, tr);
+        // updates stores with new object and rule
+        props.addNewObject(props.currentScene, tr);
+        props.addNewRule(props.currentScene, defaultRule);
+
+        InteractiveObjectAPI.saveTransitions(props.currentScene, tr);
+        InteractiveObjectAPI.saveRule(props.currentScene, defaultRule);
 
     } else {
         alert("Nessuna scena selezionata!");

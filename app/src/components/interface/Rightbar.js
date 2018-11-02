@@ -237,12 +237,6 @@ function objectButtons(props){
     );
 }
 
-/*
-*             <label>Target:</label>
-            <select id={"target"} className={"custom-select"} onChange={() => utils.setProperty(object, 'target' , "target", props)}>
-                <option key={"void_target"}>---</option>
-                {generateTargetOptions(props, object.rules)}
-            </select>*/
 
 /**
  * Generate objects list according to the chosen filter ('scene','all', etc)

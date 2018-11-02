@@ -19,10 +19,14 @@ function getByName(name) {
             }
 
             const adj = [];
+            const transitions_uuids = [];
+            const rules_uuids = [];
 
-            // generates transitions
-            const transitions = response.body.transitions.map((transition) => {
-                return Transition({
+            // generates transitions and saves them to the objects store
+            response.body.transitions.map((transition) => {
+
+                transitions_uuids.push(transition.uuid);
+                let t = Transition({
                     uuid: transition.uuid,
                     name: transition.name,
                     type: transition.type,
@@ -30,24 +34,28 @@ function getByName(name) {
                     vertices: transition.vertices,
                     properties: transition.properties,
                 });
+                Actions.receiveObject(t);
             });
 
-            // generates rules
-            const rules = response.body.rules.map(rule => {
+            // generates rules and saves them to the rules store
+            response.body.rules.map(rule => {
                 // check actions to find scene neighbours
                 rule.actions.forEach(a => {
                     if (a.type = RuleActionTypes.TRANSITION && a.target)
                         adj.push(a.target);
                 });
 
+                rules_uuids.push(rule.uuid);
+
                 // new Rule
-                return Rule({
+                let r = Rule({
                     uuid: rule.uuid,
                     object_uuid: rule.object_uuid,
                     event: rule.event,
                     condition: rule.condition,
                     actions: rule.actions,
                 });
+                Actions.receiveRule(r);
             });
 
 
@@ -62,15 +70,12 @@ function getByName(name) {
                     tagColor : response.body.tagColor,
                 },
                 objects : {
-                    transitions : transitions,
+                    transitions : transitions_uuids,
                 },
-                rules : rules,
+                rules : rules_uuids,
             });
 
             Actions.receiveScene(newScene);
-            transitions.forEach(t => {
-                Actions.addNewObject(t);
-            });
 
         });
 }

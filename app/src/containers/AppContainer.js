@@ -9,6 +9,7 @@ import ObjectsStore from "../data/ObjectsStore";
 import CurrentObjectStore from "../data/CurrentObjectStore";
 import TagsStore from "../data/TagsStore";
 import ObjectsFilterStore from "../data/ObjectsFilterStore";
+import RulesStore from "../data/RulesStore";
 import DatalistStore from "../data/DatalistStore";
 
 
@@ -40,6 +41,7 @@ function getState() {
         interactiveObjects: ObjectsStore.getState(),
         currentObject: CurrentObjectStore.getState(),
         objectsFilter: ObjectsFilterStore.getState(),
+        rules: RulesStore.getState(),
         datalists: DatalistStore.getState(),
 
         //FUNCTIONS
@@ -67,6 +69,12 @@ function getState() {
         updateCurrentObject: Actions.updateCurrentObject,
         updateObject: Actions.updateObject,
         filterObjectFunction: Actions.filterObject,
+
+        //rules
+
+        addNewRule: Actions.addNewRule,
+        removeRule: Actions.removeRule,
+        updateRule: Actions.updateRule,
 
         //OTHER
         onDrop: Actions.onDrop,

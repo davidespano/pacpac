@@ -1,7 +1,8 @@
 import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
+import Actions from "../actions/Actions";
 
 /**
- * Updates the scene saving the object in the proper list
+ * Returns the updated scene
  * @param scene
  * @param object
  */
@@ -11,9 +12,11 @@ function addInteractiveObjectToScene(scene, object){
     // updating scene
     if(field){
         let objects = scene.get('objects');
-        objects[field].push(object);
-        scene.setIn(['objects'], objects);
+        objects[field].push(object.uuid);
+        return scene.setIn(['objects'], objects);
     }
+
+    return scene;
 }
 
 /**
@@ -27,31 +30,32 @@ function removeInteractiveObject(scene, object){
     // updating scene
     if(field){
         let objects = scene.get('objects');
-        objects[field].filter((element) => element.uuid !== object.uuid);
-        scene.setIn(['objects'], objects);
+        objects[field].filter((uuid) => uuid !== object.uuid);
+        return scene.setIn(['objects'], objects);
     }
+    return scene;
 }
 
 /**
- * Updates the scene saving the given Rule
+ * Updates the scene saving the given Rule, returns updated scene
  * @param scene
  * @param rule
  */
 function addRuleToScene(scene, rule){
     let rules = scene.get('rules');
-    rules.push(rule);
-    scene.set('rules', rules);
+    rules.push(rule.uuid);
+    return scene.set('rules', rules);
 }
 
 /**
- * Removes given Rule from the Scene
+ * Removes given Rule from the Scene and returns updated scene
  * @param scene
  * @param rule
  */
 function removeRuleFromScene(scene, rule){
     let rules = scene.get('rules');
-    rules.filter((element) => element.uuid !== rule.uuid);
-    scene.set('rules', rules);
+    rules.filter((uuid) => uuid !== rule.uuid);
+    return scene.set('rules', rules);
 }
 
 /**

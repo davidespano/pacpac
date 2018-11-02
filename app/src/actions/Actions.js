@@ -132,7 +132,7 @@ const Actions = {
     //INTERACTIVE OBJECTS
 
     /**
-     * Adds new object to the scene (stores also handle generation of default rule)
+     * Adds new object (also handles generation of default rule and scene update)
      * @param scene
      * @param object
      */
@@ -140,6 +140,17 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_OBJECT,
             scene: scene,
+            obj: object,
+        })
+    },
+
+    /**
+     * Handles an object received from db
+     * @param object
+     */
+    receiveObject(object){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_OBJECT,
             obj: object,
         })
     },
@@ -215,6 +226,17 @@ const Actions = {
     },
 
     /**
+     * Handles a Rule received from db
+     * @param rule
+     */
+    receiveRule(rule){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_RULE,
+            rule: rule,
+        })
+    },
+
+    /**
      * Dispatch rule removal (stores also handle scene update)
      * @param scene
      * @param rule
@@ -227,6 +249,16 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch update of any rule
+     * @param rule
+     */
+    updateRule(rule){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_RULE,
+            rule: rule,
+        })
+    },
 
     //OTHER
 

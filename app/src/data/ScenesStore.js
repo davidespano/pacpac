@@ -17,6 +17,7 @@ class ScenesStore extends ReduceStore {
     }
 
     reduce(state, action) {
+        let newScene;
         switch (action.type) {
             case ActionTypes.LOAD_ALL_SCENES:
                 // if state isn't undefined
@@ -50,17 +51,20 @@ class ScenesStore extends ReduceStore {
                 state = state.clear();
                 return state;
             case ActionTypes.ADD_NEW_OBJECT:
-                scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
-                rules_utils.generateDefaultRule(action.scene, action.obj);
+                newScene = scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
+                state = state.set(newScene.name, newScene);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
-                scene_utils.removeInteractiveObject(action.scene, action.obj);
+                newScene = scene_utils.removeInteractiveObject(action.scene, action.obj);
+                state = state.set(newScene.name, newScene);
                 return state;
             case ActionTypes.ADD_NEW_RULE:
-                scene_utils.addRuleToScene(action.scene, action.rule);
+                newScene = scene_utils.addRuleToScene(action.scene, action.rule);
+                state = state.set(newScene.name, newScene);
                 return state;
             case ActionTypes.REMOVE_RULE:
-                scene_utils.removeRuleFromScene(action.scene, action.rule);
+                newScene = scene_utils.removeRuleFromScene(action.scene, action.rule);
+                state = state.set(newScene.name, newScene);
                 return state;
             default:
                 return state;
