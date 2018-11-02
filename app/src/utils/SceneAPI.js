@@ -90,16 +90,16 @@ function createScene(name, index, type, tagColor, tagName) {
             if (err) {
                 return console.error(err);
             }
-
+            
             // new Scene object
             const newScene = Scene({
-                name : response.body.name.replace(/\.[^/.]+$/, ""),
-                img : response.body.name,
-                type : response.body.type,
-                index : response.body.index,
+                name : name.replace(/\.[^/.]+$/, ""),
+                img : name,
+                type : type,
+                index : index,
                 tag : {
-                    tagName : response.body.tagName,
-                    tagColor : response.body.tagColor,
+                    tagName : tagName,
+                    tagColor : tagColor,
                 },
             });
 
