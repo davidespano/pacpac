@@ -25,7 +25,7 @@ function setProperty(object, property, id, props){
             object.setIn(['properties'], properties);
     }
     props.updateCurrentObject(object);
-    //InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject);
+    InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject);
 
     console.log(object);
 }

@@ -2,6 +2,7 @@ import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
 import Rule from "./Rule";
 import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes";
+import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 let uuid = require('uuid');
 
 /**
@@ -30,6 +31,7 @@ function generateDefaultRule(scene, object){
         default:
             return;
     }
+    InteractiveObjectAPI.saveRule(scene, r);
 }
 
 export default {
