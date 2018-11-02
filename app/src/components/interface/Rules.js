@@ -1,9 +1,9 @@
 import React from 'react';
 import L from "../../utils/L";
 
-function RulesCanvas(props){
+function Rules(props){
     return(
-        <div id={'canvas'} className={'canvas'}>
+        <div id={'rules'} className={'rules'}>
             {generateRules(props.currentScene, props)}
         </div>
     );
@@ -97,5 +97,5 @@ function handleKeys(event,value,ruleId,objectId,props) {
     }*/
 }
 
-export default RulesCanvas;
+export default Rules;
 
