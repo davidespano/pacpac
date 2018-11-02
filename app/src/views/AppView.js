@@ -2,7 +2,7 @@ import React from 'react';
 import TopBar from "../components/interface/Topbar";
 import LeftBar from "../components/interface/Leftbar";
 import RightBar from "../components/interface/Rightbar";
-import RulesCanvas from "../components/interface/RulesCanvas";
+import Rules from "../components/interface/Rules";
 import VRScene from "../components/aframe/create_scene2";
 import '../components/look-controls_us';
 //import PlayTest from "../components/aframe/playtest";
@@ -20,7 +20,7 @@ function AppView(props) {
                         <LeftBar {...props} />
                         <RightBar {...props} />
                         <CentralScene {...props} />
-                        <RulesCanvas {...props} />
+                        <Rules {...props} />
                     </div>
                 </div>
             );

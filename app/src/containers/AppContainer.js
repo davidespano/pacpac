@@ -65,6 +65,7 @@ function getState() {
         addNewObject: Actions.addNewObject,
         selectAllObjects: Actions.selectAllObjects,
         updateCurrentObject: Actions.updateCurrentObject,
+        updateObject: Actions.updateObject,
         filterObjectFunction: Actions.filterObject,
 
         //OTHER

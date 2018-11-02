@@ -10,7 +10,7 @@ function CentralScene(props){
     if(props.currentScene !== null && !(regex.test(props.currentScene.img))){
         return(
             <div className={'scene'}>
-                <img id={'scene'}
+                <img id={'central-img'}
                      src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}
                      alt={props.currentScene.name}
                      onClick={(event) => {
@@ -18,7 +18,7 @@ function CentralScene(props){
                          props.clickScene(p.x, p.y);
                      }}
                 />
-
+                <canvas id={'central-canvas'}></canvas>
             </div>
         );
     }
@@ -27,6 +27,7 @@ function CentralScene(props){
             <div className={'scene'}>
                 <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}>
                 </video>
+                <canvas id={'central-canvas'}></canvas>
             </div>
         );
     }
@@ -51,8 +52,6 @@ function getCoordinates(event){
         y: event.pageY - img.offsetTop,
     };
 }
-
-
 
 export default CentralScene;
 
