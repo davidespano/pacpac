@@ -165,7 +165,7 @@ async function getAllDetailedScenes(gameGraph) {
                type: transition.type,
                media: transition.media,
                vertices: transition.vertices,
-               properties: transition.properties,
+               properties: JSON.parse(transition.properties),
            });
         });
 

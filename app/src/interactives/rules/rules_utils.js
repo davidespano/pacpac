@@ -18,6 +18,7 @@ function generateDefaultRule(object){
                 object_uuid : object.uuid,
                 event : EventTypes.CLICK,
                 actions : [{
+                    uuid : uuid.v4(),
                     type : RuleActionTypes.TRANSITION,
                     target : "",
                 }],

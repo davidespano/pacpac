@@ -15,7 +15,7 @@ function saveTransition(scene, object) {
                 type: object.type,
                 media: object.media,
                 vertices: object.vertices,
-                properties: object.properties,
+                properties: JSON.stringify(object.properties),
             })
         .end(function (err, response) {
             if (err) {
