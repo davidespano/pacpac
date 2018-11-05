@@ -192,6 +192,7 @@ function generateSpecificProperties(object, props){
             );
         default:
             return(<div>Error!</div>);
+
     }
 }
 
@@ -273,14 +274,15 @@ function generateObjectsList(props) {
         }
 
         // scene objects mapping
-        return ([...props.currentScene.objects.transitions.values()].map( obj => {
-                return (
-                    <div key={obj.name}
-                         className={'objectsList-element'}
-                         onClick={()=> Actions.updateCurrentObject(obj)}>
-                        {obj.name}
-                    </div>
-                );
+        return ([...props.currentScene.objects.transitions.values()].map( obj_uuid => {
+            let obj = props.interactiveObjects.get(obj_uuid);
+            return (
+                <div key={obj.uuid}
+                     className={'objectsList-element'}
+                     onClick={()=> Actions.updateCurrentObject(obj)}>
+                    {obj.name}
+                </div>
+            );
             }
         ));
 
