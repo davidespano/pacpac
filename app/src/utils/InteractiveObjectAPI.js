@@ -1,11 +1,19 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
+import scene_utils from "../scene/scene_utils";
 
 const request = require('superagent');
 
 const {apiBaseURL} = settings;
-function saveTransition(scene, object) {
-    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/transitions`)
+
+/**
+ * Save generic Interactive Object to db
+ * @param scene the obj belongs to
+ * @param object
+ */
+function saveObject(scene, object) {
+    const field = scene_utils.defineField(object);
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/${field}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send(
@@ -26,18 +34,29 @@ function saveTransition(scene, object) {
         });
 }
 
-function removeTransition(scene, transition) {
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/transitions/${transition.uuid}`)
+/**
+ * Remove generic Interactive Object from db
+ * @param scene the obj belongs to
+ * @param object
+ */
+function removeObject(scene, object) {
+    const field = scene_utils.defineField(object);
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/${field}/${object.uuid}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function (err, response) {
             if (err) {
                 return console.error(err)
             }
-            Actions.removeObject(scene, transition);
+            Actions.removeObject(scene, object);
         });
 }
 
+/**
+ * Save Rule to db
+ * @param scene the rule belongs to
+ * @param rule
+ */
 function saveRule(scene, rule) {
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/rules`)
         .set('Accept', 'application/json')
@@ -59,6 +78,11 @@ function saveRule(scene, rule) {
         });
 }
 
+/**
+ * Remove Rule from db
+ * @param scene the rule belongs to
+ * @param rule
+ */
 function removeRule(scene, rule) {
     request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/rules/${rule.uuid}`)
         .set('Accept', 'application/json')
@@ -72,8 +96,8 @@ function removeRule(scene, rule) {
 }
 
 export default {
-    saveTransitions: saveTransition,
-    removeTransition: removeTransition,
+    saveTransitions: saveObject,
+    removeTransition: removeObject,
     saveRule: saveRule,
     removeRule: removeRule,
 };

@@ -9,7 +9,10 @@ const request = require('superagent');
 
 const {apiBaseURL} = settings;
 
-//get scene by name
+/**
+ * Retrieves scene data from db and generates a new Scene object
+ * @param name of the scene
+ */
 function getByName(name) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
         .set('Accept', 'application/json')
@@ -18,14 +21,14 @@ function getByName(name) {
                 return console.error(err)
             }
 
-            const adj = [];
+            const adj = []; // neighbours list
             const transitions_uuids = [];
             const rules_uuids = [];
 
             // generates transitions and saves them to the objects store
             response.body.transitions.map((transition) => {
 
-                transitions_uuids.push(transition.uuid);
+                transitions_uuids.push(transition.uuid); // save uuid
                 let t = Transition({
                     uuid: transition.uuid,
                     name: transition.name,
@@ -45,7 +48,7 @@ function getByName(name) {
                         adj.push(a.target);
                 });
 
-                rules_uuids.push(rule.uuid);
+                rules_uuids.push(rule.uuid); // save uuid
 
                 // new Rule
                 let r = Rule({
@@ -80,7 +83,14 @@ function getByName(name) {
         });
 }
 
-//create new scene inside db
+/**
+ * Creates new Scene inside db and stores
+ * @param name
+ * @param index
+ * @param type
+ * @param tagColor
+ * @param tagName
+ */
 function createScene(name, index, type, tagColor, tagName) {
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
@@ -107,7 +117,9 @@ function createScene(name, index, type, tagColor, tagName) {
         });
 }
 
-//reloads all scenes
+/**
+ * Retrieves all data from db and sends it to stores for scenes generations
+ */
 function getAllScenes() {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes`)
         .set('Accept', 'application/json')
@@ -120,7 +132,10 @@ function getAllScenes() {
         });
 }
 
-//delete scene
+/**
+ * Delete given scene from db and dispatch updates to the stores
+ * @param scene
+ */
 function deleteScene(scene) {
     request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}`)
         .set('Accept', 'application/json')
@@ -134,7 +149,10 @@ function deleteScene(scene) {
         });
 }
 
-//set home scene
+/**
+ * Sets specific scene as home (maybe)
+ * @param scene
+ */
 function setHome(scene) {
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/setHome`)
         .set('Accept', 'application/json')
@@ -146,7 +164,11 @@ function setHome(scene) {
         });
 }
 
-//get a detailed list of all the scenes
+/**
+ * Retrieves all data, builds Scenes and save them to gameGraph
+ * @param gameGraph will contain game data, must be an object
+ * @returns {Promise<void>}
+ */
 async function getAllDetailedScenes(gameGraph) {
     const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes-all`)
         .set('Accept', 'application/json');

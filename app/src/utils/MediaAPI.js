@@ -5,6 +5,15 @@ const request = require('superagent');
 
 const {apiBaseURL} = settings;
 
+/**
+ * Uploads scene media to db. If the file is uploaded correctly, calls createScene to generate new Scene
+ * @param name
+ * @param index
+ * @param type
+ * @param media
+ * @param tagColor
+ * @param tagName
+ */
 function addMedia(name, index, type, media, tagColor, tagName) {
     
     request.post(`${apiBaseURL}/public/${window.localStorage.getItem("gameID")}/addMedia`)
