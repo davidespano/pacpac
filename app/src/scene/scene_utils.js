@@ -30,7 +30,7 @@ function removeInteractiveObject(scene, object){
     // updating scene
     if(field){
         let objects = scene.get('objects');
-        objects[field].filter((uuid) => uuid !== object.uuid);
+        objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
         return scene.setIn(['objects'], objects);
     }
     return scene;

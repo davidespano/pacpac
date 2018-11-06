@@ -27,6 +27,14 @@ class RulesStore extends ReduceStore {
             case ActionTypes.UPDATE_RULE:
                 state = state.set(action.rule.uuid, action.rule);
                 return state;
+            case ActionTypes.REMOVE_OBJECT:
+                state = state.map(rule => {
+                    if(rule.get('object_uuid') === action.obj.get('uuid')){
+                        return rule.set('object_uuid', null);
+                    }
+                    return rule;
+                });
+                return state;
             default:
                 return state;
         }

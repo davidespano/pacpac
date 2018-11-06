@@ -22,8 +22,15 @@ function generateRules(currentScene, props){
         //each rule
         return ([...currentScene.get('rules').values()].map((rule_uuid) => {
             let rule = props.rules.get(rule_uuid);
-            let object = props.interactiveObjects.get(rule.object_uuid).name;
+
+            /**TO DO : add objects selection here**/
+            let object = "---"
+
+            if(props.interactiveObjects.has(rule.object_uuid)){
+                object = props.interactiveObjects.get(rule.object_uuid).name;
+            }
             let index = -1;
+
             //each action in rule
             return([...rule.get('actions').values()].map(action => {
                 index++; //action index in array
