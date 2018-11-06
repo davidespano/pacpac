@@ -181,7 +181,7 @@ async function getAllDetailedScenes(gameGraph) {
 
         // generates transitions
         const transitions = s.transitions.map(transition => {
-           return Transition({
+           return ({ //Transition, but not the immutable one
                uuid: transition.uuid,
                name: transition.name,
                type: transition.type,
@@ -200,7 +200,7 @@ async function getAllDetailedScenes(gameGraph) {
             });
 
             // new Rule
-            return Rule({
+            return ({ //Rule, not immutable
                 uuid: rule.uuid,
                 object_uuid: rule.object_uuid,
                 event: rule.event,
@@ -211,7 +211,7 @@ async function getAllDetailedScenes(gameGraph) {
 
 
         // new Scene
-        const newScene = Scene({
+        const newScene = ({ //Scene, not immutable
             name : s.name.replace(/\.[^/.]+$/, ""),
             img : s.name,
             type : s.type,
