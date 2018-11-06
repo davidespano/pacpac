@@ -52,8 +52,8 @@ export function givePoints(props)
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
-    interface_utils.setProperty()
-    props.currentObject.vertices = puntisalvati.join();
+    interface_utils.setPropertyFromValue(props.currentObject, 'vertices', puntisalvati.join(), props)
+    //props.currentObject.vertices = puntisalvati.join();
 }
 
 export default class GeometryScene extends React.Component{
@@ -159,7 +159,7 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'q' || keyName === 'Q')
             {
-                InteractiveObjectAPI.saveTransitions(this.props.currentScene, this.props.currentObject.object);
+                InteractiveObjectAPI.saveObject(this.props.currentScene, this.props.currentObject.object);
                 this.props.switchToEditMode();
             }
         });
@@ -169,6 +169,7 @@ export default class GeometryScene extends React.Component{
     {
         let sky = this.state.scenes;
         let curvedImages = [];
+        console.log(sky)
         curvedImages = sky.objects.transitions;
 
         let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img} transitions={curvedImages} handler={() => this.handleSceneChange()}/>

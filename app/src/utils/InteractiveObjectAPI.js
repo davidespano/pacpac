@@ -96,8 +96,8 @@ function removeRule(scene, rule) {
 }
 
 export default {
-    saveTransitions: saveObject,
-    removeTransition: removeObject,
+    saveObject: saveObject,
+    removeObject: removeObject,
     saveRule: saveRule,
     removeRule: removeRule,
 };

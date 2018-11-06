@@ -93,7 +93,7 @@ function createTransition(props) {
         props.addNewObject(props.currentScene, tr);
         props.addNewRule(props.currentScene, defaultRule);
 
-        InteractiveObjectAPI.saveTransitions(props.currentScene, tr);
+        InteractiveObjectAPI.saveObject(props.currentScene, tr);
         InteractiveObjectAPI.saveRule(props.currentScene, defaultRule);
 
     } else {
