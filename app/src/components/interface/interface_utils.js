@@ -2,14 +2,13 @@ import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import Transition from "../../interactives/Transition";
 
 /**
- * Updates object property with the new value given by user
- * @param object to update
- * @param property to update
- * @param id of the html field containing the new value
+ * Updates object property with the given value, returns new object
+ * @param object
+ * @param property
+ * @param value
  * @param props
  */
-function setProperty(object, property, id, props){
-    let value = document.getElementById(id).textContent;
+function setPropertyFromValue(object, property, value, props){
     let newObject;
 
     switch (property) {
@@ -28,9 +27,20 @@ function setProperty(object, property, id, props){
 
     props.updateCurrentObject(newObject);
     props.updateObject(newObject);
-    InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject);
+    InteractiveObjectAPI.saveObject(props.currentScene, props.currentObject);
 }
 
+/**
+ * Updates object property retrieving new value from the given field
+ * @param object to update
+ * @param property to update
+ * @param id of the html field containing the new value
+ * @param props
+ */
+function setPropertyFromId(object, property, id, props){
+    let value = document.getElementById(id).textContent;
+    setPropertyFromValue(object, property, value, props);
+}
 
 /**
  * Allows only numbers in input
@@ -57,6 +67,7 @@ function title(scene) {
 
 export default {
     onlyNumbers : onlyNumbers,
-    setProperty : setProperty,
+    setPropertyFromId : setPropertyFromId,
+    setPropertyFromValue : setPropertyFromValue,
     title : title,
 }

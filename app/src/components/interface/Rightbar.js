@@ -150,7 +150,7 @@ function generateProperties(object, props){
             <div id={"transitionName"}
                  className={"propertyForm"}
                  contentEditable={true}
-                 onBlur={()=> interface_utils.setProperty(object,'name',"transitionName", props)}
+                 onBlur={()=> interface_utils.setPropertyFromId(object,'name',"transitionName", props)}
             >
                 {object.name}
             </div>
@@ -182,7 +182,7 @@ function generateSpecificProperties(object, props){
                         <div id={"transitionDuration"}
                              className={"propertyForm"}
                              contentEditable={true}
-                             onBlur={()=> interface_utils.setProperty(object,'duration',"transitionDuration", props)}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'duration',"transitionDuration", props)}
                              onInput={() => interface_utils.onlyNumbers("transitionDuration")}
                         >
                             {object.duration}
@@ -216,7 +216,7 @@ function objectButtons(props){
                 title={"Salva"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.saveTransitions(props.currentScene, props.currentObject);
+                    InteractiveObjectAPI.saveObject(props.currentScene, props.currentObject);
                     alert("Hai salvato!")
                 }
                 }
@@ -227,7 +227,7 @@ function objectButtons(props){
                 title={"Cancella"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.removeTransition(props.currentScene, props.currentObject);
+                    InteractiveObjectAPI.removeObject(props.currentScene, props.currentObject);
                     props.updateCurrentObject(null);
                 }
                 }
