@@ -29,7 +29,7 @@ class Bubble extends React.Component
 
     render()
     {
-        const curves = this.props.objects.transitions.map(curve =>
+        const curves = this.props.transitions.map(curve =>
         {
             return(
                 <Curved vertices={curve.vertices}/>
@@ -52,6 +52,7 @@ export function givePoints(props)
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
+    console.log(puntisalvati.join())
     interface_utils.setPropertyFromValue(props.currentObject, 'vertices', puntisalvati.join(), props)
     //props.currentObject.vertices = puntisalvati.join();
 }
@@ -125,7 +126,7 @@ export default class GeometryScene extends React.Component{
                     removeSphere.forEach(point => {
                         scene.removeChild(point);
                     });
-                    this.props.updateCurrentObject(this.props.currentObject.object, this.props.currentObject.type);
+                    this.props.updateCurrentObject(this.props.currentObject);
                     this.handleSceneChange();
                 }
             }
@@ -159,7 +160,7 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'q' || keyName === 'Q')
             {
-                InteractiveObjectAPI.saveObject(this.props.currentScene, this.props.currentObject.object);
+                InteractiveObjectAPI.saveObject(this.props.currentScene, this.props.currentObject);
                 this.props.switchToEditMode();
             }
         });
@@ -169,10 +170,11 @@ export default class GeometryScene extends React.Component{
     {
         let sky = this.state.scenes;
         let curvedImages = [];
-        console.log(sky)
-        curvedImages = sky.objects.transitions;
+        curvedImages = this.props.currentScene.get('objects');
+        curvedImages = curvedImages['transitions'].map(uuid => this.props.interactiveObjects.get(uuid));
 
-        let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img} transitions={curvedImages} handler={() => this.handleSceneChange()}/>
+        let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img}
+                            transitions={curvedImages} handler={() => this.handleSceneChange()}/>
 
         return(
             <div id="mainscene" tabIndex="0">
@@ -194,7 +196,7 @@ export default class GeometryScene extends React.Component{
 
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor"></Entity>
+                            <Entity primitive="a-cursor" id="cursor"/>
                         </Entity>
                     </Entity>
                 </Scene>
