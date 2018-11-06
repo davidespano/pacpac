@@ -62,7 +62,7 @@ export default class VRScene extends React.Component {
 
                     let scene = this.state.graph.scenes[sky];
                     if (sky === this.state.activeScene) {
-                        curvedImages = scene.transitions;
+                        curvedImages = scene.objects.transitions;
                         mats = "opacity: 1; visible: true";
                         active = false;
                     }

@@ -8,6 +8,7 @@ import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';
 //import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
+import interface_utils from "../interface/interface_utils";
 //import InteractiveObject from "../../interactives/InteractiveObject";
 //var AFRAME = require('aframe');
 //var THREE = require('three');
@@ -28,7 +29,7 @@ class Bubble extends React.Component
 
     render()
     {
-        const curves = this.props.transitions.map(curve =>
+        const curves = this.props.objects.transitions.map(curve =>
         {
             return(
                 <Curved vertices={curve.vertices}/>
@@ -51,8 +52,8 @@ export function givePoints(props)
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
-
-    props.currentObject.object.vertices = puntisalvati.join();
+    interface_utils.setProperty()
+    props.currentObject.vertices = puntisalvati.join();
 }
 
 export default class GeometryScene extends React.Component{
@@ -168,7 +169,7 @@ export default class GeometryScene extends React.Component{
     {
         let sky = this.state.scenes;
         let curvedImages = [];
-        curvedImages = sky.transitions;
+        curvedImages = sky.objects.transitions;
 
         let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img} transitions={curvedImages} handler={() => this.handleSceneChange()}/>
 
