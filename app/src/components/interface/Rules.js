@@ -1,6 +1,7 @@
 import React from 'react';
 import L from "../../utils/L";
 import rules_utils from "../../interactives/rules/rules_utils";
+import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 
 function Rules(props){
     return(
@@ -44,10 +45,12 @@ function generateRules(currentScene, props){
                                     let i = e.value;
                                     let r = rules_utils.setAction(rule, i, 'target', value); //returns updated rule
                                     props.updateRule(r); //send update to stores
+                                    InteractiveObjectAPI.saveRule(props.currentScene, rule); //send update to db
                                 }}>
                             <option key={"void_target"} value={index}>---</option>
                             {generateTargetOptions(props, action, index)}
                         </select>
+                        <button class="remove-rule"></button>
                     </div>
                 );
                 })
