@@ -158,7 +158,7 @@ function generateProperties(object, props){
             <label>Geometry</label>
             <button
                 className={"propertyForm geometryBtn"}
-                onClick={() => checkGeometryMode(props) }
+                onClick={() => props.switchToGeometryMode() }
             >
                 Edit Geometry
             </button>
@@ -185,7 +185,7 @@ function generateSpecificProperties(object, props){
                              onBlur={()=> interface_utils.setPropertyFromId(object,'duration',"transitionDuration", props)}
                              onInput={() => interface_utils.onlyNumbers("transitionDuration")}
                         >
-                            {object.duration}
+                            {object.properties.duration}
                         </div><span className={"measureUnit"}>ms</span>
                     </div>
                 </div>
@@ -289,7 +289,7 @@ function generateObjectsList(props) {
     }
 }
 
-/*TO DO: remove target (it's not there anymore)*/
+/*
 function checkGeometryMode(props) {
 
     let target = document.getElementById('target').value;
@@ -301,5 +301,6 @@ function checkGeometryMode(props) {
         alert("Nessun target selezionato")
     }
 }
+*/
 
 export default RightBar;

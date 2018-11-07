@@ -27,7 +27,6 @@ function getByName(name) {
 
             // generates transitions and saves them to the objects store
             response.body.transitions.map((transition) => {
-
                 transitions_uuids.push(transition.uuid); // save uuid
                 let t = Transition({
                     uuid: transition.uuid,
@@ -35,7 +34,7 @@ function getByName(name) {
                     type: transition.type,
                     media: transition.media,
                     vertices: transition.vertices,
-                    properties: transition.properties,
+                    properties: JSON.parse(transition.properties),
                 });
                 Actions.receiveObject(t);
             });
