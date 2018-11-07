@@ -69,7 +69,7 @@ function generateTargetOptions(props, action, index) {
 
     return ([...props.scenes.values()].map(child => {
         if(child.name !== props.currentScene.name) {
-            if (child.img === action.target) {
+            if (child.name === action.target) {
                 return (<option key={child.img + index} value={index} selected={"selected"}>{child.name}</option>)
             }
             else {
