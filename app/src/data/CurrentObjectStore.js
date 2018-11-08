@@ -23,6 +23,8 @@ class CurrentObjectStore extends ReduceStore {
                 return null;
             case ActionTypes.UPDATE_CURRENT_OBJECT:
                 return action.obj;
+            case ActionTypes.REMOVE_SCENE:
+                return null;
             default:
                 return state;
         }

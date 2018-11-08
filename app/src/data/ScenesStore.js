@@ -64,6 +64,7 @@ class ScenesStore extends ReduceStore {
                 return state;
             case ActionTypes.REMOVE_RULE:
                 newScene = scene_utils.removeRuleFromScene(action.scene, action.rule);
+                console.log(newScene)
                 state = state.set(newScene.name, newScene);
                 return state;
             default:

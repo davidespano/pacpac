@@ -47,7 +47,7 @@ function view(props){
  */
 function sceneView(props){
     if(props.currentScene){
-        let scene = props.currentScene;
+        let scene = props.scenes.get(props.currentScene);
         return(
             <div className={'currentObjectOptions'}>
                 <div>
@@ -56,9 +56,7 @@ function sceneView(props){
                             title={"Elimina la scena corrente"}
                             className={"action-buttons-container"}
                             onClick={() => {
-                                SceneAPI.deleteScene(props.currentScene);
-                                props.updateCurrentScene(null);
-                                props.updateCurrentObject(null);
+                                SceneAPI.deleteScene(scene);
                             }}
                         >
                             <img className={"action-buttons scene-buttons-img"} src={"icons8-waste-50.png"}/>
@@ -203,6 +201,7 @@ function generateSpecificProperties(object, props){
  * @returns {*}
  */
 function objectButtons(props){
+    let currentScene = props.scenes.get(props.currentScene);
     return(
         <div className={"buttonGroup"}>
             <button
@@ -216,7 +215,7 @@ function objectButtons(props){
                 title={"Salva"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.saveObject(props.currentScene, props.currentObject);
+                    InteractiveObjectAPI.saveObject(currentScene, props.currentObject);
                     alert("Hai salvato!")
                 }
                 }
@@ -227,7 +226,7 @@ function objectButtons(props){
                 title={"Cancella"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.removeObject(props.currentScene, props.currentObject);
+                    InteractiveObjectAPI.removeObject(currentScene, props.currentObject);
                     props.updateCurrentObject(null);
                 }
                 }
@@ -268,13 +267,15 @@ function generateObjectsList(props) {
     // filter "scene"
     if (props.objectsFilter === 'scene'){
 
+        let currentScene = props.scenes.get(props.currentScene);
+
         // no objects in scene
-        if (props.currentScene.objects.transitions.length === 0 ){
+        if (currentScene.objects.transitions.length === 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
         }
 
         // scene objects mapping
-        return ([...props.currentScene.objects.transitions.values()].map( obj_uuid => {
+        return ([...currentScene.objects.transitions.values()].map( obj_uuid => {
             let obj = props.interactiveObjects.get(obj_uuid);
             return (
                 <div key={obj.uuid}

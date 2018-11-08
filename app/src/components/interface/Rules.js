@@ -6,16 +6,20 @@ import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 function Rules(props){
     return(
         <div id={'rules'} className={'rules'}>
-            {generateRules(props.currentScene, props)}
+            {generateRules(props)}
         </div>
     );
 }
 
-function generateRules(currentScene, props){
+function generateRules(props){
 
     //check scene selection
     if(props.currentScene != null){
         //check if rules
+
+        //get current scene
+        let currentScene = props.scenes.get(props.currentScene);
+
         if(currentScene.get('rules').length === 0){
             return ("Non ci sono regole associate a questa scena");
         }
@@ -25,7 +29,7 @@ function generateRules(currentScene, props){
             let rule = props.rules.get(rule_uuid);
 
             /**TO DO : add objects selection here**/
-            let object = "---"
+            let object = "---";
 
             if(props.interactiveObjects.has(rule.object_uuid)){
                 object = props.interactiveObjects.get(rule.object_uuid).name;
@@ -48,9 +52,16 @@ function generateRules(currentScene, props){
                                     InteractiveObjectAPI.saveRule(props.currentScene, rule); //send update to db
                                 }}>
                             <option key={"void_target"} value={index}>---</option>
-                            {generateTargetOptions(props, action, index)}
+                            {generateTargetOptions(props, action, index, currentScene.name)}
                         </select>
-                        <button class="remove-rule"></button>
+                        <button
+                            title={"Cancella"}
+                            className={"action-buttons-container"}
+                            onClick={() => {
+                                InteractiveObjectAPI.removeRule(currentScene, rule);
+                            }}>
+                            <img  className={"action-buttons"} src={"icons8-waste-50.png"} alt={'Cancella'}/>
+                        </button>
                     </div>
                 );
                 })
@@ -66,12 +77,13 @@ function generateRules(currentScene, props){
  * @param props
  * @param action
  * @param index is the action index in actions array belonging to a Rule
+ * @param name is the name of the currently selected scene
  * @returns {any[]}
  */
-function generateTargetOptions(props, action, index) {
+function generateTargetOptions(props, action, index, name) {
 
     return ([...props.scenes.values()].map(child => {
-        if(child.name !== props.currentScene.name) {
+        if(child.name !== name) {
             if (child.name === action.target) {
                 return (<option key={child.img + index} value={index} selected={"selected"}>{child.name}</option>)
             }

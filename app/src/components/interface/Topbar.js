@@ -80,7 +80,8 @@ function handleNavbarSelection(){
 function createTransition(props) {
     if(props.currentScene != null){
 
-        let name = props.currentScene.name + '_tr' + (props.currentScene.objects.transitions.length + 1);
+        let scene = props.scenes.get(props.currentScene);
+        let name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
         let tr = Transition({
             uuid : uuid.v4(),
             name : name,
@@ -90,11 +91,11 @@ function createTransition(props) {
         let defaultRule = rules_utils.generateDefaultRule(tr);
 
         // updates stores with new object and rule
-        props.addNewObject(props.currentScene, tr);
-        props.addNewRule(props.currentScene, defaultRule);
+        props.addNewObject(scene, tr);
+        props.addNewRule(scene, defaultRule);
 
-        InteractiveObjectAPI.saveObject(props.currentScene, tr);
-        InteractiveObjectAPI.saveRule(props.currentScene, defaultRule);
+        InteractiveObjectAPI.saveObject(scene, tr);
+        InteractiveObjectAPI.saveRule(scene, defaultRule);
 
     } else {
         alert("Nessuna scena selezionata!");

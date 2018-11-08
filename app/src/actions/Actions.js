@@ -72,12 +72,12 @@ const Actions = {
 
     /**
      * Dispatch current scene update
-     * @param scene
+     * @param name of the scene
      */
-    updateCurrentScene(scene){
+    updateCurrentScene(name){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
-            scene: scene,
+            name: name,
         })
 
     },

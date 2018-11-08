@@ -54,7 +54,7 @@ function addRuleToScene(scene, rule){
  */
 function removeRuleFromScene(scene, rule){
     let rules = scene.get('rules');
-    rules.filter((uuid) => uuid !== rule.uuid);
+    rules = rules.filter((uuid) => uuid !== rule.uuid);
     return scene.set('rules', rules);
 }
 

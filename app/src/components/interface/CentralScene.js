@@ -7,12 +7,18 @@ const {mediaURL} = settings;
 
 function CentralScene(props){
     let regex = RegExp('.*\.mp4$');
-    if(props.currentScene !== null && !(regex.test(props.currentScene.img))){
+    let currentScene = null;
+
+    if(props.currentScene){
+        currentScene = props.scenes.get(props.currentScene);
+    }
+
+    if(currentScene !== null && !(regex.test(currentScene.img))){
         return(
             <div className={'scene'}>
                 <img id={'central-img'}
-                     src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}
-                     alt={props.currentScene.name}
+                     src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + currentScene.img}
+                     alt={currentScene.name}
                      onClick={(event) => {
                          let p = getCoordinates(event);
                          props.clickScene(p.x, p.y);
@@ -22,10 +28,10 @@ function CentralScene(props){
             </div>
         );
     }
-    if(props.currentScene !== null && (regex.test(props.currentScene.img))){
+    if(currentScene !== null && (regex.test(currentScene.img))){
         return(
             <div className={'scene'}>
-                <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + props.currentScene.img}>
+                <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + currentScene.img}>
                 </video>
                 <canvas id={'central-canvas'}></canvas>
             </div>

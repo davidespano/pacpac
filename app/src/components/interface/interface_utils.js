@@ -27,7 +27,9 @@ function setPropertyFromValue(object, property, value, props){
 
     props.updateCurrentObject(newObject);
     props.updateObject(newObject);
-    InteractiveObjectAPI.saveObject(props.currentScene, props.currentObject);
+
+    let currentScene = props.scenes.get(props.currentScene);
+    InteractiveObjectAPI.saveObject(currentScene, props.currentObject);
 }
 
 /**

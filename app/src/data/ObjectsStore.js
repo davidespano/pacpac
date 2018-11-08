@@ -29,6 +29,14 @@ class ObjectsStore extends ReduceStore {
             case ActionTypes.UPDATE_OBJECT:
                 state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
                 return state;
+            case ActionTypes.REMOVE_SCENE:
+
+                let objects = action.scene.get('objects');
+                objects.transitions.forEach(obj => {
+                    state = state.delete(obj.uuid);
+                })
+
+                return state;
             default:
                 return state;
         }

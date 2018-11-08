@@ -37,17 +37,17 @@ function list(props, path) {
                         alt={child.name}
                         title={interface_utils.title(child)}
                         onClick={() => {
-                            let scene = props.scenes.get(child.name);
+                            //let scene = props.scenes.get(child.name);
                             //SceneAPI.getByName(child.img, scene);
-                            props.updateCurrentScene(scene);
+                            props.updateCurrentScene(child.name);
                         }}
 
                     />
                     <div className={'list-labels'}
                          onClick={() => {
-                            let scene = props.scenes.get(child.name);
+                            //let scene = props.scenes.get(child.name);
                             //SceneAPI.getByName(child.img, scene);
-                            props.updateCurrentScene(scene);
+                            props.updateCurrentScene(child.name);
                             }}
                     >
                         <div className={'label-text'}>
@@ -59,9 +59,9 @@ function list(props, path) {
             return (
                 <div key={child.name} className={'node_element'}>
                     <video muted preload={"auto"} className={'video_element list-video'} onClick={() => {
-                        let scene = props.scenes.get(child.name);
+                        //let scene = props.scenes.get(child.name);
                         //SceneAPI.getByName(child.img, scene);
-                        props.updateCurrentScene(scene);
+                        props.updateCurrentScene(child.name);
                     }}>
                         <source src={path + child.img} type="video/mp4"/>
                     </video>

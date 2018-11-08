@@ -22,8 +22,8 @@ function getByName(name) {
             }
 
             const adj = []; // neighbours list
-            const transitions_uuids = [];
-            const rules_uuids = [];
+            let transitions_uuids = [];
+            let rules_uuids = [];
 
             // generates transitions and saves them to the objects store
             response.body.transitions.map((transition) => {
@@ -101,7 +101,7 @@ function createScene(name, index, type, tagColor, tagName) {
             }
             
             // new Scene object
-            const newScene = Scene({
+            let newScene = Scene({
                 name : name.replace(/\.[^/.]+$/, ""),
                 img : name,
                 type : type,
@@ -110,7 +110,14 @@ function createScene(name, index, type, tagColor, tagName) {
                     tagName : tagName,
                     tagColor : tagColor,
                 },
+                rules: [],
+                objects: {
+                    transitions: [],
+                }
             });
+
+
+            console.log(newScene)
 
             Actions.receiveScene(newScene);
         });
@@ -143,8 +150,8 @@ function deleteScene(scene) {
             if (err) {
                 return console.error(err)
             }
+
             Actions.removeScene(scene);
-            Actions.updateCurrentScene(null);
         });
 }
 
