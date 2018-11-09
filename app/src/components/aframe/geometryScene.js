@@ -1,17 +1,10 @@
-//import Transition from "../../interactives/Transition";
-//import MyScene from "../../scene/MyScene";
 import 'aframe';
 import './aframe-selectable'
-import './aframe-newGeometry'
-//import SceneAPI from '../../utils/SceneAPI'
+import './aframe_newGeometry'
 import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';
-//import ReactDOM from 'react-dom';
 import {Entity, Scene} from 'aframe-react';
 import interface_utils from "../interface/interface_utils";
-//import InteractiveObject from "../../interactives/InteractiveObject";
-//var AFRAME = require('aframe');
-//var THREE = require('three');
 
 function Curved(props)
 {
@@ -53,7 +46,7 @@ export function givePoints(props)
         punto.toArray().join(" ")
     );
     console.log(puntisalvati.join())
-    interface_utils.setPropertyFromValue(props.currentObject, 'vertices', puntisalvati.join(), props)
+    interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
     //props.currentObject.vertices = puntisalvati.join();
 }
 
@@ -63,14 +56,14 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         this.state = {
-            scenes: this.props.currentScene,
+            scenes: this.props.scenes.get(props.currentScene)
         };
     }
 
     handleSceneChange()
     {
         this.setState({
-            scenes: this.props.currentScene
+            scenes: this.props.scenes.get(this.props.currentScene)
         })
     }
 
@@ -92,18 +85,17 @@ export default class GeometryScene extends React.Component{
             document.querySelector('a-sky').appendChild(tmp);
 
 
-            //Linee, purtroppo è poco intuitivo.
-            /*
-            console.log(a_point.length);
-            let length = a_point.length;
-            if (length >= 2) {
+            //Linee, purtroppo è poco intuitivo. Provandolo sembra bellino
+
+            let lengthLine = a_point.length;
+            if (lengthLine >= 2) {
                 let tmp = document.createElement('a-entity');
                 tmp.setAttribute('scale', '-1 1 1');
-                tmp.setAttribute('line', 'start: ' + a_point[(length - 2)].toArray().join(" "));
-                tmp.setAttribute('line', 'end: ' + a_point[(length - 1)].toArray().join(" "));
+                tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
+                tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
                 document.querySelector('a-sky').appendChild(tmp);
             }
-            */
+
         }
     }
 
@@ -170,7 +162,7 @@ export default class GeometryScene extends React.Component{
     {
         let sky = this.state.scenes;
         let curvedImages = [];
-        curvedImages = this.props.currentScene.get('objects');
+        curvedImages = this.props.scenes.get(this.props.currentScene).get('objects');
         curvedImages = curvedImages['transitions'].map(uuid => this.props.interactiveObjects.get(uuid));
 
         let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img}
