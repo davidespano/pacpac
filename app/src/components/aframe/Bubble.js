@@ -1,6 +1,6 @@
 import React from "react";
 import {Entity} from 'aframe-react';
-import {Curved, Sound} from './aframe-entities';
+import {Curved, Sound} from './aframe_entities';
 import settings from "../../utils/settings";
 const {mediaURL} = settings;
 
