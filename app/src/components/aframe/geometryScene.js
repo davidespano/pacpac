@@ -47,7 +47,6 @@ export function givePoints(props)
     );
     console.log(puntisalvati.join())
     interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
-    //props.currentObject.vertices = puntisalvati.join();
 }
 
 export default class GeometryScene extends React.Component{
@@ -55,8 +54,9 @@ export default class GeometryScene extends React.Component{
     constructor(props)
     {
         super(props);
+        console.log(props.currentObject)
         this.state = {
-            scenes: this.props.scenes.get(props.currentScene)
+            scenes: props.scenes.get(props.currentScene)
         };
     }
 
@@ -118,7 +118,6 @@ export default class GeometryScene extends React.Component{
                     removeSphere.forEach(point => {
                         scene.removeChild(point);
                     });
-                    this.props.updateCurrentObject(this.props.currentObject);
                     this.handleSceneChange();
                 }
             }
@@ -152,7 +151,8 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'q' || keyName === 'Q')
             {
-                InteractiveObjectAPI.saveObject(this.props.currentScene, this.props.currentObject);
+                InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.currentScene),
+                    this.props.interactiveObjects.get(this.props.currentObject));
                 this.props.switchToEditMode();
             }
         });
