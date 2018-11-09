@@ -1,4 +1,4 @@
-import './aframe-pointSaver'
+import './aframe_pointSaver'
 
 var AFRAME = require('aframe');
 var THREE = require('three');
