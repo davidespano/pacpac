@@ -43,7 +43,7 @@ function getByName(name) {
             response.body.rules.map(rule => {
                 // check actions to find scene neighbours
                 rule.actions.forEach(a => {
-                    if (a.type = RuleActionTypes.TRANSITION && a.target)
+                    if (a.type === RuleActionTypes.TRANSITION && a.target && a.target !== '---')
                         adj.push(a.target);
                 });
 
@@ -115,9 +115,6 @@ function createScene(name, index, type, tagColor, tagName) {
                     transitions: [],
                 }
             });
-
-
-            console.log(newScene)
 
             Actions.receiveScene(newScene);
         });

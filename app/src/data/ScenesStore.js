@@ -33,6 +33,10 @@ class ScenesStore extends ReduceStore {
                                 tagName : scene.tagName,
                                 tagColor : scene.tagColor,
                             },
+                            rules: [],
+                            objects: {
+                                transitions: [],
+                            },
                         });
                         state = state.set(newScene.name, newScene);
                     });

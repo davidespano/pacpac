@@ -46,12 +46,11 @@ function generateRules(props){
                                 onChange={() => {
                                     let e = document.getElementById('target');
                                     let value = e.options[e.selectedIndex].text;
-                                    let i = e.value;
-                                    let r = rules_utils.setAction(rule, i, 'target', value); //returns updated rule
+                                    let r = rules_utils.setAction(rule, index, 'target', value); //returns updated rule
                                     props.updateRule(r); //send update to stores
-                                    InteractiveObjectAPI.saveRule(currentScene, rule); //send update to db
+                                    InteractiveObjectAPI.saveRule(currentScene, r); //send update to db
                                 }}>
-                            <option key={"void_target"} value={index}>---</option>
+                            <option key={"void_target"}>---</option>
                             {generateTargetOptions(props, action, index, currentScene.name)}
                         </select>
                         <button
@@ -85,10 +84,10 @@ function generateTargetOptions(props, action, index, name) {
     return ([...props.scenes.values()].map(child => {
         if(child.name !== name) {
             if (child.name === action.target) {
-                return (<option key={child.img + index} value={index} selected={"selected"}>{child.name}</option>)
+                return (<option key={child.img + index} selected={"selected"}>{child.name}</option>)
             }
             else {
-                return (<option key={child.img + index} value={index}>{child.name}</option>)
+                return (<option key={child.img + index} >{child.name}</option>)
             }
         }
     }));
