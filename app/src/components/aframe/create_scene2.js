@@ -2,13 +2,14 @@
 //import MyScene from "../../scene/MyScene";
 import 'aframe';
 import './aframe_selectable'
-import './aframe_rule_listener'
 //import {Curved, Sound} from './aframe-entities';
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
 import PlanarScene from './PlanarScene'
 import SceneAPI from "../../utils/SceneAPI";
+import ConditionUtils from "../../interactives/rules/ConditionUtils";
+const eventBus = require('./eventBus');
 
 export default class VRScene extends React.Component {
 
@@ -37,8 +38,24 @@ export default class VRScene extends React.Component {
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene.img,
-            rulesAsString: JSON.stringify(Object.values(gameGraph.scenes).flatMap(s => s.rules))
         });
+        this.createRuleListeners();
+    }
+
+    createRuleListeners(){
+        let me = this;
+        Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
+            eventBus.on('click-'+rule.object_uuid, function () {
+                if(ConditionUtils.evalCondition(rule.condition)){
+                    console.log('click in object!'+rule.object_uuid)
+                    rule.actions.forEach(action => me.executeAction(action))
+                }
+            })
+        })
+    }
+
+    executeAction(action){
+        console.log(action);
     }
 
     handleSceneChange(newActiveScene) {
@@ -80,13 +97,13 @@ export default class VRScene extends React.Component {
         }
         return (
             <div id="mainscene">
-                <Scene stats rule_listener={'sceneList:'+this.state.rulesAsString}>
+                <Scene stats>
                     {skies}
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
                             <Entity primitive="a-cursor" id="cursor" pointsaver/>
                         </Entity>
-                    </Entity>;
+                    </Entity>
                 </Scene>
             </div>
         )

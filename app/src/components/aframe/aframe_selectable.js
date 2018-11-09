@@ -1,7 +1,8 @@
 import 'aframe-animation-component';
 import {transition} from "./aframe_objects";
 
-let AFRAME = require('aframe');
+const AFRAME = require('aframe');
+const eventBus = require('./eventBus');
 
 AFRAME.registerComponent('selectable', {
     schema: {
@@ -26,9 +27,8 @@ AFRAME.registerComponent('selectable', {
         //transition(this);
         let data = this.data;
         elem.addEventListener('click', function () {
-            console.log("event: "+'click-'+data.object_uuid)
-            let ev = new CustomEvent('click-'+data.object_uuid, {bubbles: true});
-            elem.dispatchEvent(ev);
+            console.log("event: "+'click-'+data.object_uuid);
+            eventBus.emit('click-'+data.object_uuid);
         })
     }
 });
