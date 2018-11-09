@@ -1,7 +1,7 @@
 import './aframe_pointSaver'
 
-var AFRAME = require('aframe');
-var THREE = require('three');
+const AFRAME = require('aframe');
+const THREE = require('three');
 
 AFRAME.registerGeometry('polyline', {
     schema: {
