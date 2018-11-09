@@ -20,7 +20,7 @@ function generateDefaultRule(object){
                 actions : [{
                     uuid : uuid.v4(),
                     type : RuleActionTypes.TRANSITION,
-                    target : "",
+                    target : "---",
                 }],
             });
 
