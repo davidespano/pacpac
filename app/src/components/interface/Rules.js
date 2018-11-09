@@ -49,7 +49,7 @@ function generateRules(props){
                                     let i = e.value;
                                     let r = rules_utils.setAction(rule, i, 'target', value); //returns updated rule
                                     props.updateRule(r); //send update to stores
-                                    InteractiveObjectAPI.saveRule(props.currentScene, rule); //send update to db
+                                    InteractiveObjectAPI.saveRule(currentScene, rule); //send update to db
                                 }}>
                             <option key={"void_target"} value={index}>---</option>
                             {generateTargetOptions(props, action, index, currentScene.name)}
