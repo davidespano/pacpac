@@ -1,7 +1,7 @@
 import Transition from "../../interactives/Transition";
 import MyScene from "../../scene/Scene";
 import 'aframe';
-import './aframe-selectable'
+import './aframe_selectable'
 import './aframe_pointSaver'
 import './aframe_newGeometry'
 import SceneAPI from '../../utils/SceneAPI'

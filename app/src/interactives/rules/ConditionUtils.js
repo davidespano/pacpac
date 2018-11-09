@@ -1,14 +1,15 @@
 import SuperCondition from "./SuperCondition";
 import Condition from './Condition'
-import Operators from "./Operators";
-import SuperOperators from "./Operators";
+import {Operators} from "./Operators";
+import {SuperOperators} from "./Operators";
 
-function eval(c, gameState) {
+function evalCondition(c, gameState) {
+    if(c === '{}') return true;
     if(c instanceof SuperCondition){
         switch (c.operator) {
-            case SuperOperators.AND: return eval(c.condition1, gameState) && eval(c.condition2, gameState);
-            case SuperOperators.OR: return eval(c.condition1, gameState) || eval(c.condition2, gameState);
-            case SuperOperators.NOT: return !eval(c.condition1, gameState);
+            case SuperOperators.AND: return evalCondition(c.condition1, gameState) && evalCondition(c.condition2, gameState);
+            case SuperOperators.OR: return evalCondition(c.condition1, gameState) || evalCondition(c.condition2, gameState);
+            case SuperOperators.NOT: return !evalCondition(c.condition1, gameState);
             default:
                 console.log('Super operator not yet implemented');
                 console.log(c.operator);
@@ -35,5 +36,5 @@ function eval(c, gameState) {
 }
 
 export default {
-    eval: eval
+    evalCondition: evalCondition
 }

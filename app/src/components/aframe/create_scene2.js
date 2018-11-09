@@ -1,7 +1,8 @@
 //import Transition from "../../interactives/Transition";
 //import MyScene from "../../scene/MyScene";
 import 'aframe';
-import './aframe-selectable'
+import './aframe_selectable'
+import './aframe_rule_listener'
 //import {Curved, Sound} from './aframe-entities';
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
@@ -19,6 +20,7 @@ export default class VRScene extends React.Component {
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene.img,
+            rulesAsString: "[]"
         };
         document.querySelector('link[href*="bootstrap"]').remove();
     }
@@ -35,6 +37,7 @@ export default class VRScene extends React.Component {
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene.img,
+            rulesAsString: JSON.stringify(Object.values(gameGraph.scenes).flatMap(s => s.rules))
         });
     }
 
@@ -77,7 +80,7 @@ export default class VRScene extends React.Component {
         }
         return (
             <div id="mainscene">
-                <Scene stats>
+                <Scene stats rule_listener={'sceneList:'+this.state.rulesAsString}>
                     {skies}
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>

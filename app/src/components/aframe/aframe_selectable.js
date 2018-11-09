@@ -1,11 +1,11 @@
 import 'aframe-animation-component';
-import {transition} from "./aframe-objects";
+import {transition} from "./aframe_objects";
 
 let AFRAME = require('aframe');
 
 AFRAME.registerComponent('selectable', {
     schema: {
-        target:{type: 'string'},
+        object_uuid:{type: 'string'},
     },
 
     init: function () {
@@ -23,7 +23,13 @@ AFRAME.registerComponent('selectable', {
             cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         });
 
-        transition(this);
+        //transition(this);
+        let data = this.data;
+        elem.addEventListener('click', function () {
+            console.log("event: "+'click-'+data.object_uuid)
+            let ev = new CustomEvent('click-'+data.object_uuid, {bubbles: true});
+            elem.dispatchEvent(ev);
+        })
     }
 });
 

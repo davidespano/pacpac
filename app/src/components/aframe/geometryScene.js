@@ -1,5 +1,5 @@
 import 'aframe';
-import './aframe-selectable'
+import './aframe_selectable'
 import './aframe_newGeometry'
 import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';

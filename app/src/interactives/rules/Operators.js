@@ -14,7 +14,6 @@ const SuperOperators = {
     NOT : '!',
 };
 
-export default {
-    Operators: Operators,
-    SuperOperators: SuperOperators
+export {
+    Operators, SuperOperators
 };

@@ -1,4 +1,4 @@
-import SuperOperators from "Operators";
+import {SuperOperators} from "./Operators";
 
 class SuperCondition {
 

@@ -2,7 +2,7 @@ import 'aframe';
 import {Entity, Scene} from 'aframe-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import "./components/aframe/aframe-selectable";
+import "./components/aframe/aframe_selectable";
 
 class VRScene extends React.Component {
     constructor() {
