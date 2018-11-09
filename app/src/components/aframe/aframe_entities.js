@@ -7,7 +7,7 @@ function Curved(props)
 {
     return(
         <Entity material="opacity: 0; visible: false; side: double" geometry={"primitive: polyline; vertices: " +
-        props.vertices} id={"curv" + props.key} selectable={'object_uuid:' + props.object_uuid} scale="-1 1 1"/>
+        props.vertices} id={"curv" + props.object_uuid} selectable={'object_uuid:' + props.object_uuid} scale="-1 1 1"/>
     );
 }
 
