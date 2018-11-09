@@ -16,13 +16,13 @@ class CurrentObjectStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
-                return action.obj;
+                return action.obj.uuid;
             case ActionTypes.SELECT_ALL_OBJECTS:
                 return null;
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 return null;
             case ActionTypes.UPDATE_CURRENT_OBJECT:
-                return action.obj;
+                return action.uuid;
             case ActionTypes.REMOVE_SCENE:
                 return null;
             default:

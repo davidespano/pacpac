@@ -25,11 +25,13 @@ function setPropertyFromValue(object, property, value, props){
             newObject = object.setIn(['properties'], properties);
     }
 
-    props.updateCurrentObject(newObject);
+    props.updateCurrentObject(newObject.uuid);
     props.updateObject(newObject);
 
     let currentScene = props.scenes.get(props.currentScene);
-    InteractiveObjectAPI.saveObject(currentScene, props.currentObject);
+    let currentObject = props.interactiveObjects.get(props.currentObject);
+
+    InteractiveObjectAPI.saveObject(currentScene, currentObject);
 }
 
 /**

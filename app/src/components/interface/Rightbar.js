@@ -87,7 +87,7 @@ function sceneView(props){
  */
 function optionsView(props){
     if(props.currentObject){
-        return generateProperties(props.currentObject, props);
+        return generateProperties(props);
     } else {
         return showObjects(props.interactiveObjects,props);
     }
@@ -133,11 +133,12 @@ function showObjects(interactiveObjects,props) {
 
 /**
  * Generates options of currently selected object
- * @param object
  * @param props
  * @returns {*}
  */
-function generateProperties(object, props){
+function generateProperties(props){
+
+    let currentObject = props.interactiveObjects.get(props.currentObject);
 
     return(
         <div className={'currentObjectOptions'}>
@@ -148,11 +149,11 @@ function generateProperties(object, props){
             <div id={"transitionName"}
                  className={"propertyForm"}
                  contentEditable={true}
-                 onBlur={()=> interface_utils.setPropertyFromId(object,'name',"transitionName", props)}
+                 onBlur={()=> interface_utils.setPropertyFromId(currentObject,'name',"transitionName", props)}
             >
-                {object.name}
+                {currentObject.name}
             </div>
-            {generateSpecificProperties(object, props)}
+            {generateSpecificProperties(currentObject, props)}
             <label>Geometry</label>
             <button
                 className={"propertyForm geometryBtn"}
@@ -202,6 +203,7 @@ function generateSpecificProperties(object, props){
  */
 function objectButtons(props){
     let currentScene = props.scenes.get(props.currentScene);
+    let currentObject = props.interactiveObjects.get(props.currentObject);
     return(
         <div className={"buttonGroup"}>
             <button
@@ -215,7 +217,7 @@ function objectButtons(props){
                 title={"Salva"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.saveObject(currentScene, props.currentObject);
+                    InteractiveObjectAPI.saveObject(currentScene, currentObject);
                     alert("Hai salvato!")
                 }
                 }
@@ -226,7 +228,7 @@ function objectButtons(props){
                 title={"Cancella"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.removeObject(currentScene, props.currentObject);
+                    InteractiveObjectAPI.removeObject(currentScene, currentObject);
                     props.updateCurrentObject(null);
                 }
                 }
@@ -257,7 +259,7 @@ function generateObjectsList(props) {
             return (
                 <div key={obj.name}
                      className={'objectsList-element'}
-                     onClick={()=> Actions.updateCurrentObject(obj)}>
+                     onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
                      {obj.name}
                  </div>
             );
@@ -280,7 +282,7 @@ function generateObjectsList(props) {
             return (
                 <div key={obj.uuid}
                      className={'objectsList-element'}
-                     onClick={()=> Actions.updateCurrentObject(obj)}>
+                     onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
                     {obj.name}
                 </div>
             );

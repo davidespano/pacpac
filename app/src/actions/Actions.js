@@ -179,12 +179,12 @@ const Actions = {
 
     /**
      * Dispatch current object update (rightbar)
-     * @param object
+     * @param uuid
      */
-    updateCurrentObject(object){
+    updateCurrentObject(uuid){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_OBJECT,
-            obj: object,
+            uuid: uuid,
         })
     },
 
