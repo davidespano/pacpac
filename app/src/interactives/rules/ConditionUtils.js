@@ -4,7 +4,7 @@ import {Operators} from "./Operators";
 import {SuperOperators} from "./Operators";
 
 function evalCondition(c, gameState) {
-    if(c === '{}') return true;
+    if(c === '{}' || c==='"{}"') return true; //quick fix for conditions saved with wrong format
     if(c instanceof SuperCondition){
         switch (c.operator) {
             case SuperOperators.AND: return evalCondition(c.condition1, gameState) && evalCondition(c.condition2, gameState);
