@@ -4,7 +4,7 @@ function executeAction(state, rule, action){
     switch (action.type) {
         case RuleActionTypes.TRANSITION:
             let duration = 2000;
-            state.activeScene.objects.transitions.forEach(t =>{ //we should check the other objects as well
+            Object.values(state.activeScene.objects).flat().forEach(t =>{ //we should check the other objects as well
                 if(t.uuid === rule.object_uuid)
                     duration = t.duration;
             });
