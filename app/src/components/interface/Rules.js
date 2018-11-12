@@ -42,9 +42,9 @@ function generateRules(props){
                 return (
                     <div className={'single-action'} key={rule.uuid + index}>
                         {rule.event} {object}:
-                        <select id={'target'}
+                        <select id={'target' + action.uuid}
                                 onChange={() => {
-                                    let e = document.getElementById('target');
+                                    let e = document.getElementById('target' + action.uuid);
                                     let value = e.options[e.selectedIndex].text;
                                     let r = rules_utils.setAction(rule, index, 'target', value); //returns updated rule
                                     props.updateRule(r); //send update to stores
