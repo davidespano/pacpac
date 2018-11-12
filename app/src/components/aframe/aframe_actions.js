@@ -1,3 +1,21 @@
+import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+
+function executeAction(state, rule, action){
+    switch (action.type) {
+        case RuleActionTypes.TRANSITION:
+            let duration = 2000;
+            state.activeScene.objects.transitions.forEach(t =>{ //we should check the other objects as well
+                if(t.uuid === rule.object_uuid)
+                    duration = t.duration;
+            });
+            transition(state.activeScene.name, action.target, duration);
+            break;
+        default:
+            console.log('not yet implemented');
+            console.log(action);
+    }
+}
+
 /**
  * Function that manages the transitions
  * @param actualSceneName
@@ -36,4 +54,4 @@ function transition2D(element){
 
 }
 
-export {transition, transition2D}
+export {executeAction}

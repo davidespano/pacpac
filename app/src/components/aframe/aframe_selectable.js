@@ -1,5 +1,5 @@
 import 'aframe-animation-component';
-import {transition} from "./aframe_objects";
+import {transition} from "./aframe_actions";
 
 const AFRAME = require('aframe');
 const eventBus = require('./eventBus');

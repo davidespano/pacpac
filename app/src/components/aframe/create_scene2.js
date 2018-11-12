@@ -10,7 +10,7 @@ import PlanarScene from './PlanarScene'
 import SceneAPI from "../../utils/SceneAPI";
 import ConditionUtils from "../../interactives/rules/ConditionUtils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
-import {transition} from "./aframe_objects";
+import {executeAction} from "./aframe_actions";
 const eventBus = require('./eventBus');
 
 export default class VRScene extends React.Component {
@@ -50,26 +50,10 @@ export default class VRScene extends React.Component {
             eventBus.on('click-'+rule.object_uuid, function () {
                 if(ConditionUtils.evalCondition(rule.condition)){
                     console.log('click in object!'+rule.object_uuid)
-                    rule.actions.forEach(action => me.executeAction(rule, action))
+                    rule.actions.forEach(action => executeAction(me.state, rule, action))
                 }
             })
         })
-    }
-
-    executeAction(rule, action){
-        switch (action.type) {
-            case RuleActionTypes.TRANSITION:
-                let duration = 2000;
-                this.state.activeScene.objects.transitions.forEach(t =>{ //we should check the other objects as well
-                    if(t.uuid === rule.object_uuid)
-                        duration = t.duration;
-                });
-                transition(this.state.activeScene.name, action.target, duration);
-                break;
-            default:
-                console.log('not yet implemented');
-                console.log(action);
-        }
     }
 
     handleSceneChange(newActiveScene) {
