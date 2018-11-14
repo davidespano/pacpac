@@ -11,7 +11,9 @@ import SceneAPI from "../../utils/SceneAPI";
 import ConditionUtils from "../../interactives/rules/ConditionUtils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import {executeAction} from "./aframe_actions";
+import settings from "../../utils/settings";
 const eventBus = require('./eventBus');
+const {mediaURL} = settings;
 
 export default class VRScene extends React.Component {
 
@@ -72,20 +74,35 @@ export default class VRScene extends React.Component {
                 let currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
                     this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
                     || name === this.state.activeScene.img);
-
+                var assets = [];
                 skies = currentLevel.map((sky) => {
 
                     let mats;
                     let active = true;
                     let curvedImages = [];
-
                     let scene = this.state.graph.scenes[sky];
+
                     if (sky === this.state.activeScene.img) {
-                        curvedImages = scene.objects.transitions;
+                        curvedImages = Object.values(scene.objects).flat();
+                        curvedImages.forEach(obj => {
+                                if(obj.media !== ""){
+                                    // TO DO definire dove mettere media
+                                    assets.push(
+                                        <video id={obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/DADEFINIRE`}
+                                               loop={"false"} autoPlay={'false'}/>
+                                    )
+                                }
+                            }
+                        );
                         mats = "opacity: 1; visible: true";
-                        active = false;
+                        active = true;
                     }
                     else mats = "opacity: 0; visible: false";
+
+                    assets.push(
+                        <video id={scene.img} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} loop={"true"}/>
+                    )
+
                     return (
                         <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
                                 transitions={curvedImages} activeScene={active}
@@ -97,6 +114,9 @@ export default class VRScene extends React.Component {
         return (
             <div id="mainscene">
                 <Scene stats>
+                    <a-assets>
+                        {assets}
+                    </a-assets>
                     {skies}
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>

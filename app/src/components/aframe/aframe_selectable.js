@@ -43,7 +43,7 @@ AFRAME.registerComponent('muted', {
         let elem = this.el;
         let data = this.data.active;
         setTimeout(function() {
-            if(data) {
+            if(!data) {
                 elem.components.material.material.map.image.pause();
             }
             elem.components.material.material.map.image.muted=true;
