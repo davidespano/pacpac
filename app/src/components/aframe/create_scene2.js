@@ -78,7 +78,7 @@ export default class VRScene extends React.Component {
                 skies = currentLevel.map((sky) => {
 
                     let mats;
-                    let active = true;
+                    let active = false;
                     let curvedImages = [];
                     let scene = this.state.graph.scenes[sky];
 
@@ -100,13 +100,14 @@ export default class VRScene extends React.Component {
                     else mats = "opacity: 0; visible: false";
 
                     assets.push(
-                        <video id={scene.img} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} loop={"true"}/>
+                        <video id={scene.img} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img}
+                               loop={"true"} muted/>
                     )
 
                     return (
                         <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
-                                transitions={curvedImages} activeScene={active}
-                                handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}/>
+                                transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
+                                />
                     );
                 })
             }

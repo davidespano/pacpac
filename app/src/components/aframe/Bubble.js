@@ -34,7 +34,7 @@ export default class Bubble extends React.Component
         const sound = <Sound track={this.props.track} id = {this.props.name}/>;
         return(
             <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={'#' + this.props.img}
-                    radius="10" material={this.props.material} muted={'active: ' + this.props.activeScene}>
+                    radius="10" material={this.props.material} muted={'video: ' + this.props.img}>
                 {curves}
             </Entity>
         );

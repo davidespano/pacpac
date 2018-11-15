@@ -36,17 +36,15 @@ AFRAME.registerComponent('selectable', {
 AFRAME.registerComponent('muted', {
 
     schema:{
-        active: {type: 'boolean', default: 'false'},
+        video: {type: 'string'}
     },
 
     init: function () {
-        let elem = this.el;
-        let data = this.data.active;
+
+        let videoID = this.data.video;
         setTimeout(function() {
-            if(!data) {
-                elem.components.material.material.map.image.pause();
-            }
-            elem.components.material.material.map.image.muted=true;
+            let video = document.getElementById(videoID);
+            video.play();
         }, 500);
     }
 })
