@@ -2,7 +2,6 @@ import React from "react";
 import {Entity} from 'aframe-react';
 import {Curved, Sound} from './aframe_entities';
 import settings from "../../utils/settings";
-const {mediaURL} = settings;
 
 
 export default class Bubble extends React.Component
@@ -34,7 +33,7 @@ export default class Bubble extends React.Component
         const sound = <Sound track={this.props.track} id = {this.props.name}/>;
         return(
             <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={'#' + this.props.img}
-                    radius="10" material={this.props.material} playVideo={this.props.videoName}>
+                    radius="10" material={this.props.material} play_video={this.props.videoName}>
                 {curves}
             </Entity>
         );

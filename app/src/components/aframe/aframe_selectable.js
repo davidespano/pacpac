@@ -33,7 +33,7 @@ AFRAME.registerComponent('selectable', {
     }
 });
 
-AFRAME.registerComponent('playVideo', {
+AFRAME.registerComponent('play_video', {
 
     schema:{
         active: {type: 'boolean', default: false},
@@ -41,11 +41,8 @@ AFRAME.registerComponent('playVideo', {
     },
 
     init: function () {
-
         let videoID = this.data.video;
         let active= this.data.active;
-        console.log(videoID)
-        console.log(active)
         if(active){
             setTimeout(function() {
                 let video = document.getElementById(videoID);

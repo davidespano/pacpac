@@ -1,15 +1,10 @@
-//import Transition from "../../interactives/Transition";
-//import MyScene from "../../scene/MyScene";
 import 'aframe';
 import './aframe_selectable'
-//import {Curved, Sound} from './aframe-entities';
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
-import PlanarScene from './PlanarScene'
 import SceneAPI from "../../utils/SceneAPI";
 import ConditionUtils from "../../interactives/rules/ConditionUtils";
-import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
 const eventBus = require('./eventBus');
@@ -79,7 +74,7 @@ export default class VRScene extends React.Component {
                 skies = currentLevel.map((sky) => {
 
                     let mats;
-                    let active = '';
+                    let active = 'active: false;';
                     let curvedImages = [];
                     let scene = this.state.graph.scenes[sky];
 
@@ -101,9 +96,9 @@ export default class VRScene extends React.Component {
                     else mats = "opacity: 0; visible: false";
 
                     assets.push(
-                        <video id={scene.img} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img}
+                        <video key={"key" + scene.name} id={scene.img} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img}
                                loop={"true"} muted/>
-                    )
+                    );
 
                     return (
                         <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}

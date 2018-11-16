@@ -22,31 +22,32 @@ AFRAME.registerShader('multi-video', {
 
     vertexShader:
         `
-    varying vec2 vUv;
-    
-    void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    }
-    `,
+        varying vec2 vUv;
+        
+        void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+        `
+    ,
     fragmentShader:
         `
-  precision mediump int;
-  precision mediump float;
-
-  varying vec2 vUv;
-  uniform sampler2D video1;
-  uniform sampler2D video2;
-  uniform sampler2D mask;
-
-void main() {
-  
-  gl_FragColor = mix(
-     texture2D(video1, vUv),
-     texture2D(video2, vUv),
-     texture2D(mask, vUv).y);
-  
-  //gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
-}
-`
+        precision mediump int;
+        precision mediump float;
+        
+        varying vec2 vUv;
+        uniform sampler2D video1;
+        uniform sampler2D video2;
+        uniform sampler2D mask;
+        
+        void main() {
+        
+        gl_FragColor = mix(
+         texture2D(video1, vUv),
+         texture2D(video2, vUv),
+         texture2D(mask, vUv).y);
+        
+        //gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+        }
+        `
 });
