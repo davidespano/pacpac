@@ -66,7 +66,7 @@ function saveRule(scene, rule) {
                 uuid: rule.uuid,
                 object_uuid: rule.object_uuid,
                 event: rule.event,
-                condition: rule.condition,
+                condition: JSON.stringify(rule.condition),
                 actions: rule.actions
             })
         .end(function (err, response) {

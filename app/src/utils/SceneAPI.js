@@ -54,7 +54,7 @@ function getByName(name) {
                     uuid: rule.uuid,
                     object_uuid: rule.object_uuid,
                     event: rule.event,
-                    condition: rule.condition,
+                    condition: JSON.parse(rule.condition),
                     actions: rule.actions,
                 });
                 Actions.receiveRule(r);
@@ -207,7 +207,7 @@ async function getAllDetailedScenes(gameGraph) {
                 uuid: rule.uuid,
                 object_uuid: rule.object_uuid,
                 event: rule.event,
-                condition: rule.condition,
+                condition: JSON.parse(rule.condition),
                 actions: rule.actions,
             });
         });

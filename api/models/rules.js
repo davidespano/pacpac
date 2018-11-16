@@ -7,7 +7,6 @@ async function createUpdateRule(session, rule, sceneName, gameID){
     const actions = rule.actions;
     const transaction = session.beginTransaction();
     delete rule.actions;
-    rule.condition = JSON.stringify(rule.condition);
     let newObjs = false;
     try {
         const res_rule = await transaction.run(
