@@ -33,19 +33,26 @@ AFRAME.registerComponent('selectable', {
     }
 });
 
-AFRAME.registerComponent('muted', {
+AFRAME.registerComponent('playVideo', {
 
     schema:{
-        video: {type: 'string'}
+        active: {type: 'boolean', default: false},
+        video: {type: 'string', default: ''}
     },
 
     init: function () {
 
         let videoID = this.data.video;
-        setTimeout(function() {
-            let video = document.getElementById(videoID);
-            video.play();
-        }, 500);
+        let active= this.data.active;
+        console.log(videoID)
+        console.log(active)
+        if(active){
+            setTimeout(function() {
+                let video = document.getElementById(videoID);
+                video.play();
+            }, 500);
+        }
+
     }
 })
 

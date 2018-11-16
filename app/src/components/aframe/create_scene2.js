@@ -78,7 +78,7 @@ export default class VRScene extends React.Component {
                 skies = currentLevel.map((sky) => {
 
                     let mats;
-                    let active = false;
+                    let active = '';
                     let curvedImages = [];
                     let scene = this.state.graph.scenes[sky];
 
@@ -89,13 +89,13 @@ export default class VRScene extends React.Component {
                                     // TO DO definire dove mettere media
                                     assets.push(
                                         <video id={obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/DADEFINIRE`}
-                                               loop={"false"} autoPlay={'false'}/>
+                                               loop={"false"} muted/>
                                     )
                                 }
                             }
                         );
                         mats = "opacity: 1; visible: true";
-                        active = true;
+                        active = 'active: true; video: ' + scene.img;
                     }
                     else mats = "opacity: 0; visible: false";
 
@@ -107,7 +107,7 @@ export default class VRScene extends React.Component {
                     return (
                         <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
                                 transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
-                                />
+                                videoName={active}/>
                     );
                 })
             }
