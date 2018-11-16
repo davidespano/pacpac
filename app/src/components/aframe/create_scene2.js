@@ -44,6 +44,7 @@ export default class VRScene extends React.Component {
             activeScene: scene,
         });
         this.createRuleListeners();
+        console.log(gameGraph)
     }
 
     createRuleListeners(){

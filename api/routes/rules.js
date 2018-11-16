@@ -39,7 +39,7 @@ const Rules = require('../models/rules')
 
 /**
  * @swagger
- * /api/v0/{gameID}/scenes/{name}/rules:
+ * /api/v0/{gameID}/rules/scenes/{name}/rules:
  *  put:
  *      tags:
  *      - rules
@@ -88,7 +88,7 @@ function putRule(req, res, next) {
 
 /**
  * @swagger
- * /api/v0/{gameID}/scenes/{name}/rules/{ruuid}:
+ * /api/v0/{gameID}/rules/scenes/{name}/rules/{ruuid}:
  *  delete:
  *      tags:
  *      - rules

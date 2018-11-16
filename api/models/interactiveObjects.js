@@ -3,10 +3,10 @@ const InteractiveObject = require('../models/neo4j/interactiveObject');
 const _ = require('lodash');
 
 //create or modify a transition
-async function createUpdateTransition(session, transition, sceneName, gameID){
+async function createUpdateInteractiveObject(session, transition, sceneName, gameID, objectType){
     const result = await session.run(
         'MATCH (s:Scene:`' + gameID + '` {name: $sceneName}) ' +
-        'MERGE (s)-[:CONTAINS_OBJECT]->(t:InteractiveObject:Transition:`' + gameID + '` {uuid: $uuid}) ' +
+        'MERGE (s)-[:CONTAINS_OBJECT]->(t:InteractiveObject:`'+objectType+'`:`' + gameID + '` {uuid: $uuid}) ' +
         'ON CREATE SET t += $transition , t.new__ = TRUE ' +
         'ON MATCH SET t += $transition ' +
         'WITH t, exists(t.new__) as isNew ' +
@@ -18,9 +18,10 @@ async function createUpdateTransition(session, transition, sceneName, gameID){
     return [transition, newObjs];
 }
 
-function deleteTransition(session, name, tuuid, gameID) {
+function deleteInteractiveObject(session, name, tuuid, gameID, objectType) {
     return session.run(
-        'MATCH (scene:Scene:`' + gameID + '` {name: $name})-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition:`' + gameID + '` {uuid: $uuid}) ' +
+        'MATCH (scene:Scene:`' + gameID + '` {name: $name})-[:CONTAINS_OBJECT]->' +
+        '(transition:InteractiveObject:`'+objectType+'`:`' + gameID + '` {uuid: $uuid}) ' +
         'DETACH DELETE transition ' +
         'RETURN COUNT(transition)', {name: name, uuid: tuuid})
         .then(result => result.records[0].get('COUNT(transition)').low)
@@ -28,6 +29,6 @@ function deleteTransition(session, name, tuuid, gameID) {
 
 
 module.exports = {
-    createUpdateTransition: createUpdateTransition,
-    deleteTransition: deleteTransition
+    createUpdateInteractiveObject: createUpdateInteractiveObject,
+    deleteInteractiveObject: deleteInteractiveObject
 };

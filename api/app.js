@@ -12,6 +12,7 @@ const express = require('express')
     , multer = require('multer')
     , fs = require('fs')
     , checkGameID = require('./middlewares/checkGameID').checkGameID
+    , checkInteractiveObjectType = require('./middlewares/checkInteractiveObjectType').checkInteractiveObjectType
     , loginRequired = require('./middlewares/loginRequired').loginRequired;
 
 const app = express()
@@ -81,6 +82,7 @@ app.use('/media', express.static(path.join(__dirname, 'public')));
 api.use(setAuthUser);
 api.use(neo4jSessionCleanup);
 api.param('gameID', checkGameID);
+api.param('objectType', checkInteractiveObjectType);
 
 //api routes
 api.post('/register', routes.users.register);
@@ -100,12 +102,12 @@ api.post('/:gameID/scenes/:name/setHome', loginRequired, routes.scenes.setHome);
 api.get('/:gameID/tags', routes.tags.list);
 
 /**INTERACTIVE OBJECTS**/
-api.put('/:gameID/scenes/:name/transitions', loginRequired, routes.interactiveObjects.putTransition);
-api.delete('/:gameID/scenes/:name/transitions/:tuuid', loginRequired, routes.interactiveObjects.deleteTransition);
+api.put('/:gameID/interactives/scenes/:name/:objectType', loginRequired, routes.interactiveObjects.putInteractiveObject);
+api.delete('/:gameID/interactives/scenes/:name/:objectType/:tuuid', loginRequired, routes.interactiveObjects.deleteInteractiveObject);
 
 /**RULES**/
-api.put('/:gameID/scenes/:name/rules', loginRequired, routes.rules.putRule);
-api.delete('/:gameID/scenes/:name/rules/:ruuid', loginRequired, routes.rules.deleteRule);
+api.put('/:gameID/rules/scenes/:name/rules', loginRequired, routes.rules.putRule);
+api.delete('/:gameID/rules/scenes/:name/rules/:ruuid', loginRequired, routes.rules.deleteRule);
 
 /**MEDIA**/
 const storage = multer.diskStorage({

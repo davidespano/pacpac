@@ -36,7 +36,7 @@ const InteractiveObjects = require('../models/interactiveObjects')
 
 /**
  * @swagger
- * /api/v0/{gameID}/scenes/{name}/transitions:
+ * /api/v0/{gameID}/interactives/scenes/{name}/{objectType}:
  *  put:
  *      tags:
  *      - interactive objects
@@ -55,6 +55,11 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *          type : string
  *          required : true
  *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *        - in: path
+ *          name : objectType
+ *          type : string
+ *          required : true
+ *          description : Type of the interactive object
  *        - name: Authorization
  *          in: header
  *          type: string
@@ -74,11 +79,12 @@ const InteractiveObjects = require('../models/interactiveObjects')
  *          404:
  *              description: Scene not found
  */
-function putTransition(req, res, next) {
+function putInteractiveObject(req, res, next) {
     const sceneName = req.params.name;
     const gameID = req.params.gameID;
-    const transition = req.body;
-    InteractiveObjects.createUpdateTransition(dbUtils.getSession(req), transition, sceneName, gameID)
+    const objectType = req.params.objectType;
+    const interactiveObj = req.body;
+    InteractiveObjects.createUpdateInteractiveObject(dbUtils.getSession(req), interactiveObj, sceneName, gameID, objectType)
         .then(response => writeResponse(res, response[0], response[1]?201:200)) //the function return true if created, so 201
         .catch(error => writeError(res, error, 500));
 }
@@ -86,7 +92,7 @@ function putTransition(req, res, next) {
 
 /**
  * @swagger
- * /api/v0/{gameID}/scenes/{name}/transitions/{tuuid}:
+ * /api/v0/{gameID}/interactives/scenes/{name}/transitions/{tuuid}:
  *  delete:
  *      tags:
  *      - interactive objects
@@ -115,22 +121,28 @@ function putTransition(req, res, next) {
  *          type : string
  *          required : true
  *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *        - in: path
+ *          name : objectType
+ *          type : string
+ *          required : true
+ *          description : Type of the interactive object
  *      responses:
  *          200:
  *              type: integer
  *              description: The number of deleted objects (should be 1)
  */
-function deleteTransition(req, res, next) {
+function deleteInteractiveObject(req, res, next) {
     const name = req.params.name;
     const tuuid = req.params.tuuid;
     const gameID = req.params.gameID;
-    InteractiveObjects.deleteTransition(dbUtils.getSession(req), name, tuuid, gameID)
+    const objectType = req.params.objectType;
+    InteractiveObjects.deleteInteractiveObject(dbUtils.getSession(req), name, tuuid, gameID, objectType)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
 
 
 module.exports = {
-    putTransition: putTransition,
-    deleteTransition: deleteTransition
+    putInteractiveObject: putInteractiveObject,
+    deleteInteractiveObject: deleteInteractiveObject
 };
