@@ -57,9 +57,6 @@ function shader(sceneName, background, video, maskMedia){
     let video2 = new THREE.VideoTexture(document.getElementById(video));
     let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/mask.png`);
 
-    let videoAssets1 = document.getElementById(background);
-    let videoAssets2 = document.getElementById(video);
-
     let sky = document.getElementById(sceneName);
     sky.setAttribute('material', "shader:multi-video;")
 
@@ -71,8 +68,8 @@ function shader(sceneName, background, video, maskMedia){
     sky.object3D.children[1].material.uniforms.video2.value = video2;
     sky.object3D.children[1].material.uniforms.mask.value = mask;
     sky.object3D.children[1].material.needsUpdate = true;
-    videoAssets1.play();
-    videoAssets2.play();
+    document.getElementById(background).play();
+    document.getElementById(video).play();
 }
 
 function transition2D(element){
