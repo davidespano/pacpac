@@ -301,15 +301,16 @@ function generateObjectsList(props) {
     // filter "scene"
     if (props.objectsFilter === 'scene'){
 
-        let currentScene = props.scenes.get(props.currentScene);
+        let objects = props.scenes.get(props.currentScene).objects;
+        let allObjects = objects.transitions.concat(objects.switches);
 
         // no objects in scene
-        if (currentScene.objects.transitions.length === 0 ){
+        if (allObjects.length === 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
         }
 
         // scene objects mapping
-        return ([...currentScene.objects.transitions.values()].map( obj_uuid => {
+        return (allObjects.map(obj_uuid => {
             let obj = props.interactiveObjects.get(obj_uuid);
             return (
                 <div key={obj.uuid}

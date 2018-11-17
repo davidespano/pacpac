@@ -2,6 +2,7 @@ import React from 'react';
 import L from "../../utils/L";
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
+import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 
 function Rules(props){
     return(
@@ -15,15 +16,12 @@ function generateRules(props){
 
     //check scene selection
     if(props.currentScene != null){
-        //check if rules
-
         //get current scene
         let currentScene = props.scenes.get(props.currentScene);
-
+        //check rules
         if(currentScene.get('rules').length === 0){
             return ("Non ci sono regole associate a questa scena");
         }
-
         //each rule
         return ([...currentScene.get('rules').values()].map((rule_uuid) => {
             let rule = props.rules.get(rule_uuid);
@@ -42,17 +40,7 @@ function generateRules(props){
                 return (
                     <div className={'single-action'} key={rule.uuid + index}>
                         {rule.event} {object}:
-                        <select id={'target' + action.uuid}
-                                onChange={() => {
-                                    let e = document.getElementById('target' + action.uuid);
-                                    let value = e.options[e.selectedIndex].text;
-                                    let r = rules_utils.setAction(rule, index, 'target', value); //returns updated rule
-                                    props.updateRule(r); //send update to stores
-                                    InteractiveObjectAPI.saveRule(currentScene, r); //send update to db
-                                }}>
-                            <option key={"void_target"}>---</option>
-                            {generateTargetOptions(props, action, index, currentScene.name)}
-                        </select>
+                        {generateAction(index, rule, action, props, currentScene)}
                         <button
                             title={"Cancella"}
                             className={"action-buttons-container"}
@@ -63,11 +51,47 @@ function generateRules(props){
                         </button>
                     </div>
                 );
-                })
-            );
+            }));
         }));
     }else {
         return "Nessuna scena selezionata";
+    }
+}
+
+/**
+ * Generate html for the given action
+ * @param index of the action
+ * @param rule the action belongs to
+ * @param action
+ * @param props
+ * @param currentScene
+ */
+function generateAction(index, rule, action, props, currentScene){
+    switch(action.type){
+        case RuleActionTypes.TRANSITION:
+            return(
+                <select id={'target' + action.uuid}
+                        onChange={() => {
+                            let e = document.getElementById('target' + action.uuid);
+                            let value = e.options[e.selectedIndex].text;
+                            let r = rules_utils.setAction(rule, index, 'target', value); //returns updated rule
+                            props.updateRule(r); //send update to stores
+                            InteractiveObjectAPI.saveRule(currentScene, r); //send update to db
+                        }}>
+                    <option key={"void_target"}>---</option>
+                    {generateTargetOptions(props, action, index, currentScene.name)}
+                </select>
+            );
+        case RuleActionTypes.FLIP_SWITCH:
+            return(
+                <select id={'change' + action.uuid}>
+                    <option> Change to ON </option>
+                    <option> Change to OFF </option>
+                </select>
+            );
+            break;
+        default:
+            return;
     }
 }
 

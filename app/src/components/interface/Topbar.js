@@ -96,7 +96,7 @@ function createObject(props, type){
                 });
                 break;
             case InteractiveObjectsTypes.SWITCH:
-                name = scene.name + '_sw' + (scene.objects.transitions.length + 1);
+                name = scene.name + '_sw' + (scene.objects.switches.length + 1);
                 obj = Switch({
                     uuid : uuid.v4(),
                     name : name,
