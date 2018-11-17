@@ -214,6 +214,8 @@ async function getAllDetailedScenes(gameGraph) {
            });
         });
 
+        const switches = [];
+
         /**
         const switches = s.switches.map(sw => {
             return ({ //Switch, but not the Immutable one
