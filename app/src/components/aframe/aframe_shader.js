@@ -1,4 +1,5 @@
 const AFRAME = require('aframe');
+const THREE = require('three');
 
 AFRAME.registerShader('multi-video', {
     // The schema declares any parameters for the shader.

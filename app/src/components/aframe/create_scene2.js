@@ -39,7 +39,6 @@ export default class VRScene extends React.Component {
             activeScene: scene,
         });
         this.createRuleListeners();
-        console.log(gameGraph)
     }
 
     createRuleListeners(){
@@ -96,8 +95,9 @@ export default class VRScene extends React.Component {
                     else mats = "opacity: 0; visible: false";
 
                     assets.push(
-                        <video key={"key" + scene.name} id={scene.img} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img}
-                               loop={"true"} muted/>
+                        <video key={"key" + scene.name} id={scene.img} loop={"true"} muted>
+                            <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} />
+                        </video>
                     );
 
                     return (

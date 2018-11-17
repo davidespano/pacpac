@@ -1,4 +1,8 @@
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+import settings from "../../utils/settings";
+import './aframe_shader'
+const THREE = require('three');
+const {mediaURL} = settings;
 
 function executeAction(state, rule, action){
     switch (action.type) {
@@ -46,8 +50,29 @@ function transition(actualSceneName, target, duration){
     trg.dispatchEvent(appear);
 
     trg.components.material.material.map.image.play();
+}
 
+function shader(sceneName, background, video, maskMedia){
+    let video1 = new THREE.VideoTexture(document.getElementById(background));
+    let video2 = new THREE.VideoTexture(document.getElementById(video));
+    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/mask.png`);
 
+    let videoAssets1 = document.getElementById(background);
+    let videoAssets2 = document.getElementById(video);
+
+    let sky = document.getElementById(sceneName);
+    sky.setAttribute('material', "shader:multi-video;")
+
+    video1.minFilter = THREE.NearestFilter;
+    video2.minFilter = THREE.NearestFilter;
+    mask.minFilter = THREE.NearestFilter;
+
+    sky.object3D.children[1].material.uniforms.video1.value = video1;
+    sky.object3D.children[1].material.uniforms.video2.value = video2;
+    sky.object3D.children[1].material.uniforms.mask.value = mask;
+    sky.object3D.children[1].material.needsUpdate = true;
+    videoAssets1.play();
+    videoAssets2.play();
 }
 
 function transition2D(element){
