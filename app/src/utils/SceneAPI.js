@@ -41,7 +41,6 @@ function getByName(name) {
                 Actions.receiveObject(t);
             });
 
-            /**
             // generates switches and saves them to the objects store
             response.body.switches.map((sw) => {
                 switches_uuids.push(sw.uuid); //save uuid
@@ -55,7 +54,6 @@ function getByName(name) {
                 });
                 Actions.receiveObject(s);
             });
-             **/
 
             // generates rules and saves them to the rules store
             response.body.rules.map(rule => {
@@ -214,9 +212,6 @@ async function getAllDetailedScenes(gameGraph) {
            });
         });
 
-        const switches = [];
-
-        /**
         const switches = s.switches.map(sw => {
             return ({ //Switch, but not the Immutable one
                 uuid: sw.uuid,
@@ -227,7 +222,6 @@ async function getAllDetailedScenes(gameGraph) {
                 properties: JSON.parse(sw.properties),
             });
         });
-         **/
 
         // generates rules
         const rules = s.rules.map(rule => {

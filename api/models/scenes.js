@@ -35,6 +35,10 @@ function buildScene(record) {
         const transitions = record.get('transitions');
         scene.transitions = transitions.map(t => new Interactiveobject(t));
     }catch (error){}
+    try {
+        const switches = record.get('switches');
+        scene.switches = switches.map(t => new Interactiveobject(t));
+    }catch (error){}
     return scene;
 }
 
@@ -66,11 +70,13 @@ function getByName(session, name, gameID){
         'WITH scene, tag ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition)' +
         'WITH scene, tag, COLLECT(transition) as transitions ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(switch:InteractiveObject:Switch)' +
+        'WITH scene, tag, transitions, COLLECT(switch) as switches ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) ' +
-        'WITH scene, tag, transitions, rule ' +
+        'WITH scene, tag, transitions, switches, rule ' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
-        'WITH scene, tag, transitions, rule, collect(action) as acts ' +
-        'RETURN scene, tag, transitions, collect(rule { .*,  actions :acts}) as rules',
+        'WITH scene, tag, transitions, switches, rule, collect(action) as acts ' +
+        'RETURN scene, tag, transitions, switches, collect(rule { .*,  actions :acts}) as rules',
         {'name': name})
         .then(result => {
             const scene = singleScene(result);
@@ -90,11 +96,13 @@ function getAllDetailed(session, gameID) {
         'WITH scene, tag ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition)' +
         'WITH scene, tag, COLLECT(transition) as transitions ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(switch:InteractiveObject:Switch)' +
+        'WITH scene, tag, transitions, COLLECT(switch) as switches ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) ' +
-        'WITH scene, tag, transitions, rule ' +
+        'WITH scene, tag, transitions, switches, rule ' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
-        'WITH scene, tag, transitions, rule, collect(action) as acts ' +
-        'RETURN scene, tag, transitions, collect(rule { .*,  actions :acts}) as rules',)
+        'WITH scene, tag, transitions, switches, rule, collect(action) as acts ' +
+        'RETURN scene, tag, transitions, switches, collect(rule { .*,  actions :acts}) as rules',)
         .then(result => {
                 if (!_.isEmpty(result.records)) {
                     return multipleScenes(result);
