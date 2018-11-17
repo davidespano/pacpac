@@ -36,6 +36,7 @@ class ScenesStore extends ReduceStore {
                             rules: [],
                             objects: {
                                 transitions: [],
+                                switches: [],
                             },
                         });
                         state = state.set(newScene.name, newScene);

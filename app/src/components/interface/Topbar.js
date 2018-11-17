@@ -5,6 +5,8 @@ import Actions from "../../actions/Actions";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import rules_utils from "../../interactives/rules/rules_utils";
 import scene_utils from "../../scene/scene_utils";
+import Switch from "../../interactives/Switch";
+import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 
 let uuid = require('uuid');
 
@@ -36,7 +38,7 @@ function TopBar(props){
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    createTransition(props);
+                                    createObject(props, InteractiveObjectsTypes.TRANSITION);
                                     // selection object section in rightbar
                                     if(document.getElementById('nav-interactives-tab'))
                                         document.getElementById('nav-interactives-tab').click();
@@ -46,7 +48,7 @@ function TopBar(props){
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    createSwitch(props);
+                                    createObject(props, InteractiveObjectsTypes.SWITCH);
                                     // selection object section in rightbar
                                     if(document.getElementById('nav-interactives-tab'))
                                         document.getElementById('nav-interactives-tab').click();
@@ -73,37 +75,47 @@ function handleNavbarSelection(){
 }
 
 /**
- * Generates a new Transition with default values and calls the function for stores update (including association
- * between scene and object and generation of the default rule)
+ * Generates a new InteractiveObject with default values according to the given type and calls the function for stores
+ * update (including association between scene and object and generation of the default rule)
  * @param props
+ * @param type
  */
-function createTransition(props) {
+function createObject(props, type){
     if(props.currentScene != null){
 
         let scene = props.scenes.get(props.currentScene);
-        let name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
-        let tr = Transition({
-            uuid : uuid.v4(),
-            name : name,
-        });
+        let name = "";
+        let obj = null;
 
-        // generates default rule for the object
-        let defaultRule = rules_utils.generateDefaultRule(tr);
+        switch(type){
+            case InteractiveObjectsTypes.TRANSITION:
+                name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
+                obj = Transition({
+                    uuid : uuid.v4(),
+                    name : name,
+                });
+                break;
+            case InteractiveObjectsTypes.SWITCH:
+                name = scene.name + '_sw' + (scene.objects.transitions.length + 1);
+                obj = Switch({
+                    uuid : uuid.v4(),
+                    name : name,
+                });
+                break;
+            default:
+                return;
+        }
 
-        // updates stores with new object and rule
-        props.addNewObject(scene, tr);
+        let defaultRule = rules_utils.generateDefaultRule(obj);
+        props.addNewObject(scene, obj);
         props.addNewRule(scene, defaultRule);
 
-        InteractiveObjectAPI.saveObject(scene, tr);
+        InteractiveObjectAPI.saveObject(scene, obj);
         InteractiveObjectAPI.saveRule(scene, defaultRule);
 
     } else {
-        alert("Nessuna scena selezionata!");
+        alert('Nessuna scena selezionata!');
     }
-}
-
-function createSwitch(props){
-
 }
 
 export default TopBar;

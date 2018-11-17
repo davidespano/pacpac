@@ -144,16 +144,26 @@ function generateProperties(props){
         <div className={'currentObjectOptions'}>
             {objectButtons(props)}
             <label>Proprietà</label>
-            <label>Tipologia: Transizione</label>
+            <label>Tipologia: {currentObject.type}</label>
             <label>Nome:</label>
-            <div id={"transitionName"}
+            <div id={"objectName"}
                  className={"propertyForm"}
                  contentEditable={true}
-                 onBlur={()=> interface_utils.setPropertyFromId(currentObject,'name',"transitionName", props)}
+                 onBlur={()=> interface_utils.setPropertyFromId(currentObject,'name',"objectName", props)}
             >
                 {currentObject.name}
             </div>
             {generateSpecificProperties(currentObject, props)}
+            <label htmlFor={"media"}>Media</label>
+            <input type="file"
+                   name="media"
+                   id="mediaInput"
+            />
+            <label htmlFor={"mask"}>Maschera</label>
+            <input type="file"
+                   name="mask"
+                   id="maskInput"
+            />
             <label>Geometry</label>
             <button
                 className={"propertyForm geometryBtn"}
@@ -189,6 +199,28 @@ function generateSpecificProperties(object, props){
                     </div>
                 </div>
             );
+        case InteractiveObjectsTypes.SWITCH:
+            if(object.properties.state === 'ON'){
+                return(
+                    <div>
+                        <label>Default State</label>
+                        <select>
+                            <option selected={true}>ON</option>
+                            <option>OFF</option>
+                        </select>
+                    </div>
+                );
+            } else {
+                return(
+                    <div>
+                        <label>Default State</label>
+                        <select>
+                            <option>ON</option>
+                            <option selected={true}>OFF</option>
+                        </select>
+                    </div>
+                );
+            }
         default:
             return(<div>Error!</div>);
 

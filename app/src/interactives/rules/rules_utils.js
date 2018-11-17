@@ -3,6 +3,7 @@ import Rule from "./Rule";
 import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
+import Condition from "./Condition";
 let uuid = require('uuid');
 
 /**
@@ -23,7 +24,19 @@ function generateDefaultRule(object){
                     target : "---",
                 }],
             });
-
+            break;
+        case InteractiveObjectsTypes.SWITCH:
+            r = Rule({
+                uuid : uuid.v4(),
+                object_uuid : object.uuid,
+                event: EventTypes.CLICK,
+                condition: new Condition(object.uuid, 'OFF'),
+                actions : [{
+                    uuid : uuid.v4(),
+                    type : RuleActionTypes.FLIP_SWITCH,
+                    newState : 'ON',
+                }]
+            });
             break;
         default:
             return;

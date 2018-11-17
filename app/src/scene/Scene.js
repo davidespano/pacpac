@@ -21,7 +21,9 @@ const Scene = Immutable.Record({
         tagColor : 'black',
     },
     objects : {
-        transitions: [], // uuid list
+        // uuid lists
+        transitions: [],
+        switches: [],
     },
     rules : [], // uuid list
 

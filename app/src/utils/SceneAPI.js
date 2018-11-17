@@ -4,6 +4,7 @@ import Scene from "../scene/Scene";
 import Transition from "../interactives/Transition";
 import Rule from "../interactives/rules/Rule";
 import RuleActionTypes from "../interactives/rules/RuleActionTypes";
+import Switch from "../interactives/Switch";
 
 const request = require('superagent');
 
@@ -23,6 +24,7 @@ function getByName(name) {
 
             const adj = []; // neighbours list
             let transitions_uuids = [];
+            let switches_uuids = [];
             let rules_uuids = [];
 
             // generates transitions and saves them to the objects store
@@ -38,6 +40,22 @@ function getByName(name) {
                 });
                 Actions.receiveObject(t);
             });
+
+            /**
+            // generates switches and saves them to the objects store
+            response.body.switches.map((sw) => {
+                switches_uuids.push(sw.uuid); //save uuid
+                let s = Switch({
+                    uuid: sw.uuid,
+                    name: sw.name,
+                    type: sw.type,
+                    media: sw.media,
+                    vertices: sw.vertices,
+                    properties: JSON.parse(sw.properties),
+                });
+                Actions.receiveObject(s);
+            });
+             **/
 
             // generates rules and saves them to the rules store
             response.body.rules.map(rule => {
@@ -73,6 +91,7 @@ function getByName(name) {
                 },
                 objects : {
                     transitions : transitions_uuids,
+                    switches : switches_uuids,
                 },
                 rules : rules_uuids,
             });
@@ -113,6 +132,7 @@ function createScene(name, index, type, tagColor, tagName) {
                 rules: [],
                 objects: {
                     transitions: [],
+                    switches: [],
                 }
             });
 
@@ -194,6 +214,19 @@ async function getAllDetailedScenes(gameGraph) {
            });
         });
 
+        /**
+        const switches = s.switches.map(sw => {
+            return ({ //Switch, but not the Immutable one
+                uuid: sw.uuid,
+                name: sw.name,
+                type: sw.type,
+                media: sw.media,
+                vertices : sw.vertices,
+                properties: JSON.parse(sw.properties),
+            });
+        });
+         **/
+
         // generates rules
         const rules = s.rules.map(rule => {
             // check actions to find scene neighbours
@@ -225,6 +258,7 @@ async function getAllDetailedScenes(gameGraph) {
             },
             objects : {
                 transitions : transitions,
+                switches : switches,
             },
             rules: rules,
         });
