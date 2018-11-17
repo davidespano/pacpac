@@ -29,9 +29,13 @@ function setPropertyFromValue(object, property, value, props){
     props.updateObject(newObject);
 
     let currentScene = props.scenes.get(props.currentScene);
-    let currentObject = props.interactiveObjects.get(props.currentObject);
 
-    InteractiveObjectAPI.saveObject(currentScene, currentObject);
+    InteractiveObjectAPI.saveObject(currentScene, newObject);
+
+    if(property === "vertices"){
+        console.log('vertices');
+        props.editVertices(newObject);
+    }
 }
 
 /**
@@ -44,6 +48,43 @@ function setPropertyFromValue(object, property, value, props){
 function setPropertyFromId(object, property, id, props){
     let value = document.getElementById(id).textContent;
     setPropertyFromValue(object, property, value, props);
+}
+
+/**
+ * Generates approximative 2d centroid for the interaction area starting from the given vertices.
+ * @param vertices is a string that contains all of the vertices values
+ * @param radius of the sphere
+ * @returns array containing x and y values of the 2d centroid
+ */
+function calculateApproximativeCentroid(vertices, radius = 10) {
+
+    let coordinates = vertices.split(" ").map(x => parseFloat(x));
+    let medianPoint = [0.0, 0.0, 0.0];
+
+    for (let i = 0; i < coordinates.length; i += 3) {
+        medianPoint[0] += coordinates[i];
+        medianPoint[1] += coordinates[i + 1];
+        medianPoint[2] += coordinates[i + 2];
+    }
+
+    medianPoint = medianPoint.map(x => {
+        return x / (coordinates.length / 3)
+    });
+
+    //project median onto sphere to obtain approximate 3d centroid
+    /*https://stackoverflow.com/questions/9604132/how-to-project-a-point-on-to-a-sphere*/
+
+    let length = Math.sqrt(Math.pow(medianPoint[0], 2) + Math.pow(medianPoint[1], 2) + Math.pow(medianPoint[2], 2));
+    let centroid = medianPoint.map(x => {
+        return radius / length * x
+    });
+
+    //calculate latitude and longitude to obtain approximate 2d centroid
+
+    let lat = Math.acos(centroid[1] / radius);
+    let lon = Math.atan(centroid[0] / centroid[2]);
+
+    return [lat, lon];
 }
 
 /**
@@ -74,4 +115,5 @@ export default {
     setPropertyFromId : setPropertyFromId,
     setPropertyFromValue : setPropertyFromValue,
     title : title,
+    centroid: calculateApproximativeCentroid,
 }
