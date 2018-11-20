@@ -9,11 +9,10 @@ const express = require('express')
     , setAuthUser = require('./middlewares/setAuthUser').setAuthUser
     , neo4jSessionCleanup = require('./middlewares/neo4jSessionCleanup').neo4jSessionCleanup
     , writeError = require('./helpers/response').writeError
-    , multer = require('multer')
-    , fs = require('fs')
     , checkGameID = require('./middlewares/checkGameID').checkGameID
     , checkInteractiveObjectType = require('./middlewares/checkInteractiveObjectType').checkInteractiveObjectType
-    , loginRequired = require('./middlewares/loginRequired').loginRequired;
+    , loginRequired = require('./middlewares/loginRequired').loginRequired
+    , handleMediaAPI = require('./handleMediaAPI').handleMediaAPI;
 
 const app = express()
     , api = express();
@@ -110,26 +109,7 @@ api.put('/:gameID/rules/scenes/:name/rules', loginRequired, routes.rules.putRule
 api.delete('/:gameID/rules/scenes/:name/rules/:ruuid', loginRequired, routes.rules.deleteRule);
 
 /**MEDIA**/
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "public/" + req.params.gameID + "/")
-    },
-    filename: function (req, file, cb) {
-        cb(null, req.headers.name)
-    }
-});
-const upload = multer({
-    storage: storage,
-    fileFilter: function (req, file, cb) {
-        fs.access("public/" + req.params.gameID + "/" + req.headers.name, (err) => {
-            if (!err)
-                cb(null, false);
-            else
-                cb(null, true);
-        });
-    }
-});
-api.post('/public/:gameID/addMedia', loginRequired, upload.single("upfile"), routes.media.addMedia);
+handleMediaAPI(api);
 
 //api error handler
 api.use(function (err, req, res, next) {
