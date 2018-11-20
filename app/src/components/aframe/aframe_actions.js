@@ -12,6 +12,7 @@ function executeAction(state, rule, action){
                 if(t.uuid === rule.object_uuid)
                     duration = t.duration;
             });
+            //shader("Prima","Prima.mp4", "Seconda.mp4");
             transition(state.activeScene.name, action.target, duration);
             break;
         default:
@@ -53,9 +54,10 @@ function transition(actualSceneName, target, duration){
 }
 
 function shader(sceneName, background, video, maskMedia){
+
     let video1 = new THREE.VideoTexture(document.getElementById(background));
     let video2 = new THREE.VideoTexture(document.getElementById(video));
-    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/mask.png`);
+    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/mask2.png`);
 
     let sky = document.getElementById(sceneName);
     sky.setAttribute('material', "shader:multi-video;")
@@ -64,10 +66,10 @@ function shader(sceneName, background, video, maskMedia){
     video2.minFilter = THREE.NearestFilter;
     mask.minFilter = THREE.NearestFilter;
 
-    sky.object3D.children[1].material.uniforms.video1.value = video1;
-    sky.object3D.children[1].material.uniforms.video2.value = video2;
-    sky.object3D.children[1].material.uniforms.mask.value = mask;
-    sky.object3D.children[1].material.needsUpdate = true;
+    sky.object3D.children[2].material.uniforms.video1.value = video1;
+    sky.object3D.children[2].material.uniforms.video2.value = video2;
+    sky.object3D.children[2].material.uniforms.mask.value = mask;
+    sky.object3D.children[2].material.needsUpdate = true;
     document.getElementById(background).play();
     document.getElementById(video).play();
 }
