@@ -1,5 +1,6 @@
 import settings from './settings';
 import SceneAPI from "./SceneAPI";
+import interface_utils from "../components/interface/interface_utils";
 
 const request = require('superagent');
 
@@ -14,7 +15,7 @@ const {apiBaseURL} = settings;
  * @param tagColor
  * @param tagName
  */
-function addMedia(name, index, type, media, tagColor, tagName) {
+function addMediaScene(name, index, type, media, tagColor, tagName) {
     
     request.post(`${apiBaseURL}/public/${window.localStorage.getItem("gameID")}/addMedia`)
         .set('name', name)
@@ -31,6 +32,30 @@ function addMedia(name, index, type, media, tagColor, tagName) {
         });
 }
 
+/**
+ * Upload a media or a mask to the db. If the file is uploaded correctly, the object is edited and the update is sent
+ * to the stores
+ * @param object
+ * @param file
+ * @param type: media or mask
+ * @param props
+ */
+function uploadMedia(object, file, type, props){
+
+    request.post(`${apiBaseURL}/public/${window.localStorage.getItem("gameID")}/addInteractiveMedia`)
+        .set('name', file.name)
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .attach('upfile', file)
+        .end(function(err, response) {
+            if (err) {
+                return console.error(err);
+            }
+
+            interface_utils.setPropertyFromValue(object, type, file.name, props);
+        });
+}
+
 export default {
-    addMedia: addMedia
+    addMediaScene: addMediaScene,
+    uploadMedia: uploadMedia,
 };

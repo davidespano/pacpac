@@ -74,7 +74,7 @@ function addMediaAndCreateScene(name, index, type, media, tagColor, tagName){
     name = name + "." + ext;
 
     if(!index) index = 0;
-    MediaAPI.addMedia(name, index, type, media, tagColor, tagName);
+    MediaAPI.addMediaScene(name, index, type, media, tagColor, tagName);
 
 }
 

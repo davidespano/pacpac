@@ -4,6 +4,7 @@ import Actions from "../../actions/Actions";
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import interface_utils from "./interface_utils";
+import MediaAPI from "../../utils/MediaAPI";
 
 let THREE = require('three');
 
@@ -154,16 +155,28 @@ function generateProperties(props){
                 {currentObject.name}
             </div>
             {generateSpecificProperties(currentObject, props)}
-            <label htmlFor={"media"}>Media</label>
-            <input type="file"
-                   name="media"
-                   id="mediaInput"
-            />
-            <label htmlFor={"mask"}>Maschera</label>
-            <input type="file"
-                   name="mask"
-                   id="maskInput"
-            />
+            <div id={'uploadMedia'}>
+                <label htmlFor={"media"}>Media</label>
+                <input type="file"
+                       name="media"
+                       id="mediaInput"
+                       onChange={() => {
+                           let file = document.getElementById("mediaInput").files[0];
+                           MediaAPI.uploadMedia(currentObject, file, 'media', props);
+                       }}
+                />
+            </div>
+            <div id={'uploadMask'}>
+                <label htmlFor={"mask"}>Maschera</label>
+                <input type="file"
+                       name="mask"
+                       id="maskInput"
+                       onChange={() => {
+                           let file = document.getElementById("maskInput").files[0]
+                           MediaAPI.uploadMedia(currentObject, file, 'mask', props);
+                       }}
+                />
+            </div>
             <label>Geometry</label>
             <button
                 className={"propertyForm geometryBtn"}
@@ -323,6 +336,17 @@ function generateObjectsList(props) {
         ));
 
     }
+}
+
+/**
+ *
+ * @param object
+ * @param type
+ * @param name
+ * @param props
+ */
+function loadFile(object, type, name, props){
+
 }
 
 /*
