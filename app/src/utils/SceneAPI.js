@@ -35,6 +35,7 @@ function getByName(name) {
                     name: transition.name,
                     type: transition.type,
                     media: transition.media,
+                    mask: transition.mask,
                     vertices: transition.vertices,
                     properties: JSON.parse(transition.properties),
                 });
@@ -49,6 +50,7 @@ function getByName(name) {
                     name: sw.name,
                     type: sw.type,
                     media: sw.media,
+                    mask: sw.mask,
                     vertices: sw.vertices,
                     properties: JSON.parse(sw.properties),
                 });
@@ -207,6 +209,7 @@ async function getAllDetailedScenes(gameGraph) {
                name: transition.name,
                type: transition.type,
                media: transition.media,
+               mask: transition.mask,
                vertices: transition.vertices,
                properties: JSON.parse(transition.properties),
            });
@@ -218,6 +221,7 @@ async function getAllDetailedScenes(gameGraph) {
                 name: sw.name,
                 type: sw.type,
                 media: sw.media,
+                mask: sw.mask,
                 vertices : sw.vertices,
                 properties: JSON.parse(sw.properties),
             });
