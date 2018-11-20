@@ -81,10 +81,15 @@ export default class VRScene extends React.Component {
                         curvedImages = Object.values(scene.objects).flat();
                         curvedImages.forEach(obj => {
                                 if(obj.media !== ""){
-                                    // TO DO definire dove mettere media
                                     assets.push(
-                                        <video id={obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/DADEFINIRE`}
+                                        <video id={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
                                                loop={"false"} muted/>
+                                    )
+                                }
+                                console.log(obj)
+                                if(obj.mask !== ""){
+                                    assets.push(
+                                        <img id={"mask_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
                                     )
                                 }
                             }

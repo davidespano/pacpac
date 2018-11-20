@@ -57,7 +57,7 @@ function shader(sceneName, background, video, maskMedia){
 
     let video1 = new THREE.VideoTexture(document.getElementById(background));
     let video2 = new THREE.VideoTexture(document.getElementById(video));
-    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/mask2.png`);
+    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` + maskMedia);
 
     let sky = document.getElementById(sceneName);
     sky.setAttribute('material', "shader:multi-video;")
