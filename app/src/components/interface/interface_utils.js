@@ -15,6 +15,7 @@ function setPropertyFromValue(object, property, value, props){
         // generic properties belonging to any interactive object
         case "name":
         case "media":
+        case "mask":
         case "vertices":
             newObject = object.set(property, value);
             break;
@@ -33,7 +34,6 @@ function setPropertyFromValue(object, property, value, props){
     InteractiveObjectAPI.saveObject(currentScene, newObject);
 
     if(property === "vertices"){
-        console.log('vertices');
         props.editVertices(newObject);
     }
 }
