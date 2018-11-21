@@ -48,7 +48,6 @@ export default class VRScene extends React.Component {
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             eventBus.on('click-'+rule.object_uuid, function () {
                 if(ConditionUtils.evalCondition(rule.condition)){
-                    console.log('click in object!'+rule.object_uuid)
                     rule.actions.forEach(action => executeAction(me.state, rule, action))
                 }
             })
@@ -91,7 +90,7 @@ export default class VRScene extends React.Component {
                                 console.log(obj)
                                 if(obj.mask !== ""){
                                     assets.push(
-                                        <img id={"mask_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
+                                        <a-asset-item id={"mask_" + obj.uuid} crossorigin="Anonymous"  preload="auto" src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
                                     )
                                 }
                             }
@@ -102,7 +101,7 @@ export default class VRScene extends React.Component {
                     else mats = "opacity: 0; visible: false";
 
                     assets.push(
-                        <video key={"key" + scene.name} id={scene.img} loop={"true"} muted>
+                        <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  muted>
                             <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} />
                         </video>
                     );

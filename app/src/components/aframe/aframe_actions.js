@@ -13,10 +13,11 @@ function executeAction(state, rule, action){
                 if(t.uuid === rule.object_uuid){
                     duration = t.duration;
                     current_object = t;
+                    console.log(current_object)
                 }
 
             });
-            shader(state.activeScene.name,state.activeScene.img, current_object.uuid);
+            shader(state.activeScene.name,state.activeScene.img, current_object);
             //transition(state.activeScene.name, action.target, duration);
             break;
         default:
@@ -59,16 +60,16 @@ function transition(actualSceneName, target, duration){
     trg.components.material.material.map.image.play();
 }
 
-function shader(sceneName, background, uuid){
+function shader(sceneName, background, current_object){
 
-    let video = "media_"+uuid;
+    let video = "media_"+current_object.uuid;
     let video1 = new THREE.VideoTexture(document.getElementById(background));
     let video2 = new THREE.VideoTexture(document.getElementById(video));
-    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/mask2.png`);
-    //let mask = new THREE.Texture(document.getElementById("mask_"+uuid));
+    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + current_object.mask);
     let sky = document.getElementById(sceneName);
+
     sky.setAttribute('material', "shader:multi-video;")
-    console.log(video2)
+
     video1.minFilter = THREE.NearestFilter;
     video2.minFilter = THREE.NearestFilter;
     mask.minFilter = THREE.NearestFilter;

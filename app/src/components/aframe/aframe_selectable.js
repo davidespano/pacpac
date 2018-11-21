@@ -27,7 +27,6 @@ AFRAME.registerComponent('selectable', {
         //transition(this);
         let data = this.data;
         elem.addEventListener('click', function () {
-            console.log("event: "+'click-'+data.object_uuid);
             eventBus.emit('click-'+data.object_uuid);
         })
     }
