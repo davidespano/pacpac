@@ -8,12 +8,16 @@ function executeAction(state, rule, action){
     switch (action.type) {
         case RuleActionTypes.TRANSITION:
             let duration = 2000;
+            let current_object = {};
             Object.values(state.activeScene.objects).flat().forEach(t =>{ //we should check the other objects as well
-                if(t.uuid === rule.object_uuid)
+                if(t.uuid === rule.object_uuid){
                     duration = t.duration;
+                    current_object = t;
+                }
+
             });
-            //shader("Prima","Prima.mp4", "Seconda.mp4");
-            transition(state.activeScene.name, action.target, duration);
+            shader(state.activeScene.name,state.activeScene.img, current_object.uuid);
+            //transition(state.activeScene.name, action.target, duration);
             break;
         default:
             console.log('not yet implemented');
@@ -31,6 +35,8 @@ function transition(actualSceneName, target, duration){
 
     let actualScene = document.querySelector('#' + actualSceneName);
     let trg = document.querySelector('#' + target);
+    console.log(target)
+    console.log(trg)
     let cursor = document.querySelector('#cursor');
     let disappear = new CustomEvent(actualScene.id + "dis");
     let appear = new CustomEvent(trg.id + "app");
@@ -53,23 +59,24 @@ function transition(actualSceneName, target, duration){
     trg.components.material.material.map.image.play();
 }
 
-function shader(sceneName, background, video, maskMedia){
+function shader(sceneName, background, uuid){
 
+    let video = "media_"+uuid;
     let video1 = new THREE.VideoTexture(document.getElementById(background));
     let video2 = new THREE.VideoTexture(document.getElementById(video));
-    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` + maskMedia);
-
+    let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/mask2.png`);
+    //let mask = new THREE.Texture(document.getElementById("mask_"+uuid));
     let sky = document.getElementById(sceneName);
     sky.setAttribute('material', "shader:multi-video;")
-
+    console.log(video2)
     video1.minFilter = THREE.NearestFilter;
     video2.minFilter = THREE.NearestFilter;
     mask.minFilter = THREE.NearestFilter;
 
-    sky.object3D.children[2].material.uniforms.video1.value = video1;
-    sky.object3D.children[2].material.uniforms.video2.value = video2;
-    sky.object3D.children[2].material.uniforms.mask.value = mask;
-    sky.object3D.children[2].material.needsUpdate = true;
+    sky.object3D.children[1].material.uniforms.video1.value = video1;
+    sky.object3D.children[1].material.uniforms.video2.value = video2;
+    sky.object3D.children[1].material.uniforms.mask.value = mask;
+    sky.object3D.children[1].material.needsUpdate = true;
     document.getElementById(background).play();
     document.getElementById(video).play();
 }

@@ -34,7 +34,7 @@ function setPropertyFromValue(object, property, value, props){
     InteractiveObjectAPI.saveObject(currentScene, newObject);
 
     if(property === "vertices"){
-        props.editVertices(newObject);
+        //props.editVertices(newObject);
     }
 }
 

@@ -30,9 +30,10 @@ export default class VRScene extends React.Component {
     }
 
     async loadEverything() {
-        let scene = this.props.scenes.toArray()[0];
+
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
+        let scene = gameGraph['scenes'][this.state.activeScene.img];
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
@@ -43,6 +44,7 @@ export default class VRScene extends React.Component {
 
     createRuleListeners(){
         let me = this;
+
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             eventBus.on('click-'+rule.object_uuid, function () {
                 if(ConditionUtils.evalCondition(rule.condition)){
@@ -83,7 +85,7 @@ export default class VRScene extends React.Component {
                                 if(obj.media !== ""){
                                     assets.push(
                                         <video id={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
-                                               loop={"false"} muted/>
+                                               loop={"false"} crossorigin="anonymous" muted/>
                                     )
                                 }
                                 console.log(obj)
