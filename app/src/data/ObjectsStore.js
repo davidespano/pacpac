@@ -32,9 +32,12 @@ class ObjectsStore extends ReduceStore {
             case ActionTypes.REMOVE_SCENE:
 
                 let objects = action.scene.get('objects');
-                objects.transitions.forEach(obj => {
-                    state = state.delete(obj.uuid);
-                })
+                objects.transitions.forEach(obj_uuid => {
+                    state = state.delete(obj_uuid);
+                });
+                objects.switches.forEach(obj_uuid => {
+                    state = state.delete(obj_uuid);
+                });
 
                 return state;
             default:

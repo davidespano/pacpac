@@ -83,7 +83,7 @@ function list(props, path) {
  */
 function buttonsBar(){
     return(
-        <div className={'currentObjectOptions'}>
+        <div className={'currentOptions'}>
             <div className={"buttonGroup"}>
                 <button
                     title={"Cerca una scena"}

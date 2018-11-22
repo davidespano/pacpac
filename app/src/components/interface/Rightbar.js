@@ -105,7 +105,6 @@ function sceneView(props){
                 >
                     {scene.name}
                 </div>
-                <label>File: {scene.img}</label>
                 <label>Tipologia: {scene.type}</label>
                 <label>Etichetta: {scene.tag.tagName}</label>
             </div>
@@ -127,7 +126,7 @@ function optionsView(props){
     if(props.currentObject){
         return generateProperties(props);
     } else {
-        return showObjects(props.interactiveObjects,props);
+        return showObjects(props.interactiveObjects, props);
     }
 }
 
@@ -137,7 +136,7 @@ function optionsView(props){
  * @param props
  * @returns {*}
  */
-function showObjects(interactiveObjects,props) {
+function showObjects(interactiveObjects, props) {
     return (
         <div id={'objectsList'} className={'currentOptions'}>
             <div className={"buttonGroup"}>
@@ -330,6 +329,7 @@ function objectButtons(props){
  * @returns {*}
  */
 function generateObjectsList(props) {
+    console.log(props.interactiveObjects);
 
     // filter "all" or no scene selected
     if(props.currentScene == null || props.editor.objectsFilter === 'all'){

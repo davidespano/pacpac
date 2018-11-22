@@ -123,11 +123,9 @@ function title(scene) {
 function checkSelection(element, option, editor){
     switch(element){
         case 'rightbar':
-            console.log(editor.rightbarSelection);
-            console.log(editor.rightbarSelection === option)
             return ((editor.rightbarSelection === option) ? '' : 'inactive');
         default:
-            return 'aaaaaaaaaaaaaaaaaaaaaaaaa';
+            return 'inactive';
     }
 }
 
