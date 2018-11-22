@@ -67,17 +67,17 @@ function shader(sceneName, background, current_object){
     let video2 = new THREE.VideoTexture(document.getElementById(video));
     let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + current_object.mask);
     let sky = document.getElementById(sceneName);
-
+    let childrenDimension = sky.object3D.children.length - 1;
     sky.setAttribute('material', "shader:multi-video;")
 
     video1.minFilter = THREE.NearestFilter;
     video2.minFilter = THREE.NearestFilter;
     mask.minFilter = THREE.NearestFilter;
 
-    sky.object3D.children[1].material.uniforms.video1.value = video1;
-    sky.object3D.children[1].material.uniforms.video2.value = video2;
-    sky.object3D.children[1].material.uniforms.mask.value = mask;
-    sky.object3D.children[1].material.needsUpdate = true;
+    sky.object3D.children[childrenDimension].material.uniforms.video1.value = video1;
+    sky.object3D.children[childrenDimension].material.uniforms.video2.value = video2;
+    sky.object3D.children[childrenDimension].material.uniforms.mask.value = mask;
+    sky.object3D.children[childrenDimension].material.needsUpdate = true;
     document.getElementById(background).play();
     document.getElementById(video).play();
 }
