@@ -37,18 +37,14 @@ function list(props, path) {
                         alt={child.name}
                         title={interface_utils.title(child)}
                         onClick={() => {
-                            //let scene = props.scenes.get(child.name);
-                            //SceneAPI.getByName(child.img, scene);
                             props.updateCurrentScene(child.name);
                         }}
 
                     />
                     <div className={'list-labels'}
                          onClick={() => {
-                            //let scene = props.scenes.get(child.name);
-                            //SceneAPI.getByName(child.img, scene);
                             props.updateCurrentScene(child.name);
-                            }}
+                         }}
                     >
                         <div className={'label-text'}>
                             {child.name}

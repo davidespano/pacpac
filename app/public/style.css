@@ -457,11 +457,18 @@
     text-align: center;
 }
 
-.list-labels{
+.list-labels {
     transition: .5s ease;
     top: 15%;
     left: 50%;
     width: 100%;
+}
+
+.node_element:hover .list-img {
+    opacity: 0.8;
+}
+.node_element:hover .list-labels {
+    opacity: 1;
 }
 
 .label-text {
