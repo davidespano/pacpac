@@ -95,7 +95,8 @@ export default class VRScene extends React.Component {
                                 }
                             }
                         );
-                        mats = "opacity: 1; visible: true";
+                        mats = "opacity: 1; visible: true;";
+                        // shader:multi-video;
                         active = 'active: true; video: ' + scene.img;
                     }
                     else mats = "opacity: 0; visible: false";
