@@ -3,7 +3,7 @@ import TopBar from "../components/interface/Topbar";
 import LeftBar from "../components/interface/Leftbar";
 import RightBar from "../components/interface/Rightbar";
 import Rules from "../components/interface/Rules";
-import VRScene from "../components/aframe/VRScene";
+import VRScene from "../components/aframe/create_scene2";
 import '../components/look-controls_us';
 //import PlayTest from "../components/aframe/playtest";
 import CentralScene from "../components/interface/CentralScene";
