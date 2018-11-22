@@ -1,6 +1,7 @@
 import React from 'react';
 import settings from '../../utils/settings';
 import SceneAPI from "../../utils/SceneAPI";
+import Canvas from "./Canvas";
 
 
 const {mediaURL} = settings;
@@ -24,7 +25,7 @@ function CentralScene(props){
                          props.clickScene(p.x, p.y);
                      }}
                 />
-                <canvas id={'central-canvas'}></canvas>
+                <Canvas {...props}/>
             </div>
         );
     }
@@ -33,7 +34,7 @@ function CentralScene(props){
             <div className={'scene'}>
                 <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + currentScene.img}>
                 </video>
-                <canvas id={'central-canvas'}></canvas>
+                <Canvas {...props} />
             </div>
         );
     }
@@ -49,6 +50,11 @@ function CentralScene(props){
     }
 }
 
+/**
+ * Returns coordinates of clicked point
+ * @param event
+ * @returns {{x: number, y: number}}
+ */
 function getCoordinates(event){
 
     let img = document.getElementById('scene');

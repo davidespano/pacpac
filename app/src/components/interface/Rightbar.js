@@ -157,6 +157,7 @@ function generateProperties(props){
             {generateSpecificProperties(currentObject, props)}
             <div id={'uploadMedia'}>
                 <label htmlFor={"media"}>Media</label>
+                {currentObject.media}
                 <input type="file"
                        name="media"
                        id="mediaInput"
@@ -168,6 +169,7 @@ function generateProperties(props){
             </div>
             <div id={'uploadMask'}>
                 <label htmlFor={"mask"}>Maschera</label>
+                {currentObject.mask}
                 <input type="file"
                        name="mask"
                        id="maskInput"

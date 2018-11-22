@@ -18,12 +18,10 @@ class CentroidsStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.UPDATE_VERTICES:
+                /*
                 let centroid = interface_utils.centroid(action.vertices);
                 state = state.set(action.obj.uuid, centroid);
-
-                console.log("centroids:");
-                console.log(state);
-
+                */
                 return state;
             default:
                 return state;

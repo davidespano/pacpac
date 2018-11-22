@@ -58,8 +58,11 @@ function setPropertyFromId(object, property, id, props){
  */
 function calculateApproximativeCentroid(vertices, radius = 10) {
 
+    vertices = vertices.split(',').join(" "); //replace commas with whitespaces
     let coordinates = vertices.split(" ").map(x => parseFloat(x));
     let medianPoint = [0.0, 0.0, 0.0];
+
+    //console.log(coordinates.length)
 
     for (let i = 0; i < coordinates.length; i += 3) {
         medianPoint[0] += coordinates[i];
@@ -75,6 +78,7 @@ function calculateApproximativeCentroid(vertices, radius = 10) {
     /*https://stackoverflow.com/questions/9604132/how-to-project-a-point-on-to-a-sphere*/
 
     let length = Math.sqrt(Math.pow(medianPoint[0], 2) + Math.pow(medianPoint[1], 2) + Math.pow(medianPoint[2], 2));
+
     let centroid = medianPoint.map(x => {
         return radius / length * x
     });

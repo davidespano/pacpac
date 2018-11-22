@@ -11,6 +11,7 @@ import TagsStore from "../data/TagsStore";
 import ObjectsFilterStore from "../data/ObjectsFilterStore";
 import RulesStore from "../data/RulesStore";
 import DatalistStore from "../data/DatalistStore";
+import CentroidsStore from "../data/CentroidsStore";
 
 
 function getStores() {
@@ -24,6 +25,7 @@ function getStores() {
         CurrentObjectStore,
         ObjectsFilterStore,
         DatalistStore,
+        CentroidsStore,
     ];
 }
 
@@ -43,6 +45,7 @@ function getState() {
         objectsFilter: ObjectsFilterStore.getState(),
         rules: RulesStore.getState(),
         datalists: DatalistStore.getState(),
+        centroids: CentroidsStore.getState(),
 
         //FUNCTIONS
 
@@ -69,6 +72,7 @@ function getState() {
         updateCurrentObject: Actions.updateCurrentObject,
         updateObject: Actions.updateObject,
         filterObjectFunction: Actions.filterObject,
+        editVertices: Actions.editVertices,
 
         //rules
 

@@ -200,6 +200,18 @@ const Actions = {
     },
 
     /**
+     * Dispatch update of any object to the objects store
+     * @param object
+     */
+    editVertices(object){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_VERTICES,
+            obj: object,
+            vertices: object.get('vertices'),
+        })
+    },
+
+    /**
      * Dispatch new filter selection
      * @param filterType
      */

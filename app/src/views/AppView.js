@@ -8,6 +8,7 @@ import '../components/look-controls_us';
 //import PlayTest from "../components/aframe/playtest";
 import CentralScene from "../components/interface/CentralScene";
 import GeometryScene from "../components/aframe/geometryScene";
+import Canvas from "../components/interface/Canvas";
 
 function AppView(props) {
 
@@ -34,6 +35,7 @@ function AppView(props) {
             return(
                 <div>
                     <GeometryScene {...props}/>
+                    <Canvas {...props}/>
                 </div>
             );
 
