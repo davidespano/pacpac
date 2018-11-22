@@ -17,8 +17,8 @@ function executeAction(state, rule, action){
                 }
 
             });
-            shader(state.activeScene.name,state.activeScene.img, current_object);
-            //transition(state.activeScene.name, action.target, duration);
+            //shader(state.activeScene.name,state.activeScene.img, current_object);
+            transition(state.activeScene.name, action.target, duration);
             break;
         default:
             console.log('not yet implemented');

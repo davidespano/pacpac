@@ -7,6 +7,7 @@ import SceneAPI from "../../utils/SceneAPI";
 import ConditionUtils from "../../interactives/rules/ConditionUtils";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
+const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
 
@@ -22,6 +23,7 @@ export default class VRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]"
         };
+        this.currentScene = React.createRef();
         document.querySelector('link[href*="bootstrap"]').remove();
     }
 
@@ -73,7 +75,7 @@ export default class VRScene extends React.Component {
                 var assets = [];
                 skies = currentLevel.map((sky) => {
 
-                    let mats;
+                    let mats = "";
                     let active = 'active: false;';
                     let curvedImages = [];
                     let scene = this.state.graph.scenes[sky];
@@ -82,12 +84,12 @@ export default class VRScene extends React.Component {
                         curvedImages = Object.values(scene.objects).flat();
                         curvedImages.forEach(obj => {
                                 if(obj.media !== ""){
+                                    mats = "shader:multi-video;";
                                     assets.push(
                                         <video id={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
                                                loop={"false"} crossorigin="anonymous" muted/>
                                     )
                                 }
-                                console.log(obj)
                                 if(obj.mask !== ""){
                                     assets.push(
                                         <a-asset-item id={"mask_" + obj.uuid} crossorigin="Anonymous"  preload="auto" src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
@@ -95,7 +97,7 @@ export default class VRScene extends React.Component {
                                 }
                             }
                         );
-                        mats = "opacity: 1; visible: true;";
+                        mats += "opacity: 1; visible: true; ";
                         // shader:multi-video;
                         active = 'active: true; video: ' + scene.img;
                     }
@@ -130,6 +132,35 @@ export default class VRScene extends React.Component {
                 </Scene>
             </div>
         )
+    }
+
+    componentDidUpdate(){
+        let me = this;
+        setTimeout(function () {
+            const scene = me.state.activeScene;
+            const objs = Object.values(scene.objects).flat();
+            if(objs.length === 0) return;
+            let video = "media_"+objs[0].uuid;
+            let video1 = new THREE.VideoTexture(document.getElementById(scene.img));
+            let video2 = new THREE.VideoTexture(document.getElementById(video));
+            let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + objs[0].mask);
+            let sky = document.getElementById(scene.name);
+            console.log(sky.object3D)
+
+            let childrenDimension = sky.object3D.children.length - 1;
+            sky.setAttribute('material', "shader:multi-video;");
+
+            video1.minFilter = THREE.NearestFilter;
+            video2.minFilter = THREE.NearestFilter;
+            mask.minFilter = THREE.NearestFilter;
+
+            sky.object3D.children[childrenDimension].material.uniforms.video1.value = video1;
+            sky.object3D.children[childrenDimension].material.uniforms.video2.value = video2;
+            sky.object3D.children[childrenDimension].material.uniforms.mask.value = mask;
+            sky.object3D.children[childrenDimension].material.needsUpdate = true;
+            document.getElementById(scene.img).play();
+            document.getElementById(video).play();
+        }, 50)
     }
 }
 
