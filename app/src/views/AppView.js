@@ -12,7 +12,7 @@ import Canvas from "../components/interface/Canvas";
 
 function AppView(props) {
 
-    switch(props.mode){
+    switch(props.editor.mode){
         case 'EDIT_MODE_ON':
             return (
                 <div>

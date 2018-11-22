@@ -1,5 +1,4 @@
 import AppView from '../views/AppView';
-import ModeTypeStore from '../data/ModeTypeStore';
 import ScenesStore from '../data/ScenesStore';
 import ClickStore from '../data/ClickStore';
 import CentralSceneStore from '../data/CentralSceneStore'
@@ -8,7 +7,7 @@ import Actions from '../actions/Actions';
 import ObjectsStore from "../data/ObjectsStore";
 import CurrentObjectStore from "../data/CurrentObjectStore";
 import TagsStore from "../data/TagsStore";
-import ObjectsFilterStore from "../data/ObjectsFilterStore";
+import EditorStateStore from "../data/EditorStateStore";
 import RulesStore from "../data/RulesStore";
 import DatalistStore from "../data/DatalistStore";
 import CentroidsStore from "../data/CentroidsStore";
@@ -16,16 +15,15 @@ import CentroidsStore from "../data/CentroidsStore";
 
 function getStores() {
     return [
-        ModeTypeStore,
         ScenesStore,
         ClickStore,
         CentralSceneStore,
         TagsStore,
         ObjectsStore,
         CurrentObjectStore,
-        ObjectsFilterStore,
         DatalistStore,
         CentroidsStore,
+        EditorStateStore,
     ];
 }
 
@@ -35,22 +33,22 @@ function getState() {
 
         //STATES
 
-        mode: ModeTypeStore.getState(),
-        scenes: ScenesStore.getState(),
+        centroids: CentroidsStore.getState(),
         click: ClickStore.getState(),
         currentScene: CentralSceneStore.getState(),
-        sceneTags: TagsStore.getState(),
-        interactiveObjects: ObjectsStore.getState(),
         currentObject: CurrentObjectStore.getState(),
-        objectsFilter: ObjectsFilterStore.getState(),
-        rules: RulesStore.getState(),
         datalists: DatalistStore.getState(),
-        centroids: CentroidsStore.getState(),
+        editor: EditorStateStore.getState(),
+        interactiveObjects: ObjectsStore.getState(),
+        rules: RulesStore.getState(),
+        scenes: ScenesStore.getState(),
+        sceneTags: TagsStore.getState(),
 
         //FUNCTIONS
 
-        //page modes
+        //editor
 
+        rightbarSelection: Actions.rightbarSelection,
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
         switchToGeometryMode: Actions.geometryModeOn,

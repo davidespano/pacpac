@@ -4,17 +4,11 @@ import SceneAPI from '../utils/SceneAPI';
 
 const Actions = {
 
-    //EDITOR MODE
+    //EDITOR
 
     /**
-     * This functions handle editor mode selection
+     * This functions handle editor state variables (such as current mode and selected menus)
      **/
-
-    playModeOn(){
-        AppDispatcher.dispatch({
-            type: ActionTypes.PLAY_MODE_ON
-        })
-    },
 
     editModeOn() {
         AppDispatcher.dispatch({
@@ -27,6 +21,20 @@ const Actions = {
             type: ActionTypes.GEOMETRY_MODE_ON
         })
     },
+
+    playModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.PLAY_MODE_ON
+        })
+    },
+
+    rightbarSelection(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RIGHTBAR_SELECTION,
+            selection: selection,
+        })
+    },
+
 
     //SCENES
 

@@ -114,10 +114,28 @@ function title(scene) {
     );
 }
 
+/**
+ * Check if the given option element is selected according to the editor state
+ * @param element (such as rightbar)
+ * @param option value
+ * @param editor is the object containing all the editor variables representing its state
+ */
+function checkSelection(element, option, editor){
+    switch(element){
+        case 'rightbar':
+            console.log(editor.rightbarSelection);
+            console.log(editor.rightbarSelection === option)
+            return ((editor.rightbarSelection === option) ? '' : 'inactive');
+        default:
+            return 'aaaaaaaaaaaaaaaaaaaaaaaaa';
+    }
+}
+
 export default {
     onlyNumbers : onlyNumbers,
     setPropertyFromId : setPropertyFromId,
     setPropertyFromValue : setPropertyFromValue,
     title : title,
     centroid: calculateApproximativeCentroid,
+    checkSelection: checkSelection,
 }

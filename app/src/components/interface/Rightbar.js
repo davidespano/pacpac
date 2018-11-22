@@ -18,27 +18,61 @@ function RightBar(props){
     );
 }
 
+
+/**
+ * Generates upper buttons for scene or objects selection, and calls upon another function to generate content
+ * @param props
+ * @returns {*}
+ */
 function view(props){
     return(
         <div id={'rightbarView'}>
-            <nav>
-                <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a className="nav-item nav-link active"
-                       id="nav-scene-tab" data-toggle="tab" href="#nav-scene" role="tab" aria-controls="nav-scene"
-                       aria-selected="true" >Scena</a>
-                    <a className="nav-item nav-link" id="nav-interactives-tab" data-toggle="tab" href="#nav-interactives" role="tab"
-                       aria-controls="nav-interactives" aria-selected="false">Oggetti</a>
+            <nav id={'nav-rightbar'}>
+                <div id={'nav-tab-scene'}
+                     className={'nav-tab-rightbar ' + interface_utils.checkSelection('rightbar', 'scene', props.editor)}
+                     onClick={() => {
+                         props.rightbarSelection('scene');
+                     }}>
+                    Scena
+                </div>
+                <div id={'nav-tab-objects'}
+                     className={'nav-tab-rightbar ' + interface_utils.checkSelection('rightbar', 'objects', props.editor)}
+                     onClick={() => {
+                         props.rightbarSelection('objects')
+                     }}>
+                    Oggetti
                 </div>
             </nav>
-            <div className="tab-content" id="nav-tabContent">
-                <div className="tab-pane fade show active flex-container" id="nav-scene" role="tabpanel" aria-labelledby="nav-scene-tab">
-                    {sceneView(props)}
-                </div>
-                <div className="tab-pane fade" id="nav-interactives" role="tabpanel" aria-labelledby="nav-interactives-tab">
-                    {optionsView(props)}
-                </div>
+            <div className={'tab-content'}>
+                {content(props)}
             </div>
-        </div>);
+        </div>
+    );
+}
+
+/**
+ * Generates content relative to scene or to objects according to the given selection
+ * @param props
+ * @returns {*}
+ */
+function content(props){
+    if(props.editor.rightbarSelection === 'scene'){
+        return (
+            <div className={'currentOptions'}>
+                {sceneView(props)}
+            </div>
+        );
+    }
+
+    if(props.editor.rightbarSelection === 'objects'){
+        return (
+            <div className={'currentOptions'}>
+                {optionsView(props)}
+            </div>
+        );
+    }
+
+    return (<div>Error!</div>);
 }
 
 /**
@@ -50,7 +84,7 @@ function sceneView(props){
     if(props.currentScene){
         let scene = props.scenes.get(props.currentScene);
         return(
-            <div className={'currentObjectOptions'}>
+            <div className={'currentOptions'}>
                 <div>
                     <div className={"buttonGroup"}>
                         <button
@@ -71,6 +105,9 @@ function sceneView(props){
                 >
                     {scene.name}
                 </div>
+                <label>File: {scene.img}</label>
+                <label>Tipologia: {scene.type}</label>
+                <label>Etichetta: {scene.tag.tagName}</label>
             </div>
         );
     } else {
@@ -102,7 +139,7 @@ function optionsView(props){
  */
 function showObjects(interactiveObjects,props) {
     return (
-        <div id={'objectsList'} className={'currentObjectOptions'}>
+        <div id={'objectsList'} className={'currentOptions'}>
             <div className={"buttonGroup"}>
                 <button
                     title={"Cerca un oggetto"}
@@ -142,7 +179,7 @@ function generateProperties(props){
     let currentObject = props.interactiveObjects.get(props.currentObject);
 
     return(
-        <div className={'currentObjectOptions'}>
+        <div className={'currentOptions'}>
             {objectButtons(props)}
             <label>Proprietà</label>
             <label>Tipologia: {currentObject.type}</label>
@@ -295,7 +332,7 @@ function objectButtons(props){
 function generateObjectsList(props) {
 
     // filter "all" or no scene selected
-    if(props.currentScene == null || props.objectsFilter === 'all'){
+    if(props.currentScene == null || props.editor.objectsFilter === 'all'){
 
         // no objects
         if(props.interactiveObjects.size === 0)
@@ -304,19 +341,21 @@ function generateObjectsList(props) {
         // objects mapping
         return ([...props.interactiveObjects.values()].map( obj => {
             return (
-                <div key={obj.name}
-                     className={'objectsList-element'}
-                     onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
-                     {obj.name}
-                 </div>
+                <div key={obj.uuid} className={'objects-wrapper'}>
+                    <div className={'objectsList-element'}
+                         onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
+                        {obj.name}
+                    </div>
+                </div>
             );
         }));
     }
 
     // filter "scene"
-    if (props.objectsFilter === 'scene'){
+    if (props.editor.objectsFilter === 'scene'){
 
-        let objects = props.scenes.get(props.currentScene).objects;
+        let scene = props.scenes.get(props.currentScene);
+        let objects = scene.objects;
         let allObjects = objects.transitions.concat(objects.switches);
 
         // no objects in scene
@@ -328,27 +367,28 @@ function generateObjectsList(props) {
         return (allObjects.map(obj_uuid => {
             let obj = props.interactiveObjects.get(obj_uuid);
             return (
-                <div key={obj.uuid}
-                     className={'objectsList-element'}
-                     onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
-                    {obj.name}
+                <div key={obj.uuid} className={"objects-wrapper"}>
+                    <div className={'objectsList-element-delete-button'}
+                         onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
+                        {obj.name}
+                    </div>
+                    <button
+                        title={"Cancella"}
+                        className={"action-buttons-container"}
+                        onClick={() => {
+                            InteractiveObjectAPI.removeObject(scene, obj);
+                            props.updateCurrentObject(null);
+                        }
+                        }
+                    >
+                        <img  className={"action-buttons"} src={"icons8-waste-50.png"} alt={'Cancella'}/>
+                    </button>
                 </div>
             );
             }
         ));
 
     }
-}
-
-/**
- *
- * @param object
- * @param type
- * @param name
- * @param props
- */
-function loadFile(object, type, name, props){
-
 }
 
 /*

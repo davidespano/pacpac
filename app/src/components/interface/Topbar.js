@@ -39,9 +39,7 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.TRANSITION);
-                                    // selection object section in rightbar
-                                    if(document.getElementById('nav-interactives-tab'))
-                                        document.getElementById('nav-interactives-tab').click();
+                                    props.rightbarSelection('object');
                                 }}>
                             <img src={"icons8-add-one-way-transition-100.png"}/>
                             <figcaption>Transizione</figcaption>
@@ -49,9 +47,7 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.SWITCH);
-                                    // selection object section in rightbar
-                                    if(document.getElementById('nav-interactives-tab'))
-                                        document.getElementById('nav-interactives-tab').click();
+                                    props.rightbarSelection('object');
                                 }}>
                             <img src={"icons8-toggle-on-filled-100.png"}/>
                             <figcaption>Interruttore</figcaption>
