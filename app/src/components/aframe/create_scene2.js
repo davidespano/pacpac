@@ -119,7 +119,7 @@ export default class VRScene extends React.Component {
         }
         return (
             <div id="mainscene">
-                <Scene stats>
+                <Scene >
                     <a-assets>
                         {assets}
                     </a-assets>
@@ -148,7 +148,6 @@ export default class VRScene extends React.Component {
             console.log(sky.object3D)
 
             let childrenDimension = sky.object3D.children.length - 1;
-            sky.setAttribute('material', "shader:multi-video;");
 
             video1.minFilter = THREE.NearestFilter;
             video2.minFilter = THREE.NearestFilter;
@@ -159,7 +158,7 @@ export default class VRScene extends React.Component {
             sky.object3D.children[childrenDimension].material.uniforms.mask.value = mask;
             sky.object3D.children[childrenDimension].material.needsUpdate = true;
             document.getElementById(scene.img).play();
-            document.getElementById(video).play();
+            //document.getElementById(video).play();
         }, 50)
     }
 }

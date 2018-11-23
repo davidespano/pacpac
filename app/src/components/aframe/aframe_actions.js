@@ -13,9 +13,7 @@ function executeAction(state, rule, action){
                 if(t.uuid === rule.object_uuid){
                     duration = t.duration;
                     current_object = t;
-                    console.log(current_object)
                 }
-
             });
             //shader(state.activeScene.name,state.activeScene.img, current_object);
             transition(state.activeScene.name, action.target, duration);
@@ -34,30 +32,32 @@ function executeAction(state, rule, action){
  */
 function transition(actualSceneName, target, duration){
 
-    let actualScene = document.querySelector('#' + actualSceneName);
-    let trg = document.querySelector('#' + target);
     console.log(target)
-    console.log(trg)
+    let actualScene = document.querySelector('#' + actualSceneName);
+    let actualSceneVideo = document.getElementById(actualSceneName + '.mp4');
+    let targetScene = document.querySelector('#' + target);
+    let targetSceneVideo = document.getElementById(target + '.mp4');
     let cursor = document.querySelector('#cursor');
     let disappear = new CustomEvent(actualScene.id + "dis");
-    let appear = new CustomEvent(trg.id + "app");
+    let appear = new CustomEvent(targetScene.id + "app");
+    console.log(actualScene)
 
     actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualScene.id + "dis");
-    trg.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
-        '; easing: linear; from: 0; to: 1; startEvents: ' + trg.id + "app");
+    targetScene.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
+        '; easing: linear; from: 0; to: 1; startEvents: ' + targetScene.id + "app");
 
     cursor.setAttribute('material', 'visible: false');
     cursor.setAttribute('raycaster', 'far: 0.1');
-    trg.setAttribute('material', 'visible: true');
+    targetScene.setAttribute('material', 'visible: true');
 
-    actualScene.components.material.material.map.image.pause();
-    trg.components.material.material.map.image.muted=true;
+    actualSceneVideo.pause();
+    //targetScene.components.material.material.map.image.muted=true;
 
     actualScene.dispatchEvent(disappear);
-    trg.dispatchEvent(appear);
+    targetScene.dispatchEvent(appear);
 
-    trg.components.material.material.map.image.play();
+    targetSceneVideo.play()
 }
 
 function shader(sceneName, background, current_object){
