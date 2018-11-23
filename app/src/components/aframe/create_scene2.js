@@ -119,7 +119,7 @@ export default class VRScene extends React.Component {
         }
         return (
             <div id="mainscene">
-                <Scene >
+                <Scene stats>
                     <a-assets>
                         {assets}
                     </a-assets>
@@ -136,29 +136,79 @@ export default class VRScene extends React.Component {
 
     componentDidUpdate(){
         let me = this;
-        setTimeout(function () {
+        setTimeout(function () { //timeout to wait the render of the scene
             const scene = me.state.activeScene;
-            const objs = Object.values(scene.objects).flat();
-            if(objs.length === 0) return;
-            let video = "media_"+objs[0].uuid;
-            let video1 = new THREE.VideoTexture(document.getElementById(scene.img));
-            let video2 = new THREE.VideoTexture(document.getElementById(video));
-            let mask = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + objs[0].mask);
-            let sky = document.getElementById(scene.name);
-            console.log(sky.object3D)
+            const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
+            if(objs.length === 0) return; //shader not necessary
 
+            let video = [];
+            let masks = [];
+            let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
+            aux.minFilter = THREE.NearestFilter;
+            video.push(aux);
+
+            objs.forEach(obj => {
+                //each object with both a media and a mask must be used in the shader
+                if(obj.media === "" || obj.mask === "") return;
+                aux = new THREE.VideoTexture(document.getElementById("media_"+obj.uuid));
+                aux.minFilter = THREE.NearestFilter;
+                video.push(aux);
+                aux =  new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask);
+                aux.minFilter = THREE.NearestFilter;
+                masks.push(aux);
+            });
+
+            if(masks.length === 0) return; //shader not necessary
+
+            //take the sky, set the shader
+            let sky = document.getElementById(scene.name);
+            sky.setAttribute('material', "shader:multi-video;");
             let childrenDimension = sky.object3D.children.length - 1;
 
-            video1.minFilter = THREE.NearestFilter;
-            video2.minFilter = THREE.NearestFilter;
-            mask.minFilter = THREE.NearestFilter;
+            let i=0;
+            let declarations = "";
+            for(i=0; i<masks.length; i++){
+                //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
+                sky.object3D.children[childrenDimension].material.uniforms[`video${i}`] = {type: "t", value: video[i]};
+                sky.object3D.children[childrenDimension].material.uniforms[`mask${i+1}`] = {type: "t", value: masks[i]};
+                declarations += `
+                       uniform sampler2D video${i};    uniform sampler2D mask${i+1};`;
 
-            sky.object3D.children[childrenDimension].material.uniforms.video1.value = video1;
-            sky.object3D.children[childrenDimension].material.uniforms.video2.value = video2;
-            sky.object3D.children[childrenDimension].material.uniforms.mask.value = mask;
+            }
+            //the last video is not handled by the previous loop
+            sky.object3D.children[childrenDimension].material.uniforms[`video${i}`] = {type: "t", value: video[i]};
+            declarations += `   uniform sampler2D video${i};`;
+
+            //now prepare the mixfunction for the fragment shader
+            let mixFunction = "mix(texture2D(video0,vUv),texture2D(video1, vUv),texture2D(mask1, vUv).y)";
+            for(i=2; i<video.length; i++){
+                mixFunction = `mix(${mixFunction},texture2D(video${i}, vUv),texture2D(mask${i}, vUv).y)`
+            }
+            mixFunction = `vec4(${mixFunction});`;
+
+            //now set the fragment shader and other small things
+            let fragShader =
+            `
+                precision mediump int;
+                precision mediump float;
+                
+                varying vec2 vUv;
+                ${declarations}
+                uniform float opacity;
+                
+                void main() {
+                
+                gl_FragColor = ${mixFunction}
+                gl_FragColor.a = opacity;
+                
+                }
+        `;
+            sky.object3D.children[childrenDimension].material.fragmentShader = fragShader;
             sky.object3D.children[childrenDimension].material.needsUpdate = true;
+            //console.log(sky.object3D.children[childrenDimension].material);
+
             document.getElementById(scene.img).play();
-            //document.getElementById(video).play();
+            document.getElementById("media_"+objs[0].uuid).play();
         }, 50)
     }
 }
