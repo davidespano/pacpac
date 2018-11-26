@@ -492,27 +492,29 @@
 }
 
 /* Rightbar objects */
+
+.objects-wrapper > button { grid-area: button}
+.objects-wrapper > p {grid-area: object-name}
+
 .objects-wrapper {
-    display:flex;
+    display: grid;
     width: 100%;
-    padding: 2px;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: 80% 20%;
+    grid-template-areas:
+            'object-name button';
 }
 
-.objects-wrapper > button {
-    position: absolute;
-    right: 1%;
-    margin-top: 5px;
-}
-
-.objects-wrapper > div{
-    margin-top: 5px;
-    width: 80%;
+.objects-wrapper > p, .objects-wrapper-no-buttons > p {
+    word-break: break-all;
     text-align: left;
+    margin-bottom: 0px;
 }
 
-.objectsList-element{
-    margin-top: 5px;
-    text-align: left;
+.objects-wrapper > .action-buttons-container{
+    max-height: 40px;
+    max-width: 40px;
 }
 
 .objectsList-element:hover, .objectsList-element-delete-button:hover {

@@ -336,11 +336,11 @@ function generateObjectsList(props) {
         // objects mapping
         return ([...props.interactiveObjects.values()].map( obj => {
             return (
-                <div key={obj.uuid} className={'objects-wrapper'}>
-                    <div className={'objectsList-element'}
+                <div key={obj.uuid} className={'objects-wrapper-no-buttons'}>
+                    <p className={'objectsList-element'}
                          onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
                         {obj.name}
-                    </div>
+                    </p>
                 </div>
             );
         }));
@@ -363,10 +363,10 @@ function generateObjectsList(props) {
             let obj = props.interactiveObjects.get(obj_uuid);
             return (
                 <div key={obj.uuid} className={"objects-wrapper"}>
-                    <div className={'objectsList-element-delete-button'}
+                    <p className={'objectsList-element-delete-button'}
                          onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
                         {obj.name}
-                    </div>
+                    </p>
                     <button
                         title={"Cancella"}
                         className={"action-buttons-container"}
