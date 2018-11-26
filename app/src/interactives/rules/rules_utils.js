@@ -30,11 +30,9 @@ function generateDefaultRule(object){
                 uuid : uuid.v4(),
                 object_uuid : object.uuid,
                 event: EventTypes.CLICK,
-                condition: new Condition(object.uuid, 'OFF'),
                 actions : [{
                     uuid : uuid.v4(),
                     type : RuleActionTypes.FLIP_SWITCH,
-                    newState : 'ON',
                 }]
             });
             break;
@@ -67,4 +65,5 @@ function setProperty(rule, property, value){
 export default {
     generateDefaultRule : generateDefaultRule,
     setAction : setAction,
+    setProperty : setProperty,
 };

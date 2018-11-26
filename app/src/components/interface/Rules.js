@@ -71,25 +71,38 @@ function generateAction(index, rule, action, props, currentScene){
         case RuleActionTypes.TRANSITION:
             return(
                 <select id={'target' + action.uuid}
+                        defaultValue={action.target}
                         onChange={() => {
                             let e = document.getElementById('target' + action.uuid);
                             let value = e.options[e.selectedIndex].text;
                             let r = rules_utils.setAction(rule, index, 'target', value); //returns updated rule
                             props.updateRule(r); //send update to stores
                             InteractiveObjectAPI.saveRule(currentScene, r); //send update to db
-                        }}>
-                    <option key={"void_target"}>---</option>
+                        }}
+                >
+                    <option key={"void_target"} value={'---'}>---</option>
                     {generateTargetOptions(props, action, index, currentScene.name)}
                 </select>
             );
         case RuleActionTypes.FLIP_SWITCH:
+        case RuleActionTypes.ON:
+        case RuleActionTypes.OFF:
             return(
-                <select id={'change' + action.uuid}>
-                    <option> Change to ON </option>
-                    <option> Change to OFF </option>
+                <select id={'change' + action.uuid}
+                        defaultValue={action.type}
+                        onChange={() => {
+                            let e = document.getElementById('change' + action.uuid);
+                            let value = e.options[e.selectedIndex].value;
+                            let r = rules_utils.setAction(rule, index, 'type', value); //returns updated rule
+                            props.updateRule(r); //send update to stores
+                            InteractiveObjectAPI.saveRule(currentScene, r); //send update to db
+                        }}
+                >
+                    <option value={RuleActionTypes.ON}> Porta ad ON </option>
+                    <option value={RuleActionTypes.OFF}> Porta ad OFF </option>
+                    <option value={RuleActionTypes.FLIP_SWITCH}> Inverti lo stato</option>
                 </select>
             );
-            break;
         default:
             return;
     }
@@ -107,12 +120,7 @@ function generateTargetOptions(props, action, index, name) {
 
     return ([...props.scenes.values()].map(child => {
         if(child.name !== name) {
-            if (child.name === action.target) {
-                return (<option key={child.img + index} selected={"selected"}>{child.name}</option>)
-            }
-            else {
-                return (<option key={child.img + index} >{child.name}</option>)
-            }
+            return (<option key={child.img} value={child.name}>{child.name}</option>)
         }
     }));
 }
