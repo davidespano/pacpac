@@ -251,27 +251,22 @@ function generateSpecificProperties(object, props){
                 </div>
             );
         case InteractiveObjectsTypes.SWITCH:
-            if(object.properties.state === 'ON'){
-                return(
-                    <div>
-                        <label>Default State</label>
-                        <select>
-                            <option selected={true}>ON</option>
-                            <option>OFF</option>
-                        </select>
-                    </div>
-                );
-            } else {
-                return(
-                    <div>
-                        <label>Default State</label>
-                        <select>
-                            <option>ON</option>
-                            <option selected={true}>OFF</option>
-                        </select>
-                    </div>
-                );
-            }
+            return(
+                <div>
+                    <label>Stato iniziale</label>
+                    <select id={'switchDefaultState'}
+                            defaultValue={object.properties.state}
+                            onChange={() => {
+                                let e = document.getElementById('switchDefaultState');
+                                let value = e.options[e.selectedIndex].value;
+                                interface_utils.setPropertyFromValue(object, 'state', value, props);
+                    }}
+                    >
+                        <option value={'ON'}>ON</option>
+                        <option value={'OFF'}>OFF</option>
+                    </select>
+                </div>
+            );
         default:
             return(<div>Error!</div>);
 
