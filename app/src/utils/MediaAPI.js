@@ -34,7 +34,8 @@ function addMediaScene(name, index, type, media, tagColor, tagName) {
 
 /**
  * Upload a media or a mask to the db. If the file is uploaded correctly, the object is edited and the update is sent
- * to the stores
+ * to the stores. If the file is already saved to the db (error 422) the object is edited and saved as well (so we can
+ * handle reusage of resources)
  * @param object
  * @param file
  * @param type: media or mask
@@ -47,7 +48,7 @@ function uploadMedia(object, file, type, props){
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .attach('upfile', file)
         .end(function(err, response) {
-            if (err) {
+            if (err && err.status !== 422) { // duplicates are ignored
                 return console.error(err);
             }
 
