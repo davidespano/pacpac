@@ -80,31 +80,29 @@ export default class VRScene extends React.Component {
                     let curvedImages = [];
                     let scene = this.state.graph.scenes[sky];
 
-                    if (sky === this.state.activeScene.img) {
-                        curvedImages = Object.values(scene.objects).flat();
-                        curvedImages.forEach(obj => {
-                                if(obj.media !== ""){
-                                    mats = "shader:multi-video;";
-                                    assets.push(
-                                        <video id={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
-                                               loop={"false"} crossorigin="anonymous" muted/>
-                                    )
-                                }
-                                if(obj.mask !== ""){
-                                    assets.push(
-                                        <a-asset-item id={"mask_" + obj.uuid} crossorigin="Anonymous"  preload="auto" src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
-                                    )
-                                }
+                    curvedImages = Object.values(scene.objects).flat();
+                    curvedImages.forEach(obj => {
+                            if(obj.media !== "" && obj.media !== undefined){
+                                assets.push(
+                                    <video id={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
+                                           preload="auto" loop={"false"} crossorigin="anonymous" muted/>
+                                )
                             }
-                        );
-                        mats += "opacity: 1; visible: true; ";
-                        // shader:multi-video;
+                            if(obj.mask !== "" && obj.mask !== undefined){
+                                assets.push(
+                                    <a-asset-item id={"mask_" + obj.uuid} crossorigin="Anonymous"  preload="auto" src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
+                                )
+                            }
+                        }
+                    );
+                    if (sky === this.state.activeScene.img) {
+                        mats = "opacity: 1; visible: true;";
                         active = 'active: true; video: ' + scene.img;
                     }
                     else mats = "opacity: 0; visible: false";
 
                     assets.push(
-                        <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  muted>
+                        <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto" muted>
                             <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} />
                         </video>
                     );
@@ -149,7 +147,7 @@ export default class VRScene extends React.Component {
 
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
-                if(obj.media === "" || obj.mask === "") return;
+                if(obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
                 aux = new THREE.VideoTexture(document.getElementById("media_"+obj.uuid));
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
@@ -163,20 +161,27 @@ export default class VRScene extends React.Component {
             //take the sky, set the shader
             let sky = document.getElementById(scene.name);
             sky.setAttribute('material', "shader:multi-video;");
-            let childrenDimension = sky.object3D.children.length - 1;
+            let children = sky.object3D.children;
+            let skyMesh=null;
+            children.forEach(obj => {
+                if(obj.type === "Mesh")
+                    skyMesh = obj;
+            })
+
+            if(skyMesh == null) return;
 
             let i=0;
             let declarations = "";
             for(i=0; i<masks.length; i++){
                 //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
-                sky.object3D.children[childrenDimension].material.uniforms[`video${i}`] = {type: "t", value: video[i]};
-                sky.object3D.children[childrenDimension].material.uniforms[`mask${i+1}`] = {type: "t", value: masks[i]};
+                skyMesh.material.uniforms[`video${i}`] = {type: "t", value: video[i]};
+                skyMesh.material.uniforms[`mask${i+1}`] = {type: "t", value: masks[i]};
                 declarations += `
                        uniform sampler2D video${i};    uniform sampler2D mask${i+1};`;
 
             }
             //the last video is not handled by the previous loop
-            sky.object3D.children[childrenDimension].material.uniforms[`video${i}`] = {type: "t", value: video[i]};
+            skyMesh.material.uniforms[`video${i}`] = {type: "t", value: video[i]};
             declarations += `   uniform sampler2D video${i};`;
 
             //now prepare the mixfunction for the fragment shader
@@ -203,12 +208,12 @@ export default class VRScene extends React.Component {
                 
                 }
         `;
-            sky.object3D.children[childrenDimension].material.fragmentShader = fragShader;
-            sky.object3D.children[childrenDimension].material.needsUpdate = true;
+            skyMesh.material.fragmentShader = fragShader;
+            skyMesh.material.needsUpdate = true;
             //console.log(sky.object3D.children[childrenDimension].material);
 
             document.getElementById(scene.img).play();
-            document.getElementById("media_"+objs[0].uuid).play();
+            //document.getElementById("media_"+objs[0].uuid).play();
         }, 50)
     }
 }
