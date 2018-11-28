@@ -6,23 +6,7 @@ AFRAME.registerShader('multi-video', {
     schema: {
         src: {type: 'map'},
         transparent: {type: "boolean", default: true, is: 'uniform'},
-        opacity: {type: "number", default: 0.8, is: 'uniform'},
-    },
-
-    uniforms : {
-        video1: { type: "t", value: null},
-        video2: { type: "t", value: null},
-        mask: {type: "t", value: null},
-        transparent: {type: "boolean", default: true},
-        opacity: {type: "float", default: 1}
-    },
-
-    init: function(data) {
-        this.material = new THREE.ShaderMaterial({
-            uniforms: this.uniforms,
-            vertexShader: this.vertexShader,
-            fragmentShader: this.fragmentShader
-        });
+        opacity: {type: "number", default: 1, is: 'uniform'},
     },
 
     vertexShader:
