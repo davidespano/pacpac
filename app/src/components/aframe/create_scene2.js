@@ -79,6 +79,7 @@ export default class VRScene extends React.Component {
                     let active = 'active: false;';
                     let curvedImages = [];
                     let scene = this.state.graph.scenes[sky];
+                    let radius = 9.9;
 
                     curvedImages = Object.values(scene.objects).flat();
                     curvedImages.forEach(obj => {
@@ -98,6 +99,7 @@ export default class VRScene extends React.Component {
                     if (sky === this.state.activeScene.img) {
                         mats = "opacity: 1; visible: true;";
                         active = 'active: true; video: ' + scene.img;
+                        radius = 10;
                     }
                     else mats = "opacity: 0; visible: false";
 
@@ -110,7 +112,7 @@ export default class VRScene extends React.Component {
                     return (
                         <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
                                 transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
-                                videoName={active}/>
+                                videoName={active} radiusBubble={radius}/>
                     );
                 })
             }
