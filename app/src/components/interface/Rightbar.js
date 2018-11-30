@@ -5,6 +5,7 @@ import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import interface_utils from "./interface_utils";
 import MediaAPI from "../../utils/MediaAPI";
+import scene_utils from "../../scene/scene_utils";
 
 let THREE = require('three');
 
@@ -102,6 +103,10 @@ function sceneView(props){
                 <div id={"sceneName"}
                      className={"propertyForm"}
                      contentEditable={true}
+                     onBlur={() => {
+                         let value = document.getElementById('sceneName').textContent;
+                         scene_utils.setProperty(scene, 'name', value, props);
+                     }}
                 >
                     {scene.name}
                 </div>
@@ -324,7 +329,7 @@ function objectButtons(props){
  * @returns {*}
  */
 function generateObjectsList(props) {
-    console.log(props.interactiveObjects);
+    //console.log(props.interactiveObjects);
 
     // filter "all" or no scene selected
     if(props.currentScene == null || props.editor.objectsFilter === 'all'){
@@ -367,17 +372,14 @@ function generateObjectsList(props) {
                          onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
                         {obj.name}
                     </p>
-                    <button
-                        title={"Cancella"}
-                        className={"action-buttons-container"}
-                        onClick={() => {
+                    <img className={"action-buttons"}
+                         src={"icons8-waste-50.png"}
+                         alt={'Cancella'}
+                         onClick={() => {
                             InteractiveObjectAPI.removeObject(scene, obj);
                             props.updateCurrentObject(null);
-                        }
-                        }
-                    >
-                        <img  className={"action-buttons"} src={"icons8-waste-50.png"} alt={'Cancella'}/>
-                    </button>
+                         }}
+                    />
                 </div>
             );
             }

@@ -1,5 +1,6 @@
 import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import Actions from "../actions/Actions";
+import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 
 /**
  * Returns the updated scene
@@ -58,6 +59,28 @@ function removeRuleFromScene(scene, rule){
     return scene.set('rules', rules);
 }
 
+
+/**
+ * Updates scene property with the given value, returns new scene. DO NOT use this function to update nested properties
+ * such as "objects"
+ * @param scene
+ * @param property
+ * @param value
+ * @param props
+ */
+function setProperty(scene, property, value, props){
+    let newScene = scene.set(property, value);;
+
+    if(property === 'name'){
+        props.removeScene(scene);
+        props.updateCurrentScene(newScene.name);
+    }
+
+    props.updateScene(newScene);
+
+    /**FUNZIONE DI SALVATAGGIO SU DB QUI**/
+}
+
 /**
  * Returns the name of the field where the given object is saved (a Transition returns "transitions", a Switch returns
  * "switches", and so on. It is used to remove and add objects to the proper field
@@ -80,5 +103,6 @@ export default {
     removeInteractiveObject: removeInteractiveObject,
     addRuleToScene: addRuleToScene,
     removeRuleFromScene: removeRuleFromScene,
+    setProperty: setProperty,
     defineField: defineField,
 }

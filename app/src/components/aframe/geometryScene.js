@@ -22,10 +22,11 @@ class Bubble extends React.Component
 
     render()
     {
-        const curves = this.props.transitions.map(curve =>
+
+        const curves = this.props.curves.map(vertices =>
         {
             return(
-                <Curved vertices={curve.vertices}/>
+                <Curved vertices={vertices}/>
             );
         });
 
@@ -45,7 +46,7 @@ export function givePoints(props)
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
-    console.log(puntisalvati.join())
+    //console.log(puntisalvati.join())
     interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
 }
 
@@ -54,7 +55,6 @@ export default class GeometryScene extends React.Component{
     constructor(props)
     {
         super(props);
-        console.log(props.currentObject)
         this.state = {
             scenes: props.scenes.get(props.currentScene)
         };
@@ -162,11 +162,17 @@ export default class GeometryScene extends React.Component{
     {
         let sky = this.state.scenes;
         let curvedImages = [];
-        curvedImages = this.props.scenes.get(this.props.currentScene).get('objects');
-        curvedImages = curvedImages['transitions'].map(uuid => this.props.interactiveObjects.get(uuid));
+        let objects = this.props.scenes.get(this.props.currentScene).get('objects');
+        for(let key in objects){
+            if(objects.hasOwnProperty(key)){
+                objects[key].forEach((uuid) => {
+                    curvedImages.push(this.props.interactiveObjects.get(uuid).get('vertices'));
+                })
+            }
+        }
 
         let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img}
-                            transitions={curvedImages} handler={() => this.handleSceneChange()}/>
+                            curves={curvedImages} handler={() => this.handleSceneChange()}/>
 
         return(
             <div id="mainscene" tabIndex="0">

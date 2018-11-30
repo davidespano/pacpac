@@ -383,7 +383,7 @@
 
 }
 
-.action-buttons-container:hover{
+.action-buttons-container:hover, .objects-wrapper > .action-buttons:hover {
     cursor: pointer;
     background-color: #8C9093;
 }
