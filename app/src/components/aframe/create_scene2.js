@@ -150,7 +150,7 @@ export default class VRScene extends React.Component {
                 let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
-
+                let dict = ['0'];
                 objs.forEach(obj => {
                     //each object with both a media and a mask must be used in the shader
                     if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
@@ -160,6 +160,7 @@ export default class VRScene extends React.Component {
                     aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask);
                     aux.minFilter = THREE.NearestFilter;
                     masks.push(aux);
+                    dict.push(obj.uuid.replace(/-/g,'_'));
                 });
 
                 if (masks.length === 0) return; //shader not necessary
@@ -182,20 +183,20 @@ export default class VRScene extends React.Component {
          //       skyMesh.material.uniforms['opacity'] = {type: "number", value: (scene.name===me.state.activeScene.name)?1:0};
                 for (i = 0; i < masks.length; i++) {
                     //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
-                    skyMesh.material.uniforms[`video${i}`] = {type: "t", value: video[i]};
-                    skyMesh.material.uniforms[`mask${i + 1}`] = {type: "t", value: masks[i]};
+                    skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
+                    skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: masks[i]};
                     declarations += `
-                           uniform sampler2D video${i};    uniform sampler2D mask${i + 1};`;
+                           uniform sampler2D video${dict[i]};    uniform sampler2D mask${dict[i + 1]};`;
 
                 }
                 //the last video is not handled by the previous loop
-                skyMesh.material.uniforms[`video${i}`] = {type: "t", value: video[i]};
-                declarations += `   uniform sampler2D video${i};`;
+                skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
+                declarations += `   uniform sampler2D video${dict[i]};`;
 
                 //now prepare the mixfunction for the fragment shader
-                let mixFunction = "mix(texture2D(video0,vUv),texture2D(video1, vUv),texture2D(mask1, vUv).y)";
+                let mixFunction = `mix(texture2D(video0,vUv),texture2D(video${dict[1]}, vUv),texture2D(mask${dict[1]}, vUv).y)`;
                 for (i = 2; i < video.length; i++) {
-                    mixFunction = `mix(${mixFunction},texture2D(video${i}, vUv),texture2D(mask${i}, vUv).y)`
+                    mixFunction = `mix(${mixFunction},texture2D(video${dict[i]}, vUv),texture2D(mask${dict[i]}, vUv).y)`
                 }
                 mixFunction = `vec4(${mixFunction});`;
 

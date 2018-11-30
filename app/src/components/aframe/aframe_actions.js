@@ -9,14 +9,25 @@ function executeAction(state, rule, action){
         case RuleActionTypes.TRANSITION:
             let duration = 2000;
             let current_object = {};
+            let mediaDuration = 0;
             Object.values(state.activeScene.objects).flat().forEach(t =>{ //we should check the other objects as well
                 if(t.uuid === rule.object_uuid){
                     duration = t.duration;
                     current_object = t;
                 }
             });
-            //shader(state.activeScene.name,state.activeScene.img, current_object);
-            transition(state.activeScene.name, action.target, duration);
+            let material = document.getElementById(state.activeScene.name).getOrCreateObject3D('mesh').material;
+            let objectVideo = (material.uniforms)?material.uniforms[`video${rule.object_uuid.replace(/-/g,'_')}`].value.image:null;
+            if(objectVideo != null) {
+                objectVideo.play();
+                mediaDuration = (objectVideo.duration * 1000) - 300;
+                //shader(state.activeScene.name,state.activeScene.img, current_object);
+            }
+
+            setTimeout(function () {
+                if(objectVideo != null) objectVideo.pause();
+                transition(state.activeScene.name, action.target, 2000);
+            },mediaDuration)
             break;
         default:
             console.log('not yet implemented');
@@ -32,9 +43,9 @@ function executeAction(state, rule, action){
  */
 function transition(actualSceneName, target, duration){
 
-    console.log(target)
     let actualScene = document.querySelector('#' + actualSceneName);
     let actualSceneVideo = document.getElementById(actualSceneName + '.mp4');
+    actualSceneVideo.pause();
     let targetScene = document.querySelector('#' + target);
     let targetSceneVideo = document.getElementById(target + '.mp4');
     let cursor = document.querySelector('#cursor');
@@ -51,13 +62,11 @@ function transition(actualSceneName, target, duration){
     cursor.setAttribute('raycaster', 'far: 0.1');
     targetScene.setAttribute('material', 'visible: true');
 
-    actualSceneVideo.pause();
+
     //targetScene.components.material.material.map.image.muted=true;
 
     actualScene.dispatchEvent(disappear);
     targetScene.dispatchEvent(appear);
-
-    targetSceneVideo.play()
 }
 
 function shader(sceneName, background, current_object){
