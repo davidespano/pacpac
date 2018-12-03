@@ -8,26 +8,44 @@ function executeAction(state, rule, action){
     switch (action.type) {
         case RuleActionTypes.TRANSITION:
             let duration = 2000;
-            let current_object = {};
-            let mediaDuration = 0;
+            let current_transition = {};
+            let duration_transition = 0;
             Object.values(state.activeScene.objects).flat().forEach(t =>{ //we should check the other objects as well
                 if(t.uuid === rule.object_uuid){
                     duration = t.duration;
-                    current_object = t;
+                    current_transition = t;
+
                 }
             });
-            let material = document.getElementById(state.activeScene.name).getOrCreateObject3D('mesh').material;
-            let objectVideo = (material.uniforms)?material.uniforms[`video${rule.object_uuid.replace(/-/g,'_')}`].value.image:null;
-            if(objectVideo != null) {
-                objectVideo.play();
-                mediaDuration = (objectVideo.duration * 1000) - 300;
-                //shader(state.activeScene.name,state.activeScene.img, current_object);
+            let material_transition = document.getElementById(state.activeScene.name).getOrCreateObject3D('mesh').material;
+            let objectVideo = (material.uniforms)?material.uniforms[`video${rule.object_uuid.replace(/-/g,'_')}`]:null;
+            let objectVideo_transition = (objectVideo)?objectVideo.value.image:null;
+            if(objectVideo_transition != null) {
+                objectVideo_transition.play();
+                duration_transition = (objectVideo_transition.duration * 1000) - 300;
             }
 
             setTimeout(function () {
-                if(objectVideo != null) objectVideo.pause();
+                if(objectVideo_transition != null) objectVideo_transition.pause();
                 transition(state.activeScene.name, action.target, 2000);
-            },mediaDuration)
+            },duration_transition)
+            break;
+        case RuleActionTypes.SWITCH:
+            let current_switch = {};
+            let duration_switch = 0;
+            let material_switch = document.getElementById(state.activeScene.name).getOrCreateObject3D('mesh').material;
+            let objectVideo_switch = (material_switch.uniforms)?material_switch.uniforms[`video${rule.object_uuid.replace(/-/g,'_')}`].value.image:null;
+            Object.values(state.activeScene.objects).flat().forEach(t =>{ //we should check the other objects as well
+                if(t.uuid === rule.object_uuid){
+                    duration = t.duration;
+                    current_switch = t;
+                }
+            });
+            if(objectVideo_switch != null) {
+                objectVideo_switch.play();
+                duration_switch = (objectVideo_switch.duration * 1000) - 300;
+            }
+
             break;
         default:
             console.log('not yet implemented');
@@ -47,7 +65,6 @@ function transition(actualSceneName, target, duration){
     let actualSceneVideo = document.getElementById(actualSceneName + '.mp4');
     actualSceneVideo.pause();
     let targetScene = document.querySelector('#' + target);
-    let targetSceneVideo = document.getElementById(target + '.mp4');
     let cursor = document.querySelector('#cursor');
     let disappear = new CustomEvent(actualScene.id + "dis");
     let appear = new CustomEvent(targetScene.id + "app");
@@ -60,10 +77,8 @@ function transition(actualSceneName, target, duration){
 
     cursor.setAttribute('material', 'visible: false');
     cursor.setAttribute('raycaster', 'far: 0.1');
+    targetScene.setAttribute('visible', 'true');
     targetScene.setAttribute('material', 'visible: true');
-
-
-    //targetScene.components.material.material.map.image.muted=true;
 
     actualScene.dispatchEvent(disappear);
     targetScene.dispatchEvent(appear);
