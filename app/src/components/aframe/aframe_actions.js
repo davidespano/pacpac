@@ -17,9 +17,11 @@ function executeAction(state, rule, action){
 
                 }
             });
-            let material_transition = document.getElementById(state.activeScene.name).getOrCreateObject3D('mesh').material;
-            let objectVideo = (material.uniforms)?material.uniforms[`video${rule.object_uuid.replace(/-/g,'_')}`]:null;
-            let objectVideo_transition = (objectVideo)?objectVideo.value.image:null;
+            //let material_transition = document.getElementById(state.activeScene.name).getOrCreateObject3D('mesh').material;
+            //let objectVideo = (material.uniforms)?material.uniforms[`video${rule.object_uuid.replace(/-/g,'_')}`]:null;
+            //let objectVideo_transition = (objectVideo)?objectVideo.value.image:null;
+            let objectVideo_transition = document.querySelector('#media_' + current_transition.uuid);
+
             if(objectVideo_transition != null) {
                 objectVideo_transition.play();
                 duration_transition = (objectVideo_transition.duration * 1000) - 300;
