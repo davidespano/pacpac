@@ -85,13 +85,13 @@ export default class VRScene extends React.Component {
                     curvedImages.forEach(obj => {
                             if(obj.media !== "" && obj.media !== undefined){
                                 assets.push(
-                                    <video id={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
+                                    <video id={"media_" + obj.uuid} key={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
                                            preload="auto" loop={"false"} crossorigin="anonymous" muted/>
                                 )
                             }
                             if(obj.mask !== "" && obj.mask !== undefined){
                                 assets.push(
-                                    <a-asset-item id={"mask_" + obj.uuid} crossorigin="Anonymous"  preload="auto" src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
+                                    <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossorigin="Anonymous"  preload="auto" src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
                                 )
                             }
                         }
@@ -139,14 +139,14 @@ export default class VRScene extends React.Component {
         let currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
             this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
             || name === this.state.activeScene.img);
-        console.log(currentLevel)
         currentLevel.forEach(sceneName => {
         //    if(sceneName !== me.state.activeScene.img) return;
             setTimeout(function () { //timeout to wait the render of the scene
                 const scene = me.state.graph.scenes[sceneName];
                 const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
                 if (objs.length === 0) return; //shader not necessary
-
+                let sky = document.getElementById(scene.name);
+                if(sky.getAttribute('material').shader === 'multi-video') return;
                 let video = [];
                 let masks = [];
                 let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
@@ -167,22 +167,19 @@ export default class VRScene extends React.Component {
 
                 if (masks.length === 0) return; //shader not necessary
 
-                //take the sky, set the shader
-                let sky = document.getElementById(scene.name);
-                if(sky.getAttribute('material').shader === 'multi-video') return;
+                //set the shader
                 sky.setAttribute('material', "shader:multi-video;");
                 let children = sky.object3D.children;
                 let skyMesh = null;
                 children.forEach(obj => {
                     if (obj.type === "Mesh")
                         skyMesh = obj;
-                })
+                });
 
                 if (skyMesh == null) return;
 
                 let i = 0;
                 let declarations = "";
-         //       skyMesh.material.uniforms['opacity'] = {type: "number", value: (scene.name===me.state.activeScene.name)?1:0};
                 for (i = 0; i < masks.length; i++) {
                     //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
                     skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
