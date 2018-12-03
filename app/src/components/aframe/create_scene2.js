@@ -73,6 +73,10 @@ export default class VRScene extends React.Component {
                     this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
                     || name === this.state.activeScene.img);
                 var assets = [];
+                if(this.state.activeScene.name === "quarta")
+                    assets.push(<video key={"key" + 'prova'} crossorigin={"anonymous"} id={'mask'} loop={true}  preload="auto" muted>
+                                <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/`+ 'interactives/h7.mp4'} />
+                            </video>);
                 skies = currentLevel.map((sky) => {
 
                     let mats = "";
@@ -81,12 +85,12 @@ export default class VRScene extends React.Component {
                     let scene = this.state.graph.scenes[sky];
                     let radius = 9.9;
 
-                    curvedImages = Object.values(scene.objects).flat();
-                    curvedImages.forEach(obj => {
+                    //curvedImages = Object.values(scene.objects).flat();
+                    Object.values(scene.objects).flat().forEach(obj => {
                             if(obj.media !== "" && obj.media !== undefined){
                                 assets.push(
                                     <video id={"media_" + obj.uuid} key={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
-                                           preload="auto" loop={"false"} crossorigin="anonymous" muted/>
+                                           preload="auto" loop={false} crossorigin="anonymous" muted/>
                                 )
                             }
                             if(obj.mask !== "" && obj.mask !== undefined){
@@ -100,6 +104,7 @@ export default class VRScene extends React.Component {
                         mats = "opacity: 1; visible: true;";
                         active = 'active: true; video: ' + scene.img;
                         radius = 10;
+                        curvedImages = Object.values(scene.objects).flat();
                     }
                     else mats = "opacity: 0; visible: false";
 
@@ -108,7 +113,7 @@ export default class VRScene extends React.Component {
                             <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} />
                         </video>
                     );
-
+                    console.log(curvedImages)
                     return (
                         <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
                                 transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
@@ -140,7 +145,7 @@ export default class VRScene extends React.Component {
             this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
             || name === this.state.activeScene.img);
         currentLevel.forEach(sceneName => {
-        //    if(sceneName !== me.state.activeScene.img) return;
+            if(sceneName === 'quarta.mp4') return;
             setTimeout(function () { //timeout to wait the render of the scene
                 const scene = me.state.graph.scenes[sceneName];
                 const objs = Object.values(scene.objects).flat(); //all the objects, whatever type

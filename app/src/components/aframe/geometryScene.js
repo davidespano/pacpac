@@ -31,7 +31,7 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="10">
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="9.5">
                 {curves}
             </Entity>
         );

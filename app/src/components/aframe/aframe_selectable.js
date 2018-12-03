@@ -1,5 +1,4 @@
 import 'aframe-animation-component';
-import {transition} from "./aframe_actions";
 
 const AFRAME = require('aframe');
 const eventBus = require('./eventBus');
@@ -10,9 +9,8 @@ AFRAME.registerComponent('selectable', {
     },
 
     init: function () {
-        let sceneEl = document.querySelector('a-scene');
         let elem = this.el;
-        let cursor = sceneEl.querySelector('#cursor');
+        let cursor = document.querySelector('#cursor');
 
         elem.addEventListener('mouseenter', function () {
             cursor.setAttribute('color', 'green');
@@ -24,7 +22,6 @@ AFRAME.registerComponent('selectable', {
             cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         });
 
-        //transition(this);
         let data = this.data;
         elem.addEventListener('click', function () {
             eventBus.emit('click-'+data.object_uuid);
@@ -50,5 +47,5 @@ AFRAME.registerComponent('play_video', {
         }
 
     }
-})
+});
 
