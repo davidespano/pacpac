@@ -56,14 +56,16 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         this.state = {
-            scenes: props.scenes.get(props.currentScene)
+            scenes: props.scenes.get(props.objectToScene.get(props.currentObject))
         };
+        console.log(props.objectToScene.get(props.currentObject));
+        console.log(props.currentObject);
     }
 
     handleSceneChange()
     {
         this.setState({
-            scenes: this.props.scenes.get(this.props.currentScene)
+            scenes: this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject))
         })
     }
 
@@ -151,7 +153,7 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'q' || keyName === 'Q')
             {
-                InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.currentScene),
+                InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
                     this.props.interactiveObjects.get(this.props.currentObject));
                 this.props.switchToEditMode();
             }
@@ -162,7 +164,7 @@ export default class GeometryScene extends React.Component{
     {
         let sky = this.state.scenes;
         let curvedImages = [];
-        let objects = this.props.scenes.get(this.props.currentScene).get('objects');
+        let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
         for(let key in objects){
             if(objects.hasOwnProperty(key)){
                 objects[key].forEach((uuid) => {

@@ -11,6 +11,7 @@ import EditorStateStore from "../data/EditorStateStore";
 import RulesStore from "../data/RulesStore";
 import DatalistStore from "../data/DatalistStore";
 import CentroidsStore from "../data/CentroidsStore";
+import ObjectToSceneStore from "../data/ObjectToSceneStore";
 
 
 function getStores() {
@@ -20,6 +21,7 @@ function getStores() {
         CentralSceneStore,
         TagsStore,
         ObjectsStore,
+        ObjectToSceneStore,
         CurrentObjectStore,
         DatalistStore,
         CentroidsStore,
@@ -40,6 +42,7 @@ function getState() {
         datalists: DatalistStore.getState(),
         editor: EditorStateStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
+        objectToScene: ObjectToSceneStore.getState(),
         rules: RulesStore.getState(),
         scenes: ScenesStore.getState(),
         sceneTags: TagsStore.getState(),

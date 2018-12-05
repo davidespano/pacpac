@@ -44,6 +44,10 @@
     height: 88.5vh !important;
 }
 
+body{
+    min-width: 1000px;
+}
+
 .topbar{
     min-height: 11.5vh !important;
 }
@@ -550,3 +554,4 @@
     border-bottom: 1px solid #8C9093;
     font-weight: normal;
 }
+
