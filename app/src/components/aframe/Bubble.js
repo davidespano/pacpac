@@ -27,7 +27,7 @@ export default class Bubble extends React.Component
     render() {
         const curves = this.props.transitions.map(curve => {
             return(
-                <Curved key={"keyC"+ curve.uuid} object_uuid={curve.uuid} vertices={curve.vertices}/>
+                <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.radiusBubble!==9.9?curve.uuid:""} vertices={curve.vertices}/>
             );
         });
         const sound = <Sound track={this.props.track} id = {this.props.name}/>;

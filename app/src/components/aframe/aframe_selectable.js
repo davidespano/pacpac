@@ -8,26 +8,38 @@ AFRAME.registerComponent('selectable', {
         object_uuid:{type: 'string'},
     },
 
-    init: function () {
+    update: function (data) {
         let elem = this.el;
-        let cursor = document.querySelector('#cursor');
 
-        elem.addEventListener('mouseenter', function () {
-            cursor.setAttribute('color', 'green');
-            cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:2 2 2;');
-        });
+        if(this.data.object_uuid!==""){
+            elem['object_uuid'] = this.data.object_uuid;
+            elem.addEventListener('mouseenter', setMouseEnter);
+            elem.addEventListener('mouseleave', setMouseLeave);
+            elem.addEventListener('click', setClick);
+            return;
+        }
+        elem.removeEventListener('mouseenter', setMouseEnter);
+        elem.removeEventListener('mouseleave', setMouseLeave);
+        elem.removeEventListener('click', setClick);
 
-        elem.addEventListener('mouseleave', function () {
-            cursor.setAttribute('color', 'black');
-            cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
-        });
-
-        let data = this.data;
-        elem.addEventListener('click', function () {
-            eventBus.emit('click-'+data.object_uuid);
-        })
     }
 });
+
+function setMouseEnter() {
+    let cursor = document.querySelector('#cursor');
+    cursor.setAttribute('color', 'green');
+    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:2 2 2;');
+}
+
+function setMouseLeave() {
+    let cursor = document.querySelector('#cursor');
+    cursor.setAttribute('color', 'black');
+    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+}
+
+function setClick(event) {
+    eventBus.emit('click-'+event.target.object_uuid);
+}
 
 AFRAME.registerComponent('play_video', {
 
