@@ -285,7 +285,7 @@ function generateSpecificProperties(object, props){
  * @returns {*}
  */
 function objectButtons(props){
-    let currentScene = props.scenes.get(props.currentScene);
+    let scene = props.scenes.get(props.objectToScene.get(props.currentObject));
     let currentObject = props.interactiveObjects.get(props.currentObject);
     return(
         <div className={"buttonGroup"}>
@@ -300,7 +300,7 @@ function objectButtons(props){
                 title={"Salva"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.saveObject(currentScene, currentObject);
+                    InteractiveObjectAPI.saveObject(scene, currentObject);
                     alert("Hai salvato!")
                 }
                 }
@@ -311,7 +311,7 @@ function objectButtons(props){
                 title={"Cancella"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.removeObject(currentScene, currentObject);
+                    InteractiveObjectAPI.removeObject(scene, currentObject);
                     props.updateCurrentObject(null);
                 }
                 }

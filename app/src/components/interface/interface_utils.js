@@ -29,12 +29,12 @@ function setPropertyFromValue(object, property, value, props){
     props.updateCurrentObject(newObject.uuid);
     props.updateObject(newObject);
 
-    let currentScene = props.scenes.get(props.currentScene);
+    let scene = props.scenes.get(props.objectToScene.get(newObject.uuid));
 
-    InteractiveObjectAPI.saveObject(currentScene, newObject);
+    InteractiveObjectAPI.saveObject(scene, newObject);
 
     if(property === "vertices"){
-        //props.editVertices(newObject);
+        props.editVertices(newObject);
     }
 }
 
@@ -56,7 +56,7 @@ function setPropertyFromId(object, property, id, props){
  * @param radius of the sphere
  * @returns array containing x and y values of the 2d centroid
  */
-function calculateApproximativeCentroid(vertices, radius = 10) {
+function calculateApproximativeCentroid(vertices, radius = 9.5) {
 
     vertices = vertices.split(',').join(" "); //replace commas with whitespaces
     let coordinates = vertices.split(" ").map(x => parseFloat(x));
@@ -77,7 +77,11 @@ function calculateApproximativeCentroid(vertices, radius = 10) {
     //project median onto sphere to obtain approximate 3d centroid
     /*https://stackoverflow.com/questions/9604132/how-to-project-a-point-on-to-a-sphere*/
 
+    medianPoint = [9.5,0,0];
+
     let length = Math.sqrt(Math.pow(medianPoint[0], 2) + Math.pow(medianPoint[1], 2) + Math.pow(medianPoint[2], 2));
+
+    if (length === 0) return [null, null];
 
     let centroid = medianPoint.map(x => {
         return radius / length * x
@@ -85,10 +89,11 @@ function calculateApproximativeCentroid(vertices, radius = 10) {
 
     //calculate latitude and longitude to obtain approximate 2d centroid
 
-    let lat = Math.acos(centroid[1] / radius);
-    let lon = Math.atan(centroid[0] / centroid[2]);
+    let lat = 90 - (Math.acos(centroid[1] / radius)) * 180 / Math.PI;
+    let lon = ((270 + (Math.atan2(centroid[0] , centroid[2])) * 180 / Math.PI) % 360) -180;
 
-    return [lat, lon];
+    console.log(lat, lon);
+    return [lon, lat];
 }
 
 /**
