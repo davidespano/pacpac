@@ -67,12 +67,13 @@ export default class VRScene extends React.Component {
 
     render() {
         let skies = [];
+        let assets = [];
         if (this.state.graph.neighbours !== undefined) {
             if (this.state.graph.neighbours[this.state.activeScene.img] !== undefined) {
                 let currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
                     this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
                     || name === this.state.activeScene.img);
-                let assets = [];
+
                 if(this.state.activeScene.name === "quarta")
                     assets.push(<video key={"key" + 'prova'} crossorigin={"anonymous"} id={'mask'} loop={true}  preload="auto" muted>
                                 <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/`+ 'interactives/h7.mp4'} />
