@@ -86,6 +86,8 @@ function transition(actualSceneName, target, duration){
     targetScene.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 0; to: 1; startEvents: ' + targetScene.id + "app");
 
+    actualScene.setAttribute('material', 'depthTest: false');
+    targetScene.setAttribute('material', 'depthTest: false');
     cursor.setAttribute('material', 'visible: false');
     cursor.setAttribute('raycaster', 'far: 0.1');
     targetScene.setAttribute('visible', 'true');

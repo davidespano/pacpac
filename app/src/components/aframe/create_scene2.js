@@ -80,7 +80,7 @@ export default class VRScene extends React.Component {
                             </video>);
                 skies = currentLevel.map((sky) => {
 
-                    let mats = "";
+                    let mats = "depthTest: true; ";
                     let active = 'active: false;';
                     let curvedImages = [];
                     let scene = this.state.graph.scenes[sky];
@@ -102,12 +102,12 @@ export default class VRScene extends React.Component {
                         }
                     );
                     if (sky === this.state.activeScene.img) {
-                        mats = "opacity: 1; visible: true;";
+                        mats += "opacity: 1; visible: true;";
                         active = 'active: true; video: ' + scene.img;
                         radius = 10;
                         curvedImages = Object.values(scene.objects).flat();
                     }
-                    else mats = "opacity: 0; visible: false";
+                    else mats += "opacity: 0; visible: false";
 
                     assets.push(
                         <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto" muted>
