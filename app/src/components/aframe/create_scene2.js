@@ -17,6 +17,7 @@ export default class VRScene extends React.Component {
         super(props);
         let scene = this.props.scenes.toArray()[0];
         let gameGraph = {};
+        this.setShader = this.setShader.bind(this);
         this.state = {
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
@@ -140,74 +141,80 @@ export default class VRScene extends React.Component {
         )
     }
 
+
+
     componentDidUpdate(){
-        let me = this;
-        let currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
+        //set the shader to all the existing bubble
+        Object.keys(this.state.graph.scenes).filter(name =>
             this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
-            || name === this.state.activeScene.img);
-        currentLevel.forEach(sceneName => {
-            if(sceneName === 'quarta.mp4') return;
-            setTimeout(function () { //timeout to wait the render of the scene
-                const scene = me.state.graph.scenes[sceneName];
-                const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
-                if (objs.length === 0) return; //shader not necessary
-                let sky = document.getElementById(scene.name);
-                if(sky.getAttribute('material').shader === 'multi-video') return;
-                let video = [];
-                let masks = [];
-                let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
+            || name === this.state.activeScene.img)
+            .forEach(this.setShader);
+    }
+
+    setShader(sceneName){
+        let me = this;
+        if(sceneName === 'quarta.mp4') return;
+        setTimeout(function () { //timeout to wait the render of the scene
+            const scene = me.state.graph.scenes[sceneName];
+            const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
+            if (objs.length === 0) return; //shader not necessary
+            let sky = document.getElementById(scene.name);
+            if(sky.getAttribute('material').shader === 'multi-video') return;
+            let video = [];
+            let masks = [];
+            let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
+            aux.minFilter = THREE.NearestFilter;
+            video.push(aux);
+            let dict = ['0'];
+            objs.forEach(obj => {
+                //each object with both a media and a mask must be used in the shader
+                if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
+                aux = new THREE.VideoTexture(document.getElementById("media_" + obj.uuid));
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
-                let dict = ['0'];
-                objs.forEach(obj => {
-                    //each object with both a media and a mask must be used in the shader
-                    if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
-                    aux = new THREE.VideoTexture(document.getElementById("media_" + obj.uuid));
-                    aux.minFilter = THREE.NearestFilter;
-                    video.push(aux);
-                    aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask);
-                    aux.minFilter = THREE.NearestFilter;
-                    masks.push(aux);
-                    dict.push(obj.uuid.replace(/-/g,'_'));
-                });
+                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask);
+                aux.minFilter = THREE.NearestFilter;
+                masks.push(aux);
+                dict.push(obj.uuid.replace(/-/g,'_'));
+            });
 
-                if (masks.length === 0) return; //shader not necessary
+            if (masks.length === 0) return; //shader not necessary
 
-                //set the shader
-                sky.setAttribute('material', "shader:multi-video;");
-                let children = sky.object3D.children;
-                let skyMesh = null;
-                children.forEach(obj => {
-                    if (obj.type === "Mesh")
-                        skyMesh = obj;
-                });
+            //set the shader
+            sky.setAttribute('material', "shader:multi-video;");
+            let children = sky.object3D.children;
+            let skyMesh = null;
+            children.forEach(obj => {
+                if (obj.type === "Mesh")
+                    skyMesh = obj;
+            });
 
-                if (skyMesh == null) return;
+            if (skyMesh == null) return;
 
-                let i = 0;
-                let declarations = "";
-                for (i = 0; i < masks.length; i++) {
-                    //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
-                    skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
-                    skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: masks[i]};
-                    declarations += `
+            let i = 0;
+            let declarations = "";
+            for (i = 0; i < masks.length; i++) {
+                //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
+                skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
+                skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: masks[i]};
+                declarations += `
                            uniform sampler2D video${dict[i]};    uniform sampler2D mask${dict[i + 1]};`;
 
-                }
-                //the last video is not handled by the previous loop
-                skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
-                declarations += `   uniform sampler2D video${dict[i]};`;
+            }
+            //the last video is not handled by the previous loop
+            skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
+            declarations += `   uniform sampler2D video${dict[i]};`;
 
-                //now prepare the mixfunction for the fragment shader
-                let mixFunction = `mix(texture2D(video0,vUv),texture2D(video${dict[1]}, vUv),texture2D(mask${dict[1]}, vUv).y)`;
-                for (i = 2; i < video.length; i++) {
-                    mixFunction = `mix(${mixFunction},texture2D(video${dict[i]}, vUv),texture2D(mask${dict[i]}, vUv).y)`
-                }
-                mixFunction = `vec4(${mixFunction});`;
+            //now prepare the mixfunction for the fragment shader
+            let mixFunction = `mix(texture2D(video0,vUv),texture2D(video${dict[1]}, vUv),texture2D(mask${dict[1]}, vUv).y)`;
+            for (i = 2; i < video.length; i++) {
+                mixFunction = `mix(${mixFunction},texture2D(video${dict[i]}, vUv),texture2D(mask${dict[i]}, vUv).y)`
+            }
+            mixFunction = `vec4(${mixFunction});`;
 
-                //now set the fragment shader and other small things
-                let fragShader =
-                    `
+            //now set the fragment shader and other small things
+            let fragShader =
+                `
                     precision mediump int;
                     precision mediump float;
                     
@@ -222,16 +229,14 @@ export default class VRScene extends React.Component {
                     
                     }
             `;
-                skyMesh.material.fragmentShader = fragShader;
-                skyMesh.material.needsUpdate = true;
-                console.log(sceneName)
-                console.log(skyMesh.material.uniforms)
-                //console.log(sky.object3D.children[childrenDimension].material);
+            skyMesh.material.fragmentShader = fragShader;
+            skyMesh.material.needsUpdate = true;
+            //console.log(sceneName)
+            //console.log(skyMesh.material.uniforms)
+            //console.log(sky.object3D.children[childrenDimension].material);
 
-                document.getElementById(scene.img).play();
-                //document.getElementById("media_"+objs[0].uuid).play();
-            }, 50);
-        });
+            if (sceneName === me.state.activeScene.name) document.getElementById(scene.img).play();
+        }, 50);
     }
 }
 
