@@ -78,7 +78,7 @@ export default class VRScene extends React.Component {
                     <a-assets>
                         {this.generateAssets()}
                     </a-assets>
-                    {this.generateSkies()}
+                    {this.generateBubbles()}
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
                             <Entity primitive="a-cursor" id="cursor" pointsaver/>
@@ -127,7 +127,7 @@ export default class VRScene extends React.Component {
         }).flat();
     }
 
-    generateSkies(){
+    generateBubbles(){
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
 
