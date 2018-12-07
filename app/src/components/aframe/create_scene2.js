@@ -130,23 +130,10 @@ export default class VRScene extends React.Component {
     generateBubbles(){
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
-
-            let mats = "depthTest: true; ";
-            let active = 'active: false;';
-            let curvedImages = Object.values(scene.objects).flat();
-            let radius = 9.9;
-
-            if (scene.name === this.state.activeScene.name) {
-                mats += "opacity: 1; visible: true;";
-                active = 'active: true; video: ' + scene.img;
-                radius = 10;
-            }
-            else mats += "opacity: 0; visible: false";
-
             return (
-                <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
-                        transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
-                        videoName={active} radiusBubble={radius}/>
+                <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
+                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
+                />
             );
         });
     }

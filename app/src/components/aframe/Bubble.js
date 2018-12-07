@@ -18,23 +18,34 @@ export default class Bubble extends React.Component
                 cursor.setAttribute('material', 'visible: true');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                 cursor.setAttribute('color', 'black');
-                el.props.handler(el.props.img);
+                el.props.handler(el.props.scene.img);
             }
             this.components[evt.detail.name].animation.reset();
         });
     }
 
     render() {
-        const curves = this.props.transitions.map(curve => {
+        //generate the interactive areas
+        let scene = this.props.scene;
+        const curves = Object.values(scene.objects).flat().map(curve => {
             return(
-                <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.radiusBubble!==9.9?curve.uuid:""} vertices={curve.vertices}/>
+                <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.isActive?curve.uuid:""} vertices={curve.vertices}/>
             );
         });
-        const sound = <Sound track={this.props.track} id = {this.props.name}/>;
+        //const sound = <Sound track={this.props.track} id = {this.props.name}/>;
+        let material = "depthTest: true; ";
+        let active = 'active: false;';
+        let radius = 9.9;
+        if (this.props.isActive) {
+            material += "opacity: 1; visible: true;";
+            active = 'active: true; video: ' + scene.img;
+            radius = 10;
+        }
+        else material += "opacity: 0; visible: false";
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-videosphere" visible={this.props.bubbleVisible}
-                    id={this.props.name} src={'#' + this.props.img} radius={this.props.radiusBubble}
-                    material={this.props.material} play_video={this.props.videoName}>
+            <Entity _ref={elem => this.nv = elem} primitive="a-videosphere" visible={this.props.isActive}
+                    id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
+                    material={material} play_video={active}>
                 {curves}
             </Entity>
         );
