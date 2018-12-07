@@ -24,7 +24,6 @@ export default class VRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]"
         };
-        this.currentScene = React.createRef();
         document.querySelector('link[href*="bootstrap"]').remove();
     }
 
@@ -68,54 +67,35 @@ export default class VRScene extends React.Component {
 
     render() {
         let skies = [];
-        let assets = [];
-        if (this.state.graph.neighbours !== undefined) {
-            if (this.state.graph.neighbours[this.state.activeScene.img] !== undefined) {
-                let currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
+
+        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.img] !== undefined) {
+                this.currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
                     this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
                     || name === this.state.activeScene.img);
+        }
+        else this.currentLevel = [];
 
-                if(this.state.activeScene.name === "quarta")
-                    assets.push(<video key={"key" + 'prova'} crossorigin={"anonymous"} id={'mask'} loop={true}  preload="auto" muted>
-                                <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/`+ 'interactives/h7.mp4'} />
-                            </video>);
-                skies = currentLevel.map((sky) => {
 
-                    let mats = "depthTest: true; ";
-                    let active = 'active: false;';
-                    let curvedImages = [];
-                    let scene = this.state.graph.scenes[sky];
-                    let radius = 9.9;
+        if (this.state.graph.neighbours !== undefined) {
+            if (this.state.graph.neighbours[this.state.activeScene.img] !== undefined) {
+                 let currentLevel = this.currentLevel;
+
+                 skies = currentLevel.map((sky) => {
+
+                     let mats = "depthTest: true; ";
+                     let active = 'active: false;';
+                     let curvedImages = [];
+                     let scene = this.state.graph.scenes[sky];
+                     let radius = 9.9;
 
                     curvedImages = Object.values(scene.objects).flat();
-                    Object.values(scene.objects).flat().forEach(obj => {
-                            if(obj.media !== "" && obj.media !== undefined){
-                                assets.push(
-                                    <video id={"media_" + obj.uuid} key={"media_" + obj.uuid} src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
-                                           preload="auto" loop={false} crossorigin="anonymous" muted/>
-                                )
-                            }
-                            if(obj.mask !== "" && obj.mask !== undefined){
-                                assets.push(
-                                    <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossorigin="Anonymous"  preload="auto" src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}/>
-                                )
-                            }
-                        }
-                    );
                     if (sky === this.state.activeScene.img) {
                         mats += "opacity: 1; visible: true;";
                         active = 'active: true; video: ' + scene.img;
                         radius = 10;
-                        curvedImages = Object.values(scene.objects).flat();
                     }
                     else mats += "opacity: 0; visible: false";
 
-                    assets.push(
-                        <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto" muted>
-                            <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} />
-                        </video>
-                    );
-                    console.log(curvedImages)
                     return (
                         <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
                                 transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
@@ -128,7 +108,7 @@ export default class VRScene extends React.Component {
             <div id="mainscene">
                 <Scene stats>
                     <a-assets>
-                        {assets}
+                        {this.generateAssets()}
                     </a-assets>
                     {skies}
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
@@ -141,14 +121,47 @@ export default class VRScene extends React.Component {
         )
     }
 
-
+    generateAssets(){
+        return this.currentLevel.map(sceneName => {
+            let scene = this.state.graph.scenes[sceneName];
+            let currAssets = [];
+            //first, push the background media.
+            //TODO take the media from the state!
+            currAssets.push(
+                <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto" muted>
+                    <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} />
+                </video>);
+            //second, push the media of the interactive objs
+            Object.values(scene.objects).flat().forEach(obj => {
+                    if(obj.media !== "" && obj.media !== undefined){
+                        currAssets.push(
+                            <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
+                                   preload="auto" loop={false} crossorigin="anonymous" muted
+                            />
+                        )
+                    }
+                    if(obj.mask !== "" && obj.mask !== undefined){
+                        currAssets.push(
+                            <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossorigin="Anonymous"
+                                          preload="auto"
+                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}
+                            />
+                        )
+                    }
+                }
+            );
+            //third, push the media present in the actions
+            //TODO do it!
+            scene.rules.forEach(()=>{});
+            //return the assets
+            return currAssets;
+        }).flat();
+    }
 
     componentDidUpdate(){
         //set the shader to all the existing bubble
-        Object.keys(this.state.graph.scenes).filter(name =>
-            this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
-            || name === this.state.activeScene.img)
-            .forEach(this.setShader);
+        this.currentLevel.forEach(this.setShader);
     }
 
     setShader(sceneName){
