@@ -66,51 +66,19 @@ export default class VRScene extends React.Component {
     }
 
     render() {
-        let skies = [];
-
         if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.img] !== undefined) {
                 this.currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
                     this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
                     || name === this.state.activeScene.img);
         }
         else this.currentLevel = [];
-
-
-        if (this.state.graph.neighbours !== undefined) {
-            if (this.state.graph.neighbours[this.state.activeScene.img] !== undefined) {
-                 let currentLevel = this.currentLevel;
-
-                 skies = currentLevel.map((sky) => {
-
-                     let mats = "depthTest: true; ";
-                     let active = 'active: false;';
-                     let curvedImages = [];
-                     let scene = this.state.graph.scenes[sky];
-                     let radius = 9.9;
-
-                    curvedImages = Object.values(scene.objects).flat();
-                    if (sky === this.state.activeScene.img) {
-                        mats += "opacity: 1; visible: true;";
-                        active = 'active: true; video: ' + scene.img;
-                        radius = 10;
-                    }
-                    else mats += "opacity: 0; visible: false";
-
-                    return (
-                        <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
-                                transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
-                                videoName={active} radiusBubble={radius}/>
-                    );
-                })
-            }
-        }
         return (
             <div id="mainscene">
                 <Scene stats>
                     <a-assets>
                         {this.generateAssets()}
                     </a-assets>
-                    {skies}
+                    {this.generateSkies()}
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
                             <Entity primitive="a-cursor" id="cursor" pointsaver/>
@@ -159,6 +127,30 @@ export default class VRScene extends React.Component {
         }).flat();
     }
 
+    generateSkies(){
+        return this.currentLevel.map(sceneName =>{
+            let scene = this.state.graph.scenes[sceneName];
+
+            let mats = "depthTest: true; ";
+            let active = 'active: false;';
+            let curvedImages = Object.values(scene.objects).flat();
+            let radius = 9.9;
+
+            if (scene.name === this.state.activeScene.name) {
+                mats += "opacity: 1; visible: true;";
+                active = 'active: true; video: ' + scene.img;
+                radius = 10;
+            }
+            else mats += "opacity: 0; visible: false";
+
+            return (
+                <Bubble key={"key" + scene.name} name={scene.name} img={scene.img} material={mats}
+                        transitions={curvedImages} handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
+                        videoName={active} radiusBubble={radius}/>
+            );
+        });
+    }
+
     componentDidUpdate(){
         //set the shader to all the existing bubble
         this.currentLevel.forEach(this.setShader);
@@ -166,7 +158,6 @@ export default class VRScene extends React.Component {
 
     setShader(sceneName){
         let me = this;
-        if(sceneName === 'quarta.mp4') return;
         setTimeout(function () { //timeout to wait the render of the scene
             const scene = me.state.graph.scenes[sceneName];
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
