@@ -63,3 +63,9 @@ AFRAME.registerComponent('play_video', {
     }
 });
 
+AFRAME.registerComponent('auto-enter-vr', {
+    init: function () {
+        this.el.sceneEl.enterVR();
+    }
+});
+
