@@ -25,6 +25,7 @@ export default class VRScene extends React.Component {
             rulesAsString: "[]"
         };
         document.querySelector('link[href*="bootstrap"]').remove();
+        setTimeout(()=> {this.state.runState.due.background = 'tre.mp4'; console.log(this.state);this.forceUpdate()},10000);
     }
 
     componentDidMount() {
@@ -36,10 +37,12 @@ export default class VRScene extends React.Component {
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.state.activeScene.img];
+        let runState = this.createGameState(gameGraph);
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene,
+            runState: runState,
         });
         this.createRuleListeners();
     }
@@ -54,6 +57,19 @@ export default class VRScene extends React.Component {
                 }
             })
         })
+    }
+
+    createGameState(gameGraph){
+        let runState = {};
+        Object.values(gameGraph.scenes).forEach(scene => {
+            //create the state for the scene
+            runState[scene.name] = {background: scene.img}; //name or img??
+            //create the state for all the objs in the scene
+            Object.values(scene.objects).flat().forEach(obj => {
+                runState[obj.uuid] = {state: obj.defaultState} //controllare come è davvero salvato
+            });
+        });
+        return runState;
     }
 
     handleSceneChange(newActiveScene) {
@@ -81,7 +97,7 @@ export default class VRScene extends React.Component {
                     {this.generateBubbles()}
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor" pointsaver/>
+                            <Entity primitive="a-cursor" id="cursor" raycaster="objects: [data-raycastable];" pointsaver/>
                         </Entity>
                     </Entity>
                 </Scene>
@@ -150,6 +166,7 @@ export default class VRScene extends React.Component {
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             if (objs.length === 0) return; //shader not necessary
             let sky = document.getElementById(scene.name);
+            console.log(sky)
             if(sky.getAttribute('material').shader === 'multi-video') return;
             let video = [];
             let masks = [];

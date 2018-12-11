@@ -10,6 +10,7 @@ AFRAME.registerComponent('selectable', {
 
     update: function (data) {
         let elem = this.el;
+        elem.setAttribute('data-raycastable', true);
 
         if(this.data.object_uuid!==""){
             elem['object_uuid'] = this.data.object_uuid;
@@ -21,6 +22,7 @@ AFRAME.registerComponent('selectable', {
         elem.removeEventListener('mouseenter', setMouseEnter);
         elem.removeEventListener('mouseleave', setMouseLeave);
         elem.removeEventListener('click', setClick);
+        elem.removeAttribute('data-raycastable');
 
     }
 });
