@@ -111,9 +111,9 @@ export default class VRScene extends React.Component {
             //first, push the background media.
             //TODO take the media from the state!
             currAssets.push(
-                <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto" muted>
-                    <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} />
-                </video>);
+                <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto" muted
+                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
+                />);
             //second, push the media of the interactive objs
             Object.values(scene.objects).flat().forEach(obj => {
                     if(obj.media !== "" && obj.media !== undefined){
@@ -165,7 +165,6 @@ export default class VRScene extends React.Component {
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             if (objs.length === 0) return; //shader not necessary
             let sky = document.getElementById(scene.name);
-            console.log(sky)
             if(sky.getAttribute('material').shader === 'multi-video') return;
             let video = [];
             let masks = [];
