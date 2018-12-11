@@ -25,7 +25,6 @@ export default class VRScene extends React.Component {
             rulesAsString: "[]"
         };
         document.querySelector('link[href*="bootstrap"]').remove();
-        setTimeout(()=> {this.state.runState.due.background = 'tre.mp4'; console.log(this.state);this.forceUpdate()},10000);
     }
 
     componentDidMount() {
@@ -90,7 +89,7 @@ export default class VRScene extends React.Component {
         else this.currentLevel = [];
         return (
             <div id="mainscene">
-                <Scene stats>
+                <Scene vr-mode-ui="enabled: true">
                     <a-assets>
                         {this.generateAssets()}
                     </a-assets>
