@@ -10,6 +10,7 @@ function executeAction(state, rule, action){
             let duration = 2000;
             let current_transition = {};
             let duration_transition = 0;
+            let cursor = document.querySelector('#cursor');
             Object.values(state.activeScene.objects).flat().forEach(t =>{ //we should check the other objects as well
                 if(t.uuid === rule.object_uuid){
                     duration = t.properties.duration;
@@ -17,7 +18,8 @@ function executeAction(state, rule, action){
 
                 }
             });
-
+            cursor.setAttribute('material', 'visible: false');
+            cursor.setAttribute('raycaster', 'far: 0.1');
             let objectVideo_transition = document.querySelector('#media_' + current_transition.uuid);
 
             if(objectVideo_transition != null) {
@@ -88,8 +90,7 @@ function transition(actualSceneName, target, duration){
 
     actualScene.setAttribute('material', 'depthTest: false');
     targetScene.setAttribute('material', 'depthTest: false');
-    cursor.setAttribute('material', 'visible: false');
-    cursor.setAttribute('raycaster', 'far: 0.1');
+
     targetScene.setAttribute('visible', 'true');
     targetScene.setAttribute('material', 'visible: true');
 
