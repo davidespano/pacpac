@@ -47,7 +47,7 @@ function generateRules(props){
                             onClick={() => {
                                 InteractiveObjectAPI.removeRule(currentScene, rule);
                             }}>
-                            <img  className={"action-buttons"} src={"icons8-waste-50.png"} alt={'Cancella'}/>
+                            <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella'}/>
                         </button>
                     </div>
                 );

@@ -85,13 +85,13 @@ function buttonsBar(){
                     title={"Cerca una scena"}
                     className={"action-buttons-container"}
                 >
-                    <img className={"action-buttons"} src={"icons8-search-filled-50.png"}/>
+                    <img className={"action-buttons"} src={"icons/icons8-search-filled-50.png"}/>
                 </button>
                 <button
                     title={"Ordina per..."}
                     className={"action-buttons-container"}
                 >
-                    <img className={"action-buttons"} src={"icons8-sort-filled-50.png"}/>
+                    <img className={"action-buttons"} src={"icons/icons8-sort-filled-50.png"}/>
                 </button>
             </div>
             <div className={'sort-menu'}>

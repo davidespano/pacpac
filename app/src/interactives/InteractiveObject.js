@@ -16,7 +16,7 @@ const InteractiveObject = Immutable.Record({
     type : null,
     media : null,
     mask: null,
-    vertices : "",
+    vertices : null,
     properties : null,
 
 });

@@ -90,7 +90,7 @@ body{
     position: relative;
 }
 
-.scene > img, .scene > video{
+#central-img, .scene > video{
     transition: .1s ease;
     backface-visibility: hidden;
     width: 100%;
@@ -553,5 +553,32 @@ body{
     background-color: white;
     border-bottom: 1px solid #8C9093;
     font-weight: normal;
+}
+
+/* Centroids icons */
+
+.icons {
+    position: absolute;
+    z-index: 1;
+}
+
+.icons-img {
+    background-color: rgba(255, 255, 255, .4);
+    width: 50px;
+    height: 50px;
+}
+
+.icons-img:hover{
+    background-color: rgba(239, 86, 45, .3);
+}
+
+.icons-labels {
+    color: white;
+    font-size: 0.5em;
+    text-shadow:
+            2px 0 2px black,
+            -2px 0 2px black,
+            0 2px 2px black,
+            0 -2px 2px black;
 }
 

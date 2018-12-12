@@ -95,7 +95,7 @@ function sceneView(props){
                                 SceneAPI.deleteScene(scene);
                             }}
                         >
-                            <img className={"action-buttons scene-buttons-img"} src={"icons8-waste-50.png"}/>
+                            <img className={"action-buttons scene-buttons-img"} src={"icons/icons8-waste-50.png"}/>
                         </button>
                     </div>
                 </div>
@@ -149,21 +149,21 @@ function showObjects(interactiveObjects, props) {
                     title={"Cerca un oggetto"}
                     className={"action-buttons-container"}
                 >
-                    <img className={"action-buttons"} src={"icons8-search-filled-50.png"} alt={'Cerca un oggetto'}/>
+                    <img className={"action-buttons"} src={"icons/icons8-search-filled-50.png"} alt={'Cerca un oggetto'}/>
                 </button>
                 <button
                     title={"Filtra per scena corrente"}
                     className={"action-buttons-container"}
                     onClick={() => props.filterObjectFunction('scene')}
                 >
-                    <img className={"action-buttons"} src={"icons8-image-100.png"} alt={'Filtra per scena corrente'}/>
+                    <img className={"action-buttons"} src={"icons/icons8-image-100.png"} alt={'Filtra per scena corrente'}/>
                 </button>
                 <button
                     title={"Tutti gli oggetti"}
                     className={"action-buttons-container"}
                     onClick={()=> props.filterObjectFunction('all')}
                 >
-                    <img className={"action-buttons"} src={"icons8-gallery-50.png"} alt={'Tutti gli oggetti'}/>
+                    <img className={"action-buttons"} src={"icons/icons8-gallery-50.png"} alt={'Tutti gli oggetti'}/>
                 </button>
 
             </div>
@@ -294,7 +294,7 @@ function objectButtons(props){
                 className={"action-buttons-container"}
                 onClick={()=> props.selectAllObjects()}
             >
-                <img  className={"action-buttons"} src={"icons8-go-back-50.png"} alt={'Torna all\'elenco degli oggetti'}/>
+                <img  className={"action-buttons"} src={"icons/icons8-go-back-50.png"} alt={'Torna all\'elenco degli oggetti'}/>
             </button>
             <button
                 title={"Salva"}
@@ -305,7 +305,7 @@ function objectButtons(props){
                 }
                 }
             >
-                <img className={"action-buttons"} src={"icons8-save-as-50.png"} alt={'Salva'}/>
+                <img className={"action-buttons"} src={"icons/icons8-save-as-50.png"} alt={'Salva'}/>
             </button>
             <button
                 title={"Cancella"}
@@ -316,7 +316,7 @@ function objectButtons(props){
                 }
                 }
             >
-                <img  className={"action-buttons"} src={"icons8-waste-50.png"} alt={'Cancella'}/>
+                <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella'}/>
             </button>
         </div>
     );
@@ -373,7 +373,7 @@ function generateObjectsList(props) {
                         {obj.name}
                     </p>
                     <img className={"action-buttons"}
-                         src={"icons8-waste-50.png"}
+                         src={"icons/icons8-waste-50.png"}
                          alt={'Cancella'}
                          onClick={() => {
                             InteractiveObjectAPI.removeObject(scene, obj);

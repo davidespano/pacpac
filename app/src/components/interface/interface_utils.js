@@ -54,15 +54,15 @@ function setPropertyFromId(object, property, id, props){
  * Generates approximative 2d centroid for the interaction area starting from the given vertices.
  * @param vertices is a string that contains all of the vertices values
  * @param radius of the sphere
- * @returns array containing x and y values of the 2d centroid
+ * @returns [longitude, latitude]
+ * This function returns latitude and longitude because they are fixed values that can be easily stored in
+ * CentroidsStore. x and y must be calculated later, since the size of central image is variable.
  */
-function calculateApproximativeCentroid(vertices, radius = 9.5) {
+function calculateCentroid(vertices, radius = 9.5) {
 
     vertices = vertices.split(',').join(" "); //replace commas with whitespaces
     let coordinates = vertices.split(" ").map(x => parseFloat(x));
     let medianPoint = [0.0, 0.0, 0.0];
-
-    //console.log(coordinates.length)
 
     for (let i = 0; i < coordinates.length; i += 3) {
         medianPoint[0] += coordinates[i];
@@ -77,22 +77,23 @@ function calculateApproximativeCentroid(vertices, radius = 9.5) {
     //project median onto sphere to obtain approximate 3d centroid
     /*https://stackoverflow.com/questions/9604132/how-to-project-a-point-on-to-a-sphere*/
 
-    medianPoint = [9.5,0,0];
-
     let length = Math.sqrt(Math.pow(medianPoint[0], 2) + Math.pow(medianPoint[1], 2) + Math.pow(medianPoint[2], 2));
-
-    if (length === 0) return [null, null];
 
     let centroid = medianPoint.map(x => {
         return radius / length * x
     });
 
-    //calculate latitude and longitude to obtain approximate 2d centroid
+    // calculate latitude and longitude to obtain approximate 2d centroid
 
     let lat = 90 - (Math.acos(centroid[1] / radius)) * 180 / Math.PI;
     let lon = ((270 + (Math.atan2(centroid[0] , centroid[2])) * 180 / Math.PI) % 360) -180;
 
-    console.log(lat, lon);
+
+    // adjust latitude and longitude to obtain values in interval (0,360)
+
+    lon = 180 - lon;
+    lat = 180 - lat;
+
     return [lon, lat];
 }
 
@@ -139,6 +140,6 @@ export default {
     setPropertyFromId : setPropertyFromId,
     setPropertyFromValue : setPropertyFromValue,
     title : title,
-    centroid: calculateApproximativeCentroid,
+    centroid: calculateCentroid,
     checkSelection: checkSelection,
 }

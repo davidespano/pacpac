@@ -21,7 +21,9 @@ function TopBar(props){
                        aria-selected="true" onClick={() => handleNavbarSelection()}>Gioco</a>
                     <a className="nav-item nav-link" id="nav-objects-tab" data-toggle="tab" href="#nav-objects" role="tab"
                        aria-controls="nav-objects" aria-selected="false" onClick={() => handleNavbarSelection()}>Oggetti</a>
-                    <a className={"nav-item navbar-toggler"} onClick={() => props.switchToPlayMode()}>PLAY</a>
+                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
+                       aria-controls="nav-play" aria-selected="false"
+                       onClick={() => {props.switchToPlayMode()}} >Play</a>
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">
@@ -29,7 +31,7 @@ function TopBar(props){
                     <InputSceneForm {...props} />
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
-                            <img src={"icons8-add-image-100.png"}/>
+                            <img src={"icons/icons8-add-image-100.png"}/>
                             <figcaption>Nuova scena</figcaption>
                         </figure>
                     </div>
@@ -40,14 +42,14 @@ function TopBar(props){
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.TRANSITION);
                                 }}>
-                            <img src={"icons8-add-one-way-transition-100.png"}/>
+                            <img src={"icons/icons8-add-one-way-transition-100.png"}/>
                             <figcaption>Transizione</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.SWITCH);
                                 }}>
-                            <img src={"icons8-toggle-on-filled-100.png"}/>
+                            <img src={"icons/icons8-add-toggle-on-filled-100.png"}/>
                             <figcaption>Interruttore</figcaption>
                         </figure>
                     </div>

@@ -17,11 +17,18 @@ class CentroidsStore extends ReduceStore {
 
     reduce(state, action){
         switch(action.type){
+            case ActionTypes.REMOVE_OBJECT:
+                if(state.has(action.obj.uuid)){
+                    state = state.delete(action.obj.uuid);
+                }
+                return state;
+            case ActionTypes.RECEIVE_OBJECT:
+                if(action.obj.vertices != null){
+                    state = state.set(action.obj.uuid, interface_utils.centroid(action.obj.vertices));
+                }
+                return state;
             case ActionTypes.UPDATE_VERTICES:
-                /*
-                let centroid = interface_utils.centroid(action.vertices);
-                state = state.set(action.obj.uuid, centroid);
-                */
+                state = state.set(action.obj.uuid, interface_utils.centroid(action.vertices));
                 return state;
             default:
                 return state;
