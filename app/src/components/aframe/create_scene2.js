@@ -89,7 +89,7 @@ export default class VRScene extends React.Component {
         else this.currentLevel = [];
         return (
             <div id="mainscene">
-                <Scene vr-mode-ui="enabled: true">
+                <Scene stats>
                     <a-assets>
                         {this.generateAssets()}
                     </a-assets>
@@ -109,7 +109,6 @@ export default class VRScene extends React.Component {
             let scene = this.state.graph.scenes[sceneName];
             let currAssets = [];
             //first, push the background media.
-            //TODO take the media from the state!
             currAssets.push(
                 <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto" muted
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}

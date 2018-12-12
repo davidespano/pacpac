@@ -50,4 +50,8 @@ export default class Bubble extends React.Component
             </Entity>
         );
     }
+
+    componentWillUnmount(){
+        delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img]
+    }
 }
