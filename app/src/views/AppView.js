@@ -35,7 +35,6 @@ function AppView(props) {
             return(
                 <div>
                     <GeometryScene {...props}/>
-                    <Canvas {...props}/>
                 </div>
             );
 

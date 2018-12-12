@@ -72,11 +72,11 @@ function setProperty(scene, property, value, props){
     let newScene = scene.set(property, value);;
 
     if(property === 'name'){
-        props.removeScene(scene);
+        props.updateSceneName(newScene, scene.name);
         props.updateCurrentScene(newScene.name);
+    } else {
+        props.updateScene(newScene);
     }
-
-    props.updateScene(newScene);
 
     /**FUNZIONE DI SALVATAGGIO SU DB QUI**/
 }

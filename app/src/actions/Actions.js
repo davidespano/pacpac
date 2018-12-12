@@ -102,6 +102,19 @@ const Actions = {
     },
 
     /**
+     * Dispatch scene name update (since the name is the scene key in ScenesStore map, it needs a specific update)
+     * @param scene
+     * @param oldName
+     */
+    updateSceneName(scene, oldName){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SCENE_NAME,
+            scene: scene,
+            oldName: oldName,
+        })
+    },
+
+    /**
      * Dispatch generic scene removal
      * @param scene
      */

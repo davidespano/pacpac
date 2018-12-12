@@ -57,7 +57,7 @@ function CentralScene(props){
  */
 function getCoordinates(event){
 
-    let img = document.getElementById('scene');
+    let img = document.getElementById('central-img');
 
     return {
         x: event.pageX - img.offsetLeft,
@@ -66,11 +66,11 @@ function getCoordinates(event){
 }
 
 function generateObjectsIcons(props){
+
     const img = document.getElementById('central-img');
 
     if(img){
 
-        console.log(img);
         let width = img.offsetWidth;
         let height = img.offsetHeight;
 
@@ -81,11 +81,8 @@ function generateObjectsIcons(props){
         if(allObjects.length === 0) return;
 
         return (allObjects.map(obj_uuid => {
-            console.log(obj_uuid)
 
             if(!props.centroids.has(obj_uuid)) return;
-
-            console.log('ciauuu')
 
             let obj = props.interactiveObjects.get(obj_uuid);
             let link;

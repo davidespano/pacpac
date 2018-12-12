@@ -64,6 +64,7 @@ function getState() {
         removeAllScene: Actions.removeAllScene,
         updateCurrentScene: Actions.updateCurrentScene,
         updateScene: Actions.updateScene,
+        updateSceneName: Actions.updateSceneName,
 
         //interactive objects
 

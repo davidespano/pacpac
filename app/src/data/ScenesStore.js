@@ -52,6 +52,9 @@ class ScenesStore extends ReduceStore {
             case ActionTypes.UPDATE_SCENE:
                 state = state.set(action.scene.name, action.scene);
                 return state;
+            case ActionTypes.UPDATE_SCENE_NAME:
+                state = state.delete(action.oldName);
+                return state.set(action.scene.name, action.scene);
             case ActionTypes.REMOVE_ALL_SCENES:
                 state = state.clear();
                 return state;
