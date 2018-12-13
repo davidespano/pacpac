@@ -2,6 +2,8 @@ import React from "react";
 import {Entity} from 'aframe-react';
 import {Curved, Sound} from './aframe_entities';
 import settings from "../../utils/settings";
+const THREE = require('three');
+const {mediaURL} = settings;
 
 
 export default class Bubble extends React.Component
@@ -22,6 +24,7 @@ export default class Bubble extends React.Component
             }
             this.components[evt.detail.name].animation.reset();
         });
+        this.setShader();
     }
 
     render() {
@@ -51,7 +54,95 @@ export default class Bubble extends React.Component
         );
     }
 
+    setShader(){
+        setTimeout(() => { //timeout to wait the render of the bubble
+            let scene = this.props.scene;
+            const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
+            if (objs.length === 0) return; //shader not necessary
+            let sky = document.getElementById(scene.name);
+            if(sky.getAttribute('material').shader === 'multi-video') return;
+            let video = [];
+            let masks = [];
+            let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
+            aux.minFilter = THREE.NearestFilter;
+            video.push(aux);
+            let dict = ['0'];
+            objs.forEach(obj => {
+                //each object with both a media and a mask must be used in the shader
+                if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
+                aux = new THREE.VideoTexture(document.getElementById("media_" + obj.uuid));
+                aux.minFilter = THREE.NearestFilter;
+                video.push(aux);
+                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask);
+                aux.minFilter = THREE.NearestFilter;
+                masks.push(aux);
+                dict.push(obj.uuid.replace(/-/g,'_'));
+            });
+
+            if (masks.length === 0) return; //shader not necessary
+
+            //set the shader
+            sky.setAttribute('material', "shader:multi-video;");
+            let children = sky.object3D.children;
+            let skyMesh = null;
+            children.forEach(obj => {
+                if (obj.type === "Mesh")
+                    skyMesh = obj;
+            });
+
+            if (skyMesh == null) return;
+
+            let i = 0;
+            let declarations = "";
+            for (i = 0; i < masks.length; i++) {
+                //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
+                skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
+                skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: masks[i]};
+                declarations += `
+                           uniform sampler2D video${dict[i]};    uniform sampler2D mask${dict[i + 1]};`;
+
+            }
+            //the last video is not handled by the previous loop
+            skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
+            declarations += `   uniform sampler2D video${dict[i]};`;
+
+            //now prepare the mixfunction for the fragment shader
+            let mixFunction = `mix(texture2D(video0,vUv),texture2D(video${dict[1]}, vUv),texture2D(mask${dict[1]}, vUv).y)`;
+            for (i = 2; i < video.length; i++) {
+                mixFunction = `mix(${mixFunction},texture2D(video${dict[i]}, vUv),texture2D(mask${dict[i]}, vUv).y)`
+            }
+            mixFunction = `vec4(${mixFunction});`;
+
+            //now set the fragment shader and other small things
+            let fragShader =
+                `
+                    precision mediump int;
+                    precision mediump float;
+                    
+                    varying vec2 vUv;
+                    ${declarations}
+                    uniform float opacity;
+                    
+                    void main() {
+                    
+                    gl_FragColor = ${mixFunction}
+                    gl_FragColor.a = opacity;
+                    
+                    }
+            `;
+            skyMesh.material.fragmentShader = fragShader;
+            skyMesh.material.needsUpdate = true;
+
+
+            if (this.props.isActive) document.getElementById(scene.img).play();
+            this.videoTextures = video;
+            this.masksTextures = masks;
+        }, 50);
+    }
+
     componentWillUnmount(){
-        delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img]
+        delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img];
+        (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());
+        (this.masksTextures?this.masksTextures:[]).forEach(t => t.dispose());
     }
 }
