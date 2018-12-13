@@ -27,6 +27,15 @@ export default class Bubble extends React.Component
         this.setShader();
     }
 
+    componentDidUpdate(){
+        if(!this.props.isActive) {
+            Object.values(this.props.scene.objects).flat().forEach(obj => {
+                if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
+                document.getElementById("media_" + obj.uuid).currentTime = 0;
+            })
+        }
+    }
+
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
