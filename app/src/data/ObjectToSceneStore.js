@@ -17,6 +17,8 @@ class ObjectToSceneStore extends ReduceStore {
     }
 
     reduce(state, action){
+        let objects;
+
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
                 state = state.set(action.obj.uuid, action.scene.name);
@@ -26,13 +28,13 @@ class ObjectToSceneStore extends ReduceStore {
                 return state;
             case ActionTypes.REMOVE_SCENE:
 
-                let objects = scene_utils.allObjects(action.scene);
+                objects = scene_utils.allObjects(action.scene);
                 objects.forEach(obj => state = state.delete(obj));
 
                 return state;
             case ActionTypes.RECEIVE_SCENE:
 
-                let objects = scene_utils.allObjects(action.scene);
+                objects = scene_utils.allObjects(action.scene);
                 objects.forEach(obj => state = state.set(obj, action.scene.name));
 
                 return state;
