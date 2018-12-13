@@ -558,6 +558,8 @@ body{
 /* Centroids icons */
 
 .icons {
+    margin-top: -25px;
+    margin-left: -25px;
     position: absolute;
     z-index: 1;
 }

@@ -3,6 +3,7 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
 import stores_utils from "./stores_utils";
+import scene_utils from "../scene/scene_utils";
 
 
 class ObjectsStore extends ReduceStore {
@@ -31,13 +32,8 @@ class ObjectsStore extends ReduceStore {
                 return state;
             case ActionTypes.REMOVE_SCENE:
 
-                let objects = action.scene.get('objects');
-                objects.transitions.forEach(obj_uuid => {
-                    state = state.delete(obj_uuid);
-                });
-                objects.switches.forEach(obj_uuid => {
-                    state = state.delete(obj_uuid);
-                });
+                let objects = scene_utils.allObjects(action.scene);
+                objects.forEach(obj => state = state.delete(obj));
 
                 return state;
             default:

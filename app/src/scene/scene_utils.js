@@ -69,7 +69,7 @@ function removeRuleFromScene(scene, rule){
  * @param props
  */
 function setProperty(scene, property, value, props){
-    let newScene = scene.set(property, value);;
+    let newScene = scene.set(property, value);
 
     if(property === 'name'){
         props.updateSceneName(newScene, scene.name);
@@ -98,6 +98,15 @@ function defineField(object){
     }
 }
 
+/**
+ * Returns array of all objects belonging to the scene (with no type distinction)
+ * @param scene
+ * @returns {*}
+ */
+function allObjects(scene){
+    return Object.values(scene.objects).flat();
+}
+
 export default {
     addInteractiveObjectToScene: addInteractiveObjectToScene,
     removeInteractiveObject: removeInteractiveObject,
@@ -105,4 +114,5 @@ export default {
     removeRuleFromScene: removeRuleFromScene,
     setProperty: setProperty,
     defineField: defineField,
+    allObjects: allObjects,
 }

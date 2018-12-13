@@ -4,7 +4,6 @@ import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
 import Scene from "../scene/Scene";
 import scene_utils from '../scene/scene_utils';
-import rules_utils from "../interactives/rules/rules_utils";
 
 class ScenesStore extends ReduceStore {
 

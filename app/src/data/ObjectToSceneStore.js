@@ -4,6 +4,7 @@ import ActionTypes from '../actions/ActionTypes';
 import InteractiveObjectsTypes from '../interactives/InteractiveObjectsTypes';
 import ObjectsStore from "./ObjectsStore";
 import Immutable from 'immutable';
+import scene_utils from "../scene/scene_utils";
 
 class ObjectToSceneStore extends ReduceStore {
 
@@ -19,31 +20,20 @@ class ObjectToSceneStore extends ReduceStore {
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
                 state = state.set(action.obj.uuid, action.scene.name);
-                console.log(state);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
                 state = state.delete(action.obj.uuid);
                 return state;
             case ActionTypes.REMOVE_SCENE:
 
-                let objects = action.scene.get('objects');
-                objects.transitions.forEach(obj_uuid => {
-                    state = state.delete(obj_uuid);
-                });
-                objects.switches.forEach(obj_uuid => {
-                    state = state.delete(obj_uuid);
-                });
+                let objects = scene_utils.allObjects(action.scene);
+                objects.forEach(obj => state = state.delete(obj));
 
                 return state;
             case ActionTypes.RECEIVE_SCENE:
 
-                let objs = action.scene.get('objects');
-                objs.transitions.forEach(obj_uuid => {
-                    state = state.set(obj_uuid, action.scene.name);
-                });
-                objs.switches.forEach(obj_uuid => {
-                    state = state.set(obj_uuid, action.scene.name);
-                });
+                let objects = scene_utils.allObjects(action.scene);
+                objects.forEach(obj => state = state.set(obj, action.scene.name));
 
                 return state;
             default:

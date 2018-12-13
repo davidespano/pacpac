@@ -89,12 +89,13 @@ function calculateCentroid(vertices, radius = 9.5) {
     let lon = ((270 + (Math.atan2(centroid[0] , centroid[2])) * 180 / Math.PI) % 360) -180;
 
 
-    // adjust latitude and longitude to obtain values in interval (0,360)
+    // adjust latitude and longitude to obtain values in percentage
 
-    lon = 180 - lon;
-    lat = 180 - lat;
+    const x = (180 - lon) * 100 / 360;
+    const y = (180 - lat) * 100 / 360;
 
-    return [lon, lat];
+
+    return [x, y];
 }
 
 /**

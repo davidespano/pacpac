@@ -3,6 +3,7 @@ import settings from '../../utils/settings';
 import SceneAPI from "../../utils/SceneAPI";
 import Canvas from "./Canvas";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
+import scene_utils from "../../scene/scene_utils";
 
 
 const {mediaURL} = settings;
@@ -65,72 +66,68 @@ function getCoordinates(event){
     };
 }
 
+/**
+ * Generates an icon for every object with a defined geometry
+ * @param props
+ * @returns {any[]}
+ */
 function generateObjectsIcons(props){
 
-    const img = document.getElementById('central-img');
+    let scene = props.scenes.get(props.currentScene);
+    let allObjects = scene_utils.allObjects(scene);
 
-    if(img){
+    return (allObjects.map(obj_uuid => {
 
-        let width = img.offsetWidth;
-        let height = img.offsetHeight;
+        if(!props.centroids.has(obj_uuid)) return;
 
-        let scene = props.scenes.get(props.currentScene);
-        let objects = scene.objects;
-        let allObjects = objects.transitions.concat(objects.switches);
+        let obj = props.interactiveObjects.get(obj_uuid);
 
-        if(allObjects.length === 0) return;
+        return(
+            <figure className={'icons'}
+                    onClick={() => {
+                        props.updateCurrentObject(obj.uuid);
+                        props.rightbarSelection('objects');
+                    }}
+                    style={getPosition(props.centroids, obj.uuid)}
+                    key={'icon-figure-' + obj.uuid}
+            >
+                <img className={'icons-img'}
+                     id={'icon-' + obj.uuid}
+                     src={getImage(obj.type)}
+                     alt={obj.name}
+                />
+                <figcaption className={'icons-labels'}>{obj.name}</figcaption>
+            </figure>
+        );
+    }));
+}
 
-        return (allObjects.map(obj_uuid => {
+/**
+ * Returns icon position in percentage
+ * @param centroids
+ * @param obj
+ * @returns {{left: string, top: string}}
+ */
+function getPosition(centroids, obj){
+    const coord = centroids.get(obj);
+    return {left: coord[0] + '%', top: coord[1] + '%'};
+}
 
-            if(!props.centroids.has(obj_uuid)) return;
+/**
+ * Returns link to img according to the object type
+ * @param type
+ * @returns {string}
+ */
+function getImage(type){
 
-            let obj = props.interactiveObjects.get(obj_uuid);
-            let link;
-
-            switch (obj.type) {
-                case InteractiveObjectsTypes.TRANSITION:
-                    link = "icons/icons8-one-way-transition-100.png";
-                    break;
-                case InteractiveObjectsTypes.SWITCH:
-                    link = "icons/icons8-toggle-on-filled-100.png";
-                    break;
-                default:
-                    return;
-            }
-
-            return(
-                <figure className={'icons'}
-                        onClick={() => {
-                            props.updateCurrentObject(obj.uuid);
-                            props.rightbarSelection('objects');
-                        }}
-                        style={calculatePosition(props, obj, width, height)}
-                        key={'icon-figure-' + obj.uuid}
-                >
-                    <img className={'icons-img'}
-                         id={'icon-' + obj.uuid}
-                         src={link}
-                         alt={obj.name}
-                    />
-                    <figcaption className={'icons-labels'}>{obj.name}</figcaption>
-                </figure>
-            );
-        }));
+    switch (type) {
+        case InteractiveObjectsTypes.TRANSITION:
+            return "icons/icons8-one-way-transition-100.png";
+        case InteractiveObjectsTypes.SWITCH:
+            return "icons/icons8-toggle-on-filled-100.png";
+        default:
+            return "?";
     }
 }
 
-function calculatePosition(props, obj, width, height){
-    const coord = props.centroids.get(obj.uuid);
-
-    let x = coord[0] * width / 360;
-    let y = coord[1] * height / 360;
-
-    x = x < 25 ? x : (x - 25);
-    y = y < 25 ? y : (y - 25);
-
-    return({left: x, top: y});
-}
-
 export default CentralScene;
-
-//props.clickScene(getCoordinates(event).x, getCoordinates(event).y)
