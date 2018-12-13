@@ -17,7 +17,6 @@ export default class VRScene extends React.Component {
         super(props);
         let scene = this.props.scenes.toArray()[0];
         let gameGraph = {};
-        this.setShader = this.setShader.bind(this);
         this.state = {
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
