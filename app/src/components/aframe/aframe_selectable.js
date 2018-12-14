@@ -8,22 +8,21 @@ AFRAME.registerComponent('selectable', {
         object_uuid:{type: 'string'},
     },
 
+    init: function () {
+        let elem = this.el;
+        elem.addEventListener('mouseenter', setMouseEnter);
+        elem.addEventListener('mouseleave', setMouseLeave);
+        elem.addEventListener('click', setClick);
+    },
+
     update: function (data) {
         let elem = this.el;
-        elem.setAttribute('data-raycastable', true);
-
         if(this.data.object_uuid!==""){
             elem['object_uuid'] = this.data.object_uuid;
-            elem.addEventListener('mouseenter', setMouseEnter);
-            elem.addEventListener('mouseleave', setMouseLeave);
-            elem.addEventListener('click', setClick);
-            return;
+            elem.setAttribute('data-raycastable', true);
+        }else {
+            elem.removeAttribute('data-raycastable');
         }
-        elem.removeEventListener('mouseenter', setMouseEnter);
-        elem.removeEventListener('mouseleave', setMouseLeave);
-        elem.removeEventListener('click', setClick);
-        elem.removeAttribute('data-raycastable');
-
     }
 });
 
