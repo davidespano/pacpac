@@ -90,7 +90,7 @@ body{
     position: relative;
 }
 
-#central-img, .scene > video{
+.scene > img, .scene > video{
     transition: .1s ease;
     backface-visibility: hidden;
     width: 100%;
