@@ -36,6 +36,7 @@ function CentralScene(props){
             <div id={'central-scene'} className={'scene'}>
                 <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + currentScene.img}>
                 </video>
+                {generateObjectsIcons(props)}
             </div>
         );
     }
