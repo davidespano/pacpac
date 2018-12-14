@@ -15,7 +15,7 @@ function AppView(props) {
     switch(props.editor.mode){
         case 'EDIT_MODE_ON':
             return (
-                <div>
+                <div onClick={(event) => closeDropdowns(event, props)}>
                     <TopBar {...props} />
                     <div className={'grid-container'}>
                         <LeftBar {...props} />
@@ -44,6 +44,16 @@ function AppView(props) {
             );
 
     }
+}
+
+/**
+ * This function closes dropdown menus when we click outside of buttons but I really don't know how it manages to work,
+ * we assume it's magic
+ * @param event
+ * @param props
+ */
+function closeDropdowns(event, props){
+    props.dropdownScenesOrder(!(props.editor.scenesOrderMenu) && event.target.className.includes('dropdown-btn'));
 }
 
 export default AppView;

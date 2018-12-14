@@ -5,6 +5,7 @@ import Transition from "../interactives/Transition";
 import Rule from "../interactives/rules/Rule";
 import RuleActionTypes from "../interactives/rules/RuleActionTypes";
 import Switch from "../interactives/Switch";
+import Orders from "../data/Orders";
 
 const request = require('superagent');
 
@@ -14,7 +15,7 @@ const {apiBaseURL} = settings;
  * Retrieves scene data from db and generates a new Scene object
  * @param name of the scene
  */
-function getByName(name) {
+function getByName(name, order = null) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
@@ -96,7 +97,7 @@ function getByName(name) {
                 rules : rules_uuids,
             });
 
-            Actions.receiveScene(newScene);
+            Actions.receiveScene(newScene, order);
 
         });
 }
@@ -108,8 +109,9 @@ function getByName(name) {
  * @param type
  * @param tagColor
  * @param tagName
+ * @param order of scenes
  */
-function createScene(name, index, type, tagColor, tagName) {
+function createScene(name, index, type, tagColor, tagName, order) {
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -136,7 +138,7 @@ function createScene(name, index, type, tagColor, tagName) {
                 }
             });
 
-            Actions.receiveScene(newScene);
+            Actions.receiveScene(newScene, order);
         });
 }
 
@@ -151,7 +153,7 @@ function getAllScenes() {
                 return console.error(err);
             }
             if (response.body && response.body !== [])
-                Actions.loadAllScenes(response.body);
+                Actions.loadAllScenes(response.body, Orders.CHRONOLOGICAL);
         });
 }
 

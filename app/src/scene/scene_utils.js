@@ -67,12 +67,13 @@ function removeRuleFromScene(scene, rule){
  * @param property
  * @param value
  * @param props
+ * @param order of scenes
  */
-function setProperty(scene, property, value, props){
+function setProperty(scene, property, value, props, order){
     let newScene = scene.set(property, value);
 
     if(property === 'name'){
-        props.updateSceneName(newScene, scene.name);
+        props.updateSceneName(newScene, scene.name, order);
         props.updateCurrentScene(newScene.name);
     } else {
         props.updateScene(newScene);

@@ -116,7 +116,7 @@ body{
     position: relative;
 }
 
-.list-img:hover{
+.list-img:hover, .nav-figures:hover {
     cursor: pointer;
 }
 
@@ -584,3 +584,31 @@ body{
             0 -2px 2px black;
 }
 
+/* Dropdown menu leftbar */
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd}
+
+.show {
+    display:block;
+}
+
+.order-selected {
+    background-color: rgba(239, 86, 45, .5);
+}

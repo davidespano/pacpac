@@ -1,0 +1,12 @@
+/**
+ * Comparators types
+ * @type {{ALPHABETICAL: string, REV_ALPHABETICAL: string, CHRONOLOGICAL: string, REV_CHRONOLOGICAL: string}}
+ */
+const Orders = {
+    ALPHABETICAL : 'ALPHABETICAL',
+    REV_ALPHABETICAL: 'REV_ALPHABETICAL',
+    CHRONOLOGICAL: 'CHRONOLOGICAL',
+    REV_CHRONOLOGICAL: 'REV_CHRONOLOGICAL'
+};
+
+export default Orders;

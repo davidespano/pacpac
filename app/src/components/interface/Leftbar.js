@@ -2,6 +2,8 @@ import React from 'react';
 import settings from '../../utils/settings';
 import SceneAPI from "../../utils/SceneAPI";
 import interface_utils from "./interface_utils";
+import Orders from "../../data/Orders";
+
 
 
 const {mediaURL} = settings;
@@ -12,7 +14,7 @@ function Leftbar(props) {
 
     return (
         <div className={'leftbar'} id={'leftbar'}>
-            {buttonsBar()}
+            {buttonsBar(props)}
             {list(props, path)}
         </div>
     )
@@ -55,8 +57,6 @@ function list(props, path) {
             return (
                 <div key={child.name} className={'node_element'}>
                     <video muted preload={"auto"} className={'video_element list-video'} onClick={() => {
-                        //let scene = props.scenes.get(child.name);
-                        //SceneAPI.getByName(child.img, scene);
                         props.updateCurrentScene(child.name);
                     }}>
                         <source src={path + child.img} type="video/mp4"/>
@@ -75,9 +75,10 @@ function list(props, path) {
 
 /**
  * Generates buttons banner
+ * @param props
  * @returns {*}
  */
-function buttonsBar(){
+function buttonsBar(props){
     return(
         <div className={'currentOptions'}>
             <div className={"buttonGroup"}>
@@ -88,17 +89,37 @@ function buttonsBar(){
                     <img className={"action-buttons"} src={"icons/icons8-search-filled-50.png"}/>
                 </button>
                 <button
-                    title={"Ordina per..."}
-                    className={"action-buttons-container"}
+                    title={"Ordina..."}
+                    className={"action-buttons-container dropdown-btn"}
                 >
-                    <img className={"action-buttons"} src={"icons/icons8-sort-filled-50.png"}/>
+                    <img className={"action-buttons dropdown-btn"} src={"icons/icons8-sort-filled-50.png"}/>
                 </button>
-            </div>
-            <div className={'sort-menu'}>
-
+                <div id="scenes-order-menu" className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>
+                    <a className={'' + checkCurrentOrder(props.editor.scenesOrder, Orders.ALPHABETICAL)}
+                       onClick={() => props.sortScenes(Orders.ALPHABETICAL)}
+                    >Per nome (A-Z)</a>
+                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_ALPHABETICAL)}
+                       onClick={() => props.sortScenes(Orders.REV_ALPHABETICAL)}
+                    >Per nome (Z-A)</a>
+                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.CHRONOLOGICAL)}
+                        onClick={() => props.sortScenes(Orders.CHRONOLOGICAL)}
+                    >Dalla prima all'ultima</a>
+                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_CHRONOLOGICAL)}
+                       onClick={() => props.sortScenes(Orders.REV_CHRONOLOGICAL)}
+                    >Dall'ultima alla prima</a>
+                </div>
             </div>
         </div>
     );
 }
+
+function checkSelection(scenesOrderMenu){
+    return scenesOrderMenu ? 'show' : '';
+}
+
+function checkCurrentOrder(scenesOrder, value){
+    return scenesOrder === value ? 'order-selected' : '';
+}
+
 
 export default Leftbar;

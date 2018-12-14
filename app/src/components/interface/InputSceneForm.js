@@ -45,9 +45,14 @@ function InputSceneForm(props){
                                     tag= JSON.parse(document.getElementById("scene_tag").value);
                                 let type = (document.getElementById("scene-type-3d").checked)? '3D' : '2D';
                                 if(!props.scenes.has(name)) {
-                                    addMediaAndCreateScene(name, props.scenes._map.last() + 1, type, media, tag.tagColor, tag.tagName);
-                                    if (document.getElementById('nav-scenes-tab'))
-                                        document.getElementById('nav-scenes-tab').click();
+                                    addMediaAndCreateScene(name,
+                                        props.scenes._map.last() + 1,
+                                        type, media,
+                                        tag.tagColor,
+                                        tag.tagName,
+                                        props.editor.scenesOrder
+                                    );
+                                    props.rightbarSelection('scene');
                                 }
                             }
                             } data-dismiss="modal" >Conferma</button>
@@ -61,7 +66,7 @@ function InputSceneForm(props){
     );
 }
 
-function addMediaAndCreateScene(name, index, type, media, tagColor, tagName){
+function addMediaAndCreateScene(name, index, type, media, tagColor, tagName, order){
     //FARE CONTROLLI FORM QUI!1!1
     //lettere accentate e spazi sono ammessi! Yay
     //MA NON ALL'INIZIO DELLA FRASE
@@ -74,7 +79,7 @@ function addMediaAndCreateScene(name, index, type, media, tagColor, tagName){
     name = name + "." + ext;
 
     if(!index) index = 0;
-    MediaAPI.addMediaScene(name, index, type, media, tagColor, tagName);
+    MediaAPI.addMediaScene(name, index, type, media, tagColor, tagName, order);
 
 }
 

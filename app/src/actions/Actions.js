@@ -35,6 +35,13 @@ const Actions = {
         })
     },
 
+    dropdownScenesOrder(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DROPDOWN_SCENES_ORDER,
+            status: status,
+        })
+    },
+
 
     //SCENES
 
@@ -55,14 +62,16 @@ const Actions = {
      * Retrieves scenes' basic data from db and sends it to the stores, then calls asynchronous update for each scene in
      * order to get complete data
      * @param response
+     * @param order of scenes
      */
-    loadAllScenes(response){
+    loadAllScenes(response, order = null){
         AppDispatcher.dispatch({
             type: ActionTypes.LOAD_ALL_SCENES,
             response: response,
+            order: order,
         });
         response.forEach(scene => {
-            SceneAPI.getByName(scene.name);
+            SceneAPI.getByName(scene.name, order);
         })
 
     },
@@ -70,11 +79,13 @@ const Actions = {
     /**
      * Dispatch to the stores the Scene received from db
      * @param scene
+     * @param order of scenes
      */
-    receiveScene(scene){
+    receiveScene(scene, order){
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_SCENE,
             scene: scene,
+            order: order,
         });
     },
 
@@ -105,12 +116,14 @@ const Actions = {
      * Dispatch scene name update (since the name is the scene key in ScenesStore map, it needs a specific update)
      * @param scene
      * @param oldName
+     * @param order of scenes
      */
-    updateSceneName(scene, oldName){
+    updateSceneName(scene, oldName, order){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE_NAME,
             scene: scene,
             oldName: oldName,
+            order: order,
         })
     },
 
@@ -128,9 +141,20 @@ const Actions = {
     /**
      * Dispatch all scenes removal
      */
-    removeAllScene(){
+    removeAllScenes(){
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_ALL_SCENES,
+        })
+    },
+
+    /**
+     * Sort scenes according to the given order
+     * @param order
+     */
+    sortScenes(order){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SORT_SCENES,
+            order: order,
         })
     },
 

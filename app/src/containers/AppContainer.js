@@ -51,6 +51,7 @@ function getState() {
 
         //editor
 
+        dropdownScenesOrder: Actions.dropdownScenesOrder,
         rightbarSelection: Actions.rightbarSelection,
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
@@ -61,7 +62,8 @@ function getState() {
         clickScene: Actions.clickScene,
         receiveScene: Actions.receiveScene,
         removeScene: Actions.removeScene,
-        removeAllScene: Actions.removeAllScene,
+        removeAllScene: Actions.removeAllScenes,
+        sortScenes: Actions.sortScenes,
         updateCurrentScene: Actions.updateCurrentScene,
         updateScene: Actions.updateScene,
         updateSceneName: Actions.updateSceneName,

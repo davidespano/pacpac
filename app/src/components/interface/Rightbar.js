@@ -105,7 +105,7 @@ function sceneView(props){
                      contentEditable={true}
                      onBlur={() => {
                          let value = document.getElementById('sceneName').textContent;
-                         scene_utils.setProperty(scene, 'name', value, props);
+                         scene_utils.setProperty(scene, 'name', value, props, props.editor.scenesOrder);
                      }}
                 >
                     {scene.name}

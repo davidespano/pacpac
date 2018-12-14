@@ -4,6 +4,7 @@ import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
 import Scene from "../scene/Scene";
 import scene_utils from '../scene/scene_utils';
+import stores_utils from "./stores_utils";
 
 class ScenesStore extends ReduceStore {
 
@@ -38,25 +39,28 @@ class ScenesStore extends ReduceStore {
                                 switches: [],
                             },
                         });
-                        state = state.set(newScene.name, newScene);
+                        state = state.set(newScene.name, newScene).sort(stores_utils.chooseComparator(action.order));
                     });
                 }
                 return state;
             case ActionTypes.RECEIVE_SCENE:
-                state = state.set(action.scene.name, action.scene);
+                state = state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));
+                return state;
+            case ActionTypes.REMOVE_ALL_SCENES:
+                state = state.clear();
                 return state;
             case ActionTypes.REMOVE_SCENE:
                 state = state.delete(action.scene.name);
+                return state;
+            case ActionTypes.SORT_SCENES:
+                state = state.sort(stores_utils.chooseComparator(action.order));
                 return state;
             case ActionTypes.UPDATE_SCENE:
                 state = state.set(action.scene.name, action.scene);
                 return state;
             case ActionTypes.UPDATE_SCENE_NAME:
                 state = state.delete(action.oldName);
-                return state.set(action.scene.name, action.scene);
-            case ActionTypes.REMOVE_ALL_SCENES:
-                state = state.clear();
-                return state;
+                return state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));
             case ActionTypes.ADD_NEW_OBJECT:
                 newScene = scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
                 state = state.set(newScene.name, newScene);
@@ -71,7 +75,6 @@ class ScenesStore extends ReduceStore {
                 return state;
             case ActionTypes.REMOVE_RULE:
                 newScene = scene_utils.removeRuleFromScene(action.scene, action.rule);
-                console.log(newScene)
                 state = state.set(newScene.name, newScene);
                 return state;
             default:
