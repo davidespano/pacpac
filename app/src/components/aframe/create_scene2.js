@@ -87,7 +87,6 @@ export default class VRScene extends React.Component {
         }
         else this.currentLevel = [];
         return (
-            <div id="mainscene">
                 <Scene stats>
                     <a-assets>
                         {this.generateAssets()}
@@ -99,7 +98,6 @@ export default class VRScene extends React.Component {
                         </Entity>
                     </Entity>
                 </Scene>
-            </div>
         )
     }
 

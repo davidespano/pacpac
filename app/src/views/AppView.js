@@ -27,9 +27,7 @@ function AppView(props) {
             );
         case 'PLAY_MODE_ON':
             return(
-                <div>
                     <VRScene {...props}/>
-                </div>
             );
         case 'GEOMETRY_MODE_ON':
             return(
