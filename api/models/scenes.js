@@ -134,22 +134,29 @@ function getHomeScene(session, gameID) {
 }
 
 //add a scene
-function addScene(session, name, index, type, tagColor, tagName, gameID) {
+function addScene(session, name, index, type, tagUuid, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name})' +
-        'RETURN scene', {name: name, tagColor: tagColor, tagName: tagName})
+        'RETURN scene', {name: name})
         .then(result => {
             if (!_.isEmpty(result.records)) {
                 throw {message: "Scene already exists", status: 422};
             }
             else {
                 return session.run(
-                    'MERGE (tag:Tag:`' + gameID + '` {color: $tagColor, name:$tagName}) ' +
+                    'MATCH (tag:Tag:`' + gameID + '` {uuid: $tagUuid}) ' +
                     'CREATE (scene:Scene:`' + gameID + '` {name: $name, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
-                    'RETURN scene,tag', {name: name, index: index, type: type, tagColor: tagColor, tagName: tagName})
+                    'RETURN scene,tag', {name: name, index: index, type: type, tagUuid: tagUuid})
             }
         })
-        .then(result => singleScene(result.records[0]));
+        .then(result => {
+            if(result.records[0] && result.records[0].has("tag")) {
+                singleScene(result.records[0])
+            }
+            else{
+                throw {message: "Tag does not exists", status: 404};
+            }
+        });
 
 }
 

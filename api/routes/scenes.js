@@ -158,13 +158,9 @@ function detailedList(req, res, next) {
  *                      type: string
  *                      required: true
  *                      description: Type of the scene (3D / 2D)
- *                  tagColor:
+ *                  tagUuid:
  *                      type: string
- *                      description: color of the tag
- *                      required: true
- *                  tagName:
- *                      type: string
- *                      description: name of the tag
+ *                      description: Uuid of the tag
  *                      required: true
  *          required: true
  *        - name: Authorization
@@ -182,18 +178,19 @@ function detailedList(req, res, next) {
  *              description: A scene
  *              schema:
  *                  $ref: '#/definitions/Scenes'
+ *          404:
+ *              description: Tag does not exists
  *          422:
  *              description: Scene already exists
  */
 function addScene(req, res, next) {
     const name = req.body.name;
     const index = req.body.index;
-    const tagColor = req.body.tagColor;
-    const tagName = req.body.tagName;
+    const tagUuid = req.body.tagUuid;
     const type = req.body.type;
     const gameID = req.params.gameID;
 
-    Scenes.addScene(dbUtils.getSession(req), name, index, type, tagColor, tagName, gameID)
+    Scenes.addScene(dbUtils.getSession(req), name, index, type, tagUuid, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
