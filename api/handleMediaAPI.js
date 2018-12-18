@@ -1,11 +1,13 @@
 const multer = require('multer')
     , fs = require('fs')
     , routes = require('./routes')
-    , loginRequired = require('./middlewares/loginRequired').loginRequired;
+    , loginRequired = require('./middlewares/loginRequired').loginRequired
+    , mkdirp = require('mkdirp');
 
 const storageSceneMedia = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "public/" + req.params.gameID + "/")
+        const dir = "public/" + req.params.gameID + "/";
+        mkdirp(dir, err => cb(err, dir))
     },
     filename: function (req, file, cb) {
         cb(null, req.headers.name)
@@ -25,7 +27,8 @@ const uploadSceneMedia = multer({
 
 const storageObjectsMedia = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "public/" + req.params.gameID + "/interactives")
+        const dir = "public/" + req.params.gameID + "/interactives";
+        (dir, err => cb(err, dir));
     },
     filename: function (req, file, cb) {
         cb(null, req.headers.name)
