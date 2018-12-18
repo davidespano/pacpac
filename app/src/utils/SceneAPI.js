@@ -14,6 +14,7 @@ const {apiBaseURL} = settings;
 /**
  * Retrieves scene data from db and generates a new Scene object
  * @param name of the scene
+ * @param order actual order of the scenes in editor
  */
 function getByName(name, order = null) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
@@ -79,6 +80,7 @@ function getByName(name, order = null) {
                 Actions.receiveRule(r);
             });
 
+            console.log(response.body)
 
             // new Scene object
             let newScene = Scene({
@@ -107,15 +109,14 @@ function getByName(name, order = null) {
  * @param name
  * @param index
  * @param type
- * @param tagColor
- * @param tagName
+ * @param tag
  * @param order of scenes
  */
-function createScene(name, index, type, tagColor, tagName, order) {
+function createScene(name, index, type, tag, order) {
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({name: name, index: index, type: type, tagColor: tagColor, tagName: tagName})
+        .send({name: name, index: index, type: type, tag: tag})
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
@@ -127,10 +128,7 @@ function createScene(name, index, type, tagColor, tagName, order) {
                 img : name,
                 type : type,
                 index : index,
-                tag : {
-                    tagName : tagName,
-                    tagColor : tagColor,
-                },
+                tag : tag,
                 rules: [],
                 objects: {
                     transitions: [],
@@ -254,10 +252,7 @@ async function getAllDetailedScenes(gameGraph) {
             img : s.name,
             type : s.type,
             index : s.index,
-            tag : {
-                tagName : s.tagName,
-                tagColor : s.tagColor,
-            },
+            tag : s.tag,
             objects : {
                 transitions : transitions,
                 switches : switches,
@@ -271,10 +266,41 @@ async function getAllDetailedScenes(gameGraph) {
     //console.log(gameGraph);
 }
 
+function saveTag(tag){
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/tags`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send({
+            uuid: tag.uuid,
+            name: tag.name,
+            color: tag.color
+        })
+        .end(function(err, response) {
+            if (err && err.status !== 422) {
+                return console.error(err);
+            }
+        });
+}
+
+function removeTag(tag) {
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/tags/${tag.uuid}`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+            /**UPDATE STORES**/
+        });
+}
+
+
 export default {
     getByName: getByName,
     createScene: createScene,
     getAllScenes: getAllScenes,
     deleteScene: deleteScene,
-    getAllDetailedScenes: getAllDetailedScenes
+    getAllDetailedScenes: getAllDetailedScenes,
+    saveTag: saveTag,
+    removeTag: removeTag,
 };

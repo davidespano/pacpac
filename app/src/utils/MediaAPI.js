@@ -12,10 +12,10 @@ const {apiBaseURL} = settings;
  * @param index
  * @param type
  * @param media
- * @param tagColor
- * @param tagName
+ * @param tag
+ * @param order
  */
-function addMediaScene(name, index, type, media, tagColor, tagName) {
+function addMediaScene(name, index, type, media, tag, order) {
     
     request.post(`${apiBaseURL}/public/${window.localStorage.getItem("gameID")}/addMedia`)
         .set('name', name)
@@ -27,7 +27,7 @@ function addMediaScene(name, index, type, media, tagColor, tagName) {
             }
             else {
                 //create db node
-                SceneAPI.createScene(name, index, type, tagColor, tagName);
+                SceneAPI.createScene(name, index, type, tag, order);
             }
         });
 }

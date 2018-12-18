@@ -29,10 +29,7 @@ class ScenesStore extends ReduceStore {
                             img : scene.name,
                             index : scene.index,
                             type : scene.type,
-                            tag : {
-                                tagName : scene.tagName,
-                                tagColor : scene.tagColor,
-                            },
+                            tag : scene.tag,
                             rules: [],
                             objects: {
                                 transitions: [],

@@ -45,7 +45,7 @@ function getState() {
         objectToScene: ObjectToSceneStore.getState(),
         rules: RulesStore.getState(),
         scenes: ScenesStore.getState(),
-        sceneTags: TagsStore.getState(),
+        tags: TagsStore.getState(),
 
         //FUNCTIONS
 

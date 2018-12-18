@@ -7,6 +7,7 @@ import rules_utils from "../../interactives/rules/rules_utils";
 import scene_utils from "../../scene/scene_utils";
 import Switch from "../../interactives/Switch";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
+import InputTagForm from "./InputTagForm";
 
 let uuid = require('uuid');
 
@@ -29,10 +30,15 @@ function TopBar(props){
             <div className="tab-content" id="nav-tabContent">
                 <div className="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
                     <InputSceneForm {...props} />
+                    <InputTagForm {...props}/>
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
                             <img src={"icons/icons8-add-image-100.png"}/>
                             <figcaption>Nuova scena</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#add-tag-modal">
+                            <img src={"icons/icons8-tags-100.png"}/>
+                            <figcaption>Gestisci etichette</figcaption>
                         </figure>
                     </div>
                 </div>

@@ -16,10 +16,7 @@ const Scene = Immutable.Record({
     img : "",
     index : 0,
     type : "3D",
-    tag : {
-        tagName : '---',
-        tagColor : 'black',
-    },
+    tag : 'default',
     objects : {
         // uuid lists
         transitions: [],

@@ -1,6 +1,10 @@
 import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
+import Immutable from 'immutable';
+import Tag from "../scene/Tag";
+import SceneAPI from "../utils/SceneAPI";
+
 
 
 class TagsStore extends ReduceStore {
@@ -10,20 +14,14 @@ class TagsStore extends ReduceStore {
     }
 
     getInitialState() {
-        return [{
-            tagName: '---',
-            tagColor: 'black',
-        }];
+        SceneAPI.saveTag(Tag());
+        return Immutable.Map().set('default', Tag());
     }
 
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.ADD_NEW_TAG:
-                state.push({
-                    tagName: action.name,
-                    tagColor: action.color,
-                });
-                return state;
+                return state.set(action.tag.uuid, action.tag);
             case ActionTypes.LOAD_ALL_TAGS:
                 return state;
             default:

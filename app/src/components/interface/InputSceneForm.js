@@ -1,6 +1,6 @@
 import React from 'react';
-import SceneAPI from "../../utils/SceneAPI";
 import MediaAPI from "../../utils/MediaAPI";
+import SceneAPI from "../../utils/SceneAPI";
 
 function InputSceneForm(props){
 
@@ -23,9 +23,9 @@ function InputSceneForm(props){
                             />
                             <label htmlFor={"scene_tag"}>Etichetta</label>
                             <select id={'scene_tag'} name={'scene_tag'} className={"custom-select"}>
-                                {[...props.sceneTags.values()].map( child => (
-                                    tagOption(child)
-                                ))}
+                                {[...props.tags.values()].map( tag =>
+                                    <option value={tag.uuid} key={tag.uuid}>{tag.name}</option>
+                                )}
                             </select>
                             <label htmlFor={'select-scene-type'}>Tipo</label>
                             <div id={'select-scene-type'} name={"select-scene-name"}>
@@ -42,15 +42,15 @@ function InputSceneForm(props){
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
                                 let name = document.getElementById("scene_name").value,
                                     media = document.getElementById("imageInput").files[0],
-                                    tag= JSON.parse(document.getElementById("scene_tag").value);
+                                    tag_uuid = document.getElementById('scene_tag').value;
                                 let type = (document.getElementById("scene-type-3d").checked)? '3D' : '2D';
                                 if(!props.scenes.has(name)) {
                                     addMediaAndCreateScene(name,
                                         props.scenes._map.last() + 1,
-                                        type, media,
-                                        tag.tagColor,
-                                        tag.tagName,
-                                        props.editor.scenesOrder
+                                        type,
+                                        media,
+                                        props.tags.get(tag_uuid),
+                                        props.editor.scenesOrder,
                                     );
                                     props.rightbarSelection('scene');
                                 }
@@ -66,7 +66,7 @@ function InputSceneForm(props){
     );
 }
 
-function addMediaAndCreateScene(name, index, type, media, tagColor, tagName, order){
+function addMediaAndCreateScene(name, index, type, media, tag, order){
     //FARE CONTROLLI FORM QUI!1!1
     //lettere accentate e spazi sono ammessi! Yay
     //MA NON ALL'INIZIO DELLA FRASE
@@ -79,19 +79,16 @@ function addMediaAndCreateScene(name, index, type, media, tagColor, tagName, ord
     name = name + "." + ext;
 
     if(!index) index = 0;
-    MediaAPI.addMediaScene(name, index, type, media, tagColor, tagName, order);
 
+    MediaAPI.addMediaScene(name, index, type, media, tag.uuid, order);
 }
 
 function tagOption(tag){
 
     // AGGIUNGERE COLORE AL TAG DA SELEZIONARE
     //https://github.com/aslamswt/Responsive-Select-Dropdown-with-Images
-    let tmp=JSON.stringify(tag);
     return (
-        <option value={tmp} key={tmp}>{tag.tagName}</option>
-
-
+        <option value={tag.uuid} key={tag.uuid}>{tag.name}</option>
     );
 }
 
