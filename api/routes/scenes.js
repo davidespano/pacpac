@@ -158,7 +158,7 @@ function detailedList(req, res, next) {
  *                      type: string
  *                      required: true
  *                      description: Type of the scene (3D / 2D)
- *                  tagUuid:
+ *                  tag:
  *                      type: string
  *                      description: Uuid of the tag
  *                      required: true
@@ -186,11 +186,11 @@ function detailedList(req, res, next) {
 function addScene(req, res, next) {
     const name = req.body.name;
     const index = req.body.index;
-    const tagUuid = req.body.tagUuid;
+    const tag = req.body.tag;
     const type = req.body.type;
     const gameID = req.params.gameID;
 
-    Scenes.addScene(dbUtils.getSession(req), name, index, type, tagUuid, gameID)
+    Scenes.addScene(dbUtils.getSession(req), name, index, type, tag, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }

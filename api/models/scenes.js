@@ -134,7 +134,7 @@ function getHomeScene(session, gameID) {
 }
 
 //add a scene
-function addScene(session, name, index, type, tagUuid, gameID) {
+function addScene(session, name, index, type, tag, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name})' +
         'RETURN scene', {name: name})
@@ -144,9 +144,9 @@ function addScene(session, name, index, type, tagUuid, gameID) {
             }
             else {
                 return session.run(
-                    'MATCH (tag:Tag:`' + gameID + '` {uuid: $tagUuid}) ' +
+                    'MATCH (tag:Tag:`' + gameID + '` {uuid: $tag}) ' +
                     'CREATE (scene:Scene:`' + gameID + '` {name: $name, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
-                    'RETURN scene,tag', {name: name, index: index, type: type, tagUuid: tagUuid})
+                    'RETURN scene,tag', {name: name, index: index, type: type, tag: tag})
             }
         })
         .then(result => {

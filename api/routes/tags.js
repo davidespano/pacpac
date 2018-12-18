@@ -10,6 +10,8 @@ const Tags = require('../models/tags')
  *  Tags:
  *      type: object
  *      properties:
+ *          uuid:
+ *              type: string
  *          color:
  *              type: string
  *          name:
