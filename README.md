@@ -33,3 +33,18 @@ To execute the project
 ``npm start``.
 
 Now open your browser and go to <http:\\localhost:3006>
+
+### Create a user 
+Go to <http:\\localhost:3000\docs>, select the user APIs, and register a user with the following info.
+The body of the POST should be 
+```
+{
+  "username": "username",
+  "password": "password"
+}
+```
+To grant the ownership of the test game, go to <http:\\localhost:7474> and run the query 
+```
+match (n:User) merge (n)-[:OWN_GAME]->(:Game {gameID: '3f585c1514024e9391954890a61d0a04'})
+```
+
