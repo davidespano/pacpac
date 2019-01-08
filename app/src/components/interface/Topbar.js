@@ -47,6 +47,8 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.TRANSITION);
+                                    console.log(props.assets);
+                                    console.log(props.assets.toList());
                                 }}>
                             <img src={"icons/icons8-add-one-way-transition-100.png"}/>
                             <figcaption>Transizione</figcaption>

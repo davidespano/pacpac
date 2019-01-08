@@ -1,10 +1,28 @@
 import settings from './settings';
 import SceneAPI from "./SceneAPI";
 import interface_utils from "../components/interface/interface_utils";
+import Actions from "../actions/Actions";
+import Orders from "../data/Orders";
 
 const request = require('superagent');
 
 const {apiBaseURL} = settings;
+
+
+/**
+ * Retrieves all data from db and sends it to stores for assets generations
+ */
+function getAllAssets() {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/assets`)
+        .set('Accept', 'application/json')
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+            if (response.body && response.body !== [])
+                Actions.loadAllAssets(response.body);
+        });
+}
 
 /**
  * Uploads scene media to db. If the file is uploaded correctly, calls createScene to generate new Scene
@@ -57,6 +75,7 @@ function uploadMedia(object, file, type, props){
 }
 
 export default {
+    getAllAssets: getAllAssets,
     addMediaScene: addMediaScene,
     uploadMedia: uploadMedia,
 };

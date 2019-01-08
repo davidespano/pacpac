@@ -110,6 +110,7 @@ api.put('/:gameID/rules/scenes/:name/rules', loginRequired, routes.rules.putRule
 api.delete('/:gameID/rules/scenes/:name/rules/:ruuid', loginRequired, routes.rules.deleteRule);
 
 /**MEDIA**/
+api.get('/:gameID/assets', routes.media.list);
 handleMediaAPI(api);
 
 //api error handler

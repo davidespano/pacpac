@@ -45,6 +45,9 @@ const ActionTypes = {
     REMOVE_RULE : 'REMOVE_RULE',
     UPDATE_RULE : 'UPDATE_RULE',
 
+    //MEDIA
+    LOAD_ALL_ASSETS : 'LOAD_ALL_ASSETS',
+
     //OTHER
 
     ON_PICTURE_DROP : 'ON_PICTURE_DROP',

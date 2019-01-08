@@ -317,6 +317,16 @@ const Actions = {
         })
     },
 
+
+    //MEDIA
+
+    loadAllAssets(list){
+      AppDispatcher.dispatch({
+          type: ActionTypes.LOAD_ALL_ASSETS,
+          list: list,
+      })
+    },
+
     //OTHER
 
     onDrop(picture){

@@ -1,5 +1,7 @@
 const fs = require('fs')
     , writeResponse = require('../helpers/response').writeResponse
+    , Media = require('../models/media')
+    , dbUtils = require('../neo4j/dbUtils')
     , _ = require('lodash');
 
 /**
@@ -93,8 +95,39 @@ function addInteractiveMedia(req, res, next) {
         writeResponse(res, {message: 'Another media has already this name', status: 422}, 422);
     }
 }
+/**
+ * @swagger
+ * /api/v0/{gameID}/assets:
+ *  get:
+ *      tags:
+ *      - media
+ *      description: Returns all assets
+ *      summary: Returns all assets
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in : path
+ *          name : gameID
+ *          type : string
+ *          required : true
+ *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *      responses:
+ *          200:
+ *              description: A list of assets
+ *              schema:
+ *                  type: array
+ *                  items:
+ *                     type: string
+ */
+function list(req, res, next){
+    const gameID = req.params.gameID;
+    Media.getAll(dbUtils.getSession(req), gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
 
 module.exports = {
+    list: list,
     addSceneMedia: addSceneMedia,
     addInteractiveMedia: addInteractiveMedia,
 };

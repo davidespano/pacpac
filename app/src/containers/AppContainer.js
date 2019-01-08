@@ -12,6 +12,7 @@ import RulesStore from "../data/RulesStore";
 import DatalistStore from "../data/DatalistStore";
 import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
+import AssetsStore from "../data/AssetsStore";
 
 
 function getStores() {
@@ -26,6 +27,7 @@ function getStores() {
         DatalistStore,
         CentroidsStore,
         EditorStateStore,
+        AssetsStore,
     ];
 }
 
@@ -34,7 +36,7 @@ function getState() {
     return {
 
         //STATES
-
+        assets: AssetsStore.getState(),
         centroids: CentroidsStore.getState(),
         click: ClickStore.getState(),
         currentScene: CentralSceneStore.getState(),
