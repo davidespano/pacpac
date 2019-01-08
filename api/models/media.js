@@ -14,7 +14,20 @@ function getAll(session, gameID) {
     return promise;
 }
 
+function deleteAsset(session, name, gameID) {
+
+    let path = "public/" + gameID + "/" + name;
+    return fs.access(path, (err) => {
+        if (!err)
+            fs.unlink(path, (err) => {
+                if (err) throw err;
+                console.log('successfully deleted ' + path);
+            })
+        throw {message: 'asset not found', status: 404};
+    });
+}
 
 module.exports = {
-    getAll: getAll
+    getAll: getAll,
+    deleteAsset: deleteAsset,
 };

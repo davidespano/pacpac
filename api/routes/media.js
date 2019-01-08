@@ -126,8 +126,51 @@ function list(req, res, next){
         .catch(next);
 }
 
+/**
+ * @swagger
+ * /api/v0/{gameID}/assets/{name}:
+ *  delete:
+ *      tags:
+ *      - media
+ *      description: Delete the asset
+ *      summary: Delete an asset by name
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in: path
+ *          name: name
+ *          type: string
+ *          required: true
+ *          description: Name of the asset
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
+ *        - in : path
+ *          name : gameID
+ *          type : string
+ *          required : true
+ *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *      responses:
+ *          200:
+ *              description: Asset deleted
+ */
+function deleteAsset(req, res, next) {
+    const name = req.params.name;
+    const gameID = req.params.gameID;
+    try{
+        Media.deleteAsset(dbUtils.getSession(req), name, gameID);
+    }catch (e) {
+        next(e);
+    }
+    return res.status(200).end();
+}
+
+
 module.exports = {
     list: list,
+    deleteAsset: deleteAsset,
     addSceneMedia: addSceneMedia,
     addInteractiveMedia: addInteractiveMedia,
 };

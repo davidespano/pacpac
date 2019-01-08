@@ -111,6 +111,7 @@ api.delete('/:gameID/rules/scenes/:name/rules/:ruuid', loginRequired, routes.rul
 
 /**MEDIA**/
 api.get('/:gameID/assets', routes.media.list);
+api.delete('/:gameID/assets/:name',loginRequired, routes.media.deleteAsset);
 handleMediaAPI(api);
 
 //api error handler
