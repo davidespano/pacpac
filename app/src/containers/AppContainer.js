@@ -57,6 +57,7 @@ function getState() {
         rightbarSelection: Actions.rightbarSelection,
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
+        switchToFileManager: Actions.fileManagerModeOn,
         switchToGeometryMode: Actions.geometryModeOn,
 
         //scenes

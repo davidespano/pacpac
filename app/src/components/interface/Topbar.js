@@ -8,6 +8,7 @@ import scene_utils from "../../scene/scene_utils";
 import Switch from "../../interactives/Switch";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import InputTagForm from "./InputTagForm";
+import ActionTypes from "../../actions/ActionTypes";
 
 let uuid = require('uuid');
 
@@ -19,9 +20,12 @@ function TopBar(props){
                     <a className="navbar-brand">PacPac</a>
                     <a className="nav-item nav-link active"
                        id="nav-game-tab" data-toggle="tab" href="#nav-game" role="tab" aria-controls="nav-game"
-                       aria-selected="true" onClick={() => handleNavbarSelection()}>Gioco</a>
+                       aria-selected="true" onClick={() => handleNavbarSelection(props)}>Gioco</a>
                     <a className="nav-item nav-link" id="nav-objects-tab" data-toggle="tab" href="#nav-objects" role="tab"
-                       aria-controls="nav-objects" aria-selected="false" onClick={() => handleNavbarSelection()}>Oggetti</a>
+                       aria-controls="nav-objects" aria-selected="false" onClick={() => handleNavbarSelection(props)}>Oggetti</a>
+                    <a className="nav-item nav-link" id="nav-objects-assets" data-toggle="tab" role="tab" href="#nav-assets"
+                       aria-controls="nav-assets" aria-selected="false"
+                       onClick={() => handleAssetsMode(props)}>Assets</a>
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
@@ -67,14 +71,25 @@ function TopBar(props){
     );
 }
 
-function handleNavbarSelection(){
-    let items = document.getElementsByClassName("nav-item");
-    for(let i = 0; i < items.length; i++){
-        if(items[i].getAttribute("aria-selected") === 'true'){
-            items[i].setAttribute('color', '#EF562D !important');
-        } else {
-            items[i].setAttribute('color', '#FFFFFF');
-        }
+function handleNavbarSelection(props){
+   // let items = document.getElementsByClassName("nav-item");
+    if(props.editor.mode != ActionTypes.EDIT_MODE_ON){
+        props.switchToEditMode();
+        document.getElementById("nav-tabContent").hidden = false;
+    }
+    // for(let i = 0; i < items.length; i++){
+    //     if(items[i].getAttribute("aria-selected") === 'true'){
+    //         items[i].setAttribute('color', '#EF562D !important');
+    //     } else {
+    //         items[i].setAttribute('color', '#FFFFFF');
+    //     }
+    // }
+}
+
+function handleAssetsMode(props){
+    if(props.editor.mode != ActionTypes.FILE_MANAGER_MODE_ON){
+        props.switchToFileManager();
+        document.getElementById("nav-tabContent").hidden = true;
     }
 }
 

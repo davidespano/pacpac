@@ -613,3 +613,8 @@ body{
 .order-selected {
     background-color: rgba(239, 86, 45, .5);
 }
+
+.filemanager{
+    height: 80vh;
+}
+

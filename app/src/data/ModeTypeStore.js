@@ -16,6 +16,9 @@ class ModeTypeStore extends ReduceStore {
             case ActionTypes.EDIT_MODE_ON:
                 console.log("EDIT");
                 return ActionTypes.EDIT_MODE_ON;
+            case ActionTypes.FILE_MANAGER_MODE_ON:
+                console.log("FILE MANAGER");
+                return ActionTypes.FILE_MANAGER_MODE_ON;
             case ActionTypes.PLAY_MODE_ON:
                 console.log("PLAY");
                 return ActionTypes.PLAY_MODE_ON;

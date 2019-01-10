@@ -42,6 +42,11 @@ const Actions = {
         })
     },
 
+    fileManagerModeOn(){
+      AppDispatcher.dispatch({
+          type: ActionTypes.FILE_MANAGER_MODE_ON
+      })
+    },
 
     //SCENES
 

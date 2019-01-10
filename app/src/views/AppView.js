@@ -9,6 +9,7 @@ import '../components/look-controls_us';
 import CentralScene from "../components/interface/CentralScene";
 import GeometryScene from "../components/aframe/geometryScene";
 import Canvas from "../components/interface/Canvas";
+import FileContainer from "../components/interface/FileContainer";
 
 function AppView(props) {
 
@@ -23,6 +24,13 @@ function AppView(props) {
                         <CentralScene {...props} />
                         <Rules {...props} />
                     </div>
+                </div>
+            );
+        case 'FILE_MANAGER_MODE_ON':
+            return(
+                <div>
+                    <TopBar {...props}/>
+                    <FileContainer {...props}/>
                 </div>
             );
         case 'PLAY_MODE_ON':

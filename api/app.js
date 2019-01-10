@@ -12,8 +12,8 @@ const express = require('express')
     , checkGameID = require('./middlewares/checkGameID').checkGameID
     , checkInteractiveObjectType = require('./middlewares/checkInteractiveObjectType').checkInteractiveObjectType
     , loginRequired = require('./middlewares/loginRequired').loginRequired
-    , handleMediaAPI = require('./handleMediaAPI').handleMediaAPI;
-
+    , handleMediaAPI = require('./handleMediaAPI').handleMediaAPI
+    , filemanagerMiddleware = require('@opuscapita/filemanager-server').middleware;
 const app = express()
     , api = express();
 
@@ -57,7 +57,7 @@ const customHeaders = "name"; //headers we use for our api
 api.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE,PATCH");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, " + customHeaders);
     if (req.method === "OPTIONS") {
         return res.status(200).end();
@@ -67,7 +67,7 @@ api.use(function (req, res, next) {
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE,PATCH");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, " + customHeaders);
     if (req.method === "OPTIONS") {
         return res.status(200).end();
@@ -82,6 +82,16 @@ api.use(setAuthUser);
 api.use(neo4jSessionCleanup);
 api.param('gameID', checkGameID);
 api.param('objectType', checkInteractiveObjectType);
+
+const fileManagerConfig = {
+    fsRoot: path.resolve(__dirname, 'public'),
+    rootName: 'Main Root'
+};
+
+api.use('/filemanager/:gameID', loginRequired, (req, res, next) => {
+    fileManagerConfig.fsRoot = path.resolve(__dirname, 'public') + '\\' + req.params.gameID;
+    filemanagerMiddleware(fileManagerConfig)(req,res,next);
+});
 
 //api routes
 api.post('/register', routes.users.register);
