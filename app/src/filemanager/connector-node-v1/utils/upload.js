@@ -1,3 +1,5 @@
+import nanoid from 'nanoid';
+
 async function readLocalFile() {
     return new Promise((resolve, reject) => {
         const uploadInput = document.createElement("input");
@@ -11,12 +13,12 @@ async function readLocalFile() {
                 const fileObj = {
                     type: fileTmp.type,
                     name: fileTmp.name,
+                    id: nanoid(),
                     file: fileTmp
                 };
                 // get item
 
                 fileArray.push(fileObj);
-                console.log(fileArray);
             }
 
             resolve(fileArray);

@@ -36,7 +36,7 @@ const translations = {
         uploading: 'Caricamento',
         uploadingItem: 'Caricando 1 elemento',
         uploadingItems: 'Caricando {quantity} elementi',
-        upload: 'Upload',
+        upload: 'Carica File',
         remove: 'Rimuovi',
         download: 'Download',
         rename: 'Rinomina',
