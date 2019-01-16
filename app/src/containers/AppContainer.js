@@ -65,11 +65,16 @@ function getState() {
         clickScene: Actions.clickScene,
         receiveScene: Actions.receiveScene,
         removeScene: Actions.removeScene,
-        removeAllScene: Actions.removeAllScenes,
+        removeAllScenes: Actions.removeAllScenes,
         sortScenes: Actions.sortScenes,
         updateCurrentScene: Actions.updateCurrentScene,
         updateScene: Actions.updateScene,
         updateSceneName: Actions.updateSceneName,
+
+        //tags
+
+        addNewTag: Actions.addNewTag,
+        updateTag: Actions.updateTag,
 
         //interactive objects
 

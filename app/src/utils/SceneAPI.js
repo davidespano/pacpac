@@ -80,18 +80,13 @@ function getByName(name, order = null) {
                 Actions.receiveRule(r);
             });
 
-            console.log(response.body)
-
             // new Scene object
             let newScene = Scene({
                 name : response.body.name.replace(/\.[^/.]+$/, ""),
                 img : response.body.name,
                 type : response.body.type,
                 index : response.body.index,
-                tag : {
-                    tagName : response.body.tagName,
-                    tagColor : response.body.tagColor,
-                },
+                tag : response.body.tag.uuid,
                 objects : {
                     transitions : transitions_uuids,
                     switches : switches_uuids,
@@ -282,15 +277,16 @@ function saveTag(tag){
         });
 }
 
-function removeTag(tag) {
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/tags/${tag.uuid}`)
+function removeTag(tag_uuid) {
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/tags/${tag_uuid}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function (err, response) {
             if (err) {
                 return console.error(err)
             }
-            /**UPDATE STORES**/
+
+            Actions.removeTag(tag_uuid);
         });
 }
 

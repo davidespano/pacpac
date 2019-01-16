@@ -21,9 +21,21 @@ class TagsStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.ADD_NEW_TAG:
-                return state.set(action.tag.uuid, action.tag);
-            case ActionTypes.LOAD_ALL_TAGS:
+                return state.set(action.uuid, action.tag);
+            case ActionTypes.LOAD_ALL_SCENES:
+                action.response.forEach(scene => {
+                    let t = Tag({
+                        uuid: scene.tag.uuid,
+                        name: scene.tag.name,
+                        color: scene.tag.color,
+                    });
+                    state = state.set(t.uuid, t);
+                });
                 return state;
+            case ActionTypes.REMOVE_TAG:
+                return state.delete(action.uuid);
+            case ActionTypes.UPDATE_TAG:
+                return state.set(action.tag.uuid, action.tag);
             default:
                 return state;
         }

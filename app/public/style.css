@@ -109,7 +109,7 @@ body{
     height: 100%;
 }
 
-.list-img{
+.list-img, .list-video {
     width: 100%;
     max-width: 150px;
     max-height: 75px;
@@ -267,7 +267,7 @@ body{
 
 .node_element{
     display: inline-block;
-    margin: 11px;
+    margin-bottom: 10px;
     width: 80%;
 }
 
@@ -321,13 +321,6 @@ body{
 .video_element:hover{
     cursor: pointer;
 }
-
-.scene > video{
-    max-width: 100%;
-    max-height: 100%;
-    align-self: center;
-}
-
 
 .nav-link{
     background-color: #EF562D;
@@ -428,6 +421,7 @@ body{
     border: 1px solid #FFFFFF;
     flex-wrap: nowrap;
     max-width: 8%;
+    min-width: 5%;
     margin-left: 2%;
     margin-right: 1%;
     border-left: 5px;
@@ -618,3 +612,42 @@ body{
     height: 80vh;
 }
 
+/** TAG FORM **/
+
+#tag-box {
+    position: relative;
+    border: solid darkgrey 1px;
+    min-height: 30em;
+    overflow-y: auto;
+}
+
+.tag-element-color {
+    min-width: 4%;
+}
+
+.tag-element-text {
+    margin-left: 1%;
+    min-width: 80%;
+    word-break: break-all;
+}
+
+#tag-add-text {
+    margin-left: 1%;
+    width: 75%;
+    margin-top: 5%;
+    margin-right: 2%;
+}
+
+#tag-search {
+    width: 100%;
+}
+
+#tag-add-text, .tag-element-text {
+    font-size: 1.1em;
+}
+
+.tag-remove-button {
+    position:absolute;
+    right: 0px;
+    margin-right: 0;
+}

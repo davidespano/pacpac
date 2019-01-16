@@ -111,13 +111,14 @@ function onlyNumbers(id) {
 
 /**
  * Generates title for a scene
- * @param child
+ * @param name
+ * @param tagName
  * @returns {string}
  */
-function title(scene) {
+function title(name, tagName) {
     return (
-        "Scena: " + scene.name +
-        "\nEtichetta: " + scene.tag.tagName
+        "Scena: " + name +
+        "\nEtichetta: " + tagName
     );
 }
 

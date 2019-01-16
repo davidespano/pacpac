@@ -167,15 +167,38 @@ const Actions = {
 
     /**
      * Dispatch creation of new tag
-     * @param name
-     * @param color
+     * @param tag
      */
-    addNewTag(name, color){
+    addNewTag(tag){
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_TAG,
-            name: name,
-            color: color,
+            uuid: tag.uuid,
+            tag: tag,
+        });
+        SceneAPI.saveTag(tag);
+    },
+
+    /**
+     * Dispatch tag removal
+     * @param tag_uuid
+     */
+    removeTag(tag_uuid){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_TAG,
+            uuid: tag_uuid,
         })
+    },
+
+    /**
+     * Dispatch tag update
+     * @param tag
+     */
+    updateTag(tag){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_TAG,
+            tag: tag,
+        });
+        SceneAPI.saveTag(tag);
     },
 
 

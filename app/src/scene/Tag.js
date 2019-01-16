@@ -2,7 +2,7 @@ import Immutable from 'immutable';
 
 const Tag = Immutable.Record({
     uuid: 'default',
-    name: "---",
+    name: "default",
     color: "#000000",
 });
 

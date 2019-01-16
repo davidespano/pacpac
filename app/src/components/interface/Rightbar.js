@@ -84,6 +84,7 @@ function content(props){
 function sceneView(props){
     if(props.currentScene){
         let scene = props.scenes.get(props.currentScene);
+        let tag = props.tags.get(scene.tag);
         return(
             <div className={'currentOptions'}>
                 <div>
@@ -111,7 +112,9 @@ function sceneView(props){
                     {scene.name}
                 </div>
                 <label>Tipologia: {scene.type}</label>
-                <label>Etichetta: {scene.tag.tagName}</label>
+                <label>Etichetta:</label>
+                <input className={'tag-element-color'} type={'color'} defaultValue={tag.color} disabled/>
+                {tag.name}
             </div>
         );
     } else {

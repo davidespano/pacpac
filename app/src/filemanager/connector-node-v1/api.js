@@ -54,9 +54,9 @@ async function getResourceById(options, id) {
 async function getChildrenForId(options, { id, sortBy = 'name', sortDirection = 'ASC' }) {
     const route = `${options.apiRoot}/files/${id}/children?orderBy=${sortBy}&orderDirection=${sortDirection}`;
     const method = 'GET';
-    console.log("sono qui");
+    //console.log("sono qui");
     const response = await request.get(route).set('authorization', `Token ${window.localStorage.getItem('authToken')}`);
-    console.log(response);
+    //console.log(response);
     return response.body.items.map(normalizeResource)
 }
 

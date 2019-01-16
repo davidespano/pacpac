@@ -29,7 +29,7 @@ class ScenesStore extends ReduceStore {
                             img : scene.name,
                             index : scene.index,
                             type : scene.type,
-                            tag : scene.tag,
+                            tag : scene.tag.uuid,
                             rules: [],
                             objects: {
                                 transitions: [],
@@ -58,6 +58,14 @@ class ScenesStore extends ReduceStore {
             case ActionTypes.UPDATE_SCENE_NAME:
                 state = state.delete(action.oldName);
                 return state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));
+            case ActionTypes.REMOVE_TAG:
+
+                state = state.mapEntries(function ([k,v]){
+                    if(v.tag === action.uuid){
+                        return ([k, v.setProperty('tag', 'default')]);
+                    }
+                });
+
             case ActionTypes.ADD_NEW_OBJECT:
                 newScene = scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
                 state = state.set(newScene.name, newScene);

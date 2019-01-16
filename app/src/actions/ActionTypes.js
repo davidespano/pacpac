@@ -25,7 +25,8 @@ const ActionTypes = {
     //TAGS
 
     ADD_NEW_TAG : 'ADD_NEW_TAG',
-    LOAD_ALL_TAGS : 'LOAD_ALL_TAGS',
+    REMOVE_TAG : 'REMOVE_TAG',
+    UPDATE_TAG: 'UPDATE_TAG',
 
     // INTERACTIVE OBJECTS
 

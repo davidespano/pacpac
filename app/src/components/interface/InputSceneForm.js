@@ -49,7 +49,7 @@ function InputSceneForm(props){
                                         props.scenes._map.last() + 1,
                                         type,
                                         media,
-                                        props.tags.get(tag_uuid),
+                                        tag_uuid,
                                         props.editor.scenesOrder,
                                     );
                                     props.rightbarSelection('scene');
@@ -80,7 +80,7 @@ function addMediaAndCreateScene(name, index, type, media, tag, order){
 
     if(!index) index = 0;
 
-    MediaAPI.addMediaScene(name, index, type, media, tag.uuid, order);
+    MediaAPI.addMediaScene(name, index, type, media, tag, order);
 }
 
 function tagOption(tag){
