@@ -8,7 +8,7 @@ const {apiBaseURL} = settings;
 
 const apiOptions = {
     ...connectorNodeV1.apiOptions,
-    locale: "it",
+    locale: "en",
     apiRoot: apiBaseURL + '/filemanager/' + window.localStorage.getItem("gameID") // Or you local Server Node V1 installation.
 }
 

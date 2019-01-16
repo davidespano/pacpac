@@ -1,7 +1,7 @@
 import { getIcon } from './icons';
 
 export default {
-  locale: 'it',
+  locale: 'en',
   initialSortBy: 'name',
   initialSortDirection: 'ASC',
   dateTimePattern: 'YYYY-MM-DD HH:mm:ss',

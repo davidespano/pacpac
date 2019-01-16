@@ -89,7 +89,7 @@ const fileManagerConfig = {
 };
 
 api.use('/filemanager/:gameID', loginRequired, (req, res, next) => {
-    fileManagerConfig.fsRoot = path.resolve(__dirname, 'public') + '\\' + req.params.gameID;
+    fileManagerConfig.fsRoot = path.resolve(__dirname, 'public') + '/' + req.params.gameID;
     filemanagerMiddleware(fileManagerConfig)(req,res,next);
 });
 
