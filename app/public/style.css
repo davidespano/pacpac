@@ -615,27 +615,31 @@ body{
 /** TAG FORM **/
 
 #tag-box {
-    position: relative;
     border: solid darkgrey 1px;
     min-height: 30em;
     overflow-y: auto;
 }
 
-.tag-element-color {
-    min-width: 4%;
+.tag-element, #add-tag {
+    position: relative;
+    min-height: 10%;
 }
 
-.tag-element-text {
-    margin-left: 1%;
-    min-width: 80%;
-    word-break: break-all;
-}
-
-#tag-add-text {
-    margin-left: 1%;
-    width: 75%;
+#add-tag {
     margin-top: 5%;
-    margin-right: 2%;
+}
+
+.tag-element-color, #tag-add-color {
+    min-width: 4%;
+    min-height: 100%;
+    padding: 0;
+}
+
+.tag-element-text, #tag-add-text {
+    margin-left: 1%;
+    margin-right: 1%;
+    min-width: 82%;
+    word-break: break-all;
 }
 
 #tag-search {
@@ -646,8 +650,16 @@ body{
     font-size: 1.1em;
 }
 
-.tag-remove-button {
+.tag-remove-button, .tag-form-button {
+    background-color: white;
+    border: 1px solid darkgrey;
+    height: 100%;
     position:absolute;
-    right: 0px;
+    right: 0;
     margin-right: 0;
+}
+
+.tag-remove-button:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, .4);
 }

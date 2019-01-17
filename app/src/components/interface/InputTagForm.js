@@ -24,16 +24,18 @@ function InputTagForm(props){
                                 {generateDefaultTag()}
                                 {generateTags(props)}
                             </div>
-                            <input type={'color'} id={'tag-add-color'} defaultValue={'#000000'}/>
-                            <input type={'text'} id={'tag-add-text'} className={'tag-inputs'} placeholder={'Aggiungi un\'etichetta...'}/>
-                            <button
-                                title={"Add new tag"}
-                                id={'tag-add-button'}
-                                className={"action-buttons-container"}
-                                onClick={() => createTag(props)}
-                            >
-                                <img className={"action-buttons"} src={"icons/icons8-plus-math-filled-50.png"}/>
-                            </button>
+                            <div id={'add-tag'}>
+                                <input type={'color'} id={'tag-add-color'} defaultValue={'#000000'}/>
+                                <input type={'text'} id={'tag-add-text'} className={'tag-inputs'} placeholder={'Aggiungi un\'etichetta...'}/>
+                                <button
+                                    title={"Add new tag"}
+                                    id={'tag-add-button'}
+                                    className={"tag-form-button"}
+                                    onClick={() => createTag(props)}
+                                >
+                                    <img className={"action-buttons"} src={"icons/icons8-plus-math-filled-50.png"}/>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -46,9 +48,9 @@ function InputTagForm(props){
 
 function generateDefaultTag(){
     return(
-        <div className={'tag-element'} key={'tag-default-element'}>
+        <div className={'tag-element'} key={'tag-default-element'} id={'tag-default-element'}>
             <input className={'tag-element-color'} type={'color'} value={'#000000'} disabled/>
-            <input className={'tag-element-text'} type={'text'} value={'default'} disabled/>
+            <input className={'tag-element-text'} id={'default-tag-text'} type={'text'} value={'default'} disabled/>
         </div>
     );
 }
@@ -73,7 +75,7 @@ function generateTags(props){
                     <button
                         title={"Remove tag"}
                         id={'tag-' + tag.uuid + '-remove-button'}
-                        className={"action-buttons-container tag-remove-button"}
+                        className={"tag-remove-button tag-form-button"}
                         onClick={() => {
                             SceneAPI.removeTag(tag.uuid);
                         }}
@@ -112,8 +114,6 @@ function editTag(uuid, props){
         name: name,
         color: color,
     });
-
-    console.log(color);
 
     props.updateTag(newTag);
 }
