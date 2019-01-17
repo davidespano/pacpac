@@ -622,7 +622,6 @@ body{
 
 .tag-element, #add-tag {
     position: relative;
-    min-height: 10%;
 }
 
 #add-tag {
@@ -630,7 +629,6 @@ body{
 }
 
 .tag-element-color, #tag-add-color {
-    min-width: 4%;
     min-height: 100%;
     padding: 0;
 }
@@ -638,7 +636,7 @@ body{
 .tag-element-text, #tag-add-text {
     margin-left: 1%;
     margin-right: 1%;
-    min-width: 82%;
+    width: 80%;
     word-break: break-all;
 }
 
@@ -653,13 +651,13 @@ body{
 .tag-remove-button, .tag-form-button {
     background-color: white;
     border: 1px solid darkgrey;
-    height: 100%;
     position:absolute;
+    height: 100%;
     right: 0;
     margin-right: 0;
 }
 
 .tag-remove-button:hover {
     cursor: pointer;
-    background-color: rgba(0, 0, 0, .4);
+    background-color: darkgrey;
 }

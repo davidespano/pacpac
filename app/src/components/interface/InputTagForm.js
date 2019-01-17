@@ -73,7 +73,7 @@ function generateTags(props){
                            onChange={() => editTag(tag.uuid, props)}
                     />
                     <button
-                        title={"Remove tag"}
+                        title={"Remove " + tag.name}
                         id={'tag-' + tag.uuid + '-remove-button'}
                         className={"tag-remove-button tag-form-button"}
                         onClick={() => {
