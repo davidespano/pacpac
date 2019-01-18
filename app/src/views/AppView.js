@@ -10,6 +10,7 @@ import CentralScene from "../components/interface/CentralScene";
 import GeometryScene from "../components/aframe/geometryScene";
 import Canvas from "../components/interface/Canvas";
 import FileContainer from "../components/interface/FileContainer";
+import StoryEditor from "../components/interface/StoryEditor";
 
 function AppView(props) {
 
@@ -43,7 +44,13 @@ function AppView(props) {
                     <GeometryScene {...props}/>
                 </div>
             );
-
+        case 'STORY_EDITOR_MODE_ON':
+            return (
+                <div>
+                    <TopBar {...props} />					
+					<StoryEditor {...props} />
+                </div>			
+            );		
         default:
             return(
                 <div>SOMETHING WENT WRONG!</div>

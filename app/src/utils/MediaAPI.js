@@ -3,6 +3,7 @@ import SceneAPI from "./SceneAPI";
 import interface_utils from "../components/interface/interface_utils";
 import Actions from "../actions/Actions";
 import Orders from "../data/Orders";
+import StoryAPI from "./StoryAPI";
 
 const request = require('superagent');
 
@@ -74,8 +75,26 @@ function uploadMedia(object, file, type, props){
         });
 }
 
+function addImageStory(name, media, systemStory, relevance, randomness) {
+    
+    request.post(`${apiBaseURL}/public/${window.localStorage.getItem("gameID")}/addImage`)
+        .set('name', name)
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .attach('upfile', media)
+        .end(function(err, response) {
+            if (err) {
+                return console.error(err);
+            }
+            else {
+                //crea il nodo nel db
+                StoryAPI.createStory(name, systemStory, relevance, randomness)
+            }
+        });
+}
+
 export default {
     getAllAssets: getAllAssets,
     addMediaScene: addMediaScene,
     uploadMedia: uploadMedia,
+	addImageStory: addImageStory,	
 };

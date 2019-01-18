@@ -1,6 +1,7 @@
 import ActionTypes from './ActionTypes';
 import AppDispatcher from '../data/AppDispatcher';
 import SceneAPI from '../utils/SceneAPI';
+import StoryAPI from '../utils/StoryAPI';
 
 const Actions = {
 
@@ -48,6 +49,13 @@ const Actions = {
       })
     },
 
+    storyEditorModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.STORY_EDITOR_MODE_ON
+        })
+    },	
+	
+	
     //SCENES
 
     /**
@@ -372,7 +380,69 @@ const Actions = {
         })
     },
 
+	//STORY EDITOR
+	
+    loadAllStories(response){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOAD_ALL_STORIES,
+            response: response,
+        });
+        response.forEach(story => {
+            StoryAPI.getStoryByName(story.name);
+        })
 
+    },	
+	
+    updateStory(story){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_STORY,
+            story: story,
+        })
+    },	
+	
+    receiveStory(story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_STORY,
+			story:story
+        })
+    },
+
+    removeStory(story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_STORY,
+			story: story
+        })
+    },
+	
+    restoreStory(story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RESTORE_STORY,
+			story: story			
+        })
+    },	
+
+    editStory(name, userStory) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.EDIT_STORY,
+			name: name,
+			userStory: userStory			
+        })
+    },		
+	
+    startEditingStory(name) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.START_EDITING_STORY,
+			name: name			
+        })
+    },			
+	
+    stopEditingStory() {
+        AppDispatcher.dispatch({
+            type: ActionTypes.STOP_EDITING_STORY
+        })
+    },			
+	
+	
 };
 
 export default Actions;

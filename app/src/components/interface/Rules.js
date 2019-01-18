@@ -3,11 +3,14 @@ import L from "../../utils/L";
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+import StoriesViewer from "./StoriesViewer";
 
 function Rules(props){
     return(
         <div id={'rules'} className={'rules'}>
             {generateRules(props)}
+			<StoriesViewer {...props} />
+			<button id="stories" className={"btn"} data-toggle="modal" data-target="#view-story-modal">Visualizzatore</button>					
         </div>
     );
 }

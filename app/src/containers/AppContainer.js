@@ -13,7 +13,8 @@ import DatalistStore from "../data/DatalistStore";
 import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
-
+import StoriesStore from '../data/StoriesStore';
+import EditStoriesStore from '../data/EditStoriesStore';
 
 function getStores() {
     return [
@@ -28,6 +29,8 @@ function getStores() {
         CentroidsStore,
         EditorStateStore,
         AssetsStore,
+		StoriesStore,
+	    EditStoriesStore,		
     ];
 }
 
@@ -48,6 +51,8 @@ function getState() {
         rules: RulesStore.getState(),
         scenes: ScenesStore.getState(),
         tags: TagsStore.getState(),
+		stories: StoriesStore.getState(),
+		editStories: EditStoriesStore.getState(),		
 
         //FUNCTIONS
 
@@ -59,6 +64,7 @@ function getState() {
         switchToEditMode: Actions.editModeOn,
         switchToFileManager: Actions.fileManagerModeOn,
         switchToGeometryMode: Actions.geometryModeOn,
+		switchToStoryEditorMode: Actions.storyEditorModeOn,				
 
         //scenes
 
@@ -95,6 +101,17 @@ function getState() {
         //OTHER
         onDrop: Actions.onDrop,
         updateDatalist: Actions.updateDatalist,
+
+		//story editor
+		
+		receiveStory: Actions.receiveStory,
+		removeStory: Actions.removeStory,
+		restoreStory: Actions.restoreStory,
+		updateStory: Actions.updateStory,
+		onEditStory: Actions.editStory,
+		
+		startEditingStory: Actions.startEditingStory,
+		stopEditingStory: Actions.stopEditingStory,
 
     };
 }

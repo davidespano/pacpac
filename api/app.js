@@ -124,6 +124,13 @@ api.get('/:gameID/assets', routes.media.list);
 api.delete('/:gameID/assets/:name',loginRequired, routes.media.deleteAsset);
 handleMediaAPI(api);
 
+/**STORIES**/
+api.get('/:gameID/stories', routes.stories.listStories);
+api.get('/:gameID/stories/:name', routes.stories.getStoryByName);
+api.post('/:gameID/stories/addStory', loginRequired, routes.stories.addStory);
+api.delete('/:gameID/stories/:name', loginRequired, routes.stories.deleteStory);
+api.put('/:gameID/stories/updateStory', routes.stories.updateStory);
+
 //api error handler
 api.use(function (err, req, res, next) {
     if (err && err.status) {
