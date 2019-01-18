@@ -28,7 +28,7 @@ nconf.env(['PORT', 'NODE_ENV'])
         'PASSWORD' : 'password',
         'neo4j': 'local',
         'neo4j-local': 'bolt://localhost:7687',
-        'neo4j-remote': 'bolt://192.168.0.200:7687',
+        'neo4j-remote': 'bolt://db:7687',
         'base_url': 'http://localhost:3000',
         'api_path': '/api/v0'
     });

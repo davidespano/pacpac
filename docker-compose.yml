@@ -1,0 +1,20 @@
+version: "3"
+services:
+
+  editor:
+    build: ./app
+    ports:
+      - 3006:3006
+  api:
+    build: ./api
+    ports:
+      - 3000:3000
+    volumes:
+      - D:/temp_pacpac/public:/api/public
+  db:
+    image: neo4j
+    ports:
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - D:/temp_pacpac/neo4j/data:/data
