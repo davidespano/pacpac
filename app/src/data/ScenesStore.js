@@ -23,7 +23,7 @@ class ScenesStore extends ReduceStore {
                 // if state isn't undefined
                 if(state) {
                     // for each scene in db create new Scene object
-                    action.response.forEach(function(scene){
+                    action.scenes.forEach(function(scene){
                         let newScene = Scene({
                             name : scene.name.replace(/\.[^/.]+$/, ""),
                             img : scene.name,

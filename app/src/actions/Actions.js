@@ -69,13 +69,14 @@ const Actions = {
      * @param response
      * @param order of scenes
      */
-    loadAllScenes(response, order = null){
+    loadAllScenes(response, order = null){+
         AppDispatcher.dispatch({
             type: ActionTypes.LOAD_ALL_SCENES,
-            response: response,
+            scenes: response.scenes,
             order: order,
+            tags: response.tags,
         });
-        response.forEach(scene => {
+        response.scenes.forEach(scene => {
             SceneAPI.getByName(scene.name, order);
         })
 
