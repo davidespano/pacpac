@@ -138,16 +138,27 @@ function createScene(name, index, type, tag, order) {
 /**
  * Retrieves all data from db and sends it to stores for scenes generations
  */
-function getAllScenes() {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes`)
+function getAllScenesAndTags() {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/tags`)
         .set('Accept', 'application/json')
-        .end(function (err, response) {
+        .end(function (err, responseT) {
             if (err) {
                 return console.error(err);
             }
-            if (response.body && response.body !== [])
-                Actions.loadAllScenes(response.body, Orders.CHRONOLOGICAL);
+            if (responseT.body && responseT.body !== [])
+                request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes`)
+                    .set('Accept', 'application/json')
+                    .end(function (err, response) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        if (response.body && response.body !== []) {
+                            const scenes_tags = {scenes: response.body, tags: responseT.body};
+                            Actions.loadAllScenes(scenes_tags, Orders.CHRONOLOGICAL);
+                        }
+                    });
         });
+
 }
 
 /**
@@ -294,7 +305,7 @@ function removeTag(tag_uuid) {
 export default {
     getByName: getByName,
     createScene: createScene,
-    getAllScenes: getAllScenes,
+    getAllScenesAndTags: getAllScenesAndTags,
     deleteScene: deleteScene,
     getAllDetailedScenes: getAllDetailedScenes,
     saveTag: saveTag,

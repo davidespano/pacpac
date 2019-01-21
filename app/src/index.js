@@ -13,5 +13,5 @@ ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
 window.localStorage.removeItem("gameID");
 window.localStorage.setItem("gameID", "3f585c1514024e9391954890a61d0a04");
 AuthenticationApi.login("username", "password");
-SceneAPI.getAllScenes();
+SceneAPI.getAllScenesAndTags();
 MediaAPI.getAllAssets();
