@@ -37,7 +37,17 @@ async function createUpdateTag(session, tag, gameID){
     return [tag, newObjs];
 }
 
+function deleteTag(session, uuid, gameID){
+
+    return session.run(
+        'MATCH (tag:Tag:`' + gameID + '` {uuid: $uuid}) ' +
+        'DETACH DELETE tag ' +
+        'RETURN COUNT(tag)', {uuid: uuid})
+        .then(result => result.records[0].get('COUNT(tag)').low)
+}
+
 module.exports = {
     getAll: getAll,
-    createUpdateTag: createUpdateTag
+    createUpdateTag: createUpdateTag,
+    deleteTag: deleteTag,
 };

@@ -110,6 +110,8 @@ api.post('/:gameID/scenes/:name/setHome', loginRequired, routes.scenes.setHome);
 /**TAGS**/
 api.get('/:gameID/tags', routes.tags.list);
 api.put('/:gameID/tags', loginRequired, routes.tags.putTag);
+api.delete('/:gameID/tags/:uuid', loginRequired, routes.tags.deleteTag);
+
 
 /**INTERACTIVE OBJECTS**/
 api.put('/:gameID/interactives/scenes/:name/:objectType', loginRequired, routes.interactiveObjects.putInteractiveObject);
