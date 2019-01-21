@@ -42,7 +42,6 @@ class ScenesStore extends ReduceStore {
                         state = state.set(newScene.name, newScene).sort(stores_utils.chooseComparator(action.order));
                     });
                 }
-                console.log(state);
                 return state;
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));
@@ -66,10 +65,13 @@ class ScenesStore extends ReduceStore {
 
                 state = state.mapEntries(function ([k,v]){
                     if(v.tag === action.uuid){
-                        return ([k, v.setProperty('tag', 'default')]);
+                        v = v.set('tag', 'default');
                     }
+                    return ([k,v]);
                 });
 
+
+                return state;
             case ActionTypes.ADD_NEW_OBJECT:
                 newScene = scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
                 state = state.set(newScene.name, newScene);
