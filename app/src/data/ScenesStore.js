@@ -24,12 +24,15 @@ class ScenesStore extends ReduceStore {
                 if(state) {
                     // for each scene in db create new Scene object
                     action.scenes.forEach(function(scene){
+
+                        let tag = scene.tag.uuid ? scene.tag.uuid : "default";
+
                         let newScene = Scene({
                             name : scene.name.replace(/\.[^/.]+$/, ""),
                             img : scene.name,
                             index : scene.index,
                             type : scene.type,
-                            tag : scene.tag.uuid,
+                            tag : tag,
                             rules: [],
                             objects: {
                                 transitions: [],
@@ -39,6 +42,7 @@ class ScenesStore extends ReduceStore {
                         state = state.set(newScene.name, newScene).sort(stores_utils.chooseComparator(action.order));
                     });
                 }
+                console.log(state);
                 return state;
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));

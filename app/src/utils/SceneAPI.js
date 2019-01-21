@@ -80,13 +80,15 @@ function getByName(name, order = null) {
                 Actions.receiveRule(r);
             });
 
+            let tag = response.body.tag.uuid ? response.body.tag.uuid : "default";
+
             // new Scene object
             let newScene = Scene({
                 name : response.body.name.replace(/\.[^/.]+$/, ""),
                 img : response.body.name,
                 type : response.body.type,
                 index : response.body.index,
-                tag : response.body.tag.uuid,
+                tag : tag,
                 objects : {
                     transitions : transitions_uuids,
                     switches : switches_uuids,
