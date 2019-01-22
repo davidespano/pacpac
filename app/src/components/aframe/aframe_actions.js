@@ -4,26 +4,27 @@ import './aframe_shader'
 const THREE = require('three');
 const {mediaURL} = settings;
 
-function executeAction(state, rule, action){
+function executeAction(VRScene, rule, action){
+    let state = VRScene.state;
+    let runState = VRScene.state.runState;
+    let current_object = {};
+
+    Object.values(state.activeScene.objects).flat().forEach(o =>{
+        if(o.uuid === rule.object_uuid){
+            current_object = o;
+
+        }
+    });
+
     switch (action.type) {
         case RuleActionTypes.TRANSITION:
-            let duration = 2000;
-            let current_transition = {};
             let duration_transition = 0;
             let cursor = document.querySelector('#cursor');
-
-            Object.values(state.activeScene.objects).flat().forEach(t =>{ //we should check the other objects as well
-                if(t.uuid === rule.object_uuid){
-                    duration = t.properties.duration;
-                    current_transition = t;
-
-                }
-            });
-
+            let duration = current_object.properties.duration;
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
 
-            let objectVideo_transition = document.querySelector('#media_' + current_transition.uuid);
+            let objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
 
             if(objectVideo_transition != null) {
                 objectVideo_transition.play();
@@ -37,28 +38,37 @@ function executeAction(state, rule, action){
 
             break;
         case RuleActionTypes.FLIP_SWITCH:
-            let current_switch = {};
             let duration_switch = 0;
-            Object.values(state.activeScene.objects).flat().forEach(t =>{ //we should check the other objects as well
-                if(t.uuid === rule.object_uuid){
-                    duration = t.properties.duration;
-                    current_switch = t;
 
-                }
-            });
-            let objectVideo1_switch = document.querySelector('#media_' + current_switch.uuid);
+            if(runState[current_object.uuid].state === "OFF")
+                runState[current_object.uuid].state = "ON";
+            else
+                runState[current_object.uuid].state = "OFF";
+
+            VRScene.setState({runState: runState});
+
+            /*let objectVideo1_switch = document.querySelector('#media_' + current_object.uuid);
             let objectVideo2_switch = document.querySelector('#mask');
             let current_scene = document.getElementById(state.activeScene.name);
             if(objectVideo1_switch != null) {
-                current_scene.setAttribute('src', '#media_' + current_switch.uuid)
+                current_scene.setAttribute('src', '#media_' + current_object.uuid)
                 objectVideo1_switch.play();
                 duration_switch = (objectVideo1_switch.duration * 1000);
             }
             setTimeout(function () {
                 current_scene.setAttribute('src', '#mask');
                 objectVideo2_switch.play();
-            },duration_switch)
+            },duration_switch)*/
 
+
+            break;
+        case RuleActionTypes.ON:
+            if(runState[current_object.uuid].state === "OFF")
+                runState[current_object.uuid].state = "ON";
+            break;
+        case RuleActionTypes.OFF:
+            if(runState[current_object.uuid].state === "ON")
+                runState[current_object.uuid].state = "OFF";
             break;
         default:
             console.log('not yet implemented');

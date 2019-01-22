@@ -51,7 +51,7 @@ export default class VRScene extends React.Component {
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             eventBus.on('click-'+rule.object_uuid, function () {
                 if(ConditionUtils.evalCondition(rule.condition)){
-                    rule.actions.forEach(action => executeAction(me.state, rule, action))
+                    rule.actions.forEach(action => executeAction(me, rule, action))
                 }
             })
         })
@@ -61,10 +61,10 @@ export default class VRScene extends React.Component {
         let runState = {};
         Object.values(gameGraph.scenes).forEach(scene => {
             //create the state for the scene
-            runState[scene.name] = {background: scene.img}; //name or img??
+            runState[scene.name] = {background: scene.img};
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
-                runState[obj.uuid] = {state: obj.defaultState} //controllare come è davvero salvato
+                runState[obj.uuid] = {state: obj.properties.state}
             });
         });
         return runState;
@@ -86,6 +86,8 @@ export default class VRScene extends React.Component {
                     || name === this.state.activeScene.img);
         }
         else this.currentLevel = [];
+
+        console.log(this.state.runState)
         return (
                 <Scene stats>
                     <a-assets>
