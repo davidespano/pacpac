@@ -63,12 +63,17 @@ function executeAction(VRScene, rule, action){
 
             break;
         case RuleActionTypes.ON:
-            if(runState[current_object.uuid].state === "OFF")
+            if(runState[current_object.uuid].state === "OFF"){
                 runState[current_object.uuid].state = "ON";
+                VRScene.setState({runState: runState});
+            }
+
             break;
         case RuleActionTypes.OFF:
-            if(runState[current_object.uuid].state === "ON")
+            if(runState[current_object.uuid].state === "ON") {
                 runState[current_object.uuid].state = "OFF";
+                VRScene.setState({runState: runState});
+            }
             break;
         default:
             console.log('not yet implemented');
