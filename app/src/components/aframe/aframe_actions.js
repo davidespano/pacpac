@@ -75,6 +75,14 @@ function executeAction(VRScene, rule, action){
                 VRScene.setState({runState: runState});
             }
             break;
+        case RuleActionTypes.CHANGE_BACKGROUND:
+            let scene = action.targetScene;
+            let media = action.media;
+            runState[scene].background = media;
+            VRScene.setState({runState: runState});
+            let targetSceneVideo = document.getElementById(scene + '.mp4');
+            targetSceneVideo.play();
+            break;
         default:
             console.log('not yet implemented');
             console.log(action);

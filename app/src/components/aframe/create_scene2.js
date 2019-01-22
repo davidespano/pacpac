@@ -109,7 +109,7 @@ export default class VRScene extends React.Component {
             let currAssets = [];
             //first, push the background media.
             currAssets.push(
-                <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto" muted
+                <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
                 />);
             //second, push the media of the interactive objs
@@ -118,7 +118,7 @@ export default class VRScene extends React.Component {
                         currAssets.push(
                             <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
-                                   preload="auto" loop={false} crossorigin="anonymous" muted
+                                   preload="auto" loop={false} crossorigin="anonymous"
                             />
                         )
                     }

@@ -69,7 +69,10 @@ export default class Bubble extends React.Component
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             if (objs.length === 0) return; //shader not necessary
             let sky = document.getElementById(scene.name);
-            if(sky.getAttribute('material').shader === 'multi-video') return;
+            if(sky.getAttribute('material').shader === 'multi-video') {
+                if (this.props.isActive) document.getElementById(scene.img).play();
+                return;
+            };
             let video = [];
             let masks = [];
             let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
