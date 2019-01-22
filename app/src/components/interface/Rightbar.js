@@ -6,6 +6,7 @@ import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import interface_utils from "./interface_utils";
 import MediaAPI from "../../utils/MediaAPI";
 import scene_utils from "../../scene/scene_utils";
+import TagDropdown from "./TagDropdown";
 
 let THREE = require('three');
 
@@ -82,6 +83,12 @@ function content(props){
  * @returns {*}
  */
 function sceneView(props){
+    
+    let properties = {
+        props : props,
+        component : 'rightbar',
+    };
+
     if(props.currentScene){
         let scene = props.scenes.get(props.currentScene);
         let tag = props.tags.get(scene.tag);
@@ -113,8 +120,7 @@ function sceneView(props){
                 </div>
                 <label>Tipologia: {scene.type}</label>
                 <label>Etichetta:</label>
-                <input className={'tag-element-color'} type={'color'} defaultValue={tag.color} disabled/>
-                {tag.name}
+                <TagDropdown {...properties}/>
             </div>
         );
     } else {

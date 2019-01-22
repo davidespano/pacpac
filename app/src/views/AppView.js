@@ -60,6 +60,7 @@ function AppView(props) {
  */
 function closeDropdowns(event, props){
     props.dropdownScenesOrder(!(props.editor.scenesOrderMenu) && event.target.className.includes('dropdown-btn'));
+    props.dropdownTagsRightbar(!(props.editor.chooseTagRightbar) && event.target.className.includes('dropdown-tags-btn-rightbar'));
 }
 
 export default AppView;

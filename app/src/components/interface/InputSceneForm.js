@@ -1,8 +1,14 @@
 import React from 'react';
 import MediaAPI from "../../utils/MediaAPI";
 import SceneAPI from "../../utils/SceneAPI";
+import TagDropdown from "./TagDropdown";
 
 function InputSceneForm(props){
+
+    let properties = {
+        props : props,
+        component : 'topbar',
+    }
 
     return(
         <div id={"addSceneDiv"}>
@@ -16,17 +22,13 @@ function InputSceneForm(props){
                             </button>
                         </div>
                         <div className="modal-body modalOptions">
-                            <label htmlFor={"scene_name"}>Nome</label>
+                            <label>Nome</label>
                             <input type="text"
                                    id="scene_name"
                                    name="scene_name"
                             />
-                            <label htmlFor={"scene_tag"}>Etichetta</label>
-                            <select id={'scene_tag'} name={'scene_tag'} className={"custom-select"}>
-                                {[...props.tags.values()].map( tag =>
-                                    <option value={tag.uuid} key={tag.uuid}>{tag.name}</option>
-                                )}
-                            </select>
+                            <label>Etichetta</label>
+                            <TagDropdown {...properties}/>
                             <label htmlFor={'select-scene-type'}>Tipo</label>
                             <div id={'select-scene-type'} name={"select-scene-name"}>
                                 <input id={'scene-type-3d'} type={'radio'} name={'scene-type'} value={'3D'} defaultChecked={'checked'}/>3D
@@ -42,7 +44,7 @@ function InputSceneForm(props){
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
                                 let name = document.getElementById("scene_name").value,
                                     media = document.getElementById("imageInput").files[0],
-                                    tag_uuid = document.getElementById('scene_tag').value;
+                                    tag_uuid = props.editor.selectedTagNewScene;
                                 let type = (document.getElementById("scene-type-3d").checked)? '3D' : '2D';
                                 if(!props.scenes.has(name)) {
                                     addMediaAndCreateScene(name,
@@ -81,15 +83,6 @@ function addMediaAndCreateScene(name, index, type, media, tag, order){
     if(!index) index = 0;
 
     MediaAPI.addMediaScene(name, index, type, media, tag, order);
-}
-
-function tagOption(tag){
-
-    // AGGIUNGERE COLORE AL TAG DA SELEZIONARE
-    //https://github.com/aslamswt/Responsive-Select-Dropdown-with-Images
-    return (
-        <option value={tag.uuid} key={tag.uuid}>{tag.name}</option>
-    );
 }
 
 export default InputSceneForm;

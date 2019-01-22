@@ -54,7 +54,10 @@ function getState() {
         //editor
 
         dropdownScenesOrder: Actions.dropdownScenesOrder,
+        dropdownTagsNewScene: Actions.dropdownTagsNewScene,
+        dropdownTagsRightbar: Actions.dropdownTagsRightbar,
         rightbarSelection: Actions.rightbarSelection,
+        selectTagNewScene: Actions.selectTagNewScene,
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
         switchToFileManager: Actions.fileManagerModeOn,
@@ -93,6 +96,7 @@ function getState() {
         updateRule: Actions.updateRule,
 
         //OTHER
+
         onDrop: Actions.onDrop,
         updateDatalist: Actions.updateDatalist,
 

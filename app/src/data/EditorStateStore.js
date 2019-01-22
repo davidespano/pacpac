@@ -19,6 +19,10 @@ class EditorStateStore extends ReduceStore {
                 return state.set('rightbarSelection', 'objects');
             case ActionTypes.DROPDOWN_SCENES_ORDER:
                 return state.set('scenesOrderMenu', action.status);
+            case ActionTypes.DROPDOWN_TAGS_NEW_SCENE:
+                return state.set('chooseTagNewScene', action.status);
+            case ActionTypes.DROPDOWN_TAGS_RIGHTBAR:
+                return state.set('chooseTagRightbar', action.status);
             case ActionTypes.EDIT_MODE_ON:
                 return state.set('mode', ActionTypes.EDIT_MODE_ON);
             case ActionTypes.GEOMETRY_MODE_ON:
@@ -35,6 +39,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('rightbarSelection', 'scene');
             case ActionTypes.RIGHTBAR_SELECTION:
                 return state.set('rightbarSelection', action.selection);
+            case ActionTypes.SELECT_TAG_NEW_SCENE:
+                return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SORT_SCENES:
                 return state.set('scenesOrder', action.order);
             default:

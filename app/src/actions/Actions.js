@@ -42,6 +42,28 @@ const Actions = {
         })
     },
 
+    dropdownTagsNewScene(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DROPDOWN_TAGS_NEW_SCENE,
+            status: status,
+        })
+    },
+
+    dropdownTagsRightbar(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DROPDOWN_TAGS_RIGHTBAR,
+            status: status,
+        })
+
+    },
+
+    selectTagNewScene(tag){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_TAG_NEW_SCENE,
+            tag: tag,
+        })
+    },
+
     fileManagerModeOn(){
       AppDispatcher.dispatch({
           type: ActionTypes.FILE_MANAGER_MODE_ON
@@ -116,21 +138,25 @@ const Actions = {
             type: ActionTypes.UPDATE_SCENE,
             scene: scene,
         })
+        /**TODO: funzione update sul db **/
     },
 
     /**
      * Dispatch scene name update (since the name is the scene key in ScenesStore map, it needs a specific update)
      * @param scene
-     * @param oldName
+     * @param oldScene
      * @param order of scenes
      */
-    updateSceneName(scene, oldName, order){
+    updateSceneName(scene, oldScene, order){
+        console.log(scene)
+        console.log(oldScene)
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE_NAME,
             scene: scene,
-            oldName: oldName,
+            oldName: oldScene.name,
             order: order,
         })
+        /**TODO: funzione di aggiornamento sul db**/
     },
 
     /**
