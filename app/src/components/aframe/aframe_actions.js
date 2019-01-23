@@ -1,6 +1,7 @@
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import settings from "../../utils/settings";
 import './aframe_shader'
+import {Howl} from 'howler';
 const THREE = require('three');
 const {mediaURL} = settings;
 
@@ -66,6 +67,17 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState});
             let targetSceneVideo = document.getElementById(scene + '.mp4');
             targetSceneVideo.play();
+            break;
+        case RuleActionTypes.PLAY_AUDIO:
+            let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + action.media;
+            let sound = new Howl({
+                src: [media_audio],
+                loop: action.loop,
+            });
+            sound.play();
+            break;
+        case RuleActionTypes.STOP_AUDIO:
+
             break;
         default:
             console.log('not yet implemented');
