@@ -11,6 +11,14 @@ const Switch = defaultValues => InteractiveObject({
     properties : {
         state : 'OFF',
     },
+    media : {
+        onToOff : null,
+        offToOn : null,
+    },
+    mask : {
+        onToOff : null,
+        offToOn : null,
+    },
     ...defaultValues
 });
 

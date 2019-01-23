@@ -71,21 +71,14 @@ function TopBar(props){
 
 function handleNavbarSelection(props){
    // let items = document.getElementsByClassName("nav-item");
-    if(props.editor.mode != ActionTypes.EDIT_MODE_ON){
+    if(props.editor.mode !== ActionTypes.EDIT_MODE_ON){
         props.switchToEditMode();
         document.getElementById("nav-tabContent").hidden = false;
     }
-    // for(let i = 0; i < items.length; i++){
-    //     if(items[i].getAttribute("aria-selected") === 'true'){
-    //         items[i].setAttribute('color', '#EF562D !important');
-    //     } else {
-    //         items[i].setAttribute('color', '#FFFFFF');
-    //     }
-    // }
 }
 
 function handleAssetsMode(props){
-    if(props.editor.mode != ActionTypes.FILE_MANAGER_MODE_ON){
+    if(props.editor.mode !== ActionTypes.FILE_MANAGER_MODE_ON){
         props.switchToFileManager();
         document.getElementById("nav-tabContent").hidden = true;
     }

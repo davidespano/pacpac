@@ -30,11 +30,6 @@ function InputSceneForm(props){
                             />
                             <label>Etichetta</label>
                             <TagDropdown {...properties}/>
-                            <label htmlFor={'select-scene-type'}>Tipo</label>
-                            <div id={'select-scene-type'} name={"select-scene-name"}>
-                                <input id={'scene-type-3d'} type={'radio'} name={'scene-type'} value={'3D'} defaultChecked={'checked'}/>3D
-                                <input id={'scene-type-2d'} type={'radio'} name={'scene-type'} value={'2D'}/>2D
-                            </div>
                             <label htmlFor={"image"}>Media</label>
                             <input type="file"
                                    name="image"
@@ -49,7 +44,7 @@ function InputSceneForm(props){
                                 let name = document.getElementById("scene_name").value,
                                     media = document.getElementById("imageInput").files[0],
                                     tag_uuid = props.editor.selectedTagNewScene;
-                                let type = (document.getElementById("scene-type-3d").checked)? '3D' : '2D';
+                                let type = "3D";
                                 if(!props.scenes.has(name)) {
                                     addMediaAndCreateScene(name,
                                         props.scenes._map.last() + 1,

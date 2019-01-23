@@ -21,8 +21,8 @@ function saveObject(scene, object) {
                 uuid: object.uuid,
                 name: object.name,
                 type: object.type,
-                media: object.media,
-                mask: object.mask,
+                media: JSON.stringify(object.media),
+                mask: JSON.stringify(object.mask),
                 vertices: object.vertices,
                 properties: JSON.stringify(object.properties),
             })

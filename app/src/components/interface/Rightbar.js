@@ -118,7 +118,6 @@ function sceneView(props){
                 >
                     {scene.name}
                 </div>
-                <label>Tipologia: {scene.type}</label>
                 <label>Etichetta:</label>
                 <TagDropdown {...properties}/>
             </div>
@@ -205,30 +204,7 @@ function generateProperties(props){
                 {currentObject.name}
             </div>
             {generateSpecificProperties(currentObject, props)}
-            <div id={'uploadMedia'}>
-                <label htmlFor={"media"}>Media</label>
-                {currentObject.media}
-                <input type="file"
-                       name="media"
-                       id="mediaInput"
-                       onChange={() => {
-                           let file = document.getElementById("mediaInput").files[0];
-                           MediaAPI.uploadMedia(currentObject, file, 'media', props);
-                       }}
-                />
-            </div>
-            <div id={'uploadMask'}>
-                <label htmlFor={"mask"}>Maschera</label>
-                {currentObject.mask}
-                <input type="file"
-                       name="mask"
-                       id="maskInput"
-                       onChange={() => {
-                           let file = document.getElementById("maskInput").files[0]
-                           MediaAPI.uploadMedia(currentObject, file, 'mask', props);
-                       }}
-                />
-            </div>
+            {generateMediaAndMaskProperties(currentObject, props)}
             <label>Geometry</label>
             <button
                 className={"propertyForm geometryBtn"}
@@ -262,6 +238,7 @@ function generateSpecificProperties(object, props){
                             {object.properties.duration}
                         </div><span className={"measureUnit"}>ms</span>
                     </div>
+
                 </div>
             );
         case InteractiveObjectsTypes.SWITCH:
@@ -284,6 +261,99 @@ function generateSpecificProperties(object, props){
         default:
             return(<div>Error!</div>);
 
+    }
+}
+
+/**
+ * Generates media and mask properties for each object type (some have the same properties, others have more than one
+ * media/mask)
+ * @param object
+ * @param props
+ */
+function generateMediaAndMaskProperties(object, props){
+    switch(object.type){
+        case InteractiveObjectsTypes.SWITCH:
+            return(
+                <div>
+                    <div id={'uploadMedia-on-to-off'}>
+                        <label htmlFor={"media-on-to-off"}>Media ON to OFF</label>
+                        {object.media.onToOff}
+                        <input type="file"
+                               name="media-on-to-off"
+                               id="mediaInput-on-to-off"
+                               onChange={() => {
+                                   let file = document.getElementById("mediaInput-on-to-off").files[0];
+                                   MediaAPI.uploadMedia(object, file, 'media-on-to-off', props);
+                               }}
+                        />
+                    </div>
+                    <div id={'uploadMask-on-to-off'}>
+                        <label htmlFor={"mask-on-to-off"}>Mask ON to OFF</label>
+                        {object.mask.onToOff}
+                        <input type="file"
+                               name="mask-on-to-off"
+                               id="maskInput-on-to-off"
+                               onChange={() => {
+                                   let file = document.getElementById("maskInput-on-to-off").files[0]
+                                   MediaAPI.uploadMedia(object, file, 'mask-on-to-off', props);
+                               }}
+                        />
+                    </div>
+                    <div id={'uploadMedia-off-to-on'}>
+                        <label htmlFor={"media-off-to-on"}>Media OFF to ON</label>
+                        {object.media.offToOn}
+                        <input type="file"
+                               name="media-off-to-on"
+                               id="mediaInput-off-to-on"
+                               onChange={() => {
+                                   let file = document.getElementById("mediaInput-off-to-on").files[0];
+                                   MediaAPI.uploadMedia(object, file, 'media-off-to-on', props);
+                               }}
+                        />
+                    </div>
+                    <div id={'uploadMask-off-to-on'}>
+                        <label htmlFor={"mask-off-to-on"}>Mask OFF to ON</label>
+                        {object.mask.offToOn}
+                        <input type="file"
+                               name="mask-off-to-on"
+                               id="maskInput-off-to-on"
+                               onChange={() => {
+                                   let file = document.getElementById("maskInput-off-to-on").files[0]
+                                   MediaAPI.uploadMedia(object, file, 'mask-off-to-on', props);
+                               }}
+                        />
+                    </div>
+                </div>
+            );
+        default:
+            return(
+                <div>
+                    <div id={'uploadMedia'}>
+                        <label htmlFor={"media"}>Media</label>
+                        {object.media}
+                        <input type="file"
+                               name="media"
+                               id="mediaInput"
+                               onChange={() => {
+                                   let file = document.getElementById("mediaInput").files[0];
+                                   MediaAPI.uploadMedia(object, file, 'media', props);
+                               }}
+                        />
+                    </div>
+                    <div id={'uploadMask'}>
+                        <label htmlFor={"mask"}>Maschera</label>
+                        {object.mask}
+                        <input type="file"
+                               name="mask"
+                               id="maskInput"
+                               onChange={() => {
+                                   let file = document.getElementById("maskInput").files[0]
+                                   MediaAPI.uploadMedia(object, file, 'mask', props);
+                               }}
+                        />
+                    </div>
+                </div>
+            );
     }
 }
 

@@ -51,8 +51,8 @@ function getByName(name, order = null) {
                     uuid: sw.uuid,
                     name: sw.name,
                     type: sw.type,
-                    media: sw.media,
-                    mask: sw.mask,
+                    media: JSON.parse(sw.media),
+                    mask: JSON.parse(sw.mask),
                     vertices: sw.vertices,
                     properties: JSON.parse(sw.properties),
                 });
