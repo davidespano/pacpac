@@ -46,28 +46,12 @@ function executeAction(VRScene, rule, action){
                 runState[current_object.uuid].state = "OFF";
 
             VRScene.setState({runState: runState});
-
-            /*let objectVideo1_switch = document.querySelector('#media_' + current_object.uuid);
-            let objectVideo2_switch = document.querySelector('#mask');
-            let current_scene = document.getElementById(state.activeScene.name);
-            if(objectVideo1_switch != null) {
-                current_scene.setAttribute('src', '#media_' + current_object.uuid)
-                objectVideo1_switch.play();
-                duration_switch = (objectVideo1_switch.duration * 1000);
-            }
-            setTimeout(function () {
-                current_scene.setAttribute('src', '#mask');
-                objectVideo2_switch.play();
-            },duration_switch)*/
-
-
             break;
         case RuleActionTypes.ON:
             if(runState[current_object.uuid].state === "OFF"){
                 runState[current_object.uuid].state = "ON";
                 VRScene.setState({runState: runState});
             }
-
             break;
         case RuleActionTypes.OFF:
             if(runState[current_object.uuid].state === "ON") {
