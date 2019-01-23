@@ -1,14 +1,13 @@
 import React from 'react';
 import InputSceneForm from './InputSceneForm';
 import Transition from "../../interactives/Transition";
-import Actions from "../../actions/Actions";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import rules_utils from "../../interactives/rules/rules_utils";
-import scene_utils from "../../scene/scene_utils";
 import Switch from "../../interactives/Switch";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import InputTagForm from "./InputTagForm";
 import ActionTypes from "../../actions/ActionTypes";
+import FileForm from "./FileForm";
 
 let uuid = require('uuid');
 
@@ -35,6 +34,7 @@ function TopBar(props){
                 <div className="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
                     <InputSceneForm {...props} />
                     <InputTagForm {...props}/>
+                    <FileForm {...props}/>
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
                             <img src={"icons/icons8-add-image-100.png"}/>

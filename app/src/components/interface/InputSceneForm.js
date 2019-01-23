@@ -2,13 +2,14 @@ import React from 'react';
 import MediaAPI from "../../utils/MediaAPI";
 import SceneAPI from "../../utils/SceneAPI";
 import TagDropdown from "./TagDropdown";
+import FileForm from "./FileForm";
 
 function InputSceneForm(props){
 
     let properties = {
         props : props,
         component : 'topbar',
-    }
+    };
 
     return(
         <div id={"addSceneDiv"}>
@@ -39,6 +40,9 @@ function InputSceneForm(props){
                                    name="image"
                                    id="imageInput"
                             />
+                            <button data-toggle="modal" data-target="#add-file-modal">
+                                FILES
+                            </button>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
