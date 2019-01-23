@@ -4,6 +4,7 @@ import './aframe_shader'
 import {Howl} from 'howler';
 const THREE = require('three');
 const {mediaURL} = settings;
+const soundsHub = require('./soundsHub');
 
 function executeAction(VRScene, rule, action){
     let state = VRScene.state;
@@ -74,10 +75,12 @@ function executeAction(VRScene, rule, action){
                 src: [media_audio],
                 loop: action.loop,
             });
+            soundsHub[action.media] = sound;
             sound.play();
             break;
         case RuleActionTypes.STOP_AUDIO:
-
+            if(soundsHub[action.media])
+                soundsHub[action.media].stop();
             break;
         default:
             console.log('not yet implemented');
