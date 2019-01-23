@@ -20,7 +20,7 @@ function TagDropdown(properties){
                     <p className={'tag-text'}>{selected.name}</p>
                 </div>
                 <button
-                    title={"Scegli un'etichetta..."}
+                    title={"See tags..."}
                     className={"action-buttons-container dropdown-tags-btn-" + component}
                     onClick={() => display(props, component)}
                 >
@@ -64,12 +64,12 @@ function handleTagsButton(component){
     if(component === 'topbar'){
         return(
             <button
-                title={"Gestisci etichette"}
-                className={"action-buttons-container dropdown-tags-btn-" + component}
+                title={"Tag manager"}
+                className={"tag-manager-btn action-buttons-container dropdown-tags-btn-" + component}
                 data-toggle="modal"
                 data-target="#add-tag-modal"
             >
-                <img className={"action-buttons dropdown-tags-btn-" + component} src={"icons/icons8-tags-100.png"}/>
+                <img className={"action-buttons dropdown-tags-btn-" + component} src={"icons/icons8-tags-white-50.png"}/>
             </button>
         );
     }

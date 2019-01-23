@@ -59,7 +59,7 @@ function AppView(props) {
  * @param props
  */
 function closeDropdowns(event, props){
-    if(event.target){
+    if(event.target.className && typeof event.target.className !== 'object'){
         props.dropdownScenesOrder(!(props.editor.scenesOrderMenu) && event.target.className.includes('dropdown-btn'));
         props.dropdownTagsRightbar(!(props.editor.chooseTagRightbar) && event.target.className.includes('dropdown-tags-btn-rightbar'));
     }

@@ -27,17 +27,27 @@ function InputSceneForm(props){
                             <input type="text"
                                    id="scene_name"
                                    name="scene_name"
+                                   className={'input-new-scene'}
                             />
                             <label>Etichetta</label>
                             <TagDropdown {...properties}/>
                             <label htmlFor={"image"}>Media</label>
-                            <input type="file"
-                                   name="image"
-                                   id="imageInput"
-                            />
-                            <button data-toggle="modal" data-target="#add-file-modal">
-                                FILES
-                            </button>
+                            <div id={'select-file-container'} name="image">
+                                <p id={'file-selected-name'}
+                                   className={'input-new-scene'}
+                                >
+                                    No file selected
+                                </p>
+                                <button name={'image'}
+                                        id={'select-file-scene-btn'}
+                                        className={'select-file-btn btn'}
+                                        data-toggle="modal"
+                                        data-target="#add-file-modal"
+                                >
+                                    <img className={"action-buttons"} src={"icons/icons8-add-folder-50.png"}/>
+                                      Search
+                                </button>
+                            </div>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{

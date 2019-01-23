@@ -123,7 +123,7 @@ body{
 /** MODAL BOXES **/
 
 .modal {
-    font-size: 12px;
+    font-size: 1em;
 }
 .modal > .header {
     width: 100%;
@@ -154,6 +154,49 @@ body{
     background: #ffffff;
     border-radius: 18px;
     border: 1px solid #cfcece;
+}
+
+.modalOptions > label{
+    font-size: 20px;
+    width: 100%;
+}
+.modalOptions > select{
+    width: 20%;
+    height: 26px;
+}
+
+#scene_name{
+    background-color: #FFFFFF;
+    border: 1px solid darkgrey;
+    height: 26px;
+}
+
+.input-new-scene {
+    width: 70%;
+    padding: 2px 5px 2px 2px;
+    height: 30px;
+}
+
+#select-file-container {
+    display: inline-flex;
+    width: 100%;
+    height: 30px;
+}
+
+#file-selected-name {
+    border: solid 1px darkgrey;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+#select-file-scene-btn {
+    width: 20%;
+    height: 30px;
+    padding: 2px;
+}
+
+.modal-footer{
+    display: inline;
 }
 
 .pop-button{
@@ -349,27 +392,6 @@ body{
     border: 1px solid #EF562D;
     border-radius: 5px;
     width: 30%;
-}
-
-.modalOptions > label{
-    font-size: 20px;
-    width: 100%;
-}
-.modalOptions > select{
-    width: 20%;
-    height: 26px;
-}
-
-#scene_name{
-    background-color: #FFFFFF;
-    border: 1px solid #EF562D;
-    border-radius: 5px;
-    height: 26px;
-    width: 80%;
-}
-
-.modal-footer{
-    display: inline;
 }
 
 .action-buttons{
@@ -596,7 +618,7 @@ body{
 }
 
 .dropdown-tags-topbar, .dropdown-tags-element-chosen-topbar, .dropdown-tags-element-chosen-rightbar {
-    width: 80%;
+    width: 70%;
 }
 
 /* Links inside the dropdown */
@@ -610,7 +632,7 @@ body{
 }
 
 .dropdown-tags-element-chosen-topbar, .dropdown-tags-element-chosen-rightbar {
-    margin-right: 1%;
+    height: 100%;
 }
 
 .dropdown-tags-element-topbar,
@@ -623,7 +645,7 @@ body{
 .dropdown-tags-element-topbar > p, .dropdown-tags-element-chosen-topbar > p,
 .dropdown-tags-element-rightbar > p, .dropdown-tags-element-chosen-rightbar > p {
     margin: 0;
-    padding: 2px;
+    padding-left: 5px;
 }
 
 .dropdown-content a {
@@ -645,8 +667,20 @@ body{
     background-color: rgba(239, 86, 45, .5);
 }
 
+.tag-manager-btn {
+    color: white;
+    background-color: #EF562D;
+    border-color: #DD4124;
+    margin-right: 1%;
+}
 
-/** FILE MANAGER **/
+.tag-manager-btn:hover {
+    background-color: #EF562D;
+    border-color: #DD4124;
+}
+
+
+    /** FILE MANAGER **/
 
 .filemanager{
     height: 80vh;
