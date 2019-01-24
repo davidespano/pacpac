@@ -161,7 +161,7 @@ const Actions = {
             oldScene: oldScene,
             order: order,
         });
-        SceneAPI.updateScene(scene.uuid, scene.name, scene.type, scene.tag);
+        SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
     },
 
     /**
