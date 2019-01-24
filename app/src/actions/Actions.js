@@ -145,7 +145,7 @@ const Actions = {
             type: ActionTypes.UPDATE_SCENE,
             scene: scene,
         });
-        SceneAPI.updateScene(scene.uuid, scene.name, scene.type, scene.tag);
+        SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
     },
 
     /**

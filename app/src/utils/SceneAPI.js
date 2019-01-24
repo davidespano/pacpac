@@ -151,12 +151,11 @@ function createScene(name, img, index, type, tag, order) {
  * @param type
  * @param tag
  */
-function updateScene(uuid, name, type, tag) {
-    console.log(uuid, name, type, tag);
+function updateScene(uuid, name, img, type, tag) {
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({uuid: uuid, name: name, type: type, tag: tag})
+        .send({uuid: uuid, name: name, img: img, type: type, tag: tag})
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
