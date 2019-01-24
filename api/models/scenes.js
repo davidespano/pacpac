@@ -134,7 +134,7 @@ function getHomeScene(session, gameID) {
 }
 
 //add a scene
-function addScene(session, name, index, type, tag, gameID) {
+function addScene(session, uuid, name, index, type, tag, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name})' +
         'RETURN scene', {name: name})
@@ -145,8 +145,8 @@ function addScene(session, name, index, type, tag, gameID) {
             else {
                 return session.run(
                     'MATCH (tag:Tag:`' + gameID + '` {uuid: $tag}) ' +
-                    'CREATE (scene:Scene:`' + gameID + '` {name: $name, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
-                    'RETURN scene,tag', {name: name, index: index, type: type, tag: tag})
+                    'CREATE (scene:Scene:`' + gameID + '` {uuid:$uuid, name: $name, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
+                    'RETURN scene,tag', {uuid: uuid, name: name, index: index, type: type, tag: tag})
             }
         })
         .then(result => {
@@ -158,6 +158,34 @@ function addScene(session, name, index, type, tag, gameID) {
             }
         });
 
+}
+
+//update a scene
+function updateScene( session, uuid, name, type, tag, gameID){
+    return session.run(
+        'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})' +
+        'RETURN scene', {uuid: uuid})
+        .then(result => {
+            if (_.isEmpty(result.records)) {
+                throw {message: "Scene doesn't exists", status: 404};
+            }
+            else {
+                return session.run(
+                    'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})-[r:TAGGED_AS]->(tagS), (tag:Tag:`' + gameID + '` {uuid: $tag}) ' +
+                    'SET scene.name = $name, scene.type = $type ' +
+                    'CREATE (scene) -[:TAGGED_AS]-> (tag) ' +
+                    'DELETE r ' +
+                    'RETURN scene,tag', {uuid: uuid, name: name, type: type, tag: tag})
+            }
+        })
+        .then(result => {
+            if(result.records[0] && result.records[0].has("tag")) {
+                singleScene(result.records[0])
+            }
+            else{
+                throw {message: "Tag does not exists", status: 404};
+            }
+        });
 }
 
 //delete a scene
@@ -194,13 +222,14 @@ function setHome(session, name, gameID){
             if (_.isEmpty(result.records)) {
                 throw {message: 'scene not found', status: 404};
             }
-        })
+        });
 }
 
 module.exports = {
     getAll: getAll,
     getByName: getByName,
     addScene: addScene,
+    updateScene: updateScene,
     getHomeScene: getHomeScene,
     deleteScene: deleteScene,
     setHome: setHome,

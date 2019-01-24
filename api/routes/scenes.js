@@ -146,6 +146,10 @@ function detailedList(req, res, next) {
  *          type: object
  *          schema:
  *              properties:
+ *                  uuid:
+ *                      type: string
+ *                      required: true
+ *                      description: uuid of the scene
  *                  name:
  *                      type: string
  *                      required: true
@@ -184,13 +188,77 @@ function detailedList(req, res, next) {
  *              description: Scene already exists
  */
 function addScene(req, res, next) {
+    const uuid = req.body.uuid;
     const name = req.body.name;
     const index = req.body.index;
     const tag = req.body.tag;
     const type = req.body.type;
     const gameID = req.params.gameID;
 
-    Scenes.addScene(dbUtils.getSession(req), name, index, type, tag, gameID)
+    Scenes.addScene(dbUtils.getSession(req), uuid, name, index, type, tag, gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
+/**
+ * @swagger
+ * /api/v0/{gameID}/scenes/updateScene:
+ *  put:
+ *      tags:
+ *      - scenes
+ *      description: Update a scene
+ *      summary: Update a scene
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in: body
+ *          name: scene
+ *          type: object
+ *          schema:
+ *              properties:
+ *                  uuid:
+ *                      type: string
+ *                      required: true
+ *                      description: uuid of the scene
+ *                  name:
+ *                      type: string
+ *                      required: true
+ *                      description: Name of the scene
+ *                  type:
+ *                      type: string
+ *                      required: true
+ *                      description: Type of the scene (3D / 2D)
+ *                  tag:
+ *                      type: string
+ *                      description: Uuid of the tag
+ *                      required: true
+ *          required: true
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
+ *        - in : path
+ *          name : gameID
+ *          type : string
+ *          required : true
+ *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *      responses:
+ *          200:
+ *              description: A scene
+ *              schema:
+ *                  $ref: '#/definitions/Scenes'
+ *          404:
+ *              description: Scene/Tag does not exists
+ */
+function updateScene(req, res, next) {
+    const uuid = req.body.uuid;
+    const name = req.body.name;
+    const tag = req.body.tag;
+    const type = req.body.type;
+    const gameID = req.params.gameID;
+
+    Scenes.updateScene(dbUtils.getSession(req), uuid, name, type, tag, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
@@ -311,6 +379,7 @@ module.exports = {
     list: list,
     getByName: getByName,
     addScene: addScene,
+    updateScene: updateScene,
     getHomeScene: getHomeScene,
     deleteScene: deleteScene,
     setHome: setHome,

@@ -104,6 +104,7 @@ api.get('/:gameID/scenes-all', routes.scenes.detailedList);
 api.get('/:gameID/scenes/:name', routes.scenes.getByName);
 api.get('/:gameID/scenes-home', routes.scenes.getHomeScene);
 api.post('/:gameID/scenes/addScene', loginRequired, routes.scenes.addScene);
+api.put('/:gameID/scenes/updateScene', loginRequired, routes.scenes.updateScene);
 api.delete('/:gameID/scenes/:name', loginRequired, routes.scenes.deleteScene);
 api.post('/:gameID/scenes/:name/setHome', loginRequired, routes.scenes.setHome);
 
