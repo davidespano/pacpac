@@ -57,6 +57,13 @@ const Actions = {
 
     },
 
+    selectFile(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_FILE,
+            selection: selection,
+        })
+    },
+
     selectTagNewScene(tag){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_TAG_NEW_SCENE,
@@ -137,8 +144,8 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE,
             scene: scene,
-        })
-        /**TODO: funzione update sul db **/
+        });
+        SceneAPI.updateScene(scene.uuid, scene.name, scene.type, scene.tag);
     },
 
     /**
@@ -148,15 +155,13 @@ const Actions = {
      * @param order of scenes
      */
     updateSceneName(scene, oldScene, order){
-        console.log(scene)
-        console.log(oldScene)
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE_NAME,
             scene: scene,
-            oldName: oldScene.name,
+            oldScene: oldScene,
             order: order,
-        })
-        /**TODO: funzione di aggiornamento sul db**/
+        });
+        SceneAPI.updateScene(scene.uuid, scene.name, scene.type, scene.tag);
     },
 
     /**

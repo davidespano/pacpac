@@ -3,6 +3,7 @@ import MediaAPI from "../../utils/MediaAPI";
 import SceneAPI from "../../utils/SceneAPI";
 import TagDropdown from "./TagDropdown";
 import FileForm from "./FileForm";
+import FileSelectionBtn from "./FileSelectionBtn";
 
 function InputSceneForm(props){
 
@@ -36,34 +37,33 @@ function InputSceneForm(props){
                                 <p id={'file-selected-name'}
                                    className={'input-new-scene'}
                                 >
-                                    No file selected
+                                    {selectedFile(props.editor)}
                                 </p>
-                                <button name={'image'}
-                                        id={'select-file-scene-btn'}
-                                        className={'select-file-btn btn'}
-                                        data-toggle="modal"
-                                        data-target="#add-file-modal"
-                                >
-                                    <img className={"action-buttons"} src={"icons/icons8-add-folder-50.png"}/>
-                                      Search
-                                </button>
+                                <FileSelectionBtn {...properties} />
                             </div>
+                            <label htmlFor={"image"}>Media</label>
+                            <input type="file"
+                                   name="image"
+                                   id="imageInput"
+                            />
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
                                 let name = document.getElementById("scene_name").value,
-                                    media = document.getElementById("imageInput").files[0],
+                                    media = props.editor.selectedFile,
                                     tag_uuid = props.editor.selectedTagNewScene;
                                 let type = "3D";
-                                if(!props.scenes.has(name)) {
-                                    addMediaAndCreateScene(name,
+                                if(!props.scenes.has(name) && media != null) {
+                                    checkFormAndCreateScene(
+                                        name,
+                                        media,
                                         props.scenes._map.last() + 1,
                                         type,
-                                        media,
                                         tag_uuid,
                                         props.editor.scenesOrder,
                                     );
                                     props.rightbarSelection('scene');
+                                    props.selectFile(null);
                                 }
                             }
                             } data-dismiss="modal" >Conferma</button>
@@ -77,7 +77,7 @@ function InputSceneForm(props){
     );
 }
 
-function addMediaAndCreateScene(name, index, type, media, tag, order){
+function checkFormAndCreateScene(name, media, index, type, tag, order){
     //FARE CONTROLLI FORM QUI!1!1
     //lettere accentate e spazi sono ammessi! Yay
     //MA NON ALL'INIZIO DELLA FRASE
@@ -85,14 +85,19 @@ function addMediaAndCreateScene(name, index, type, media, tag, order){
 
     // regex to extract file extension
     // https://stackoverflow.com/questions/680929/how-to-extract-extension-from-filename-string-in-javascript
-    let re = /(?:\.([^.]+))?$/;
-    let ext = re.exec(media.name)[1];
-    name = name + "." + ext;
+    //let re = /(?:\.([^.]+))?$/;
+    //let ext = re.exec(media.name)[1];
+    //name = name + "." + ext;
 
     if(!index) index = 0;
 
-    MediaAPI.addMediaScene(name, index, type, media, tag, order);
+    SceneAPI.createScene(name, media, index, type, tag, order);
 }
+
+function selectedFile(editor){
+    return editor.selectedFile ? editor.selectedFile : 'No file selected';
+}
+
 
 export default InputSceneForm;
 

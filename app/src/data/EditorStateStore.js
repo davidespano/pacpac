@@ -39,6 +39,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('rightbarSelection', 'scene');
             case ActionTypes.RIGHTBAR_SELECTION:
                 return state.set('rightbarSelection', action.selection);
+            case ActionTypes.SELECT_FILE:
+                return state.set('selectedFile', action.selection);
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SORT_SCENES:

@@ -189,10 +189,8 @@ body{
     vertical-align: middle;
 }
 
-#select-file-scene-btn {
-    width: 20%;
-    height: 30px;
-    padding: 2px;
+.select-file-btn {
+    padding: 0 5px 0 5px;
 }
 
 .modal-footer{

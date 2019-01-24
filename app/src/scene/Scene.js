@@ -12,6 +12,7 @@ import Immutable from "immutable";
  */
 const Scene = Immutable.Record({
 
+    uuid: null,
     name : "",
     img : "",
     index : 0,

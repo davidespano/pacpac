@@ -2,6 +2,13 @@ import React from 'react';
 import FileContainer from "./FileContainer";
 
 function FileForm(props){
+    let properties = {
+        props : props,
+        component : 'modal',
+    };
+
+    let buttonStatus = !props.editor.selectedFile;
+
     return(
         <div id={"manage-files"}>
             <div className="modal fade" id="add-file-modal" tabIndex="-1" role="dialog" aria-labelledby="add-file-modal-label" aria-hidden="true">
@@ -14,7 +21,16 @@ function FileForm(props){
                             </button>
                         </div>
                         <div className="modal-body modalOptions">
-                            <FileContainer {...props}/>
+                            <FileContainer {...properties}/>
+                            <button
+                                id={'button-file-selectiom'}
+                                type='button'
+                                className={'btn'}
+                                data-dismiss="modal"
+                                disabled={buttonStatus}
+                            >
+                                Open file
+                            </button>
                         </div>
                     </div>
                 </div>

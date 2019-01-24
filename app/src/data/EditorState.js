@@ -5,6 +5,7 @@ import Orders from "./Orders";
 const EditorState = Immutable.Record({
     chooseTagNewScene: false,
     chooseTagRightbar: false,
+    selectedFile: null,
     mode: ActionTypes.EDIT_MODE_ON,
     objectsFilter: 'scene',
     navbarSelection: 'scene',

@@ -28,6 +28,7 @@ class ScenesStore extends ReduceStore {
                         let tag = scene.tag.uuid ? scene.tag.uuid : "default";
 
                         let newScene = Scene({
+                            uuid: scene.uuid,
                             name : scene.name.replace(/\.[^/.]+$/, ""),
                             img : scene.name,
                             index : scene.index,
@@ -42,6 +43,7 @@ class ScenesStore extends ReduceStore {
                         state = state.set(newScene.name, newScene).sort(stores_utils.chooseComparator(action.order));
                     });
                 }
+                console.log(state);
                 return state;
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));
@@ -59,7 +61,7 @@ class ScenesStore extends ReduceStore {
                 state = state.set(action.scene.name, action.scene);
                 return state;
             case ActionTypes.UPDATE_SCENE_NAME:
-                state = state.delete(action.oldName);
+                state = state.delete(action.oldScene.name);
                 return state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));
             case ActionTypes.REMOVE_TAG:
 

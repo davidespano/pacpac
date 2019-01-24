@@ -10,27 +10,55 @@ const apiOptions = {
     ...connectorNodeV1.apiOptions,
     locale: "en",
     apiRoot: apiBaseURL + '/filemanager/' + window.localStorage.getItem("gameID") // Or you local Server Node V1 installation.
+};
+
+function FileContainer(properties){
+
+    let props = properties.props,
+        component = properties.component;
+
+    /**TODO: disabilitare selezione multipla se il component è modal**/
+
+    return (
+        <div className={"filemanager"}>
+            <FileManager>
+                <FileNavigator
+                    id={"filemanager-" + component}
+                    api={connectorNodeV1.api}
+                    apiOptions={apiOptions}
+                    capabilities={connectorNodeV1.capabilities}
+                    listViewLayout={connectorNodeV1.listViewLayout}
+                    viewLayoutOptions={connectorNodeV1.viewLayoutOptions}
+                    onResourceItemClick={
+                        ({ event, number, rowData }) => handleFileSelection(props, rowData, component)
+                    }
+                    onResourceItemDoubleClick={
+                        ({ event, number, rowData }) => handleDoubleClick(props, rowData, component)
+                    }
+                />
+            </FileManager>
+        </div>
+    );
 }
 
-class FileContainer extends React.Component {
+function handleFileSelection(props, data, component){
+    if(component === 'modal'){
+        if(data.type !== 'dir'){
+            let path = "";
+            for(let i = 1; i < data.ancestors.length; i++){
+                path += data.ancestors[i].name + "/";
+            }
 
-    render()
-    {
-        return (
-            <div className={"filemanager"}>
-                <FileManager>
-                    <FileNavigator
-                        id="filemanager-1"
-                        api={connectorNodeV1.api}
-                        apiOptions={apiOptions}
-                        capabilities={connectorNodeV1.capabilities}
-                        listViewLayout={connectorNodeV1.listViewLayout}
-                        viewLayoutOptions={connectorNodeV1.viewLayoutOptions}
-                    />
-                </FileManager>
-            </div>
-        );
+            path += data.name;
+            props.selectFile(path);
+        }
     }
+}
+
+function handleDoubleClick(props, data, component) {
+    handleFileSelection(props, data, component);
+
+    /**TODO: chiudere modal**/
 }
 
 export default FileContainer;

@@ -6,6 +6,7 @@ import Rule from "../interactives/rules/Rule";
 import RuleActionTypes from "../interactives/rules/RuleActionTypes";
 import Switch from "../interactives/Switch";
 import Orders from "../data/Orders";
+let uuid = require('uuid');
 
 const request = require('superagent');
 
@@ -84,8 +85,9 @@ function getByName(name, order = null) {
 
             // new Scene object
             let newScene = Scene({
-                name : response.body.name.replace(/\.[^/.]+$/, ""),
-                img : response.body.name,
+                uuid: response.body.uuid,
+                name : response.body.name,
+                img : response.body.img,
                 type : response.body.type,
                 index : response.body.index,
                 tag : tag,
@@ -104,16 +106,18 @@ function getByName(name, order = null) {
 /**
  * Creates new Scene inside db and stores
  * @param name
+ * @param img
  * @param index
  * @param type
  * @param tag
  * @param order of scenes
  */
-function createScene(name, index, type, tag, order) {
+function createScene(name, img, index, type, tag, order) {
+    let id = uuid.v4();
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({name: name, index: index, type: type, tag: tag})
+        .send({uuid: id, name: name, img: img, index: index, type: type, tag: tag})
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
@@ -121,8 +125,9 @@ function createScene(name, index, type, tag, order) {
             
             // new Scene object
             let newScene = Scene({
-                name : name.replace(/\.[^/.]+$/, ""),
-                img : name,
+                uuid: id,
+                name : name,
+                img : img,
                 type : type,
                 index : index,
                 tag : tag,
@@ -132,6 +137,8 @@ function createScene(name, index, type, tag, order) {
                     switches: [],
                 }
             });
+
+            console.log(newScene)
 
             Actions.receiveScene(newScene, order);
         });
@@ -145,6 +152,7 @@ function createScene(name, index, type, tag, order) {
  * @param tag
  */
 function updateScene(uuid, name, type, tag) {
+    console.log(uuid, name, type, tag);
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -276,8 +284,9 @@ async function getAllDetailedScenes(gameGraph) {
 
         // new Scene
         const newScene = ({ //Scene, not immutable
-            name : s.name.replace(/\.[^/.]+$/, ""),
-            img : s.name,
+            uuid: s.uuid,
+            name : s.name,
+            img : s.img,
             type : s.type,
             index : s.index,
             tag : s.tag,

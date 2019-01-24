@@ -57,6 +57,7 @@ function getState() {
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
         rightbarSelection: Actions.rightbarSelection,
+        selectFile: Actions.selectFile,
         selectTagNewScene: Actions.selectTagNewScene,
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,

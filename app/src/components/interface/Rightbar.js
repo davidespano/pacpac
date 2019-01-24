@@ -7,6 +7,7 @@ import interface_utils from "./interface_utils";
 import MediaAPI from "../../utils/MediaAPI";
 import scene_utils from "../../scene/scene_utils";
 import TagDropdown from "./TagDropdown";
+import FileSelectionBtn from "./FileSelectionBtn";
 
 let THREE = require('three');
 
@@ -278,50 +279,22 @@ function generateMediaAndMaskProperties(object, props){
                     <div id={'uploadMedia-on-to-off'}>
                         <label htmlFor={"media-on-to-off"}>Media ON to OFF</label>
                         {object.media.onToOff}
-                        <input type="file"
-                               name="media-on-to-off"
-                               id="mediaInput-on-to-off"
-                               onChange={() => {
-                                   let file = document.getElementById("mediaInput-on-to-off").files[0];
-                                   MediaAPI.uploadMedia(object, file, 'media-on-to-off', props);
-                               }}
-                        />
+                        {buttonFileSelection("media-on-to-off")}
                     </div>
                     <div id={'uploadMask-on-to-off'}>
                         <label htmlFor={"mask-on-to-off"}>Mask ON to OFF</label>
                         {object.mask.onToOff}
-                        <input type="file"
-                               name="mask-on-to-off"
-                               id="maskInput-on-to-off"
-                               onChange={() => {
-                                   let file = document.getElementById("maskInput-on-to-off").files[0]
-                                   MediaAPI.uploadMedia(object, file, 'mask-on-to-off', props);
-                               }}
-                        />
+                        {buttonFileSelection("mask-on-to-off")}
                     </div>
                     <div id={'uploadMedia-off-to-on'}>
                         <label htmlFor={"media-off-to-on"}>Media OFF to ON</label>
                         {object.media.offToOn}
-                        <input type="file"
-                               name="media-off-to-on"
-                               id="mediaInput-off-to-on"
-                               onChange={() => {
-                                   let file = document.getElementById("mediaInput-off-to-on").files[0];
-                                   MediaAPI.uploadMedia(object, file, 'media-off-to-on', props);
-                               }}
-                        />
+                        {buttonFileSelection("media-off-to-on")}
                     </div>
                     <div id={'uploadMask-off-to-on'}>
                         <label htmlFor={"mask-off-to-on"}>Mask OFF to ON</label>
                         {object.mask.offToOn}
-                        <input type="file"
-                               name="mask-off-to-on"
-                               id="maskInput-off-to-on"
-                               onChange={() => {
-                                   let file = document.getElementById("maskInput-off-to-on").files[0]
-                                   MediaAPI.uploadMedia(object, file, 'mask-off-to-on', props);
-                               }}
-                        />
+                        {buttonFileSelection("mask-off-to-on")}
                     </div>
                 </div>
             );
@@ -331,26 +304,12 @@ function generateMediaAndMaskProperties(object, props){
                     <div id={'uploadMedia'}>
                         <label htmlFor={"media"}>Media</label>
                         {object.media}
-                        <input type="file"
-                               name="media"
-                               id="mediaInput"
-                               onChange={() => {
-                                   let file = document.getElementById("mediaInput").files[0];
-                                   MediaAPI.uploadMedia(object, file, 'media', props);
-                               }}
-                        />
+                        {buttonFileSelection("media")}
                     </div>
                     <div id={'uploadMask'}>
                         <label htmlFor={"mask"}>Maschera</label>
                         {object.mask}
-                        <input type="file"
-                               name="mask"
-                               id="maskInput"
-                               onChange={() => {
-                                   let file = document.getElementById("maskInput").files[0]
-                                   MediaAPI.uploadMedia(object, file, 'mask', props);
-                               }}
-                        />
+                        {buttonFileSelection("mask")}
                     </div>
                 </div>
             );
@@ -465,6 +424,15 @@ function generateObjectsList(props) {
         ));
 
     }
+}
+
+function buttonFileSelection(props, component){
+    let properties = {
+        props : props,
+        component : component,
+    };
+
+    return <FileSelectionBtn {...properties}/>
 }
 
 /*

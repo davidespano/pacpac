@@ -14,6 +14,11 @@ import FileForm from "../components/interface/FileForm";
 
 function AppView(props) {
 
+    let propsAssets = {
+        props : props,
+        component : 'assets',
+    };
+
     switch(props.editor.mode){
         case 'EDIT_MODE_ON':
             return (
@@ -32,7 +37,7 @@ function AppView(props) {
             return(
                 <div>
                     <TopBar {...props}/>
-                    <FileContainer {...props}/>
+                    <FileContainer {...propsAssets}/>
                 </div>
             );
         case 'PLAY_MODE_ON':
