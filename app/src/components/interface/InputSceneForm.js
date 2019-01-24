@@ -41,11 +41,6 @@ function InputSceneForm(props){
                                 </p>
                                 <FileSelectionBtn {...properties} />
                             </div>
-                            <label htmlFor={"image"}>Media</label>
-                            <input type="file"
-                                   name="image"
-                                   id="imageInput"
-                            />
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
