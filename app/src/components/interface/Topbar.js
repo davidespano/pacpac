@@ -34,7 +34,6 @@ function TopBar(props){
                 <div className="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
                     <InputSceneForm {...props} />
                     <InputTagForm {...props}/>
-                    <FileForm {...props}/>
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
                             <img src={"icons/icons8-add-image-100.png"}/>

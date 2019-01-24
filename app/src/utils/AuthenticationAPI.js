@@ -5,10 +5,10 @@ var request = require('superagent');
 const {apiBaseURL} = settings;
 
 function login(username, password) {
-    request.post(`${apiBaseURL}/login`)
+    return request.post(`${apiBaseURL}/login`)
         .set('Accept', 'application/json')
         .send({username: username, password:password})
-        .end(function(err, response){
+        .then(function(response, err){
             if(err){
                 return console.error(err);
             }

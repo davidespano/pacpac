@@ -10,6 +10,7 @@ import CentralScene from "../components/interface/CentralScene";
 import GeometryScene from "../components/aframe/geometryScene";
 import Canvas from "../components/interface/Canvas";
 import FileContainer from "../components/interface/FileContainer";
+import FileForm from "../components/interface/FileForm";
 
 function AppView(props) {
 
@@ -18,6 +19,7 @@ function AppView(props) {
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>
                     <TopBar {...props} />
+                    <FileForm {...props}/>
                     <div className={'grid-container'}>
                         <LeftBar {...props} />
                         <RightBar {...props} />
