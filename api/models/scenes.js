@@ -134,7 +134,7 @@ function getHomeScene(session, gameID) {
 }
 
 //add a scene
-function addScene(session, uuid, name, index, type, tag, gameID) {
+function addScene(session, uuid, name, img, index, type, tag, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name})' +
         'RETURN scene', {name: name})
@@ -145,8 +145,8 @@ function addScene(session, uuid, name, index, type, tag, gameID) {
             else {
                 return session.run(
                     'MATCH (tag:Tag:`' + gameID + '` {uuid: $tag}) ' +
-                    'CREATE (scene:Scene:`' + gameID + '` {uuid:$uuid, name: $name, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
-                    'RETURN scene,tag', {uuid: uuid, name: name, index: index, type: type, tag: tag})
+                    'CREATE (scene:Scene:`' + gameID + '` {uuid:$uuid, name: $name, img: $img, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
+                    'RETURN scene,tag', {uuid: uuid, name: name, img: img, index: index, type: type, tag: tag})
             }
         })
         .then(result => {
@@ -161,7 +161,7 @@ function addScene(session, uuid, name, index, type, tag, gameID) {
 }
 
 //update a scene
-function updateScene( session, uuid, name, type, tag, gameID){
+function updateScene( session, uuid, name, img, type, tag, gameID){
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})' +
         'RETURN scene', {uuid: uuid})
@@ -172,10 +172,10 @@ function updateScene( session, uuid, name, type, tag, gameID){
             else {
                 return session.run(
                     'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})-[r:TAGGED_AS]->(tagS), (tag:Tag:`' + gameID + '` {uuid: $tag}) ' +
-                    'SET scene.name = $name, scene.type = $type ' +
+                    'SET scene.name = $name, scene.type = $type, scene.img = $img ' +
                     'CREATE (scene) -[:TAGGED_AS]-> (tag) ' +
                     'DELETE r ' +
-                    'RETURN scene,tag', {uuid: uuid, name: name, type: type, tag: tag})
+                    'RETURN scene,tag', {uuid: uuid, name: name, img: img, type: type, tag: tag})
             }
         })
         .then(result => {

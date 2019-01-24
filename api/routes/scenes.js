@@ -154,6 +154,10 @@ function detailedList(req, res, next) {
  *                      type: string
  *                      required: true
  *                      description: Name of the scene
+ *                  img:
+ *                      type: string
+ *                      required: true
+ *                      description: Img of the scene
  *                  index:
  *                      type: integer
  *                      required: true
@@ -190,12 +194,13 @@ function detailedList(req, res, next) {
 function addScene(req, res, next) {
     const uuid = req.body.uuid;
     const name = req.body.name;
+    const img = req.body.img;
     const index = req.body.index;
     const tag = req.body.tag;
     const type = req.body.type;
     const gameID = req.params.gameID;
 
-    Scenes.addScene(dbUtils.getSession(req), uuid, name, index, type, tag, gameID)
+    Scenes.addScene(dbUtils.getSession(req), uuid, name, img, index, type, tag, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
@@ -224,6 +229,10 @@ function addScene(req, res, next) {
  *                      type: string
  *                      required: true
  *                      description: Name of the scene
+ *                  img:
+ *                      type: string
+ *                      required: true
+ *                      description: Img of the scene
  *                  type:
  *                      type: string
  *                      required: true
@@ -254,11 +263,12 @@ function addScene(req, res, next) {
 function updateScene(req, res, next) {
     const uuid = req.body.uuid;
     const name = req.body.name;
+    const img = req.body.img;
     const tag = req.body.tag;
     const type = req.body.type;
     const gameID = req.params.gameID;
 
-    Scenes.updateScene(dbUtils.getSession(req), uuid, name, type, tag, gameID)
+    Scenes.updateScene(dbUtils.getSession(req), uuid, name, img, type, tag, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
