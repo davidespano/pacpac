@@ -138,6 +138,25 @@ function createScene(name, index, type, tag, order) {
 }
 
 /**
+ * Update a scene inside db
+ * @param uuid
+ * @param name
+ * @param type
+ * @param tag
+ */
+function updateScene(uuid, name, type, tag) {
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send({uuid: uuid, name: name, type: type, tag: tag})
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+        });
+}
+
+/**
  * Retrieves all data from db and sends it to stores for scenes generations
  */
 function getAllScenesAndTags() {
@@ -308,6 +327,7 @@ function removeTag(tag_uuid) {
 export default {
     getByName: getByName,
     createScene: createScene,
+    updateScene: updateScene,
     getAllScenesAndTags: getAllScenesAndTags,
     deleteScene: deleteScene,
     getAllDetailedScenes: getAllDetailedScenes,
