@@ -8,6 +8,7 @@ import MediaAPI from "../../utils/MediaAPI";
 import scene_utils from "../../scene/scene_utils";
 import TagDropdown from "./TagDropdown";
 import FileSelectionBtn from "./FileSelectionBtn";
+import MediaEditingform from "./MediaEditingForm";
 
 let THREE = require('three');
 
@@ -205,7 +206,13 @@ function generateProperties(props){
                 {currentObject.name}
             </div>
             {generateSpecificProperties(currentObject, props)}
-            {generateMediaAndMaskProperties(currentObject, props)}
+            <button id={'edit-media-btn'}
+                    className={'btn'}
+                    data-toggle="modal"
+                    data-target="#edit-media-modal"
+            >
+                Edit Media
+            </button>
             <label>Geometry</label>
             <button
                 className={"propertyForm geometryBtn"}
@@ -264,58 +271,6 @@ function generateSpecificProperties(object, props){
 
     }
 }
-
-/**
- * Generates media and mask properties for each object type (some have the same properties, others have more than one
- * media/mask)
- * @param object
- * @param props
- */
-function generateMediaAndMaskProperties(object, props){
-    switch(object.type){
-        case InteractiveObjectsTypes.SWITCH:
-            return(
-                <div>
-                    <div id={'uploadMedia-on-to-off'}>
-                        <label htmlFor={"media-on-to-off"}>Media ON to OFF</label>
-                        {object.media.onToOff}
-                        {buttonFileSelection("media-on-to-off")}
-                    </div>
-                    <div id={'uploadMask-on-to-off'}>
-                        <label htmlFor={"mask-on-to-off"}>Mask ON to OFF</label>
-                        {object.mask.onToOff}
-                        {buttonFileSelection("mask-on-to-off")}
-                    </div>
-                    <div id={'uploadMedia-off-to-on'}>
-                        <label htmlFor={"media-off-to-on"}>Media OFF to ON</label>
-                        {object.media.offToOn}
-                        {buttonFileSelection("media-off-to-on")}
-                    </div>
-                    <div id={'uploadMask-off-to-on'}>
-                        <label htmlFor={"mask-off-to-on"}>Mask OFF to ON</label>
-                        {object.mask.offToOn}
-                        {buttonFileSelection("mask-off-to-on")}
-                    </div>
-                </div>
-            );
-        default:
-            return(
-                <div>
-                    <div id={'uploadMedia'}>
-                        <label htmlFor={"media"}>Media</label>
-                        {object.media}
-                        {buttonFileSelection("media")}
-                    </div>
-                    <div id={'uploadMask'}>
-                        <label htmlFor={"mask"}>Maschera</label>
-                        {object.mask}
-                        {buttonFileSelection("mask")}
-                    </div>
-                </div>
-            );
-    }
-}
-
 
 /**
  * Generates buttons for currently selected object options
@@ -424,15 +379,6 @@ function generateObjectsList(props) {
         ));
 
     }
-}
-
-function buttonFileSelection(props, component){
-    let properties = {
-        props : props,
-        component : component,
-    };
-
-    return <FileSelectionBtn {...properties}/>
 }
 
 /*

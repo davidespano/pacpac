@@ -5,12 +5,12 @@ import RightBar from "../components/interface/Rightbar";
 import Rules from "../components/interface/Rules";
 import VRScene from "../components/aframe/create_scene2";
 import '../components/look-controls_us';
-//import PlayTest from "../components/aframe/playtest";
 import CentralScene from "../components/interface/CentralScene";
 import GeometryScene from "../components/aframe/geometryScene";
 import Canvas from "../components/interface/Canvas";
 import FileContainer from "../components/interface/FileContainer";
 import FileForm from "../components/interface/FileForm";
+import MediaEditingform from "../components/interface/MediaEditingForm";
 
 function AppView(props) {
 
@@ -24,6 +24,7 @@ function AppView(props) {
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>
                     <TopBar {...props} />
+                    <MediaEditingform {...props}/>
                     <FileForm {...props}/>
                     <div className={'grid-container'}>
                         <LeftBar {...props} />

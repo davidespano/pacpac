@@ -6,6 +6,7 @@ const EditorState = Immutable.Record({
     chooseTagNewScene: false,
     chooseTagRightbar: false,
     selectedFile: null,
+    selectedMediaToEdit: null,
     mode: ActionTypes.EDIT_MODE_ON,
     objectsFilter: 'scene',
     navbarSelection: 'scene',

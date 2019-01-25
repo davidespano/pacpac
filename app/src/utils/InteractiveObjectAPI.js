@@ -13,7 +13,7 @@ const {apiBaseURL} = settings;
  */
 function saveObject(scene, object) {
     const field = scene_utils.defineField(object);
-    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${scene.img}/${field}`)
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${scene.name}/${field}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send(
@@ -42,7 +42,7 @@ function saveObject(scene, object) {
  */
 function removeObject(scene, object) {
     const field = scene_utils.defineField(object);
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${scene.img}/${field}/${object.uuid}`)
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${scene.name}/${field}/${object.uuid}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function (err, response) {
@@ -59,7 +59,7 @@ function removeObject(scene, object) {
  * @param rule
  */
 function saveRule(scene, rule) {
-    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/rules/scenes/${scene.img}/rules`)
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/rules/scenes/${scene.name}/rules`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send(
@@ -85,7 +85,7 @@ function saveRule(scene, rule) {
  * @param rule
  */
 function removeRule(scene, rule) {
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/rules/scenes/${scene.img}/rules/${rule.uuid}`)
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/rules/scenes/${scene.name}/rules/${rule.uuid}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function (err, response) {

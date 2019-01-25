@@ -3,6 +3,7 @@ import settings from '../../utils/settings';
 import ReactDOM from 'react-dom';
 import { FileManager, FileNavigator } from '@opuscapita/react-filemanager';
 import connectorNodeV1 from '../../filemanager/connector-node-v1';
+import interface_utils from "./interface_utils";
 
 const {apiBaseURL} = settings;
 
@@ -51,6 +52,11 @@ function handleFileSelection(props, data, component){
 
             path += data.name;
             props.selectFile(path);
+
+            if(props.selectedMediaToEdit !== null){
+                let obj = props.interactiveObjects.get(props.currentObject);
+                interface_utils.setPropertyFromValue(obj, props.editor.selectedMediaToEdit, path, props);
+            }
         }
     }
 }

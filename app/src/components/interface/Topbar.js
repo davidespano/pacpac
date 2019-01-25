@@ -35,7 +35,9 @@ function TopBar(props){
                     <InputSceneForm {...props} />
                     <InputTagForm {...props}/>
                     <div className={"flex-container"}>
-                        <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
+                                onClick={() => props.selectMediaToEdit(null)}
+                        >
                             <img src={"icons/icons8-add-image-100.png"}/>
                             <figcaption>Nuova scena</figcaption>
                         </figure>

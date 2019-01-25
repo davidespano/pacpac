@@ -64,6 +64,13 @@ const Actions = {
         })
     },
 
+    selectMediaToEdit(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_MEDIA_TO_EDIT,
+            selection: selection,
+        })
+    },
+
     selectTagNewScene(tag){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_TAG_NEW_SCENE,
