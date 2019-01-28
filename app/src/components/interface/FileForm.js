@@ -16,7 +16,7 @@ function FileForm(props){
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="add-file-modal-label">Choose file</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <button id={'manage-files-close-btn'} type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>

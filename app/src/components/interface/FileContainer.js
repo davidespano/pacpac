@@ -63,8 +63,7 @@ function handleFileSelection(props, data, component){
 
 function handleDoubleClick(props, data, component) {
     handleFileSelection(props, data, component);
-
-    /**TODO: chiudere modal**/
+    document.getElementById('manage-files-close-btn').click();
 }
 
 export default FileContainer;
