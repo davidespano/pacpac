@@ -12,8 +12,8 @@ const Switch = defaultValues => InteractiveObject({
         state : 'OFF',
     },
     media : {
-        onToOff : null,
-        offToOn : null,
+        media0 : null,
+        media1 : null,
     },
     ...defaultValues
 });

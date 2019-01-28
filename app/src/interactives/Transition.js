@@ -11,6 +11,9 @@ const Transition = defaultValues => InteractiveObject({
     properties : {
         duration : 2000,
     },
+    media : {
+        media0: null,
+    },
     ...defaultValues
 });
 

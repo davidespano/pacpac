@@ -38,25 +38,25 @@ function generateMediaModal(props, object){
         case InteractiveObjectsTypes.SWITCH:
             return(
                 <div>
-                    <div id={'uploadMedia-on-to-off'}
-                         className={'media-editing-divs'}
-                    >
-                        <label htmlFor={"media-on-to-off"}>Media ON to OFF</label>
-                        <div className={'selected-medias-and-masks'}>
-                            {object.media.onToOff ? object.media.onToOff : "No file selected"}
-                            {buttonRemoveFile(object, 'media-on-to-off', props)}
-                        </div>
-                        {buttonFileSelection(props, "media-on-to-off")}
-                    </div>
                     <div id={'uploadMedia-off-to-on'}
                          className={'media-editing-divs'}
                     >
                         <label htmlFor={"media-off-to-on"}>Media OFF to ON</label>
                         <div className={'selected-medias-and-masks'}>
-                            {object.media.offToOn ? object.media.offToOn : "No file selected"}
-                            {buttonRemoveFile(object, 'media-off-to-on', props)}
+                            {object.media.media0 ? object.media.media0 : "No file selected"}
+                            {buttonRemoveFile(object, 'media0', props)}
                         </div>
-                        {buttonFileSelection(props, "media-off-to-on")}
+                        {buttonFileSelection(props, "media0")}
+                    </div>
+                    <div id={'uploadMedia-on-to-off'}
+                         className={'media-editing-divs'}
+                    >
+                        <label htmlFor={"media-on-to-off"}>Media ON to OFF</label>
+                        <div className={'selected-medias-and-masks'}>
+                            {object.media.media1 ? object.media.media1 : "No file selected"}
+                            {buttonRemoveFile(object, 'media1', props)}
+                        </div>
+                        {buttonFileSelection(props, "media1")}
                     </div>
                     <div id={'uploadMask'}
                          className={'media-editing-divs'}
@@ -78,10 +78,10 @@ function generateMediaModal(props, object){
                     >
                         <label htmlFor={"media"}>Media</label>
                         <div className={'selected-medias-and-masks'}>
-                            {object.media ? object.media : "No file selected"}
-                            {buttonRemoveFile(object, 'media', props)}
+                            {object.media.media0 ? object.media.media0 : "No file selected"}
+                            {buttonRemoveFile(object, 'media0', props)}
                         </div>
-                        {buttonFileSelection(props, "media")}
+                        {buttonFileSelection(props, "media0")}
                     </div>
                     <div id={'uploadMask'}
                          className={'media-editing-divs'}
