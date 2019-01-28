@@ -295,8 +295,8 @@ async function getAllDetailedScenes(gameGraph) {
             rules: rules,
         });
 
-        gameGraph['scenes'][newScene.img] = newScene;
-        gameGraph['neighbours'][newScene.img] = adj;
+        gameGraph['scenes'][newScene.name] = newScene;
+        gameGraph['neighbours'][newScene.name] = adj;
     })
     //console.log(gameGraph);
 }

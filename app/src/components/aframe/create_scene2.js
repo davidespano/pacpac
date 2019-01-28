@@ -7,6 +7,7 @@ import SceneAPI from "../../utils/SceneAPI";
 import ConditionUtils from "../../interactives/rules/ConditionUtils";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
+import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -34,7 +35,7 @@ export default class VRScene extends React.Component {
 
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
-        let scene = gameGraph['scenes'][this.state.activeScene.img];
+        let scene = gameGraph['scenes'][this.state.activeScene.name];
         let runState = this.createGameState(gameGraph);
         this.setState({
             scenes: this.props.scenes.toArray(),
@@ -80,12 +81,7 @@ export default class VRScene extends React.Component {
     }
 
     render() {
-        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.img] !== undefined) {
-                this.currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
-                    this.state.graph.neighbours[this.state.activeScene.img].includes(this.state.graph.scenes[name].name)
-                    || name === this.state.activeScene.img);
-        }
-        else this.currentLevel = [];
+        this.currentLevel = this.state.graph.neighbours[this.state.activeScene.name];
 
         console.log(this.state.runState)
         return (
@@ -114,30 +110,66 @@ export default class VRScene extends React.Component {
                 />);
             //second, push the media of the interactive objs
             Object.values(scene.objects).flat().forEach(obj => {
-                    if(obj.media !== "" && obj.media !== undefined){
+                Object.keys(obj).map(k => {
+                    if(obj[k] !== null){
                         currAssets.push(
-                            <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.media}
+                            <video id={k+"_" + obj.uuid} key={k+"_" + obj.uuid}
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj[k]}
                                    preload="auto" loop={false} crossorigin="anonymous"
                             />
                         )
                     }
-                    if(obj.mask !== "" && obj.mask !== undefined){
-                        currAssets.push(
-                            <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossorigin="Anonymous"
-                                          preload="auto"
-                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask}
-                            />
-                        )
-                    }
+                });
+
+                let v = this.generateCurrentAsset(obj);
+                if(v!==null) currAssets.push(v);
+
+                if(obj.mask !== "" && obj.mask !== undefined&& obj.mask !== null){
+                    currAssets.push(
+                        <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossorigin="Anonymous"
+                                      preload="auto"
+                                      src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.mask}
+                        />
+                    )
                 }
-            );
+            });
             //third, push the media present in the actions
-            //TODO do it!
+            //TODO do it! maybe not necessary
             scene.rules.forEach(()=>{});
             //return the assets
             return currAssets;
         }).flat();
+    }
+
+    generateCurrentAsset(obj){
+        switch (obj.type) {
+            case InteractiveObjectsTypes.TRANSITION:
+                if(obj.media.media0 !== null){
+                    return(
+                    <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0}
+                                   preload="auto" loop={false} crossorigin="anonymous"
+                    />)
+                }
+                else return null;
+            case InteractiveObjectsTypes.SWITCH:
+                let i = (this.state.runState[obj.uuid].state === "OFF")?0:1;
+                if(obj.media["media"+i] !== null)
+                    return(
+                        <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
+                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i]}
+                               preload="auto" loop={false} crossorigin="anonymous"
+                        />)
+                else if (obj.media["media"+((i+1)%2)] !== null)
+                    return(
+                        <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
+                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)]}
+                               preload="auto" loop={false} crossorigin="anonymous"
+                        />)
+                else return null;
+            default:
+                return null;
+        }
     }
 
     generateBubbles(){
