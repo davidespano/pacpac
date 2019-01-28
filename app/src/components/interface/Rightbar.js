@@ -206,8 +206,9 @@ function generateProperties(props){
                 {currentObject.name}
             </div>
             {generateSpecificProperties(currentObject, props)}
+            <label>Media</label>
             <button id={'edit-media-btn'}
-                    className={'btn'}
+                    className={'propertyForm geometryBtn'}
                     data-toggle="modal"
                     data-target="#edit-media-modal"
             >
