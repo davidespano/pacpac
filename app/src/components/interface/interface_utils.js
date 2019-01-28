@@ -11,7 +11,6 @@ import Transition from "../../interactives/Transition";
 function setPropertyFromValue(object, property, value, props){
     let newObject;
     let media = object.get('media');
-    let mask = object.get('mask');
 
     switch (property) {
         // generic properties belonging to any interactive object
@@ -29,14 +28,6 @@ function setPropertyFromValue(object, property, value, props){
         case 'media-off-to-on':
             media['offToOn'] = value;
             newObject = object.setIn(['media'], media);
-            break;
-        case 'mask-on-to-off':
-            mask['onToOff'] = value;
-            newObject = object.setIn(['mask'], mask);
-            break;
-        case 'mask-off-to-on':
-            mask['offToOn'] = value;
-            newObject = object.setIn(['mask'], mask);
             break;
         default:
             let properties = object.get('properties');

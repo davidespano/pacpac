@@ -48,16 +48,6 @@ function generateMediaModal(props, object){
                         </div>
                         {buttonFileSelection(props, "media-on-to-off")}
                     </div>
-                    <div id={'uploadMask-on-to-off'}
-                         className={'media-editing-divs'}
-                    >
-                        <label htmlFor={"mask-on-to-off"}>Mask ON to OFF</label>
-                        <div className={'selected-medias-and-masks'}>
-                            {object.mask.onToOff ? object.mask.onToOff : "No file selected"}
-                            {buttonRemoveFile(object, 'mask-on-to-off', props)}
-                        </div>
-                        {buttonFileSelection(props, "mask-on-to-off")}
-                    </div>
                     <div id={'uploadMedia-off-to-on'}
                          className={'media-editing-divs'}
                     >
@@ -68,15 +58,15 @@ function generateMediaModal(props, object){
                         </div>
                         {buttonFileSelection(props, "media-off-to-on")}
                     </div>
-                    <div id={'uploadMask-off-to-on'}
+                    <div id={'uploadMask'}
                          className={'media-editing-divs'}
                     >
-                        <label htmlFor={"mask-off-to-on"}>Mask OFF to ON</label>
+                        <label htmlFor={"mask"}>Mask</label>
                         <div className={'selected-medias-and-masks'}>
-                            {object.mask.offToOn ? object.mask.offToOn : "No file selected"}
-                            {buttonRemoveFile(object, 'mask-off-to-on', props)}
+                            {object.mask ? object.mask : "No file selected"}
+                            {buttonRemoveFile(object, 'mask', props)}
                         </div>
-                        {buttonFileSelection(props, "mask-off-to-on")}
+                        {buttonFileSelection(props, "mask")}
                     </div>
                 </div>
             );

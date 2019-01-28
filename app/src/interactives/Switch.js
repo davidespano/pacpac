@@ -15,10 +15,6 @@ const Switch = defaultValues => InteractiveObject({
         onToOff : null,
         offToOn : null,
     },
-    mask : {
-        onToOff : null,
-        offToOn : null,
-    },
     ...defaultValues
 });
 
