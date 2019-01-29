@@ -30,7 +30,10 @@ export default class Bubble extends React.Component
     componentDidUpdate(){
         if(!this.props.isActive) {
             Object.values(this.props.scene.objects).flat().forEach(obj => {
-                if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
+                Object.values(obj.media).forEach(media=>{
+                    if(media !== null)
+                        document.getElementById("media_" + obj.uuid).currentTime = 0;
+                });
                 document.getElementById("media_" + obj.uuid).currentTime = 0;
             })
         }
@@ -72,7 +75,7 @@ export default class Bubble extends React.Component
             if(sky.getAttribute('material').shader === 'multi-video') {
                 if (this.props.isActive) document.getElementById(scene.img).play();
                 return;
-            };
+            }
             let video = [];
             let masks = [];
             let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
@@ -81,11 +84,12 @@ export default class Bubble extends React.Component
             let dict = ['0'];
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
-                if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
-                aux = new THREE.VideoTexture(document.getElementById("media_" + obj.uuid));
+                let asset = document.getElementById("media_" + obj.uuid);
+                if (asset === null) return;
+                aux = new THREE.VideoTexture(asset);
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
-                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask);
+                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.mask);
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
                 dict.push(obj.uuid.replace(/-/g,'_'));

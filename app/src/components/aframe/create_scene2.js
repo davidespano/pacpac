@@ -81,9 +81,13 @@ export default class VRScene extends React.Component {
     }
 
     render() {
-        this.currentLevel = this.state.graph.neighbours[this.state.activeScene.name];
-
-        console.log(this.state.runState)
+        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.name] !== undefined) {
+            this.currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
+                this.state.graph.neighbours[this.state.activeScene.name].includes(name)
+                || name === this.state.activeScene.name);
+        }
+        else
+            this.currentLevel = [];
         return (
                 <Scene stats>
                     <a-assets>
@@ -101,6 +105,7 @@ export default class VRScene extends React.Component {
 
     generateAssets(){
         return this.currentLevel.map(sceneName => {
+            console.log(this)
             let scene = this.state.graph.scenes[sceneName];
             let currAssets = [];
             //first, push the background media.
@@ -110,6 +115,7 @@ export default class VRScene extends React.Component {
                 />);
             //second, push the media of the interactive objs
             Object.values(scene.objects).flat().forEach(obj => {
+                obj = obj.media;
                 Object.keys(obj).map(k => {
                     if(obj[k] !== null){
                         currAssets.push(
