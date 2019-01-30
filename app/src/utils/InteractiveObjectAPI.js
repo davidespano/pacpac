@@ -22,7 +22,7 @@ function saveObject(scene, object) {
                 name: object.name,
                 type: object.type,
                 media: JSON.stringify(object.media),
-                mask: JSON.stringify(object.mask),
+                mask: object.mask,
                 vertices: object.vertices,
                 properties: JSON.stringify(object.properties),
             })

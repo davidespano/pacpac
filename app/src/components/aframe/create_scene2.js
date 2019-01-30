@@ -115,12 +115,11 @@ export default class VRScene extends React.Component {
                 />);
             //second, push the media of the interactive objs
             Object.values(scene.objects).flat().forEach(obj => {
-                obj = obj.media;
-                Object.keys(obj).map(k => {
-                    if(obj[k] !== null){
+                Object.keys(obj.media).map(k => {
+                    if(obj.media[k] !== null){
                         currAssets.push(
                             <video id={k+"_" + obj.uuid} key={k+"_" + obj.uuid}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj[k]}
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
                                    preload="auto" loop={false} crossorigin="anonymous"
                             />
                         )

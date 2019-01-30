@@ -34,7 +34,6 @@ export default class Bubble extends React.Component
                     if(media !== null)
                         document.getElementById("media_" + obj.uuid).currentTime = 0;
                 });
-                document.getElementById("media_" + obj.uuid).currentTime = 0;
             })
         }
     }
