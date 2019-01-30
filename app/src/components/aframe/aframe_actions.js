@@ -35,7 +35,7 @@ function executeAction(VRScene, rule, action){
 
             setTimeout(function () {
                 if(objectVideo_transition != null) objectVideo_transition.pause();
-                transition(state.activeScene.name, action.target, duration);
+                transition(state.activeScene, state.graph.scenes[action.target], duration);
             },duration_transition);
 
             break;
@@ -90,34 +90,33 @@ function executeAction(VRScene, rule, action){
 
 /**
  * Function that manages the transitions
- * @param actualSceneName
- * @param target
+ * @param actualScene
+ * @param targetScene
  * @param duration
  */
-function transition(actualSceneName, target, duration){
-
-    let actualScene = document.querySelector('#' + actualSceneName);
-    let actualSceneVideo = document.getElementById(actualSceneName + '.mp4');
+function transition(actualScene, targetScene, duration){
+    let actualSky = document.querySelector('#' + actualScene.name);
+    let actualSceneVideo = document.getElementById(actualScene.img);
     actualSceneVideo.pause();
-    let targetScene = document.querySelector('#' + target);
-    let targetSceneVideo = document.getElementById(target + '.mp4');
+    let targetSky = document.querySelector('#' + targetScene.name);
+    let targetSceneVideo = document.getElementById(targetScene.img);
     let cursor = document.querySelector('#cursor');
-    let disappear = new CustomEvent(actualScene.id + "dis");
-    let appear = new CustomEvent(targetScene.id + "app");
+    let disappear = new CustomEvent(actualSky.id + "dis");
+    let appear = new CustomEvent(targetSky.id + "app");
 
-    actualScene.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
-        '; easing: linear; from: 1; to: 0; startEvents: ' + actualScene.id + "dis");
-    targetScene.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
-        '; easing: linear; from: 0; to: 1; startEvents: ' + targetScene.id + "app");
+    actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
+        '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
+    targetSky.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
+        '; easing: linear; from: 0; to: 1; startEvents: ' + targetSky.id + "app");
 
-    actualScene.setAttribute('material', 'depthTest: false');
-    targetScene.setAttribute('material', 'depthTest: false');
+    actualSky.setAttribute('material', 'depthTest: false');
+    targetSky.setAttribute('material', 'depthTest: false');
 
-    targetScene.setAttribute('visible', 'true');
-    targetScene.setAttribute('material', 'visible: true');
+    targetSky.setAttribute('visible', 'true');
+    targetSky.setAttribute('material', 'visible: true');
 
-    actualScene.dispatchEvent(disappear);
-    targetScene.dispatchEvent(appear);
+    actualSky.dispatchEvent(disappear);
+    targetSky.dispatchEvent(appear);
     targetSceneVideo.play();
 }
 
