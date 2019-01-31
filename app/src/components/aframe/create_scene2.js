@@ -182,7 +182,7 @@ export default class VRScene extends React.Component {
             let scene = this.state.graph.scenes[sceneName];
             return (
                 <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
-                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
+                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
                 />
             );
         });

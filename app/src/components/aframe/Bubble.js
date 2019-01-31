@@ -25,6 +25,7 @@ export default class Bubble extends React.Component
             this.components[evt.detail.name].animation.reset();
         });
         this.setShader();
+        this.setVideoFrame();
     }
 
     componentDidUpdate(){
@@ -36,6 +37,23 @@ export default class Bubble extends React.Component
                 });
             })
         }
+        this.setVideoFrame()
+    }
+
+    setVideoFrame(){
+        //if(!this.props.isActive) return;
+        this.props.scene.objects.switches.forEach(s => {
+            if((this.props.runState[s.uuid].state === "ON"  && s.media.media1 === null )||
+               (this.props.runState[s.uuid].state === "OFF" && s.media.media0 === null )){
+                let asset = document.getElementById("media_"+s.uuid);
+                asset.addEventListener('durationchange', function (ev) {
+                    console.log(ev)
+                    asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
+                })
+                if(asset.readyState > 0)
+                    asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
+            }
+        })
     }
 
     render() {
