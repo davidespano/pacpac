@@ -41,24 +41,52 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.FLIP_SWITCH:
             let duration_switch = 0;
+            let switchVideo = document.getElementById('media_'+current_object.uuid);
 
-            if(runState[current_object.uuid].state === "OFF")
-                runState[current_object.uuid].state = "ON";
-            else
-                runState[current_object.uuid].state = "OFF";
+            if(switchVideo != null) {
+                switchVideo.play();
+                duration_switch = (switchVideo.duration * 1000);
+            }
+            setTimeout(function () {
+                if(runState[current_object.uuid].state === "OFF")
+                    runState[current_object.uuid].state = "ON";
+                else
+                    runState[current_object.uuid].state = "OFF";
 
-            VRScene.setState({runState: runState});
+                VRScene.setState({runState: runState});
+            },duration_switch);
+
             break;
         case RuleActionTypes.ON:
             if(runState[current_object.uuid].state === "OFF"){
-                runState[current_object.uuid].state = "ON";
-                VRScene.setState({runState: runState});
+                let duration_switch = 0;
+                let switchVideo = document.getElementById('media_'+current_object.uuid);
+
+                if(switchVideo != null) {
+                    switchVideo.play();
+                    duration_switch = (switchVideo.duration * 1000);
+                }
+                setTimeout(function () {
+                    runState[current_object.uuid].state = "ON";
+                    VRScene.setState({runState: runState});
+                },duration_switch);
+
             }
             break;
         case RuleActionTypes.OFF:
-            if(runState[current_object.uuid].state === "ON") {
-                runState[current_object.uuid].state = "OFF";
-                VRScene.setState({runState: runState});
+            if(runState[current_object.uuid].state === "ON"){
+                let duration_switch = 0;
+                let switchVideo = document.getElementById('media_'+current_object.uuid);
+
+                if(switchVideo != null) {
+                    switchVideo.play();
+                    duration_switch = (switchVideo.duration * 1000);
+                }
+                setTimeout(function () {
+                    runState[current_object.uuid].state = "OFF";
+                    VRScene.setState({runState: runState});
+                },duration_switch);
+
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
