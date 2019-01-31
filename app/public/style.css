@@ -605,7 +605,7 @@ body{
 
 /* Dropdown menu leftbar and tags */
 
-.dropdown-content, .dropdown-tags-topbar, .dropdown-tags-rightbar{
+.dropdown-content {
     display: none;
     position: absolute;
     background-color: #f1f1f1;
@@ -615,37 +615,6 @@ body{
     cursor: pointer;
 }
 
-.dropdown-tags-topbar, .dropdown-tags-element-chosen-topbar, .dropdown-tags-element-chosen-rightbar {
-    width: 70%;
-}
-
-/* Links inside the dropdown */
-
-.dropdown-tags-element-topbar,
-.dropdown-tags-element-chosen-topbar,
-.dropdown-tags-element-rightbar,
-.dropdown-tags-element-chosen-rightbar {
-    display: inline-flex;
-    border: solid 1px darkgrey;
-}
-
-.dropdown-tags-element-chosen-topbar, .dropdown-tags-element-chosen-rightbar {
-    height: 100%;
-}
-
-.dropdown-tags-element-topbar,
-.choose-tag-dropdown-topbar,
-.dropdown-tags-element-rightbar,
-.choose-tag-dropdown-rightbar {
-    width: 100%;
-}
-
-.dropdown-tags-element-topbar > p, .dropdown-tags-element-chosen-topbar > p,
-.dropdown-tags-element-rightbar > p, .dropdown-tags-element-chosen-rightbar > p {
-    margin: 0;
-    padding-left: 5px;
-}
-
 .dropdown-content a {
     color: black;
     padding: 8px 8px;
@@ -653,11 +622,11 @@ body{
     display: block;
 }
 
-.dropdown-content a:hover, .dropdown-tags-element-topbar:hover, .dropdown-tags-element-rightbar:hover {
+.dropdown-content a:hover {
     background-color: #ddd
 }
 
-.show, .show-tags {
+.show {
     display:block;
 }
 
@@ -768,4 +737,109 @@ body{
 .selected-medias-and-masks > button > img {
     height: 15px;
     width: 15px;
+}
+
+/** TAG DROPDOWN REPRISE **/
+
+.wrapper-dropdown-tags {
+    position:relative;
+    background-color: white;
+    padding: 5px;
+    margin: 0;
+    border: solid 1px darkgrey;
+}
+
+#wrapper-dropdown-tags-rightbar {
+    width: 100%;
+}
+
+#wrapper-dropdown-tags-topbar {
+    width: 70%;
+}
+
+.chosen-tag-rightbar, .chosen-tag-topbar {
+    position: relative;
+    cursor: pointer;
+}
+
+.arrow-up:after,
+.arrow-down:after {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    margin-top: -6px;
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+}
+
+.arrow-down:after {
+    border-top: 10px solid #EF562D;
+}
+
+.arrow-up:after {
+    border-bottom: 10px solid #EF562D;
+}
+
+.chosen-tag-rightbar > p, .chosen-tag-topbar > p {
+    margin-left: 40px;
+    margin-bottom: 0;
+    pointer-events: none;
+}
+
+.wrapper-dropdown-tags > ul {
+    position: absolute;
+    left: -1px;
+    width: 100%;
+    margin: 0;
+    z-index: 2;
+    max-height: 400px;
+    background-color: white;
+    border: solid 1px darkgrey;
+}
+
+.wrapper-dropdown-tags > ul > li {
+    padding: 2px;
+    position: relative;
+    list-style: none;
+    border-bottom: 1px solid darkgrey;
+}
+
+.wrapper-dropdown-tags > ul > li:hover {
+    background-color: darkgrey;
+}
+
+li > span, .chosen-tag-rightbar > p > span, .chosen-tag-topbar > p > span {
+    position: absolute;
+    height: 10px;
+    width: 20px;
+    padding: 10px;
+}
+
+li > span {
+    left: -30px;
+}
+
+.chosen-tag-rightbar > p > span,
+.chosen-tag-topbar > p > span {
+    left: 0;
+}
+
+.hide-tags {
+    display: none;
+}
+
+.show-tags {
+    display: block;
+}
+
+.tags-input-scene {
+    width: 100%;
+    display: inline-block;
+}
+
+.tags-input-scene {
+    width: 20%;
 }

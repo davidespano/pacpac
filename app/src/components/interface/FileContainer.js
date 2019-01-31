@@ -62,8 +62,10 @@ function handleFileSelection(props, data, component){
 }
 
 function handleDoubleClick(props, data, component) {
-    handleFileSelection(props, data, component);
-    document.getElementById('manage-files-close-btn').click();
+    if(component === 'modal' && data.type === 'file') {
+        handleFileSelection(props, data, component);
+        document.getElementById('manage-files-close-btn').click();
+    }
 }
 
 export default FileContainer;

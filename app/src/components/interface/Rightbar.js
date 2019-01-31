@@ -4,11 +4,8 @@ import Actions from "../../actions/Actions";
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import interface_utils from "./interface_utils";
-import MediaAPI from "../../utils/MediaAPI";
 import scene_utils from "../../scene/scene_utils";
 import TagDropdown from "./TagDropdown";
-import FileSelectionBtn from "./FileSelectionBtn";
-import MediaEditingform from "./MediaEditingForm";
 
 let THREE = require('three');
 

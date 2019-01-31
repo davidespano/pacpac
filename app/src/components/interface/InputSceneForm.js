@@ -1,8 +1,6 @@
 import React from 'react';
-import MediaAPI from "../../utils/MediaAPI";
 import SceneAPI from "../../utils/SceneAPI";
 import TagDropdown from "./TagDropdown";
-import FileForm from "./FileForm";
 import FileSelectionBtn from "./FileSelectionBtn";
 
 function InputSceneForm(props){
@@ -31,7 +29,17 @@ function InputSceneForm(props){
                                    className={'input-new-scene'}
                             />
                             <label>Etichetta</label>
-                            <TagDropdown {...properties}/>
+                            <div id={'tags-input-scene'}>
+                                <TagDropdown {...properties}/>
+                                <button
+                                    title={"Tag manager"}
+                                    className={"tag-manager-btn action-buttons-container dropdown-tags-btn-topbar"}
+                                    data-toggle="modal"
+                                    data-target="#add-tag-modal"
+                                >
+                                    <img className={"action-buttons dropdown-tags-btn-topbar"} src={"icons/icons8-tags-white-50.png"}/>
+                                </button>
+                            </div>
                             <label htmlFor={"image"}>Media</label>
                             <div id={'select-file-container'} name="image">
                                 <p id={'file-selected-name'}
@@ -92,7 +100,6 @@ function checkFormAndCreateScene(name, media, index, type, tag, order){
 function selectedFile(editor){
     return editor.selectedFile ? editor.selectedFile : 'No file selected';
 }
-
 
 export default InputSceneForm;
 
