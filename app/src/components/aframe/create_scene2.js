@@ -51,7 +51,7 @@ export default class VRScene extends React.Component {
 
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             eventBus.on('click-'+rule.object_uuid, function () {
-                if(ConditionUtils.evalCondition(rule.condition)){
+                if(ConditionUtils.evalCondition(rule.condition, me.state.runState)){
                     rule.actions.forEach(action => executeAction(me, rule, action))
                 }
             })
@@ -105,7 +105,6 @@ export default class VRScene extends React.Component {
 
     generateAssets(){
         return this.currentLevel.map(sceneName => {
-            console.log(this)
             let scene = this.state.graph.scenes[sceneName];
             let currAssets = [];
             //first, push the background media.

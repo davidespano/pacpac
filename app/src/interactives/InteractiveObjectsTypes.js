@@ -8,6 +8,7 @@ const InteractiveObjectsTypes = {
     KEY : 'KEY',
     COUNTER : 'COUNTER',
     BUTTON : 'BUTTON',
+    LOCK: 'LOCK',
 
 };
 

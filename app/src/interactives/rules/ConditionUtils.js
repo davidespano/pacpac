@@ -5,7 +5,7 @@ import {SuperOperators} from "./Operators";
 
 function evalCondition(c, gameState) {
     if(JSON.stringify(c) == "{}" || c === '{}' || c==='"{}"') return true; //quick fix for conditions saved with wrong format
-    if(c instanceof SuperCondition){
+    if(c instanceof SuperCondition || c.hasOwnProperty("condition1")){
         switch (c.operator) {
             case SuperOperators.AND: return evalCondition(c.condition1, gameState) && evalCondition(c.condition2, gameState);
             case SuperOperators.OR: return evalCondition(c.condition1, gameState) || evalCondition(c.condition2, gameState);
@@ -14,7 +14,7 @@ function evalCondition(c, gameState) {
                 console.log('Super operator not yet implemented');
                 console.log(c.operator);
         }
-    }else if(c instanceof Condition){
+    }else if(c instanceof Condition || c.hasOwnProperty("uuid")){
         const state = gameState[c.uuid].state;
         switch (c.operator) {
             case Operators.EQUAL: return state == c.state;
