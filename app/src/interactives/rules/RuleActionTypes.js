@@ -6,7 +6,8 @@ const RuleActionTypes = {
     FLIP_SWITCH: 'FLIP_SWITCH',
     CHANGE_BACKGROUND: 'CHANGE_BACKGROUND',
     PLAY_AUDIO: 'PLAY_AUDIO',
-    STOP_AUDIO: 'STOP_AUDIO'
+    STOP_AUDIO: 'STOP_AUDIO',
+    COLLECT_KEY: 'COLLECT_KEY',
 };
 
 export default RuleActionTypes;
@@ -31,5 +32,12 @@ export default RuleActionTypes;
  * {
  * uuid: ....,
  * media: nome del'audio da stoppare, con estenesione
+ * }
+ * */
+
+/** TODO: la struttura dell'azione collect-key:
+ * {
+ * uuid: ....,
+ * keyUuid: uuid della chiave da raccogliere
  * }
  * */
