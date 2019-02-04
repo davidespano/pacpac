@@ -110,6 +110,9 @@ function executeAction(VRScene, rule, action){
             if(soundsHub[action.media])
                 soundsHub[action.media].stop();
             break;
+        case RuleActionTypes.COLLECT_KEY:
+            
+            break;
         default:
             console.log('not yet implemented');
             console.log(action);
