@@ -66,6 +66,10 @@ export default class Bubble extends React.Component
         });
         //const sound = <Sound track={this.props.track} id = {this.props.name}/>;
         let material = "depthTest: true; ";
+        if(this.needShaderUpdate === true) {
+            material += "shader: flat;";
+            this.needShaderUpdate = false;
+        }
         let active = 'active: false;';
         let radius = 9.9;
         if (this.props.isActive) {

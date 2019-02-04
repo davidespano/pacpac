@@ -10,7 +10,7 @@ function executeAction(VRScene, rule, action){
     let state = VRScene.state;
     let runState = VRScene.state.runState;
     let current_object = {};
-
+    let game_graph = VRScene.state.graph;
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.object_uuid){
             current_object = o;
@@ -111,7 +111,14 @@ function executeAction(VRScene, rule, action){
                 soundsHub[action.media].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
-            
+            let actual_scene = VRScene.state.activeScene.name;
+            runState[current_object.uuid].state=true;
+            game_graph.scenes[actual_scene].objects.keys = game_graph.scenes[actual_scene].objects.keys.filter(
+                obj =>  obj.uuid !== current_object.uuid);
+            if(current_object.media0 !== null){
+                document.getElementById(actual_scene).needShaderUpdate = true;
+            }
+            VRScene.setState({runState: runState, graph: game_graph});
             break;
         default:
             console.log('not yet implemented');
