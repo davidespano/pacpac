@@ -264,6 +264,21 @@ function generateSpecificProperties(object, props){
                     </select>
                 </div>
             );
+        case InteractiveObjectsTypes.KEY:
+            return (
+                <div>
+                    <label>Stato iniziale</label>
+                    <input type={"checkbox"} id={'keyDefaultState'}
+                            defaultValue={object.properties.state}
+                            onChange={() => {
+                                let e = document.getElementById('keyDefaultState');
+                                let value = e.options[e.selectedIndex].value;
+                                interface_utils.setPropertyFromValue(object, 'state', value, props);
+                            }}
+                    />
+                        Collected
+                </div>
+            );
         default:
             return(<div>Error!</div>);
 

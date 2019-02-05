@@ -4,6 +4,7 @@ import Transition from "../../interactives/Transition";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import rules_utils from "../../interactives/rules/rules_utils";
 import Switch from "../../interactives/Switch";
+import Key from "../../interactives/Key";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import InputTagForm from "./InputTagForm";
 import ActionTypes from "../../actions/ActionTypes";
@@ -63,6 +64,12 @@ function TopBar(props){
                             <img src={"icons/icons8-add-toggle-on-filled-100.png"}/>
                             <figcaption>Interruttore</figcaption>
                         </figure>
+                        <figure className={'nav-figures'}
+                            onClick={() => {
+                                createObject(props, InteractiveObjectsTypes.KEY);
+                             }}>
+                            <img src={"icons/icons8-key-2-100.png"}/>
+                        </figure>
                     </div>
                 </div>
             </div>
@@ -109,6 +116,14 @@ function createObject(props, type){
             case InteractiveObjectsTypes.SWITCH:
                 name = scene.name + '_sw' + (scene.objects.switches.length + 1);
                 obj = Switch({
+                    uuid : uuid.v4(),
+                    name : name,
+                });
+                break;
+            case InteractiveObjectsTypes.KEY:
+                console.log(scene.objects);
+                name = scene.name + '_key' + (scene.objects.collectable_keys.length + 1);
+                obj = Key ({
                     uuid : uuid.v4(),
                     name : name,
                 });

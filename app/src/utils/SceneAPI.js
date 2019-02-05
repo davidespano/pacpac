@@ -5,6 +5,7 @@ import Transition from "../interactives/Transition";
 import Rule from "../interactives/rules/Rule";
 import RuleActionTypes from "../interactives/rules/RuleActionTypes";
 import Switch from "../interactives/Switch";
+import Key from "../interactives/Key";
 import Orders from "../data/Orders";
 let uuid = require('uuid');
 
@@ -28,6 +29,7 @@ function getByName(name, order = null) {
             const adj = []; // neighbours list
             let transitions_uuids = [];
             let switches_uuids = [];
+            let collectable_keys_uuids = [];
             let rules_uuids = [];
 
             // generates transitions and saves them to the objects store
@@ -58,6 +60,21 @@ function getByName(name, order = null) {
                     properties: JSON.parse(sw.properties),
                 });
                 Actions.receiveObject(s);
+            });
+
+            // generates switches and saves them to the objects store
+            response.body.collectable_keys.map((key) => {
+                switches_uuids.push(key.uuid); //save uuid
+                let k = Key({
+                    uuid: key.uuid,
+                    name: key.name,
+                    type: key.type,
+                    media: JSON.parse(key.media),
+                    mask: key.mask,
+                    vertices: key.vertices,
+                    properties: JSON.parse(key.properties),
+                });
+                Actions.receiveObject(k);
             });
 
             // generates rules and saves them to the rules store
@@ -94,6 +111,7 @@ function getByName(name, order = null) {
                 objects : {
                     transitions : transitions_uuids,
                     switches : switches_uuids,
+                    collectable_keys: collectable_keys_uuids,
                 },
                 rules : rules_uuids,
             });
@@ -135,6 +153,7 @@ function createScene(name, img, index, type, tag, order) {
                 objects: {
                     transitions: [],
                     switches: [],
+                    collectable_keys: [],
                 }
             });
 
