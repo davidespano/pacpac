@@ -34,12 +34,13 @@ function setMouseEnter() {
 
 function setMouseLeave() {
     let cursor = document.querySelector('#cursor');
+
     cursor.setAttribute('color', 'black');
     cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
 }
 
 function setClick(event) {
-    eventBus.emit('click-'+event.target.object_uuid);
+    event.detail.cursorEl.components.raycaster.intersectedEls.forEach(obj => eventBus.emit('click-'+obj.object_uuid))
 }
 
 AFRAME.registerComponent('play_video', {

@@ -43,6 +43,7 @@ export default class Bubble extends React.Component
     setVideoFrame(){
         //if(!this.props.isActive) return;
         this.props.scene.objects.switches.forEach(s => {
+            if(s.media.media0 === null && s.media.media1 === null) return;
             if((this.props.runState[s.uuid].state === "ON"  && s.media.media1 === null )||
                (this.props.runState[s.uuid].state === "OFF" && s.media.media0 === null )){
                 let asset = document.getElementById("media_"+s.uuid);
