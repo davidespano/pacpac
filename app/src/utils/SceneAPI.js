@@ -62,7 +62,7 @@ function getByName(name, order = null) {
                 Actions.receiveObject(s);
             });
 
-            // generates switches and saves them to the objects store
+            // generates keys and saves them to the objects store
             response.body.collectable_keys.map((key) => {
                 switches_uuids.push(key.uuid); //save uuid
                 let k = Key({
@@ -280,6 +280,19 @@ async function getAllDetailedScenes(gameGraph) {
             });
         });
 
+        // generates keys
+        const keys = s.collectable_keys.map((key) => {
+            return ({ //key, not the immutable
+                uuid: key.uuid,
+                name: key.name,
+                type: key.type,
+                media: JSON.parse(key.media),
+                mask: key.mask,
+                vertices: key.vertices,
+                properties: JSON.parse(key.properties),
+            });
+        });
+
         // generates rules
         const rules = s.rules.map(rule => {
             // check actions to find scene neighbours
@@ -310,6 +323,7 @@ async function getAllDetailedScenes(gameGraph) {
             objects : {
                 transitions : transitions,
                 switches : switches,
+                collectable_keys: keys,
             },
             rules: rules,
         });

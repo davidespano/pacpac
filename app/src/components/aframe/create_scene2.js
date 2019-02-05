@@ -171,6 +171,15 @@ export default class VRScene extends React.Component {
                                preload="auto" loop={false} crossorigin="anonymous"
                         />)
                 else return null;
+            case InteractiveObjectsTypes.KEY:
+                if(obj.media.media0 !== null){
+                    return(
+                        <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
+                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0}
+                               preload="auto" loop={false} crossorigin="anonymous"
+                        />)
+                }
+                else return null;
             default:
                 return null;
         }

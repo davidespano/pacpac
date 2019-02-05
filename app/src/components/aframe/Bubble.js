@@ -36,8 +36,10 @@ export default class Bubble extends React.Component
                         document.getElementById("media_" + obj.uuid).currentTime = 0;
                 });
             })
+        }else{
+            this.setShader();
         }
-        this.setVideoFrame()
+        this.setVideoFrame();
     }
 
     setVideoFrame(){
@@ -48,9 +50,8 @@ export default class Bubble extends React.Component
                (this.props.runState[s.uuid].state === "OFF" && s.media.media0 === null )){
                 let asset = document.getElementById("media_"+s.uuid);
                 asset.addEventListener('durationchange', function (ev) {
-                    console.log(ev)
                     asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
-                })
+                });
                 if(asset.readyState > 0)
                     asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
             }
@@ -67,9 +68,9 @@ export default class Bubble extends React.Component
         });
         //const sound = <Sound track={this.props.track} id = {this.props.name}/>;
         let material = "depthTest: true; ";
-        if(this.needShaderUpdate === true) {
+        if(this.nv !== undefined && this.nv.needShaderUpdate === true) {
             material += "shader: flat;";
-            this.needShaderUpdate = false;
+            this.nv.needShaderUpdate = false;
         }
         let active = 'active: false;';
         let radius = 9.9;

@@ -113,8 +113,8 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.COLLECT_KEY:
             let actual_scene = VRScene.state.activeScene.name;
             runState[current_object.uuid].state=true;
-            game_graph.scenes[actual_scene].objects.keys = game_graph.scenes[actual_scene].objects.keys.filter(
-                obj =>  obj.uuid !== current_object.uuid);
+            game_graph.scenes[actual_scene].objects.collectable_keys =
+                game_graph.scenes[actual_scene].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
             if(current_object.media0 !== null){
                 document.getElementById(actual_scene).needShaderUpdate = true;
             }
