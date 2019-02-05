@@ -22,6 +22,10 @@ function MediaEditingform(props){
                             <div className="modal-body modalOptions">
                                 {generateMediaModal(props, object)}
                             </div>
+                            <div className="modal-footer" id={'modal-footer-media'}>
+                                <button type="button" className="btn btn-secondary buttonConferm"
+                                        data-dismiss="modal" >Ok</button>
+                            </div>
                         </div>
                     </div>
                 </div>
