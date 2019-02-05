@@ -69,6 +69,7 @@ function TopBar(props){
                                 createObject(props, InteractiveObjectsTypes.KEY);
                              }}>
                             <img src={"icons/icons8-key-2-100.png"}/>
+                            <figcaption>Chiave</figcaption>
                         </figure>
                     </div>
                 </div>
