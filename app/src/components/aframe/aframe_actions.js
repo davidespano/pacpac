@@ -9,6 +9,7 @@ const soundsHub = require('./soundsHub');
 function executeAction(VRScene, rule, action){
     let state = VRScene.state;
     let runState = VRScene.state.runState;
+    let actual_scene = VRScene.state.activeScene.name;
     let current_object = {};
     let game_graph = VRScene.state.graph;
     Object.values(state.activeScene.objects).flat().forEach(o =>{
@@ -111,13 +112,18 @@ function executeAction(VRScene, rule, action){
                 soundsHub[action.media].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
-            let actual_scene = VRScene.state.activeScene.name;
             runState[current_object.uuid].state=true;
             game_graph.scenes[actual_scene].objects.collectable_keys =
                 game_graph.scenes[actual_scene].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
             if(current_object.media0 !== null){
                 document.getElementById(actual_scene).needShaderUpdate = true;
             }
+            VRScene.setState({runState: runState, graph: game_graph});
+            break;
+        case RuleActionTypes.UNLOCK_LOCK:
+            runState[current_object.uuid].state=true;
+            game_graph.scenes[actual_scene].objects.locks =
+                game_graph.scenes[actual_scene].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         default:
