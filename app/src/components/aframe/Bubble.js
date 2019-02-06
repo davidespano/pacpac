@@ -93,9 +93,13 @@ export default class Bubble extends React.Component
         console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
-            const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
-            if (objs.length === 0) return; //shader not necessary
             let sky = document.getElementById(scene.name);
+            const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
+            if (objs.length === 0){
+                this.resetShader(sky);
+                return; //shader not necessary
+            }
+
             if(sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive) document.getElementById(scene.img).play();
                 return;
@@ -120,12 +124,16 @@ export default class Bubble extends React.Component
                 dict.push(obj.uuid.replace(/-/g,'_'));
             });
 
-            if (masks.length === 0) return; //shader not necessary
+            if (masks.length === 0) {
+                this.resetShader(sky);
+                return; //shader not necessary
+            }
 
             //set the shader
             if(sky.getAttribute('material').shader !== 'multi-video'){
                 sky.setAttribute('material', "shader:multi-video;");
             }
+
             let children = sky.object3D.children;
             let skyMesh = null;
             children.forEach(obj => {
@@ -183,6 +191,12 @@ export default class Bubble extends React.Component
         }, 50);
     }
 
+    resetShader(sky){
+        if(sky.getAttribute('material').shader !== 'multi-video'){
+            return;
+        }
+        sky.setAttribute('material', "shader:flat;");
+    }
     componentWillUnmount(){
         delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img];
         (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());
