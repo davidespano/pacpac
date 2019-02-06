@@ -123,7 +123,9 @@ export default class Bubble extends React.Component
             if (masks.length === 0) return; //shader not necessary
 
             //set the shader
-            sky.setAttribute('material', "shader:multi-video;");
+            if(sky.getAttribute('material').shader !== 'multi-video'){
+                sky.setAttribute('material', "shader:multi-video;");
+            }
             let children = sky.object3D.children;
             let skyMesh = null;
             children.forEach(obj => {
@@ -172,7 +174,7 @@ export default class Bubble extends React.Component
                     }
             `;
             skyMesh.material.fragmentShader = fragShader;
-            skyMesh.material.needsUpdate = true;
+            setTimeout(()=>skyMesh.material.needsUpdate = true ,50);
 
 
             if (this.props.isActive) document.getElementById(scene.img).play();
