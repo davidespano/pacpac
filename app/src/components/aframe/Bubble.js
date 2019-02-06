@@ -68,10 +68,10 @@ export default class Bubble extends React.Component
         });
         //const sound = <Sound track={this.props.track} id = {this.props.name}/>;
         let material = "depthTest: true; ";
-        if(this.nv !== undefined && this.nv.needShaderUpdate === true) {
+       /* if(this.nv !== undefined && this.nv.needShaderUpdate === true) {
             material += "shader: flat;";
             this.nv.needShaderUpdate = false;
-        }
+        }*/
         let active = 'active: false;';
         let radius = 9.9;
         if (this.props.isActive) {
@@ -90,15 +90,17 @@ export default class Bubble extends React.Component
     }
 
     setShader(){
+        console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             if (objs.length === 0) return; //shader not necessary
             let sky = document.getElementById(scene.name);
-            if(sky.getAttribute('material').shader === 'multi-video') {
+            if(sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive) document.getElementById(scene.img).play();
                 return;
             }
+            if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
             let video = [];
             let masks = [];
             let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
