@@ -312,6 +312,19 @@ async function getAllDetailedScenes(gameGraph) {
             });
         });
 
+        // generates locks
+        const locks = s.locks.map((lock) => {
+            return ({ //lock, not the immutable
+                uuid: lock.uuid,
+                name: lock.name,
+                type: lock.type,
+                media: JSON.parse(lock.media),
+                mask: lock.mask,
+                vertices: lock.vertices,
+                properties: JSON.parse(lock.properties),
+            });
+        });
+
         // generates rules
         const rules = s.rules.map(rule => {
             // check actions to find scene neighbours
@@ -343,6 +356,7 @@ async function getAllDetailedScenes(gameGraph) {
                 transitions : transitions,
                 switches : switches,
                 collectable_keys: keys,
+                locks : locks,
             },
             rules: rules,
         });
