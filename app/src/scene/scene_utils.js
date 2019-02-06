@@ -94,6 +94,8 @@ function defineField(object){
             return 'switches';
         case InteractiveObjectsTypes.KEY:
             return 'collectable_keys';
+        case InteractiveObjectsTypes.LOCK:
+            return 'locks';
         default:
             return null;
     }

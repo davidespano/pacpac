@@ -279,6 +279,21 @@ function generateSpecificProperties(object, props){
                         Collected
                 </div>
             );
+        case InteractiveObjectsTypes.LOCK:
+            return (
+                <div>
+                    <select id={'keyDefaultState'}
+                            defaultValue={object.properties.key_uuid}
+                            onChange={() => {
+                                let e = document.getElementById('keyDefaultState');
+                                let value = e.options[e.selectedIndex].value;
+                                interface_utils.setPropertyFromValue(object, 'key_uuid', value, props);
+                            }}
+                    >
+                        {generateKeyList(props, object)}
+                    </select>
+                </div>
+            );
         default:
             return(<div>Error!</div>);
 
@@ -362,8 +377,8 @@ function generateObjectsList(props) {
 
         let scene = props.scenes.get(props.currentScene);
         let objects = scene.objects;
-        let allObjects = objects.transitions.concat(objects.switches);
-
+        //let allObjects = objects.transitions.concat(objects.switches).concat(objects.collectable_keys);
+        let allObjects = Object.values(scene.objects).flat();
         // no objects in scene
         if (allObjects.length === 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
@@ -371,6 +386,7 @@ function generateObjectsList(props) {
 
         // scene objects mapping
         return (allObjects.map(obj_uuid => {
+            console.log(obj_uuid);
             let obj = props.interactiveObjects.get(obj_uuid);
             return (
                 <div key={obj.uuid} className={"objects-wrapper"}>
@@ -394,6 +410,21 @@ function generateObjectsList(props) {
     }
 }
 
+
+/**
+ * Generates target options for transitions
+ * @param props
+ * @returns {any[]}
+ */
+function generateKeyList(props, obj) {
+    let scene = props.scenes.get(props.objectToScene.get(obj.uuid));
+    console.log(scene);
+    return ([...scene.objects.collectable_keys.values()].map(key_uuid => {
+        const key = props.interactiveObjects.get(key_uuid);
+            return (<option key={key.uuid} value={key.uuid}>{key.name}</option>)
+
+    }));
+}
 /*
 function checkGeometryMode(props) {
 

@@ -47,6 +47,17 @@ function generateDefaultRule(object){
                 }]
             });
             break;
+        case InteractiveObjectsTypes.LOCK:
+            r = Rule({
+                uuid : uuid.v4(),
+                object_uuid : object.uuid,
+                event: EventTypes.CLICK,
+                actions : [{
+                    uuid : uuid.v4(),
+                    type : RuleActionTypes.UNLOCK_LOCK,
+                }]
+            });
+            break;
         default:
             return;
     }

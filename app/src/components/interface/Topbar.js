@@ -5,6 +5,7 @@ import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import rules_utils from "../../interactives/rules/rules_utils";
 import Switch from "../../interactives/Switch";
 import Key from "../../interactives/Key";
+import Lock from "../../interactives/Lock";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import InputTagForm from "./InputTagForm";
 import ActionTypes from "../../actions/ActionTypes";
@@ -71,6 +72,13 @@ function TopBar(props){
                             <img src={"icons/icons8-key-2-100.png"}/>
                             <figcaption>Chiave</figcaption>
                         </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.LOCK);
+                                }}>
+                            <img src={"icons/icons8-lock-100.png"}/>
+                            <figcaption>Lucchetto</figcaption>
+                        </figure>
                     </div>
                 </div>
             </div>
@@ -122,9 +130,15 @@ function createObject(props, type){
                 });
                 break;
             case InteractiveObjectsTypes.KEY:
-                console.log(scene.objects);
                 name = scene.name + '_key' + (scene.objects.collectable_keys.length + 1);
                 obj = Key ({
+                    uuid : uuid.v4(),
+                    name : name,
+                });
+                break;
+            case InteractiveObjectsTypes.LOCK:
+                name = scene.name + '_lk' + (scene.objects.locks.length + 1);
+                obj = Lock ({
                     uuid : uuid.v4(),
                     name : name,
                 });

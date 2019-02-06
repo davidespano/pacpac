@@ -23,6 +23,7 @@ const Scene = Immutable.Record({
         transitions: [],
         switches: [],
         collectable_keys: [],
+        locks: [],
     },
     rules : [], // uuid list
 

@@ -8,6 +8,7 @@ const RuleActionTypes = {
     PLAY_AUDIO: 'PLAY_AUDIO',
     STOP_AUDIO: 'STOP_AUDIO',
     COLLECT_KEY: 'COLLECT_KEY',
+    UNLOCK_LOCK: 'UNLOCK_LOCK',
 };
 
 export default RuleActionTypes;
@@ -39,5 +40,12 @@ export default RuleActionTypes;
  * {
  * uuid: ....,
  * keyUuid: uuid della chiave da raccogliere
+ * }
+ * */
+
+/** TODO: la struttura dell'azione unlock-lock:
+ * {
+ * uuid: ....,
+ * lockUuid uuid del lucchetto da sbloccare
  * }
  * */

@@ -20,6 +20,8 @@ class ObjectsStore extends ReduceStore {
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
                 state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
+                console.log(action.obj);
+                console.log(state);
                 return state;
             case ActionTypes.RECEIVE_OBJECT:
                 state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
