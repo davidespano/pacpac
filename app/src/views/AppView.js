@@ -10,6 +10,7 @@ import GeometryScene from "../components/aframe/geometryScene";
 import FileContainer from "../components/interface/FileContainer";
 import FileForm from "../components/interface/FileForm";
 import MediaEditingform from "../components/interface/MediaEditingForm";
+import Login from "../components/interface/Login";
 
 function AppView(props) {
 
@@ -50,7 +51,10 @@ function AppView(props) {
                     <GeometryScene {...props}/>
                 </div>
             );
-
+        case 'LOGIN_MODE_ON':
+            return(
+                <Login {...props}/>
+            );
         default:
             return(
                 <div>SOMETHING WENT WRONG!</div>

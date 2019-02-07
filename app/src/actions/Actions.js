@@ -28,6 +28,12 @@ const Actions = {
         })
     },
 
+    loginModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOGIN_MODE_ON
+        })
+    },
+
     rightbarSelection(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.RIGHTBAR_SELECTION,

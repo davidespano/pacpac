@@ -62,6 +62,7 @@ function getState() {
         selectTagNewScene: Actions.selectTagNewScene,
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
+        switchToLoginMode: Actions.loginModeOn,
         switchToFileManager: Actions.fileManagerModeOn,
         switchToGeometryMode: Actions.geometryModeOn,
 

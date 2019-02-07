@@ -8,11 +8,14 @@ class ModeTypeStore extends ReduceStore {
     }
 
     getInitialState() {
-        return ActionTypes.EDIT_MODE_ON;
+        return ActionTypes.LOGIN_MODE_ON;
     }
 
     reduce(state, action) {
         switch (action.type) {
+            case ActionTypes.LOGIN_MODE_ON:
+                console.log("LOGIN");
+                return ActionTypes.LOGIN_MODE_ON;
             case ActionTypes.EDIT_MODE_ON:
                 console.log("EDIT");
                 return ActionTypes.EDIT_MODE_ON;

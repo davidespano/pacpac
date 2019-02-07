@@ -27,6 +27,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.EDIT_MODE_ON);
             case ActionTypes.GEOMETRY_MODE_ON:
                 return state.set('mode', ActionTypes.GEOMETRY_MODE_ON);
+            case ActionTypes.LOGIN_MODE_ON:
+                return state.set('mode', ActionTypes.LOGIN_MODE_ON);
             case ActionTypes.FILE_MANAGER_MODE_ON:
                 return state.set('mode', ActionTypes.FILE_MANAGER_MODE_ON);
             case ActionTypes.OBJECTS_FILTER:
