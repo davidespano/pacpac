@@ -10,6 +10,7 @@ import MediaAPI from "./utils/MediaAPI";
 window.localStorage.removeItem("gameID");
 window.localStorage.setItem("gameID", "3f585c1514024e9391954890a61d0a04");
 AuthenticationApi.login("username", "password").then(()=> {
+    AuthenticationApi.getUserDetail();
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
 });
 
