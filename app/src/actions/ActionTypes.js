@@ -59,6 +59,7 @@ const ActionTypes = {
     //OTHER
 
     ON_PICTURE_DROP : 'ON_PICTURE_DROP',
+    RECEIVE_USER : 'RECEIVE_USER',
     UPDATE_DATALIST : 'UPDATE_DATALIST',
 };
 

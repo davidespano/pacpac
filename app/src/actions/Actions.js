@@ -409,6 +409,13 @@ const Actions = {
         })
     },
 
+    receiveUser(user){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_USER,
+            user: user,
+        })
+    },
+
     updateDatalist(id,value){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_DATALIST,

@@ -16,7 +16,7 @@ function Login(props){
                     <label htmlFor="exampleInputPassword1">Password</label>
                     <input type="password" className="form-control" id="InputPassword" placeholder="Password"/>
                 </div>
-                <button className="btn btn-primary">Submit</button>
+                <button className="btn btn-primary" onClick={()=>submitUser()}>Submit</button>
             </div>
         )
 }
@@ -24,8 +24,11 @@ function Login(props){
 function submitUser(){
     let username = document.getElementById("InputUser").value;
     let password = document.getElementById("InputPassword").value;
-    AuthenticationAPI.login(username,password);
-
+    AuthenticationAPI.login(username,password).then(function (response) {
+        AuthenticationAPI.getUserDetail();
+    }).catch(function(err){
+        alert('Nome utente o password errati');
+    });
 }
 
 export default Login;

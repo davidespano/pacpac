@@ -14,6 +14,7 @@ const EditorState = Immutable.Record({
     scenesOrder: Orders.CHRONOLOGICAL,
     scenesOrderMenu: false,
     selectedTagNewScene: 'default',
+    user: null,
 });
 
 export default EditorState;
