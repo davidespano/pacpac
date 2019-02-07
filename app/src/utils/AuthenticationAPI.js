@@ -29,7 +29,7 @@ function getUserDetail() {
             });
             console.log(user)
             Actions.receiveUser(user);
-            //Action.switchToGameSelection();
+            Actions.gameSelectionModeOn();
         });
 }
 

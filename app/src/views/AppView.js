@@ -45,6 +45,8 @@ function AppView(props) {
             return(
                     <VRScene {...props}/>
             );
+        case 'GAME_SELECTION_MODE_ON':
+            return (<p/>); //todo implement list of game
         case 'GEOMETRY_MODE_ON':
             return(
                 <div>

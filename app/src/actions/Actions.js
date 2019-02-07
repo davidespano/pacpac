@@ -16,6 +16,12 @@ const Actions = {
         })
     },
 
+    gameSelectionModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.GAME_SELECTION_MODE_ON,
+        })
+    },
+
     geometryModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.GEOMETRY_MODE_ON

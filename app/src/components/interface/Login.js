@@ -25,7 +25,7 @@ function submitUser(){
     let username = document.getElementById("InputUser").value;
     let password = document.getElementById("InputPassword").value;
     AuthenticationAPI.login(username,password).then(function (response) {
-        AuthenticationAPI.getUserDetail();
+        AuthenticationAPI.getUserDetail().catch((error)=>{console.log(error)});
     }).catch(function(err){
         alert('Nome utente o password errati');
     });
