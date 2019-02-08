@@ -14,16 +14,16 @@ function GameList(props) {
     });
 
     return (
-        <div class="list-group">
+        <div className="list-group">
             {buttons}
         </div>
     );
 }
 
-function gameSelection(event,props){
+function gameSelection(gameUuid,props){
 
     window.localStorage.removeItem("gameID");
-    window.localStorage.setItem("gameID", event);
+    window.localStorage.setItem("gameID", gameUuid);
     props.switchToEditMode();
     SceneAPI.getAllScenesAndTags();
     MediaAPI.getAllAssets();

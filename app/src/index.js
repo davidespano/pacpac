@@ -4,16 +4,20 @@ import ReactDOM from 'react-dom';
 import SceneAPI from './utils/SceneAPI';
 import AuthenticationApi from './utils/AuthenticationAPI';
 import MediaAPI from "./utils/MediaAPI";
+import Actions from "./actions/Actions";
 
 //import '../public/style.css';
 //import './aframe.js';
-window.localStorage.removeItem("gameID");
-window.localStorage.setItem("gameID", "3f585c1514024e9391954890a61d0a04");
-AuthenticationApi.login("username", "password").then(()=> {
-    //AuthenticationApi.getUserDetail();
+
+AuthenticationApi.isUserAuthenticated().then((response)=>{
+    let gameUuid = window.localStorage.getItem("gameID");
+    if (gameUuid === null || (!response.body.games.includes(gameUuid)))
+        throw gameUuid;
+    else {
+        Actions.editModeOn();
+        SceneAPI.getAllScenesAndTags();
+        MediaAPI.getAllAssets();
+    }
+}).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
 });
-
-
-SceneAPI.getAllScenesAndTags();
-MediaAPI.getAllAssets();

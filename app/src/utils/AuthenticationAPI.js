@@ -33,7 +33,14 @@ function getUserDetail() {
         });
 }
 
+function isUserAuthenticated() {
+    return request.get(`${apiBaseURL}/users/me`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`);
+}
+
 export default {
     login: login,
     getUserDetail: getUserDetail,
+    isUserAuthenticated: isUserAuthenticated,
 };
