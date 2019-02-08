@@ -1,5 +1,4 @@
 import React from 'react';
-import ActionTypes from "../../actions/ActionTypes";
 import AuthenticationAPI from "../../utils/AuthenticationAPI";
 
 
@@ -28,6 +27,7 @@ function submitUser(){
         AuthenticationAPI.getUserDetail().catch((error)=>{console.log(error)});
     }).catch(function(err){
         alert('Nome utente o password errati');
+        console.log(err);
     });
 }
 

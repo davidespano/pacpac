@@ -11,6 +11,7 @@ import FileContainer from "../components/interface/FileContainer";
 import FileForm from "../components/interface/FileForm";
 import MediaEditingform from "../components/interface/MediaEditingForm";
 import Login from "../components/interface/Login";
+import GameList from "../components/interface/GameList";
 
 function AppView(props) {
 
@@ -46,7 +47,7 @@ function AppView(props) {
                     <VRScene {...props}/>
             );
         case 'GAME_SELECTION_MODE_ON':
-            return (<p/>); //todo implement list of game
+            return (<GameList/>);
         case 'GEOMETRY_MODE_ON':
             return(
                 <div>
