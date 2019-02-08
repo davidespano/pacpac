@@ -38,9 +38,9 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.PLAY_MODE_ON:
                 return state.set('mode', ActionTypes.PLAY_MODE_ON);
             case ActionTypes.RECEIVE_SCENE:
-                return state.set('user', action.user);
-            case ActionTypes.RECEIVE_USER:
                 return state.set('rightbarSelection', 'scene');
+            case ActionTypes.RECEIVE_USER:
+                return state.set('user', action.user);
             case ActionTypes.REMOVE_SCENE:
                 return state.set('rightbarSelection', 'scene');
             case ActionTypes.RIGHTBAR_SELECTION:

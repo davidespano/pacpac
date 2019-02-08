@@ -47,7 +47,7 @@ function AppView(props) {
                     <VRScene {...props}/>
             );
         case 'GAME_SELECTION_MODE_ON':
-            return (<GameList/>);
+            return (<GameList {...props}/>);
         case 'GEOMETRY_MODE_ON':
             return(
                 <div>
