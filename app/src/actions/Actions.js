@@ -117,7 +117,7 @@ const Actions = {
      * @param response
      * @param order of scenes
      */
-    loadAllScenes(response, order = null){+
+    loadAllScenes(response, order = null){
         AppDispatcher.dispatch({
             type: ActionTypes.LOAD_ALL_SCENES,
             scenes: response.scenes,
@@ -393,6 +393,21 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_RULE,
             rule: rule,
+        })
+    },
+
+
+    updateRuleEditorFromState(state){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_RULE_EDITOR_STATE,
+            state: state,
+        })
+    },
+
+    updateRuleEditorFromHTML(text){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_RULE_EDITOR_HTML,
+            text: text,
         })
     },
 

@@ -1,17 +1,19 @@
 import React from 'react';
-import L from "../../utils/L";
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+import {Editor, EditorState, convertToRaw} from "draft-js";
 
 function Rules(props){
+
     return(
         <div id={'rules'} className={'rules'}>
-            {generateRules(props)}
+            <Editor editorState={props.rulesEditor} onChange={(state) => props.updateRuleEditorFromState(state)}/>
         </div>
     );
 }
 
+/*
 function generateRules(props){
 
     //check scene selection
@@ -26,7 +28,6 @@ function generateRules(props){
         return ([...currentScene.get('rules').values()].map((rule_uuid) => {
             let rule = props.rules.get(rule_uuid);
 
-            /**TO DO : add objects selection here**/
             let object = "---";
 
             if(props.interactiveObjects.has(rule.object_uuid)){
@@ -56,7 +57,7 @@ function generateRules(props){
     }else {
         return "Nessuna scena selezionata";
     }
-}
+}*/
 
 /**
  * Generate html for the given action

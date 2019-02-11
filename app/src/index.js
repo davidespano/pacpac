@@ -20,4 +20,5 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
     }
 }).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
+    Actions.updateRuleEditorFromHTML("<a>Magia </a>Ciao sono una regola e sono bella");
 });

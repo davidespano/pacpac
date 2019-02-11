@@ -45,7 +45,6 @@ class ScenesStore extends ReduceStore {
                         state = state.set(newScene.name, newScene).sort(stores_utils.chooseComparator(action.order));
                     });
                 }
-                console.log(state);
                 return state;
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));
