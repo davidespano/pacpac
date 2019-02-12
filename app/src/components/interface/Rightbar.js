@@ -386,7 +386,6 @@ function generateObjectsList(props) {
 
         // scene objects mapping
         return (allObjects.map(obj_uuid => {
-            console.log(obj_uuid);
             let obj = props.interactiveObjects.get(obj_uuid);
             return (
                 <div key={obj.uuid} className={"objects-wrapper"}>

@@ -411,6 +411,12 @@ const Actions = {
         })
     },
 
+    updateSuggestion(state){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SUGGESTION,
+            state: state,
+        })
+    },
 
     //MEDIA
 

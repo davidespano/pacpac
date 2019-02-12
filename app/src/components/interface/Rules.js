@@ -2,16 +2,53 @@ import React from 'react';
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
-import {Editor, EditorState, convertToRaw} from "draft-js";
+import {Editor, EditorState, convertToRaw, RichUtils} from "draft-js";
+import createMentionPlugin from 'draft-js-mention-plugin';
+
+const mentionPlugin = createMentionPlugin();
+
+const { MentionsSuggestions } = mentionPlugin ;
+const plugins = [mentionPlugin];
+
+
 
 function Rules(props){
 
+    console.log([...props.mentions.get('objects').values()]);
+
+    console.log(props.rulesEditor.mentionsPlugin)
+
     return(
         <div id={'rules'} className={'rules'}>
-            <Editor editorState={props.rulesEditor} onChange={(state) => props.updateRuleEditorFromState(state)}/>
+            <Editor editorState={props.rulesEditor.editorState}
+                    plugins={plugins}
+                    onChange={(state) => {
+                console.log(state);
+                let blockType = RichUtils.getCurrentBlockType(state)
+                let selection = state.getSelection().getStartOffset();
+
+                let block = null;
+
+                state.getCurrentContent().getBlocksAsArray().forEach(b => {
+                    if(RichUtils.getCurrentBlockType(state) === b.type){
+                        block = b;
+                    }
+                });
+
+                console.log(block)
+                console.log(selection);
+                let entity = block.getEntityAt(selection);
+                console.log(state.getCurrentContent().getEntity(entity).getData())
+
+
+                props.updateRuleEditorFromState(state)}}/>
         </div>
     );
 }
+
+/*<MentionsSuggestions suggestions={props.rulesEditor.suggestions}
+                                 onSearchChange={(state) => props.updateSuggestion(state)}
+            />*/
 
 /*
 function generateRules(props){

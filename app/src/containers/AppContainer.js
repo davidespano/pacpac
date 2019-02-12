@@ -14,6 +14,7 @@ import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
 import RulesEditorStore from "../data/RulesEditorStore";
+import MentionsStore from "../data/MentionsStore";
 
 
 function getStores() {
@@ -30,6 +31,7 @@ function getStores() {
         EditorStateStore,
         AssetsStore,
         RulesEditorStore,
+        MentionsStore,
     ];
 }
 
@@ -46,6 +48,7 @@ function getState() {
         datalists: DatalistStore.getState(),
         editor: EditorStateStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
+        mentions: MentionsStore.getState(),
         objectToScene: ObjectToSceneStore.getState(),
         rules: RulesStore.getState(),
         rulesEditor: RulesEditorStore.getState(),
@@ -102,6 +105,7 @@ function getState() {
         updateRule: Actions.updateRule,
         updateRuleEditorFromState: Actions.updateRuleEditorFromState,
         updateRuleEditorFromHTML: Actions.updateRuleEditorFromHTML,
+        updateSuggestion: Actions.updateSuggestion,
 
         //OTHER
 

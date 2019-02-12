@@ -29,8 +29,8 @@ class ScenesStore extends ReduceStore {
 
                         let newScene = Scene({
                             uuid: scene.uuid,
-                            name : scene.name.replace(/\.[^/.]+$/, ""),
-                            img : scene.name,
+                            name : scene.name,
+                            img : scene.img,
                             index : scene.index,
                             type : scene.type,
                             tag : tag,
