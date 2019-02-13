@@ -10,11 +10,11 @@ services:
     ports:
       - 3001:3000
     volumes:
-      - ~/pacpac/data/media:/api/public
+      - /home/server/pacpac/data/media:/api/public
   db:
     image: neo4j
     ports:
       - 7474:7474
       - 7687:7687
     volumes:
-      - ~/pacpac/data/database:/data
+      - /home/server/pacpac/data/database:/data
