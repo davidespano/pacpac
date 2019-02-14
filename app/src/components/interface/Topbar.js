@@ -76,7 +76,7 @@ function TopBar(props){
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.LOCK);
                                 }}>
-                            <img src={"icons/icons8-lock-100.png"}/>
+                            <img src={"icons/icons8-add-lock-100.png"}/>
                             <figcaption>Lucchetto</figcaption>
                         </figure>
                     </div>
