@@ -843,3 +843,23 @@ li > span {
 .tags-input-scene {
     width: 20%;
 }
+
+.loginlabel{
+  text-align: center;
+}
+
+.login-home{
+    margin: 0;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    width: 450px;
+    height: 290px;
+    border: solid 1.5px #EF562D;
+    border-radius: 20px;
+}
+.gameList{
+    overflow-y: auto;
+}

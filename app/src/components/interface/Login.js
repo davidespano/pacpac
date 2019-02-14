@@ -5,7 +5,8 @@ import AuthenticationAPI from "../../utils/AuthenticationAPI";
 function Login(props){
 
         return(
-            <div className={'topbar'}>
+            <div className={'login-home'}>
+                <h4 className={"loginlabel"}>Login</h4>
                 <div className="form-group">
                     <label htmlFor="exampleInputEmail1">Username</label>
                     <input type="text" className="form-control" id="InputUser" aria-describedby="emailHelp"

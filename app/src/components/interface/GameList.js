@@ -14,8 +14,11 @@ function GameList(props) {
     });
 
     return (
-        <div className="list-group">
+        <div className="list-group login-home">
+            <h4 className={"loginlabel"}>I tuoi giochi</h4>
+            <div className={"gameList"}>
             {buttons}
+            </div>
         </div>
     );
 }
