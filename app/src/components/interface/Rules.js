@@ -2,49 +2,118 @@ import React from 'react';
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
-import {Editor, EditorState, convertToRaw, RichUtils} from "draft-js";
+import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils} from "draft-js";
 import createMentionPlugin from 'draft-js-mention-plugin';
+import stores_utils from "../../data/stores_utils";
 
-const mentionPlugin = createMentionPlugin();
+//const mentionPlugin = createMentionPlugin();
 
-const { MentionsSuggestions } = mentionPlugin ;
-const plugins = [mentionPlugin];
+//const { MentionsSuggestions } = mentionPlugin ;
+//const plugins = [mentionPlugin];
 
 
 
 function Rules(props){
 
-    console.log([...props.mentions.get('objects').values()]);
-
-    console.log(props.rulesEditor.mentionsPlugin)
-
     return(
         <div id={'rules'} className={'rules'}>
             <Editor editorState={props.rulesEditor.editorState}
-                    plugins={plugins}
+                    handleBeforeInput={() => {
+                        console.log('beforeInput');
+                        handleBeforeInput(props);
+                    }}
+                    handleKeyCommand={(command) => {
+                        console.log('handleKeyCommand');
+                        handleKeyCommand(command, props);
+                    }}
                     onChange={(state) => {
-                console.log(state);
-                let blockType = RichUtils.getCurrentBlockType(state)
-                let selection = state.getSelection().getStartOffset();
-
-                let block = null;
-
-                state.getCurrentContent().getBlocksAsArray().forEach(b => {
-                    if(RichUtils.getCurrentBlockType(state) === b.type){
-                        block = b;
-                    }
-                });
-
-                console.log(block)
-                console.log(selection);
-                let entity = block.getEntityAt(selection);
-                console.log(state.getCurrentContent().getEntity(entity).getData())
-
-
-                props.updateRuleEditorFromState(state)}}/>
+                        console.log('onchange');
+                        props.updateRuleEditorFromState(state);
+                    }}/>
         </div>
     );
 }
+
+/**
+ * Checks if user is allowed to write in the selected portion of text
+ * @param props
+ * @returns {string}
+ */
+function handleBeforeInput(props){
+    let entity = stores_utils.getEntity(props.rulesEditor.editorState);
+    if(entity){
+        switch(entity.getType()){
+            case 'quando':
+            case 'se':
+            case 'allora':
+                props.updateRuleEditorFromState(props.rulesEditor.editorState);
+                return 'handled';
+            default:
+                break;
+        }
+    }
+}
+
+/**
+ * Checks if the user is allowed to execute a command in the selected portion of text
+ * @param command
+ * @param props
+ * @returns {string}
+ */
+function handleKeyCommand(command, props){
+    if(command === 'backspace'){
+        let entity = stores_utils.getEntity(props.rulesEditor.editorState);
+        console.log('ENTITY: ' + entity);
+
+        if(entity){
+            switch(entity.getType()){
+                case 'quando':
+                case 'se':
+                case 'allora':
+                    return 'handled';
+                default:
+                    break;
+            }
+        } else {
+            return 'handled';
+        }
+    }
+}
+
+
+function checkBlocks(state, props){
+    let raw = convertToRaw(state.getCurrentContent());
+    //let checker = true;
+
+    raw.blocks.forEach( block => {
+
+        console.log('ENTITYMAP:');
+        console.log(raw.entityMap);
+
+        if(block.entityRanges.length !== 0) {
+            console.log(block.entityRanges.length)
+            let length = block.entityRanges[0].length;
+            let sliced = block.text.slice(0, length);
+            let key = block.entityRanges[0].key;
+            let type = raw.entityMap[key].type;
+
+            //checker = checker && (sliced === type || sliced === type.toUpperCase());
+
+            console.log('SLICED: ' + sliced);
+            console.log('TYPE:' + type);
+
+
+            if(!(sliced === type || sliced === type.toUpperCase())){
+                props.updateRuleEditorFromState(EditorState.undo(props.rulesEditor.editorState));
+            }
+
+        } else {
+            props.updateRuleEditorFromState(EditorState.undo(props.rulesEditor.editorState));
+        }
+
+    });
+}
+
 
 /*<MentionsSuggestions suggestions={props.rulesEditor.suggestions}
                                  onSearchChange={(state) => props.updateSuggestion(state)}
