@@ -4,13 +4,7 @@ import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils} from "draft-js";
 import createMentionPlugin from 'draft-js-mention-plugin';
-import stores_utils from "../../data/stores_utils";
-
-//const mentionPlugin = createMentionPlugin();
-
-//const { MentionsSuggestions } = mentionPlugin ;
-//const plugins = [mentionPlugin];
-
+import interface_utils from "./interface_utils";
 
 
 function Rules(props){
@@ -20,11 +14,11 @@ function Rules(props){
             <Editor editorState={props.rulesEditor.editorState}
                     handleBeforeInput={() => {
                         console.log('beforeInput');
-                        handleBeforeInput(props);
+                        return handleBeforeInput(props);
                     }}
                     handleKeyCommand={(command) => {
                         console.log('handleKeyCommand');
-                        handleKeyCommand(command, props);
+                        return handleKeyCommand(command, props);
                     }}
                     onChange={(state) => {
                         console.log('onchange');
@@ -40,18 +34,12 @@ function Rules(props){
  * @returns {string}
  */
 function handleBeforeInput(props){
-    let entity = stores_utils.getEntity(props.rulesEditor.editorState);
-    if(entity){
-        switch(entity.getType()){
-            case 'quando':
-            case 'se':
-            case 'allora':
-                props.updateRuleEditorFromState(props.rulesEditor.editorState);
-                return 'handled';
-            default:
-                break;
-        }
+    if(!checkIfEditable(props)){
+        console.log('not editable!')
+        props.updateRuleEditorFromState(props.rulesEditor.editorState);
+        return 'handled';
     }
+    return 'not-handled';
 }
 
 /**
@@ -62,22 +50,27 @@ function handleBeforeInput(props){
  */
 function handleKeyCommand(command, props){
     if(command === 'backspace'){
-        let entity = stores_utils.getEntity(props.rulesEditor.editorState);
-        console.log('ENTITY: ' + entity);
-
-        if(entity){
-            switch(entity.getType()){
-                case 'quando':
-                case 'se':
-                case 'allora':
-                    return 'handled';
-                default:
-                    break;
-            }
-        } else {
+        if(!checkIfEditable(props) || !checkIfEditable(props, 1)){
+            console.log('not deletable!')
+            props.updateRuleEditorFromState(props.rulesEditor.editorState);
             return 'handled';
         }
+    } else {
+        return 'not-handled';
     }
+}
+
+/**
+ * check selected entity
+ * @param props
+ * @param offset (move selection n spaces to the left, default 0)
+ * @returns {boolean}
+ */
+function checkIfEditable(props, offset = 0){
+    let entity = interface_utils.getEntity(props.rulesEditor.editorState, offset);
+    console.log('ENTITY: ' + entity);
+
+    return entity !== null && entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
 }
 
 

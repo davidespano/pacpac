@@ -1,5 +1,4 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import Transition from "../../interactives/Transition";
 
 /**
  * Updates object property with the given value, returns new object
@@ -146,6 +145,23 @@ function checkSelection(element, option, editor){
     }
 }
 
+
+/**
+ * Given an EditorState, returns currently selected entity. Offset "moves" the cursor of n spaces to the left before
+ * checking.
+ * @param state (EditorState)
+ * @param offset (move selection n spaces to the left)
+ * @returns entity if any, null otherwise
+ */
+function getEntity(state, offset = 0) {
+
+    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const entity = block.getEntityAt(state.getSelection().getStartOffset() - offset);
+
+    return entity ? (state.getCurrentContent().getEntity(entity)) : null;
+}
+
+
 export default {
     onlyNumbers : onlyNumbers,
     setPropertyFromId : setPropertyFromId,
@@ -153,4 +169,5 @@ export default {
     title : title,
     centroid: calculateCentroid,
     checkSelection: checkSelection,
+    getEntity: getEntity,
 }

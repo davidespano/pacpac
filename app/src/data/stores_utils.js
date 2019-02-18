@@ -1,5 +1,4 @@
 import Orders from "./Orders";
-import {RichUtils} from "draft-js";
 
 /**
  * Returns correct comparator according to the given type
@@ -64,24 +63,10 @@ function rev_chronological(a, b){
     return -(chronological(a, b));
 }
 
-/**
- * Given an EditorState, returns currently selected entity
- * @param state (EditorState)
- * @returns entity if any, null otherwise
- */
-function getEntity(state) {
-
-    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const entity = block.getEntityAt(state.getSelection().getStartOffset());
-
-    return entity ? (state.getCurrentContent().getEntity(entity)) : null;
-}
-
 export default {
     chooseComparator: chooseComparator,
     alphabetical: alphabetical,
     rev_alphabetical: rev_alphabetical,
     chronological: chronological,
     rev_chronological: rev_chronological,
-    getEntity: getEntity,
 }
