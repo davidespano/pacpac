@@ -22,7 +22,8 @@ function chooseComparator(type){
 
 /**
  * Comparator on object names
- * @param type
+ * @param a
+ * @param b
  * @returns {number}
  */
 function alphabetical(a, b){
