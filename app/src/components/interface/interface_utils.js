@@ -155,10 +155,24 @@ function checkSelection(element, option, editor){
  */
 function getEntity(state, offset = 0) {
 
-    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const entity = block.getEntityAt(state.getSelection().getStartOffset() - offset);
+    const blockStart = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const blockEnd = state.getCurrentContent().getBlockForKey(state.getSelection().getFocusKey());
 
-    return entity ? (state.getCurrentContent().getEntity(entity)) : null;
+    //checks if selection spans over multiple blocks
+    if(blockStart !== blockEnd){
+        console.log('multiple blocks!')
+        return null;
+    }
+
+    const entityStart = blockStart.getEntityAt(state.getSelection().getStartOffset() - offset);
+    const entityEnd = blockEnd.getEntityAt(state.getSelection().getEndOffset() - offset);
+
+    //checks if entity is null or selection covers more than one entity
+    if(!entityStart || (entityStart !== entityEnd)){
+        return null;
+    }
+
+    return state.getCurrentContent().getEntity(entityStart);
 }
 
 
