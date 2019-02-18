@@ -28,7 +28,7 @@ function TagDropdown(properties){
                     {[...props.tags.values()].map(tag => {
                         let id = (component + tag.uuid).replace('-', "") ;
                         return (
-                            <li id={id}
+                            <li id={id} key={id}
                                 onClick={() => {handleSelection(props, component, tag);}}
                             >
                                 <span style={color(tag.color)}> </span>
