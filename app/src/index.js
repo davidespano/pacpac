@@ -9,34 +9,39 @@ import Actions from "./actions/Actions";
 //import '../public/style.css';
 //import './aframe.js';
 
+
+/**
+ * NOTA: la length delle entità è uguale alla lunghezza della parola + 1
+ * **/
+
 const provaRaw = {
     blocks: [
         {
             text: 'QUANDO soggetto evento oggetto-scena, ',
             type: 'quando-block',
             entityRanges: [
-                {offset: 0, length: 6, key: 'quando'},
-                {offset: 7, length: 8, key: 'soggetto'},
-                {offset: 16, length: 6, key: 'evento'},
-                {offset: 23, length: 13, ket: 'oggettoScena'},
+                {offset: 0, length: 7, key: 'quando'},
+                {offset: 7, length: 9, key: 'soggetto'},
+                {offset: 16, length: 7, key: 'evento'},
+                {offset: 23, length: 14, key: 'oggettoScena'},
             ],
         },
         {
             text: 'SE oggetto operatore valore, ',
             type: 'se-block',
             entityRanges: [
-                {offset: 0, length: 2, key: 'se'},
-                {offset: 3, length: 7, key: 'oggetto'},
-                {offset: 11, length: 9, key: 'operatore'},
-                {offset: 21, length: 6, key: 'valore'},
+                {offset: 0, length: 3, key: 'se'},
+                {offset: 3, length: 8, key: 'oggetto'},
+                {offset: 11, length: 10, key: 'operatore'},
+                {offset: 21, length: 7, key: 'valore'},
             ],
         },
         {
             text: 'ALLORA azione ',
             type: 'allora-block',
             entityRanges: [
-                {offset: 0, length: 6, key: 'allora'},
-                {offset: 7, length: 6, key: 'azione'},
+                {offset: 0, length: 7, key: 'allora'},
+                {offset: 7, length: 7, key: 'azione'},
             ],
         }
     ],
