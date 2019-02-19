@@ -17,6 +17,8 @@ const provaRaw = {
             entityRanges: [
                 {offset: 0, length: 6, key: 'quando'},
                 {offset: 7, length: 8, key: 'soggetto'},
+                {offset: 16, length: 6, key: 'evento'},
+                {offset: 23, length: 13, ket: 'oggettoScena'},
             ],
         },
         {
@@ -25,6 +27,8 @@ const provaRaw = {
             entityRanges: [
                 {offset: 0, length: 2, key: 'se'},
                 {offset: 3, length: 7, key: 'oggetto'},
+                {offset: 11, length: 9, key: 'operatore'},
+                {offset: 21, length: 6, key: 'valore'},
             ],
         },
         {
@@ -38,11 +42,15 @@ const provaRaw = {
     ],
     entityMap: {
         quando: {type: 'quando', data: 'quando'},
-        soggetto: {type: 'soggetto', data: 'soggetto'},
+        soggetto: {type: 'soggetto', data: 'soggetto', mutability: 'MUTABLE'},
+        evento: {type: 'evento', data: 'evento', mutability: 'MUTABLE'},
+        oggettoScena: {type: 'oggettoScena', data: 'oggettoScena', mutability: 'MUTABLE'},
         se: {type: 'se', data: 'se'},
-        oggetto: {type: 'oggetto', data: 'oggetto'},
+        oggetto: {type: 'oggetto', data: 'oggetto', mutability: 'MUTABLE'},
+        operatore: {type: 'operatore', data: 'operatore', mutability: 'MUTABLE'},
+        valore: {type: 'valore', data: 'valore', mutability: 'MUTABLE'},
         allora: {type: 'allora', data: 'allora'},
-        azione: {type: 'azione', data: 'azione'},
+        azione: {type: 'azione', data: 'azione', mutability: 'MUTABLE'},
     },
 };
 

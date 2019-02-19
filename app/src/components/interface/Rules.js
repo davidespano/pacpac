@@ -73,41 +73,6 @@ function checkIfEditable(props, offset = 0){
     return entity !== null && entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
 }
 
-
-function checkBlocks(state, props){
-    let raw = convertToRaw(state.getCurrentContent());
-    //let checker = true;
-
-    raw.blocks.forEach( block => {
-
-        console.log('ENTITYMAP:');
-        console.log(raw.entityMap);
-
-        if(block.entityRanges.length !== 0) {
-            console.log(block.entityRanges.length)
-            let length = block.entityRanges[0].length;
-            let sliced = block.text.slice(0, length);
-            let key = block.entityRanges[0].key;
-            let type = raw.entityMap[key].type;
-
-            //checker = checker && (sliced === type || sliced === type.toUpperCase());
-
-            console.log('SLICED: ' + sliced);
-            console.log('TYPE:' + type);
-
-
-            if(!(sliced === type || sliced === type.toUpperCase())){
-                props.updateRuleEditorFromState(EditorState.undo(props.rulesEditor.editorState));
-            }
-
-        } else {
-            props.updateRuleEditorFromState(EditorState.undo(props.rulesEditor.editorState));
-        }
-
-    });
-}
-
-
 /*<MentionsSuggestions suggestions={props.rulesEditor.suggestions}
                                  onSearchChange={(state) => props.updateSuggestion(state)}
             />*/
