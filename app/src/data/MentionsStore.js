@@ -11,7 +11,7 @@ class MentionsStore extends ReduceStore {
     }
 
     getInitialState(){
-        return Mentions();
+        return Mentions;
     }
 
     reduce(state, action){

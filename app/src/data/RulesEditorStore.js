@@ -15,7 +15,7 @@ class RulesEditorStore extends ReduceStore {
     getInitialState(){
         return {
             editorState: EditorState.createEmpty(),
-            suggestions: Mentions(),
+            suggestions: Mentions,
             mentionsPlugin: createMentionPlugin(),
         }
     }
