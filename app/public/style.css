@@ -266,6 +266,9 @@ body{
 
 .navbar-brand{
     font-size: 22px;
+    padding: 0;
+    border: none;
+    background: none;
     background-color: #FFFFFF;
     color: #EF562D !important;
     font-family: playregular;
