@@ -4,6 +4,7 @@ import {EditorState, ContentState, convertFromHTML, convertFromRaw} from 'draft-
 import ActionTypes from "../actions/ActionTypes";
 import Mentions from "./Mentions";
 import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin';
+import storeUtils from "./stores_utils";
 
 
 class RulesEditorStore extends ReduceStore {
@@ -22,6 +23,13 @@ class RulesEditorStore extends ReduceStore {
 
     reduce(state, action){
         switch(action.type){
+            case ActionTypes.UPDATE_CURRENT_SCENE:
+                return {
+                    editorState: EditorState.createWithContent(convertFromRaw(
+                        storeUtils.generateRawFromRules(action.rules, action.objectMap))),
+                    suggestions: state.suggestions,
+                    mentionsPlugin: state.mentionsPlugin,
+                };
             case ActionTypes.UPDATE_RULE_EDITOR_STATE:
                 return {
                     editorState: action.state,

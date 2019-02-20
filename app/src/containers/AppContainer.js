@@ -80,7 +80,9 @@ function getState() {
         removeScene: Actions.removeScene,
         removeAllScenes: Actions.removeAllScenes,
         sortScenes: Actions.sortScenes,
-        updateCurrentScene: Actions.updateCurrentScene,
+        updateCurrentScene: ((name) => Actions.updateCurrentScene(name,
+                ScenesStore.getState().get(name).get('rules').map((uuid) => RulesStore.getState().get(uuid)),
+                ObjectsStore.getState())),
         updateScene: Actions.updateScene,
         updateSceneName: Actions.updateSceneName,
 
