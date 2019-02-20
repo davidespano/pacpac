@@ -66,6 +66,7 @@ function getState() {
         selectFile: Actions.selectFile,
         selectMediaToEdit: Actions.selectMediaToEdit,
         selectTagNewScene: Actions.selectTagNewScene,
+        switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
         switchToLoginMode: Actions.loginModeOn,

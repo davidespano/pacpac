@@ -9,7 +9,7 @@ import Lock from "../../interactives/Lock";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import InputTagForm from "./InputTagForm";
 import ActionTypes from "../../actions/ActionTypes";
-import FileForm from "./FileForm";
+import AuthenticationAPI from "../../utils/AuthenticationAPI";
 
 let uuid = require('uuid');
 
@@ -18,7 +18,7 @@ function TopBar(props){
         <div className={'topbar'}>
             <nav>
                 <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a className="navbar-brand">PacPac</a>
+                    <button className="navbar-brand" onClick={() => AuthenticationAPI.getUserDetail()}>PacPac</button>
                     <a className="nav-item nav-link active"
                        id="nav-game-tab" data-toggle="tab" href="#nav-game" role="tab" aria-controls="nav-game"
                        aria-selected="true" onClick={() => handleNavbarSelection(props)}>Gioco</a>
