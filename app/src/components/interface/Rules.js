@@ -93,7 +93,7 @@ function handleKeyCommand(command, props){
                     let newContentState = Modifier.replaceText(
                         state.getCurrentContent(),
                         state.getSelection(),
-                        placeholder
+                        placeholder,
                     );
 
                     props.updateRuleEditorFromContent(newContentState, newSelectionState);
@@ -109,11 +109,13 @@ function handleKeyCommand(command, props){
                 //console.log('NOT KEYWORD');
                 if(interface_utils.checkIfPlaceholderNeeded(state)){ //placeholder
 
+                    let placeholder = interface_utils.checkEndSpace() ? '@' : '@ ';
+
                     //console.log('PLACEHOLDER');
                     let newContentState = Modifier.replaceText(
                         state.getCurrentContent(),
                         state.getSelection().set('anchorOffset', state.getSelection().getStartOffset() -1),
-                        '@placeholder'
+                        placeholder
                     );
 
                     props.updateRuleEditorFromContent(newContentState, state.getSelection());
