@@ -250,6 +250,15 @@ function secondCheck(state){
     return getEntity(state, selectionLength+1) === getEntity(state, 0);
 }
 
+/**
+ * check if a text selected contains a space at the end
+ * @param state
+ */
+function checkEndSpace(state) {
+    const textSelected = window.getSelection().toString();
+    return  textSelected.slice(-1) === " ";
+}
+
 
 export default {
     onlyNumbers : onlyNumbers,
@@ -267,4 +276,5 @@ export default {
     checkEntity: checkEntity,
     firstCheck: firstCheck,
     secondCheck: secondCheck,
+    checkEndSpace: checkEndSpace,
 }
