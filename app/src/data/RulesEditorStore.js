@@ -5,7 +5,8 @@ import ActionTypes from "../actions/ActionTypes";
 import Mentions from "./Mentions";
 import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin';
 import storeUtils from "./stores_utils";
-
+import ScenesStore from './ScenesStore';
+import RulesStore from './RulesStore';
 
 class RulesEditorStore extends ReduceStore {
 
@@ -24,11 +25,10 @@ class RulesEditorStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.UPDATE_CURRENT_SCENE:
-                let props = action.props;
-                let rules = props.scenes.get(action.name).get('rules').map((uuid) => props.rules.get(uuid));
+                let rules = ScenesStore.getState().get(action.name).get('rules').map((uuid) => RulesStore.getState().get(uuid));
                 return {
                     editorState: EditorState.createWithContent(convertFromRaw(
-                        storeUtils.generateRawFromRules(rules, props))),
+                        storeUtils.generateRawFromRules(rules))),
                     suggestions: state.suggestions,
                     mentionsPlugin: state.mentionsPlugin,
                 };
