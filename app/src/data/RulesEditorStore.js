@@ -36,7 +36,17 @@ class RulesEditorStore extends ReduceStore {
                     suggestions: state.suggestions,
                     mentionsPlugin: state.mentionsPlugin,
                 };
-            case ActionTypes.UPDATE_RULE_EDITOR_HTML:
+            case ActionTypes.UPDATE_RULE_EDITOR_CONTENT:
+
+                let newState = EditorState.createWithContent(action.content);
+                newState = EditorState.forceSelection(newState, action.selection);
+
+                return {
+                    editorState: newState,
+                    suggestions: state.suggestions,
+                    mentionsPlugin: state.mentionsPlugin,
+                };
+            case ActionTypes.UPDATE_RULE_EDITOR_RAW:
 
                 /*let blocks = convertFromHTML(action.text);
 
@@ -46,7 +56,7 @@ class RulesEditorStore extends ReduceStore {
                 );*/
 
                 return {
-                    editorState: EditorState.createWithContent(convertFromRaw(action.text)),
+                    editorState: EditorState.createWithContent(convertFromRaw(action.raw)),
                     suggestions: state.suggestions,
                     mentionsPlugin: state.mentionsPlugin,
                 };

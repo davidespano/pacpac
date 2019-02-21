@@ -32,7 +32,7 @@ function AppView(props) {
                         <LeftBar {...props} />
                         <RightBar {...props} />
                         <CentralScene {...props} />
-                        <MentionRules {...props} />
+                        <Rules {...props} />
                     </div>
                 </div>
             );

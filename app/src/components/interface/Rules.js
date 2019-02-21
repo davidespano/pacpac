@@ -2,7 +2,7 @@ import React from 'react';
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
-import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils} from "draft-js";
+import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils, Modifier} from "draft-js";
 import createMentionPlugin from 'draft-js-mention-plugin';
 import interface_utils from "./interface_utils";
 
@@ -34,12 +34,28 @@ function Rules(props){
  * @returns {string}
  */
 function handleBeforeInput(props){
-    if(!checkIfEditable(props)){
-        console.log('not editable!')
-        props.updateRuleEditorFromState(props.rulesEditor.editorState);
-        return 'handled';
+    const state = props.rulesEditor.editorState;
+    if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
+        if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) && interface_utils.checkIfEditableCursor(state)){
+            if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
+
+                let newContentState = Modifier.replaceText(
+                    state.getCurrentContent(),
+                    state.getSelection(),
+                    '@placeholder'
+                );
+
+                props.updateRuleEditorFromContent(newContentState, state.getSelection());
+                return 'handled';
+            }
+        } else { // multiple blocks, multiple entities or keywords involved
+            return 'handled';
+        }
+    } else { //CURSOR
+        if(!interface_utils.checkIfEditableCursor(state)) { //not editable
+            return 'handled';
+        }
     }
-    return 'not-handled';
 }
 
 /**
@@ -49,14 +65,25 @@ function handleBeforeInput(props){
  * @returns {string}
  */
 function handleKeyCommand(command, props){
-    if(command === 'backspace'){
-        if(!checkIfEditable(props) || !checkIfEditable(props, 1)){
-            console.log('not deletable!')
-            props.updateRuleEditorFromState(props.rulesEditor.editorState);
-            return 'handled';
+    const state = props.rulesEditor.editorState;
+
+    if(command === 'backspace') {
+        if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
+            return 'not-handled';
+        } else { //CURSOR
+            if(interface_utils.checkIfDeletableCursor(state)){ // deletable
+                //console.log('NOT KEYWORD');
+                if(interface_utils.checkIfPlaceholderNeeded(state)){ //placeholder
+                    /**INSERT PLACEHOLDER**/
+                    //console.log('PLACEHOLDER');
+                    return 'handled';
+                }
+                //console.log('NO PLACEHOLDER');
+            } else { // not deletable
+                //console.log('KEYWORD');
+                return 'handled';
+            }
         }
-    } else {
-        return 'not-handled';
     }
 }
 
@@ -234,4 +261,3 @@ function handleKeys(event,value,ruleId,objectId,props) {
 }*/
 
 export default Rules;
-

@@ -145,34 +145,109 @@ function checkSelection(element, option, editor){
     }
 }
 
+/**
+ * Returns true if multiple chars are selected
+ * @param state
+ * @returns {boolean}
+ */
+function checkIfMultipleSelection(state){
+    const selectionLength = state.getSelection().getEndOffset() - state.getSelection().getStartOffset();
+    return selectionLength > 0;
+}
+
 
 /**
- * Given an EditorState, returns currently selected entity. Offset "moves" the cursor of n spaces to the left before
- * checking.
- * @param state (EditorState)
- * @param offset (move selection n spaces to the left)
- * @returns entity if any, null otherwise
+ * Returns currently selected entity (doesn't check if selection spans over multiple blocks or entities)
+ * @param state
+ * @param offset
+ * returns entity
  */
-function getEntity(state, offset = 0) {
+function getEntity(state, offset = 0){
+    const selection = state.getSelection();
+    const block = state.getCurrentContent().getBlockForKey(selection.getAnchorKey());
+    const entity = block.getEntityAt(selection.getStartOffset() + offset);
+    return state.getCurrentContent().getEntity(entity);
+}
 
+
+/**
+ * check selected entity
+ * @param state
+ * @param offset (move selection n spaces)
+ * @returns {boolean}
+ */
+function checkIfEditableCursor(state, offset){
+    let entity = getEntity(state, offset);
+
+    console.log('ENTITY: ' + entity);
+
+    return entity !== null && entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
+}
+
+/**
+ * check selected entity
+ * @param state
+ * return {boolean}
+ */
+function checkIfDeletableCursor(state){
+    return checkIfEditableCursor(state) && (getEntity(state) === getEntity(state, -1));
+}
+
+/**
+ * @param state
+ * return {boolean}
+ */
+function checkIfPlaceholderNeeded(state){
+    const entity = getEntity(state);
+    return ((getEntity(state, -2) !== entity) && (getEntity(state, 1) !== entity));
+}
+
+
+/**
+ * Given an EditorState, returns true only selection spans over a single block
+ * @param state
+ * @returns {boolean}
+ */
+function checkBlock(state){
     const blockStart = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
     const blockEnd = state.getCurrentContent().getBlockForKey(state.getSelection().getFocusKey());
 
     //checks if selection spans over multiple blocks
-    if(blockStart !== blockEnd){
-        console.log('multiple blocks!')
-        return null;
-    }
+    return (blockStart === blockEnd);
+}
 
-    const entityStart = blockStart.getEntityAt(state.getSelection().getStartOffset() - offset);
-    const entityEnd = blockEnd.getEntityAt(state.getSelection().getEndOffset() - offset);
+/**
+ * Given an EditorState, returns true only if the selection spans over a single entity.
+ * Doesn't check if selection spans over multiple blocks
+ * Offset "moves" the cursor of n spaces
+ * @param state (EditorState)
+ * @returns {boolean}
+ */
+function checkEntity(state) {
+
+    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
+    const entityEnd = block.getEntityAt(state.getSelection().getEndOffset());
 
     //checks if entity is null or selection covers more than one entity
-    if(!entityStart || (entityStart !== entityEnd)){
-        return null;
-    }
+    return (entityStart !== null && (entityStart === entityEnd));
+}
 
-    return state.getCurrentContent().getEntity(entityStart);
+/**
+ * check previous entity
+ * @param state
+ */
+function firstCheck(state){
+    return getEntity(state, -1) === getEntity(state, 0);
+}
+
+/**
+ * check previous entity
+ * @param state
+ */
+function secondCheck(state){
+    const selectionLength = state.getSelection().getEndOffset() - state.getSelection().getStartOffset();
+    return getEntity(state, selectionLength+1) === getEntity(state, 0);
 }
 
 
@@ -184,4 +259,12 @@ export default {
     centroid: calculateCentroid,
     checkSelection: checkSelection,
     getEntity: getEntity,
+    checkIfEditableCursor: checkIfEditableCursor,
+    checkIfMultipleSelection: checkIfMultipleSelection,
+    checkIfDeletableCursor: checkIfDeletableCursor,
+    checkIfPlaceholderNeeded: checkIfPlaceholderNeeded,
+    checkBlock: checkBlock,
+    checkEntity: checkEntity,
+    firstCheck: firstCheck,
+    secondCheck: secondCheck,
 }

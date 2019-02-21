@@ -107,7 +107,8 @@ function getState() {
         removeRule: Actions.removeRule,
         updateRule: Actions.updateRule,
         updateRuleEditorFromState: Actions.updateRuleEditorFromState,
-        updateRuleEditorFromHTML: Actions.updateRuleEditorFromHTML,
+        updateRuleEditorFromContent: Actions.updateRuleEditorFromContent,
+        updateRuleEditorFromRaw: Actions.updateRuleEditorFromRaw,
         updateSuggestion: Actions.updateSuggestion,
 
         //OTHER

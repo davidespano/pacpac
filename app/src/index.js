@@ -71,7 +71,7 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
     }
 }).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
-    Actions.updateRuleEditorFromHTML(provaRaw);
+    Actions.updateRuleEditorFromRaw(provaRaw);
 });
 
 

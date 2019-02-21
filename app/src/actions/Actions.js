@@ -407,10 +407,18 @@ const Actions = {
         })
     },
 
-    updateRuleEditorFromHTML(text){
+    updateRuleEditorFromContent(content, selection){
         AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_RULE_EDITOR_HTML,
-            text: text,
+            type: ActionTypes.UPDATE_RULE_EDITOR_CONTENT,
+            content: content,
+            selection: selection,
+        })
+    },
+
+    updateRuleEditorFromRaw(raw){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_RULE_EDITOR_RAW,
+            raw: raw,
         })
     },
 
