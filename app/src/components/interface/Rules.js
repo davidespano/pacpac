@@ -36,13 +36,14 @@ function Rules(props){
 function handleBeforeInput(props){
     const state = props.rulesEditor.editorState;
     if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
-        if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) && interface_utils.checkIfEditableCursor(state)){
+        if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state)
+            && interface_utils.checkIfEditableCursor(state)){ // editable
             if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
                 let newContentState = Modifier.replaceText(
                     state.getCurrentContent(),
                     state.getSelection(),
-                    '@placeholder'
+                    '@'
                 );
 
                 props.updateRuleEditorFromContent(newContentState, state.getSelection());
@@ -66,16 +67,46 @@ function handleBeforeInput(props){
  */
 function handleKeyCommand(command, props){
     const state = props.rulesEditor.editorState;
+    const selection = state.getSelection();
 
-    if(command === 'backspace') {
+    if(command === 'backspace' || command === 'delete') {
         if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
-            return 'not-handled';
+            if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) // deletable
+                && interface_utils.checkIfEditableCursor(state)){
+
+                if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
+
+                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() +1).set(
+                        'focusOffset', selection.getStartOffset() +1);
+
+                    //console.log('PLACEHOLDER');
+                    let newContentState = Modifier.replaceText(
+                        state.getCurrentContent(),
+                        state.getSelection(),
+                        '@'
+                    );
+
+                    props.updateRuleEditorFromContent(newContentState, newSelectionState);
+                    return 'handled';
+
+                }
+            } else { // multiple blocks, multiple entities or keywords involved
+                console.log('KEYWORD');
+                return 'handled';
+            }
         } else { //CURSOR
             if(interface_utils.checkIfDeletableCursor(state)){ // deletable
                 //console.log('NOT KEYWORD');
                 if(interface_utils.checkIfPlaceholderNeeded(state)){ //placeholder
-                    /**INSERT PLACEHOLDER**/
+
                     //console.log('PLACEHOLDER');
+                    let newContentState = Modifier.replaceText(
+                        state.getCurrentContent(),
+                        state.getSelection().set('anchorOffset', state.getSelection().getStartOffset() -1),
+                        '@placeholder'
+                    );
+
+                    props.updateRuleEditorFromContent(newContentState, state.getSelection());
                     return 'handled';
                 }
                 //console.log('NO PLACEHOLDER');
