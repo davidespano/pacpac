@@ -146,14 +146,13 @@ const Actions = {
     /**
      * Dispatch current scene update
      * @param name of the scene
-     * @param rules belonging to the new current scene
+     * @param props the usual props object
      */
-    updateCurrentScene(name, rules, objectMap){
+    updateCurrentScene(name, props){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
             name: name,
-            rules: rules,
-            objectMap: objectMap,
+            props: props,
         })
 
     },

@@ -24,9 +24,11 @@ class RulesEditorStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.UPDATE_CURRENT_SCENE:
+                let props = action.props;
+                let rules = props.scenes.get(action.name).get('rules').map((uuid) => props.rules.get(uuid));
                 return {
                     editorState: EditorState.createWithContent(convertFromRaw(
-                        storeUtils.generateRawFromRules(action.rules, action.objectMap))),
+                        storeUtils.generateRawFromRules(rules, props))),
                     suggestions: state.suggestions,
                     mentionsPlugin: state.mentionsPlugin,
                 };

@@ -65,7 +65,8 @@ function rev_chronological(a, b){
     return -(chronological(a, b));
 }
 
-function generateRawFromRules(rules, objectMap) {
+function generateRawFromRules(rules, props) {
+    let objectMap = props.interactiveObjects;
     let blocks = [];
     console.log(rules)
     const entityMap =  {

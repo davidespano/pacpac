@@ -39,13 +39,13 @@ function list(props, path) {
                         alt={child.name}
                         title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
                         onClick={() => {
-                            props.updateCurrentScene(child.name);
+                            props.updateCurrentScene(child.name, props);
                         }}
                         style={borderStyle(props.tags.get(child.tag).color)}
                     />
                     <div className={'list-labels'}
                          onClick={() => {
-                            props.updateCurrentScene(child.name);
+                            props.updateCurrentScene(child.name, props);
                          }}
                     >
                         <div className={'label-text'}>
@@ -60,7 +60,7 @@ function list(props, path) {
                         muted preload={"auto"}
                         className={'video_element list-video'}
                         onClick={() => {
-                            props.updateCurrentScene(child.name);
+                            props.updateCurrentScene(child.name, props);
                         }}
                         title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
                         style={borderStyle(props.tags.get(child.tag).color)}

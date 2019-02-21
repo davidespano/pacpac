@@ -74,7 +74,7 @@ function setProperty(scene, property, value, props, order){
 
     if(property === 'name'){
         props.updateSceneName(newScene, scene, order);
-        props.updateCurrentScene(newScene.name);
+        props.updateCurrentScene(newScene.name, props);
     } else {
         props.updateScene(newScene);
     }
