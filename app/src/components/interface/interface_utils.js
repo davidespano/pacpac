@@ -252,9 +252,8 @@ function secondCheck(state){
 
 /**
  * check if a text selected contains a space at the end
- * @param state
  */
-function checkEndSpace(state) {
+function checkEndSpace() {
     const textSelected = window.getSelection().toString();
     return  textSelected.slice(-1) === " ";
 }

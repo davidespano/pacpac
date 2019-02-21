@@ -12,9 +12,9 @@ function Rules(props){
     return(
         <div id={'rules'} className={'rules'}>
             <Editor editorState={props.rulesEditor.editorState}
-                    handleBeforeInput={() => {
+                    handleBeforeInput={(input) => {
                         console.log('beforeInput');
-                        return handleBeforeInput(props);
+                        return handleBeforeInput(input, props);
                     }}
                     handleKeyCommand={(command) => {
                         console.log('handleKeyCommand');
@@ -30,23 +30,31 @@ function Rules(props){
 
 /**
  * Checks if user is allowed to write in the selected portion of text
+ * @param input
  * @param props
  * @returns {string}
  */
-function handleBeforeInput(props){
+function handleBeforeInput(input, props){
     const state = props.rulesEditor.editorState;
+    const selection = state.getSelection();
+
     if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
         if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state)
             && interface_utils.checkIfEditableCursor(state)){ // editable
             if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
+                let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() +2).set(
+                    'focusOffset', selection.getStartOffset() +2);
+
+                let placeholder = interface_utils.checkEndSpace() ? '@' + input : '@' + input + ' ';
+
                 let newContentState = Modifier.replaceText(
                     state.getCurrentContent(),
                     state.getSelection(),
-                    '@'
+                    placeholder,
                 );
 
-                props.updateRuleEditorFromContent(newContentState, state.getSelection());
+                props.updateRuleEditorFromContent(newContentState, newSelectionState);
                 return 'handled';
             }
         } else { // multiple blocks, multiple entities or keywords involved
@@ -79,11 +87,13 @@ function handleKeyCommand(command, props){
                     let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() +1).set(
                         'focusOffset', selection.getStartOffset() +1);
 
+                    let placeholder = interface_utils.checkEndSpace() ? '@' : '@ ';
+
                     //console.log('PLACEHOLDER');
                     let newContentState = Modifier.replaceText(
                         state.getCurrentContent(),
                         state.getSelection(),
-                        '@'
+                        placeholder
                     );
 
                     props.updateRuleEditorFromContent(newContentState, newSelectionState);
