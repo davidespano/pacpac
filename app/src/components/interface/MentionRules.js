@@ -14,7 +14,7 @@ import Actions from "../../actions/Actions";
 const provaRaw = {
     blocks: [
         {
-            text: 'QUANDO soggetto evento oggetto-scena, ',
+            text: 'QUANDO @soggetto @evento @oggetto-scena, ',
             type: 'quando-block',
             entityRanges: [
                 {offset: 0, length: 7, key: 'quando'},
@@ -24,7 +24,7 @@ const provaRaw = {
             ],
         },
         {
-            text: 'SE oggetto operatore valore, ',
+            text: 'SE @oggetto @operatore @valore, ',
             type: 'se-block',
             entityRanges: [
                 {offset: 0, length: 3, key: 'se'},
@@ -34,7 +34,7 @@ const provaRaw = {
             ],
         },
         {
-            text: 'ALLORA azione ',
+            text: 'ALLORA @azione ',
             type: 'allora-block',
             entityRanges: [
                 {offset: 0, length: 7, key: 'allora'},
