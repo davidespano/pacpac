@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { EditorState, Modifier, convertFromRaw } from 'draft-js';
+import { EditorState, Modifier, convertFromRaw, convertToRaw } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
-import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin';
+import createMentionPlugin from 'draft-js-mention-plugin';
 import scene_utils from "../../scene/scene_utils";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import Rules from "./Rules";
@@ -10,31 +10,35 @@ import ScenesStore from "../../data/ScenesStore"
 import ObjectsStore from "../../data/ObjectsStore"
 import interface_utils from "./interface_utils";
 import Actions from "../../actions/Actions";
+import createMentionEntities from "./inizializeMention"
+import {fromJS} from "immutable";
+import forEach from 'lodash/forEach';
+import 'draft-js-mention-plugin/lib/plugin.css';
 
 const provaRaw = {
     blocks: [
         {
-            text: 'QUANDO @soggetto @evento @oggetto-scena, ',
+            text: 'QUANDO soggetto evento oggettoscena , ',
             type: 'quando-block',
             entityRanges: [
                 {offset: 0, length: 7, key: 'quando'},
                 {offset: 7, length: 9, key: 'soggetto'},
                 {offset: 16, length: 7, key: 'evento'},
-                {offset: 23, length: 14, key: 'oggettoScena'},
+                {offset: 23, length: 13, key: 'oggettoScena'},
             ],
         },
         {
-            text: 'SE @oggetto @operatore @valore, ',
+            text: 'SE oggetto operatore valore, ',
             type: 'se-block',
             entityRanges: [
                 {offset: 0, length: 3, key: 'se'},
-                {offset: 3, length: 8, key: 'oggetto'},
-                {offset: 11, length: 10, key: 'operatore'},
-                {offset: 21, length: 7, key: 'valore'},
+                {offset: 3, length: 7, key: 'oggetto'},
+                {offset: 10, length: 10, key: 'operatore'},
+                {offset: 20, length: 7, key: 'valore'},
             ],
         },
         {
-            text: 'ALLORA @azione ',
+            text: 'ALLORA azione ',
             type: 'allora-block',
             entityRanges: [
                 {offset: 0, length: 7, key: 'allora'},
@@ -44,15 +48,51 @@ const provaRaw = {
     ],
     entityMap: {
         quando: {type: 'quando', data: 'quando'},
-        soggetto: {type: 'soggetto', data: 'soggetto', mutability: 'MUTABLE'},
-        evento: {type: 'evento', data: 'evento', mutability: 'MUTABLE'},
-        oggettoScena: {type: 'oggettoScena', data: 'oggettoScena', mutability: 'MUTABLE'},
         se: {type: 'se', data: 'se'},
-        oggetto: {type: 'oggetto', data: 'oggetto', mutability: 'MUTABLE'},
-        operatore: {type: 'operatore', data: 'operatore', mutability: 'MUTABLE'},
-        valore: {type: 'valore', data: 'valore', mutability: 'MUTABLE'},
         allora: {type: 'allora', data: 'allora'},
-        azione: {type: 'azione', data: 'azione', mutability: 'MUTABLE'},
+        soggetto: {type: 'mention',  mutability: 'IMMUTABLE', data: {
+                        mention: {
+                            name: 'soggetto',
+                            type: 'quello che ti pare',
+                        }
+                    }
+        },
+        evento: {type: 'mention',  mutability: 'IMMUTABLE', data: {
+                mention: {
+                    name: 'evento',
+                    type: 'quello che ti pare'
+                }
+            }},
+        oggettoScena: {type: 'mention',  mutability: 'IMMUTABLE', data: {
+                mention: {
+                    name: 'oggettoScena',
+                    type: 'quello che ti pare'
+                }
+            }},
+        oggetto: {type: 'mention', mutability: 'IMMUTABLE', data: {
+                    mention: {
+                        name: 'oggetto',
+                        type: 'quello che ti pare'
+                    }
+            }},
+        operatore: {type: 'mention',  mutability: 'IMMUTABLE', data: {
+                mention: {
+                    name: 'operatore',
+                    type: 'quello che ti pare'
+                }
+            }},
+        valore: {type: 'mention',  mutability: 'IMMUTABLE', data: {
+                mention: {
+                    name: 'valore',
+                    type: 'quello che ti pare'
+                }
+            }},
+        azione: {type: 'mention',  mutability: 'IMMUTABLE', data: {
+                mention: {
+                    name: 'azione',
+                    type: 'quello che ti pare'
+                }
+            }},
     },
 };
 
@@ -113,14 +153,20 @@ export default class MentionRules extends Component {
     constructor(props) {
         super(props);
 
+        forEach(provaRaw.entityMap, function(value, key) {
+            if(value.data.mention)
+                value.data.mention = fromJS(value.data.mention)
+        });
 
         this.state = {
             editorState: EditorState.createWithContent(convertFromRaw(provaRaw)),
             suggestions: [],
-            currentScene: CentralSceneStore.getState()
+            currentScene: CentralSceneStore.getState(),
+            isMentioned: false,
         };
 
-        this.mentionPlugin = createMentionPlugin({
+        this.mentionPlugin = createMentionPlugin();
+        /*this.mentionPlugin = createMentionPlugin({
 
             entityMutability: 'IMMUTABLE',
             theme: {
@@ -141,12 +187,8 @@ export default class MentionRules extends Component {
             positionSuggestions,
             mentionPrefix: '@',
             supportWhitespace: true
-        });
-
-
-
+        });*/
     }
-
 
     onChange = (editorState) => {
         this.setState({
@@ -157,8 +199,6 @@ export default class MentionRules extends Component {
     onSearchChange = ({ value }) => {
         this.updateSuggestions(value);
     };
-
-
 
     focus = () => {
         this.editor.focus();
@@ -180,6 +220,17 @@ export default class MentionRules extends Component {
       this.updateSuggestions({value: ""});
     };
 
+    onAddMention = (mention) => {
+        this.state.isMentioned = true;
+        const currunteContent = this.state.editorState.getCurrentContent();
+        let newEntity = currunteContent.createEntity('mention', 'IMMUTABLE', {data: {
+            mention: {
+                name: mention.name,
+                type: 'quello che ti pare'
+            }}});
+        this.state.isMentioned = true;
+    };
+
     updateSuggestions= ({ value }) =>{
         let scene = ScenesStore.getState().get(CentralSceneStore.getState());
         let allObjects = scene_utils.allObjects(scene);
@@ -188,12 +239,11 @@ export default class MentionRules extends Component {
             let obj = ObjectsStore.getState().get(obj_uuid);
 
             return {
-                name: obj.name,
+                name: obj.name + ' ',
                 link: '#',
                 avatar: this.getImage(obj.type)
             };
         });
-
 
         this.setState({
             suggestions: data,
@@ -225,32 +275,32 @@ export default class MentionRules extends Component {
                         onSearchChange={this.onSearchChange}
                         onOpen={this.openSuggestions}
                         suggestions={this.state.suggestions}
-                        entryComponent={Entry}
+                        onAddMention={this.onAddMention}
+
                     />
                 </div>
             </div>
         );
     }
 
-
     /**
      * Checks if user is allowed to write in the selected portion of text
      * @param input
      * @returns {string}
      */
-     handleBeforeInput(input, state){
+    handleBeforeInput(input, state){
         //const state = this.state.editorState;
         const selection = state.getSelection();
-
+        console.log(convertToRaw(this.state.editorState.getCurrentContent()))
+        console.log(this.state.editorState.getCurrentContent())
         if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
-            if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state)
-                && interface_utils.checkIfEditableCursor(state)){ // editable
-                if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
+            if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) && interface_utils.isMention(state)
+                /*&& interface_utils.checkIfEditableCursor(state)*/){ // editable
+                //if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
-                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() +2).set(
-                        'focusOffset', selection.getStartOffset() +2);
-
-                    let placeholder = interface_utils.checkEndSpace() ? '@' + input : '@' + input + ' ';
+                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 2).set(
+                        'focusOffset', selection.getStartOffset() + 2);
+                    let placeholder = '@' + input;
 
                     let newContentState = Modifier.replaceText(
                         state.getCurrentContent(),
@@ -258,18 +308,37 @@ export default class MentionRules extends Component {
                         placeholder,
                     );
 
-                    let newState = EditorState.createWithContent(newContentState);
+                let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
                     newState = EditorState.forceSelection(newState, newSelectionState);
-                    this.setState(newState);
+                    this.onChange(newState);
                     return 'handled';
-                }
+                //}
             } else { // multiple blocks, multiple entities or keywords involved
+
                 return 'handled';
             }
         } else { //CURSOR
-            if(!interface_utils.checkIfEditableCursor(state)) { //not editable
+            //TODO bisogna rivedere il check, trovare un sistema per selezionare il testo e inserire la chiocciola
+            /*if(!interface_utils.checkIfEditableCursor(state)) { //not editable
                 return 'handled';
-            }
+            } else {
+                let entity = interface_utils.getEntity(state);
+                let entityLenght = entity.getData().mention.toJSON().name.length;
+                console.log(selection.getAnchorKey())
+                let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() - entityLenght);
+                let placeholder = '@' + input;
+
+                let newContentState = Modifier.replaceText(
+                    state.getCurrentContent(),
+                    state.getSelection(),
+                    placeholder,
+                );
+
+                let newState = EditorState.createWithContent(newContentState);
+                //newState = EditorState.forceSelection(newState, newSelectionState);
+                this.onChange(newState);
+                return 'handled';
+            }*/
         }
     }
 
@@ -278,20 +347,20 @@ export default class MentionRules extends Component {
      * @param command
      * @returns {string}
      */
-     handleKeyCommand(command, state){
+    handleKeyCommand(command, state){
         const selection = state.getSelection();
 
-        if(command === 'backspace' || command === 'delete') {
+        console.log(interface_utils.getEntity(state, -1))
+        if((command === 'backspace' || command === 'delete') && interface_utils.getEntity(state, -1) !== null ) {
             if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
                 if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) // deletable
                     && interface_utils.checkIfEditableCursor(state)){
 
                     if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
-                        let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() +1).set(
-                            'focusOffset', selection.getStartOffset() +1);
+                        let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 1)
 
-                        let placeholder = interface_utils.checkEndSpace() ? '@' : '@ ';
+                        let placeholder = '@';
 
                         //console.log('PLACEHOLDER');
                         let newContentState = Modifier.replaceText(
@@ -301,9 +370,9 @@ export default class MentionRules extends Component {
                         );
 
                         //Actions.updateRuleEditorFromContent(newContentState, newSelectionState);
-                        let newState = EditorState.createWithContent(newContentState);
+                        let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
                         newState = EditorState.forceSelection(newState, newSelectionState);
-                        this.setState(newState);
+                        this.onChange(newState);
                         return 'handled';
 
                     }
@@ -315,20 +384,23 @@ export default class MentionRules extends Component {
                 if(interface_utils.checkIfDeletableCursor(state)){ // deletable
                     //console.log('NOT KEYWORD');
                     if(interface_utils.checkIfPlaceholderNeeded(state)){ //placeholder
+                    let entity = interface_utils.getEntity(state);
+                    let entityLenght = entity.getData().mention.toJSON().name.length;
+                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset()  + 1).set(
+                        'focusOffset', selection.getStartOffset() + 2);
 
-                        let placeholder = interface_utils.checkEndSpace() ? '@' : '@ ';
+                    let placeholder = '@';
 
-                        //console.log('PLACEHOLDER');
-                        let newContentState = Modifier.replaceText(
-                            state.getCurrentContent(),
-                            state.getSelection().set('anchorOffset', state.getSelection().getStartOffset() -1),
-                            placeholder
-                        );
+                    let newContentState = Modifier.replaceText(
+                        state.getCurrentContent(),
+                        newSelectionState,
+                        placeholder
+                    );
 
-                        let newState = EditorState.createWithContent(newContentState);
-                        newState = EditorState.forceSelection(newState, state.getSelection());
-                        this.setState(newState);
-                        return 'handled';
+                    let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
+                    newState = EditorState.forceSelection(newState, state.getSelection());
+                    this.onChange(newState);
+                    return 'handled';
                     }
                     //console.log('NO PLACEHOLDER');
                 } else { // not deletable

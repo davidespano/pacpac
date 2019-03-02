@@ -1,5 +1,5 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-
+import {EditorState, Modifier, SelectionState} from 'draft-js';
 /**
  * Updates object property with the given value, returns new object
  * @param object
@@ -166,9 +166,9 @@ function getEntity(state, offset = 0){
     const selection = state.getSelection();
     const block = state.getCurrentContent().getBlockForKey(selection.getAnchorKey());
     const entity = block.getEntityAt(selection.getStartOffset() + offset);
-    return state.getCurrentContent().getEntity(entity);
-}
 
+    return entity !== null ? state.getCurrentContent().getEntity(entity) : null;
+}
 
 /**
  * check selected entity
@@ -201,7 +201,6 @@ function checkIfPlaceholderNeeded(state){
     const entity = getEntity(state);
     return ((getEntity(state, -2) !== entity) && (getEntity(state, 1) !== entity));
 }
-
 
 /**
  * Given an EditorState, returns true only selection spans over a single block
@@ -250,6 +249,14 @@ function secondCheck(state){
     return getEntity(state, selectionLength+1) === getEntity(state, 0);
 }
 
+function isMention(state) {
+    let entity = getEntity(state);
+
+    console.log('ENTITY: ' + entity);
+
+    return entity !== null && entity.getType() === 'mention';
+}
+
 /**
  * check if a text selected contains a space at the end
  */
@@ -257,7 +264,6 @@ function checkEndSpace() {
     const textSelected = window.getSelection().toString();
     return  textSelected.slice(-1) === " ";
 }
-
 
 export default {
     onlyNumbers : onlyNumbers,
@@ -276,4 +282,5 @@ export default {
     firstCheck: firstCheck,
     secondCheck: secondCheck,
     checkEndSpace: checkEndSpace,
+    isMention: isMention,
 }
