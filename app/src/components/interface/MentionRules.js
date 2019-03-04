@@ -321,26 +321,40 @@ export default class MentionRules extends Component {
             }
         } else { //CURSOR
             //TODO bisogna rivedere il check, trovare un sistema per selezionare il testo e inserire la chiocciola
-            /*if(!interface_utils.checkIfEditableCursor(state)) { //not editable
+            if(!interface_utils.checkIfEditableCursor(state)) { //not editable
                 return 'handled';
             } else {
                 let entity = interface_utils.getEntity(state);
-                let entityLenght = entity.getData().mention.toJSON().name.length;
-                console.log(selection.getAnchorKey())
-                let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() - entityLenght);
-                let placeholder = '@' + input;
+                let entityLenght;
+                if(entity.getData().mention.link === undefined){
+                    entityLenght = entity.getData().mention.toJSON().name.length ;
+                } else {
+                    entityLenght = entity.getData().mention.name.length ;
+                }
+                let startIndex = interface_utils.getStartIndexEntity(state)[0];
+                let selectionPosition = selection.getStartOffset();
 
+                let start = selectionPosition-startIndex;
+                let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() -(start)).set(
+                    'focusOffset', selection.getStartOffset() + (entityLenght-start));
+
+                let selectState = EditorState.acceptSelection(state, newSelectionState);
+                let placeholder = '@' +input;
+
+                console.log(entityLenght);
                 let newContentState = Modifier.replaceText(
-                    state.getCurrentContent(),
-                    state.getSelection(),
-                    placeholder,
+                    selectState.getCurrentContent(),
+                    newSelectionState,
+                    placeholder
                 );
 
-                let newState = EditorState.createWithContent(newContentState);
-                //newState = EditorState.forceSelection(newState, newSelectionState);
+                let newSelectionState2 = selection.set('anchorOffset', selection.getStartOffset() - (start-2) ).set(
+                    'focusOffset', selection.getStartOffset() - (start-2));
+                let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
+                newState = EditorState.forceSelection(newState, newSelectionState2);
                 this.onChange(newState);
                 return 'handled';
-            }*/
+            }
         }
     }
 
