@@ -257,6 +257,14 @@ function isMention(state) {
     return entity !== null && entity.getType() === 'mention';
 }
 
+function checkAt(state) {
+    console.log(state)
+    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const text = block.text;
+    const blockStart = state.getSelection().anchorOffset;
+    return text.slice(blockStart-1,blockStart) === '@'
+}
+
 /**
  * check if a text selected contains a space at the end
  */
@@ -283,4 +291,5 @@ export default {
     secondCheck: secondCheck,
     checkEndSpace: checkEndSpace,
     isMention: isMention,
+    checkAt, checkAt,
 }

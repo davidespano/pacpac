@@ -350,7 +350,6 @@ export default class MentionRules extends Component {
     handleKeyCommand(command, state){
         const selection = state.getSelection();
 
-        console.log(interface_utils.getEntity(state, -1))
         if((command === 'backspace' || command === 'delete') && interface_utils.getEntity(state, -1) !== null ) {
             if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
                 if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) // deletable
@@ -358,7 +357,8 @@ export default class MentionRules extends Component {
 
                     if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
-                        let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 1)
+                        let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 1).set(
+                            'focusOffset', selection.getStartOffset() + 1);;
 
                         let placeholder = '@';
 
@@ -369,7 +369,6 @@ export default class MentionRules extends Component {
                             placeholder,
                         );
 
-                        //Actions.updateRuleEditorFromContent(newContentState, newSelectionState);
                         let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
                         newState = EditorState.forceSelection(newState, newSelectionState);
                         this.onChange(newState);
@@ -381,6 +380,10 @@ export default class MentionRules extends Component {
                     return 'handled';
                 }
             } else { //CURSOR
+                console.log('entro qui')
+                if(interface_utils.checkAt(state)){
+                    return 'handled';
+                }
                 if(interface_utils.checkIfDeletableCursor(state)){ // deletable
                     //console.log('NOT KEYWORD');
                     if(interface_utils.checkIfPlaceholderNeeded(state)){ //placeholder
@@ -407,6 +410,10 @@ export default class MentionRules extends Component {
                     //console.log('KEYWORD');
                     return 'handled';
                 }
+            }
+        } else {
+            if(interface_utils.checkAt(state)){
+                return 'handled';
             }
         }
     }
