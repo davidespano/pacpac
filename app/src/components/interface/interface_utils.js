@@ -1,5 +1,6 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import {EditorState, Modifier, SelectionState} from 'draft-js';
+import inizializeMention from "./inizializeMention"
 /**
  * Updates object property with the given value, returns new object
  * @param object
@@ -227,7 +228,6 @@ function checkEntity(state) {
     const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
     const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
     const entityEnd = block.getEntityAt(state.getSelection().getEndOffset());
-
     //checks if entity is null or selection covers more than one entity
     return (entityStart !== null && (entityStart === entityEnd));
 }
@@ -258,13 +258,24 @@ function isMention(state) {
 }
 
 function checkAt(state) {
-    console.log(state)
     const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
     const text = block.text;
     const blockStart = state.getSelection().anchorOffset;
     return text.slice(blockStart-1,blockStart) === '@'
 }
 
+function getStartIndexEntity(state) {
+    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
+    let entityText;
+    if (state.getCurrentContent().getEntity(entityStart).getData().mention.link !== undefined){
+        entityText = state.getCurrentContent().getEntity(entityStart).getData().mention.name;
+    } else {
+        entityText = state.getCurrentContent().getEntity(entityStart).getData().mention._root.entries[0][1];
+    }
+    let index = inizializeMention.getIndicesOf( entityText, block.text);
+    return index;
+}
 /**
  * check if a text selected contains a space at the end
  */
@@ -292,4 +303,5 @@ export default {
     checkEndSpace: checkEndSpace,
     isMention: isMention,
     checkAt, checkAt,
+    getStartIndexEntity, getStartIndexEntity,
 }

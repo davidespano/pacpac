@@ -224,10 +224,10 @@ export default class MentionRules extends Component {
         this.state.isMentioned = true;
         const currunteContent = this.state.editorState.getCurrentContent();
         let newEntity = currunteContent.createEntity('mention', 'IMMUTABLE', {data: {
-            mention: {
+            mention: fromJS({
                 name: mention.name,
                 type: 'quello che ti pare'
-            }}});
+            })}});
         this.state.isMentioned = true;
     };
 
@@ -239,9 +239,10 @@ export default class MentionRules extends Component {
             let obj = ObjectsStore.getState().get(obj_uuid);
 
             return {
-                name: obj.name + ' ',
+                avatar: this.getImage(obj.type),
                 link: '#',
-                avatar: this.getImage(obj.type)
+                name: obj.name
+
             };
         });
 
@@ -298,6 +299,7 @@ export default class MentionRules extends Component {
                 /*&& interface_utils.checkIfEditableCursor(state)*/){ // editable
                 //if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
+                console.log(selection)
                     let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 2).set(
                         'focusOffset', selection.getStartOffset() + 2);
                     let placeholder = '@' + input;
@@ -352,7 +354,7 @@ export default class MentionRules extends Component {
 
         if((command === 'backspace' || command === 'delete') && interface_utils.getEntity(state, -1) !== null ) {
             if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
-                if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) // deletable
+                /*if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) // deletable
                     && interface_utils.checkIfEditableCursor(state)){
 
                     if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
@@ -378,33 +380,46 @@ export default class MentionRules extends Component {
                 } else { // multiple blocks, multiple entities or keywords involved
                     console.log('KEYWORD');
                     return 'handled';
-                }
+                }*/
+                return 'handled';
             } else { //CURSOR
-                console.log('entro qui')
                 if(interface_utils.checkAt(state)){
                     return 'handled';
                 }
                 if(interface_utils.checkIfDeletableCursor(state)){ // deletable
                     //console.log('NOT KEYWORD');
-                    if(interface_utils.checkIfPlaceholderNeeded(state)){ //placeholder
+                    //if(interface_utils.checkIfPlaceholderNeeded(state)){ //placeholder
                     let entity = interface_utils.getEntity(state);
-                    let entityLenght = entity.getData().mention.toJSON().name.length;
-                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset()  + 1).set(
-                        'focusOffset', selection.getStartOffset() + 2);
+                    let entityLenght;
+                    if(entity.getData().mention.link === undefined){
+                        entityLenght = entity.getData().mention.toJSON().name.length ;
+                    } else {
+                        entityLenght = entity.getData().mention.name.length ;
+                    }
+                    let startIndex = interface_utils.getStartIndexEntity(state)[0];
+                    let selectionPosition = selection.getStartOffset();
 
+                    let start = selectionPosition-startIndex;
+                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() -start).set(
+                        'focusOffset', selection.getStartOffset() + (entityLenght-start));
+
+                    let selectState = EditorState.acceptSelection(state, newSelectionState);
                     let placeholder = '@';
 
+                    console.log(entityLenght);
                     let newContentState = Modifier.replaceText(
-                        state.getCurrentContent(),
+                        selectState.getCurrentContent(),
                         newSelectionState,
                         placeholder
                     );
 
+                    let newSelectionState2 = selection.set('anchorOffset', selection.getStartOffset() - (start-1) ).set(
+                        'focusOffset', selection.getStartOffset() - (start-1));
                     let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
-                    newState = EditorState.forceSelection(newState, state.getSelection());
+                    newState = EditorState.forceSelection(newState, newSelectionState2);
                     this.onChange(newState);
                     return 'handled';
-                    }
+                    //}
                     //console.log('NO PLACEHOLDER');
                 } else { // not deletable
                     //console.log('KEYWORD');
