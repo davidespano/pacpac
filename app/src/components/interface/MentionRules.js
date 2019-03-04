@@ -292,8 +292,7 @@ export default class MentionRules extends Component {
     handleBeforeInput(input, state){
         //const state = this.state.editorState;
         const selection = state.getSelection();
-        console.log(convertToRaw(this.state.editorState.getCurrentContent()))
-        console.log(this.state.editorState.getCurrentContent())
+
         if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
             if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) && interface_utils.isMention(state)
                 /*&& interface_utils.checkIfEditableCursor(state)*/){ // editable
@@ -316,44 +315,47 @@ export default class MentionRules extends Component {
                     return 'handled';
                 //}
             } else { // multiple blocks, multiple entities or keywords involved
-
                 return 'handled';
             }
         } else { //CURSOR
-            //TODO bisogna rivedere il check, trovare un sistema per selezionare il testo e inserire la chiocciola
+            //TODO bloccare la scrittura fuori da entità, scritto cosi dopo l'inseriemnto della @ non potevo scrivere
             if(!interface_utils.checkIfEditableCursor(state)) { //not editable
-                return 'handled';
+                console.log('dio merda')
+                //return 'handled';
             } else {
-                let entity = interface_utils.getEntity(state);
-                let entityLenght;
-                if(entity.getData().mention.link === undefined){
-                    entityLenght = entity.getData().mention.toJSON().name.length ;
-                } else {
-                    entityLenght = entity.getData().mention.name.length ;
+                if(interface_utils.getEntity(state)){
+                    let entity = interface_utils.getEntity(state);
+                    let entityLenght;
+                    if(entity.getData().mention.link === undefined){
+                        entityLenght = entity.getData().mention.toJSON().name.length ;
+                    } else {
+                        entityLenght = entity.getData().mention.name.length ;
+                    }
+                    let startIndex = interface_utils.getStartIndexEntity(state)[0];
+                    let selectionPosition = selection.getStartOffset();
+
+                    let start = selectionPosition-startIndex;
+                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() -(start)).set(
+                        'focusOffset', selection.getStartOffset() + (entityLenght-start));
+
+                    let selectState = EditorState.acceptSelection(state, newSelectionState);
+                    let placeholder = '@' +input;
+
+                    console.log(entityLenght);
+                    let newContentState = Modifier.replaceText(
+                        selectState.getCurrentContent(),
+                        newSelectionState,
+                        placeholder
+                    );
+
+                    let newSelectionState2 = selection.set('anchorOffset', selection.getStartOffset() - (start-2) ).set(
+                        'focusOffset', selection.getStartOffset() - (start-2));
+                    let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
+                    newState = EditorState.forceSelection(newState, newSelectionState2);
+                    this.onChange(newState);
+                    return 'handled';
                 }
-                let startIndex = interface_utils.getStartIndexEntity(state)[0];
-                let selectionPosition = selection.getStartOffset();
 
-                let start = selectionPosition-startIndex;
-                let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() -(start)).set(
-                    'focusOffset', selection.getStartOffset() + (entityLenght-start));
-
-                let selectState = EditorState.acceptSelection(state, newSelectionState);
-                let placeholder = '@' +input;
-
-                console.log(entityLenght);
-                let newContentState = Modifier.replaceText(
-                    selectState.getCurrentContent(),
-                    newSelectionState,
-                    placeholder
-                );
-
-                let newSelectionState2 = selection.set('anchorOffset', selection.getStartOffset() - (start-2) ).set(
-                    'focusOffset', selection.getStartOffset() - (start-2));
-                let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
-                newState = EditorState.forceSelection(newState, newSelectionState2);
-                this.onChange(newState);
-                return 'handled';
             }
         }
     }
@@ -368,13 +370,13 @@ export default class MentionRules extends Component {
 
         if((command === 'backspace' || command === 'delete') && interface_utils.getEntity(state, -1) !== null ) {
             if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
-                /*if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) // deletable
-                    && interface_utils.checkIfEditableCursor(state)){
+                if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) // deletable
+                    /*&& interface_utils.checkIfEditableCursor(state)*/){
 
                     if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
                         let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 1).set(
-                            'focusOffset', selection.getStartOffset() + 1);;
+                            'focusOffset', selection.getStartOffset() + 1);
 
                         let placeholder = '@';
 
@@ -394,7 +396,7 @@ export default class MentionRules extends Component {
                 } else { // multiple blocks, multiple entities or keywords involved
                     console.log('KEYWORD');
                     return 'handled';
-                }*/
+                }
                 return 'handled';
             } else { //CURSOR
                 if(interface_utils.checkAt(state)){
