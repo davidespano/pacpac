@@ -5,7 +5,10 @@ import AuthenticationAPI from "../../utils/AuthenticationAPI";
 function Login(props){
 
         return(
-            <div className={'login-home'}>
+            <div className={'login-home'} onKeyDown={(event) => {
+                if(event.key === 'Enter'){
+                    submitUser()
+                }}}>
                 <h4 className={"loginlabel"}>Login</h4>
                 <div className="form-group">
                     <label htmlFor="exampleInputEmail1">Username</label>
