@@ -13,7 +13,6 @@ import DatalistStore from "../data/DatalistStore";
 import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
-import RulesEditorStore from "../data/RulesEditorStore";
 import MentionsStore from "../data/MentionsStore";
 
 
@@ -30,7 +29,6 @@ function getStores() {
         CentroidsStore,
         EditorStateStore,
         AssetsStore,
-        RulesEditorStore,
         MentionsStore,
     ];
 }
@@ -51,7 +49,6 @@ function getState() {
         mentions: MentionsStore.getState(),
         objectToScene: ObjectToSceneStore.getState(),
         rules: RulesStore.getState(),
-        rulesEditor: RulesEditorStore.getState(),
         scenes: ScenesStore.getState(),
         tags: TagsStore.getState(),
 

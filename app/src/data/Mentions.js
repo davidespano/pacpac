@@ -7,7 +7,7 @@ const Mentions = Immutable.Record({
     subjects: [{name:'il giocatore', link: '#', type: 'soggetto'}],
     events: [{name: 'seleziona', link: '#', type: 'evento'}],
     actions: [
-        {name:'esegui transizione verso'},
+        {name:'esegui transizione verso', link: '#', type: 'azione'},
         {name:'accendi', link: '#', type: 'azione'},
         {name:'spegni', link: '#', type: 'azione'},
         {name:'premi', link: '#', type: 'azione'},

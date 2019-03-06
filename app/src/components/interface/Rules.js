@@ -9,7 +9,7 @@ import interface_utils from "./interface_utils";
 
 function Rules(props){
 
-    return(
+    /*return(
         <div id={'rules'} className={'rules'}>
             <Editor editorState={props.rulesEditor.editorState}
                     handleBeforeInput={(input) => {
@@ -25,7 +25,7 @@ function Rules(props){
                         props.updateRuleEditorFromState(state);
                     }}/>
         </div>
-    );
+    );*/
 }
 
 /**
