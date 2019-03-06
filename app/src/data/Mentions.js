@@ -4,10 +4,23 @@ import Immutable from 'immutable';
 const Mentions = Immutable.Record({
     objects: [],
     scenes: [],
-    subjects: [{name:'il giocatore'}],
-    events: [{name: 'seleziona'}],
-    actions: [{name:'esegui transizione verso'}, {name:'accendi'}, {name:'spegni'}, {name:'premi'}],
-    operators: [{name:'='}, {name:'<'}, {name:'>'}, {name:'<='}, {name:'>='}],
+    subjects: [{name:'il giocatore', link: '#', type: 'soggetto'}],
+    events: [{name: 'seleziona', link: '#', type: 'evento'}],
+    actions: [
+        {name:'esegui transizione verso'},
+        {name:'accendi', link: '#', type: 'azione'},
+        {name:'spegni', link: '#', type: 'azione'},
+        {name:'premi', link: '#', type: 'azione'},
+        {name: 'play audio', link: '#', type: 'azione'},
+        {name: 'stop audio', link: '#', type: 'azione'},
+        {name: 'raccogli chiave', link: '#', type: 'azione'},
+        {name: 'apri lucchetto', link: '#', type: 'azione'}],
+    operators: [
+        {name:'=', link: '#', type: 'operatore'},
+        {name:'<', link: '#', type: 'operatore'},
+        {name:'>', link: '#', type: 'operatore'},
+        {name:'<=', link: '#', type: 'operatore'},
+        {name:'>=', link: '#', type: 'operatore'}],
     values: [],
     objectsScene: [],
 

@@ -34,9 +34,9 @@ const provaRaw = {
             type: 'se-block',
             entityRanges: [
                 {offset: 0, length: 3, key: 'se'},
-                {offset: 3, length: 7, key: 'oggetto'},
-                {offset: 10, length: 10, key: 'operatore'},
-                {offset: 20, length: 7, key: 'valore'},
+                {offset: 3, length: 8, key: 'oggetto'},
+                {offset: 11, length: 10, key: 'operatore'},
+                {offset: 21, length: 7, key: 'valore'},
             ],
         },
         {
@@ -164,7 +164,8 @@ export default class MentionRules extends Component {
             editorState: EditorState.createWithContent(convertFromRaw(provaRaw)),
             suggestions: [],
             currentScene: CentralSceneStore.getState(),
-            isMentioned: false,
+            isMentioned: true,
+            restoreState: EditorState.createWithContent(convertFromRaw(provaRaw))
         };
 
         this.mentionPlugin = createMentionPlugin();
@@ -203,6 +204,12 @@ export default class MentionRules extends Component {
     };
 
     focus = () => {
+        console.log(this.state.editorState)
+        if(!this.state.isMentioned){
+            let newState = EditorState.forceSelection(this.state.restoreState, this.state.editorState.getSelection());
+            this.state.isMentioned = true;
+            this.onChange(newState)
+        }
         this.editor.focus();
     };
 
@@ -223,12 +230,13 @@ export default class MentionRules extends Component {
     };
 
     onAddMention = (mention) => {
+        //TODO aggiungere il tipo sostituiendo 'quello che ti pare'
         this.state.isMentioned = true;
         const currunteContent = this.state.editorState.getCurrentContent();
         let newEntity = currunteContent.createEntity('mention', 'IMMUTABLE', {data: {
             mention: fromJS({
                 name: mention.name,
-                type: 'quello che ti pare'
+                type: getMentionType(EditorStateStore.getState().get('mentionType'))
             })}});
         this.state.isMentioned = true;
     };
@@ -288,13 +296,14 @@ export default class MentionRules extends Component {
     handleBeforeInput(input, state){
         //const state = this.state.editorState;
         const selection = state.getSelection();
-
+        console.log(this.state.editorState)
         if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
             if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) && interface_utils.isMention(state)
                 /*&& interface_utils.checkIfEditableCursor(state)*/){ // editable
                 //if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
                 console.log(selection)
+                this.state.isMentioned=false;
                 let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 2).set(
                     'focusOffset', selection.getStartOffset() + 2);
                 let placeholder = '@' + input;
@@ -307,7 +316,7 @@ export default class MentionRules extends Component {
                     entityType = entity.getData().mention.type;
                 }
                 Actions.setMentionType(entityType);
-
+                this.state.restoreState = this.state.editorState;
                 let newContentState = Modifier.replaceText(
                     state.getCurrentContent(),
                     state.getSelection(),
@@ -352,7 +361,8 @@ export default class MentionRules extends Component {
                         entityType = entity.getData().mention.type;
                     }
                     Actions.setMentionType(entityType);
-
+                    this.state.restoreState = this.state.editorState;
+                    this.state.isMentioned=false;
                     console.log(entityLenght);
                     let newContentState = Modifier.replaceText(
                         selectState.getCurrentContent(),
@@ -392,7 +402,8 @@ export default class MentionRules extends Component {
 
                         let placeholder = '@';
 
-
+                        this.state.restoreState = this.state.editorState;
+                        this.state.isMentioned=false;
                         //console.log('PLACEHOLDER');
                         let newContentState = Modifier.replaceText(
                             state.getCurrentContent(),
@@ -436,7 +447,8 @@ export default class MentionRules extends Component {
                     let placeholder = '@';
 
                     console.log(entityLenght);
-
+                    this.state.restoreState = this.state.editorState;
+                    this.state.isMentioned=false;
                     let newContentState = Modifier.replaceText(
                         selectState.getCurrentContent(),
                         newSelectionState,
