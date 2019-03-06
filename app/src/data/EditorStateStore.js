@@ -53,6 +53,9 @@ class EditorStateStore extends ReduceStore {
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SORT_SCENES:
                 return state.set('scenesOrder', action.order);
+            case ActionTypes.SET_MENTION_TYPE:
+                //console.log('update mention type to ' + action.mentionType)
+                return state.set('mentionType', action.mentionType);
             default:
                 return state;
         }

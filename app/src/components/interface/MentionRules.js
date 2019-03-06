@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { EditorState, Modifier, convertFromRaw, convertToRaw } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
-import createMentionPlugin from 'draft-js-mention-plugin';
+import createMentionPlugin, { defaultSuggestionsFilter} from 'draft-js-mention-plugin';
 import scene_utils from "../../scene/scene_utils";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import Rules from "./Rules";
@@ -14,6 +14,8 @@ import createMentionEntities from "./inizializeMention"
 import {fromJS} from "immutable";
 import forEach from 'lodash/forEach';
 import 'draft-js-mention-plugin/lib/plugin.css';
+import MentionsStore from "../../data/MentionsStore";
+import EditorStateStore from "../../data/EditorStateStore";
 
 const provaRaw = {
     blocks: [
@@ -28,7 +30,7 @@ const provaRaw = {
             ],
         },
         {
-            text: 'SE oggetto operatore valore, ',
+            text: 'SE oggetto operatore valore , ',
             type: 'se-block',
             entityRanges: [
                 {offset: 0, length: 3, key: 'se'},
@@ -53,44 +55,44 @@ const provaRaw = {
         soggetto: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                         mention: {
                             name: 'soggetto',
-                            type: 'quello che ti pare',
+                            type: 'soggetto',
                         }
                     }
         },
         evento: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
                     name: 'evento',
-                    type: 'quello che ti pare'
+                    type: 'evento'
                 }
             }},
         oggettoScena: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
                     name: 'oggettoScena',
-                    type: 'quello che ti pare'
+                    type: 'oggettoScena'
                 }
             }},
         oggetto: {type: 'mention', mutability: 'IMMUTABLE', data: {
                     mention: {
                         name: 'oggetto',
-                        type: 'quello che ti pare'
+                        type: 'oggetto'
                     }
             }},
         operatore: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
                     name: 'operatore',
-                    type: 'quello che ti pare'
+                    type: 'operatore'
                 }
             }},
         valore: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
                     name: 'valore',
-                    type: 'quello che ti pare'
+                    type: 'valore'
                 }
             }},
         azione: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
                     name: 'azione',
-                    type: 'quello che ti pare'
+                    type: 'azione'
                 }
             }},
     },
@@ -197,7 +199,7 @@ export default class MentionRules extends Component {
     };
 
     onSearchChange = ({ value }) => {
-        this.updateSuggestions(value);
+        this.updateSuggestions({value});
     };
 
     focus = () => {
@@ -231,24 +233,18 @@ export default class MentionRules extends Component {
         this.state.isMentioned = true;
     };
 
-    updateSuggestions= ({ value }) =>{
-        let scene = ScenesStore.getState().get(CentralSceneStore.getState());
-        let allObjects = scene_utils.allObjects(scene);
+    updateSuggestions= ({ value }) => {
 
-        let data = allObjects.map(obj_uuid => {
-            let obj = ObjectsStore.getState().get(obj_uuid);
+        console.log(value)
 
-            return {
-                avatar: this.getImage(obj.type),
-                link: '#',
-                name: obj.name
+        let mentionsType = getMentionType(EditorStateStore.getState().get('mentionType'));
 
-            };
-        });
-
-        this.setState({
-            suggestions: data,
-        });
+        if(mentionsType){
+            let mentions = MentionsStore.getState().get(mentionsType);
+            this.setState({
+                suggestions: defaultSuggestionsFilter(value, mentions),
+            });
+        }
     };
 
     render() {
@@ -299,15 +295,24 @@ export default class MentionRules extends Component {
                 //if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
 
                 console.log(selection)
-                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 2).set(
-                        'focusOffset', selection.getStartOffset() + 2);
-                    let placeholder = '@' + input;
+                let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() + 2).set(
+                    'focusOffset', selection.getStartOffset() + 2);
+                let placeholder = '@' + input;
 
-                    let newContentState = Modifier.replaceText(
-                        state.getCurrentContent(),
-                        state.getSelection(),
-                        placeholder,
-                    );
+                let entity = interface_utils.getEntity(state);
+                let entityType = null;
+                if(entity.getData().mention.link === undefined){
+                    entityType = entity.getData().mention.toJSON().type ;
+                } else {
+                    entityType = entity.getData().mention.type;
+                }
+                Actions.setMentionType(entityType);
+
+                let newContentState = Modifier.replaceText(
+                    state.getCurrentContent(),
+                    state.getSelection(),
+                    placeholder,
+                );
 
                 let newState = EditorState.push(this.state.editorState, newContentState, 'replace-text');
                     newState = EditorState.forceSelection(newState, newSelectionState);
@@ -320,7 +325,6 @@ export default class MentionRules extends Component {
         } else { //CURSOR
             //TODO bloccare la scrittura fuori da entità, scritto cosi dopo l'inseriemnto della @ non potevo scrivere
             if(!interface_utils.checkIfEditableCursor(state)) { //not editable
-                console.log('dio merda')
                 //return 'handled';
             } else {
                 if(interface_utils.getEntity(state)){
@@ -340,6 +344,14 @@ export default class MentionRules extends Component {
 
                     let selectState = EditorState.acceptSelection(state, newSelectionState);
                     let placeholder = '@' +input;
+
+                    let entityType = null;
+                    if(entity.getData().mention.link === undefined){
+                        entityType = entity.getData().mention.toJSON().type ;
+                    } else {
+                        entityType = entity.getData().mention.type;
+                    }
+                    Actions.setMentionType(entityType);
 
                     console.log(entityLenght);
                     let newContentState = Modifier.replaceText(
@@ -379,6 +391,7 @@ export default class MentionRules extends Component {
                             'focusOffset', selection.getStartOffset() + 1);
 
                         let placeholder = '@';
+
 
                         //console.log('PLACEHOLDER');
                         let newContentState = Modifier.replaceText(
@@ -423,6 +436,7 @@ export default class MentionRules extends Component {
                     let placeholder = '@';
 
                     console.log(entityLenght);
+
                     let newContentState = Modifier.replaceText(
                         selectState.getCurrentContent(),
                         newSelectionState,
@@ -449,5 +463,21 @@ export default class MentionRules extends Component {
         }
     }
 
+}
 
+function getMentionType(mentionType){
+
+    console.log(mentionType)
+
+    switch(mentionType){
+        case 'soggetto': return 'subjects';
+        case 'evento': return 'events';
+        case 'oggettoScena': return 'objectsScene';
+        case 'oggetto': return 'objects';
+        case 'operatore': return 'operators';
+        case 'valore': return 'values';
+        case 'azione': return 'actions';
+        default:
+            return null;
+    }
 }

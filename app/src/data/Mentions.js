@@ -1,13 +1,20 @@
-/*import React from 'react';
+import React from 'react';
 import Immutable from 'immutable';
 
 const Mentions = Immutable.Record({
-    objects: Immutable.Map(),
-    scenes: Immutable.Map(),
+    objects: [],
+    scenes: [],
+    subjects: [{name:'il giocatore'}],
+    events: [{name: 'seleziona'}],
+    actions: [{name:'esegui transizione verso'}, {name:'accendi'}, {name:'spegni'}, {name:'premi'}],
+    operators: [{name:'='}, {name:'<'}, {name:'>'}, {name:'<='}, {name:'>='}],
+    values: [],
+    objectsScene: [],
+
 });
 
-export default Mentions;*/
-
+export default Mentions;
+/*
 const Mentions = [
     {
         name: 'Matthew Russell',
@@ -41,4 +48,5 @@ const Mentions = [
     },
 ];
 
-export default Mentions;
+
+export default Mentions; */

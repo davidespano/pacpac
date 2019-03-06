@@ -15,6 +15,7 @@ const EditorState = Immutable.Record({
     scenesOrderMenu: false,
     selectedTagNewScene: 'default',
     user: null,
+    mentionType: null,
 });
 
 export default EditorState;

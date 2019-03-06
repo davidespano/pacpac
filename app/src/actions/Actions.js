@@ -1,6 +1,7 @@
 import ActionTypes from './ActionTypes';
 import AppDispatcher from '../data/AppDispatcher';
 import SceneAPI from '../utils/SceneAPI';
+import ObjectToSceneStore from "../data/ObjectToSceneStore";
 
 const Actions = {
 
@@ -140,6 +141,7 @@ const Actions = {
             type: ActionTypes.RECEIVE_SCENE,
             scene: scene,
             order: order,
+            objectsToScene: ObjectToSceneStore.getState(),
         });
     },
 
@@ -151,6 +153,7 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
             name: name,
+            objectsToScene: ObjectToSceneStore.getState(),
         });
     },
 
@@ -381,6 +384,14 @@ const Actions = {
             type: ActionTypes.REMOVE_RULE,
             scene: scene,
             rule: rule,
+        })
+    },
+
+
+    setMentionType(mentionType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_MENTION_TYPE,
+            mentionType: mentionType,
         })
     },
 

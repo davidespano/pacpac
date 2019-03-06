@@ -10,6 +10,10 @@ import TagDropdown from "./TagDropdown";
 let THREE = require('three');
 
 function RightBar(props){
+
+
+    console.log(props.mentions);
+
     return(
         <div className={'rightbar'}>
             <div id={'rbContainer'}>
