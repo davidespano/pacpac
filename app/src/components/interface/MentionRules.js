@@ -322,7 +322,7 @@ export default class MentionRules extends Component {
                     let selectState = EditorState.acceptSelection(state, newSelectionState);
                     let placeholder = '@' +input;
 
-                    let entityType = interface_utils.getEntityType(state);
+                    let entityType = entity.getData().mention.type;
                     Actions.setMentionType(entityType);
                     this.state.restoreState = this.state.editorState;
                     this.state.isMentioned=false;
@@ -374,7 +374,7 @@ export default class MentionRules extends Component {
                     let selectState = EditorState.acceptSelection(state, newSelectionState);
                     let placeholder = '@';
 
-                    let entityType = interface_utils.getEntityType(state);
+                    let entityType = entity.getData().mention.type;
                     Actions.setMentionType(entityType);
 
                     this.state.restoreState = this.state.editorState;
