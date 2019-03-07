@@ -1,5 +1,6 @@
 import React from 'react';
 import Immutable from 'immutable';
+import RuleActionTypes from "../interactives/rules/RuleActionTypes";
 
 const Mentions = Immutable.Record({
     objects: [],
@@ -7,20 +8,23 @@ const Mentions = Immutable.Record({
     subjects: [{name:'il giocatore', link: '#', type: 'soggetto'}],
     events: [{name: 'seleziona', link: '#', type: 'evento'}],
     actions: [
-        {name:'esegui transizione verso', link: '#', type: 'azione'},
-        {name:'accendi l\'interruttore', link: '#', type: 'azione'},
-        {name:'spegni l\'interruttore', link: '#', type: 'azione'},
-        {name:'inverti l\'interruttore', link: '#', type: 'azione'},
-        {name: 'riproduci audio', link: '#', type: 'azione'},
-        {name: 'metti in pausa audio', link: '#', type: 'azione'},
-        {name: 'raccogli la chiave', link: '#', type: 'azione'},
-        {name: 'apri il lucchetto', link: '#', type: 'azione'}],
+        {name:'esegui transizione verso', link: '#', type: 'azione', action: RuleActionTypes.TRANSITION},
+        {name:'accendi l\'interruttore', link: '#', type: 'azione', action: RuleActionTypes.ON},
+        {name:'spegni l\'interruttore', link: '#', type: 'azione', action: RuleActionTypes.OFF},
+        {name:'inverti l\'interruttore', link: '#', type: 'azione', action: RuleActionTypes.FLIP_SWITCH},
+        {name: 'riproduci audio', link: '#', type: 'azione', action: RuleActionTypes.PLAY_AUDIO},
+        {name: 'metti in pausa audio', link: '#', type: 'azione', action: RuleActionTypes.STOP_AUDIO},
+        {name: 'raccogli la chiave', link: '#', type: 'azione', action: RuleActionTypes.COLLECT_KEY},
+        {name: 'apri il lucchetto', link: '#', type: 'azione', action: RuleActionTypes.UNLOCK_LOCK},
+        {name: 'sostituisci sfondo con', link: '#', type:'azione', action: RuleActionTypes.CHANGE_BACKGROUND},
+    ],
     operators: [
         {name:'=', link: '#', type: 'operatore'},
         {name:'<', link: '#', type: 'operatore'},
         {name:'>', link: '#', type: 'operatore'},
         {name:'<=', link: '#', type: 'operatore'},
-        {name:'>=', link: '#', type: 'operatore'}],
+        {name:'>=', link: '#', type: 'operatore'},
+    ],
     values: [],
     objectsScene: [],
 
