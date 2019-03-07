@@ -249,6 +249,11 @@ function secondCheck(state){
     return getEntity(state, selectionLength+1) === getEntity(state, 0);
 }
 
+/**
+ * check in an Entity is a mention
+ * @param state
+ * @returns {boolean}
+ */
 function isMention(state) {
     let entity = getEntity(state);
 
@@ -257,6 +262,11 @@ function isMention(state) {
     return entity !== null && entity.getType() === 'mention';
 }
 
+/**
+ * check if the previous character is @
+ * @param state
+ * @returns {boolean}
+ */
 function checkAt(state) {
     const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
     const text = block.text;
@@ -264,6 +274,11 @@ function checkAt(state) {
     return text.slice(blockStart-1,blockStart) === '@'
 }
 
+/**
+ * return the start index of an entity
+ * @param state
+ * @returns {*}
+ */
 function getStartIndexEntity(state) {
     const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
     const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
@@ -276,6 +291,8 @@ function getStartIndexEntity(state) {
     let index = inizializeMention.getIndicesOf( entityText, block.text);
     return index;
 }
+
+
 /**
  * check if a text selected contains a space at the end
  */
@@ -302,6 +319,6 @@ export default {
     secondCheck: secondCheck,
     checkEndSpace: checkEndSpace,
     isMention: isMention,
-    checkAt, checkAt,
-    getStartIndexEntity, getStartIndexEntity,
+    checkAt: checkAt,
+    getStartIndexEntity: getStartIndexEntity,
 }
