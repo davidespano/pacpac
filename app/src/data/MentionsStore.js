@@ -24,7 +24,7 @@ class MentionsStore extends ReduceStore {
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
                 entry = {
-                    name: action.obj.name + ' ',
+                    name: action.obj.name ,
                     uuid: action.obj.uuid,
                     link: '#',
                     type: 'oggetto'
@@ -35,14 +35,14 @@ class MentionsStore extends ReduceStore {
 
                 objects = objects.map(obj => {
                     if(obj.uuid === action.obj.get('uuid')){
-                        obj.name = action.obj.name + ' ';
+                        obj.name = action.obj.name ;
                     }
                     return obj;
                 });
                 return state.set('objects', objects);
             case ActionTypes.RECEIVE_OBJECT:
                 entry = {
-                    name: action.obj.name + ' ',
+                    name: action.obj.name ,
                     uuid: action.obj.uuid,
                     link: '#',
                     type: 'oggetto',
@@ -54,7 +54,7 @@ class MentionsStore extends ReduceStore {
                 return state.set('objects', objects);
             case ActionTypes.RECEIVE_SCENE:
                 entry = {
-                    name: action.scene.name + ' ',
+                    name: action.scene.name ,
                     uuid: action.scene.uuid,
                     link: '#',
                     type: 'scena',
@@ -81,7 +81,7 @@ class MentionsStore extends ReduceStore {
 
                 scenes = scenes.map(s => {
                     if(s.uuid === action.scene.get('uuid')){
-                        s.name = action.scene.name + ' ';
+                        s.name = action.scene.name ;
                     }
                     return s;
                 });
