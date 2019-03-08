@@ -307,8 +307,8 @@ export default class MentionRules extends Component {
             return 'handled';
         } else { //CURSOR
             //TODO bloccare la scrittura fuori da entità, scritto cosi dopo l'inseriemnto della @ non potevo scrivere
-            if(!interface_utils.checkIfEditableCursor(state)) { //not editable
-                //return 'handled';
+            if(interface_utils.getEntity(state, -1) && (entity == null)) { //not editable
+                return 'handled';
             } else {
                 if(entity){
                     let entityLength = entity.getData().mention.name.length;

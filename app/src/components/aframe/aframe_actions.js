@@ -112,7 +112,7 @@ function executeAction(VRScene, rule, action){
                 soundsHub[action.media].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
-            runState[current_object.uuid].state=true;
+            runState[current_object.uuid].state='COLLECTED';
             game_graph.scenes[actual_scene].objects.collectable_keys =
                 game_graph.scenes[actual_scene].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
             if(current_object.media0 !== null){
@@ -121,7 +121,7 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.UNLOCK_LOCK:
-            runState[current_object.uuid].state=true;
+            runState[current_object.uuid].state='UNLOCKED';
             game_graph.scenes[actual_scene].objects.locks =
                 game_graph.scenes[actual_scene].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
             VRScene.setState({runState: runState, graph: game_graph});
