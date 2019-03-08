@@ -54,7 +54,7 @@ const provaRaw = {
         allora: {type: 'allora', data: 'allora'},
         soggetto: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                         mention: {
-                            name: 'soggetto',
+                            name: 'soggetto ',
                             type: 'soggetto',
                             link: '#'
                         }
@@ -62,7 +62,7 @@ const provaRaw = {
         },
         evento: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
-                    name: 'evento',
+                    name: 'evento ',
                     type: 'evento',
                     link: '#'
                 }
@@ -76,28 +76,28 @@ const provaRaw = {
             }},
         oggetto: {type: 'mention', mutability: 'IMMUTABLE', data: {
                     mention: {
-                        name: 'oggetto',
+                        name: 'oggetto ',
                         type: 'oggetto',
                         link: '#'
                     }
             }},
         operatore: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
-                    name: 'operatore',
+                    name: 'operatore ',
                     type: 'operatore',
                     link: '#'
                 }
             }},
         valore: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
-                    name: 'valore',
+                    name: 'valore ',
                     type: 'valore',
                     link: '#'
                 }
             }},
         azione: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
-                    name: 'azione',
+                    name: 'azione ',
                     type: 'azione',
                     link: '#'
                 }
@@ -241,7 +241,7 @@ export default class MentionRules extends Component {
         const currentContent = this.state.editorState.getCurrentContent();
         let newEntity = currentContent.createEntity('mention', 'IMMUTABLE', {data: {
             mention: fromJS({
-                name: mention.name + ' ',
+                name: mention.name,
                 type: getMentionType(EditorStateStore.getState().get('mentionType'))
             })}});
         this.state.isMentioned = true;
@@ -311,12 +311,12 @@ export default class MentionRules extends Component {
                 //return 'handled';
             } else {
                 if(entity){
-                    let entityLength = entity.getData().mention.name.length ;
+                    let entityLength = entity.getData().mention.name.length;
                     let startIndex = interface_utils.getStartIndexEntity(state)[0];
                     let selectionPosition = selection.getStartOffset();
                     let start = selectionPosition-startIndex;
                     let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() -(start)).set(
-                        'focusOffset', selection.getStartOffset() + (entityLength-start) );
+                        'focusOffset', selection.getStartOffset() + (entityLength-start));
 
                     let selectState = EditorState.acceptSelection(state, newSelectionState);
                     let placeholder = '@' +input;
@@ -362,7 +362,7 @@ export default class MentionRules extends Component {
                 }
                 if(interface_utils.checkIfDeletableCursor(state)){ // deletable
                     //console.log('NOT KEYWORD');
-                    let entityLength = entity.getData().mention.name.length ;
+                    let entityLength = entity.getData().mention.name.length;
                     let startIndex = interface_utils.getStartIndexEntity(state)[0];
                     let selectionPosition = selection.getStartOffset();
 
