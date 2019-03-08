@@ -130,7 +130,8 @@ function parseRulesFromRaw(content, scene){
                     action = {...action, type: mention.action};
                     break;
                 case "scena":
-                    action = {...action, target: mention.name}
+                    if(mention.name != null)
+                        action = {...action, target: mention.name}
                     break;
                 default:
                     break;
