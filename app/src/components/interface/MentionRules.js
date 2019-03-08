@@ -237,10 +237,9 @@ export default class MentionRules extends Component {
     };
 
     onAddMention = (mention) => {
-        //TODO aggiungere il tipo sostituiendo 'quello che ti pare'
-        this.state.isMentioned = true;
-        const currunteContent = this.state.editorState.getCurrentContent();
-        let newEntity = currunteContent.createEntity('mention', 'IMMUTABLE', {data: {
+        
+        const currentContent = this.state.editorState.getCurrentContent();
+        let newEntity = currentContent.createEntity('mention', 'IMMUTABLE', {data: {
             mention: fromJS({
                 name: mention.name + ' ',
                 type: getMentionType(EditorStateStore.getState().get('mentionType'))
