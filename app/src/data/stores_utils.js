@@ -1,5 +1,12 @@
 import Orders from "./Orders";
 import ObjectsStore from "./ObjectsStore";
+import Rule from "../interactives/rules/Rule";
+import Immutable from "immutable";
+import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
+import Actions from "../actions/Actions";
+import RuleActionTypes from "../interactives/rules/RuleActionTypes";
+import EventTypes from "../interactives/rules/EventTypes";
+import Mentions from "./Mentions";
 
 /**
  * Returns correct comparator according to the given type
@@ -65,11 +72,87 @@ function rev_chronological(a, b){
     return -(chronological(a, b));
 }
 
+function parseRulesFromRaw(content, scene){
+    const entityMap = content.entityMap;
+    let rules = new Immutable.Map();
+    Object.entries(entityMap).forEach(([key, val]) => {
+        if(val.data.rule_uuid){
+            let mention = val.data.mention;
+            let rule = rules.get(val.data.rule_uuid);
+
+            if (!rule) {
+                rule = new Rule();
+                rule = rule.set("uuid", val.data.rule_uuid);
+            }
+
+            let action;
+
+            if(val.data.action_uuid && rule.actions)
+            {
+                action = rule.actions.find((a) => {
+                    if(a)
+                        return a.uuid === val.data.action_uuid;
+                    return false;
+                });
+            }
+
+            if(!action && val.data.action_uuid){
+                action = {uuid: val.data.action_uuid}
+            }
+
+            let condition = {};
+
+            if(rule.condition)
+                condition = rule.condition;
+
+            switch (mention.type) {
+                case "soggetto":
+                    break;
+                case "evento":
+                    rule = rule.set("event", mention.event);
+                    break;
+                case "oggettoScena":
+                    rule = rule.set("object_uuid", mention.uuid);
+                    break;
+                case "oggetto":
+                    if(mention.uuid)
+                        condition = {...condition, uuid: mention.uuid};
+                    break;
+                case "operatore":
+                    if(mention.operator)
+                        condition = {...condition, operator: mention.operator};
+                    break;
+                case "valore":
+                    if(mention.value)
+                        condition = {...condition, state: mention.value};
+                    break;
+                case "azione":
+                    action = {...action, type: mention.action};
+                    break;
+                case "scena":
+                    action = {...action, target: mention.name}
+                    break;
+                default:
+                    break;
+            }
+            rule = rule.set("condition", condition);
+            rule = rule.set("actions", [action]);
+            rules = rules.set(val.data.rule_uuid,rule);
+        }
+    });
+
+    // rules.forEach((rule) =>{
+    //     InteractiveObjectAPI.saveRule(scene,rule);
+    //     Actions.updateRule(rule);
+    // });
+    return rules;
+}
+
 function generateRawFromRules(rules) {
     let objectMap = ObjectsStore.getState();
     let blocks = [];
     let mutability = "IMMUTABLE";
-    console.log(rules);
+
     let entityMap = {};
     // const entityMap =  {
     //     quando: {type: 'quando', data: 'quando'},
@@ -86,100 +169,134 @@ function generateRawFromRules(rules) {
 
     rules.forEach((rule,index) => {
         let object = objectMap.get(rule.object_uuid);
+
         const entryEntityMap = {
                 ['quando' + index]: {type: 'quando', data: 'quando'},
                 ['se' + index]: {type: 'se', data: 'se'},
                 ['allora' + index]: {type: 'allora', data: 'allora'},
                 ['soggetto' + index]: {type: 'mention', mutability: mutability, data:{
                         mention: {
-                            name: 'soggetto',
-                            type: 'giocatore'
+                            name: 'il giocatore',
+                            type: 'soggetto',
+                            link: "#"
                         },
-                        rule_uuid: rule.uuid
+                        rule_uuid: rule.uuid,
                     }},
                 ['evento' + index]: {type: 'mention', mutability: mutability, data:{
-                        mention: {
-                            name: 'evento',
-                            type: rule.event
-                        },
-                        rule_uuid: rule.uuid
+                        mention: Mentions().events.find((mention) =>{
+                            return mention.event === rule.event;
+                        }),
+                        rule_uuid: rule.uuid,
                     }},
                 ['oggettoScena' + index]: {type: 'mention', mutability: mutability, data:{
                         mention: {
-                            name: 'oggettoScena',
-                            type: rule.object_uuid
+                            name: object.name,
+                            type: 'oggettoScena',
+                            link: "#",
+                            uuid: rule.object_uuid
                         },
-                        rule_uuid: rule.uuid
+                        rule_uuid: rule.uuid,
                     }},
                 ['oggetto' + index]: {type: 'mention', mutability: mutability, data:{
                         mention: {
-                            name: 'oggetto',
-                            type: 'oggetto'
+                            name: Object.keys(rule.condition).length > 0  ? ObjectsStore.getState().get(rule.condition.uuid).name : 'oggetto',
+                            type: 'oggetto',
+                            link: "#",
+                            uuid: Object.keys(rule.condition).length > 0 ? rule.condition.uuid : null
                         },
-                        rule_uuid: rule.uuid
+                        rule_uuid: rule.uuid,
                     }},
                 ['operatore' + index]: {type: 'mention', mutability: mutability, data:{
-                        mention: {
-                            name: 'operatore',
-                            type: rule.condition.operator
-                        },
-                        rule_uuid: rule.uuid
+                        mention: Object.keys(rule.condition).length > 0 ? Mentions().operators.find((mention) =>{
+                            return mention.operator === rule.condition.operator;
+                        }) : {name: 'operatore', type: 'operatore', link:'#'},
+                        rule_uuid: rule.uuid,
                     }},
                 ['valore' + index]: {type: 'mention', mutability: mutability, data:{
-                        mention: {
-                            name: 'valore',
-                            type: rule.condition.state
-                        },
-                        rule_uuid: rule.uuid
+                        mention: Object.keys(rule.condition).length > 0 ? Mentions().values.find((mention) =>{
+                            return mention.value === rule.condition.state;
+                        }): {name: 'valore', type: 'valore', link:'#'},
+                        rule_uuid: rule.uuid,
                     }},
                 ['azione' + index]: {type: 'mention', mutability: mutability, data:{
-                        mention: {
-                            name: 'azione',
-                            type: rule.actions[0].uuid
-                        },
-                        rule_uuid: rule.uuid
+                        mention: Mentions().actions.find((mention) =>{
+                            return mention.action === rule.actions[0].type;
+                        }),
+                        rule_uuid: rule.uuid,
+                        action_uuid: rule.actions[0].uuid,
                     }},
-        }
+                ['scena' + index]: {type: 'mention', mutability: mutability, data:{
+                        mention: {
+                            name: rule.actions[0].type === RuleActionTypes.TRANSITION ? rule.actions[0].target : null,
+                            type: 'scena',
+                            link: "#"
+                        },
+                        rule_uuid: rule.uuid,
+                        action_uuid: rule.actions[0].uuid,
+                    }},
+        };
         entityMap = {...entityMap, ...entryEntityMap};
 
+        let soggetto = {offset: 7, length: entityMap['soggetto'+index].data.mention.name.length +1, key: 'soggetto' + index};
+        let evento = {offset: soggetto.offset+soggetto.length, length: entityMap['evento'+index].data.mention.name.length +1, key: 'evento' + index};
+        let oggettoScena = {offset: evento.offset+evento.length, length: entityMap['oggettoScena'+index].data.mention.name.length +1, key: 'oggettoScena' + index};
+
         blocks.push({
-                text: 'QUANDO giocatore clicca '+object.name.replace(" ","_")+' ',
+                text: 'QUANDO '+entityMap['soggetto'+index].data.mention.name +' '+entityMap['evento'+index].data.mention.name+' '+entityMap['oggettoScena'+index].data.mention.name+' ',
                 type: 'quando-block',
                 entityRanges: [
                     {offset: 0, length: 7, key: 'quando' + index},
-                    {offset: 7, length: 10, key: 'soggetto' + index},
-                    {offset: 17, length: 7, key: 'evento' + index},
-                    {offset: 24, length: object.name.length+1 , key: 'oggettoScena' + index},
+                    soggetto,
+                    evento,
+                    oggettoScena,
                 ],
             });
+
+        let oggetto = {offset: 3, length: entityMap['oggetto'+index].data.mention.name.length +1, key: 'oggetto' + index};
+        let operatore = {offset: oggetto.offset+oggetto.length, length: entityMap['operatore'+index].data.mention.name.length +1, key: 'operatore' + index};
+        let valore = {offset: operatore.offset+operatore.length, length: entityMap['valore'+index].data.mention.name.length +1, key: 'valore' + index}
         blocks.push(
             {
-                text: 'SE oggetto operatore valore ',
+                text: 'SE '+entityMap['oggetto'+index].data.mention.name +' '+entityMap['operatore'+index].data.mention.name+' '+entityMap['valore'+index].data.mention.name+' ',
                 type: 'se-block',
                 entityRanges: [
                     {offset: 0, length: 3, key: 'se' + index},
-                    {offset: 3, length: 8, key: 'oggetto' + index},
-                    {offset: 11, length: 10, key: 'operatore' + index},
-                    {offset: 21, length: 7, key: 'valore' + index},
+                    oggetto,
+                    operatore,
+                    valore
                 ],
             });
+
+
+        let alloraText = 'ALLORA ' + entityMap['azione'+index].data.mention.name + ' '
+        let azione = {offset: 7, length: entityMap['azione'+index].data.mention.name.length+1, key: 'azione' + index};
+        let alloraRanges = [
+            {offset: 0, length: 7, key: 'allora' + index},
+            azione
+        ];
+        if(rule.actions[0].type === RuleActionTypes.TRANSITION ){
+            alloraText += entityMap['scena'+index].data.mention.name +' ';
+
+            let scena = {offset: azione.offset+azione.length, length: entityMap['scena'+index].data.mention.name.length+1, key: 'scena' + index};
+            alloraRanges = [...alloraRanges, scena];
+        }
+
         blocks.push({
-                text: 'ALLORA ' + rule.actions[0].type.replace(" ","_") + ' ',
+                text: alloraText,
                 type: 'allora-block',
-                entityRanges: [
-                    {offset: 0, length: 7, key: 'allora' + index},
-                    {offset: 8, length: rule.actions[0].type.length+1, key: 'azione' + index},
-                ],
+                entityRanges: alloraRanges,
             });
     });
 
-    console.log(JSON.stringify(blocks));
-    console.log(JSON.stringify(entityMap));
+    parseRulesFromRaw({blocks:blocks,entityMap:entityMap});
+
     return {
         blocks: blocks,
         entityMap: entityMap
     }
 }
+
+
 
 export default {
     chooseComparator: chooseComparator,

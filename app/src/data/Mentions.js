@@ -21,13 +21,18 @@ const Mentions = Immutable.Record({
         {name: 'sostituisci sfondo con', link: '#', type:'azione', action: RuleActionTypes.CHANGE_BACKGROUND},
     ],
     operators: [
-        {name:'= ', link: '#', type: 'operatore', operator: Operators.EQUAL},
-        {name:'< ', link: '#', type: 'operatore', operator: Operators.LESS_THAN},
-        {name:'> ', link: '#', type: 'operatore', operator: Operators.GREATER_THAN},
-        {name:'<= ', link: '#', type: 'operatore', operator: Operators.LESS_EQUAL},
-        {name:'>= ', link: '#', type: 'operatore', operator: Operators.GREATER_EQUAL},
+        {name:'=', link: '#', type: 'operatore', operator: Operators.EQUAL},
+        {name:'<', link: '#', type: 'operatore', operator: Operators.LESS_THAN},
+        {name:'>', link: '#', type: 'operatore', operator: Operators.GREATER_THAN},
+        {name:'<=', link: '#', type: 'operatore', operator: Operators.LESS_EQUAL},
+        {name:'>=', link: '#', type: 'operatore', operator: Operators.GREATER_EQUAL},
     ],
-    values: [],
+    values: [
+        {name:'sbloccato', link: '#', type: 'valore', value: 'UNLOCKED'},
+        {name:'raccolto', link: '#', type: 'valore', value: 'COLLECTED'},
+        {name:'acceso', link: '#', type: 'valore', value: 'ON'},
+        {name:'spento', link: '#', type: 'valore', value: 'OFF'}
+        ],
     objectsScene: [],
 
 });

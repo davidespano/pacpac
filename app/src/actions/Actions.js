@@ -2,6 +2,7 @@ import ActionTypes from './ActionTypes';
 import AppDispatcher from '../data/AppDispatcher';
 import SceneAPI from '../utils/SceneAPI';
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
+import ScenesStore from "../data/ScenesStore";
 
 const Actions = {
 
@@ -154,6 +155,7 @@ const Actions = {
             type: ActionTypes.UPDATE_CURRENT_SCENE,
             name: name,
             objectsToScene: ObjectToSceneStore.getState(),
+            scene: ScenesStore.getState().get(name),
         });
     },
 
