@@ -141,10 +141,10 @@ function parseRulesFromRaw(content, scene){
         }
     });
 
-    // rules.forEach((rule) =>{
-    //     InteractiveObjectAPI.saveRule(scene,rule);
-    //     Actions.updateRule(rule);
-    // });
+    rules.forEach((rule) =>{
+        InteractiveObjectAPI.saveRule(scene,rule);
+        Actions.updateRule(rule);
+    });
     return rules;
 }
 
@@ -287,8 +287,6 @@ function generateRawFromRules(rules) {
                 entityRanges: alloraRanges,
             });
     });
-
-    parseRulesFromRaw({blocks:blocks,entityMap:entityMap});
 
     return {
         blocks: blocks,
