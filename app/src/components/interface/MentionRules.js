@@ -54,7 +54,7 @@ const provaRaw = {
         allora: {type: 'allora', data: 'allora'},
         soggetto: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                         mention: {
-                            name: 'soggetto ',
+                            name: 'soggetto',
                             type: 'soggetto',
                             link: '#'
                         }
@@ -62,7 +62,7 @@ const provaRaw = {
         },
         evento: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
-                    name: 'evento ',
+                    name: 'evento',
                     type: 'evento',
                     link: '#'
                 }
@@ -76,28 +76,28 @@ const provaRaw = {
             }},
         oggetto: {type: 'mention', mutability: 'IMMUTABLE', data: {
                     mention: {
-                        name: 'oggetto ',
+                        name: 'oggetto',
                         type: 'oggetto',
                         link: '#'
                     }
             }},
         operatore: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
-                    name: 'operatore ',
+                    name: 'operatore',
                     type: 'operatore',
                     link: '#'
                 }
             }},
         valore: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
-                    name: 'valore ',
+                    name: 'valore',
                     type: 'valore',
                     link: '#'
                 }
             }},
         azione: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                 mention: {
-                    name: 'azione ',
+                    name: 'azione',
                     type: 'azione',
                     link: '#'
                 }
