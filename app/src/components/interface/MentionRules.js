@@ -166,13 +166,16 @@ export default class MentionRules extends Component {
             if(value.data.mention)
                 value.data.mention = fromJS(value.data.mention)
         });*/
+        const token = AppDispatcher.register(this.onDispatch);
 
+        //const rules = ScenesStore.getState().get(action.name).get('rules').map((uuid) => RulesStore.getState().get(uuid));
         this.state = {
             editorState: EditorState.createWithContent(convertFromRaw(provaRaw)),
             suggestions: [],
             currentScene: CentralSceneStore.getState(),
             isMentioned: true,
-            restoreState: EditorState.createWithContent(convertFromRaw(provaRaw))
+            restoreState: EditorState.createWithContent(convertFromRaw(provaRaw)),
+            dispatcherToken: token,
         };
 
         this.mentionPlugin = createMentionPlugin();
@@ -200,11 +203,81 @@ export default class MentionRules extends Component {
         });*/
     }
 
+    componentWillUnmount() {
+        AppDispatcher.unregister(this.state.dispatcherToken);
+    }
+
     onChange = (editorState) => {
         this.setState({
             editorState,
         });
     };
+
+    onDispatch = (action) => {
+        let tokens = [];
+        tokens.push(ScenesStore.getDispatchToken());
+        tokens.push(RulesStore.getDispatchToken());
+        tokens.push(ObjectToSceneStore.getDispatchToken());
+        tokens.push(ObjectsStore.getDispatchToken());
+        tokens.push(CentralSceneStore.getDispatchToken());
+
+        AppDispatcher.waitFor(tokens);
+
+        let rules = [];
+
+        if(action.scene)
+            rules = action.scene.get('rules').map((uuid) => RulesStore.getState().get(uuid));
+        else if(ScenesStore.getState().get(this.props.currentScene))
+            rules = ScenesStore.getState().get(this.props.currentScene).get('rules').map((uuid) => RulesStore.getState().get(uuid));
+
+        switch(action.type){
+            case ActionTypes.RECEIVE_SCENE:
+                console.log(rules);
+                if(rules.length > 0)
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+                else
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
+                break;
+            case ActionTypes.UPDATE_CURRENT_SCENE:
+                console.log(action.scene.get('rules'));
+                if(rules.length > 0)
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+                else
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
+                break;
+            case ActionTypes.ADD_NEW_RULE:
+                this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+                break;
+            case ActionTypes.REMOVE_RULE:
+                rules = rules.filter((r) => (r !== action.rule));
+                if(rules.length > 0)
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+                else
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
+                break;
+            case ActionTypes.UPDATE_RULE:
+                if(rules.length > 0)
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+                else
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
+                break;
+            case ActionTypes.UPDATE_OBJECT:
+                console.log(ObjectToSceneStore.getState().get(action.obj.uuid));
+                if(ObjectToSceneStore.getState().get(action.obj.uuid) === this.props.currentScene) {
+                    if (rules.length > 0)
+                        this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+                    else
+                        this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
+                }
+                break;
+            case ActionTypes.UPDATE_SCENE_NAME:
+                if(rules.length > 0)
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+                else
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
+                break;
+        }
+    }
 
     onSearchChange = ({ value }) => {
         this.updateSuggestions({value});
@@ -417,6 +490,7 @@ function getMentionType(mentionType){
         case 'operatore': return 'operators';
         case 'valore': return 'values';
         case 'azione': return 'actions';
+        case 'scena': return 'scenes';
         default:
             return null;
     }

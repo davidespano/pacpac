@@ -76,7 +76,6 @@ function parseRulesFromRaw(content, scene){
     const entityMap = content.entityMap;
     let rules = new Immutable.Map();
     Object.entries(entityMap).forEach(([key, val]) => {
-        console.log(val);
         if(val.data.rule_uuid){
             let mention = val.data.mention;
             let rule = rules.get(val.data.rule_uuid);
@@ -192,7 +191,7 @@ function generateRawFromRules(rules) {
                     }},
                 ['oggettoScena' + index]: {type: 'mention', mutability: mutability, data:{
                         mention: {
-                            name: object.name,
+                            name: object ? object.name : 'oggetto',
                             type: 'oggettoScena',
                             link: "#",
                             uuid: rule.object_uuid
