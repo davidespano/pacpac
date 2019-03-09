@@ -76,6 +76,7 @@ function parseRulesFromRaw(content, scene){
     const entityMap = content.entityMap;
     let rules = new Immutable.Map();
     Object.entries(entityMap).forEach(([key, val]) => {
+        console.log(val);
         if(val.data.rule_uuid){
             let mention = val.data.mention;
             let rule = rules.get(val.data.rule_uuid);
@@ -142,9 +143,9 @@ function parseRulesFromRaw(content, scene){
         }
     });
 
-    rules.forEach((rule) =>{
+    rules.valueSeq().forEach((rule) =>{
         InteractiveObjectAPI.saveRule(scene,rule);
-        Actions.updateRule(rule);
+        //Actions.updateRule(rule);
     });
     return rules;
 }
@@ -304,4 +305,5 @@ export default {
     chronological: chronological,
     rev_chronological: rev_chronological,
     generateRawFromRules: generateRawFromRules,
+    parseRulesFromRaw: parseRulesFromRaw,
 }
