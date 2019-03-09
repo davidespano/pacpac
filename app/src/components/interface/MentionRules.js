@@ -16,6 +16,11 @@ import forEach from 'lodash/forEach';
 import 'draft-js-mention-plugin/lib/plugin.css';
 import MentionsStore from "../../data/MentionsStore";
 import EditorStateStore from "../../data/EditorStateStore";
+import storeUtils from "../../data/stores_utils";
+import RulesStore from "../../data/RulesStore";
+import AppDispatcher from "../../data/AppDispatcher";
+import ActionTypes from "../../actions/ActionTypes";
+import ObjectToSceneStore from "../../data/ObjectToSceneStore";
 
 const provaRaw = {
     blocks: [
