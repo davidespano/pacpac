@@ -317,12 +317,45 @@ export default class MentionRules extends Component {
     onAddMention = (mention) => {
         
         const currentContent = this.state.editorState.getCurrentContent();
-        let newEntity = currentContent.createEntity('mention', 'IMMUTABLE', {data: {
-            mention: fromJS({
-                name: mention.name,
-                type: getMentionType(EditorStateStore.getState().get('mentionType'))
-            })}});
+
+        let data = interface_utils.getEntity(this.state.restoreState).data;
+
+        mention.type = data.mention.type;
+
+        delete data.mention;
+
+        console.log(data);
+
+        // let newEntity = currentContent.createEntity('mention', 'IMMUTABLE', {
+        //     data: {
+        //     mention: {
+        //             name: mention.name,
+        //             type: getMentionType(EditorStateStore.getState().get('mentionType')),
+        //             uuid: mention.uuid,
+        //         },
+        //         ...data
+        //     }
+        // });
+        // this.setState({editorState: EditorState.createWithContent(newEntity)});
+        // console.log(newEntity);
+        // console.log(newEntity.getLastCreatedEntityKey());
         this.state.isMentioned = true;
+
+        let raw = convertToRaw(currentContent);
+        raw.entityMap = {...raw.entityMap, temp:{type:'mention', mutability:'IMMUTABLE', data:{
+            mention: mention,
+                ...data
+            }}};
+        console.log(mention);
+        storeUtils.parseRulesFromRaw(raw, ScenesStore.getState().get(this.props.currentScene));
+    };
+
+    onClose = () => {
+        let rules = [];
+        if(ScenesStore.getState().get(this.props.currentScene))
+            rules = ScenesStore.getState().get(this.props.currentScene).get('rules').map((uuid) => RulesStore.getState().get(uuid));
+        if(rules.length > 0)
+            this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
     };
 
     updateSuggestions= ({ value }) => {
@@ -365,6 +398,7 @@ export default class MentionRules extends Component {
                         onOpen={this.openSuggestions}
                         suggestions={this.state.suggestions}
                         onAddMention={this.onAddMention}
+                        onClose = {this.onClose}
 
                     />
                 </div>

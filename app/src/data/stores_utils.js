@@ -7,6 +7,7 @@ import Actions from "../actions/Actions";
 import RuleActionTypes from "../interactives/rules/RuleActionTypes";
 import EventTypes from "../interactives/rules/EventTypes";
 import Mentions from "./Mentions";
+import MentionsStore from "./MentionsStore";
 
 /**
  * Returns correct comparator according to the given type
@@ -130,21 +131,26 @@ function parseRulesFromRaw(content, scene){
                     action = {...action, type: mention.action};
                     break;
                 case "scena":
-                    if(mention.name != null)
-                        action = {...action, target: mention.name}
+                    if(action.type === RuleActionTypes.TRANSITION)
+                        action = {...action, target: mention.name};
+                    else
+                        action = {...action, target: '---'}
                     break;
                 default:
                     break;
             }
-            rule = rule.set("condition", condition);
-            rule = rule.set("actions", [action]);
+            if(condition)
+                rule = rule.set("condition", condition);
+            if(action)
+                rule = rule.set("actions", [action]);
+            console.log(rule);
             rules = rules.set(val.data.rule_uuid,rule);
         }
     });
 
     rules.valueSeq().forEach((rule) =>{
         InteractiveObjectAPI.saveRule(scene,rule);
-        //Actions.updateRule(rule);
+        Actions.updateRule(rule);
     });
     return rules;
 }
@@ -200,21 +206,21 @@ function generateRawFromRules(rules) {
                     }},
                 ['oggetto' + index]: {type: 'mention', mutability: mutability, data:{
                         mention: {
-                            name: Object.keys(rule.condition).length > 0  ? ObjectsStore.getState().get(rule.condition.uuid).name : 'oggetto',
+                            name: Object.keys(rule.condition).length > 0 && rule.condition.uuid  ? ObjectsStore.getState().get(rule.condition.uuid).name : 'oggetto',
                             type: 'oggetto',
                             link: "#",
-                            uuid: Object.keys(rule.condition).length > 0 ? rule.condition.uuid : null
+                            uuid: Object.keys(rule.condition).length > 0 && rule.condition.uuid ? rule.condition.uuid : null
                         },
                         rule_uuid: rule.uuid,
                     }},
                 ['operatore' + index]: {type: 'mention', mutability: mutability, data:{
-                        mention: Object.keys(rule.condition).length > 0 ? Mentions().operators.find((mention) =>{
+                        mention: Object.keys(rule.condition).length > 0 && rule.condition.operator ? Mentions().operators.find((mention) =>{
                             return mention.operator === rule.condition.operator;
                         }) : {name: 'operatore', type: 'operatore', link:'#'},
                         rule_uuid: rule.uuid,
                     }},
                 ['valore' + index]: {type: 'mention', mutability: mutability, data:{
-                        mention: Object.keys(rule.condition).length > 0 ? Mentions().values.find((mention) =>{
+                        mention: Object.keys(rule.condition).length > 0 && rule.condition.state ? Mentions().values.find((mention) =>{
                             return mention.value === rule.condition.state;
                         }): {name: 'valore', type: 'valore', link:'#'},
                         rule_uuid: rule.uuid,
@@ -228,7 +234,7 @@ function generateRawFromRules(rules) {
                     }},
                 ['scena' + index]: {type: 'mention', mutability: mutability, data:{
                         mention: {
-                            name: rule.actions[0].type === RuleActionTypes.TRANSITION ? rule.actions[0].target : null,
+                            name: rule.actions[0].type === RuleActionTypes.TRANSITION ? (rule.actions[0].target||'---') : '---',
                             type: 'scena',
                             link: "#"
                         },
