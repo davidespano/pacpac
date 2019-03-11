@@ -206,10 +206,10 @@ function generateRawFromRules(rules) {
                     }},
                 ['oggetto' + index]: {type: 'mention', mutability: mutability, data:{
                         mention: {
-                            name: Object.keys(rule.condition).length > 0 && rule.condition.uuid  ? ObjectsStore.getState().get(rule.condition.uuid).name : 'oggetto',
+                            name: Object.keys(rule.condition).length > 0 && rule.condition.uuid && ObjectsStore.getState().get(rule.condition.uuid) ? ObjectsStore.getState().get(rule.condition.uuid).name : 'oggetto',
                             type: 'oggetto',
                             link: "#",
-                            uuid: Object.keys(rule.condition).length > 0 && rule.condition.uuid ? rule.condition.uuid : null
+                            uuid: Object.keys(rule.condition).length > 0 && rule.condition.uuid && ObjectsStore.getState().get(rule.condition.uuid) ? rule.condition.uuid : null
                         },
                         rule_uuid: rule.uuid,
                     }},
@@ -234,7 +234,7 @@ function generateRawFromRules(rules) {
                     }},
                 ['scena' + index]: {type: 'mention', mutability: mutability, data:{
                         mention: {
-                            name: rule.actions[0].type === RuleActionTypes.TRANSITION ? (rule.actions[0].target||'---') : '---',
+                            name: rule.actions[0].type === RuleActionTypes.TRANSITION ? (rule.actions[0].target||'scena') : 'scena',
                             type: 'scena',
                             link: "#"
                         },
