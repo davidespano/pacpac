@@ -126,6 +126,10 @@ function getImage(type){
             return "icons/icons8-one-way-transition-100.png";
         case InteractiveObjectsTypes.SWITCH:
             return "icons/icons8-toggle-on-filled-100.png";
+        case  InteractiveObjectsTypes.KEY:
+            return "icons/icons8-key-100.png";
+        case InteractiveObjectsTypes.LOCK:
+            return "icons/icons8-lock-100.png";
         default:
             return "?";
     }
