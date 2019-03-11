@@ -185,6 +185,19 @@ function checkIfEditableCursor(state, offset){
     return entity !== null && entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
 }
 
+function checkKeyHendle(state) {
+    let entity = getEntity(state);
+
+    console.log('ENTITY: ' + entity);
+    if(entity == null){
+        return entity == null
+    } else {
+        return entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
+    }
+
+
+}
+
 /**
  * check selected entity
  * @param state
@@ -321,4 +334,5 @@ export default {
     isMention: isMention,
     checkAt: checkAt,
     getStartIndexEntity: getStartIndexEntity,
+    checkKeyHendle: checkKeyHendle,
 }

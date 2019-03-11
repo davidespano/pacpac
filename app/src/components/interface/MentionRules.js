@@ -148,8 +148,7 @@ const Entry = (props) => {
                     />
                 </div>
 
-                <div className={theme.mentionSuggestionsEntryContainerRight}>
-                    <div className={theme.mentionSuggestionsEntryText}>
+                <div className={theme.mentionSuggestionsEntryContainerRight}><div className={theme.mentionSuggestionsEntryText}>
                         {mention.name}
                     </div>
 
@@ -175,11 +174,11 @@ export default class MentionRules extends Component {
 
         //const rules = ScenesStore.getState().get(action.name).get('rules').map((uuid) => RulesStore.getState().get(uuid));
         this.state = {
-            editorState: EditorState.createWithContent(convertFromRaw(provaRaw)),
+            editorState: EditorState.createEmpty(),
             suggestions: [],
             currentScene: CentralSceneStore.getState(),
             isMentioned: true,
-            restoreState: EditorState.createWithContent(convertFromRaw(provaRaw)),
+            restoreState: EditorState.createEmpty(),
             dispatcherToken: token,
         };
 
@@ -225,6 +224,7 @@ export default class MentionRules extends Component {
         tokens.push(ObjectToSceneStore.getDispatchToken());
         tokens.push(ObjectsStore.getDispatchToken());
         tokens.push(CentralSceneStore.getDispatchToken());
+        tokens.push(EditorStateStore.getDispatchToken());
 
         AppDispatcher.waitFor(tokens);
 
@@ -235,16 +235,15 @@ export default class MentionRules extends Component {
         else if(ScenesStore.getState().get(this.props.currentScene))
             rules = ScenesStore.getState().get(this.props.currentScene).get('rules').map((uuid) => RulesStore.getState().get(uuid));
 
+        console.log(rules);
         switch(action.type){
             case ActionTypes.RECEIVE_SCENE:
-                console.log(rules);
                 if(rules.length > 0)
                     this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
                 else
                     this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
                 break;
             case ActionTypes.UPDATE_CURRENT_SCENE:
-                console.log(action.scene.get('rules'));
                 if(rules.length > 0)
                     this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
                 else
@@ -358,6 +357,14 @@ export default class MentionRules extends Component {
             this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
     };
 
+    componentWillMount(){
+        let rules = [];
+        if(ScenesStore.getState().get(this.props.currentScene))
+            rules = ScenesStore.getState().get(this.props.currentScene).get('rules').map((uuid) => RulesStore.getState().get(uuid));
+        if(rules.length > 0)
+            this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+    };
+
     updateSuggestions= ({ value }) => {
 
         console.log(value)
@@ -415,7 +422,7 @@ export default class MentionRules extends Component {
 
         const selection = state.getSelection();
         const entity = interface_utils.getEntity(state);
-        if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
+        if(!interface_utils.checkKeyHendle(state)){ //SELECTION
             return 'handled';
         } else { //CURSOR
             //TODO bloccare la scrittura fuori da entità, scritto cosi dopo l'inseriemnto della @ non potevo scrivere
