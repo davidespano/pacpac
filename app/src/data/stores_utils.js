@@ -241,6 +241,10 @@ function generateRawFromRules(rules) {
                         rule_uuid: rule.uuid,
                         action_uuid: rule.actions[0].uuid,
                     }},
+                ['buttonRemove' + index]: {type: 'buttonRemove', mutability: mutability, data: {
+                        text:'Rimuovi',
+                        rule_uuid: rule.uuid,
+                    }}
         };
         entityMap = {...entityMap, ...entryEntityMap};
 
@@ -293,6 +297,15 @@ function generateRawFromRules(rules) {
                 type: 'allora-block',
                 entityRanges: alloraRanges,
             });
+        blocks.push({
+            text: "remove",
+            type: 'buttons-block',
+            entityRanges:[{offset: 0, length: 6, key: 'buttonRemove' + index}]
+        })
+        blocks.push({
+            text: "",
+            type: 'empty-block'
+        })
     });
 
     return {
