@@ -276,7 +276,8 @@ function generateSpecificProperties(object, props){
                             defaultValue={object.properties.state}
                             onChange={() => {
                                 let e = document.getElementById('keyDefaultState');
-                                let value = e.options[e.selectedIndex].value;
+                                let value = e.checked;
+                                console.log(value);
                                 interface_utils.setPropertyFromValue(object, 'state', value, props);
                             }}
                     />
@@ -286,7 +287,7 @@ function generateSpecificProperties(object, props){
         case InteractiveObjectsTypes.LOCK:
             return (
                 <div>
-                    <select id={'keyDefaultState'}
+                   {/* <select id={'keyDefaultState'}
                             defaultValue={object.properties.key_uuid}
                             onChange={() => {
                                 let e = document.getElementById('keyDefaultState');
@@ -295,7 +296,7 @@ function generateSpecificProperties(object, props){
                             }}
                     >
                         {generateKeyList(props, object)}
-                    </select>
+                    </select>*/}
                 </div>
             );
         default:
