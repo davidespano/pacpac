@@ -65,7 +65,8 @@ const provaRaw = {
         quando: {type: 'quando', data: 'quando'},
         se: {type: 'se', data: 'se'},
         allora: {type: 'allora', data: 'allora'},
-        button: {type: 'button', mutability: 'IMMUTABLE', data: {text: 'Aggiungi'} },
+        button: {type: 'buttonRemove', mutability: 'IMMUTABLE', data: {text: 'Rimuovi'} },
+
         soggetto: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                         mention: {
                             name: 'soggetto',
@@ -218,13 +219,13 @@ export default class MentionRules extends Component {
     }
 
     blockRendererFn = (contentBlock) =>{
-        const blockType = contentBlock.getType()
-        if (blockType === 'sono-un-bottone') {
+        const blockType = contentBlock.getType();
+        console.log(contentBlock)
+        if (blockType === 'buttons-block') {
             const entity = this.state.editorState.getCurrentContent().getEntity(contentBlock.getEntityAt(0));
-            console.log(contentBlock.getEntityAt(0))
             if(entity !== null){
-                const type = entity.getType()
-                if (type === 'buttonRemove' && type === 'buttonAddCondition' && type === 'buttonAddAction') {
+                const type = entity.getType();
+                if (type === 'buttonRemove' || type === 'buttonAddCondition' || type === 'buttonAddAction') {
                     return {
                         component: Button,
                         editable: false,
