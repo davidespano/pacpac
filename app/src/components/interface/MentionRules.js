@@ -220,18 +220,18 @@ export default class MentionRules extends Component {
 
     blockRendererFn = (contentBlock) =>{
         const blockType = contentBlock.getType();
-        console.log(contentBlock)
         if (blockType === 'buttons-block') {
             const entity = this.state.editorState.getCurrentContent().getEntity(contentBlock.getEntityAt(0));
             if(entity !== null){
                 const type = entity.getType();
-                if (type === 'buttonRemove' || type === 'buttonAddCondition' || type === 'buttonAddAction') {
+                if (type === 'buttonRemove' || type === 'buttonAddCondition' || type === 'buttonRemoveCondition') {
                     return {
                         component: Button,
                         editable: false,
                         props: {
                             text: entity.getData().text,
                             uuid: entity.getData().rule_uuid,
+                            type: type,
                         }
                     }
                 }
@@ -268,8 +268,15 @@ export default class MentionRules extends Component {
         else if(ScenesStore.getState().get(this.props.currentScene))
             rules = ScenesStore.getState().get(this.props.currentScene).get('rules').map((uuid) => RulesStore.getState().get(uuid));
 
-        console.log(rules);
         switch(action.type){
+            case ActionTypes.UPDATE_RULE:
+                console.log('voglio modificarmi ma non ci riesco perché?')
+                console.log(rules)
+                if(rules.length > 0)
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
+                else
+                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
+                break;
             case ActionTypes.RECEIVE_SCENE:
                 if(rules.length > 0)
                     this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
@@ -286,13 +293,7 @@ export default class MentionRules extends Component {
                 this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
                 break;
             case ActionTypes.REMOVE_RULE:
-                rules = rules.filter((r) => (r !== action.rule));
-                if(rules.length > 0)
-                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
-                else
-                    this.setState({editorState: EditorState.createWithContent(convertFromRaw(provaRaw))});
-                break;
-            case ActionTypes.UPDATE_RULE:
+                rules = rules.filter((r) => (r !== undefined));
                 if(rules.length > 0)
                     this.setState({editorState: EditorState.createWithContent(convertFromRaw(storeUtils.generateRawFromRules(rules)))});
                 else

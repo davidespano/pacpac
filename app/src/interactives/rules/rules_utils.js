@@ -84,8 +84,16 @@ function setProperty(rule, property, value){
     return rule.set(property, value);
 }
 
+function generateEmptyRule(){
+    return Rule({
+        uuid: uuid.v4(),
+        actions: []
+    })
+}
+
 export default {
     generateDefaultRule : generateDefaultRule,
     setAction : setAction,
     setProperty : setProperty,
+    generateEmptyRule: generateEmptyRule,
 };
