@@ -277,7 +277,6 @@ function generateSpecificProperties(object, props){
                             onChange={() => {
                                 let e = document.getElementById('keyDefaultState');
                                 let value = e.checked;
-                                console.log(value);
                                 interface_utils.setPropertyFromValue(object, 'state', value, props);
                             }}
                     />
