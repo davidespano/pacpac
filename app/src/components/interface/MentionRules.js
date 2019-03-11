@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { EditorState, Modifier, convertFromRaw, convertToRaw } from 'draft-js';
+import { Entity, EditorState, Modifier, convertFromRaw, convertToRaw } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
 import createMentionPlugin, { defaultSuggestionsFilter} from 'draft-js-mention-plugin';
 import scene_utils from "../../scene/scene_utils";
@@ -21,6 +21,7 @@ import RulesStore from "../../data/RulesStore";
 import AppDispatcher from "../../data/AppDispatcher";
 import ActionTypes from "../../actions/ActionTypes";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
+import Button from './Button'
 
 const provaRaw = {
     blocks: [
@@ -51,12 +52,20 @@ const provaRaw = {
                 {offset: 0, length: 7, key: 'allora'},
                 {offset: 7, length: 7, key: 'azione'},
             ],
+        },
+        {
+            text: 'Bottone',
+            type: 'sono-un-bottone',
+            entityRanges: [
+                {offset: 0, length: 7, key: 'button'}
+            ]
         }
     ],
     entityMap: {
         quando: {type: 'quando', data: 'quando'},
         se: {type: 'se', data: 'se'},
         allora: {type: 'allora', data: 'allora'},
+        button: {type: 'button', mutability: 'IMMUTABLE', data: {text: 'Aggiungi'} },
         soggetto: {type: 'mention',  mutability: 'IMMUTABLE', data: {
                         mention: {
                             name: 'soggetto',
@@ -161,6 +170,7 @@ const Entry = (props) => {
     );
 };
 
+
 export default class MentionRules extends Component {
 
     constructor(props) {
@@ -174,7 +184,7 @@ export default class MentionRules extends Component {
 
         //const rules = ScenesStore.getState().get(action.name).get('rules').map((uuid) => RulesStore.getState().get(uuid));
         this.state = {
-            editorState: EditorState.createEmpty(),
+            editorState: EditorState.createEmpty() ,
             suggestions: [],
             currentScene: CentralSceneStore.getState(),
             isMentioned: true,
@@ -205,6 +215,28 @@ export default class MentionRules extends Component {
             mentionPrefix: '@',
             supportWhitespace: true
         });*/
+    }
+
+    blockRendererFn = (contentBlock) =>{
+        const blockType = contentBlock.getType()
+        if (blockType === 'sono-un-bottone') {
+            const entity = this.state.editorState.getCurrentContent().getEntity(contentBlock.getEntityAt(0));
+            console.log(contentBlock.getEntityAt(0))
+            if(entity !== null){
+                const type = entity.getType()
+                if (type === 'buttonRemove' && type === 'buttonAddCondition' && type === 'buttonAddAction') {
+                    return {
+                        component: Button,
+                        editable: false,
+                        props: {
+                            text: entity.getData().text,
+                            uuid: entity.getData().rule_uuid,
+                        }
+                    }
+                }
+            }
+        }
+        return null
     }
 
     componentWillUnmount() {
@@ -288,7 +320,7 @@ export default class MentionRules extends Component {
     };
 
     focus = () => {
-        console.log(this.state.editorState)
+        //console.log(this.state.editorState)
         if(!this.state.isMentioned){
             let newState = EditorState.forceSelection(this.state.restoreState, this.state.editorState.getSelection());
             this.state.isMentioned = true;
@@ -387,6 +419,7 @@ export default class MentionRules extends Component {
             <div className={'rules'}>
                 <div className={'editor'} onClick={this.focus}>
                     <Editor
+                        blockRendererFn={this.blockRendererFn}
                         editorState={this.state.editorState}
                         handleBeforeInput={(input) => {
                             console.log('beforeInput');
