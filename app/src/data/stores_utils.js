@@ -247,7 +247,15 @@ function generateRawFromRules(rules) {
                 ['buttonRemove' + index]: {type: 'buttonRemove', mutability: mutability, data: {
                         text:'Rimuovi',
                         rule_uuid: rule.uuid,
-                    }}
+                    }},
+                ['buttonAddCondition' + index]: {type: 'buttonAddCondition', mutability: mutability, data: {
+                        text:'Aggiungi condizione',
+                        rule_uuid: rule.uuid,
+                    }},
+                ['buttonRemoveCondition' + index]: {type: 'buttonRemoveCondition', mutability: mutability, data: {
+                        text:'Rimuovi condizione',
+                        rule_uuid: rule.uuid,
+                    }},
         };
         entityMap = {...entityMap, ...entryEntityMap};
 
@@ -301,14 +309,18 @@ function generateRawFromRules(rules) {
                 entityRanges: alloraRanges,
             });
         blocks.push({
-            text: "remove",
+            text: "remove addCond remCond",
             type: 'buttons-block',
-            entityRanges:[{offset: 0, length: 6, key: 'buttonRemove' + index}]
-        })
+            entityRanges:[
+                {offset: 0, length: 6, key: 'buttonRemove' + index},
+                {offset: 6, length: 7, key: 'buttonAddCondition' + index},
+                {offset: 15, length: 7, key: 'buttonRemoveCondition' + index}
+            ]
+        });
         blocks.push({
             text: "",
             type: 'empty-block'
-        })
+        });
     });
 
     return {
