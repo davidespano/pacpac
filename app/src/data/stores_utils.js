@@ -81,6 +81,9 @@ function parseRulesFromRaw(content, scene){
             let mention = val.data.mention;
             let rule = rules.get(val.data.rule_uuid);
 
+            if(!mention)
+                return;
+
             if (!rule) {
                 rule = new Rule();
                 rule = rule.set("uuid", val.data.rule_uuid);
