@@ -964,3 +964,7 @@ li > span {
 .public-DraftEditor-content > div > div {
     display: flex;
 }
+
+.mediaBtn {
+    margin-top: 15px;
+}

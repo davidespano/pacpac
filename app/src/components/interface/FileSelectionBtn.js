@@ -14,7 +14,7 @@ function FileSelectionBtn(properties){
                 onClick={() => props.selectMediaToEdit(component)}
         >
             <img className={"action-buttons"} src={"icons/icons8-add-folder-50.png"}/>
-            Search
+            Cerca
         </button>
     );
 }

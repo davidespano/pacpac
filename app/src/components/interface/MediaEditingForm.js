@@ -82,7 +82,7 @@ function generateMediaModal(props, object){
                     >
                         <label htmlFor={"media"}>Media</label>
                         <div className={'selected-medias-and-masks'}>
-                            {object.media.media0 ? object.media.media0 : "No file selected"}
+                            {object.media.media0 ? object.media.media0 : "Nessun file selezionato"}
                             {buttonRemoveFile(object, 'media0', props)}
                         </div>
                         {buttonFileSelection(props, "media0")}
@@ -92,7 +92,7 @@ function generateMediaModal(props, object){
                     >
                         <label htmlFor={"mask"}>Mask</label>
                         <div className={'selected-medias-and-masks'}>
-                            {object.mask ? object.mask : "No file selected"}
+                            {object.mask ? object.mask : "Nessun file selezionato"}
                             {buttonRemoveFile(object, 'mask', props)}
                         </div>
                         {buttonFileSelection(props, "mask")}
@@ -118,7 +118,7 @@ function buttonRemoveFile(object, property, props){
             className={""}
             onClick={()=> interface_utils.setPropertyFromValue(object, property, null, props)}
         >
-            <img className={"action-buttons"} src={"icons/icons8-delete-filled-50.png"} alt={'Remove file'}/>
+            <img className={"action-buttons"} src={"icons/icons8-delete-filled-50.png"} alt={'Rimuovi file'}/>
         </button>
     );
 }

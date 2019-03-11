@@ -12,7 +12,7 @@ let THREE = require('three');
 function RightBar(props){
 
 
-    console.log(props.mentions);
+    //console.log(props.mentions);
 
     return(
         <div className={'rightbar'}>
@@ -207,20 +207,18 @@ function generateProperties(props){
                 {currentObject.name}
             </div>
             {generateSpecificProperties(currentObject, props)}
-            <label>Media</label>
             <button id={'edit-media-btn'}
-                    className={'propertyForm geometryBtn'}
+                    className={'propertyForm geometryBtn mediaBtn'}
                     data-toggle="modal"
                     data-target="#edit-media-modal"
             >
-                Edit Media
+                Modifica media
             </button>
-            <label>Geometry</label>
             <button
-                className={"propertyForm geometryBtn"}
+                className={"propertyForm geometryBtn mediaBtn"}
                 onClick={() => props.switchToGeometryMode() }
             >
-                Edit Geometry
+                Modifica geometria
             </button>
         </div>
     );
@@ -237,7 +235,7 @@ function generateSpecificProperties(object, props){
         case InteractiveObjectsTypes.TRANSITION:
             return (
                 <div>
-                    <label>Duration</label>
+                    <label>Durata</label>
                     <div className={"durationContainer"}>
                         <div id={"transitionDuration"}
                              className={"propertyForm"}
@@ -280,7 +278,7 @@ function generateSpecificProperties(object, props){
                                 interface_utils.setPropertyFromValue(object, 'state', value, props);
                             }}
                     />
-                        Collected
+                        Raccolto
                 </div>
             );
         case InteractiveObjectsTypes.LOCK:
@@ -415,7 +413,7 @@ function generateObjectsList(props) {
 
 
 /**
- * Generates target options for transitions
+ * Generates options for keys
  * @param props
  * @returns {any[]}
  */
