@@ -274,20 +274,34 @@ function generateRawFromRules(rules) {
                 ],
             });
 
-        let oggetto = {offset: 3, length: entityMap['oggetto'+index].data.mention.name.length +1, key: 'oggetto' + index};
-        let operatore = {offset: oggetto.offset+oggetto.length, length: entityMap['operatore'+index].data.mention.name.length +1, key: 'operatore' + index};
-        let valore = {offset: operatore.offset+operatore.length, length: entityMap['valore'+index].data.mention.name.length +1, key: 'valore' + index}
-        blocks.push(
-            {
-                text: 'SE '+entityMap['oggetto'+index].data.mention.name +' '+entityMap['operatore'+index].data.mention.name+' '+entityMap['valore'+index].data.mention.name+' ',
-                type: 'se-block',
-                entityRanges: [
-                    {offset: 0, length: 3, key: 'se' + index},
-                    oggetto,
-                    operatore,
-                    valore
-                ],
-            });
+        if(Object.keys(rule.condition).length > 0 ) {
+            let oggetto = {
+                offset: 3,
+                length: entityMap['oggetto' + index].data.mention.name.length + 1,
+                key: 'oggetto' + index
+            };
+            let operatore = {
+                offset: oggetto.offset + oggetto.length,
+                length: entityMap['operatore' + index].data.mention.name.length + 1,
+                key: 'operatore' + index
+            };
+            let valore = {
+                offset: operatore.offset + operatore.length,
+                length: entityMap['valore' + index].data.mention.name.length + 1,
+                key: 'valore' + index
+            };
+            blocks.push(
+                {
+                    text: 'SE ' + entityMap['oggetto' + index].data.mention.name + ' ' + entityMap['operatore' + index].data.mention.name + ' ' + entityMap['valore' + index].data.mention.name + ' ',
+                    type: 'se-block',
+                    entityRanges: [
+                        {offset: 0, length: 3, key: 'se' + index},
+                        oggetto,
+                        operatore,
+                        valore
+                    ],
+                });
+        }
 
 
         let alloraText = 'ALLORA ' + entityMap['azione'+index].data.mention.name + ' '
@@ -312,9 +326,9 @@ function generateRawFromRules(rules) {
             text: "remove addCond remCond",
             type: 'buttons-block',
             entityRanges:[
-                {offset: 0, length: 6, key: 'buttonRemove' + index},
-                {offset: 6, length: 7, key: 'buttonAddCondition' + index},
-                {offset: 15, length: 7, key: 'buttonRemoveCondition' + index}
+                {offset: 0, length: 7, key: 'buttonRemove' + index},
+                {offset: 7, length: 8, key: 'buttonAddCondition' + index},
+                {offset: 16, length: 7, key: 'buttonRemoveCondition' + index}
             ]
         });
         blocks.push({
