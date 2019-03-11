@@ -960,3 +960,7 @@ li > span {
 .editor :global(.public-DraftEditor-content) {
     min-height: 140px;
 }
+
+.public-DraftEditor-content > div > div {
+    display: flex;
+}
