@@ -112,18 +112,21 @@ function getByName(name, order = null) {
 
                 rules_uuids.push(rule.uuid); // save uuid
 
+                let event = JSON.parse(rule.event);
+
                 // new Rule
                 let r = Rule({
                     uuid: rule.uuid,
                     event: Action({
-                        uuid: rule.event.uuid,
-                        subj_uuid: rule.event.subj_uuid,
-                        action: rule.event.action,
-                        obj_uuid: rule.event.obj_uuid,
+                        uuid: event.uuid,
+                        subj_uuid: event.subj_uuid,
+                        action: event.action,
+                        obj_uuid: event.obj_uuid,
                     }),
                     condition: JSON.parse(rule.condition),
                     actions: actions,
                 });
+                console.log(r);
                 Actions.receiveRule(r);
             });
 
@@ -348,7 +351,7 @@ async function getAllDetailedScenes(gameGraph) {
             // new Rule
             return ({ //Rule, not immutable
                 uuid: rule.uuid,
-                event: rule.event,
+                event: JSON.parse(rule.event),
                 condition: JSON.parse(rule.condition),
                 actions: rule.actions,
             });
