@@ -8,6 +8,7 @@ import Switch from "../interactives/Switch";
 import Key from "../interactives/Key";
 import Lock from "../interactives/Lock"
 import Orders from "../data/Orders";
+import Action from "../interactives/rules/Action";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -96,10 +97,17 @@ function getByName(name, order = null) {
 
             // generates rules and saves them to the rules store
             response.body.rules.map(rule => {
-                // check actions to find scene neighbours
-                rule.actions.forEach(a => {
-                    if (a.type === RuleActionTypes.TRANSITION && a.target && a.target !== '---')
-                        adj.push(a.target);
+                // check actions to find scene neighbours and create new immutable action
+                let actions = rule.actions.map(a => {
+                    if (a.action === RuleActionTypes.TRANSITION && a.obj_uuid && a.obj_uuid !== null)
+                        adj.push(a.obj_uuid);
+
+                    return Action({
+                        uuid: a.uuid,
+                        subj_uuid: a.subj_uuid,
+                        action: a.action,
+                        obj_uuid: a.obj_uuid,
+                    });
                 });
 
                 rules_uuids.push(rule.uuid); // save uuid
@@ -107,10 +115,14 @@ function getByName(name, order = null) {
                 // new Rule
                 let r = Rule({
                     uuid: rule.uuid,
-                    object_uuid: rule.object_uuid,
-                    event: rule.event,
+                    event: Action({
+                        uuid: rule.event.uuid,
+                        subj_uuid: rule.event.subj_uuid,
+                        action: rule.event.action,
+                        obj_uuid: rule.event.obj_uuid,
+                    }),
                     condition: JSON.parse(rule.condition),
-                    actions: rule.actions,
+                    actions: actions,
                 });
                 Actions.receiveRule(r);
             });
@@ -329,14 +341,13 @@ async function getAllDetailedScenes(gameGraph) {
         const rules = s.rules.map(rule => {
             // check actions to find scene neighbours
             rule.actions.forEach(a => {
-                if (a.type === RuleActionTypes.TRANSITION && a.target && a.target !== '---' )
-                    adj.push(a.target);
+                if (a.action === RuleActionTypes.TRANSITION && a.obj_uuid && a.obj_uuid !== null)
+                    adj.push(a.obj_uuid);
             });
 
             // new Rule
             return ({ //Rule, not immutable
                 uuid: rule.uuid,
-                object_uuid: rule.object_uuid,
                 event: rule.event,
                 condition: JSON.parse(rule.condition),
                 actions: rule.actions,

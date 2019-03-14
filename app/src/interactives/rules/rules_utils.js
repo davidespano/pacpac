@@ -4,7 +4,10 @@ import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import Condition from "./Condition";
+import Action from "./Action";
 let uuid = require('uuid');
+
+const PLAYER = 'player';
 
 /**
  * Generates a default rule depending on the given object
@@ -16,46 +19,68 @@ function generateDefaultRule(object){
         case InteractiveObjectsTypes.TRANSITION:
             r = Rule({
                 uuid : uuid.v4(),
-                object_uuid : object.uuid,
-                event : EventTypes.CLICK,
-                actions : [{
-                    uuid : uuid.v4(),
-                    type : RuleActionTypes.TRANSITION,
-                    target : "---",
-                }],
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : [Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: PLAYER,
+                    action: RuleActionTypes.TRANSITION,
+                })],
             });
             break;
         case InteractiveObjectsTypes.SWITCH:
             r = Rule({
                 uuid : uuid.v4(),
-                object_uuid : object.uuid,
-                event: EventTypes.CLICK,
-                actions : [{
-                    uuid : uuid.v4(),
-                    type : RuleActionTypes.FLIP_SWITCH,
-                }]
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : [Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: PLAYER,
+                    action: RuleActionTypes.FLIP_SWITCH,
+                    obj_uuid: object.uuid,
+                })],
             });
             break;
         case InteractiveObjectsTypes.KEY:
             r = Rule({
                 uuid : uuid.v4(),
-                object_uuid : object.uuid,
-                event: EventTypes.CLICK,
-                actions : [{
-                    uuid : uuid.v4(),
-                    type : RuleActionTypes.COLLECT_KEY,
-                }]
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : [Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: PLAYER,
+                    action: RuleActionTypes.COLLECT_KEY,
+                    obj_uuid: object.uuid,
+                })],
             });
             break;
         case InteractiveObjectsTypes.LOCK:
             r = Rule({
                 uuid : uuid.v4(),
-                object_uuid : object.uuid,
-                event: EventTypes.CLICK,
-                actions : [{
-                    uuid : uuid.v4(),
-                    type : RuleActionTypes.UNLOCK_LOCK,
-                }]
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : [Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: PLAYER,
+                    action: RuleActionTypes.UNLOCK_LOCK,
+                    obj_uuid: object.uuid,
+                })],
             });
             break;
         default:
@@ -75,7 +100,7 @@ function setAction(rule, index, property, value){
 
     let actions = rule.get('actions');
     let a = actions[index];
-    a[property] = value;
+    a = a.set(property, value);
     actions[index] = a;
     return rule.set('actions', actions);
 }
