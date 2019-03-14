@@ -438,6 +438,22 @@ const Actions = {
         })
     },
 
+    // [davide] eud editor state
+    eudShowCompletions(rulePartId, input){
+        AppDispatcher.dispatch({
+            type: ActionTypes.EUD_SHOW_COMPLETIONS,
+            rulePartId: rulePartId,
+            completionText: input,
+        })
+    },
+
+    eudSaveOriginalObject(objectId){
+        AppDispatcher.dispatch({
+            type: ActionTypes.EUD_SAVE_ORIGINAL_OBJECT,
+            objectId: objectId,
+        })
+    },
+
     //MEDIA
 
     loadAllAssets(list){

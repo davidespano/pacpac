@@ -30,6 +30,7 @@ function getStores() {
         EditorStateStore,
         AssetsStore,
         MentionsStore,
+        RulesStore
     ];
 }
 
@@ -106,6 +107,11 @@ function getState() {
         updateRuleEditorFromContent: Actions.updateRuleEditorFromContent,
         updateRuleEditorFromRaw: Actions.updateRuleEditorFromRaw,
         updateSuggestion: Actions.updateSuggestion,
+        ruleEditorCallback: {
+            eudShowCompletions: Actions.eudShowCompletions,
+            eudSaveOriginalObject: Actions.eudSaveOriginalObject,
+        },
+
 
         //OTHER
 

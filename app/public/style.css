@@ -3,6 +3,7 @@
 .scene { grid-area: scene; }
 .rules {
     grid-area: rules;
+    font-size: 16pt;
 }
 .topbar {grid-area: topbar;}
 
@@ -33,6 +34,15 @@
     font-style: normal;
 
 }
+
+div.rules{
+    font-size: 16pt!important;
+}
+.rules-editor{
+    width: 100%;
+
+}
+
 
 .grid-container {
     display: grid;
@@ -967,4 +977,76 @@ li > span {
 
 .mediaBtn {
     margin-top: 15px;
+}
+
+
+
+.eudRulePart {
+    display: inline-block;
+}
+
+.eudCompletionRoot {
+    position: relative;
+}
+
+.eudCompletionPopup {
+    position: absolute;
+    left: 0px;
+    right:0px;
+    z-index: 1000;
+    border: solid 1px darkgrey;
+    background-color: white;
+    border-radius: 2px;
+    cursor: pointer;
+    max-height: 100px;
+    overflow: scroll;
+    width: 400px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%)
+
+}
+
+.eudCompletionPopup ul{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.eudCompletionPopup li:hover{
+    background-color: #e6f3ff;
+}
+
+span.eudObjectString {
+    position: relative;
+    display: inline-block;
+    min-width: 50px;
+}
+
+span.eudObjectString > span{
+    visibility: hidden;
+    display: inline-block;
+    min-width: 50px;
+}
+
+input.eudObjectString[type=text] {
+    position: absolute;
+    display:inline-block;
+    left:0px;
+    right:0px;
+    border:0px;
+    padding:0px;
+    overflow: no-display;
+    width: 100%;
+    min-width: 50px;
+    background-color: transparent;
+    color: #0f6ab4;
+    cursor: pointer;
+}
+.eudObjectButton{
+    display: inline-block;
+}
+
+.eudObjectButtonHide{
+    display: none;
 }

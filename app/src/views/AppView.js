@@ -13,6 +13,7 @@ import FileForm from "../components/interface/FileForm";
 import MediaEditingform from "../components/interface/MediaEditingForm";
 import Login from "../components/interface/Login";
 import GameList from "../components/interface/GameList";
+import EudRuleEditor from "../components/interface/EudRuleEditor";
 
 function AppView(props) {
 
@@ -32,7 +33,7 @@ function AppView(props) {
                         <LeftBar {...props} />
                         <RightBar {...props} />
                         <CentralScene {...props} />
-                        <MentionRules {...props} />
+                        <EudRuleEditor {...props} />
                     </div>
                 </div>
             );
