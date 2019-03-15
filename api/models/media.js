@@ -1,15 +1,23 @@
 const fs = require('fs');
+const readdirp = require('readdirp');
+
 
 function getAll(session, gameID) {
-    let fileList;
+    let fileList = [];
     const path = "public/" + gameID;
     const promise = new Promise(function(resolve, reject){
-        fs.readdir(path, function(err, files){
-            if (err != null){
-                reject(err);
-            }
-            else resolve(files);
-        })
+
+        readdirp({root: path})
+            .on('data',(file) => fileList.push(file.path.replace(/\\/g,'/')))
+            .on('error', (error) => reject(error))
+            .on('warn', (error) => reject(error))
+            .on('end', () => resolve(fileList));
+        // fs.readdir(path, function(err, files){
+        //     if (err != null){
+        //         reject(err);
+        //     }
+        //     else resolve(files);
+        // })
     });
     return promise;
 }
