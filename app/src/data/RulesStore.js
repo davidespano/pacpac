@@ -48,14 +48,14 @@ class RulesStore extends ReduceStore {
                     }
 
                     // check actions
-                    let actions = rule.get('actions').map(action => {
-                        if(action.get('subj_uuid') === action.obj.get('uuid')){
-                            action = action.set('subj_uuid', null);
+                    let actions = rule.get('actions').map(a => {
+                        if(a.get('subj_uuid') === action.obj.get('uuid')){
+                            a = a.set('subj_uuid', null);
                         }
-                        if(action.get('obj_uuid') === action.obj.get('uuid')){
-                            action = action.set('obj_uuid', null);
+                        if(a.get('obj_uuid') === action.obj.get('uuid')){
+                            a = a.set('obj_uuid', null);
                         }
-                        return action;
+                        return a;
                     });
 
                     return rule.set('actions', actions).set('event', event);;
