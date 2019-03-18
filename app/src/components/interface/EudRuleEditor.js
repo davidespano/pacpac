@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import EventTypes from "../../interactives/rules/EventTypes"
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes"
 import InteractiveObjectTypes from "../../interactives/InteractiveObjectsTypes"
+import Action from "../../interactives/rules/Action"
 
 export default class EudRuleEditor extends Component {
     constructor(props) {
@@ -167,7 +168,7 @@ class EudAction extends Component {
 
 
     render() {
-        switch (this.props.action.type) {
+        switch (this.props.action.action) {
             case RuleActionTypes.TRANSITION:
                 let scene = this.props.scenes.get(this.props.action.target);
                 return <span className={"action"}>
@@ -176,13 +177,15 @@ class EudAction extends Component {
                 <a href="#" className={"object"}>la scena {scene.name}</a>
             </span>;
             case RuleActionTypes.COLLECT_KEY:
-                let propsId = this.props.rules.get('rulePartId');
+                let rulePartId = this.props.rules.get('rulePartId');
                 let showCompletion =
-                    propsId != null &&
-                    propsId.rule == this.props.rule.uuid &&
-                    propsId.partType == this.props.action &&
-                    propsId.partId == this.props.rule.object_uuid;
-                let key = this.props.interactiveObjects.get(this.props.rule.object_uuid);
+                    rulePartId != null &&
+                    rulePartId == this.props.action.uuid;
+                    //rulePartId != null &&
+                    //rulePartId.rule == this.props.rule.uuid &&
+                    //rulePartId.partType == this.props.action &&
+                    //rulePartId.partId == this.props.action.obj_uuid;
+                let key = this.props.interactiveObjects.get(this.props.action.obj_uuid);
                 return <span className={"action"}>
                                 <span className={"subject"}>il giocatore </span>
                                 <span className={"operation"}>inserisce nell'inventario </span>
@@ -190,16 +193,14 @@ class EudAction extends Component {
                                         interactiveObjects={this.props.interactiveObjects}
                                         rules={this.props.rules}
                                         rule={this.props.rule}
-                                        ruleId={this.props.rule.uuid}
-                                        subject={"PLAYER"}
                                         object={this.props.rule.object_uuid}
-                                        action={this.props.action.type}
-                                        part={this.props.action}
+                                        action={this.props.action}
                                         ruleEditorCallback={this.props.ruleEditorCallback}
                                         originalText={objectTypeToString(key.type) + " " + key.name}
                                         inputText={this.props.rules.get('completionInput')}
                                         showCompletion={showCompletion}
                                         changeText = {(text) => this.changeText(text)}
+                                        updateRule = {(rule) => this.updateRule(rule)}
                                     />
                     </span>;
 
@@ -210,10 +211,36 @@ class EudAction extends Component {
     }
 
     changeText(text){
-        let rulePartId = createRulePartId(this.props.rule.uuid, this.props.action, this.props.rule.object_uuid);
+        let rulePartId = this.props.action.uuid;
+        //createRulePartId(this.props.rule.uuid, this.props.action, this.props.rule.object_uuid);
         this.props.ruleEditorCallback.eudShowCompletions(
             rulePartId,
             text)
+    }
+
+    updateRule(ruleUpdate){
+        let rule = this.props.rule;
+        // TODO [davide] inefficiente, utilizzare i metodi di immutable
+        let index = -1;
+        let action;
+        for(var i = 0; i < rule.actions.length; i++){
+            if(rule.actions[i].uuid == ruleUpdate.action){
+                index = i;
+                action = rule.actions[i];
+            }
+        }
+        // TODO [davide] set da fare nel caso di piu di un elemento
+        rule = rule.set('actions', [
+            Action({
+                uuid: action.uuid,
+                action: action.action,
+                subj_uuid: action.subj_uuid,
+                obj_uuid: ruleUpdate.object,
+            })]);
+
+        //rule = rule.set("actions",  actions);
+        this.props.ruleEditorCallback.eudUpdateRule(rule);
+        this.props.ruleEditorCallback.eudShowCompletions(null, null);
     }
 
 }
@@ -246,10 +273,12 @@ class EudObject extends Component {
         if(this.props.showCompletion){
             autocomplete = <EudAutoComplete
                 subject={this.props.subject}
-                actionType={this.props.actionType}
+                action={this.props.action}
                 interactiveObjects={this.props.interactiveObjects}
                 input={this.props.inputText}
                 originalId={this.props.object}
+                changeText = {(text) => this.changeText(text)}
+                updateRule = {(rule) => this.props.updateRule(rule)}
             />;
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
@@ -315,7 +344,7 @@ class EudAutoComplete extends Component {
         let items = getCompletions({
             interactiveObjects: this.props.interactiveObjects,
             subject: this.props.subject,
-            actionType: this.props.actionType
+            actionType: this.props.action.action
         });
         let li = items.valueSeq()
             .filter(i => {
@@ -324,7 +353,11 @@ class EudAutoComplete extends Component {
                 const word = n[n.length - 1];
                 return key.includes(word);
             }).map(i => {
-                return <EudAutoCompleteItem item={i}/>
+                return <EudAutoCompleteItem item={i}
+                                            action={this.props.action}
+                                            changeText = {(text) => this.changeText(text)}
+                                            updateRule = {(rule) => this.props.updateRule(rule)}
+                />
             });
         return <div className={"eudCompletionPopup"}>
             <ul>
@@ -343,18 +376,34 @@ class EudAutoCompleteItem extends Component {
      * @param props
      *          item: interactive object for the completion
      *
+     *
      */
     constructor(props) {
         super(props);
     }
 
     render() {
-        return <li>{objectTypeToString(this.props.item.type)} {this.props.item.name}</li>;
+        let text =  objectTypeToString(this.props.item.type) + " " +  this.props.item.name;
+        return <li
+            onClick={(e) =>{
+                e.stopPropagation();
+                this.changeSelection(text);
+            }}>
+            {text}
+            </li>;
+    }
+
+    changeSelection(){
+        const ruleUpdate = {
+            action: this.props.action.uuid,
+            object: this.props.item.uuid
+        };
+        this.props.updateRule(ruleUpdate);
     }
 }
 
 /**
- * Retrieves the set of the possible completions, given a subject and action type and a subject
+ * Retrieves the set of the possible completions, given a subject and action type
  * @param props
  *          subject-> the subject that executes the action
  *          actionType -> the type of action the subject executes

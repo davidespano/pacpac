@@ -110,6 +110,7 @@ function getState() {
         ruleEditorCallback: {
             eudShowCompletions: Actions.eudShowCompletions,
             eudSaveOriginalObject: Actions.eudSaveOriginalObject,
+            eudUpdateRule: Actions.updateRule,
         },
 
 
