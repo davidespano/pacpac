@@ -19,9 +19,9 @@ class RulesStore extends ReduceStore {
                 state = state.set('objectId', action.objectId);
                 return state;
             case ActionTypes.EUD_SHOW_COMPLETIONS:
-                state = state.set('rulePartId', action.rulePartId);
+                state = state.set('actionId', action.actionId);
+                state = state.set('role', action.role);
                 state = state.set('completionInput', action.completionText);
-                //state = state.set("rulePartId", action.rulePartId);
                 return state;
             case ActionTypes.ADD_NEW_RULE:
                 state = state.set(action.rule.uuid, action.rule);

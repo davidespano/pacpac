@@ -1,6 +1,7 @@
 import Immutable from "immutable";
 import Action from "./Action";
 
+
 /**
  * @type {*|Immutable.Record.Class}
  * @param uuid default null
@@ -12,7 +13,7 @@ import Action from "./Action";
 const Rule = Immutable.Record({
 
     uuid : null,
-    event : Action({}),
+    event : null,
     condition : {},
     actions : [],
 

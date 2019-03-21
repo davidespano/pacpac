@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
-import EventTypes from "../../interactives/rules/EventTypes"
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes"
 import InteractiveObjectTypes from "../../interactives/InteractiveObjectsTypes"
+import InteractiveObject from "../../interactives/InteractiveObject"
+import Immutable from "immutable";
 import Action from "../../interactives/rules/Action"
+import Rule from "../../interactives/rules/Rule";
+let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
     constructor(props) {
@@ -18,17 +21,30 @@ export default class EudRuleEditor extends Component {
                     return <EudRule
                         interactiveObjects={this.props.interactiveObjects}
                         scenes={this.props.scenes}
+                        currentScene={this.props.currentScene}
                         rules={this.props.rules}
                         rule={rule}
                         ruleEditorCallback={this.props.ruleEditorCallback}
+                        removeRule = {(rule) => {this.onRemoveRuleClick(rule)}}
                     />
                 });
             return <div className={"rules"}>
-                <div className={"rule-editor"}
-                     onClick={() => {
-                         this.onClick();
-                     }}>
-                    {rulesRendering}
+                <div className={"rule-container"}>
+                    <div className={"rule-editor"}
+                         onClick={() => {
+                             this.onOutsideClick();
+                         }}>
+                        <h2>Regole della scena</h2>
+                        {rulesRendering}
+                    </div>
+                    <div className={"eudFloating"}>
+                        <button className={"propertyForm geometryBtn"}
+                                onClick={() => {
+                                    this.onNewRuleClick();
+                                }}>
+                            Nuova Regola
+                        </button>
+                    </div>
                 </div>
             </div>;
         } else {
@@ -36,10 +52,22 @@ export default class EudRuleEditor extends Component {
         }
     }
 
-    onClick() {
-        //let originalObject = this.props.interactiveObjects.get(this.props.rules.get('objectId'));
-        //let text = objectTypeToString(originalObject.type) + " " + originalObject.name;
+    onOutsideClick() {
         this.props.ruleEditorCallback.eudShowCompletions(null, null)
+    }
+
+    onNewRuleClick(){
+        let scene = this.props.scenes.get(this.props.currentScene);
+        let event = Action().set("uuid", uuid.v4());
+        let acts = [Action().set("uuid", uuid.v4())];
+        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts);
+        this.props.addNewRule(scene, rule);
+    }
+
+    onRemoveRuleClick(ruleId){
+        let scene = this.props.scenes.get(this.props.currentScene);
+        let rule = this.props.rules.get(ruleId);
+        this.props.removeRule(scene, rule);
     }
 
 
@@ -57,10 +85,24 @@ class EudRule extends Component {
      */
     constructor(props) {
         super(props);
+        this.state = {
+            isMouseInside: false
+        };
     }
+
+    mouseEnter(){
+        this.setState({isMouseInside: true});
+    }
+
+    mouseLeave(){
+        this.setState({isMouseInside: false});
+    }
+
 
     render() {
         let rule = this.props.rules.get(this.props.rule);
+        let buttonBar = this.state.isMouseInside ? "eudAction" : "eudAction eudHidden";
+        let ruleCssClass = this.state.isMouseInside ?  "eudRule eudHighlight" : "eudRule";
         if (rule) {
             let actionRendering = rule.actions.map(
                 action => {
@@ -73,59 +115,46 @@ class EudRule extends Component {
                         ruleEditorCallback={this.props.ruleEditorCallback}
                     />
                 });
-            return <p id={"rule-" + rule.uuid}>
-                <span className={"keyword when"}>Quando </span>
-                <EudEvent
+            return <div className={ruleCssClass}
+                    onMouseEnter={() => {this.mouseEnter()}}
+                      onMouseLeave={() => {this.mouseLeave()}}>
+                <span className={"eudWhen"}>Quando </span>
+                <EudAction
                     interactiveObjects={this.props.interactiveObjects}
+                    scenes={this.props.scenes}
                     rules={this.props.rules}
                     rule={rule}
+                    action={rule.event}
                     ruleEditorCallback={this.props.ruleEditorCallback}
                 /><br/>
                 <EudCondition condition={rule.condition}/>
-                <span className={"keyword if"}>allora </span>{actionRendering}
-            </p>
+                <span className={"eudThen"}>allora </span>
+                {actionRendering}
+                <div className={buttonBar}>
+                    <button title={"Cancella la regola"} onClick={()=>{}}
+                            className={"eudDelete action-buttons-container"}>
+                        <img className={"action-buttons"} src={"icons/icons8-condition-128.png"} alt={"Elimina la regola"}/>
+                        &nbsp;Aggiungi Condizione
+                    </button>
+                    <button title={"Cancella la regola"} onClick={()=>{}}
+                            className={"eudDelete action-buttons-container"}>
+                        <img className={"action-buttons"} src={"icons/icons8-action-128.png"} alt={"Elimina la regola"}/>
+                        &nbsp;Aggiungi Azione
+                    </button>
+                    <button title={"Cancella la regola"} onClick={()=>{this.props.removeRule(this.props.rule)}}
+                            className={"eudDelete action-buttons-container"}>
+                        <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={"Elimina la regola"}/>
+                        &nbsp;Elimina Regola
+                    </button>
+                </div>
+            </div>
         } else {
             return <p>Regola non trovata</p>
         }
     }
 
-}
 
-class EudEvent extends Component {
-    /**
-     *
-     * @param props
-     *          interactiveObjects -> list of interactive objects in the game
-     *          rules -> the list of rules in the game
-     *          rule -> the current rule
-     *          ruleEditorCallback -> callback functions for the rules store
-     *
-     *
-     */
-    constructor(props) {
-        super(props);
-    }
 
-    render() {
-        /*
-        <EudObject
-                interactiveObjects={this.props.interactiveObjects}
-                rules={this.props.rules}
-                rule={this.props.rule}
-                ruleId={this.props.rule.uuid}
-                subject={"PLAYER"}
-                object={this.props.rule.object_uuid}
-                part={this.props.rule.event}
-                action={this.props.rule.event}
-                ruleEditorCallback={this.props.ruleEditorCallback}
-            />
-         */
-        return <span className={"event"}>
-        <span className={"subject"}>il giocatore </span>
-        <span className={"operation"}>{eventTypeToString(this.props.rule.event)} </span>
-
-    </span>
-    }
 }
 
 class EudCondition extends Component {
@@ -168,91 +197,196 @@ class EudAction extends Component {
 
 
     render() {
-        switch (this.props.action.action) {
-            case RuleActionTypes.TRANSITION:
-                let scene = this.props.scenes.get(this.props.action.target);
-                return <span className={"action"}>
-                <span className={"subject"}>il giocatore </span>
-                <span className={"operation"}>si sposta verso </span>
-                <a href="#" className={"object"}>la scena {scene.name}</a>
-            </span>;
-            case RuleActionTypes.COLLECT_KEY:
-                let rulePartId = this.props.rules.get('rulePartId');
-                let showCompletion =
-                    rulePartId != null &&
-                    rulePartId == this.props.action.uuid;
-                    //rulePartId != null &&
-                    //rulePartId.rule == this.props.rule.uuid &&
-                    //rulePartId.partType == this.props.action &&
-                    //rulePartId.partId == this.props.action.obj_uuid;
-                let key = this.props.interactiveObjects.get(this.props.action.obj_uuid);
-                return <span className={"action"}>
-                                <span className={"subject"}>il giocatore </span>
-                                <span className={"operation"}>inserisce nell'inventario </span>
-                                    <EudObject
-                                        interactiveObjects={this.props.interactiveObjects}
-                                        rules={this.props.rules}
-                                        rule={this.props.rule}
-                                        object={this.props.rule.object_uuid}
-                                        action={this.props.action}
-                                        ruleEditorCallback={this.props.ruleEditorCallback}
-                                        originalText={objectTypeToString(key.type) + " " + key.name}
-                                        inputText={this.props.rules.get('completionInput')}
-                                        showCompletion={showCompletion}
-                                        changeText = {(text) => this.changeText(text)}
-                                        updateRule = {(rule) => this.updateRule(rule)}
-                                    />
-                    </span>;
+        let actionId = this.props.rules.get('actionId');
+        let subjectCompletion = this.showCompletion(actionId, "subject");
+        let subject = this.getInteractiveObjectReference(this.props.action.subj_uuid);
+        let actionRendering =
+            <EudRulePart
+            interactiveObjects={this.props.interactiveObjects}
+            rules={this.props.rules}
+            rule={this.props.rule}
+            subject={subject}
+            object={this.props.rule.object_uuid}
+            action={this.props.action}
+            ruleEditorCallback={this.props.ruleEditorCallback}
+            originalText={subject == null? "" : objectTypeToString(subject.type) + " " + subject.name}
+            inputText={this.props.rules.get('completionInput')}
+            showCompletion={subjectCompletion}
+            changeText = {(text, role) => this.changeText(text, role)}
+            updateRule = {(rule, role) => this.updateRule(rule, role)}
+            role={"subject"}
+        />;
 
 
+        let operationCompletion = this.showCompletion(actionId, "operation");
+        let operationRendering = <EudRulePart
+            interactiveObjects={this.props.interactiveObjects}
+            rules={this.props.rules}
+            rule={this.props.rule}
+            subject={subject}
+            object={this.props.rule.object_uuid}
+            action={this.props.action}
+            ruleEditorCallback={this.props.ruleEditorCallback}
+            originalText={eventTypeToString(this.props.action.get('action'))}
+            inputText={this.props.rules.get('completionInput')}
+            showCompletion={operationCompletion}
+            changeText = {(text, role) => this.changeText(text, role)}
+            updateRule = {(rule, role) => this.updateRule(rule, role)}
+            role={"operation"}
+        /> ;
 
-        }
-        return <span className={"action"}>[Azione]</span>
+        let objectCompletion = this.showCompletion(actionId, "object");
+        let object = this.getInteractiveObjectReference(this.props.action.obj_uuid);
+        let objectRendering =
+            <EudRulePart
+            interactiveObjects={this.props.interactiveObjects}
+            rules={this.props.rules}
+            rule={this.props.rule}
+            subject={subject}
+            object={this.props.rule.object_uuid}
+            action={this.props.action}
+            ruleEditorCallback={this.props.ruleEditorCallback}
+            originalText={object == null? "" : objectTypeToString(object.type) + " " + object.name}
+            inputText={this.props.rules.get('completionInput')}
+            showCompletion={objectCompletion}
+            changeText = {(text, role) => this.changeText(text, role)}
+            updateRule = {(rule, role) => this.updateRule(rule, role)}
+            role={"object"}
+        />;
+
+
+        return <span className={"eudAction"}>
+            {actionRendering}
+            {operationRendering}
+            {objectRendering}
+        </span>;
+
     }
 
-    changeText(text){
-        let rulePartId = this.props.action.uuid;
-        //createRulePartId(this.props.rule.uuid, this.props.action, this.props.rule.object_uuid);
+    changeText(text, role){
+        let actionId = this.props.action.uuid;
         this.props.ruleEditorCallback.eudShowCompletions(
-            rulePartId,
-            text)
+            actionId, role, text)
     }
 
-    updateRule(ruleUpdate){
+    getInteractiveObjectReference(uuid){
+        if(uuid == "player"){
+            return InteractiveObject({
+                type: InteractiveObjectTypes.PLAYER,
+                uuid: "player",
+                name:""});
+        }
+
+        return this.props.interactiveObjects.get(uuid);
+    }
+
+    updateRule(ruleUpdate, role){
+
         let rule = this.props.rule;
         // TODO [davide] inefficiente, utilizzare i metodi di immutable
         let index = -1;
         let action;
+        let event = false;
         for(var i = 0; i < rule.actions.length; i++){
             if(rule.actions[i].uuid == ruleUpdate.action){
                 index = i;
                 action = rule.actions[i];
             }
         }
-        // TODO [davide] set da fare nel caso di piu di un elemento
-        rule = rule.set('actions', [
-            Action({
-                uuid: action.uuid,
-                action: action.action,
-                subj_uuid: action.subj_uuid,
-                obj_uuid: ruleUpdate.object,
-            })]);
+        if(index == -1 && ruleUpdate.action == rule.event.uuid){
+            // TODO [davide] gestire la parte nell'evento
+            action = rule.event;
+            event = true;
+        }
 
-        //rule = rule.set("actions",  actions);
+
+
+        switch(role){
+            case "subject":
+                if(event){
+                    rule = rule.set('event',
+                        Action({
+                            uuid: action.uuid,
+                            action: null,
+                            subj_uuid: ruleUpdate.object,
+                            obj_uuid: null,
+                        }));
+                }else {
+                    // TODO [davide] set da fare nel caso di piu di un elemento
+                    rule = rule.set('actions', [
+                        Action({
+                            uuid: action.uuid,
+                            action: null,
+                            subj_uuid: ruleUpdate.object,
+                            obj_uuid: null,
+                        })]);
+                }
+
+                break;
+            case "object":
+                if(event){
+                    rule = rule.set('event',
+                        Action({
+                            uuid: action.uuid,
+                            action: action.action,
+                            subj_uuid: action.subj_uuid,
+                            obj_uuid: ruleUpdate.object,
+                        }));
+                }else{
+                    // TODO [davide] set da fare nel caso di piu di un elemento
+                    rule = rule.set('actions', [
+                        Action({
+                            uuid: action.uuid,
+                            action: action.action,
+                            subj_uuid: action.subj_uuid,
+                            obj_uuid: ruleUpdate.object,
+                        })]);
+                }
+
+                break;
+            case "operation":
+                if(event){
+                    rule = rule.set('event',
+                        Action({
+                            uuid: action.uuid,
+                            action: ruleUpdate.object,
+                            subj_uuid: action.subj_uuid,
+                            obj_uuid: null,
+                        }));
+                }else{
+                    // TODO [davide] set da fare nel caso di piu di un elemento
+                    rule = rule.set('actions', [
+                        Action({
+                            uuid: action.uuid,
+                            action: ruleUpdate.object,
+                            subj_uuid: action.subj_uuid,
+                            obj_uuid: null,
+                        })]);
+                }
+
+        }
         this.props.ruleEditorCallback.eudUpdateRule(rule);
         this.props.ruleEditorCallback.eudShowCompletions(null, null);
+
+    }
+
+    showCompletion(actionId, role){
+        return actionId != null &&
+            role == this.props.rules.get('role') &&
+            actionId == this.props.action.uuid;
     }
 
 }
 
-class EudObject extends Component {
+
+class EudRulePart extends Component {
 
     /**
      *
      * @param props
      *          interactiveObjects -> list of interactive objects in the game
      *          rules -> the list of rules in the game
-     *          rule -> the curren rule
+     *          rule -> the current rule
      *          subject -> the subject part in the current rule
      *          actionType -> the action type in the current rule
      *          part -> the rule part that includes the object
@@ -268,8 +402,9 @@ class EudObject extends Component {
 
     render() {
         let autocomplete = null;
-        let buttonVisible="eudObjectButtonHide";
+        let buttonVisible="eudHide";
         let text = this.props.originalText;
+        let css = "eudRulePart eudCompletionRoot eud" +  this.props.role;
         if(this.props.showCompletion){
             autocomplete = <EudAutoComplete
                 subject={this.props.subject}
@@ -277,28 +412,29 @@ class EudObject extends Component {
                 interactiveObjects={this.props.interactiveObjects}
                 input={this.props.inputText}
                 originalId={this.props.object}
-                changeText = {(text) => this.changeText(text)}
-                updateRule = {(rule) => this.props.updateRule(rule)}
+                changeText = {(text, role) => this.changeText(text, role)}
+                updateRule = {(rule, role) => this.props.updateRule(rule, role)}
+                role = {this.props.role}
             />;
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
         }
-        return <div className={"eudRulePart eudCompletionRoot"}>
-            <a href="#" className={"object"}
+        return <div className={css}>
+            <span className={"eudInputBox"}
                onClick = {
                    (e) => {
                        e.stopPropagation();
                        if(!this.props.showCompletion){
-                           this.props.changeText(this.props.originalText);
+                           this.props.changeText(this.props.originalText, this.props.role);
                        }
                    }
                }
             >
                 <span>
                     <span className={"eudObjectString"}>
-                        <span>{text}</span>
+                        <span>{text == "" ? this.getPlaceholder(this.props.role) : text}</span>
                         <input type={"text"}
-                              className={"eudObjectString"}
+                              className={"eudObjectString"} placeholder={this.getPlaceholder(this.props.role)}
                               onChange={(e) => this.onChange(e)}
                              value={text}
                              />
@@ -307,19 +443,34 @@ class EudObject extends Component {
                             onClick={(e) => {
                                 e.stopPropagation();
                                 this.onClear();
-                            }}>x</button>
+                            }}><img className={"action-buttons"} src={"icons/icons8-x-128.png"} alt={"Cancella la regola"}/></button>
                 </span>
-            </a>
+            </span>
             {autocomplete}
         </div>;
     }
 
+    getPlaceholder(partType){
+        switch(partType){
+            case "subject":{
+                return "[un soggetto]";
+            }
+            case "operation":{
+                return "[aziona]";
+            }
+            case "object":{
+                return "[un oggetto]";
+            }
+        }
+        return "[nessuno]"
+    }
+
     onChange(e) {
-        this.props.changeText(e.target.value);
+        this.props.changeText(e.target.value, this.props.role);
     }
 
     onClear(){
-        this.props.changeText("");
+        this.props.changeText("", this.props.role);
     }
 }
 
@@ -344,7 +495,8 @@ class EudAutoComplete extends Component {
         let items = getCompletions({
             interactiveObjects: this.props.interactiveObjects,
             subject: this.props.subject,
-            actionType: this.props.action.action
+            actionType: this.props.action.action,
+            role: this.props.role
         });
         let li = items.valueSeq()
             .filter(i => {
@@ -352,11 +504,14 @@ class EudAutoComplete extends Component {
                 let n = (this.props.input ? this.props.input : "").split(" ");
                 const word = n[n.length - 1];
                 return key.includes(word);
-            }).map(i => {
+            })
+            .map(i => {
                 return <EudAutoCompleteItem item={i}
                                             action={this.props.action}
-                                            changeText = {(text) => this.changeText(text)}
-                                            updateRule = {(rule) => this.props.updateRule(rule)}
+                                            subject={this.props.subject}
+                                            role={this.props.role}
+                                            changeText = {(text, role) => this.changeText(text, role)}
+                                            updateRule = {(rule, role) => this.props.updateRule(rule, role)}
                 />
             });
         return <div className={"eudCompletionPopup"}>
@@ -383,7 +538,9 @@ class EudAutoCompleteItem extends Component {
     }
 
     render() {
-        let text =  objectTypeToString(this.props.item.type) + " " +  this.props.item.name;
+
+        let text = objectTypeToString(this.props.item.type) + " " +  this.props.item.name;
+
         return <li
             onClick={(e) =>{
                 e.stopPropagation();
@@ -398,7 +555,7 @@ class EudAutoCompleteItem extends Component {
             action: this.props.action.uuid,
             object: this.props.item.uuid
         };
-        this.props.updateRule(ruleUpdate);
+        this.props.updateRule(ruleUpdate, this.props.role);
     }
 }
 
@@ -412,16 +569,61 @@ class EudAutoCompleteItem extends Component {
  */
 function getCompletions(props) {
     // TODO [davide] stub implemenation
-    return props.interactiveObjects;
+    switch(props.role){
+        case "subject":
+        case "object":
+            return props.interactiveObjects.set("player",
+                InteractiveObject({
+                    type: InteractiveObjectTypes.PLAYER,
+                    uuid: "player",
+                    name:""}));
+        case "operation":
+            if(props.subject.uuid == "player"){
+                return Immutable.Map([
+                    [
+                    RuleActionTypes.CLICK,
+                        {
+                            type: "operation",
+                            name: eventTypeToString(RuleActionTypes.CLICK),
+                            uuid: RuleActionTypes.CLICK
+                        },
+                ]]);
+            }else{
+                return Immutable.Map([
+                    [
+                        RuleActionTypes.COLLECT_KEY,
+                        {
+                            type: "operation",
+                            name: eventTypeToString(RuleActionTypes.COLLECT_KEY),
+                            uuid: RuleActionTypes.COLLECT_KEY
+                        }
+                    ],
+                    [
+                        RuleActionTypes.TRANSITION,
+                        {
+                            type: "operation",
+                            name: eventTypeToString(RuleActionTypes.TRANSITION),
+                            uuid: RuleActionTypes.TRANSITION
+                        }
+                    ],
+                ]);
+            }
+
+    }
+
 }
 
 
 function eventTypeToString(eventType) {
     switch (eventType) {
-        case  EventTypes.CLICK:
+        case  RuleActionTypes.CLICK:
             return "clicca";
+        case RuleActionTypes.COLLECT_KEY:
+            return "raccoglie";
+        case RuleActionTypes.TRANSITION:
+            return "si sposta verso";
         default:
-            return "evento sconosciuto";
+            return "";
     }
 }
 
@@ -445,15 +647,11 @@ function objectTypeToString(objectType) {
             return "la chiave";
         case InteractiveObjectTypes.TRANSITION:
             return "la transizione";
+        case InteractiveObjectTypes.PLAYER:
+            return "il giocatore";
+        case "operation":
+            return "";
         default:
             return "l'oggetto sconosciuto";
-    }
-}
-
-function createRulePartId(rule, rulePartType, rulePartId){
-    return {
-        rule: rule,
-        partType: rulePartType,
-        partId: rulePartId,
     }
 }

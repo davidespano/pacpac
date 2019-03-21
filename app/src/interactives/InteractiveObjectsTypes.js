@@ -9,6 +9,7 @@ const InteractiveObjectsTypes = {
     COUNTER : 'COUNTER',
     BUTTON : 'BUTTON',
     LOCK: 'LOCK',
+    PLAYER: 'PLAYER'
 
 };
 

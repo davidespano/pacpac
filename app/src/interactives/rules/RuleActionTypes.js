@@ -9,6 +9,7 @@ const RuleActionTypes = {
     STOP_AUDIO: 'STOP_AUDIO',
     COLLECT_KEY: 'COLLECT_KEY',
     UNLOCK_LOCK: 'UNLOCK_LOCK',
+    CLICK: 'CLICK',
 };
 
 export default RuleActionTypes;

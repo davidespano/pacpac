@@ -439,10 +439,11 @@ const Actions = {
     },
 
     // [davide] eud editor state
-    eudShowCompletions(rulePartId, input){
+    eudShowCompletions(actionId, role, input){
         AppDispatcher.dispatch({
             type: ActionTypes.EUD_SHOW_COMPLETIONS,
-            rulePartId: rulePartId,
+            actionId: actionId,
+            role: role,
             completionText: input,
         })
     },
