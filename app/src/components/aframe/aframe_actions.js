@@ -12,6 +12,9 @@ function executeAction(VRScene, rule, action){
     let actual_scene = VRScene.state.activeScene.name;
     let current_object = {};
     let game_graph = VRScene.state.graph;
+    let sceneName = action.obj_uuid;
+    let media = sceneName + '.mp4' ;
+    console.log(action.action)
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.object_uuid){
             current_object = o;
@@ -19,24 +22,26 @@ function executeAction(VRScene, rule, action){
         }
     });
 
-    switch (action.type) {
+    switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
             let cursor = document.querySelector('#cursor');
             let duration = current_object.properties.duration;
+
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
 
             let objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
 
             if(objectVideo_transition != null) {
+
                 objectVideo_transition.play();
                 duration_transition = (objectVideo_transition.duration * 1000);
             }
 
             setTimeout(function () {
                 if(objectVideo_transition != null) objectVideo_transition.pause();
-                transition(state.activeScene, state.graph.scenes[action.target], duration);
+                transition(state.activeScene, state.graph.scenes[sceneName], duration);
             },duration_transition);
 
             break;
@@ -91,25 +96,24 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
-            let scene = action.targetScene;
-            let media = action.media;
-            runState[scene].background = media;
+
+            runState[sceneName].background = media;
             VRScene.setState({runState: runState});
-            let targetSceneVideo = document.getElementById(scene + '.mp4');
+            let targetSceneVideo = document.getElementById(media);
             targetSceneVideo.play();
             break;
         case RuleActionTypes.PLAY_AUDIO:
-            let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + action.media;
+            let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;
             let sound = new Howl({
                 src: [media_audio],
-                loop: action.loop,
+                //loop: action.loop,
             });
-            soundsHub[action.media] = sound;
+            soundsHub[media] = sound;
             sound.play();
             break;
         case RuleActionTypes.STOP_AUDIO:
-            if(soundsHub[action.media])
-                soundsHub[action.media].stop();
+            if(soundsHub[media])
+                soundsHub[media].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
             runState[current_object.uuid].state='COLLECTED';

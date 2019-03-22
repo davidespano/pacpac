@@ -55,8 +55,14 @@ AFRAME.registerComponent('play_video', {
         let active= this.data.active;
         if(active){
             setTimeout(function() {
-                let video = document.getElementById(videoID);
-                video.play();
+                let video = document.getElementById(videoID).play();
+                if(video !== undefined){
+                    video.catch(error => {
+
+                    }).then(() => {
+
+                    })
+                }
             }, 500);
         }
 
