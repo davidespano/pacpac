@@ -9,6 +9,7 @@ import Key from "../interactives/Key";
 import Lock from "../interactives/Lock"
 import Orders from "../data/Orders";
 import Action from "../interactives/rules/Action";
+import Immutable from 'immutable';
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -109,6 +110,8 @@ function getByName(name, order = null) {
                         obj_uuid: a.obj_uuid,
                     });
                 });
+
+                actions = Immutable.List(actions);
 
                 rules_uuids.push(rule.uuid); // save uuid
 

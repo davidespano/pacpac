@@ -2,8 +2,7 @@ import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
 import Rule from "./Rule";
 import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes";
-import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import Condition from "./Condition";
+import Immutable from 'immutable';
 import Action from "./Action";
 let uuid = require('uuid');
 
@@ -25,11 +24,11 @@ function generateDefaultRule(object){
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                actions : [Action({
+                actions : Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: PLAYER,
                     action: RuleActionTypes.TRANSITION,
-                })],
+                })]),
             });
             break;
         case InteractiveObjectsTypes.SWITCH:
@@ -41,12 +40,12 @@ function generateDefaultRule(object){
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                actions : [Action({
+                actions : Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: PLAYER,
                     action: RuleActionTypes.FLIP_SWITCH,
                     obj_uuid: object.uuid,
-                })],
+                })]),
             });
             break;
         case InteractiveObjectsTypes.KEY:
@@ -58,12 +57,12 @@ function generateDefaultRule(object){
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                actions : [Action({
+                actions : Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: PLAYER,
                     action: RuleActionTypes.COLLECT_KEY,
                     obj_uuid: object.uuid,
-                })],
+                })]),
             });
             break;
         case InteractiveObjectsTypes.LOCK:
@@ -75,12 +74,12 @@ function generateDefaultRule(object){
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                actions : [Action({
+                actions : Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: PLAYER,
                     action: RuleActionTypes.UNLOCK_LOCK,
                     obj_uuid: object.uuid,
-                })],
+                })]),
             });
             break;
         default:
@@ -109,16 +108,9 @@ function setProperty(rule, property, value){
     return rule.set(property, value);
 }
 
-function generateEmptyRule(){
-    return Rule({
-        uuid: uuid.v4(),
-        actions: []
-    })
-}
 
 export default {
     generateDefaultRule : generateDefaultRule,
     setAction : setAction,
     setProperty : setProperty,
-    generateEmptyRule: generateEmptyRule,
 };

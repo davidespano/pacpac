@@ -59,7 +59,7 @@ export default class EudRuleEditor extends Component {
     onNewRuleClick(){
         let scene = this.props.scenes.get(this.props.currentScene);
         let event = Action().set("uuid", uuid.v4());
-        let acts = [Action().set("uuid", uuid.v4())];
+        let acts = Immutable.List([Action({uuid: uuid.v4()})]);
         let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts);
         this.props.addNewRule(scene, rule);
     }
@@ -287,10 +287,10 @@ class EudAction extends Component {
         let index = -1;
         let action;
         let event = false;
-        for(var i = 0; i < rule.actions.length; i++){
-            if(rule.actions[i].uuid == ruleUpdate.action){
+        for(var i = 0; i < rule.actions.size; i++){
+            if(rule.actions.get(i).uuid == ruleUpdate.action){
                 index = i;
-                action = rule.actions[i];
+                action = rule.actions.get(i);
             }
         }
         if(index == -1 && ruleUpdate.action == rule.event.uuid){
@@ -300,6 +300,7 @@ class EudAction extends Component {
         }
 
 
+        console.log(action)
 
         switch(role){
             case "subject":
@@ -334,13 +335,13 @@ class EudAction extends Component {
                         }));
                 }else{
                     // TODO [davide] set da fare nel caso di piu di un elemento
-                    rule = rule.set('actions', [
+                    rule = rule.set('actions', Immutable.List([
                         Action({
                             uuid: action.uuid,
                             action: action.action,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: ruleUpdate.object,
-                        })]);
+                        })]));
                 }
 
                 break;
@@ -355,13 +356,13 @@ class EudAction extends Component {
                         }));
                 }else{
                     // TODO [davide] set da fare nel caso di piu di un elemento
-                    rule = rule.set('actions', [
+                    rule = rule.set('actions', Immutable.List([
                         Action({
                             uuid: action.uuid,
                             action: ruleUpdate.object,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: null,
-                        })]);
+                        })]));
                 }
 
         }

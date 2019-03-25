@@ -15,7 +15,7 @@ const Rule = Immutable.Record({
     uuid : null,
     event : null,
     condition : {},
-    actions : [],
+    actions : Immutable.List(),
 
 });
 
