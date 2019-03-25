@@ -88,21 +88,31 @@ function generateDefaultRule(object){
     return r;
 }
 
-/**
- * Set property of a specific action belonging to the Rule and returns updated Rule
- * @param rule
- * @param index is the index of the action inside the actions array
- * @param property to set
- * @param value of the property
- */
-function setAction(rule, index, property, value){
 
-    let actions = rule.get('actions');
-    let a = actions[index];
-    a = a.set(property, value);
-    actions[index] = a;
-    return rule.set('actions', actions);
+function addEmptyAction(rule){
+     let list = rule.get('actions');
+     list = list.push(Action({
+         uuid: uuid.v4(),
+         subj_uuid: PLAYER,
+     }));
+     rule = rule.set('actions', list);
+     console.log(rule)
+     return rule;
 }
+
+function deleteAction(rule, action){
+    let index = -1;
+    for(var i = 0; i < rule.actions.size; i++){
+        if(rule.actions.get(i).uuid == action){
+            let list = rule.get('actions');
+            list = list.delete(index);
+            rule = rule.set('actions', list);
+            return rule;
+        }
+    }
+    return null;
+}
+
 
 function setProperty(rule, property, value){
     return rule.set(property, value);
@@ -111,6 +121,7 @@ function setProperty(rule, property, value){
 
 export default {
     generateDefaultRule : generateDefaultRule,
-    setAction : setAction,
     setProperty : setProperty,
+    addEmptyAction : addEmptyAction,
+    deleteAction : deleteAction,
 };

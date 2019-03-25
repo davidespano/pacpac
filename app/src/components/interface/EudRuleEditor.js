@@ -5,6 +5,8 @@ import InteractiveObject from "../../interactives/InteractiveObject"
 import Immutable from "immutable";
 import Action from "../../interactives/rules/Action"
 import Rule from "../../interactives/rules/Rule";
+import rules_utils from "../../interactives/rules/rules_utils";
+import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
@@ -139,9 +141,12 @@ class EudRule extends Component {
                         <img className={"action-buttons"} src={"icons/icons8-condition-128.png"} alt={"Elimina la regola"}/>
                         &nbsp;Aggiungi Condizione
                     </button>
-                    <button title={"Cancella la regola"} onClick={()=>{}}
+                    <button title={"Aggiungi una condizione"} onClick={()=>{
+                        let newRule = rules_utils.addEmptyAction(rule);
+                        this.props.ruleEditorCallback.eudUpdateRule(newRule);
+                    }}
                             className={"eudDelete action-buttons-container"}>
-                        <img className={"action-buttons"} src={"icons/icons8-action-128.png"} alt={"Elimina la regola"}/>
+                        <img className={"action-buttons"} src={"icons/icons8-action-128.png"} alt={"Aggiungi una condizione"}/>
                         &nbsp;Aggiungi Azione
                     </button>
                     <button title={"Cancella la regola"} onClick={()=>{this.props.removeRule(this.props.rule)}}
@@ -264,6 +269,18 @@ class EudAction extends Component {
             {objectRendering}
         </span>;
 
+        /*
+        * <button
+                title={"Cancella"}
+                className={"action-buttons-container"}
+                onClick={() => {
+                    let newRule = rules_utils.deleteAction(this.props.rule, this.props.action);
+                    this.props.ruleEditorCallback.eudUpdateRule(newRule);
+                }}
+            >
+                <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella'}/>
+            </button>*/
+
     }
 
     changeText(text, role){
@@ -302,7 +319,7 @@ class EudAction extends Component {
             event = true;
         }
 
-
+        let list = rule.get('actions');
         switch(role){
             case "subject":
                 if(event){
@@ -314,16 +331,14 @@ class EudAction extends Component {
                             obj_uuid: null,
                         }));
                 }else {
-                    // TODO [davide] set da fare nel caso di piu di un elemento
-                    rule = rule.set('actions', [
+                    list = list.set(index,
                         Action({
                             uuid: action.uuid,
                             action: null,
                             subj_uuid: ruleUpdate.object,
                             obj_uuid: null,
-                        })]);
+                        }));
                 }
-
                 break;
             case "object":
                 if(event){
@@ -335,14 +350,13 @@ class EudAction extends Component {
                             obj_uuid: ruleUpdate.object,
                         }));
                 }else{
-                    // TODO [davide] set da fare nel caso di piu di un elemento
-                    rule = rule.set('actions', Immutable.List([
+                    list = list.set(index,
                         Action({
                             uuid: action.uuid,
                             action: action.action,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: ruleUpdate.object,
-                        })]));
+                        }));
                 }
 
                 break;
@@ -356,17 +370,17 @@ class EudAction extends Component {
                             obj_uuid: null,
                         }));
                 }else{
-                    // TODO [davide] set da fare nel caso di piu di un elemento
-                    rule = rule.set('actions', Immutable.List([
+                    list = list.set(index,
                         Action({
                             uuid: action.uuid,
                             action: ruleUpdate.object,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: null,
-                        })]));
+                        }));
                 }
 
         }
+        rule = rule.set('actions', list);
         this.props.ruleEditorCallback.eudUpdateRule(rule);
         this.props.ruleEditorCallback.eudShowCompletions(null, null);
 
