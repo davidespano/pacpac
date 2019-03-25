@@ -1,7 +1,6 @@
 import React from 'react';
 import settings from '../../utils/settings';
 import SceneAPI from "../../utils/SceneAPI";
-import Canvas from "./Canvas";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import scene_utils from "../../scene/scene_utils";
 

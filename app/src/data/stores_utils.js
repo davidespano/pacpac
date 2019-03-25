@@ -73,6 +73,7 @@ function rev_chronological(a, b){
     return -(chronological(a, b));
 }
 
+/*
 function parseRulesFromRaw(content, scene){
     const entityMap = content.entityMap;
     let rules = new Immutable.Map();
@@ -158,6 +159,7 @@ function parseRulesFromRaw(content, scene){
     return rules;
 }
 
+/*
 function generateRawFromRules(rules) {
     let objectMap = ObjectsStore.getState();
     let blocks = [];
@@ -343,7 +345,7 @@ function generateRawFromRules(rules) {
     }
 }
 
-
+*/
 
 export default {
     chooseComparator: chooseComparator,
@@ -351,6 +353,4 @@ export default {
     rev_alphabetical: rev_alphabetical,
     chronological: chronological,
     rev_chronological: rev_chronological,
-    generateRawFromRules: generateRawFromRules,
-    parseRulesFromRaw: parseRulesFromRaw,
 }

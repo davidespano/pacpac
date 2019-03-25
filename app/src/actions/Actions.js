@@ -3,6 +3,8 @@ import AppDispatcher from '../data/AppDispatcher';
 import SceneAPI from '../utils/SceneAPI';
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import ScenesStore from "../data/ScenesStore";
+import CentralSceneStore from "../data/CentralSceneStore";
+import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 
 const Actions = {
 
@@ -405,7 +407,9 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_RULE,
             rule: rule,
-        })
+        });
+        let scene = ScenesStore.getState().get(CentralSceneStore.getState());
+        InteractiveObjectAPI.saveRule(scene, rule);
     },
 
 

@@ -25,6 +25,14 @@ class EditorStateStore extends ReduceStore {
                 return state.set('chooseTagRightbar', action.status);
             case ActionTypes.EDIT_MODE_ON:
                 return state.set('mode', ActionTypes.EDIT_MODE_ON);
+            case ActionTypes.EUD_SAVE_ORIGINAL_OBJECT:
+                state = state.set('objectId', action.objectId);
+                return state;
+            case ActionTypes.EUD_SHOW_COMPLETIONS:
+                state = state.set('actionId', action.actionId);
+                state = state.set('role', action.role);
+                state = state.set('completionInput', action.completionText);
+                return state;
             case ActionTypes.GAME_SELECTION_MODE_ON:
                 return state.set('mode', ActionTypes.GAME_SELECTION_MODE_ON);
             case ActionTypes.GEOMETRY_MODE_ON:

@@ -19,6 +19,7 @@ export default class EudRuleEditor extends Component {
             let rulesRendering = rules.map(
                 rule => {
                     return <EudRule
+                        editor={this.props.editor}
                         interactiveObjects={this.props.interactiveObjects}
                         scenes={this.props.scenes}
                         currentScene={this.props.currentScene}
@@ -107,6 +108,7 @@ class EudRule extends Component {
             let actionRendering = rule.actions.map(
                 action => {
                     return <EudAction
+                        editor={this.props.editor}
                         interactiveObjects={this.props.interactiveObjects}
                         scenes={this.props.scenes}
                         rules={this.props.rules}
@@ -120,6 +122,7 @@ class EudRule extends Component {
                       onMouseLeave={() => {this.mouseLeave()}}>
                 <span className={"eudWhen"}>Quando </span>
                 <EudAction
+                    editor={this.props.editor}
                     interactiveObjects={this.props.interactiveObjects}
                     scenes={this.props.scenes}
                     rules={this.props.rules}
@@ -197,7 +200,7 @@ class EudAction extends Component {
 
 
     render() {
-        let actionId = this.props.rules.get('actionId');
+        let actionId = this.props.editor.get('actionId');
         let subjectCompletion = this.showCompletion(actionId, "subject");
         let subject = this.getInteractiveObjectReference(this.props.action.subj_uuid);
         let actionRendering =
@@ -210,7 +213,7 @@ class EudAction extends Component {
             action={this.props.action}
             ruleEditorCallback={this.props.ruleEditorCallback}
             originalText={subject == null? "" : objectTypeToString(subject.type) + " " + subject.name}
-            inputText={this.props.rules.get('completionInput')}
+            inputText={this.props.editor.get('completionInput')}
             showCompletion={subjectCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
@@ -228,7 +231,7 @@ class EudAction extends Component {
             action={this.props.action}
             ruleEditorCallback={this.props.ruleEditorCallback}
             originalText={eventTypeToString(this.props.action.get('action'))}
-            inputText={this.props.rules.get('completionInput')}
+            inputText={this.props.editor.get('completionInput')}
             showCompletion={operationCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
@@ -247,7 +250,7 @@ class EudAction extends Component {
             action={this.props.action}
             ruleEditorCallback={this.props.ruleEditorCallback}
             originalText={object == null? "" : objectTypeToString(object.type) + " " + object.name}
-            inputText={this.props.rules.get('completionInput')}
+            inputText={this.props.editor.get('completionInput')}
             showCompletion={objectCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
@@ -299,8 +302,6 @@ class EudAction extends Component {
             event = true;
         }
 
-
-        console.log(action)
 
         switch(role){
             case "subject":
@@ -373,7 +374,7 @@ class EudAction extends Component {
 
     showCompletion(actionId, role){
         return actionId != null &&
-            role == this.props.rules.get('role') &&
+            role == this.props.editor.get('role') &&
             actionId == this.props.action.uuid;
     }
 
