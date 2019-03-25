@@ -151,8 +151,8 @@ function createObject(props, type){
         props.addNewObject(scene, obj);
         props.addNewRule(scene, defaultRule);
 
-        //InteractiveObjectAPI.saveObject(scene, obj);
-        //InteractiveObjectAPI.saveRule(scene, defaultRule);
+        InteractiveObjectAPI.saveObject(scene, obj);
+        InteractiveObjectAPI.saveRule(scene, defaultRule);
 
     } else {
         alert('Nessuna scena selezionata!');
