@@ -364,7 +364,8 @@ const Actions = {
             type: ActionTypes.ADD_NEW_RULE,
             scene: scene,
             rule: rule,
-        })
+        });
+        InteractiveObjectAPI.saveRule(scene, rule);
     },
 
     /**
@@ -389,6 +390,7 @@ const Actions = {
             scene: scene,
             rule: rule,
         })
+        InteractiveObjectAPI.removeRule(scene, rule);
     },
 
 

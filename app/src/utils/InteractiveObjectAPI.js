@@ -91,7 +91,7 @@ function removeRule(scene, rule) {
             if (err) {
                 return console.error(err)
             }
-            Actions.removeRule(scene, rule);
+            return true;
         });
 }
 
