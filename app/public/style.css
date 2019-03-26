@@ -1097,7 +1097,7 @@ input.eudObjectString[type=text] {
     text-align: left;
 }
 
-.eudWhen, .eudThen{
+.eudWhen, .eudThen, .eudIf{
     grid-column: 1;
     box-sizing: border-box;
     text-align: right;
@@ -1108,7 +1108,7 @@ input.eudObjectString[type=text] {
     position: relative;
 }
 
-.eudThen{
+.eudThen, .eudIf{
     padding-left: 25px;
 }
 
@@ -1123,12 +1123,12 @@ input.eudObjectString[type=text] {
     margin-right: 5%;
 }
 
-.eudoperation{
+.eudoperation, .eudoperator{
 
     margin-right: 5%;
 }
 
-.eudobject, .eudoperation, .eudsubject{
+.eudobject, .eudoperation, .eudsubject, .eudoperator, .eudvalue {
     display: inline-block;
     width: 30%;
     box-sizing: border-box;
@@ -1192,8 +1192,10 @@ input.eudObjectString[type=text] {
 
 .eudWhen:after,
 .eudThen:after,
+.eudIf:after,
 .eudsubject:after,
-.eudoperation:after
+.eudoperation:after,
+.eudoperator:after
 {
     content:'';
     width:5em;/* size of your margin */

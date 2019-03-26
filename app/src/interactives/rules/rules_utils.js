@@ -4,6 +4,7 @@ import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes";
 import Immutable from 'immutable';
 import Action from "./Action";
+import Condition from "./Condition";
 let uuid = require('uuid');
 
 const PLAYER = 'player';
@@ -112,6 +113,15 @@ function deleteAction(rule, action){
     return null;
 }
 
+function addEmptyCondition(rule){
+    rule = rule.set('condition', new Condition(uuid.v4()));
+    return rule;
+}
+
+function deleteCondition(rule){
+    rule = rule.set('condition', {});
+    return rule;
+}
 
 function setProperty(rule, property, value){
     return rule.set(property, value);
@@ -123,4 +133,6 @@ export default {
     setProperty : setProperty,
     addEmptyAction : addEmptyAction,
     deleteAction : deleteAction,
+    addEmptyCondition : addEmptyCondition,
+    deleteCondition : deleteCondition,
 };
