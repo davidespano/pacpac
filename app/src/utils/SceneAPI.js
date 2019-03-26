@@ -129,7 +129,6 @@ function getByName(name, order = null) {
                     condition: JSON.parse(rule.condition),
                     actions: actions,
                 });
-                console.log(r);
                 Actions.receiveRule(r);
             });
 
@@ -193,8 +192,6 @@ function createScene(name, img, index, type, tag, order) {
                     locks: [],
                 }
             });
-
-            console.log(newScene)
 
             Actions.receiveScene(newScene, order);
         });

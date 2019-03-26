@@ -96,14 +96,13 @@ function addEmptyAction(rule){
          subj_uuid: PLAYER,
      }));
      rule = rule.set('actions', list);
-     console.log(rule)
      return rule;
 }
 
 function deleteAction(rule, action){
     let index = -1;
     for(var i = 0; i < rule.actions.size; i++){
-        if(rule.actions.get(i).uuid == action){
+        if(rule.actions.get(i).uuid == action.uuid){
             let list = rule.get('actions');
             list = list.delete(index);
             rule = rule.set('actions', list);

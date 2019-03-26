@@ -417,10 +417,18 @@ body{
     border-radius: .25rem;
     background-color: transparent;
     margin-right: 3px;
-
 }
 
-.action-buttons-container:hover, .objects-wrapper > .action-buttons:hover {
+
+.action-buttons-container:disabled {
+    border-color: darkgrey;
+}
+
+.action-buttons-container:disabled > img {
+    opacity: 0.5;
+}
+
+.action-buttons-container:enabled:hover, .objects-wrapper > .action-buttons:hover {
     cursor: pointer;
     background-color: #8C9093;
 }
@@ -1138,6 +1146,17 @@ input.eudObjectString[type=text] {
     grid-column: 2;
 }
 
+.eudDeleteAction{
+    display: inline-block;
+    box-sizing: border-box;
+    margin-top: 4px;
+    grid-column: 4;
+}
+
+.eudDeleteAction:disabled:hover {
+
+}
+
 .eudHidden{
     visibility: hidden;
 }
@@ -1183,3 +1202,4 @@ input.eudObjectString[type=text] {
     top:50%;
 
 }
+

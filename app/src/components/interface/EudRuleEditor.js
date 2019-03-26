@@ -89,7 +89,7 @@ class EudRule extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isMouseInside: false
+            isMouseInside: false,
         };
     }
 
@@ -101,6 +101,23 @@ class EudRule extends Component {
         this.setState({isMouseInside: false});
     }
 
+    actionBtn(rule, action){
+        let disabled = rule.actions.size <= 1;
+        return (
+            <button
+                title={"Cancella l'azione"}
+                className={"action-buttons-container eudDeleteAction "}
+                onClick={() => {
+                    let newRule = rules_utils.deleteAction(rule, action);
+                    this.props.ruleEditorCallback.eudUpdateRule(newRule);
+                }}
+                disabled={disabled}
+            >
+                <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella l\'azione'}/>
+            </button>
+        );
+    }
+
 
     render() {
         let rule = this.props.rules.get(this.props.rule);
@@ -109,7 +126,8 @@ class EudRule extends Component {
         if (rule) {
             let actionRendering = rule.actions.map(
                 action => {
-                    return <EudAction
+                    return <React.Fragment>
+                        <EudAction
                         editor={this.props.editor}
                         interactiveObjects={this.props.interactiveObjects}
                         scenes={this.props.scenes}
@@ -117,7 +135,9 @@ class EudRule extends Component {
                         rule={rule}
                         action={action}
                         ruleEditorCallback={this.props.ruleEditorCallback}
-                    />
+                        />
+                        {this.actionBtn(rule, action)}
+                    </React.Fragment>
                 });
             return <div className={ruleCssClass}
                     onMouseEnter={() => {this.mouseEnter()}}
@@ -264,22 +284,10 @@ class EudAction extends Component {
 
 
         return <span className={"eudAction"}>
-            {actionRendering}
-            {operationRendering}
-            {objectRendering}
-        </span>;
-
-        /*
-        * <button
-                title={"Cancella"}
-                className={"action-buttons-container"}
-                onClick={() => {
-                    let newRule = rules_utils.deleteAction(this.props.rule, this.props.action);
-                    this.props.ruleEditorCallback.eudUpdateRule(newRule);
-                }}
-            >
-                <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella'}/>
-            </button>*/
+                {actionRendering}
+                {operationRendering}
+                {objectRendering}
+                </span>;
 
     }
 
@@ -477,6 +485,13 @@ class EudRulePart extends Component {
             case "object":{
                 return "[un oggetto]";
             }
+            case "operator":{
+                return "[è nello stato]";
+            }
+            case "value": {
+                return "[valore]";
+            }
+
         }
         return "[nessuno]"
     }
