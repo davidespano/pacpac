@@ -8,7 +8,7 @@ import ConditionUtils from "../../interactives/rules/ConditionUtils";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
 import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
-const THREE = require('three');
+//const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
 
@@ -50,11 +50,15 @@ export default class VRScene extends React.Component {
         let me = this;
 
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
-            eventBus.on('click-'+rule.object_uuid, function () {
-                if(ConditionUtils.evalCondition(rule.condition, me.state.runState)){
-                    rule.actions.forEach(action => executeAction(me, rule, action))
-                }
+
+            rule.actions.forEach(action => {
+                eventBus.on('click-'+rule.event.obj_uuid, function () {
+                    if(ConditionUtils.evalCondition(rule.condition, me.state.runState)){
+                        executeAction(me, rule, action)
+                    }
+                })
             })
+
         })
     }
 

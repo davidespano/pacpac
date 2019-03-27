@@ -16,7 +16,7 @@ function executeAction(VRScene, rule, action){
     let media = sceneName + '.mp4' ;
     console.log(action.action)
     Object.values(state.activeScene.objects).flat().forEach(o =>{
-        if(o.uuid === rule.object_uuid){
+        if(o.uuid === rule.event.obj_uuid){
             current_object = o;
 
         }
@@ -30,7 +30,6 @@ function executeAction(VRScene, rule, action){
 
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
-
             let objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
 
             if(objectVideo_transition != null) {
@@ -96,7 +95,6 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
-
             runState[sceneName].background = media;
             VRScene.setState({runState: runState});
             let targetSceneVideo = document.getElementById(media);
