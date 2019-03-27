@@ -120,7 +120,7 @@ class EudRule extends Component {
         );
     }
 
-    conditionBtn(rule, condition){
+    conditionBtn(rule){
         return (
             <button
                 title={"Cancella la condizione"}
@@ -145,7 +145,7 @@ class EudRule extends Component {
         if (rule) {
             let actionRendering = rule.actions.map(
                 action => {
-                    return <React.Fragment>
+                    return <React.Fragment key={uuid.v4()}>
                         <EudAction
                         editor={this.props.editor}
                         interactiveObjects={this.props.interactiveObjects}
@@ -161,7 +161,7 @@ class EudRule extends Component {
             // (Object.keys(this.props.rule.condition).length !== 0 || this.props.rule.condition.constructor !== Object)
             if (rule.condition.uuid && rule.condition.uuid !== ""){
                 disabled = true;
-                eudCondition = <React.Fragment>
+                eudCondition = <React.Fragment key={uuid.v4()}>
                     <span className={"eudIf"}>se </span>
                     <EudCondition
                         editor={this.props.editor}
@@ -178,8 +178,9 @@ class EudRule extends Component {
             }
 
             return <div className={ruleCssClass}
-                    onMouseEnter={() => {this.mouseEnter()}}
-                      onMouseLeave={() => {this.mouseLeave()}}>
+                        key={uuid.v4()}
+                        onMouseEnter={() => {this.mouseEnter()}}
+                        onMouseLeave={() => {this.mouseLeave()}}>
                 <span className={"eudWhen"}>Quando </span>
                 <EudAction
                     editor={this.props.editor}
@@ -630,7 +631,7 @@ class EudRulePart extends Component {
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
         }
-        return <div className={css}>
+        return <div className={css} key={uuid.v4()}>
             <span className={"eudInputBox"}
                onClick = {
                    (e) => {
@@ -733,7 +734,7 @@ class EudAutoComplete extends Component {
                                             updateRule = {(rule, role) => this.props.updateRule(rule, role)}
                 />
             });
-        return <div className={"eudCompletionPopup"}>
+        return <div className={"eudCompletionPopup"} key={uuid.v4()}>
             <ul>
                 {li}
             </ul>
@@ -761,6 +762,7 @@ class EudAutoCompleteItem extends Component {
         let text = objectTypeToString(this.props.item.type) + " " +  this.props.item.name;
 
         return <li
+            key={uuid.v4()}
             onClick={(e) =>{
                 e.stopPropagation();
                 this.changeSelection(text);
@@ -797,33 +799,15 @@ function getCompletions(props) {
                     uuid: "player",
                     name:""})).merge(props.scenes);
         case "operation":
-            // TODO [Martina] differentiation between "player" and "objects" actions
-                return Immutable.Map([
-                    [
-                    RuleActionTypes.CLICK,
-                        {
-                            type: "operation",
-                            name: eventTypeToString(RuleActionTypes.CLICK),
-                            uuid: RuleActionTypes.CLICK
-                        },
-                    ],
-                    [
-                        RuleActionTypes.COLLECT_KEY,
-                        {
-                            type: "operation",
-                            name: eventTypeToString(RuleActionTypes.COLLECT_KEY),
-                            uuid: RuleActionTypes.COLLECT_KEY
-                        }
-                    ],
-                    [
-                        RuleActionTypes.TRANSITION,
-                        {
-                            type: "operation",
-                            name: eventTypeToString(RuleActionTypes.TRANSITION),
-                            uuid: RuleActionTypes.TRANSITION
-                        }
-                    ],
-                ]);
+            if(props.subject.uuid === 'player'){
+                return RulesActionPlayerMap;
+            }
+
+            if(props.subject.type === '3D' || props.subject.type === '2D'){
+                return RulesActionSceneMap;
+            }
+
+            return RulesActionObjectMap;
         case "operator":
             return OperatorsMap;
         case 'value':
@@ -842,6 +826,14 @@ function eventTypeToString(eventType) {
             return "raccoglie";
         case RuleActionTypes.TRANSITION:
             return "si sposta verso";
+        case RuleActionTypes.CHANGE_BACKGROUND:
+            return 'cambia sfondo in';
+        case RuleActionTypes.ON:
+            return 'accende';
+        case RuleActionTypes.OFF:
+            return 'spegne';
+        case RuleActionTypes.FLIP_SWITCH:
+            return 'preme';
         default:
             return "";
     }
@@ -1027,4 +1019,78 @@ const OperatorsMap = Immutable.Map([
         },
     ],
 
+]);
+
+const RulesActionPlayerMap = Immutable.Map([
+    [
+        RuleActionTypes.CLICK,
+        {
+            type: "operation",
+            name: eventTypeToString(RuleActionTypes.CLICK),
+            uuid: RuleActionTypes.CLICK
+        },
+    ],
+    [
+        RuleActionTypes.COLLECT_KEY,
+        {
+            type: "operation",
+            name: eventTypeToString(RuleActionTypes.COLLECT_KEY),
+            uuid: RuleActionTypes.COLLECT_KEY
+        }
+    ],
+    [
+        RuleActionTypes.TRANSITION,
+        {
+            type: "operation",
+            name: eventTypeToString(RuleActionTypes.TRANSITION),
+            uuid: RuleActionTypes.TRANSITION
+        }
+    ],
+    [
+        RuleActionTypes.ON,
+        {
+            type: "operation",
+            name: eventTypeToString(RuleActionTypes.ON),
+            uuid: RuleActionTypes.ON
+        }
+    ],
+    [
+        RuleActionTypes.OFF,
+        {
+            type: "operation",
+            name: eventTypeToString(RuleActionTypes.OFF),
+            uuid: RuleActionTypes.OFF
+        }
+    ],
+    [
+        RuleActionTypes.FLIP_SWITCH,
+        {
+            type: "operation",
+            name: eventTypeToString(RuleActionTypes.FLIP_SWITCH),
+            uuid: RuleActionTypes.FLIP_SWITCH
+        }
+    ],
+]);
+
+const RulesActionSceneMap = Immutable.Map([
+    [
+        RuleActionTypes.CHANGE_BACKGROUND,
+        {
+            type: "operation",
+            name: eventTypeToString(RuleActionTypes.CHANGE_BACKGROUND),
+            uuid: RuleActionTypes.CHANGE_BACKGROUND
+        },
+    ],
+]);
+
+
+const RulesActionObjectMap = Immutable.Map([
+    [
+        RuleActionTypes.CHANGE_STATE,
+        {
+            type: "operation",
+            name: eventTypeToString(RuleActionTypes.CHANGE_STATE),
+            uuid: RuleActionTypes.CHANGE_STATE
+        },
+    ],
 ]);
