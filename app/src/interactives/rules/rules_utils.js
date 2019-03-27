@@ -105,7 +105,7 @@ function deleteAction(rule, action){
     for(var i = 0; i < rule.actions.size; i++){
         if(rule.actions.get(i).uuid == action.uuid){
             let list = rule.get('actions');
-            list = list.delete(index);
+            list = list.delete(i);
             rule = rule.set('actions', list);
             return rule;
         }

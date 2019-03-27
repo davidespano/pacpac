@@ -21,8 +21,6 @@ function AppView(props) {
         component : 'assets',
     };
 
-    console.log(props.rules);
-
     switch(props.editor.mode){
         case 'EDIT_MODE_ON':
             return (
