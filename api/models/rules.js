@@ -14,10 +14,14 @@ async function createUpdateRule(session, rule, sceneName, gameID){
             'MERGE (s)-[:CONTAINS_RULE]->(r:Rule:`' + gameID + '` {uuid: $uuid}) ' +
             'ON CREATE SET r += $rule , r.new__ = TRUE ' +
             'ON MATCH SET r += $rule ' +
+            'WITH r ' +
+            'OPTIONAL MATCH (r)-[:CONTAINS_ACTION]->(a:Action:`' + gameID + '`) ' +
+            'WHERE NOT a IN $actions ' +
+            'DETACH DELETE a ' +
             'WITH r, exists(r.new__) as isNew ' +
             'REMOVE r.new__ ' +
             'RETURN r, isNew',
-            {sceneName: sceneName, uuid: rule.uuid, rule: rule}
+            {sceneName: sceneName, uuid: rule.uuid, rule: rule, actions: actions}
         );
         newObjs = newObjs || res_rule.records[0].get('isNew');
         const res_actions = await Promise.all(actions.map(act => {
