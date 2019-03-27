@@ -8,6 +8,7 @@ import Rule from "../../interactives/rules/Rule";
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import {Operators} from "../../interactives/rules/Operators";
+import Values from "../../interactives/rules/Values";
 let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
@@ -119,12 +120,28 @@ class EudRule extends Component {
         );
     }
 
+    conditionBtn(rule, condition){
+        return (
+            <button
+                title={"Cancella la condizione"}
+                className={"action-buttons-container eudDeleteCondition "}
+                onClick={() => {
+                    let newRule = rules_utils.deleteCondition(rule);
+                    this.props.ruleEditorCallback.eudUpdateRule(newRule);
+                }}
+            >
+                <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella la condizione'}/>
+            </button>
+        );
+    }
+
 
     render() {
         let rule = this.props.rules.get(this.props.rule);
         let buttonBar = this.state.isMouseInside ? "eudAction" : "eudAction eudHidden";
         let ruleCssClass = this.state.isMouseInside ?  "eudRule eudHighlight" : "eudRule";
         let eudCondition = null;
+        let disabled = false;
         if (rule) {
             let actionRendering = rule.actions.map(
                 action => {
@@ -142,8 +159,8 @@ class EudRule extends Component {
                     </React.Fragment>
                 });
             // (Object.keys(this.props.rule.condition).length !== 0 || this.props.rule.condition.constructor !== Object)
-            console.log(rule)
             if (rule.condition.uuid && rule.condition.uuid !== ""){
+                disabled = true;
                 eudCondition = <React.Fragment>
                     <span className={"eudIf"}>se </span>
                     <EudCondition
@@ -154,7 +171,9 @@ class EudRule extends Component {
                         rule={rule}
                         rules={this.props.rules}
                         ruleEditorCallback={this.props.ruleEditorCallback}
-                    /><br/>
+                    />
+                    {this.conditionBtn(rule)}
+                    <br/>
                 </React.Fragment>;
             }
 
@@ -175,7 +194,7 @@ class EudRule extends Component {
                 <span className={"eudThen"}>allora </span>
                 {actionRendering}
                 <div className={buttonBar}>
-                    <button title={"Aggiungi una condizione"} onClick={()=>{
+                    <button title={"Aggiungi una condizione"} disabled={disabled} onClick={()=>{
                         let newRule = rules_utils.addEmptyCondition(rule);
                         this.props.ruleEditorCallback.eudUpdateRule(newRule);
                     }}
@@ -235,7 +254,7 @@ class EudCondition extends Component {
 
         let actionId = this.props.editor.get('actionId');
         let subjectCompletion = this.showCompletion(actionId, "subject");
-        let subject = this.getInteractiveObjectReference(this.props.condition.uuid);
+        let subject = this.getInteractiveObjectReference(this.props.condition.obj_uuid);
         let subjectRendering =
             <EudRulePart
                 interactiveObjects={this.props.interactiveObjects}
@@ -243,13 +262,14 @@ class EudCondition extends Component {
                 rule={this.props.rule}
                 subject={subject}
                 complement={this.props.rule.object_uuid}
-                verb={this.props.condition.operator}
+                verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
                 originalText={subject == null? "" : objectTypeToString(subject.type) + " " + subject.name}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText = {(text, role) => this.changeText(text, role)}
                 updateRule = {(rule, role) => this.updateRule(rule, role)}
+                scene={this.props.scenes}
                 role={"subject"}
             />;
 
@@ -261,18 +281,20 @@ class EudCondition extends Component {
             rule={this.props.rule}
             subject={subject}
             complement={this.props.rule.object_uuid}
-            verb={this.props.condition.operator}
+            verb={this.props.condition}
             ruleEditorCallback={this.props.ruleEditorCallback}
-            originalText={eventTypeToString(this.props.condition.operator)}
+            originalText={operatorUuidToString(this.props.condition.operator)}
             inputText={this.props.editor.get('completionInput')}
             showCompletion={operatorCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
+            scene={this.props.scenes}
             role={"operator"}
+
         /> ;
 
         let valueCompletion = this.showCompletion(actionId, "value");
-        let value = this.getInteractiveObjectReference(this.props.condition.state);
+        let value = this.getValuesReference(this.props.condition.state);
         let valueRendering =
             <EudRulePart
                 interactiveObjects={this.props.interactiveObjects}
@@ -280,13 +302,14 @@ class EudCondition extends Component {
                 rule={this.props.rule}
                 subject={subject}
                 complement={this.props.rule.object_uuid}
-                verb={this.props.condition.operator}
+                verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={value == null? "" : objectTypeToString(value.type) + " " + value.name}
+                originalText={value == null? "" : valueUuidToString(value.uuid)}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={valueCompletion}
                 changeText = {(text, role) => this.changeText(text, role)}
                 updateRule = {(rule, role) => this.updateRule(rule, role)}
+                scenes={this.props.scenes}
                 role={"value"}
             />;
 
@@ -301,9 +324,11 @@ class EudCondition extends Component {
 
     changeText(text, role){
         let actionId = this.props.condition.uuid;
+        console.log(text, role, actionId)
         this.props.ruleEditorCallback.eudShowCompletions(
             actionId, role, text)
     }
+
 
     getInteractiveObjectReference(uuid){
         if(uuid == "player"){
@@ -313,7 +338,15 @@ class EudCondition extends Component {
                 name:""});
         }
 
+        if(this.props.scenes.has(uuid)){
+            return this.props.scenes.get(uuid);
+        }
+
         return this.props.interactiveObjects.get(uuid);
+    }
+
+    getValuesReference(uuid){
+        return ValuesMap.get(uuid);
     }
 
     updateRule(ruleUpdate, role){
@@ -321,15 +354,16 @@ class EudCondition extends Component {
         let rule = this.props.rule;
         let condition = this.props.condition;
 
+
         switch(role){
             case 'subject':
-                condition['obj_uuid'] = ruleUpdate.complement;
+                condition['obj_uuid'] = ruleUpdate.item;
                 break;
             case 'operator':
-                condition['operator'] = ruleUpdate.verb;
+                condition['operator'] = ruleUpdate.item;
                 break;
             case 'value':
-                condition['state'] = ruleUpdate.complement;
+                condition['state'] = ruleUpdate.item;
                 break;
         }
 
@@ -386,6 +420,7 @@ class EudAction extends Component {
             showCompletion={subjectCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
+            scenes={this.props.scenes}
             role={"subject"}
         />;
 
@@ -404,6 +439,7 @@ class EudAction extends Component {
             showCompletion={operationCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
+            scenes={this.props.scenes}
             role={"operation"}
         /> ;
 
@@ -423,6 +459,7 @@ class EudAction extends Component {
             showCompletion={objectCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
+            scenes={this.props.scenes}
             role={"object"}
         />;
 
@@ -449,6 +486,10 @@ class EudAction extends Component {
                 name:""});
         }
 
+        if(this.props.scenes.has(uuid)){
+            return this.props.scenes.get(uuid);
+        }
+
         return this.props.interactiveObjects.get(uuid);
     }
 
@@ -460,13 +501,13 @@ class EudAction extends Component {
         let action;
         let event = false;
         for(var i = 0; i < rule.actions.size; i++){
-            if(rule.actions.get(i).uuid == ruleUpdate.verb){
+            if(rule.actions.get(i).uuid == ruleUpdate.action.uuid){
                 console.log('qui')
                 index = i;
                 action = rule.actions.get(i);
             }
         }
-        if(index == -1 && ruleUpdate.verb == rule.event.uuid){
+        if(index == -1 && ruleUpdate.action.uuid == rule.event.uuid){
             // TODO [davide] gestire la parte nell'evento
             action = rule.event;
             event = true;
@@ -480,7 +521,7 @@ class EudAction extends Component {
                         Action({
                             uuid: action.uuid,
                             action: null,
-                            subj_uuid: ruleUpdate.complement,
+                            subj_uuid: ruleUpdate.item,
                             obj_uuid: null,
                         }));
                 }else {
@@ -488,7 +529,7 @@ class EudAction extends Component {
                         Action({
                             uuid: action.uuid,
                             action: null,
-                            subj_uuid: ruleUpdate.complement,
+                            subj_uuid: ruleUpdate.item,
                             obj_uuid: null,
                         }));
                 }
@@ -500,7 +541,7 @@ class EudAction extends Component {
                             uuid: action.uuid,
                             action: action.action,
                             subj_uuid: action.subj_uuid,
-                            obj_uuid: ruleUpdate.complement,
+                            obj_uuid: ruleUpdate.item,
                         }));
                 }else{
                     list = list.set(index,
@@ -508,7 +549,7 @@ class EudAction extends Component {
                             uuid: action.uuid,
                             action: action.action,
                             subj_uuid: action.subj_uuid,
-                            obj_uuid: ruleUpdate.complement,
+                            obj_uuid: ruleUpdate.item,
                         }));
                 }
 
@@ -518,7 +559,7 @@ class EudAction extends Component {
                     rule = rule.set('event',
                         Action({
                             uuid: action.uuid,
-                            action: ruleUpdate.complement,
+                            action: ruleUpdate.item,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: null,
                         }));
@@ -526,7 +567,7 @@ class EudAction extends Component {
                     list = list.set(index,
                         Action({
                             uuid: action.uuid,
-                            action: ruleUpdate.complement,
+                            action: ruleUpdate.item,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: null,
                         }));
@@ -584,6 +625,7 @@ class EudRulePart extends Component {
                 changeText = {(text, role) => this.changeText(text, role)}
                 updateRule = {(rule, role) => this.props.updateRule(rule, role)}
                 role = {this.props.role}
+                scenes = {this.props.scenes}
             />;
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
@@ -673,6 +715,7 @@ class EudAutoComplete extends Component {
             subject: this.props.subject,
             verb: this.props.verb,
             role: this.props.role,
+            scenes: this.props.scenes,
         });
         let li = items.valueSeq()
             .filter(i => {
@@ -728,8 +771,8 @@ class EudAutoCompleteItem extends Component {
 
     changeSelection(){
         const ruleUpdate = {
-            verb: this.props.verb.uuid,
-            complement: this.props.item.uuid,
+            action: this.props.verb,
+            item: (this.props.item.type === '3D' || this.props.item.type === '2D') ? this.props.item.name : this.props.item.uuid
         };
         this.props.updateRule(ruleUpdate, this.props.role);
     }
@@ -752,7 +795,7 @@ function getCompletions(props) {
                 InteractiveObject({
                     type: InteractiveObjectTypes.PLAYER,
                     uuid: "player",
-                    name:""}));
+                    name:""})).merge(props.scenes);
         case "operation":
             // TODO [Martina] differentiation between "player" and "objects" actions
                 return Immutable.Map([
@@ -782,57 +825,9 @@ function getCompletions(props) {
                     ],
                 ]);
         case "operator":
-            return Immutable.Map([
-                [
-                    Operators.EQUAL,
-                    {
-                        type: "operator",
-                        name: operatorTypeToString(Operators.EQUAL),
-                        uuid: Operators.EQUAL,
-                    },
-                ],
-                [
-                    Operators.NOT_EQUAL,
-                    {
-                        type: "operator",
-                        name: operatorTypeToString(Operators.NOT_EQUAL),
-                        uuid: Operators.NOT_EQUAL,
-                    },
-                ],
-                [
-                    Operators.LESS_EQUAL,
-                    {
-                        type: "operator",
-                        name: operatorTypeToString(Operators.LESS_EQUAL),
-                        uuid: Operators.LESS_EQUAL,
-                    },
-                ],
-                [
-                    Operators.LESS_THAN,
-                    {
-                        type: "operator",
-                        name: operatorTypeToString(Operators.LESS_THAN),
-                        uuid: Operators.LESS_THAN,
-                    },
-                ],
-                [
-                    Operators.GREATER_EQUAL,
-                    {
-                        type: "operator",
-                        name: operatorTypeToString(Operators.GREATER_EQUAL),
-                        uuid: Operators.GREATER_EQUAL,
-                    },
-                ],
-                [
-                    Operators.GREATER_THAN,
-                    {
-                        type: "operator",
-                        name: operatorTypeToString(Operators.GREATER_THAN),
-                        uuid: Operators.GREATER_THAN,
-                    },
-                ],
-
-            ])
+            return OperatorsMap;
+        case 'value':
+            return ValuesMap;
 
     }
 
@@ -852,8 +847,8 @@ function eventTypeToString(eventType) {
     }
 }
 
-function operatorTypeToString(operatorType) {
-    switch (operatorType) {
+function operatorUuidToString(operatorUuid) {
+    switch (operatorUuid) {
         case Operators.EQUAL:
             return "è uguale a";
         case Operators.NOT_EQUAL:
@@ -893,9 +888,143 @@ function objectTypeToString(objectType) {
             return "la transizione";
         case InteractiveObjectTypes.PLAYER:
             return "il giocatore";
+        case '3D':
+        case '2D':
+            return "la scena";
         case "operation":
+        case "operator":
+        case "value":
             return "";
         default:
             return "l'oggetto sconosciuto";
     }
 }
+
+function valueUuidToString(valueUuid){
+    switch(valueUuid){
+        case Values.ON:
+            return 'acceso';
+        case Values.OFF:
+            return 'spento';
+        case Values.LOCKED:
+            return 'chiuso';
+        case Values.UNLOCKED:
+            return 'aperto';
+        case Values.COLLECTED:
+            return 'raccolto';
+        case Values.NOT_COLLECTED:
+            return 'non raccolto';
+        default:
+            return 'stato sconosciuto';
+    }
+
+}
+
+const ValuesMap = Immutable.Map([
+    [
+        Values.ON,
+        {
+            type: "value",
+            name: valueUuidToString(Values.ON),
+            uuid: Values.ON,
+        },
+
+    ],
+    [
+        Values.OFF,
+        {
+            type: "value",
+            name: valueUuidToString(Values.OFF),
+            uuid: Values.OFF,
+        },
+
+    ],
+    [
+        Values.LOCKED,
+        {
+            type: "value",
+            name: valueUuidToString(Values.LOCKED),
+            uuid: Values.LOCKED,
+        },
+
+    ],
+    [
+        Values.UNLOCKED,
+        {
+            type: "value",
+            name: valueUuidToString(Values.UNLOCKED),
+            uuid: Values.UNLOCKED,
+        },
+
+    ],
+    [
+        Values.COLLECTED,
+        {
+            type: "value",
+            name: valueUuidToString(Values.COLLECTED),
+            uuid: Values.COLLECTED,
+        },
+
+    ],
+    [
+        Values.NOT_COLLECTED,
+        {
+            type: "value",
+            name: valueUuidToString(Values.NOT_COLLECTED),
+            uuid: Values.NOT_COLLECTED,
+        },
+
+    ],
+]);
+
+const OperatorsMap = Immutable.Map([
+    [
+        Operators.EQUAL,
+        {
+            type: "operator",
+            name: operatorUuidToString(Operators.EQUAL),
+            uuid: Operators.EQUAL,
+        },
+    ],
+    [
+        Operators.NOT_EQUAL,
+        {
+            type: "operator",
+            name: operatorUuidToString(Operators.NOT_EQUAL),
+            uuid: Operators.NOT_EQUAL,
+        },
+    ],
+    [
+        Operators.LESS_EQUAL,
+        {
+            type: "operator",
+            name: operatorUuidToString(Operators.LESS_EQUAL),
+            uuid: Operators.LESS_EQUAL,
+        },
+    ],
+    [
+        Operators.LESS_THAN,
+        {
+            type: "operator",
+            name: operatorUuidToString(Operators.LESS_THAN),
+            uuid: Operators.LESS_THAN,
+        },
+    ],
+    [
+        Operators.GREATER_EQUAL,
+        {
+            type: "operator",
+            name: operatorUuidToString(Operators.GREATER_EQUAL),
+            uuid: Operators.GREATER_EQUAL,
+        },
+    ],
+    [
+        Operators.GREATER_THAN,
+        {
+            type: "operator",
+            name: operatorUuidToString(Operators.GREATER_THAN),
+            uuid: Operators.GREATER_THAN,
+        },
+    ],
+
+]);

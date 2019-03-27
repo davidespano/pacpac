@@ -1146,16 +1146,13 @@ input.eudObjectString[type=text] {
     grid-column: 2;
 }
 
-.eudDeleteAction{
+.eudDeleteAction, .eudDeleteCondition{
     display: inline-block;
     box-sizing: border-box;
     margin-top: 4px;
     grid-column: 4;
 }
 
-.eudDeleteAction:disabled:hover {
-
-}
 
 .eudHidden{
     visibility: hidden;

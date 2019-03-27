@@ -101,7 +101,6 @@ function addEmptyAction(rule){
 }
 
 function deleteAction(rule, action){
-    let index = -1;
     for(var i = 0; i < rule.actions.size; i++){
         if(rule.actions.get(i).uuid == action.uuid){
             let list = rule.get('actions');
