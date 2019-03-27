@@ -99,6 +99,7 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState});
             let targetSceneVideo = document.getElementById(media);
             targetSceneVideo.play();
+            targetSceneVideo.onended = function () {console.log('finito')};
             break;
         case RuleActionTypes.PLAY_AUDIO:
             let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;

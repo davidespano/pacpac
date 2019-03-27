@@ -52,11 +52,22 @@ export default class VRScene extends React.Component {
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
 
             rule.actions.forEach(action => {
-                eventBus.on('click-'+rule.event.obj_uuid, function () {
-                    if(ConditionUtils.evalCondition(rule.condition, me.state.runState)){
-                        executeAction(me, rule, action)
-                    }
-                })
+
+                if(rule.event.action === 'CLICK'){
+                    eventBus.on('click-'+rule.event.obj_uuid, function () {
+                        if(ConditionUtils.evalCondition(rule.condition, me.state.runState)){
+                            executeAction(me, rule, action)
+                        }
+                    })
+                } else {
+                    let video = document.getElementById(action.obj_uuid + 'mp4')
+                    video.on('ended', function (){
+                        if(ConditionUtils.evalCondition(rule.condition, me.state.runState)){
+                            executeAction(me, rule, action)
+                        }
+                    })
+                }
+
             })
 
         })
