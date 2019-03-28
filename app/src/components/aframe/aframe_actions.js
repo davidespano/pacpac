@@ -10,12 +10,13 @@ function executeAction(VRScene, rule, action){
     let state = VRScene.state;
     let runState = VRScene.state.runState;
     let actual_scene = VRScene.state.activeScene.name;
+    let actual_sceneimg = VRScene.state.activeScene.img;
     let current_object = {};
     let game_graph = VRScene.state.graph;
     let sceneName = action.subj_uuid;
     let media = action.obj_uuid;
-    console.log(action)
     let cursor = document.querySelector('#cursor');
+    let changeBG = true;
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
@@ -27,17 +28,22 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
             let duration = current_object.properties.duration ? current_object.properties.duration : 0;
-
+            let objectVideo_transition = 0;
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
-            let objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
-            if(objectVideo_transition != null) {
-                objectVideo_transition.play();
-                duration_transition = (objectVideo_transition.duration * 1000);
+            console.log(current_object)
+            if(current_object.type === 'TRANSITION'){
+                objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
+                if(objectVideo_transition != null) {
+                    objectVideo_transition.play();
+                    duration_transition = (objectVideo_transition.duration * 1000);
+                }
             }
+
             setTimeout(function () {
-                if(objectVideo_transition != null) objectVideo_transition.pause();
-                transition(state.activeScene, state.graph.scenes[sceneName], duration);
+                if(objectVideo_transition !== 0) objectVideo_transition.pause();
+                console.log(state.activeScene, state.graph.scenes)
+                transition(state.activeScene, state.graph.scenes[media], duration);
             },duration_transition);
 
             break;
@@ -110,11 +116,11 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
+            let skyId = runState[sceneName].background;
             runState[sceneName].background = media;
-            VRScene.setState({runState: runState});
-
-            let targetSceneVideo = document.getElementById("media_" + media);
-            console.log(targetSceneVideo)
+            VRScene.setState({runState: runState, graph: game_graph});
+            console.log(actual_scene)
+            let targetSceneVideo = document.getElementById(actual_sceneimg);
             targetSceneVideo.play();
             //targetSceneVideo.onended = function () {console.log('finito')};
             break;
