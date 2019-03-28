@@ -14,7 +14,7 @@ function executeAction(VRScene, rule, action){
     let game_graph = VRScene.state.graph;
     let sceneName = action.obj_uuid;
     let media = sceneName + '.mp4' ;
-    console.log(action.action)
+    let cursor = document.querySelector('#cursor');
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
@@ -25,19 +25,15 @@ function executeAction(VRScene, rule, action){
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
-            let cursor = document.querySelector('#cursor');
-            let duration = current_object.properties.duration;
+            let duration = current_object.properties.duration ? current_object.properties.duration : 0;
 
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
             let objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
-
             if(objectVideo_transition != null) {
-
                 objectVideo_transition.play();
                 duration_transition = (objectVideo_transition.duration * 1000);
             }
-
             setTimeout(function () {
                 if(objectVideo_transition != null) objectVideo_transition.pause();
                 transition(state.activeScene, state.graph.scenes[sceneName], duration);
@@ -49,10 +45,16 @@ function executeAction(VRScene, rule, action){
             let switchVideo = document.getElementById('media_'+current_object.uuid);
 
             if(switchVideo != null) {
+                cursor.setAttribute('material', 'visible: false');
+                cursor.setAttribute('raycaster', 'far: 0.1');
                 switchVideo.play();
                 duration_switch = (switchVideo.duration * 1000);
             }
             setTimeout(function () {
+                cursor.setAttribute('raycaster', 'far: 10000');
+                cursor.setAttribute('material', 'visible: true');
+                cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                cursor.setAttribute('color', 'black');
                 if(runState[current_object.uuid].state === "OFF")
                     runState[current_object.uuid].state = "ON";
                 else
@@ -68,10 +70,16 @@ function executeAction(VRScene, rule, action){
                 let switchVideo = document.getElementById('media_'+current_object.uuid);
 
                 if(switchVideo != null) {
+                    cursor.setAttribute('material', 'visible: false');
+                    cursor.setAttribute('raycaster', 'far: 0.1');
                     switchVideo.play();
                     duration_switch = (switchVideo.duration * 1000);
                 }
                 setTimeout(function () {
+                    cursor.setAttribute('raycaster', 'far: 10000');
+                    cursor.setAttribute('material', 'visible: true');
+                    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                    cursor.setAttribute('color', 'black');
                     runState[current_object.uuid].state = "ON";
                     VRScene.setState({runState: runState});
                 },duration_switch);
@@ -84,10 +92,16 @@ function executeAction(VRScene, rule, action){
                 let switchVideo = document.getElementById('media_'+current_object.uuid);
 
                 if(switchVideo != null) {
+                    cursor.setAttribute('material', 'visible: false');
+                    cursor.setAttribute('raycaster', 'far: 0.1');
                     switchVideo.play();
                     duration_switch = (switchVideo.duration * 1000);
                 }
                 setTimeout(function () {
+                    cursor.setAttribute('raycaster', 'far: 10000');
+                    cursor.setAttribute('material', 'visible: true');
+                    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                    cursor.setAttribute('color', 'black');
                     runState[current_object.uuid].state = "OFF";
                     VRScene.setState({runState: runState});
                 },duration_switch);
@@ -99,7 +113,7 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState});
             let targetSceneVideo = document.getElementById(media);
             targetSceneVideo.play();
-            targetSceneVideo.onended = function () {console.log('finito')};
+            //targetSceneVideo.onended = function () {console.log('finito')};
             break;
         case RuleActionTypes.PLAY_AUDIO:
             let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;
@@ -150,7 +164,6 @@ function transition(actualScene, targetScene, duration){
     let cursor = document.querySelector('#cursor');
     let disappear = new CustomEvent(actualSky.id + "dis");
     let appear = new CustomEvent(targetSky.id + "app");
-
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
     targetSky.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
@@ -161,9 +174,9 @@ function transition(actualScene, targetScene, duration){
 
     targetSky.setAttribute('visible', 'true');
     targetSky.setAttribute('material', 'visible: true');
-
     actualSky.dispatchEvent(disappear);
     targetSky.dispatchEvent(appear);
+
     targetSceneVideo.play();
 }
 
