@@ -54,7 +54,7 @@ export default class VRScene extends React.Component {
             let state = me.state;
             let current_object = {};
             let objectVideo;
-            let stopCBG = false;
+            //let stopCBG = false;
             Object.values(state.activeScene.objects).flat().forEach(o => {
                 if (o.uuid === rule.event.obj_uuid) {
                     current_object = o;
@@ -65,16 +65,15 @@ export default class VRScene extends React.Component {
                 eventBus.on('click-' + rule.event.obj_uuid, function () {
                     if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                         objectVideo = document.querySelector('#media_' + action.obj_uuid);
-                        if(current_object.type !== 'CHANGE_BACKGROUND' || !stopCBG){
-                            console.log('sto entrando')
+                        //if(current_object.type !== 'CHANGE_BACKGROUND' || !stopCBG){
                             setTimeout(function () {
                                 executeAction(me, rule, action)
                             }, duration);
                             if (objectVideo) {
                                 duration = (objectVideo.duration * 1000) + 100;
                             }
-                            stopCBG = true;
-                    }}
+                            //stopCBG = true;
+                    }//}
 
                 })
 

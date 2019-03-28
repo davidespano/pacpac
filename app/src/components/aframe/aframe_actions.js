@@ -31,7 +31,6 @@ function executeAction(VRScene, rule, action){
             let objectVideo_transition = 0;
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
-            console.log(current_object)
             if(current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null) {
@@ -39,10 +38,8 @@ function executeAction(VRScene, rule, action){
                     duration_transition = (objectVideo_transition.duration * 1000);
                 }
             }
-
             setTimeout(function () {
-                if(objectVideo_transition !== 0) objectVideo_transition.pause();
-                console.log(state.activeScene, state.graph.scenes)
+                if(objectVideo_transition !== 0 && objectVideo_transition !== null) objectVideo_transition.pause();
                 transition(state.activeScene, state.graph.scenes[media], duration);
             },duration_transition);
 
@@ -119,7 +116,6 @@ function executeAction(VRScene, rule, action){
             let skyId = runState[sceneName].background;
             runState[sceneName].background = media;
             VRScene.setState({runState: runState, graph: game_graph});
-            console.log(actual_scene)
             let targetSceneVideo = document.getElementById(actual_sceneimg);
             targetSceneVideo.play();
             //targetSceneVideo.onended = function () {console.log('finito')};
