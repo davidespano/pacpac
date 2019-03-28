@@ -73,6 +73,23 @@ function rev_chronological(a, b){
     return -(chronological(a, b));
 }
 
+/**
+ * Return file type based on extension
+ * @param fileName
+ * @returns {string}
+ */
+function getFileType(fileName){
+    let reVideo = new RegExp('.mp4$');
+    let reImg = new RegExp('.png$|.jpeg$|.jpg$');
+
+    if(reVideo.test(fileName)) {
+        return 'video';
+    }
+
+    return reImg.test(fileName) ? 'img' : 'file';
+}
+
+
 /*
 function parseRulesFromRaw(content, scene){
     const entityMap = content.entityMap;
@@ -353,4 +370,5 @@ export default {
     rev_alphabetical: rev_alphabetical,
     chronological: chronological,
     rev_chronological: rev_chronological,
+    getFileType: getFileType,
 }

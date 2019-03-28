@@ -26,6 +26,7 @@ export default class EudRuleEditor extends Component {
                         editor={this.props.editor}
                         interactiveObjects={this.props.interactiveObjects}
                         scenes={this.props.scenes}
+                        assets={this.props.assets}
                         currentScene={this.props.currentScene}
                         rules={this.props.rules}
                         rule={rule}
@@ -145,11 +146,12 @@ class EudRule extends Component {
         if (rule) {
             let actionRendering = rule.actions.map(
                 action => {
-                    return <React.Fragment key={uuid.v4()}>
+                    return <React.Fragment >
                         <EudAction
                         editor={this.props.editor}
                         interactiveObjects={this.props.interactiveObjects}
                         scenes={this.props.scenes}
+                        assets={this.props.assets}
                         rules={this.props.rules}
                         rule={rule}
                         action={action}
@@ -161,12 +163,13 @@ class EudRule extends Component {
             // (Object.keys(this.props.rule.condition).length !== 0 || this.props.rule.condition.constructor !== Object)
             if (rule.condition.uuid && rule.condition.uuid !== ""){
                 disabled = true;
-                eudCondition = <React.Fragment key={uuid.v4()}>
+                eudCondition = <React.Fragment >
                     <span className={"eudIf"}>se </span>
                     <EudCondition
                         editor={this.props.editor}
                         condition={rule.condition}
                         interactiveObjects={this.props.interactiveObjects}
+                        assets={this.props.assets}
                         scenes={this.props.scenes}
                         rule={rule}
                         rules={this.props.rules}
@@ -178,7 +181,7 @@ class EudRule extends Component {
             }
 
             return <div className={ruleCssClass}
-                        key={uuid.v4()}
+                        key={rule.uuid}
                         onMouseEnter={() => {this.mouseEnter()}}
                         onMouseLeave={() => {this.mouseLeave()}}>
                 <span className={"eudWhen"}>Quando </span>
@@ -186,6 +189,7 @@ class EudRule extends Component {
                     editor={this.props.editor}
                     interactiveObjects={this.props.interactiveObjects}
                     scenes={this.props.scenes}
+                    assets={this.props.assets}
                     rules={this.props.rules}
                     rule={rule}
                     action={rule.event}
@@ -261,6 +265,7 @@ class EudCondition extends Component {
                 interactiveObjects={this.props.interactiveObjects}
                 rules={this.props.rules}
                 rule={this.props.rule}
+                rulePartType={'condition'}
                 subject={subject}
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
@@ -270,27 +275,31 @@ class EudCondition extends Component {
                 showCompletion={subjectCompletion}
                 changeText = {(text, role) => this.changeText(text, role)}
                 updateRule = {(rule, role) => this.updateRule(rule, role)}
-                scene={this.props.scenes}
+                scenes={this.props.scenes}
+                assets={this.props.assets}
                 role={"subject"}
             />;
 
 
         let operatorCompletion = this.showCompletion(actionId, "operator");
-        let operatorRendering = <EudRulePart
-            interactiveObjects={this.props.interactiveObjects}
-            rules={this.props.rules}
-            rule={this.props.rule}
-            subject={subject}
-            complement={this.props.rule.object_uuid}
-            verb={this.props.condition}
-            ruleEditorCallback={this.props.ruleEditorCallback}
-            originalText={operatorUuidToString(this.props.condition.operator)}
-            inputText={this.props.editor.get('completionInput')}
-            showCompletion={operatorCompletion}
-            changeText = {(text, role) => this.changeText(text, role)}
-            updateRule = {(rule, role) => this.updateRule(rule, role)}
-            scene={this.props.scenes}
-            role={"operator"}
+        let operatorRendering =
+            <EudRulePart
+                interactiveObjects={this.props.interactiveObjects}
+                rules={this.props.rules}
+                rule={this.props.rule}
+                rulePartType={'condition'}
+                subject={subject}
+                complement={this.props.rule.object_uuid}
+                verb={this.props.condition}
+                ruleEditorCallback={this.props.ruleEditorCallback}
+                originalText={operatorUuidToString(this.props.condition.operator)}
+                inputText={this.props.editor.get('completionInput')}
+                showCompletion={operatorCompletion}
+                changeText = {(text, role) => this.changeText(text, role)}
+                updateRule = {(rule, role) => this.updateRule(rule, role)}
+                scenes={this.props.scenes}
+                assets={this.props.assets}
+                role={"operator"}
 
         /> ;
 
@@ -301,6 +310,7 @@ class EudCondition extends Component {
                 interactiveObjects={this.props.interactiveObjects}
                 rules={this.props.rules}
                 rule={this.props.rule}
+                rulePartType={'condition'}
                 subject={subject}
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
@@ -311,11 +321,12 @@ class EudCondition extends Component {
                 changeText = {(text, role) => this.changeText(text, role)}
                 updateRule = {(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
+                assets={this.props.assets}
                 role={"value"}
             />;
 
 
-        return <span className={"eudAction"}>
+        return <span className={"eudAction"} key={this.props.condition.uuid}>
             {subjectRendering}
             {operatorRendering}
             {valueRendering}
@@ -325,7 +336,6 @@ class EudCondition extends Component {
 
     changeText(text, role){
         let actionId = this.props.condition.uuid;
-        console.log(text, role, actionId)
         this.props.ruleEditorCallback.eudShowCompletions(
             actionId, role, text)
     }
@@ -341,6 +351,10 @@ class EudCondition extends Component {
 
         if(this.props.scenes.has(uuid)){
             return this.props.scenes.get(uuid);
+        }
+
+        if(this.props.assets.has(uuid)){
+            return this.props.assets(uuid);
         }
 
         return this.props.interactiveObjects.get(uuid);
@@ -412,6 +426,7 @@ class EudAction extends Component {
             interactiveObjects={this.props.interactiveObjects}
             rules={this.props.rules}
             rule={this.props.rule}
+            rulePartType={'action'}
             subject={subject}
             complement={this.props.rule.object_uuid}
             verb={this.props.action}
@@ -422,6 +437,7 @@ class EudAction extends Component {
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
             scenes={this.props.scenes}
+            assets={this.props.assets}
             role={"subject"}
         />;
 
@@ -431,6 +447,7 @@ class EudAction extends Component {
             interactiveObjects={this.props.interactiveObjects}
             rules={this.props.rules}
             rule={this.props.rule}
+            rulePartType={'action'}
             subject={subject}
             complement={this.props.rule.object_uuid}
             verb={this.props.action}
@@ -441,6 +458,7 @@ class EudAction extends Component {
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
             scenes={this.props.scenes}
+            assets={this.props.assets}
             role={"operation"}
         /> ;
 
@@ -451,6 +469,7 @@ class EudAction extends Component {
             interactiveObjects={this.props.interactiveObjects}
             rules={this.props.rules}
             rule={this.props.rule}
+            rulePartType={'action'}
             subject={subject}
             complement={this.props.rule.object_uuid}
             verb={this.props.action}
@@ -461,11 +480,12 @@ class EudAction extends Component {
             changeText = {(text, role) => this.changeText(text, role)}
             updateRule = {(rule, role) => this.updateRule(rule, role)}
             scenes={this.props.scenes}
+            assets={this.props.assets}
             role={"object"}
         />;
 
 
-        return <span className={"eudAction"}>
+        return <span className={"eudAction"} key={this.props.action.uuid}>
                 {actionRendering}
                 {operationRendering}
                 {objectRendering}
@@ -489,6 +509,10 @@ class EudAction extends Component {
 
         if(this.props.scenes.has(uuid)){
             return this.props.scenes.get(uuid);
+        }
+
+        if(this.props.assets.has(uuid)){
+            return this.props.assets(uuid);
         }
 
         return this.props.interactiveObjects.get(uuid);
@@ -626,12 +650,14 @@ class EudRulePart extends Component {
                 changeText = {(text, role) => this.changeText(text, role)}
                 updateRule = {(rule, role) => this.props.updateRule(rule, role)}
                 role = {this.props.role}
+                rulePartType={this.props.rulePartType}
                 scenes = {this.props.scenes}
+                assets={this.props.assets}
             />;
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
         }
-        return <div className={css} key={uuid.v4()}>
+        return <div className={css} key={this.props.rule.uuid + this.props.role}>
             <span className={"eudInputBox"}
                onClick = {
                    (e) => {
@@ -717,6 +743,8 @@ class EudAutoComplete extends Component {
             verb: this.props.verb,
             role: this.props.role,
             scenes: this.props.scenes,
+            rulePartType: this.props.rulePartType,
+            assets: this.props.assets,
         });
         let li = items.valueSeq()
             .filter(i => {
@@ -734,7 +762,7 @@ class EudAutoComplete extends Component {
                                             updateRule = {(rule, role) => this.props.updateRule(rule, role)}
                 />
             });
-        return <div className={"eudCompletionPopup"} key={uuid.v4()}>
+        return <div className={"eudCompletionPopup"} >
             <ul>
                 {li}
             </ul>
@@ -762,7 +790,7 @@ class EudAutoCompleteItem extends Component {
         let text = objectTypeToString(this.props.item.type) + " " +  this.props.item.name;
 
         return <li
-            key={uuid.v4()}
+            key={this.props.item.name}
             onClick={(e) =>{
                 e.stopPropagation();
                 this.changeSelection(text);
@@ -786,6 +814,7 @@ class EudAutoCompleteItem extends Component {
  *          subject-> the subject that executes the action
  *          verb -> the type of action the subject executes
  *          interactiveObjects -> the list of the objects in the game
+ *          rulePartType -> type of rule portion we are returning the completions for
  * @returns {the list of possible completions}
  */
 function getCompletions(props) {
@@ -793,18 +822,22 @@ function getCompletions(props) {
 
     switch(props.role){
         case "subject":
-            let subjects = props.interactiveObjects.filter(x => x.type === InteractiveObjectTypes.SWITCH);
-
-            return subjects.set("player",
+            let subjects = props.interactiveObjects.filter(x => x.type !== InteractiveObjectTypes.TRANSITION).set(
+                "player",
                 InteractiveObject({
                     type: InteractiveObjectTypes.PLAYER,
                     uuid: "player",
-                    name:""})).merge(props.scenes);
+                    name:""})
+            );
+
+            return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
-            let allObjects = props.interactiveObjects.merge(props.scenes);
+            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets);
             if(props.verb.action){
-                let objType = allRulesActionMap.get(props.verb.action).obj_type;
-                return allObjects.filter(x => objType.includes(x.type));
+                if(props.verb.action){
+                    let objType = allRulesActionMap.get(props.verb.action).obj_type;
+                    return allObjects.filter(x => objType.includes(x.type));
+                }
             }
             return allObjects;
         case "operation":
@@ -843,7 +876,7 @@ function eventTypeToString(eventType) {
         case RuleActionTypes.TRANSITION:
             return "si sposta verso";
         case RuleActionTypes.CHANGE_BACKGROUND:
-            return 'cambia sfondo in';
+            return 'cambia sfondo con';
         case RuleActionTypes.ON:
             return 'accende';
         case RuleActionTypes.OFF:
@@ -860,9 +893,9 @@ function eventTypeToString(eventType) {
 function operatorUuidToString(operatorUuid) {
     switch (operatorUuid) {
         case Operators.EQUAL:
-            return "è uguale a";
+            return "è";
         case Operators.NOT_EQUAL:
-            return "è diverso da";
+            return "non è";
         case Operators.LESS_THAN:
             return "è minore di";
         case Operators.LESS_EQUAL:
@@ -905,6 +938,12 @@ function objectTypeToString(objectType) {
         case "operator":
         case "value":
             return "";
+        case 'video':
+            return 'il video';
+        case 'img':
+            return "l'immagine";
+        case 'file':
+            return 'il file';
         default:
             return "l'oggetto sconosciuto";
     }
@@ -1010,6 +1049,7 @@ const OperatorsMap = Immutable.Map([
             uuid: Operators.NOT_EQUAL,
         },
     ],
+    /*
     [
         Operators.LESS_EQUAL,
         {
@@ -1042,6 +1082,7 @@ const OperatorsMap = Immutable.Map([
             uuid: Operators.GREATER_THAN,
         },
     ],
+    */
 
 ]);
 
@@ -1112,7 +1153,7 @@ const RulesActionSceneMap = Immutable.Map([
         RuleActionTypes.CHANGE_BACKGROUND,
         {
             type: "operation",
-            obj_type: ['media'],
+            obj_type: ['video'],
             name: eventTypeToString(RuleActionTypes.CHANGE_BACKGROUND),
             uuid: RuleActionTypes.CHANGE_BACKGROUND
         },
