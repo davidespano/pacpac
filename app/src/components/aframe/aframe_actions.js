@@ -12,8 +12,9 @@ function executeAction(VRScene, rule, action){
     let actual_scene = VRScene.state.activeScene.name;
     let current_object = {};
     let game_graph = VRScene.state.graph;
-    let sceneName = action.obj_uuid;
-    let media = sceneName + '.mp4' ;
+    let sceneName = action.subj_uuid;
+    let media = action.obj_uuid;
+    console.log(action)
     let cursor = document.querySelector('#cursor');
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
@@ -111,7 +112,9 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.CHANGE_BACKGROUND:
             runState[sceneName].background = media;
             VRScene.setState({runState: runState});
-            let targetSceneVideo = document.getElementById(media);
+
+            let targetSceneVideo = document.getElementById("media_" + media);
+            console.log(targetSceneVideo)
             targetSceneVideo.play();
             //targetSceneVideo.onended = function () {console.log('finito')};
             break;

@@ -132,6 +132,7 @@ export default class VRScene extends React.Component {
                 <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
                 />);
+            console.log(scene)
             //second, push the media of the interactive objs
             Object.values(scene.objects).flat().forEach(obj => {
                 Object.keys(obj.media).map(k => {
@@ -157,6 +158,20 @@ export default class VRScene extends React.Component {
                     )
                 }
             });
+            scene.rules.forEach( rule => {
+                rule.actions.forEach(action => {
+                    console.log(action)
+                    if(action.action === 'CHANGE_BACKGROUND'){
+                        currAssets.push(
+                            <video id={"media_" + action.obj_uuid} key={"media_" + action.obj_uuid}
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
+                                   preload="auto" loop={false} crossorigin="anonymous" playsInline muted
+                            />
+                        )
+                    }
+                })
+
+            })
             //third, push the media present in the actions
             //TODO do it! maybe not necessary
             scene.rules.forEach(()=>{});
