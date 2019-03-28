@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes"
-import InteractiveObjectTypes from "../../interactives/InteractiveObjectsTypes"
+import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObject from "../../interactives/InteractiveObject"
 import Immutable from "immutable";
 import Action from "../../interactives/rules/Action"
@@ -342,10 +342,10 @@ class EudCondition extends Component {
 
 
     getInteractiveObjectReference(uuid){
-        if(uuid == "player"){
+        if(uuid == InteractiveObjectsTypes.PLAYER){
             return InteractiveObject({
-                type: InteractiveObjectTypes.PLAYER,
-                uuid: "player",
+                type: InteractiveObjectsTypes.PLAYER,
+                uuid: InteractiveObjectsTypes.PLAYER,
                 name:""});
         }
 
@@ -500,10 +500,10 @@ class EudAction extends Component {
     }
 
     getInteractiveObjectReference(uuid){
-        if(uuid == "player"){
+        if(uuid == InteractiveObjectsTypes.PLAYER){
             return InteractiveObject({
-                type: InteractiveObjectTypes.PLAYER,
-                uuid: "player",
+                type: InteractiveObjectsTypes.PLAYER,
+                uuid: InteractiveObjectsTypes.PLAYER,
                 name:""});
         }
 
@@ -512,7 +512,7 @@ class EudAction extends Component {
         }
 
         if(this.props.assets.has(uuid)){
-            return this.props.assets(uuid);
+            return this.props.assets.get(uuid);
         }
 
         return this.props.interactiveObjects.get(uuid);
@@ -822,45 +822,32 @@ function getCompletions(props) {
 
     switch(props.role){
         case "subject":
-            let subjects = props.interactiveObjects.filter(x => x.type !== InteractiveObjectTypes.TRANSITION).set(
-                "player",
+            let subjects = props.interactiveObjects.filter(x => x.type !== InteractiveObjectsTypes.TRANSITION).set(
+                InteractiveObjectsTypes.PLAYER,
                 InteractiveObject({
-                    type: InteractiveObjectTypes.PLAYER,
-                    uuid: "player",
-                    name:""})
+                    type: InteractiveObjectsTypes.PLAYER,
+                    uuid: InteractiveObjectsTypes.PLAYER,
+                    name:""
+                })
             );
 
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
-            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets);
+            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets)
+            if(props.subject){
+                allObjects = allObjects.merge(ValuesMap.filter(x => x.subj_type.includes(props.subject.type)));
+            }
             if(props.verb.action){
-                if(props.verb.action){
-                    let objType = allRulesActionMap.get(props.verb.action).obj_type;
-                    return allObjects.filter(x => objType.includes(x.type));
-                }
+                let objType = RulesActionMap.get(props.verb.action).obj_type;
+                allObjects = allObjects.filter(x => objType.includes(x.type));
             }
             return allObjects;
         case "operation":
-            if(props.subject){
-                if(props.subject.uuid === 'player'){
-                    return RulesActionPlayerMap;
-                }
-
-                if(props.subject.type === '3D' || props.subject.type === '2D'){
-                    return RulesActionSceneMap;
-                }
-
-                return RulesActionObjectMap;
-            }
-
-            return allRulesActionMap;
+            return props.subject ? RulesActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RulesActionMap;
         case "operator":
             return OperatorsMap;
         case 'value':
-            if(props.subject){
-                return ValuesMap.filter(x => x.obj_type.includes(props.subject.type));
-            }
-            return ValuesMap;
+            return props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
 
     }
 
@@ -911,25 +898,25 @@ function operatorUuidToString(operatorUuid) {
 
 function objectTypeToString(objectType) {
     switch (objectType) {
-        case InteractiveObjectTypes.BUTTON:
+        case InteractiveObjectsTypes.BUTTON:
             return "il pulsante";
-        case InteractiveObjectTypes.COUNTER:
+        case InteractiveObjectsTypes.COUNTER:
             return "il contatore";
-        case InteractiveObjectTypes.CUMULABLE:
+        case InteractiveObjectsTypes.CUMULABLE:
             return "l'oggetto";
-        case InteractiveObjectTypes.LOCK:
+        case InteractiveObjectsTypes.LOCK:
             return "la serratura";
-        case InteractiveObjectTypes.SELECTOR:
+        case InteractiveObjectsTypes.SELECTOR:
             return "il selettore";
-        case InteractiveObjectTypes.SWITCH:
+        case InteractiveObjectsTypes.SWITCH:
             return "l'interruttore";
-        case InteractiveObjectTypes.TIMER:
+        case InteractiveObjectsTypes.TIMER:
             return "il timer";
-        case InteractiveObjectTypes.KEY:
+        case InteractiveObjectsTypes.KEY:
             return "la chiave";
-        case InteractiveObjectTypes.TRANSITION:
+        case InteractiveObjectsTypes.TRANSITION:
             return "la transizione";
-        case InteractiveObjectTypes.PLAYER:
+        case InteractiveObjectsTypes.PLAYER:
             return "il giocatore";
         case '3D':
         case '2D':
@@ -974,7 +961,7 @@ const ValuesMap = Immutable.Map([
         Values.ON,
         {
             type: 'value',
-            obj_type: [InteractiveObjectTypes.SWITCH],
+            subj_type: [InteractiveObjectsTypes.SWITCH],
             name: valueUuidToString(Values.ON),
             uuid: Values.ON,
         },
@@ -984,7 +971,7 @@ const ValuesMap = Immutable.Map([
         Values.OFF,
         {
             type: 'value',
-            obj_type: [InteractiveObjectTypes.SWITCH],
+            subj_type: [InteractiveObjectsTypes.SWITCH],
             name: valueUuidToString(Values.OFF),
             uuid: Values.OFF,
         },
@@ -994,7 +981,7 @@ const ValuesMap = Immutable.Map([
         Values.LOCKED,
         {
             type: 'value',
-            obj_type: [InteractiveObjectTypes.LOCK],
+            subj_type: [InteractiveObjectsTypes.LOCK],
             name: valueUuidToString(Values.LOCKED),
             uuid: Values.LOCKED,
         },
@@ -1004,7 +991,7 @@ const ValuesMap = Immutable.Map([
         Values.UNLOCKED,
         {
             type: 'value',
-            obj_type: [InteractiveObjectTypes.LOCK],
+            subj_type: [InteractiveObjectsTypes.LOCK],
             name: valueUuidToString(Values.UNLOCKED),
             uuid: Values.UNLOCKED,
         },
@@ -1014,7 +1001,7 @@ const ValuesMap = Immutable.Map([
         Values.COLLECTED,
         {
             type: 'value',
-            obj_type: [InteractiveObjectTypes.KEY],
+            subj_type: [InteractiveObjectsTypes.KEY],
             name: valueUuidToString(Values.COLLECTED),
             uuid: Values.COLLECTED,
         },
@@ -1024,7 +1011,7 @@ const ValuesMap = Immutable.Map([
         Values.NOT_COLLECTED,
         {
             type: 'value',
-            obj_type: [InteractiveObjectTypes.KEY],
+            subj_type: [InteractiveObjectsTypes.KEY],
             name: valueUuidToString(Values.NOT_COLLECTED),
             uuid: Values.NOT_COLLECTED,
         },
@@ -1086,16 +1073,17 @@ const OperatorsMap = Immutable.Map([
 
 ]);
 
-const RulesActionPlayerMap = Immutable.Map([
+const RulesActionMap = Immutable.Map([
     [
         RuleActionTypes.CLICK,
         {
             type: "operation",
+            subj_type: [InteractiveObjectsTypes.PLAYER],
             obj_type: [
-                InteractiveObjectTypes.SWITCH,
-                InteractiveObjectTypes.KEY,
-                InteractiveObjectTypes.LOCK,
-                InteractiveObjectTypes.TRANSITION,
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.TRANSITION,
             ],
             name: eventTypeToString(RuleActionTypes.CLICK),
             uuid: RuleActionTypes.CLICK
@@ -1105,7 +1093,8 @@ const RulesActionPlayerMap = Immutable.Map([
         RuleActionTypes.COLLECT_KEY,
         {
             type: "operation",
-            obj_type: [InteractiveObjectTypes.KEY],
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [InteractiveObjectsTypes.KEY],
             name: eventTypeToString(RuleActionTypes.COLLECT_KEY),
             uuid: RuleActionTypes.COLLECT_KEY
         }
@@ -1114,6 +1103,7 @@ const RulesActionPlayerMap = Immutable.Map([
         RuleActionTypes.TRANSITION,
         {
             type: "operation",
+            subj_type: [InteractiveObjectsTypes.PLAYER],
             obj_type: ['2D', '3D'],
             name: eventTypeToString(RuleActionTypes.TRANSITION),
             uuid: RuleActionTypes.TRANSITION
@@ -1123,7 +1113,8 @@ const RulesActionPlayerMap = Immutable.Map([
         RuleActionTypes.ON,
         {
             type: "operation",
-            obj_type: [InteractiveObjectTypes.SWITCH],
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [InteractiveObjectsTypes.SWITCH],
             name: eventTypeToString(RuleActionTypes.ON),
             uuid: RuleActionTypes.ON
         }
@@ -1132,7 +1123,8 @@ const RulesActionPlayerMap = Immutable.Map([
         RuleActionTypes.OFF,
         {
             type: "operation",
-            obj_type: [InteractiveObjectTypes.SWITCH],
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [InteractiveObjectsTypes.SWITCH],
             name: eventTypeToString(RuleActionTypes.OFF),
             uuid: RuleActionTypes.OFF
         }
@@ -1141,36 +1133,32 @@ const RulesActionPlayerMap = Immutable.Map([
         RuleActionTypes.FLIP_SWITCH,
         {
             type: "operation",
-            obj_type: [InteractiveObjectTypes.SWITCH],
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [InteractiveObjectsTypes.SWITCH],
             name: eventTypeToString(RuleActionTypes.FLIP_SWITCH),
             uuid: RuleActionTypes.FLIP_SWITCH
         }
     ],
-]);
-
-const RulesActionSceneMap = Immutable.Map([
     [
         RuleActionTypes.CHANGE_BACKGROUND,
         {
             type: "operation",
+            subj_type: ['2D', '3D'],
             obj_type: ['video'],
             name: eventTypeToString(RuleActionTypes.CHANGE_BACKGROUND),
             uuid: RuleActionTypes.CHANGE_BACKGROUND
         },
     ],
-]);
-
-
-const RulesActionObjectMap = Immutable.Map([
     [
         RuleActionTypes.CHANGE_STATE,
         {
             type: "operation",
-            obj_type: ['state'],
+            subj_type: [
+                InteractiveObjectsTypes.SWITCH,
+            ],
+            obj_type: ['value'],
             name: eventTypeToString(RuleActionTypes.CHANGE_STATE),
             uuid: RuleActionTypes.CHANGE_STATE
         },
     ],
 ]);
-
-const allRulesActionMap = RulesActionSceneMap.merge(RulesActionObjectMap).merge(RulesActionPlayerMap);

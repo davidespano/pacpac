@@ -7,8 +7,6 @@ import Action from "./Action";
 import Condition from "./Condition";
 let uuid = require('uuid');
 
-const PLAYER = 'player';
-
 /**
  * Generates a default rule depending on the given object
  * @param object
@@ -21,13 +19,13 @@ function generateDefaultRule(object){
                 uuid : uuid.v4(),
                 event : Action({
                     uuid: uuid.v4(),
-                    subj_uuid: PLAYER,
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
                 actions : Immutable.List([Action({
                     uuid: uuid.v4(),
-                    subj_uuid: PLAYER,
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.TRANSITION,
                 })]),
             });
@@ -37,13 +35,13 @@ function generateDefaultRule(object){
                 uuid : uuid.v4(),
                 event : Action({
                     uuid: uuid.v4(),
-                    subj_uuid: PLAYER,
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
                 actions : Immutable.List([Action({
                     uuid: uuid.v4(),
-                    subj_uuid: PLAYER,
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.FLIP_SWITCH,
                     obj_uuid: object.uuid,
                 })]),
@@ -54,13 +52,13 @@ function generateDefaultRule(object){
                 uuid : uuid.v4(),
                 event : Action({
                     uuid: uuid.v4(),
-                    subj_uuid: PLAYER,
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
                 actions : Immutable.List([Action({
                     uuid: uuid.v4(),
-                    subj_uuid: PLAYER,
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.COLLECT_KEY,
                     obj_uuid: object.uuid,
                 })]),
@@ -71,13 +69,13 @@ function generateDefaultRule(object){
                 uuid : uuid.v4(),
                 event : Action({
                     uuid: uuid.v4(),
-                    subj_uuid: PLAYER,
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
                 actions : Immutable.List([Action({
                     uuid: uuid.v4(),
-                    subj_uuid: PLAYER,
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.UNLOCK_LOCK,
                     obj_uuid: object.uuid,
                 })]),
@@ -94,7 +92,7 @@ function addEmptyAction(rule){
      let list = rule.get('actions');
      list = list.push(Action({
          uuid: uuid.v4(),
-         subj_uuid: PLAYER,
+         subj_uuid: InteractiveObjectsTypes.PLAYER,
      }));
      rule = rule.set('actions', list);
      return rule;
