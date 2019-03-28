@@ -12,6 +12,7 @@ const Action = Immutable.Record({
     subj_uuid: null, //subject
     action: null,    //action
     obj_uuid: null,  //object
+    index: 0,        //creation order
 
 });
 

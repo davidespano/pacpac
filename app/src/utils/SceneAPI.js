@@ -10,6 +10,7 @@ import Lock from "../interactives/Lock"
 import Orders from "../data/Orders";
 import Action from "../interactives/rules/Action";
 import Immutable from 'immutable';
+import stores_utils from "../data/stores_utils";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -108,10 +109,11 @@ function getByName(name, order = null) {
                         subj_uuid: a.subj_uuid,
                         action: a.action,
                         obj_uuid: a.obj_uuid,
+                        index: a.index,
                     });
                 });
 
-                actions = Immutable.List(actions);
+                actions = Immutable.List(actions).sort(stores_utils.actionComparator);
 
                 rules_uuids.push(rule.uuid); // save uuid
 

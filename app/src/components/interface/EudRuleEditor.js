@@ -144,6 +144,7 @@ class EudRule extends Component {
         let eudCondition = null;
         let disabled = false;
         if (rule) {
+            console.log(rule.get('actions'))
             let actionRendering = rule.actions.map(
                 action => {
                     return <React.Fragment >
@@ -548,6 +549,7 @@ class EudAction extends Component {
                             action: null,
                             subj_uuid: ruleUpdate.item,
                             obj_uuid: null,
+                            index: action.index,
                         }));
                 }else {
                     list = list.set(index,
@@ -556,6 +558,7 @@ class EudAction extends Component {
                             action: null,
                             subj_uuid: ruleUpdate.item,
                             obj_uuid: null,
+                            index: action.index,
                         }));
                 }
                 break;
@@ -567,6 +570,7 @@ class EudAction extends Component {
                             action: action.action,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: ruleUpdate.item,
+                            index: action.index,
                         }));
                 }else{
                     list = list.set(index,
@@ -575,6 +579,7 @@ class EudAction extends Component {
                             action: action.action,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: ruleUpdate.item,
+                            index: action.index,
                         }));
                 }
 
@@ -587,6 +592,7 @@ class EudAction extends Component {
                             action: ruleUpdate.item,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: null,
+                            index: action.index,
                         }));
                 }else{
                     list = list.set(index,
@@ -595,6 +601,7 @@ class EudAction extends Component {
                             action: ruleUpdate.item,
                             subj_uuid: action.subj_uuid,
                             obj_uuid: null,
+                            index: action.index,
                         }));
                 }
 

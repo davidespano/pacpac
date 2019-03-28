@@ -90,6 +90,12 @@ function getFileType(fileName){
 }
 
 
+function actionComparator(a, b){
+    if(a.index < b.index) return -1;
+    if(a.index > b.index) return 1;
+    return 0;
+}
+
 /*
 function parseRulesFromRaw(content, scene){
     const entityMap = content.entityMap;
@@ -371,4 +377,5 @@ export default {
     chronological: chronological,
     rev_chronological: rev_chronological,
     getFileType: getFileType,
+    actionComparator: actionComparator,
 }

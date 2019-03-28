@@ -90,9 +90,11 @@ function generateDefaultRule(object){
 
 function addEmptyAction(rule){
      let list = rule.get('actions');
+     let index = list.size > 0 ? list.get(list.size-1).get('index') + 1 : 0;
      list = list.push(Action({
          uuid: uuid.v4(),
          subj_uuid: InteractiveObjectsTypes.PLAYER,
+         index: index,
      }));
      rule = rule.set('actions', list);
      return rule;
