@@ -64,15 +64,19 @@ export default class VRScene extends React.Component {
             rule.actions.forEach(action => {
                 eventBus.on('click-' + rule.event.obj_uuid, function () {
                     if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
-                        objectVideo = document.querySelector('#media_' + action.obj_uuid);
                         //if(current_object.type !== 'CHANGE_BACKGROUND' || !stopCBG){
-                            setTimeout(function () {
-                                executeAction(me, rule, action)
-                            }, duration);
-                            if (objectVideo) {
-                                duration = (objectVideo.duration * 1000) + 100;
-                            }
-                            //stopCBG = true;
+                        setTimeout(function () {
+                            executeAction(me, rule, action)
+                        }, duration);
+                        if(action.action === 'CHANGE_BACKGROUND'){
+                            objectVideo = document.getElementById(action.obj_uuid);
+                        } else {
+                            objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                        }
+                        if (objectVideo) {
+                            duration = (objectVideo.duration * 1000);
+                        }
+                        //stopCBG = true;
                     }//}
 
                 })
@@ -160,9 +164,8 @@ export default class VRScene extends React.Component {
                     )
                 }
             });
-            /*scene.rules.forEach( rule => {
+            scene.rules.forEach( rule => {
                 rule.actions.forEach(action => {
-                    console.log(action)
                     if(action.action === 'CHANGE_BACKGROUND'){
                         currAssets.push(
                             <video id={action.obj_uuid} key={"key" + action.obj_uuid}
@@ -173,7 +176,7 @@ export default class VRScene extends React.Component {
                     }
                 })
 
-            })*/
+            })
             //third, push the media present in the actions
             //TODO do it! maybe not necessary
             scene.rules.forEach(()=>{});
