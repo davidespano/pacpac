@@ -8,6 +8,7 @@ import ConditionUtils from "../../interactives/rules/ConditionUtils";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
 import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
+import stores_utils from "../../data/stores_utils";
 //const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -61,6 +62,8 @@ export default class VRScene extends React.Component {
 
                 }
             });
+            rule.actions.sort(stores_utils.actionComparator)
+            //stores_utils.actionComparator()
             rule.actions.forEach(action => {
                 eventBus.on('click-' + rule.event.obj_uuid, function () {
                     if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {

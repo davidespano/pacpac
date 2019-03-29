@@ -118,6 +118,8 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             let targetSceneVideo = document.getElementById(actual_sceneimg);
             targetSceneVideo.play();
+            //cursor.setAttribute('material', 'visible: false');
+            //cursor.setAttribute('raycaster', 'far: 0.1');
             //targetSceneVideo.onended = function () {console.log('finito')};
             break;
         case RuleActionTypes.PLAY_AUDIO:
