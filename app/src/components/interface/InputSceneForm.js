@@ -27,6 +27,10 @@ function InputSceneForm(props){
                                    id="scene_name"
                                    name="scene_name"
                                    className={'input-new-scene'}
+                                   onChange={() => {
+                                       let name = document.getElementById("scene_name").value;
+                                       props.newSceneNameTyped(name != "");
+                                   }}
                             />
                             <label>Etichetta</label>
                             <div id={'tags-input-scene'}>
@@ -45,7 +49,7 @@ function InputSceneForm(props){
                                 <p id={'file-selected-name'}
                                    className={'input-new-scene'}
                                 >
-                                    {selectedFile(props.editor)}
+                                    {selectedFile(props)}
                                 </p>
                                 <FileSelectionBtn {...properties} />
                             </div>
@@ -69,7 +73,7 @@ function InputSceneForm(props){
                                     props.selectFile(null);
                                 }
                             }
-                            } data-dismiss="modal" >Conferma</button>
+                            } data-dismiss="modal" disabled={checkIfDisabled(props)}>Conferma</button>
                         </div>
                     </div>
                 </div>
@@ -80,25 +84,18 @@ function InputSceneForm(props){
     );
 }
 
+function checkIfDisabled(props){
+    return !(props.editor.selectedFile && props.editor.newSceneNameTyped);
+}
+
 function checkFormAndCreateScene(name, media, index, type, tag, order){
-    //FARE CONTROLLI FORM QUI!1!1
-    //lettere accentate e spazi sono ammessi! Yay
-    //MA NON ALL'INIZIO DELLA FRASE
     name = name.trim();
-
-    // regex to extract file extension
-    // https://stackoverflow.com/questions/680929/how-to-extract-extension-from-filename-string-in-javascript
-    //let re = /(?:\.([^.]+))?$/;
-    //let ext = re.exec(media.name)[1];
-    //name = name + "." + ext;
-
     if(!index) index = 0;
-
     SceneAPI.createScene(name, media, index, type, tag, order);
 }
 
-function selectedFile(editor){
-    return editor.selectedFile ? editor.selectedFile : 'No file selected';
+function selectedFile(props){
+    return props.editor.selectedFile ? props.editor.selectedFile : 'No file selected';
 }
 
 export default InputSceneForm;

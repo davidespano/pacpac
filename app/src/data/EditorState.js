@@ -20,6 +20,7 @@ const EditorState = Immutable.Record({
     actionId: null,
     role: null,
     completionInput: null,
+    newSceneNameTyped: false,
 });
 
 export default EditorState;

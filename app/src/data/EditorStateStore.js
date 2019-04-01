@@ -39,6 +39,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.GEOMETRY_MODE_ON);
             case ActionTypes.LOGIN_MODE_ON:
                 return state.set('mode', ActionTypes.LOGIN_MODE_ON);
+            case ActionTypes.NEW_SCENE_NAME_TYPED:
+                return state.set('newSceneNameTyped', action.status);
             case ActionTypes.FILE_MANAGER_MODE_ON:
                 return state.set('mode', ActionTypes.FILE_MANAGER_MODE_ON);
             case ActionTypes.OBJECTS_FILTER:
