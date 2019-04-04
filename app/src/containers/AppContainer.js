@@ -60,6 +60,7 @@ function getState() {
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
+        newSceneNameTyped: Actions.newSceneNameTyped,
         rightbarSelection: Actions.rightbarSelection,
         selectFile: Actions.selectFile,
         selectMediaToEdit: Actions.selectMediaToEdit,

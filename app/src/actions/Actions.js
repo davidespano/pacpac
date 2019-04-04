@@ -95,9 +95,16 @@ const Actions = {
     },
 
     fileManagerModeOn(){
-      AppDispatcher.dispatch({
-          type: ActionTypes.FILE_MANAGER_MODE_ON
-      })
+       AppDispatcher.dispatch({
+            type: ActionTypes.FILE_MANAGER_MODE_ON
+       })
+    },
+
+    newSceneNameTyped(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.NEW_SCENE_NAME_TYPED,
+            status: status,
+        })
     },
 
     //SCENES

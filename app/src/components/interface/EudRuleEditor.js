@@ -144,7 +144,6 @@ class EudRule extends Component {
         let eudCondition = null;
         let disabled = false;
         if (rule) {
-            console.log(rule.get('actions'))
             let actionRendering = rule.actions.map(
                 action => {
                     return <React.Fragment >
@@ -528,7 +527,6 @@ class EudAction extends Component {
         let event = false;
         for(var i = 0; i < rule.actions.size; i++){
             if(rule.actions.get(i).uuid == ruleUpdate.action.uuid){
-                console.log('qui')
                 index = i;
                 action = rule.actions.get(i);
             }
@@ -840,7 +838,7 @@ function getCompletions(props) {
 
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
-            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets)
+            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets);
             if(props.subject){
                 allObjects = allObjects.merge(ValuesMap.filter(x => x.subj_type.includes(props.subject.type)));
             }
@@ -867,6 +865,8 @@ function eventTypeToString(eventType) {
             return "clicca";
         case RuleActionTypes.COLLECT_KEY:
             return "raccoglie";
+        case RuleActionTypes.UNLOCK_LOCK:
+            return "sblocca";
         case RuleActionTypes.TRANSITION:
             return "si sposta verso";
         case RuleActionTypes.CHANGE_BACKGROUND:
@@ -1104,6 +1104,16 @@ const RulesActionMap = Immutable.Map([
             obj_type: [InteractiveObjectsTypes.KEY],
             name: eventTypeToString(RuleActionTypes.COLLECT_KEY),
             uuid: RuleActionTypes.COLLECT_KEY
+        }
+    ],
+    [
+        RuleActionTypes.UNLOCK_LOCK,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [InteractiveObjectsTypes.LOCK],
+            name: eventTypeToString(RuleActionTypes.UNLOCK_LOCK),
+            uuid: RuleActionTypes.UNLOCK_LOCK
         }
     ],
     [
