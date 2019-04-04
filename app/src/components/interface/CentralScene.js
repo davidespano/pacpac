@@ -33,7 +33,7 @@ function CentralScene(props){
     if(currentScene !== null && (regex.test(currentScene.img))){
         return(
             <div id={'central-scene'} className={'scene'}>
-                <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + currentScene.img}>
+                <video muted={true}  playsInline controls className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + currentScene.img}>
                 </video>
                 {generateObjectsIcons(props)}
             </div>

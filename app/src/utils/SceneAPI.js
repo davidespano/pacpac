@@ -117,21 +117,26 @@ function getByName(name, order = null) {
 
                 rules_uuids.push(rule.uuid); // save uuid
 
-                let event = JSON.parse(rule.event);
+                let event;
 
-                // new Rule
-                let r = Rule({
-                    uuid: rule.uuid,
-                    event: Action({
-                        uuid: event.uuid,
-                        subj_uuid: event.subj_uuid,
-                        action: event.action,
-                        obj_uuid: event.obj_uuid,
-                    }),
-                    condition: JSON.parse(rule.condition),
-                    actions: actions,
-                });
-                Actions.receiveRule(r);
+                try{
+                    event = JSON.parse(rule.event)
+                    // new Rule
+                    let r = Rule({
+                        uuid: rule.uuid,
+                        event: Action({
+                            uuid: event.uuid,
+                            subj_uuid: event.subj_uuid,
+                            action: event.action,
+                            obj_uuid: event.obj_uuid,
+                        }),
+                        condition: JSON.parse(rule.condition),
+                        actions: actions,
+                    });
+                    Actions.receiveRule(r);
+                }catch(e){}
+
+
             });
 
             let tag = response.body.tag.uuid ? response.body.tag.uuid : "default";

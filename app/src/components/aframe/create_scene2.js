@@ -1,5 +1,6 @@
 import 'aframe';
 import './aframe_selectable'
+import './pac-look-controls'
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
@@ -45,6 +46,8 @@ export default class VRScene extends React.Component {
             runState: runState,
         });
         this.createRuleListeners();
+        document.querySelector('#camera').removeAttribute('look-controls');
+        document.querySelector('#camera').removeAttribute('wasd-controls');
     }
 
     createRuleListeners(){
@@ -124,10 +127,12 @@ export default class VRScene extends React.Component {
                         {this.generateAssets()}
                     </a-assets>
                     {this.generateBubbles()}
-                    <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
-                        <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor" raycaster="objects: [data-raycastable];" pointsaver/>
-                        </Entity>
+                    <Entity primitive="a-camera" key="keycamera" id="camera"
+                            pac-look-controls="pointerLockEnabled: true;" look-controls="false" wasd-controls="false">
+
+                            <Entity primitive="a-cursor" id="cursor" raycaster="objects: [data-raycastable];"
+                                    fuse={false} pointsaver/>
+
                     </Entity>
                 </Scene>
         )
@@ -141,6 +146,7 @@ export default class VRScene extends React.Component {
             currAssets.push(
                 <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
+                       playsInline={true} autoPlay muted={true}
                 />);
             //second, push the media of the interactive objs
             Object.values(scene.objects).flat().forEach(obj => {
@@ -149,7 +155,7 @@ export default class VRScene extends React.Component {
                         currAssets.push(
                             <video id={k+"_" + obj.uuid} key={k+"_" + obj.uuid}
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
-                                   preload="auto" loop={false} crossorigin="anonymous"
+                                   preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
                             />
                         )
                     }
@@ -173,7 +179,7 @@ export default class VRScene extends React.Component {
                         currAssets.push(
                             <video id={action.obj_uuid} key={"key" + action.obj_uuid}
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
-                                   preload="auto" loop={'true'} crossorigin="anonymous" playsInline muted
+                                   preload="auto" loop={'true'} crossorigin="anonymous" playsInline={true} muted={true}
                             />
                         )
                     }
@@ -194,8 +200,8 @@ export default class VRScene extends React.Component {
                 if(obj.media.media0 !== null){
                     return(
                     <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0}
-                                   preload="auto" loop={false} crossorigin="anonymous"
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}
+                                   preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
                     />)
                 }
                 else return null;
@@ -204,22 +210,22 @@ export default class VRScene extends React.Component {
                 if(obj.media["media"+i] !== null)
                     return(
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i]}
-                               preload="auto" loop={false} crossorigin="anonymous"
+                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i] + "#t=0.1"}
+                               preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
                         />)
                 else if (obj.media["media"+((i+1)%2)] !== null)
                     return(
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)]}
-                               preload="auto" loop={false} crossorigin="anonymous"
+                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}
+                               preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
                         />)
                 else return null;
             case InteractiveObjectsTypes.KEY:
                 if(obj.media.media0 !== null){
                     return(
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0}
-                               preload="auto" loop={false} crossorigin="anonymous"
+                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}
+                               preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
                         />)
                 }
                 else return null;

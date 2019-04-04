@@ -41,7 +41,7 @@ class Bubble extends React.Component
 export function givePoints(props)
 {
     let cursor = document.querySelector('a-cursor');
-    let puntisalvati = cursor.getAttribute("pointsaver").points;
+    let puntisalvati = cursor.components.pointsaver.points;
 
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
@@ -70,8 +70,8 @@ export default class GeometryScene extends React.Component{
     }
 
     handleFeedbackChange() {
-        if(document.querySelector('#cursor').getAttribute('pointsaver') != null) {
-            let a_point = document.querySelector('#cursor').getAttribute('pointsaver').points;
+        if(document.querySelector('a-cursor').components.pointsaver != null) {
+            let a_point = document.querySelector('#cursor').components.pointsaver.points;
 
             //Punti
             let length = a_point.length;
@@ -106,7 +106,7 @@ export default class GeometryScene extends React.Component{
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
             {
-                let pointsaver = document.querySelector('#cursor').getAttribute('pointsaver');
+                let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 if(pointsaver != null && pointsaver.points.length != 0) {
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
@@ -114,7 +114,7 @@ export default class GeometryScene extends React.Component{
                     cursor.setAttribute('color', 'black');
                     cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange);
-                    cursor.removeAttribute("pointsaver");
+                    cursor.components.pointsaver.points = [];
                     let scene = document.querySelector("a-sky");
                     let removeSphere = scene.querySelectorAll(".points");
                     removeSphere.forEach(point => {
@@ -134,13 +134,13 @@ export default class GeometryScene extends React.Component{
 
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
-                cursor.setAttribute('pointsaver', true);
+                cursor.components.pointsaver.points = [];
                 cursor.addEventListener('click', this.handleFeedbackChange);
             }
 
             if(keyName === 'u' || keyName === 'U')
             {
-                let pointsaver = document.querySelector('#cursor').getAttribute('pointsaver');
+                let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 if(pointsaver != null && pointsaver.points.length != 0){
                     let points = pointsaver.points;
                     let lastID = points.length - 1;
@@ -194,9 +194,9 @@ export default class GeometryScene extends React.Component{
                     {skies}
 
 
-                    <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
+                    <Entity primitive="a-camera" key="keycamera" id="camera" look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor"/>
+                            <Entity primitive="a-cursor" pointsaver id="cursor" />
                         </Entity>
                     </Entity>
                 </Scene>

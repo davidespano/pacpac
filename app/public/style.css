@@ -53,15 +53,22 @@ div.rules{
     grid-gap: 1.5px;
     padding: 1px;
     background-color: #ADB0B1;
-    height: 88.5vh !important;
+    height: 82vh !important;
+    max-height: 82vh !important;;
+    box-sizing: border-box;
 }
 
+
 body{
-    min-width: 1000px;
+    width: 100vw;
+    height: 100vh;
+
 }
 
 .topbar{
-    min-height: 11.5vh !important;
+    box-sizing: border-box;
+    min-height: 18vh !important;
+    max-height: 18vh !important;
 }
 
 .grid-container > div {
@@ -90,8 +97,7 @@ body{
 }
 
 .rules{
-    min-height: 33vh;
-    max-height: 33vh;
+
     overflow-y: auto;
 }
 
@@ -103,12 +109,13 @@ body{
 }
 
 .scene > img, .scene > video{
+    box-sizing: border-box;
     transition: .1s ease;
     backface-visibility: hidden;
     width: 100%;
     align-self: center;
-    min-height: 55vh;
-    max-height: 55vh;
+    min-height: 44vh;
+    max-height: 44vh;
     z-index: 1;
 }
 
@@ -218,7 +225,6 @@ body{
 }
 
 .leftbar, .rightbar{
-    max-height: 88.5vh;
     overflow-y: auto;
 }
 
@@ -456,6 +462,7 @@ body{
     height: 100%;
     font-size: 1em !important;
     padding-top: 1.5vh;
+    box-sizing: border-box;
 }
 
 .flex-container{
@@ -674,6 +681,7 @@ body{
 
 .filemanager{
     height: 80vh;
+    box-sizing: border-box;
 }
 
 /** TAG FORM **/
@@ -1074,15 +1082,13 @@ input.eudObjectString[type=text] {
 
 .eudFloating{
     position: absolute;
-    height: 60px;
     bottom: 0px;
     right: 0px;
-    left: 0px;
     background-color: white;
     text-align: right;
 }
 
-.eudFloating .propertyForm{
+.propertyForm{
     margin-right: 10px;
 }
 
@@ -1159,17 +1165,18 @@ input.eudObjectString[type=text] {
 }
 
 .rule-container{
+    box-sizing: border-box;
     position:relative;
-    height: 33vh;
-    min-height: 33vh;
+    height: 38vh;
+    min-height: 38vh;
 
 }
 
 .rule-editor{
-    height: 33vh;
-    min-height: 33vh;
+    box-sizing: border-box;
+    height: 38vh;
+    min-height: 38vh;
     overflow: scroll;
-    padding-bottom: 60px;
     background-color: white;
 }
 

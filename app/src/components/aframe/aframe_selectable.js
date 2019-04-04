@@ -1,4 +1,4 @@
-import 'aframe-animation-component';
+//import 'aframe-animation-component';
 
 const AFRAME = require('aframe');
 const eventBus = require('./eventBus');
