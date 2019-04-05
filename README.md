@@ -48,3 +48,7 @@ To grant the ownership of the test game, go to <http:\\localhost:7474> and run t
 match (n:User) merge (n)-[:OWN_GAME]->(:Game {gameID: '3f585c1514024e9391954890a61d0a04'})
 ```
 
+To delete everything in the db, but users and games use
+```
+MATCH (n) WHERE NOT n:User AND NOT n:Game DETACH DELETE n
+```
