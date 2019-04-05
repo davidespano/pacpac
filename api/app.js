@@ -78,7 +78,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-//app.use('/media', express.static(path.join(__dirname, 'public')));
+app.use('/media', express.static(path.join(__dirname, 'public')));
 
 app.use('/media/*', function(req, res) {
     const fileName = path.join(__dirname, req.params[0]);
