@@ -4,10 +4,11 @@ WORKDIR /app
 COPY package.json /app
 RUN npm install
 COPY . /app
-#RUN npm install -g serve
-#CMD npm run-script build
-#CMD serve -s build
+RUN npm install -g serve
+RUN npm run-script build
+CMD serve -s build
+EXPOSE 5000
 
 #------- debug ----------
-CMD cd src && npm start
-EXPOSE 3006
+#CMD cd src && npm start
+#EXPOSE 3006
