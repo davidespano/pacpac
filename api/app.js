@@ -78,10 +78,10 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use('/media', express.static(path.join(__dirname, 'public')));
+//app.use('/media', express.static(path.join(__dirname, 'public')));
 
 app.use('/media/*', function(req, res) {
-    const fileName = path.join(__dirname, req.params[0]);
+    const fileName = path.join(__dirname, 'public/' + req.params[0]);
     const stat = fs.statSync(fileName);
     const fileSize = stat.size;
     const range = req.headers.range;
