@@ -5,6 +5,8 @@ import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import interface_utils from "../interface/interface_utils";
+import settings from '../../utils/settings';
+const {mediaURL} = settings;
 
 function Curved(props)
 {
@@ -31,7 +33,7 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={"http://localhost:3000/media/" + this.props.img} radius="9.5">
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={`${mediaURL}`+ this.props.img} radius="9.5">
                 {curves}
             </Entity>
         );
