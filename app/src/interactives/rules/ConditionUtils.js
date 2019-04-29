@@ -14,7 +14,7 @@ function evalCondition(c, gameState) {
                 console.log('Super operator not yet implemented');
                 console.log(c.operator);
         }
-    }else if(c instanceof Condition || c.hasOwnProperty("uuid")){
+    }else if(c instanceof Condition || c.hasOwnProperty("obj_uuid")){
         const state = gameState[c.obj_uuid].state;
         switch (c.operator) {
             case Operators.EQUAL: return state == c.state;

@@ -40,7 +40,6 @@ div.rules{
 }
 .rules-editor{
     width: 100%;
-
 }
 
 
@@ -97,8 +96,8 @@ body{
 }
 
 .rules{
-
     overflow-y: auto;
+    overflow-y: hidden;
 }
 
 .scene{
@@ -274,6 +273,7 @@ body{
 .propertyForm{
     margin-right: auto;
     margin-left: auto;
+    margin-bottom: 5px;
     background-color: #FFFFFF;
     border: 1px solid #EF562D;
     border-radius: 5px;
@@ -1176,7 +1176,7 @@ input.eudObjectString[type=text] {
     box-sizing: border-box;
     height: 38vh;
     min-height: 38vh;
-    overflow: scroll;
+    overflow-y: scroll;
     background-color: white;
 }
 
@@ -1206,6 +1206,13 @@ input.eudObjectString[type=text] {
     border-bottom:1px solid;
     position:absolute;
     top:50%;
+}
 
+.eudOperator{
+    box-sizing: border-box;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: white;
+    color: #ef562d;
 }
 
