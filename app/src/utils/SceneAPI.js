@@ -421,6 +421,11 @@ function removeTag(tag_uuid) {
 
 
 function conditionParser(c){
+
+    if(!c.hasOwnProperty('operator')){
+        return {};
+    }
+
     if(c.hasOwnProperty('condition1')){
         return new SuperCondition(c.uuid, conditionParser(c.condition1), conditionParser(c.condition2), c.operator);
     } else {
