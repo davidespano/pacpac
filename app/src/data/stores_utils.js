@@ -1,13 +1,4 @@
 import Orders from "./Orders";
-import ObjectsStore from "./ObjectsStore";
-import Rule from "../interactives/rules/Rule";
-import Immutable from "immutable";
-import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
-import Actions from "../actions/Actions";
-import RuleActionTypes from "../interactives/rules/RuleActionTypes";
-import EventTypes from "../interactives/rules/EventTypes";
-import Mentions from "./Mentions";
-import MentionsStore from "./MentionsStore";
 
 /**
  * Returns correct comparator according to the given type

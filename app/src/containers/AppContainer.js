@@ -9,11 +9,9 @@ import CurrentObjectStore from "../data/CurrentObjectStore";
 import TagsStore from "../data/TagsStore";
 import EditorStateStore from "../data/EditorStateStore";
 import RulesStore from "../data/RulesStore";
-import DatalistStore from "../data/DatalistStore";
 import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
-import MentionsStore from "../data/MentionsStore";
 import AudioStore from "../data/AudioStore";
 
 
@@ -26,11 +24,9 @@ function getStores() {
         ObjectsStore,
         ObjectToSceneStore,
         CurrentObjectStore,
-        DatalistStore,
         CentroidsStore,
         EditorStateStore,
         AssetsStore,
-        MentionsStore,
         RulesStore,
         AudioStore,
     ];
@@ -47,10 +43,8 @@ function getState() {
         click: ClickStore.getState(),
         currentScene: CentralSceneStore.getState(),
         currentObject: CurrentObjectStore.getState(),
-        datalists: DatalistStore.getState(),
         editor: EditorStateStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
-        mentions: MentionsStore.getState(),
         objectToScene: ObjectToSceneStore.getState(),
         rules: RulesStore.getState(),
         scenes: ScenesStore.getState(),
