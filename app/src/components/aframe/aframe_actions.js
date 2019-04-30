@@ -17,7 +17,6 @@ function executeAction(VRScene, rule, action){
     let sceneName = action.subj_uuid;
     let media = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
-    let changeBG = true;
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
@@ -34,7 +33,7 @@ function executeAction(VRScene, rule, action){
             cursor.setAttribute('raycaster', 'far: 0.1');
             if(current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
-                if(objectVideo_transition != null && (store_utils.getFileType(objectVideo_transition.img) === 'video')) {
+                if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
                     duration_transition = (objectVideo_transition.duration * 1000);
                 }
@@ -115,14 +114,10 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
-            let skyId = runState[sceneName].background;
             runState[sceneName].background = media;
-            VRScene.setState({runState: runState, graph: game_graph});
+            VRScene.setState({runState: runState, game_graph: game_graph});
             let targetSceneVideo = document.getElementById(actual_sceneimg);
-            if(store_utils.getFileType(current_object.img) === 'video') targetSceneVideo.play();
-            //cursor.setAttribute('material', 'visible: false');
-            //cursor.setAttribute('raycaster', 'far: 0.1');
-            //targetSceneVideo.onended = function () {console.log('finito')};
+            if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
             break;
         case RuleActionTypes.PLAY_AUDIO:
             let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;

@@ -41,7 +41,6 @@ export default class Bubble extends React.Component
                 });
             })
         }else{
-            console.log(stores_utils.getFileType(this.props.scene.img))
             if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
         }
         this.setVideoFrame();
@@ -106,7 +105,6 @@ export default class Bubble extends React.Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-
             if(sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive ) document.getElementById(scene.img).play();
                 return;

@@ -39,12 +39,12 @@ export default class VRScene extends React.Component {
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
         //this.generateAudio()
-        this.interval = setInterval(() => this.tick(), 200);
+        //this.interval = setInterval(() => this.tick(), 200);
     }
 
     tick() {
-        document.querySelector('#camera').object3D.getWorldDirection(this.state.camera);
-        this.updateAngles();
+        //document.querySelector('#camera').object3D.getWorldDirection(this.state.camera);
+        //this.updateAngles();
     }
 
     async loadEverything() {
@@ -152,8 +152,8 @@ export default class VRScene extends React.Component {
         return this.currentLevel.map(sceneName => {
             let scene = this.state.graph.scenes[sceneName];
             let currAssets = [];
-            //first, push the background media.
             let sceneBackground;
+            //first, push the background media.
             if(stores_utils.getFileType(scene.img) === 'video'){
                 sceneBackground = (
                 <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
@@ -161,19 +161,17 @@ export default class VRScene extends React.Component {
                        playsInline={true} autoPlay muted={true}
                 />)
             } else {
-                sceneBackground = (<img id={scene.img} key={"key" + scene.name} crossorigin="Anonymous"
+                sceneBackground =(<img id={scene.img} key={"key" + scene.name} crossorigin="Anonymous"
                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
                 />)
             }
             currAssets.push(sceneBackground);
             let objAsset;
-
-                    //second, push the media of the interactive objs
+            //second, push the media of the interactive objs
             Object.values(scene.objects).flat().forEach(obj => {
                 Object.keys(obj.media).map(k => {
                     if(obj.media[k] !== null){
                         if(stores_utils.getFileType(obj.media[k]) === 'video'){
-                            console.log(obj.media[k])
                             objAsset = (
                                 <video key={k+"_" + obj.uuid} crossorigin={"anonymous"} id={k+"_" + obj.uuid} loop={"true"}  preload="auto"
                                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
@@ -203,7 +201,7 @@ export default class VRScene extends React.Component {
             scene.rules.forEach( rule => {
                 rule.actions.forEach(action => {
                     if(action.action === 'CHANGE_BACKGROUND'){
-                        if(stores_utils.getFileType(action.media) === 'video'){
+                        if(stores_utils.getFileType(action.obj_uuid) === 'video'){
                             currAssets.push(
                                 <video id={action.obj_uuid} key={"key" + action.obj_uuid}
                                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
