@@ -12,6 +12,7 @@ import MediaEditingform from "../components/interface/MediaEditingForm";
 import Login from "../components/interface/Login";
 import GameList from "../components/interface/GameList";
 import EudRuleEditor from "../components/interface/EudRuleEditor";
+import activePlayAudio from "../components/aframe/aframeUtils"
 
 function AppView(props) {
 
@@ -44,7 +45,10 @@ function AppView(props) {
             );
         case 'PLAY_MODE_ON':
             return(
-                    <VRScene {...props}/>
+                <div><VRScene {...props}/>
+
+                </div>
+
             );
         case 'GAME_SELECTION_MODE_ON':
             return (<GameList {...props}/>);

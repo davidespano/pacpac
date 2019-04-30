@@ -87,6 +87,7 @@ function actionComparator(a, b){
     return 0;
 }
 
+
 /*
 function parseRulesFromRaw(content, scene){
     const entityMap = content.entityMap;

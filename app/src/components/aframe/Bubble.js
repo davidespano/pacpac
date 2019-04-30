@@ -2,6 +2,9 @@ import React from "react";
 import {Entity} from 'aframe-react';
 import {Curved, Sound} from './aframe_entities';
 import settings from "../../utils/settings";
+import {Howl} from "howler";
+import '../../data/stores_utils'
+import stores_utils from "../../data/stores_utils";
 const THREE = require('three');
 const {mediaURL} = settings;
 
@@ -24,8 +27,9 @@ export default class Bubble extends React.Component
             }
             this.components[evt.detail.name].animation.reset();
         });
+        //if(stores_utils.getFileType(this.props.scene.img) === 'video')
         this.setShader();
-        this.setVideoFrame();
+        if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame();
     }
 
     componentDidUpdate(){
@@ -37,7 +41,8 @@ export default class Bubble extends React.Component
                 });
             })
         }else{
-            this.setShader();
+            console.log(stores_utils.getFileType(this.props.scene.img))
+            if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
         }
         this.setVideoFrame();
     }
@@ -61,6 +66,7 @@ export default class Bubble extends React.Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
+        let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         const curves = Object.values(scene.objects).flat().map(curve => {
             return(
                 <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.isActive?curve.uuid:""} vertices={curve.vertices}/>
@@ -80,10 +86,11 @@ export default class Bubble extends React.Component
             radius = 10;
         }
         else material += "opacity: 0; visible: false";
+
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-videosphere" visible={this.props.isActive}
+            <Entity _ref={elem => this.nv = elem} primitive={primitive} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
-                    material={material} play_video={active}>
+                    material={material} play_video={active} dolby={'active: ' + this.props.isActive.toString() + ';'}>
                 {curves}
             </Entity>
         );
@@ -101,13 +108,18 @@ export default class Bubble extends React.Component
             }
 
             if(sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
-                if (this.props.isActive) document.getElementById(scene.img).play();
+                if (this.props.isActive ) document.getElementById(scene.img).play();
                 return;
             }
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
             let video = [];
             let masks = [];
-            let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
+            let aux; //= new THREE.VideoTexture(document.getElementById(scene.img)); //background video
+            if(stores_utils.getFileType(scene.img) === 'video'){
+                aux = new THREE.VideoTexture(document.getElementById(scene.img));
+            } else {
+                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` +scene.img);
+            }
             aux.minFilter = THREE.NearestFilter;
             video.push(aux);
             let dict = ['0'];
@@ -115,7 +127,11 @@ export default class Bubble extends React.Component
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
                 if (asset === null) return;
-                aux = new THREE.VideoTexture(asset);
+                if(asset.nodeName === 'VIDEO'){
+                    aux = new THREE.VideoTexture(asset);
+                } else {
+                    aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0);
+                }
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
                 aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.mask);
@@ -185,7 +201,7 @@ export default class Bubble extends React.Component
             setTimeout(()=>skyMesh.material.needsUpdate = true ,50);
 
 
-            if (this.props.isActive) document.getElementById(scene.img).play();
+            if (this.props.isActive && stores_utils.getFileType(this.props.scene.img) === 'video') document.getElementById(scene.img).play();
             this.videoTextures = video;
             this.masksTextures = masks;
         }, 50);
