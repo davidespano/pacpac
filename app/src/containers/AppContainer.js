@@ -14,6 +14,7 @@ import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
 import MentionsStore from "../data/MentionsStore";
+import AudioStore from "../data/AudioStore";
 
 
 function getStores() {
@@ -30,7 +31,8 @@ function getStores() {
         EditorStateStore,
         AssetsStore,
         MentionsStore,
-        RulesStore
+        RulesStore,
+        AudioStore,
     ];
 }
 
@@ -40,6 +42,7 @@ function getState() {
 
         //STATES
         assets: AssetsStore.getState(),
+        audios: AudioStore.getState(),
         centroids: CentroidsStore.getState(),
         click: ClickStore.getState(),
         currentScene: CentralSceneStore.getState(),
@@ -114,6 +117,11 @@ function getState() {
             eudUpdateRule: Actions.updateRule,
         },
 
+        //audios
+
+        addNewAudio: Actions.addNewAudio,
+        removeAudio: Actions.removeAudio,
+        updateAudio: Actions.updateAudio,
 
         //OTHER
 

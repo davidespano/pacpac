@@ -468,6 +468,61 @@ const Actions = {
         })
     },
 
+    //AUDIO
+
+    /**
+     * Add new audio to stores and scene, dispatch db update
+     * @param audio
+     */
+    addNewAudio(audio){
+        if(audio.isLocal){
+            AppDispatcher.dispatch({
+                type: ActionTypes.ADD_NEW_LOCAL_AUDIO,
+                scene: audio.scene,
+                audio: audio,
+            })
+        } else {
+            AppDispatcher.dispatch({
+                type: ActionTypes.ADD_NEW_GLOBAL_AUDIO,
+                audio: audio,
+            })
+        }
+        /**TODO: Save audio to db here**/
+    },
+
+    /**
+     * Remove audio from stores and scene, dispatch db update
+     * @param audio
+     */
+    removeAudio(audio){
+        if(audio.isLocal){
+            AppDispatcher.dispatch({
+                type: ActionTypes.REMOVE_LOCAL_AUDIO,
+                scene: audio.scene,
+                audio: audio,
+            })
+        } else {
+            AppDispatcher.dispatch({
+                type: ActionTypes.REMOVE_GLOBAL_AUDIO,
+                audio: audio,
+            })
+        }
+        /**TODO: Dispatch db update here**/
+    },
+
+
+    /**
+     * Updates audio in stores, dispatch db update
+     * @param audio
+     */
+    updateAudio(audio){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_AUDIO,
+            audio: audio,
+        })
+        /**TODO: Dispatch db update here**/
+    },
+
     //MEDIA
 
     loadAllAssets(list){
