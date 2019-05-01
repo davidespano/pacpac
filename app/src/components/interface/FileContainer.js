@@ -53,7 +53,7 @@ function handleFileSelection(props, data, component){
             path += data.name;
             props.selectFile(path);
 
-            if(props.editor.selectedMediaToEdit !== 'topbar'){
+            if(props.editor.selectedMediaToEdit !== 'topbar' && props.editor.selectedMediaToEdit !== 'audio-form'){
                 let obj = props.interactiveObjects.get(props.currentObject);
                 interface_utils.setPropertyFromValue(obj, props.editor.selectedMediaToEdit, path, props);
             }

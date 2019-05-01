@@ -54,6 +54,7 @@ function getState() {
 
         //editor
 
+        changeAudioFormStatus: Actions.changeAudioFormStatus,
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
@@ -61,6 +62,7 @@ function getState() {
         rightbarSelection: Actions.rightbarSelection,
         selectFile: Actions.selectFile,
         selectMediaToEdit: Actions.selectMediaToEdit,
+        selectAudioToEdit: Actions.selectAudioToEdit,
         selectTagNewScene: Actions.selectTagNewScene,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
@@ -68,6 +70,8 @@ function getState() {
         switchToLoginMode: Actions.loginModeOn,
         switchToFileManager: Actions.fileManagerModeOn,
         switchToGeometryMode: Actions.geometryModeOn,
+        updateAudioFilter: Actions.updateAudioFilter,
+        updateTagFilter: Actions.updateTagFilter,
 
         //scenes
 

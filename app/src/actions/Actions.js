@@ -14,6 +14,7 @@ const Actions = {
      * This functions handle editor state variables (such as current mode and selected menus)
      **/
 
+
     editModeOn() {
         AppDispatcher.dispatch({
             type: ActionTypes.EDIT_MODE_ON
@@ -73,6 +74,7 @@ const Actions = {
 
     },
 
+
     selectFile(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_FILE,
@@ -83,6 +85,13 @@ const Actions = {
     selectMediaToEdit(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_MEDIA_TO_EDIT,
+            selection: selection,
+        })
+    },
+
+    selectAudioToEdit(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_AUDIO_TO_EDIT,
             selection: selection,
         })
     },
@@ -103,6 +112,27 @@ const Actions = {
     newSceneNameTyped(status){
         AppDispatcher.dispatch({
             type: ActionTypes.NEW_SCENE_NAME_TYPED,
+            status: status,
+        })
+    },
+
+    updateAudioFilter(filter){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_AUDIO_FILTER,
+            filter: filter,
+        })
+    },
+
+    updateTagFilter(filter){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_TAG_FILTER,
+            filter: filter,
+        })
+    },
+
+    changeAudioFormStatus(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.AUDIO_FORM_STATUS,
             status: status,
         })
     },

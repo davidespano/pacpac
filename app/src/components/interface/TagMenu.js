@@ -1,10 +1,9 @@
 import React from 'react';
-import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import SceneAPI from "../../utils/SceneAPI";
 import Tag from "../../scene/Tag";
 let uuid = require('uuid');
 
-function InputTagForm(props){
+function TagMenu(props){
     return(
         <div id={"manage-tags"}>
             <div className="modal fade" id="add-tag-modal" tabIndex="-1" role="dialog" aria-labelledby="add-tag-modal-label" aria-hidden="true">
@@ -19,7 +18,12 @@ function InputTagForm(props){
                         <div className="modal-body modalOptions">
                             <input type={'text'} id={'tag-search'}
                                    className={'tag-inputs'}
-                                   placeholder={"Cerca un'etichetta..."}/>
+                                   placeholder={"Filtra..."}
+                                   onChange={() => {
+                                       let value = document.getElementById('tag-search').value;
+                                       props.updateTagFilter(value);
+                                   }}
+                            />
                             <div id={'tag-box'}>
                                 {generateDefaultTag()}
                                 {generateTags(props)}
@@ -55,7 +59,7 @@ function generateDefaultTag(){
 
 function generateTags(props){
     return [...props.tags.values()].map(tag => {
-        if(tag.name !== 'default'){
+        if(tag.name !== 'default' && tag.name.includes(props.editor.tagFilter)){
             return (
                 <div className={'tag-element'} key={'tag-' + tag.uuid + '-element'}>
                     <input className={'tag-element-color'}
@@ -116,4 +120,4 @@ function editTag(uuid, props){
     props.updateTag(newTag);
 }
 
-export default InputTagForm;
+export default TagMenu;

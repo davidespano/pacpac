@@ -677,16 +677,16 @@ body{
 }
 
 
-    /** FILE MANAGER **/
+/** FILE MANAGER **/
 
 .filemanager{
     height: 80vh;
     box-sizing: border-box;
 }
 
-/** TAG FORM **/
+/** TAG FORM, AUDIO FORM **/
 
-#tag-box {
+#tag-box, #audio-box {
     border: solid darkgrey 1px;
     min-height: 30em;
     overflow-y: auto;
@@ -732,6 +732,90 @@ body{
 .tag-remove-button:hover {
     cursor: pointer;
     background-color: darkgrey;
+}
+
+#audio-box, #audio-search {
+    width: 95%;
+    grid-area: left;
+}
+
+#audio-buttons-box {
+    grid-area: right;
+}
+
+#audio-form-general {
+    height: 70%;
+}
+
+#audio-form-play {
+    height: 30%;
+}
+
+#modal-body-audio {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    grid-template-rows: 6% 94%;
+    grid-template-areas: 'left right';
+    width: 100%;
+}
+
+.audio-form-box-grid{
+    display: grid;
+    grid-template-columns: 65% 35%;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+            'left right'
+            'left right'
+            'left right'
+            'left right';
+    grid-gap: 10px;
+    width: 100%;
+}
+
+#multichannel-checkbox {
+    margin-left: 5px;
+}
+
+#modal-content-audio{
+    width: 120%;
+}
+
+.audio-btn {
+    width: 100%;
+    margin-top: 5%;
+    font-size: 0.9em;
+    position: relative;
+}
+
+.audio-btn > img {
+    position: absolute;
+    left: 5px;
+}
+
+#remove-audio-btn {
+    margin-top: 10%;
+}
+
+#audio-form-box {
+    min-height: 30em;
+}
+
+.audio-form-box-titles{
+    color: grey;
+    border-bottom: 1px solid darkgrey;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.input-audio-form {
+    width: 100%;
+    padding: 2px;
+}
+
+.input-new-audio-file {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0px;
 }
 
 

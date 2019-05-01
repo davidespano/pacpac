@@ -7,9 +7,12 @@ import Switch from "../../interactives/Switch";
 import Key from "../../interactives/Key";
 import Lock from "../../interactives/Lock";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
-import InputTagForm from "./InputTagForm";
+import TagMenu from "./TagMenu";
 import ActionTypes from "../../actions/ActionTypes";
 import AuthenticationAPI from "../../utils/AuthenticationAPI";
+import AudioMenu from "./AudioMenu";
+import AudioForm from "./AudioForm";
+
 
 let uuid = require('uuid');
 
@@ -35,7 +38,9 @@ function TopBar(props){
             <div className="tab-content" id="nav-tabContent">
                 <div className="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
                     <InputSceneForm {...props} />
-                    <InputTagForm {...props}/>
+                    <TagMenu {...props}/>
+                    <AudioMenu {...props}/>
+                    <AudioForm {...props}/>
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
                                 onClick={() => props.selectMediaToEdit(null)}
@@ -46,6 +51,10 @@ function TopBar(props){
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-tag-modal">
                             <img src={"icons/icons8-tags-100.png"}/>
                             <figcaption>Gestisci etichette</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
+                            <img src={"icons/icons8-tags-100.png"}/>
+                            <figcaption>Gestisci audio</figcaption>
                         </figure>
                     </div>
                 </div>
