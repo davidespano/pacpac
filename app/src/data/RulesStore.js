@@ -29,10 +29,28 @@ class RulesStore extends ReduceStore {
                 return state;
             case ActionTypes.REMOVE_OBJECT:
                 state = state.map(rule => {
-                    if(rule.get('object_uuid') === action.obj.get('uuid')){
-                        return rule.set('object_uuid', null);
+                    let event = rule.get('event');
+
+                    //check event
+                    if(event.get('subj_uuid') === action.obj.get('uuid')){
+                        event = event.set('subj_uuid', null);
                     }
-                    return rule;
+                    if(event.get('obj_uuid') === action.obj.get('uuid')){
+                        event = event.set('obj_uuid', null);
+                    }
+
+                    // check actions
+                    let actions = rule.get('actions').map(a => {
+                        if(a.get('subj_uuid') === action.obj.get('uuid')){
+                            a = a.set('subj_uuid', null);
+                        }
+                        if(a.get('obj_uuid') === action.obj.get('uuid')){
+                            a = a.set('obj_uuid', null);
+                        }
+                        return a;
+                    });
+
+                    return rule.set('actions', actions).set('event', event);;
                 });
                 return state;
             default:

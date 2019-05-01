@@ -1,6 +1,11 @@
 import ActionTypes from './ActionTypes';
 import AppDispatcher from '../data/AppDispatcher';
 import SceneAPI from '../utils/SceneAPI';
+import ObjectToSceneStore from "../data/ObjectToSceneStore";
+import ScenesStore from "../data/ScenesStore";
+import CentralSceneStore from "../data/CentralSceneStore";
+import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
+
 import StoryAPI from '../utils/StoryAPI';
 
 const Actions = {
@@ -17,6 +22,12 @@ const Actions = {
         })
     },
 
+    gameSelectionModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.GAME_SELECTION_MODE_ON,
+        })
+    },
+
     geometryModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.GEOMETRY_MODE_ON
@@ -26,6 +37,12 @@ const Actions = {
     playModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.PLAY_MODE_ON
+        })
+    },
+
+    loginModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOGIN_MODE_ON
         })
     },
 
@@ -43,19 +60,63 @@ const Actions = {
         })
     },
 
-    fileManagerModeOn(){
-      AppDispatcher.dispatch({
-          type: ActionTypes.FILE_MANAGER_MODE_ON
-      })
+    dropdownTagsNewScene(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DROPDOWN_TAGS_NEW_SCENE,
+            status: status,
+        })
     },
 
+    dropdownTagsRightbar(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DROPDOWN_TAGS_RIGHTBAR,
+            status: status,
+        })
+
+    },
+
+    selectFile(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_FILE,
+            selection: selection,
+        })
+    },
+
+    selectMediaToEdit(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_MEDIA_TO_EDIT,
+            selection: selection,
+        })
+    },
+
+    selectTagNewScene(tag){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_TAG_NEW_SCENE,
+            tag: tag,
+        })
+    },
+
+    fileManagerModeOn(){
+       AppDispatcher.dispatch({
+            type: ActionTypes.FILE_MANAGER_MODE_ON
+       })
+    },
+
+    newSceneNameTyped(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.NEW_SCENE_NAME_TYPED,
+            status: status,
+        })
+    },
+	
+	//STORY EDITOR MODE
     storyEditorModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.STORY_EDITOR_MODE_ON
         })
-    },	
+    },		
 	
-	
+
     //SCENES
 
     /**
@@ -80,10 +141,11 @@ const Actions = {
     loadAllScenes(response, order = null){
         AppDispatcher.dispatch({
             type: ActionTypes.LOAD_ALL_SCENES,
-            response: response,
+            scenes: response.scenes,
             order: order,
+            tags: response.tags,
         });
-        response.forEach(scene => {
+        response.scenes.forEach(scene => {
             SceneAPI.getByName(scene.name, order);
         })
 
@@ -99,6 +161,7 @@ const Actions = {
             type: ActionTypes.RECEIVE_SCENE,
             scene: scene,
             order: order,
+            objectsToScene: ObjectToSceneStore.getState(),
         });
     },
 
@@ -110,8 +173,9 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
             name: name,
-        })
-
+            objectsToScene: ObjectToSceneStore.getState(),
+            scene: ScenesStore.getState().get(name),
+        });
     },
 
     /**
@@ -122,22 +186,24 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE,
             scene: scene,
-        })
+        });
+        SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
     },
 
     /**
      * Dispatch scene name update (since the name is the scene key in ScenesStore map, it needs a specific update)
      * @param scene
-     * @param oldName
+     * @param oldScene
      * @param order of scenes
      */
-    updateSceneName(scene, oldName, order){
+    updateSceneName(scene, oldScene, order){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE_NAME,
             scene: scene,
-            oldName: oldName,
+            oldScene: oldScene,
             order: order,
-        })
+        });
+        SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
     },
 
     /**
@@ -315,7 +381,8 @@ const Actions = {
             type: ActionTypes.ADD_NEW_RULE,
             scene: scene,
             rule: rule,
-        })
+        });
+        InteractiveObjectAPI.saveRule(scene, rule);
     },
 
     /**
@@ -340,6 +407,15 @@ const Actions = {
             scene: scene,
             rule: rule,
         })
+        InteractiveObjectAPI.removeRule(scene, rule);
+    },
+
+
+    setMentionType(mentionType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_MENTION_TYPE,
+            mentionType: mentionType,
+        })
     },
 
     /**
@@ -350,9 +426,57 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_RULE,
             rule: rule,
+        });
+        let scene = ScenesStore.getState().get(CentralSceneStore.getState());
+        InteractiveObjectAPI.saveRule(scene, rule);
+    },
+
+
+    updateRuleEditorFromState(state){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_RULE_EDITOR_STATE,
+            state: state,
         })
     },
 
+    updateRuleEditorFromContent(content, selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_RULE_EDITOR_CONTENT,
+            content: content,
+            selection: selection,
+        })
+    },
+
+    updateRuleEditorFromRaw(raw){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_RULE_EDITOR_RAW,
+            raw: raw,
+        })
+    },
+
+    updateSuggestion(state){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SUGGESTION,
+            state: state,
+        })
+    },
+
+    // [davide] eud editor state
+    eudShowCompletions(actionId, role, input){
+        AppDispatcher.dispatch({
+            type: ActionTypes.EUD_SHOW_COMPLETIONS,
+            actionId: actionId,
+            role: role,
+            completionText: input,
+        })
+    },
+
+    eudSaveOriginalObject(objectId){
+        AppDispatcher.dispatch({
+            type: ActionTypes.EUD_SAVE_ORIGINAL_OBJECT,
+            objectId: objectId,
+        })
+    },
 
     //MEDIA
 
@@ -372,6 +496,13 @@ const Actions = {
         })
     },
 
+    receiveUser(user){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_USER,
+            user: user,
+        })
+    },
+
     updateDatalist(id,value){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_DATALIST,
@@ -380,17 +511,53 @@ const Actions = {
         })
     },
 
-	//STORY EDITOR
-	
-    loadAllStories(response){
+	//STORY EDITOR ACTIONS
+
+    loadAllCollections(response){
         AppDispatcher.dispatch({
-            type: ActionTypes.LOAD_ALL_STORIES,
+            type: ActionTypes.LOAD_ALL_COLLECTIONS,
             response: response,
         });
-        response.forEach(story => {
-            StoryAPI.getStoryByName(story.name);
+        response.forEach(collection => {
+            StoryAPI.getCollectionByName(collection.name);
         })
 
+    },	
+
+    receiveCollection(collection) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_COLLECTION,
+			collection:collection
+        })
+    },		
+
+    updateCollection(collection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_COLLECTION,
+            collection: collection,
+        })
+    },		
+	
+    removeCollection(collection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_COLLECTION,
+            collection: collection,
+        })
+    },			
+	
+
+    receiveImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_IMAGE,
+			image:image
+        })
+    },	
+	
+    updateImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_IMAGE,
+			image:image
+        })
     },	
 	
     updateStory(story){
@@ -406,13 +573,6 @@ const Actions = {
 			story:story
         })
     },
-
-    removeStory(story) {
-        AppDispatcher.dispatch({
-            type: ActionTypes.REMOVE_STORY,
-			story: story
-        })
-    },
 	
     restoreStory(story) {
         AppDispatcher.dispatch({
@@ -421,27 +581,34 @@ const Actions = {
         })
     },	
 
-    editStory(name, userStory) {
+    editStory(uuid, userStory) {
         AppDispatcher.dispatch({
             type: ActionTypes.EDIT_STORY,
-			name: name,
+			uuid: uuid,
 			userStory: userStory			
         })
-    },		
+    },	
+
+    removeStory(collection, story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_STORY,
+			collection: collection,
+			story: story
+        })
+    },
 	
-    startEditingStory(name) {
+    startEditingStory(uuid) {
         AppDispatcher.dispatch({
             type: ActionTypes.START_EDITING_STORY,
-			name: name			
+			uuid: uuid			
         })
-    },			
+    },	
 	
     stopEditingStory() {
         AppDispatcher.dispatch({
             type: ActionTypes.STOP_EDITING_STORY
         })
-    },			
-	
+    },	
 	
 };
 

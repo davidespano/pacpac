@@ -39,7 +39,6 @@ const fs = require('fs')
  */
 function addSceneMedia(req, res, next) {
     if (req.file) {
-        console.log(req.file);
         if(req.file.mimetype.includes('video')) {
 
         }
@@ -85,7 +84,6 @@ function addSceneMedia(req, res, next) {
  */
 function addInteractiveMedia(req, res, next) {
     if (req.file) {
-        console.log(req.file);
         if(req.file.mimetype.includes('video')) {
 
         }
@@ -182,5 +180,5 @@ module.exports = {
     deleteAsset: deleteAsset,
     addSceneMedia: addSceneMedia,
     addInteractiveMedia: addInteractiveMedia,
-	addStoryImage: addStoryImage,	
+	addStoryImage: addStoryImage,		
 };

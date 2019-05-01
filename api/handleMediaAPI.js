@@ -46,31 +46,9 @@ const uploadObjectsMedia = multer({
     }
 });
 
-const storageStoryImage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "public/" + req.params.gameID + "/story_editor")
-    },
-    filename: function (req, file, cb) {
-        cb(null, req.headers.name)
-    }
-});
-
-const uploadStoryImage = multer({
-    storage: storageStoryImage,
-    fileFilter: function (req, file, cb) {
-        fs.access("public/" + req.params.gameID + "/story_editor/" + req.headers.name, (err) => {
-            if (!err)
-                cb(null, false);
-            else
-                cb(null, true);
-        });
-    }
-});
-
 function handleMediaAPI(api) {
     api.post('/public/:gameID/addMedia', loginRequired, uploadSceneMedia.single("upfile"), routes.media.addSceneMedia);
     api.post('/public/:gameID/addInteractiveMedia', loginRequired, uploadObjectsMedia.single('upfile'), routes.media.addInteractiveMedia);
-	api.post('/public/:gameID/addImage', loginRequired, uploadStoryImage.single("upfile"), routes.media.addStoryImage);		
 }
 
 module.exports = {

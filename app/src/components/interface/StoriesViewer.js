@@ -21,19 +21,11 @@ function StoriesViewer(props){
 									<ul className={"stories-list"}>	
 									{[...props.stories.values()].map(child => (
 										<li key={child.name}>	
-											<div className={"story-wrapper"}>
-												<div className={"story-image"}>
-													<img
-													src={path + child.img}
-													alt={child.name}
-													/>
-												</div>
 												<div className={"story-content"} >
 													<textarea value={child.userStory ? child.userStory : child.systemStory} disabled={true}
 													id={child.name + '_textarea'} readOnly={true} 
 													/>
 												</div>
-											</div>
 										</li>
 										 ))}
 									</ul>		

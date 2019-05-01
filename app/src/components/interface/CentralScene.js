@@ -1,7 +1,6 @@
 import React from 'react';
 import settings from '../../utils/settings';
 import SceneAPI from "../../utils/SceneAPI";
-import Canvas from "./Canvas";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import scene_utils from "../../scene/scene_utils";
 
@@ -34,7 +33,7 @@ function CentralScene(props){
     if(currentScene !== null && (regex.test(currentScene.img))){
         return(
             <div id={'central-scene'} className={'scene'}>
-                <video muted preload={"metadata"} className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + currentScene.img}>
+                <video muted={true}  playsInline controls className={'video'} id={"video"} src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + currentScene.img}>
                 </video>
                 {generateObjectsIcons(props)}
             </div>
@@ -126,6 +125,10 @@ function getImage(type){
             return "icons/icons8-one-way-transition-100.png";
         case InteractiveObjectsTypes.SWITCH:
             return "icons/icons8-toggle-on-filled-100.png";
+        case  InteractiveObjectsTypes.KEY:
+            return "icons/icons8-key-100.png";
+        case InteractiveObjectsTypes.LOCK:
+            return "icons/icons8-lock-100.png";
         default:
             return "?";
     }

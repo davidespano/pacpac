@@ -2,7 +2,8 @@ import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
 import Rule from "./Rule";
 import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes";
-import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
+import Immutable from 'immutable';
+import Action from "./Action";
 import Condition from "./Condition";
 let uuid = require('uuid');
 
@@ -16,24 +17,68 @@ function generateDefaultRule(object){
         case InteractiveObjectsTypes.TRANSITION:
             r = Rule({
                 uuid : uuid.v4(),
-                object_uuid : object.uuid,
-                event : EventTypes.CLICK,
-                actions : [{
-                    uuid : uuid.v4(),
-                    type : RuleActionTypes.TRANSITION,
-                    target : "---",
-                }],
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: RuleActionTypes.TRANSITION,
+                })]),
             });
             break;
         case InteractiveObjectsTypes.SWITCH:
             r = Rule({
                 uuid : uuid.v4(),
-                object_uuid : object.uuid,
-                event: EventTypes.CLICK,
-                actions : [{
-                    uuid : uuid.v4(),
-                    type : RuleActionTypes.FLIP_SWITCH,
-                }]
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: RuleActionTypes.FLIP_SWITCH,
+                    obj_uuid: object.uuid,
+                })]),
+            });
+            break;
+        case InteractiveObjectsTypes.KEY:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: RuleActionTypes.COLLECT_KEY,
+                    obj_uuid: object.uuid,
+                })]),
+            });
+            break;
+        case InteractiveObjectsTypes.LOCK:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: RuleActionTypes.UNLOCK_LOCK,
+                    obj_uuid: object.uuid,
+                })]),
             });
             break;
         default:
@@ -42,28 +87,51 @@ function generateDefaultRule(object){
     return r;
 }
 
-/**
- * Set property of a specific action belonging to the Rule and returns updated Rule
- * @param rule
- * @param index is the index of the action inside the actions array
- * @param property to set
- * @param value of the property
- */
-function setAction(rule, index, property, value){
 
-    let actions = rule.get('actions');
-    let a = actions[index];
-    a[property] = value;
-    actions[index] = a;
-    return rule.set('actions', actions);
+function addEmptyAction(rule){
+     let list = rule.get('actions');
+     let index = list.size > 0 ? list.get(list.size-1).get('index') + 1 : 0;
+     list = list.push(Action({
+         uuid: uuid.v4(),
+         subj_uuid: InteractiveObjectsTypes.PLAYER,
+         index: index,
+     }));
+     rule = rule.set('actions', list);
+     return rule;
+}
+
+function deleteAction(rule, action){
+    for(var i = 0; i < rule.actions.size; i++){
+        if(rule.actions.get(i).uuid == action.uuid){
+            let list = rule.get('actions');
+            list = list.delete(i);
+            rule = rule.set('actions', list);
+            return rule;
+        }
+    }
+    return null;
+}
+
+function addEmptyCondition(rule){
+    rule = rule.set('condition', new Condition(uuid.v4()));
+    return rule;
+}
+
+function deleteCondition(rule){
+    rule = rule.set('condition', {});
+    return rule;
 }
 
 function setProperty(rule, property, value){
     return rule.set(property, value);
 }
 
+
 export default {
     generateDefaultRule : generateDefaultRule,
-    setAction : setAction,
     setProperty : setProperty,
+    addEmptyAction : addEmptyAction,
+    deleteAction : deleteAction,
+    addEmptyCondition : addEmptyCondition,
+    deleteCondition : deleteCondition,
 };

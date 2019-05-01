@@ -1,4 +1,4 @@
-import 'aframe-animation-component';
+//import 'aframe-animation-component';
 
 const AFRAME = require('aframe');
 const eventBus = require('./eventBus');
@@ -34,12 +34,13 @@ function setMouseEnter() {
 
 function setMouseLeave() {
     let cursor = document.querySelector('#cursor');
+
     cursor.setAttribute('color', 'black');
     cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
 }
 
 function setClick(event) {
-    eventBus.emit('click-'+event.target.object_uuid);
+    event.detail.cursorEl.components.raycaster.intersectedEls.forEach(obj => eventBus.emit('click-'+obj.object_uuid))
 }
 
 AFRAME.registerComponent('play_video', {
@@ -54,8 +55,14 @@ AFRAME.registerComponent('play_video', {
         let active= this.data.active;
         if(active){
             setTimeout(function() {
-                let video = document.getElementById(videoID);
-                video.play();
+                let video = document.getElementById(videoID).play();
+                if(video !== undefined){
+                    video.catch(error => {
+
+                    }).then(() => {
+
+                    })
+                }
             }, 500);
         }
 

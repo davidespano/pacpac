@@ -23,17 +23,23 @@ class ScenesStore extends ReduceStore {
                 // if state isn't undefined
                 if(state) {
                     // for each scene in db create new Scene object
-                    action.response.forEach(function(scene){
+                    action.scenes.forEach(function(scene){
+
+                        let tag = scene.tag.uuid ? scene.tag.uuid : "default";
+
                         let newScene = Scene({
-                            name : scene.name.replace(/\.[^/.]+$/, ""),
-                            img : scene.name,
+                            uuid: scene.uuid,
+                            name : scene.name,
+                            img : scene.img,
                             index : scene.index,
                             type : scene.type,
-                            tag : scene.tag.uuid,
+                            tag : tag,
                             rules: [],
                             objects: {
                                 transitions: [],
                                 switches: [],
+                                collectable_keys: [],
+                                locks: [],
                             },
                         });
                         state = state.set(newScene.name, newScene).sort(stores_utils.chooseComparator(action.order));
@@ -56,16 +62,19 @@ class ScenesStore extends ReduceStore {
                 state = state.set(action.scene.name, action.scene);
                 return state;
             case ActionTypes.UPDATE_SCENE_NAME:
-                state = state.delete(action.oldName);
+                state = state.delete(action.oldScene.name);
                 return state.set(action.scene.name, action.scene).sort(stores_utils.chooseComparator(action.order));
             case ActionTypes.REMOVE_TAG:
 
                 state = state.mapEntries(function ([k,v]){
                     if(v.tag === action.uuid){
-                        return ([k, v.setProperty('tag', 'default')]);
+                        v = v.set('tag', 'default');
                     }
+                    return ([k,v]);
                 });
 
+
+                return state;
             case ActionTypes.ADD_NEW_OBJECT:
                 newScene = scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
                 state = state.set(newScene.name, newScene);

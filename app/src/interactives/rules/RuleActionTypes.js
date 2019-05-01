@@ -4,7 +4,13 @@ const RuleActionTypes = {
     ON : 'ON',
     TRANSITION : 'TRANSITION',
     FLIP_SWITCH: 'FLIP_SWITCH',
+    CHANGE_BACKGROUND: 'CHANGE_BACKGROUND',
+    PLAY_AUDIO: 'PLAY_AUDIO',
+    STOP_AUDIO: 'STOP_AUDIO',
+    COLLECT_KEY: 'COLLECT_KEY',
+    UNLOCK_LOCK: 'UNLOCK_LOCK',
+    CLICK: 'CLICK',
+    CHANGE_STATE : 'CHANGE_STATE',
 };
 
 export default RuleActionTypes;
-

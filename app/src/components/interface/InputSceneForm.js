@@ -1,8 +1,14 @@
 import React from 'react';
-import MediaAPI from "../../utils/MediaAPI";
 import SceneAPI from "../../utils/SceneAPI";
+import TagDropdown from "./TagDropdown";
+import FileSelectionBtn from "./FileSelectionBtn";
 
 function InputSceneForm(props){
+
+    let properties = {
+        props : props,
+        component : 'topbar',
+    };
 
     return(
         <div id={"addSceneDiv"}>
@@ -16,46 +22,58 @@ function InputSceneForm(props){
                             </button>
                         </div>
                         <div className="modal-body modalOptions">
-                            <label htmlFor={"scene_name"}>Nome</label>
+                            <label>Nome</label>
                             <input type="text"
                                    id="scene_name"
                                    name="scene_name"
+                                   className={'input-new-scene'}
+                                   onChange={() => {
+                                       let name = document.getElementById("scene_name").value;
+                                       props.newSceneNameTyped(name != "");
+                                   }}
                             />
-                            <label htmlFor={"scene_tag"}>Etichetta</label>
-                            <select id={'scene_tag'} name={'scene_tag'} className={"custom-select"}>
-                                {[...props.tags.values()].map( tag =>
-                                    <option value={tag.uuid} key={tag.uuid}>{tag.name}</option>
-                                )}
-                            </select>
-                            <label htmlFor={'select-scene-type'}>Tipo</label>
-                            <div id={'select-scene-type'} name={"select-scene-name"}>
-                                <input id={'scene-type-3d'} type={'radio'} name={'scene-type'} value={'3D'} defaultChecked={'checked'}/>3D
-                                <input id={'scene-type-2d'} type={'radio'} name={'scene-type'} value={'2D'}/>2D
+                            <label>Etichetta</label>
+                            <div id={'tags-input-scene'}>
+                                <TagDropdown {...properties}/>
+                                <button
+                                    title={"Tag manager"}
+                                    className={"tag-manager-btn action-buttons-container dropdown-tags-btn-topbar"}
+                                    data-toggle="modal"
+                                    data-target="#add-tag-modal"
+                                >
+                                    <img className={"action-buttons dropdown-tags-btn-topbar"} src={"icons/icons8-tags-white-50.png"}/>
+                                </button>
                             </div>
                             <label htmlFor={"image"}>Media</label>
-                            <input type="file"
-                                   name="image"
-                                   id="imageInput"
-                            />
+                            <div id={'select-file-container'} name="image">
+                                <p id={'file-selected-name'}
+                                   className={'input-new-scene'}
+                                >
+                                    {selectedFile(props)}
+                                </p>
+                                <FileSelectionBtn {...properties} />
+                            </div>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
                                 let name = document.getElementById("scene_name").value,
-                                    media = document.getElementById("imageInput").files[0],
-                                    tag_uuid = document.getElementById('scene_tag').value;
-                                let type = (document.getElementById("scene-type-3d").checked)? '3D' : '2D';
-                                if(!props.scenes.has(name)) {
-                                    addMediaAndCreateScene(name,
+                                    media = props.editor.selectedFile,
+                                    tag_uuid = props.editor.selectedTagNewScene;
+                                let type = "3D";
+                                if(!props.scenes.has(name) && media != null) {
+                                    checkFormAndCreateScene(
+                                        name,
+                                        media,
                                         props.scenes._map.last() + 1,
                                         type,
-                                        media,
                                         tag_uuid,
                                         props.editor.scenesOrder,
                                     );
                                     props.rightbarSelection('scene');
+                                    props.selectFile(null);
                                 }
                             }
-                            } data-dismiss="modal" >Conferma</button>
+                            } data-dismiss="modal" disabled={checkIfDisabled(props)}>Conferma</button>
                         </div>
                     </div>
                 </div>
@@ -66,30 +84,18 @@ function InputSceneForm(props){
     );
 }
 
-function addMediaAndCreateScene(name, index, type, media, tag, order){
-    //FARE CONTROLLI FORM QUI!1!1
-    //lettere accentate e spazi sono ammessi! Yay
-    //MA NON ALL'INIZIO DELLA FRASE
-    name = name.trim();
-
-    // regex to extract file extension
-    // https://stackoverflow.com/questions/680929/how-to-extract-extension-from-filename-string-in-javascript
-    let re = /(?:\.([^.]+))?$/;
-    let ext = re.exec(media.name)[1];
-    name = name + "." + ext;
-
-    if(!index) index = 0;
-
-    MediaAPI.addMediaScene(name, index, type, media, tag, order);
+function checkIfDisabled(props){
+    return !(props.editor.selectedFile && props.editor.newSceneNameTyped);
 }
 
-function tagOption(tag){
+function checkFormAndCreateScene(name, media, index, type, tag, order){
+    name = name.trim();
+    if(!index) index = 0;
+    SceneAPI.createScene(name, media, index, type, tag, order);
+}
 
-    // AGGIUNGERE COLORE AL TAG DA SELEZIONARE
-    //https://github.com/aslamswt/Responsive-Select-Dropdown-with-Images
-    return (
-        <option value={tag.uuid} key={tag.uuid}>{tag.name}</option>
-    );
+function selectedFile(props){
+    return props.editor.selectedFile ? props.editor.selectedFile : 'No file selected';
 }
 
 export default InputSceneForm;

@@ -17,7 +17,7 @@ class EditStoriesStore extends ReduceStore {
         switch (action.type) {
 
 			case ActionTypes.START_EDITING_STORY:
-				return action.name;
+				return action.uuid;
 			case ActionTypes.STOP_EDITING_STORY:
 				return '';				
             default:

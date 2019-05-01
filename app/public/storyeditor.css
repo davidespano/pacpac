@@ -1,15 +1,15 @@
-.story {grid-area: story;}
+.collection {grid-area: collection;}
 .foot {grid-area: foot;}
 .leftstory { grid-area: leftstory; }
 .rightstory { grid-area: rightstory; }
-.rightbutton { grid-area: rightbutton; }
+.topstory { grid-area: topstory; }
 
 
 .story-editor-container {
     display: grid;
     grid-template-rows: auto auto;	
     grid-template-areas: 
-								'story'
+								'collection'
 								'foot';
     background-color: #FFFFFF;
     height: 88.5vh !important;
@@ -17,41 +17,40 @@
 		margin-left: 8vw;
 }
 
-.story-container {
+.collection h1{
+	text-align: center;	
+	}
+
+.collection-container {
     display: grid;
-    grid-template-columns: 25% auto;	
-	grid-template-rows: 10% auto;
+    grid-template-columns: 28% 72%;	
+	grid-template-rows: 8vh auto;
     grid-template-areas: 
-								'leftstory rightbutton'
+								'topstory topstory'
 								'leftstory rightstory';						
     background-color: #FFFFFF;
 	margin: 10px;
 }
 
-.story {
-	display: inherit;
-    background-color: #FFFFFF;
-	position: relative;
-	justify-content: center;
-}
 
-.story ol{
+
+.collection ol{
 list-style: none;	
 counter-reset: elementcounter;
 /* padding: 10px;
 margin: 0px;*/
 }
 
-.story-list li{
+.collection-list > li{
 margin-top: 0px;
 list-style: none;
 }
 
-.story-list li:first-child{
+.collection-list  > li:first-child{
 margin-top: 0px;
 }
 
-.story-list li:before{
+.collection-list > li:before{
 	content: "Storia #" counter(elementcounter);
 	counter-increment:elementcounter;
 	font-weight: bold;
@@ -59,28 +58,62 @@ margin-top: 0px;
 	margin-left: 20px;
 }
 
-.story-list li.editing{
+/*
+.stories-list li.editing{
 border: 2px solid #ef562d;
 border-radius: 5px;
-}
+}*/
 
 /* di default casella di testo ausiliaria non mostrata */
-.story-list li .edit{
+.stories-list li .edit{
 display: none;
 }
 
 /*Mostra in modalita modifica*/
-.story-list li.editing .edit{
+.stories-list li.editing .edit{
 display: block;
 }
 
 /* se in modalita modifca non mostrare */
-.story-list li.editing .view{
+.stories-list li.editing .view{
+	display: none;
+}
+
+.stories-list li.editing textarea{
+border: 3px solid #ef562d;
+border-radius: 5px;
+outline: none;
+}
+
+/* di default casella di testo ausiliaria non mostrata */
+.stories-list li .edit{
+display: none;
+}
+
+/*Mostra in modalita modifica*/
+.stories-list li.editing .edit{
+display: block;
+}
+
+/* se in modalita modifca non mostrare */
+.stories-list li.editing .view{
 	display: none;
 }
 
 
 
+
+
+
+.topstory {
+text-align: right;	
+font-weight: bold;
+font-size: 20px;
+}
+
+.topstory span{
+    color: #EF562D;
+}
 
 .leftstory {
 font-weight: bold;
@@ -96,28 +129,32 @@ margin-top: 10px;
 }
 
 .leftstory img{
-    min-height: 30vh;
-    max-height: 30vh;
-	max-width: 20vw;
-	min-width: 20vw;
+	margin-top: 10px;
+    min-height: 27vh;
+    max-height: 27vh;
+	max-width: 18vw;
+	min-width: 18vw;
 }
 
-.leftstory img{
-    min-height: 30vh;
-    max-height: 30vh;
-	max-width: 20vw;
-	min-width: 20vw;
-}
 
 .leftstory span{
     color: #EF562D;
 }
 
-.rightbutton {
+.story-header {
+	height: 40px;
 	text-align: right;
 }
 
-.rightbutton img{
+.story-header span{
+    color: #EF562D;
+	font-weight: bold;
+	font-size: 20px;
+	float:left;
+}
+
+
+.story-header img{
     margin-left: 40px;
 	position: relative;
 	top: 50%;
@@ -125,7 +162,7 @@ margin-top: 10px;
 }
 
 .rightstory {
- padding-left:10%;
+ padding-left: 0%;
 }
 
 .rightstory textarea{
@@ -157,7 +194,7 @@ margin-top: 10px;
 
 
  .slider {
-      width: 20vw;
+      width: 13vw;
 	  height: 18px;
       -webkit-appearance: none;
       background-color: #ffffff;
@@ -182,32 +219,15 @@ margin-top: 10px;
 
 
 
-
-
-
-
-
 #stories { position: fixed; bottom: 0px; right: 240px; }
 
-.story-image img{
-    min-height: 27vh;
-    max-height: 27vh;
-	max-width: 18vw;
-	min-width: 18vw;	
-	}
-
 .story-content textarea{
-    min-height: 250px;
-	min-width: 400px;
+    min-height: 150px;
+	width: 100%;
 	border: none;
 	overflow: auto;
 	font-size: 15px;
 	background-color: #ffffff;
-}
-
-.story-image {
-	float:left;
-	min-height: 150px;
 }
 
 .story-content {
@@ -221,6 +241,34 @@ margin-top: 10px;
 .stories-list li{
 	margin-top: 10px;	
 }
-.story-wrapper{
-	width: 100%;
+
+
+
+
+.new-story-form input{
+	float:right;
 }
+
+.new-story-form label{
+	float:left;
+}
+
+
+
+.form-inline label{
+	font-weight: bold;
+	font-size: 16px;
+	text-align: left;
+}
+	
+ .fileUpload {
+      width: 13vw;
+}
+
+hr {
+border-top:solid 2px #EF562D;
+width: 96%;
+height: 1px;
+margin-top: -0.5em;
+margin-bottom: -0.5em;
+}	

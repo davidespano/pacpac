@@ -38,6 +38,12 @@ class ObjectToSceneStore extends ReduceStore {
                 objects.forEach(obj => state = state.set(obj, action.scene.name));
 
                 return state;
+            case ActionTypes.UPDATE_SCENE_NAME:
+
+                objects = scene_utils.allObjects(action.oldScene);
+                objects.forEach(obj => state = state.set(obj, action.scene.name));
+
+                return state;
             default:
                 return state;
         }

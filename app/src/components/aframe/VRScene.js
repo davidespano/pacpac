@@ -102,7 +102,7 @@ export default class VRScene extends React.Component {
                     else mats = "opacity: 0; visible: false";
 
                     assets.push(
-                        <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  muted>
+                        <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  playsinline webkit-playsinline>
                             <source type="video/mp4" src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + scene.img} />
                         </video>
                     );
@@ -123,9 +123,7 @@ export default class VRScene extends React.Component {
                     </a-assets>
                     {skies}
                     <Entity key="keycamera" id="camera" camera look-controls_us="pointerLockEnabled: true">
-                        <Entity mouse-cursor>
                             <Entity primitive="a-cursor" id="cursor" pointsaver/>
-                        </Entity>
                     </Entity>
                 </Scene>
             </div>

@@ -1,20 +1,153 @@
 import React from 'react';
-import L from "../../utils/L";
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
-import StoriesViewer from "./StoriesViewer";
+import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils, Modifier} from "draft-js";
+import createMentionPlugin from 'draft-js-mention-plugin';
+import interface_utils from "./interface_utils";
+
 
 function Rules(props){
-    return(
+
+    /*return(
         <div id={'rules'} className={'rules'}>
-            {generateRules(props)}
-			<StoriesViewer {...props} />
-			<button id="stories" className={"btn"} data-toggle="modal" data-target="#view-story-modal">Visualizzatore</button>					
+            <Editor editorState={props.rulesEditor.editorState}
+                    handleBeforeInput={(input) => {
+                        console.log('beforeInput');
+                        return handleBeforeInput(input, props);
+                    }}
+                    handleKeyCommand={(command) => {
+                        console.log('handleKeyCommand');
+                        return handleKeyCommand(command, props);
+                    }}
+                    onChange={(state) => {
+                        console.log('onchange');
+                        props.updateRuleEditorFromState(state);
+                    }}/>
         </div>
-    );
+    );*/
 }
 
+/**
+ * Checks if user is allowed to write in the selected portion of text
+ * @param input
+ * @param props
+ * @returns {string}
+ */
+function handleBeforeInput(input, props){
+    const state = props.rulesEditor.editorState;
+    const selection = state.getSelection();
+
+    if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
+        if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state)
+            && interface_utils.checkIfEditableCursor(state)){ // editable
+            if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
+
+                let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() +2).set(
+                    'focusOffset', selection.getStartOffset() +2);
+
+                let placeholder = interface_utils.checkEndSpace() ? '@' + input : '@' + input + ' ';
+
+                let newContentState = Modifier.replaceText(
+                    state.getCurrentContent(),
+                    state.getSelection(),
+                    placeholder,
+                );
+
+                props.updateRuleEditorFromContent(newContentState, newSelectionState);
+                return 'handled';
+            }
+        } else { // multiple blocks, multiple entities or keywords involved
+            return 'handled';
+        }
+    } else { //CURSOR
+        if(!interface_utils.checkIfEditableCursor(state)) { //not editable
+            return 'handled';
+        }
+    }
+}
+
+/**
+ * Checks if the user is allowed to execute a command in the selected portion of text
+ * @param command
+ * @param props
+ * @returns {string}
+ */
+function handleKeyCommand(command, props){
+    const state = props.rulesEditor.editorState;
+    const selection = state.getSelection();
+
+    if(command === 'backspace' || command === 'delete') {
+        if(interface_utils.checkIfMultipleSelection(state)){ //SELECTION
+            if(interface_utils.checkBlock(state) && interface_utils.checkEntity(state) // deletable
+                && interface_utils.checkIfEditableCursor(state)){
+
+                if(!(interface_utils.firstCheck(state) || interface_utils.secondCheck(state))){ // replace with placeholder
+
+                    let newSelectionState = selection.set('anchorOffset', selection.getStartOffset() +1).set(
+                        'focusOffset', selection.getStartOffset() +1);
+
+                    let placeholder = interface_utils.checkEndSpace() ? '@' : '@ ';
+
+                    //console.log('PLACEHOLDER');
+                    let newContentState = Modifier.replaceText(
+                        state.getCurrentContent(),
+                        state.getSelection(),
+                        placeholder,
+                    );
+
+                    props.updateRuleEditorFromContent(newContentState, newSelectionState);
+                    return 'handled';
+
+                }
+            } else { // multiple blocks, multiple entities or keywords involved
+                console.log('KEYWORD');
+                return 'handled';
+            }
+        } else { //CURSOR
+            if(interface_utils.checkIfDeletableCursor(state)){ // deletable
+                //console.log('NOT KEYWORD');
+                if(interface_utils.checkIfPlaceholderNeeded(state)){ //placeholder
+
+                    let placeholder = interface_utils.checkEndSpace() ? '@' : '@ ';
+
+                    //console.log('PLACEHOLDER');
+                    let newContentState = Modifier.replaceText(
+                        state.getCurrentContent(),
+                        state.getSelection().set('anchorOffset', state.getSelection().getStartOffset() -1),
+                        placeholder
+                    );
+
+                    props.updateRuleEditorFromContent(newContentState, state.getSelection());
+                    return 'handled';
+                }
+                //console.log('NO PLACEHOLDER');
+            } else { // not deletable
+                //console.log('KEYWORD');
+                return 'handled';
+            }
+        }
+    }
+}
+
+/**
+ * check selected entity
+ * @param props
+ * @param offset (move selection n spaces to the left, default 0)
+ * @returns {boolean}
+ */
+function checkIfEditable(props, offset = 0){
+    let entity = interface_utils.getEntity(props.rulesEditor.editorState, offset);
+    console.log('ENTITY: ' + entity);
+
+    return entity !== null && entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
+}
+
+/*<MentionsSuggestions suggestions={props.rulesEditor.suggestions}
+                                 onSearchChange={(state) => props.updateSuggestion(state)}
+            />*/
+
+/*
 function generateRules(props){
 
     //check scene selection
@@ -29,7 +162,6 @@ function generateRules(props){
         return ([...currentScene.get('rules').values()].map((rule_uuid) => {
             let rule = props.rules.get(rule_uuid);
 
-            /**TO DO : add objects selection here**/
             let object = "---";
 
             if(props.interactiveObjects.has(rule.object_uuid)){
@@ -59,7 +191,7 @@ function generateRules(props){
     }else {
         return "Nessuna scena selezionata";
     }
-}
+}*/
 
 /**
  * Generate html for the given action
@@ -172,4 +304,3 @@ function handleKeys(event,value,ruleId,objectId,props) {
 }*/
 
 export default Rules;
-

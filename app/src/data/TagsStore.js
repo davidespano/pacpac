@@ -23,11 +23,11 @@ class TagsStore extends ReduceStore {
             case ActionTypes.ADD_NEW_TAG:
                 return state.set(action.uuid, action.tag);
             case ActionTypes.LOAD_ALL_SCENES:
-                action.response.forEach(scene => {
+                action.tags.forEach(tag => {
                     let t = Tag({
-                        uuid: scene.tag.uuid,
-                        name: scene.tag.name,
-                        color: scene.tag.color,
+                        uuid: tag.uuid,
+                        name: tag.name,
+                        color: tag.color,
                     });
                     state = state.set(t.uuid, t);
                 });

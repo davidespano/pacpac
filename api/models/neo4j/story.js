@@ -7,5 +7,5 @@ var Story = module.exports = function (_node) {
     } else {
         _.extend(this, _node);
     }
-    assert(this.name, "the story must have a name");
+    assert(this.uuid, "the story must have a uuid");
 };

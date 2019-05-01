@@ -1,60 +1,120 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
 import Story from "../data/Story";
+import StoryCollection from "../data/StoryCollection";
+import StoryImage from "../data/StoryImage";
 
 const request = require('superagent');
 
 const {apiBaseURL} = settings;
+const fs = require('fs');
 
-var stories_updates = [
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. The sun had risen from the ocean, making her feel more alive than normal. As soon as the sun broke out on the horizon, it was as if he were in New York City, and I had no idea what to do with her.The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. I'd seen the men in his life, who guided me at the beach once more.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. The sun had risen from the ocean, making her feel more alive than normal. I kept my head down, staring at Nina's stunning blue eyes.The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. I'd seen the men in his life, who guided me at the beach once more.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. In fact, it seemed to be the most memorable night of my life.She's beautiful, but the truth is that I don't know what to do. The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. I'd seen the men in his life, who guided me at the beach once more.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. The sun had risen from the ocean, making her feel more alive than normal. She's beautiful, but the truth is that I don't know what to do. The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. It was so much more than that I could hardly believe what had happened to me.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. The sun had risen from the ocean, making her feel more alive than normal. She's beautiful, but the truth is that I don't know what to do. She had the bouquet of purple roses, and I bit down on my fingers.I'd seen the men in his life, who guided me at the beach once more.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. She stood up, afraid of the vase and mixed blood.She's beautiful, but the truth is that I don't know what to do. The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. I'd seen the men in his life, who guided me at the beach once more.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. The sun had risen from the ocean, making her feel more alive than normal. She was the only source of power, and I'd let it fade away at night.The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. I'd seen the men in his life, who guided me at the beach once more.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. The sun had risen from the ocean, making her feel more alive than normal. She's beautiful, but the truth is that I don't know what to do. To be honest, I did n't know what to say to her.I'd seen the men in his life, who guided me at the beach once more.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. Yes lights dimmed the city, and I saw a flash of light in the distance.She's beautiful, but the truth is that I don't know what to do. The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. I'd seen the men in his life, who guided me at the beach once more.",
-"We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. In fact, it was as if they were living in a vase full of flowers.The sun had risen from the ocean, making her feel more alive than normal. She's beautiful, but the truth is that I don't know what to do. The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. I'd seen the men in his life, who guided me at the beach once more."
-];
+let uuid = require('uuid');
 
-function createStory(name, systemStory, relevance, randomness) {
-	let userStory = "";
-	let lastUpdate = "";
+function generateSystemStory(name, filename, relevance, randomness) {
+	
+	let genres = ["romance", "scifi", "adventure", "thriller"];
+	
+	
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/generateStory`)
+        .set('Accept', 'application/json')
+	    .send({filename: filename, relevance: relevance, randomness: randomness, genres: genres})
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+			createStory(name, filename, relevance, randomness, response.body);
+	
+        });
+	//let systemStory = [{genre:'romance', systemStory:'Romance story', uuid:uuid.v4()}, {genre:'scifi', systemStory:'Scifi story', uuid:uuid.v4()}]
+	
+	
+	//createStory(name, filename, relevance, randomness, systemStory);
+}
+
+
+function createStory(name, filename, relevance, randomness, systemStory) {
+    let images = [];
+	let stories = [];
+	let id = uuid.v4();
+	
+	for (let i=0; i<filename.length; i++){
+		let obj = {
+		relevance: relevance[i],
+		filename: filename[i],
+		uuid: uuid.v4()
+				};
+    images.push(obj);
+	}
+	
+	for (let key of Object.keys(systemStory)) {
+		let obj = {
+		genre: key,
+		systemStory: systemStory[key],
+		userStory: "",
+		lastUpdate: "",
+		uuid: uuid.v4()
+				};
+    stories.push(obj);
+	}	
+	
+	
+
+
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/addStory`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({name: name, systemStory: systemStory, relevance: relevance, randomness: randomness, userStory: userStory, lastUpdate: lastUpdate})
+        .send({uuid: id, name: name, images:images, stories: stories, randomness: randomness})
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
             }
             
+			let images_uuids = [];
+			let stories_uuids = [];
+			
+			images.map((image) => {
+				images_uuids.push(image.uuid); // save uuid
+                let i = StoryImage({
+                    uuid: image.uuid,
+                    name: image.filename,
+                    relevance: image.relevance,
+                });
+                Actions.receiveImage(i);
+            });
+			
+			stories.map((story) => {
+				stories_uuids.push(story.uuid); // save uuid
+                let s = Story({
+                    uuid: story.uuid,
+                    genre: story.genre,
+                    systemStory: story.systemStory,
+					userStory: '',
+					lastUpdate: '',
+                });
+                Actions.receiveStory(s);
+            });			
+			
+			
             // new Story object
-           let newStory = Story({
-				name : name.replace(/\.[^/.]+$/, ""),
-				img : name,
-				relevance : relevance,
+           let newStoryCollection = StoryCollection({
+			    uuid: uuid,
+				name : name,
 				randomness : randomness,
-				systemStory : systemStory,
-				userStory : userStory,
-				lastUpdate : lastUpdate,
-
+			    images: images_uuids,
+			    stories: stories_uuids,
             });
 
-            Actions.receiveStory(newStory);
+            Actions.receiveCollection(newStoryCollection);
         });
 }
 
 function restoreSystemStory(story){
 
 			let newStory = Story({
-                name : story.name,
-				img : story.img,
-                relevance : story.relevance,
-				randomness: story.randomness,
-				systemStory: story.systemStory,
+                uuid : story.uuid,
+				genre : story.genre,
+				systemStory: story.systemStory,	
 				userStory: "",
 				lastUpdate: "",
 
@@ -62,14 +122,12 @@ function restoreSystemStory(story){
 			updateStory(newStory);		
 }
 
-function editUserStory(story, content, lastUpdate){
+function editStory(story, content, lastUpdate){
 		
 			let newStory = Story({
-                name : story.name,
-				img : story.img,
-                relevance : story.relevance,
-				randomness: story.randomness,
-				systemStory: story.systemStory,
+                uuid : story.uuid,
+				genre : story.genre,
+				systemStory: story.systemStory,				
 				userStory: content,
 				lastUpdate: lastUpdate,
 
@@ -77,37 +135,17 @@ function editUserStory(story, content, lastUpdate){
 			updateStory(newStory);		
 }
 
-function changeStoryParameters(story, parameter, value){
-	
-				let newStory = Story({
-                name : story.name,
-				img: story.img,
-                relevance : parameter === 'relevance' ? value : story.relevance ,
-				randomness: parameter === 'randomness' ? value : story.randomness,
-				systemStory: stories_updates[value-1],
-				userStory: "",
-				lastUpdate: "",
-
-            });
-	
-			updateStory(newStory);		
-}
-
-
-
 function updateStory(story) {
-   // request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/${story.img}`)
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/updateStory`)	
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send(
 		{
-			name: story.img,	
-			relevance: story.relevance, 
-			randomness: story.randomness, 			
-			systemStory: story.systemStory,
-			userStory: story.userStory, 
-			lastUpdate: story.lastUpdate,
+                uuid : story.uuid,
+				genre : story.genre,
+				systemStory: story.systemStory,				
+				userStory: story.userStory,
+				lastUpdate: story.lastUpdate,
 		}
 				)
         .end(function (err, response) {
@@ -119,8 +157,8 @@ function updateStory(story) {
 		Actions.updateStory(story);	
 }
 
-function deleteStory(story) {
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/${story.img}`)
+function deleteStory(collection, story) {
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/${collection.name}/${story.uuid}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function (err, response) {
@@ -128,12 +166,32 @@ function deleteStory(story) {
                 return console.error(err)
             }
 
-            Actions.removeStory(story);
+            Actions.removeStory(collection, story);
         });
 }
 
+function deleteCollection(collection, images) {
+	
+	Actions.removeCollection(collection);
+	
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/${collection.name}`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+		.send(
+		{
+			images: images.map(a => a.name)
+			}
+		)
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+			
+            
+        });
+}
 
-function getAllStories() {
+function getAllCollections() {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
@@ -141,11 +199,11 @@ function getAllStories() {
                 return console.error(err);
             }
             if (response.body && response.body !== [])
-                Actions.loadAllStories(response.body);
+                Actions.loadAllCollections(response.body);
         });
 }
 
-function getStoryByName(name) {
+function getCollectionByName(name) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/${name}`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
@@ -153,33 +211,208 @@ function getStoryByName(name) {
                 return console.error(err)
             }
 			
+			let images_uuids = [];
+			let stories_uuids = [];
+			
+			response.body.images.map((image) => {
+				images_uuids.push(image.uuid); // save uuid
+                let i = StoryImage({
+                    uuid: image.uuid,
+                    name: image.name,
+                    relevance: image.relevance,
+                });
+                Actions.receiveImage(i);
+            });
+			
+			response.body.stories.map((story) => {
+				stories_uuids.push(story.uuid); // save uuid
+                let s = Story({
+                    uuid: story.uuid,
+                    genre: story.genre,
+                    systemStory: story.systemStory,
+					userStory: story.userStory,
+					lastUpdate: story.lastUpdate,
+                });
+                Actions.receiveStory(s);
+            });			
+			
 			
             // new Story object
-            let newStory = Story({
-                name : response.body.name.replace(/\.[^/.]+$/, ""),
-				img: response.body.name,
-                relevance : response.body.relevance,
-				randomness: response.body.randomness,
-				systemStory: response.body.systemStory,
-				userStory: response.body.userStory,
-				lastUpdate: response.body.lastUpdate,
-
+           let newStoryCollection = StoryCollection({
+			    uuid: response.body.uuid,
+				name : response.body.name,
+				randomness : response.body.randomness,
+			    images: images_uuids,
+			    stories: stories_uuids,
             });
 
-            Actions.receiveStory(newStory);
-
+            Actions.receiveCollection(newStoryCollection);
         });
+		
+		
+		
 }
 
+function changeRelevance(collection, img, relevance, images, stories){
+	
+	let grs = [];
+	let filename = [];
+	let rel = [];	
+	
+	images.forEach( i=> {
+		filename.push(i.name);
+		i.uuid === img.uuid ? rel.push(relevance) : rel.push(i.relevance);
+	});
+	
+	stories.forEach( s=> {
+		grs.push(s.genre);
+	});	
+
+
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/generateStory`)
+        .set('Accept', 'application/json')
+	    .send({filename: filename, relevance: rel, randomness: collection.randomness, genres: grs})
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+			updateRelevance(img, relevance, stories, response.body);
+        });
+	
+}
+
+function updateRelevance(img, relevance, oldStory, newStory){
+	
+	let newStories = [];
+	
+	oldStory.map((story) => {
+        let s = Story({
+            uuid: story.uuid,
+            genre: story.genre,
+            systemStory: newStory[story.genre],
+	    	userStory: '',
+			lastUpdate: '',
+			});
+			
+		newStories.push(s);
+		Actions.updateStory(s);
+			
+            });		
+	
+	
+	
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/updateRelevance`)	
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send(
+		{
+				img: img.uuid,
+				relevance: relevance,
+				newStory: newStories,
+		}
+				)
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+        });
+		
+		let i = StoryImage({
+            uuid: img.uuid,
+            name: img.name,
+            relevance: relevance,
+                });
+				
+		Actions.updateImage(i);
+		
+
+
+}
+
+
+
+function changeRandomness(collection, randomness, images, stories){
+	
+	let grs = [];
+	let filename = [];
+	let rel = [];	
+	
+	images.forEach( i=> {
+		filename.push(i.name);
+		rel.push(i.relevance);
+	});
+	
+	stories.forEach( s=> {
+		grs.push(s.genre);
+	});	
+
+
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/generateStory`)
+        .set('Accept', 'application/json')
+	    .send({filename: filename, relevance: rel, randomness: randomness, genres: grs})
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+			updateRandomness(collection, randomness, stories, response.body);
+        });	
+		
+}
+
+function updateRandomness(collection, randomness, oldStory, newStory){
+	
+	let newStories = [];
+	
+	oldStory.map((story) => {
+        let s = Story({
+            uuid: story.uuid,
+            genre: story.genre,
+            systemStory: newStory[story.genre],
+	    	userStory: '',
+			lastUpdate: '',
+			});
+			
+		newStories.push(s);
+		Actions.updateStory(s);
+			
+            });
+	
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/stories/updateRandomness`)	
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send({name : collection.name, randomness: randomness, newStory: newStories})
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+        });
+
+
+	let newStColl = StoryCollection({
+		uuid: collection.uuid,
+		name : collection.name,
+		randomness : randomness,
+		images: collection.images,
+		stories: collection.stories,
+            });
+		Actions.updateCollection(newStColl);			
+			
+}
 
 
 export default {
     createStory: createStory,
 	updateStory: updateStory,
 	restoreSystemStory: restoreSystemStory,
-	changeStoryParameters: changeStoryParameters,
-	editUserStory: editUserStory,
+	editStory: editStory,
 	deleteStory: deleteStory,
-	getAllStories: getAllStories,
-	getStoryByName: getStoryByName,
+	getAllCollections: getAllCollections,
+	getCollectionByName: getCollectionByName,
+	generateSystemStory: generateSystemStory,
+	changeRandomness: changeRandomness,
+	updateRandomness: updateRandomness,	
+	changeRelevance: changeRelevance,
+	updateRelevance: updateRelevance,
+    deleteCollection: deleteCollection,	
+	
 };

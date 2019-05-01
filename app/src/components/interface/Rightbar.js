@@ -4,12 +4,16 @@ import Actions from "../../actions/Actions";
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import interface_utils from "./interface_utils";
-import MediaAPI from "../../utils/MediaAPI";
 import scene_utils from "../../scene/scene_utils";
+import TagDropdown from "./TagDropdown";
 
 let THREE = require('three');
 
 function RightBar(props){
+
+
+    //console.log(props.mentions);
+
     return(
         <div className={'rightbar'}>
             <div id={'rbContainer'}>
@@ -82,6 +86,12 @@ function content(props){
  * @returns {*}
  */
 function sceneView(props){
+    
+    let properties = {
+        props : props,
+        component : 'rightbar',
+    };
+
     if(props.currentScene){
         let scene = props.scenes.get(props.currentScene);
         let tag = props.tags.get(scene.tag);
@@ -111,10 +121,8 @@ function sceneView(props){
                 >
                     {scene.name}
                 </div>
-                <label>Tipologia: {scene.type}</label>
                 <label>Etichetta:</label>
-                <input className={'tag-element-color'} type={'color'} defaultValue={tag.color} disabled/>
-                {tag.name}
+                <TagDropdown {...properties}/>
             </div>
         );
     } else {
@@ -199,36 +207,18 @@ function generateProperties(props){
                 {currentObject.name}
             </div>
             {generateSpecificProperties(currentObject, props)}
-            <div id={'uploadMedia'}>
-                <label htmlFor={"media"}>Media</label>
-                {currentObject.media}
-                <input type="file"
-                       name="media"
-                       id="mediaInput"
-                       onChange={() => {
-                           let file = document.getElementById("mediaInput").files[0];
-                           MediaAPI.uploadMedia(currentObject, file, 'media', props);
-                       }}
-                />
-            </div>
-            <div id={'uploadMask'}>
-                <label htmlFor={"mask"}>Maschera</label>
-                {currentObject.mask}
-                <input type="file"
-                       name="mask"
-                       id="maskInput"
-                       onChange={() => {
-                           let file = document.getElementById("maskInput").files[0]
-                           MediaAPI.uploadMedia(currentObject, file, 'mask', props);
-                       }}
-                />
-            </div>
-            <label>Geometry</label>
+            <button id={'edit-media-btn'}
+                    className={'propertyForm geometryBtn mediaBtn'}
+                    data-toggle="modal"
+                    data-target="#edit-media-modal"
+            >
+                Modifica media
+            </button>
             <button
-                className={"propertyForm geometryBtn"}
+                className={"propertyForm geometryBtn mediaBtn"}
                 onClick={() => props.switchToGeometryMode() }
             >
-                Edit Geometry
+                Modifica geometria
             </button>
         </div>
     );
@@ -245,7 +235,7 @@ function generateSpecificProperties(object, props){
         case InteractiveObjectsTypes.TRANSITION:
             return (
                 <div>
-                    <label>Duration</label>
+                    <label>Durata</label>
                     <div className={"durationContainer"}>
                         <div id={"transitionDuration"}
                              className={"propertyForm"}
@@ -256,6 +246,7 @@ function generateSpecificProperties(object, props){
                             {object.properties.duration}
                         </div><span className={"measureUnit"}>ms</span>
                     </div>
+
                 </div>
             );
         case InteractiveObjectsTypes.SWITCH:
@@ -275,12 +266,41 @@ function generateSpecificProperties(object, props){
                     </select>
                 </div>
             );
+        case InteractiveObjectsTypes.KEY:
+            return (
+                <div>
+                    <label>Stato iniziale</label>
+                    <input type={"checkbox"} id={'keyDefaultState'}
+                            defaultValue={object.properties.state}
+                            onChange={() => {
+                                let e = document.getElementById('keyDefaultState');
+                                let value = e.checked;
+                                interface_utils.setPropertyFromValue(object, 'state', value, props);
+                            }}
+                    />
+                        Raccolto
+                </div>
+            );
+        case InteractiveObjectsTypes.LOCK:
+            return (
+                <div>
+                   {/* <select id={'keyDefaultState'}
+                            defaultValue={object.properties.key_uuid}
+                            onChange={() => {
+                                let e = document.getElementById('keyDefaultState');
+                                let value = e.options[e.selectedIndex].value;
+                                interface_utils.setPropertyFromValue(object, 'key_uuid', value, props);
+                            }}
+                    >
+                        {generateKeyList(props, object)}
+                    </select>*/}
+                </div>
+            );
         default:
             return(<div>Error!</div>);
 
     }
 }
-
 
 /**
  * Generates buttons for currently selected object options
@@ -359,8 +379,8 @@ function generateObjectsList(props) {
 
         let scene = props.scenes.get(props.currentScene);
         let objects = scene.objects;
-        let allObjects = objects.transitions.concat(objects.switches);
-
+        //let allObjects = objects.transitions.concat(objects.switches).concat(objects.collectable_keys);
+        let allObjects = Object.values(scene.objects).flat();
         // no objects in scene
         if (allObjects.length === 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
@@ -391,6 +411,21 @@ function generateObjectsList(props) {
     }
 }
 
+
+/**
+ * Generates options for keys
+ * @param props
+ * @returns {any[]}
+ */
+function generateKeyList(props, obj) {
+    let scene = props.scenes.get(props.objectToScene.get(obj.uuid));
+    console.log(scene);
+    return ([...scene.objects.collectable_keys.values()].map(key_uuid => {
+        const key = props.interactiveObjects.get(key_uuid);
+            return (<option key={key.uuid} value={key.uuid}>{key.name}</option>)
+
+    }));
+}
 /*
 function checkGeometryMode(props) {
 

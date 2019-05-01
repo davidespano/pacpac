@@ -13,6 +13,10 @@ import DatalistStore from "../data/DatalistStore";
 import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
+import MentionsStore from "../data/MentionsStore";
+
+import StoryCollectionsStore from '../data/StoryCollectionsStore';
+import StoryImagesStore from '../data/StoryImagesStore';
 import StoriesStore from '../data/StoriesStore';
 import EditStoriesStore from '../data/EditStoriesStore';
 
@@ -29,8 +33,13 @@ function getStores() {
         CentroidsStore,
         EditorStateStore,
         AssetsStore,
+        MentionsStore,
+        RulesStore,
+	
 		StoriesStore,
-	    EditStoriesStore,		
+	    EditStoriesStore,
+		StoryCollectionsStore,
+	    StoryImagesStore,	
     ];
 }
 
@@ -47,24 +56,36 @@ function getState() {
         datalists: DatalistStore.getState(),
         editor: EditorStateStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
+        mentions: MentionsStore.getState(),
         objectToScene: ObjectToSceneStore.getState(),
         rules: RulesStore.getState(),
         scenes: ScenesStore.getState(),
         tags: TagsStore.getState(),
+		
 		stories: StoriesStore.getState(),
-		editStories: EditStoriesStore.getState(),		
+		editStories: EditStoriesStore.getState(),
+		storyCollections: StoryCollectionsStore.getState(),
+		storyImages: StoryImagesStore.getState(),		
 
         //FUNCTIONS
 
         //editor
 
         dropdownScenesOrder: Actions.dropdownScenesOrder,
+        dropdownTagsNewScene: Actions.dropdownTagsNewScene,
+        dropdownTagsRightbar: Actions.dropdownTagsRightbar,
+        newSceneNameTyped: Actions.newSceneNameTyped,
         rightbarSelection: Actions.rightbarSelection,
+        selectFile: Actions.selectFile,
+        selectMediaToEdit: Actions.selectMediaToEdit,
+        selectTagNewScene: Actions.selectTagNewScene,
+        switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
         switchToEditMode: Actions.editModeOn,
+        switchToLoginMode: Actions.loginModeOn,
         switchToFileManager: Actions.fileManagerModeOn,
         switchToGeometryMode: Actions.geometryModeOn,
-		switchToStoryEditorMode: Actions.storyEditorModeOn,				
+		switchToStoryEditorMode: Actions.storyEditorModeOn,		
 
         //scenes
 
@@ -96,20 +117,37 @@ function getState() {
 
         addNewRule: Actions.addNewRule,
         removeRule: Actions.removeRule,
+        setMentionType: Actions.setMentionType,
         updateRule: Actions.updateRule,
+        updateRuleEditorFromState: Actions.updateRuleEditorFromState,
+        updateRuleEditorFromContent: Actions.updateRuleEditorFromContent,
+        updateRuleEditorFromRaw: Actions.updateRuleEditorFromRaw,
+        updateSuggestion: Actions.updateSuggestion,
+        ruleEditorCallback: {
+            eudShowCompletions: Actions.eudShowCompletions,
+            eudSaveOriginalObject: Actions.eudSaveOriginalObject,
+            eudUpdateRule: Actions.updateRule,
+        },
+
 
         //OTHER
+
         onDrop: Actions.onDrop,
         updateDatalist: Actions.updateDatalist,
-
-		//story editor
+		
+		
+		
+		//STORY EDITOR
+		
+		receiveCollection: Actions.receiveCollection,
+		removeCollection: Actions.removeCollection,		
+		receiveImage: Actions.receiveImage,		
 		
 		receiveStory: Actions.receiveStory,
 		removeStory: Actions.removeStory,
 		restoreStory: Actions.restoreStory,
 		updateStory: Actions.updateStory,
 		onEditStory: Actions.editStory,
-		
 		startEditingStory: Actions.startEditingStory,
 		stopEditingStory: Actions.stopEditingStory,
 

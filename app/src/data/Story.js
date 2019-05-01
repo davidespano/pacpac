@@ -2,14 +2,11 @@ import Immutable from "immutable";
 
 const Story = Immutable.Record({
 
-    name : "",
-	img : "",
-	relevance : 0,
-	randomness : 0,
-	systemStory : "",
-	userStory : "",
-	lastUpdate : "",
-
+    genre : "", //senza estensione
+	uuid: "",
+	systemStory: "",
+	userStory: "",
+	lastUpdate: "",
 });
 
 export default Story;

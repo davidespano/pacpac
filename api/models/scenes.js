@@ -39,6 +39,14 @@ function buildScene(record) {
         const switches = record.get('switches');
         scene.switches = switches.map(t => new Interactiveobject(t));
     }catch (error){}
+    try {
+        const collectable_keys = record.get('collectable_keys');
+        scene.collectable_keys = collectable_keys.map(t => new Interactiveobject(t));
+    }catch (error){}
+    try {
+        const locks = record.get('locks');
+        scene.locks = locks.map(t => new Interactiveobject(t));
+    }catch (error){}
     return scene;
 }
 
@@ -68,15 +76,19 @@ function getByName(session, name, gameID){
         'MATCH (scene:Scene:`' + gameID + '` {name:$name}) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
         'WITH scene, tag ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition)' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition) ' +
         'WITH scene, tag, COLLECT(transition) as transitions ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(switch:InteractiveObject:Switch)' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(switch:InteractiveObject:Switch) ' +
         'WITH scene, tag, transitions, COLLECT(switch) as switches ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(key:InteractiveObject:Key) ' +
+        'WITH scene, tag, transitions, switches, COLLECT(key) as collectable_keys ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(lock:InteractiveObject:Lock) ' +
+        'WITH scene, tag, transitions, switches, collectable_keys, COLLECT(lock) as locks ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) ' +
-        'WITH scene, tag, transitions, switches, rule ' +
+        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule ' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
-        'WITH scene, tag, transitions, switches, rule, collect(action) as acts ' +
-        'RETURN scene, tag, transitions, switches, collect(rule { .*,  actions :acts}) as rules',
+        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, collect(action) as acts ' +
+        'RETURN scene, tag, transitions, switches, collectable_keys, locks, collect(rule { .*,  actions :acts}) as rules',
         {'name': name})
         .then(result => {
             const scene = singleScene(result);
@@ -94,15 +106,19 @@ function getAllDetailed(session, gameID) {
         'MATCH (scene:Scene:`' + gameID + '` ) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
         'WITH scene, tag ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition)' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition) ' +
         'WITH scene, tag, COLLECT(transition) as transitions ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(switch:InteractiveObject:Switch)' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(switch:InteractiveObject:Switch) ' +
         'WITH scene, tag, transitions, COLLECT(switch) as switches ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(key:InteractiveObject:Key) ' +
+        'WITH scene, tag, transitions, switches, COLLECT(key) as collectable_keys ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(lock:InteractiveObject:Lock) ' +
+        'WITH scene, tag, transitions, switches, collectable_keys, COLLECT(lock) as locks ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) ' +
-        'WITH scene, tag, transitions, switches, rule ' +
+        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule ' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
-        'WITH scene, tag, transitions, switches, rule, collect(action) as acts ' +
-        'RETURN scene, tag, transitions, switches, collect(rule { .*,  actions :acts}) as rules',)
+        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, collect(action) as acts ' +
+        'RETURN scene, tag, transitions, switches, collectable_keys, locks, collect(rule { .*,  actions :acts}) as rules',)
         .then(result => {
                 if (!_.isEmpty(result.records)) {
                     return multipleScenes(result);
@@ -134,7 +150,7 @@ function getHomeScene(session, gameID) {
 }
 
 //add a scene
-function addScene(session, name, index, type, tag, gameID) {
+function addScene(session, uuid, name, img, index, type, tag, gameID) {
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name})' +
         'RETURN scene', {name: name})
@@ -145,8 +161,8 @@ function addScene(session, name, index, type, tag, gameID) {
             else {
                 return session.run(
                     'MATCH (tag:Tag:`' + gameID + '` {uuid: $tag}) ' +
-                    'CREATE (scene:Scene:`' + gameID + '` {name: $name, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
-                    'RETURN scene,tag', {name: name, index: index, type: type, tag: tag})
+                    'CREATE (scene:Scene:`' + gameID + '` {uuid:$uuid, name: $name, img: $img, index:$index, type:$type}) -[:TAGGED_AS]-> (tag) ' +
+                    'RETURN scene,tag', {uuid: uuid, name: name, img: img, index: index, type: type, tag: tag})
             }
         })
         .then(result => {
@@ -160,17 +176,36 @@ function addScene(session, name, index, type, tag, gameID) {
 
 }
 
+//update a scene
+function updateScene( session, uuid, name, img, type, tag, gameID){
+    return session.run(
+        'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})' +
+        'RETURN scene', {uuid: uuid})
+        .then(result => {
+            if (_.isEmpty(result.records)) {
+                throw {message: "Scene doesn't exists", status: 404};
+            }
+            else {
+                return session.run(
+                    'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})-[r:TAGGED_AS]->(tagS), (tag:Tag:`' + gameID + '` {uuid: $tag}) ' +
+                    'SET scene.name = $name, scene.type = $type, scene.img = $img ' +
+                    'CREATE (scene) -[:TAGGED_AS]-> (tag) ' +
+                    'DELETE r ' +
+                    'RETURN scene,tag', {uuid: uuid, name: name, img: img, type: type, tag: tag})
+            }
+        })
+        .then(result => {
+            if(result.records[0] && result.records[0].has("tag")) {
+                singleScene(result.records[0])
+            }
+            else{
+                throw {message: "Tag does not exists", status: 404};
+            }
+        });
+}
+
 //delete a scene
 function deleteScene(session, name, gameID) {
-
-    let path = "public/" + gameID + "/" + name;
-    fs.access(path,(err)=> {
-        if(!err)
-            fs.unlink(path, (err) => {
-                if (err) throw err;
-                console.log('successfully deleted '+path);
-            })
-        });
 
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {name: $name}) ' +
@@ -194,13 +229,14 @@ function setHome(session, name, gameID){
             if (_.isEmpty(result.records)) {
                 throw {message: 'scene not found', status: 404};
             }
-        })
+        });
 }
 
 module.exports = {
     getAll: getAll,
     getByName: getByName,
     addScene: addScene,
+    updateScene: updateScene,
     getHomeScene: getHomeScene,
     deleteScene: deleteScene,
     setHome: setHome,

@@ -11,6 +11,10 @@ const Switch = defaultValues => InteractiveObject({
     properties : {
         state : 'OFF',
     },
+    media : {
+        media0 : null,
+        media1 : null,
+    },
     ...defaultValues
 });
 

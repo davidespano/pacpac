@@ -20,20 +20,42 @@ export default class Bubble extends React.Component
                 cursor.setAttribute('material', 'visible: true');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                 cursor.setAttribute('color', 'black');
-                el.props.handler(el.props.scene.img);
+                el.props.handler(el.props.scene.name);
             }
             this.components[evt.detail.name].animation.reset();
         });
         this.setShader();
+        this.setVideoFrame();
     }
 
     componentDidUpdate(){
         if(!this.props.isActive) {
             Object.values(this.props.scene.objects).flat().forEach(obj => {
-                if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
-                document.getElementById("media_" + obj.uuid).currentTime = 0;
+                Object.values(obj.media).forEach(media=>{
+                    if(media !== null)
+                        document.getElementById("media_" + obj.uuid).currentTime = 0;
+                });
             })
+        }else{
+            this.setShader();
         }
+        this.setVideoFrame();
+    }
+
+    setVideoFrame(){
+        //if(!this.props.isActive) return;
+        this.props.scene.objects.switches.forEach(s => {
+            if(s.media.media0 === null && s.media.media1 === null) return;
+            if((this.props.runState[s.uuid].state === "ON"  && s.media.media1 === null )||
+               (this.props.runState[s.uuid].state === "OFF" && s.media.media0 === null )){
+                let asset = document.getElementById("media_"+s.uuid);
+                asset.addEventListener('durationchange', function (ev) {
+                    asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
+                });
+                if(asset.readyState > 0)
+                    asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
+            }
+        })
     }
 
     render() {
@@ -46,6 +68,10 @@ export default class Bubble extends React.Component
         });
         //const sound = <Sound track={this.props.track} id = {this.props.name}/>;
         let material = "depthTest: true; ";
+       /* if(this.nv !== undefined && this.nv.needShaderUpdate === true) {
+            material += "shader: flat;";
+            this.nv.needShaderUpdate = false;
+        }*/
         let active = 'active: false;';
         let radius = 9.9;
         if (this.props.isActive) {
@@ -64,12 +90,21 @@ export default class Bubble extends React.Component
     }
 
     setShader(){
+        console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
-            const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
-            if (objs.length === 0) return; //shader not necessary
             let sky = document.getElementById(scene.name);
-            if(sky.getAttribute('material').shader === 'multi-video') return;
+            const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
+            if (objs.length === 0){
+                this.resetShader(sky);
+                return; //shader not necessary
+            }
+
+            if(sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
+                if (this.props.isActive) document.getElementById(scene.img).play();
+                return;
+            }
+            if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
             let video = [];
             let masks = [];
             let aux = new THREE.VideoTexture(document.getElementById(scene.img)); //background video
@@ -78,20 +113,27 @@ export default class Bubble extends React.Component
             let dict = ['0'];
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
-                if (obj.media === "" || obj.mask === "" || obj.media === undefined || obj.mask === undefined) return;
-                aux = new THREE.VideoTexture(document.getElementById("media_" + obj.uuid));
+                let asset = document.getElementById("media_" + obj.uuid);
+                if (asset === null) return;
+                aux = new THREE.VideoTexture(asset);
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
-                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/interactives/` + obj.mask);
+                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.mask);
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
                 dict.push(obj.uuid.replace(/-/g,'_'));
             });
 
-            if (masks.length === 0) return; //shader not necessary
+            if (masks.length === 0) {
+                this.resetShader(sky);
+                return; //shader not necessary
+            }
 
             //set the shader
-            sky.setAttribute('material', "shader:multi-video;");
+            if(sky.getAttribute('material').shader !== 'multi-video'){
+                sky.setAttribute('material', "shader:multi-video;");
+            }
+
             let children = sky.object3D.children;
             let skyMesh = null;
             children.forEach(obj => {
@@ -140,7 +182,7 @@ export default class Bubble extends React.Component
                     }
             `;
             skyMesh.material.fragmentShader = fragShader;
-            skyMesh.material.needsUpdate = true;
+            setTimeout(()=>skyMesh.material.needsUpdate = true ,50);
 
 
             if (this.props.isActive) document.getElementById(scene.img).play();
@@ -149,6 +191,12 @@ export default class Bubble extends React.Component
         }, 50);
     }
 
+    resetShader(sky){
+        if(sky.getAttribute('material').shader !== 'multi-video'){
+            return;
+        }
+        sky.setAttribute('material', "shader:flat;");
+    }
     componentWillUnmount(){
         delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img];
         (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());

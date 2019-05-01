@@ -5,7 +5,13 @@ import Transition from "../interactives/Transition";
 import Rule from "../interactives/rules/Rule";
 import RuleActionTypes from "../interactives/rules/RuleActionTypes";
 import Switch from "../interactives/Switch";
+import Key from "../interactives/Key";
+import Lock from "../interactives/Lock"
 import Orders from "../data/Orders";
+import Action from "../interactives/rules/Action";
+import Immutable from 'immutable';
+import stores_utils from "../data/stores_utils";
+let uuid = require('uuid');
 
 const request = require('superagent');
 
@@ -27,6 +33,8 @@ function getByName(name, order = null) {
             const adj = []; // neighbours list
             let transitions_uuids = [];
             let switches_uuids = [];
+            let collectable_keys_uuids = [];
+            let locks_uuids = [];
             let rules_uuids = [];
 
             // generates transitions and saves them to the objects store
@@ -36,7 +44,7 @@ function getByName(name, order = null) {
                     uuid: transition.uuid,
                     name: transition.name,
                     type: transition.type,
-                    media: transition.media,
+                    media: JSON.parse(transition.media),
                     mask: transition.mask,
                     vertices: transition.vertices,
                     properties: JSON.parse(transition.properties),
@@ -51,7 +59,7 @@ function getByName(name, order = null) {
                     uuid: sw.uuid,
                     name: sw.name,
                     type: sw.type,
-                    media: sw.media,
+                    media: JSON.parse(sw.media),
                     mask: sw.mask,
                     vertices: sw.vertices,
                     properties: JSON.parse(sw.properties),
@@ -59,37 +67,93 @@ function getByName(name, order = null) {
                 Actions.receiveObject(s);
             });
 
+            // generates key and saves them to the objects store
+            response.body.collectable_keys.map((key) => {
+                collectable_keys_uuids.push(key.uuid); //save uuid
+                let k = Key({
+                    uuid: key.uuid,
+                    name: key.name,
+                    type: key.type,
+                    media: JSON.parse(key.media),
+                    mask: key.mask,
+                    vertices: key.vertices,
+                    properties: JSON.parse(key.properties),
+                });
+                Actions.receiveObject(k);
+            });
+
+            // generates lock and saves them to the objects store
+            response.body.locks.map((lock) => {
+                locks_uuids.push(lock.uuid); //save uuid
+                let l = Lock({
+                    uuid: lock.uuid,
+                    name: lock.name,
+                    type: lock.type,
+                    media: JSON.parse(lock.media),
+                    mask: lock.mask,
+                    vertices: lock.vertices,
+                    properties: JSON.parse(lock.properties),
+                });
+                Actions.receiveObject(l);
+            });
+
             // generates rules and saves them to the rules store
             response.body.rules.map(rule => {
-                // check actions to find scene neighbours
-                rule.actions.forEach(a => {
-                    if (a.type === RuleActionTypes.TRANSITION && a.target && a.target !== '---')
-                        adj.push(a.target);
+                // check actions to find scene neighbours and create new immutable action
+                let actions = rule.actions.map(a => {
+                    if (a.action === RuleActionTypes.TRANSITION && a.obj_uuid && a.obj_uuid !== null)
+                        adj.push(a.obj_uuid);
+
+                    return Action({
+                        uuid: a.uuid,
+                        subj_uuid: a.subj_uuid,
+                        action: a.action,
+                        obj_uuid: a.obj_uuid,
+                        index: a.index,
+                    });
                 });
+
+                actions = Immutable.List(actions).sort(stores_utils.actionComparator);
 
                 rules_uuids.push(rule.uuid); // save uuid
 
-                // new Rule
-                let r = Rule({
-                    uuid: rule.uuid,
-                    object_uuid: rule.object_uuid,
-                    event: rule.event,
-                    condition: JSON.parse(rule.condition),
-                    actions: rule.actions,
-                });
-                Actions.receiveRule(r);
+                let event;
+
+                try{
+                    event = JSON.parse(rule.event)
+                    // new Rule
+                    let r = Rule({
+                        uuid: rule.uuid,
+                        event: Action({
+                            uuid: event.uuid,
+                            subj_uuid: event.subj_uuid,
+                            action: event.action,
+                            obj_uuid: event.obj_uuid,
+                        }),
+                        condition: JSON.parse(rule.condition),
+                        actions: actions,
+                    });
+                    Actions.receiveRule(r);
+                }catch(e){}
+
+
             });
+
+            let tag = response.body.tag.uuid ? response.body.tag.uuid : "default";
 
             // new Scene object
             let newScene = Scene({
-                name : response.body.name.replace(/\.[^/.]+$/, ""),
-                img : response.body.name,
+                uuid: response.body.uuid,
+                name : response.body.name,
+                img : response.body.img,
                 type : response.body.type,
                 index : response.body.index,
-                tag : response.body.tag.uuid,
+                tag : tag,
                 objects : {
                     transitions : transitions_uuids,
                     switches : switches_uuids,
+                    collectable_keys: collectable_keys_uuids,
+                    locks: locks_uuids,
                 },
                 rules : rules_uuids,
             });
@@ -102,16 +166,18 @@ function getByName(name, order = null) {
 /**
  * Creates new Scene inside db and stores
  * @param name
+ * @param img
  * @param index
  * @param type
  * @param tag
  * @param order of scenes
  */
-function createScene(name, index, type, tag, order) {
+function createScene(name, img, index, type, tag, order) {
+    let id = uuid.v4();
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({name: name, index: index, type: type, tag: tag})
+        .send({uuid: id, name: name, img: img, index: index, type: type, tag: tag})
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
@@ -119,8 +185,9 @@ function createScene(name, index, type, tag, order) {
             
             // new Scene object
             let newScene = Scene({
-                name : name.replace(/\.[^/.]+$/, ""),
-                img : name,
+                uuid: id,
+                name : name,
+                img : img,
                 type : type,
                 index : index,
                 tag : tag,
@@ -128,6 +195,8 @@ function createScene(name, index, type, tag, order) {
                 objects: {
                     transitions: [],
                     switches: [],
+                    collectable_keys: [],
+                    locks: [],
                 }
             });
 
@@ -136,18 +205,48 @@ function createScene(name, index, type, tag, order) {
 }
 
 /**
- * Retrieves all data from db and sends it to stores for scenes generations
+ * Update a scene inside db
+ * @param uuid
+ * @param name
+ * @param type
+ * @param tag
  */
-function getAllScenes() {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes`)
+function updateScene(uuid, name, img, type, tag) {
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send({uuid: uuid, name: name, img: img, type: type, tag: tag})
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
             }
-            if (response.body && response.body !== [])
-                Actions.loadAllScenes(response.body, Orders.CHRONOLOGICAL);
         });
+}
+
+/**
+ * Retrieves all data from db and sends it to stores for scenes generations
+ */
+function getAllScenesAndTags() {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/tags`)
+        .set('Accept', 'application/json')
+        .end(function (err, responseT) {
+            if (err) {
+                return console.error(err);
+            }
+            if (responseT.body && responseT.body !== [])
+                request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes`)
+                    .set('Accept', 'application/json')
+                    .end(function (err, response) {
+                        if (err) {
+                            return console.error(err);
+                        }
+                        if (response.body && response.body !== []) {
+                            const scenes_tags = {scenes: response.body, tags: responseT.body};
+                            Actions.loadAllScenes(scenes_tags, Orders.CHRONOLOGICAL);
+                        }
+                    });
+        });
+
 }
 
 /**
@@ -155,7 +254,7 @@ function getAllScenes() {
  * @param scene
  */
 function deleteScene(scene) {
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}`)
+    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.name}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function (err, response) {
@@ -203,7 +302,7 @@ async function getAllDetailedScenes(gameGraph) {
                uuid: transition.uuid,
                name: transition.name,
                type: transition.type,
-               media: transition.media,
+               media: JSON.parse(transition.media),
                mask: transition.mask,
                vertices: transition.vertices,
                properties: JSON.parse(transition.properties),
@@ -215,10 +314,36 @@ async function getAllDetailedScenes(gameGraph) {
                 uuid: sw.uuid,
                 name: sw.name,
                 type: sw.type,
-                media: sw.media,
+                media: JSON.parse(sw.media),
                 mask: sw.mask,
                 vertices : sw.vertices,
                 properties: JSON.parse(sw.properties),
+            });
+        });
+
+        // generates keys
+        const keys = s.collectable_keys.map((key) => {
+            return ({ //key, not the immutable
+                uuid: key.uuid,
+                name: key.name,
+                type: key.type,
+                media: JSON.parse(key.media),
+                mask: key.mask,
+                vertices: key.vertices,
+                properties: JSON.parse(key.properties),
+            });
+        });
+
+        // generates locks
+        const locks = s.locks.map((lock) => {
+            return ({ //lock, not the immutable
+                uuid: lock.uuid,
+                name: lock.name,
+                type: lock.type,
+                media: JSON.parse(lock.media),
+                mask: lock.mask,
+                vertices: lock.vertices,
+                properties: JSON.parse(lock.properties),
             });
         });
 
@@ -226,15 +351,14 @@ async function getAllDetailedScenes(gameGraph) {
         const rules = s.rules.map(rule => {
             // check actions to find scene neighbours
             rule.actions.forEach(a => {
-                if (a.type === RuleActionTypes.TRANSITION && a.target && a.target !== '---' )
-                    adj.push(a.target);
+                if (a.action === RuleActionTypes.TRANSITION && a.obj_uuid && a.obj_uuid !== null)
+                    adj.push(a.obj_uuid);
             });
 
             // new Rule
             return ({ //Rule, not immutable
                 uuid: rule.uuid,
-                object_uuid: rule.object_uuid,
-                event: rule.event,
+                event: JSON.parse(rule.event),
                 condition: JSON.parse(rule.condition),
                 actions: rule.actions,
             });
@@ -243,20 +367,23 @@ async function getAllDetailedScenes(gameGraph) {
 
         // new Scene
         const newScene = ({ //Scene, not immutable
-            name : s.name.replace(/\.[^/.]+$/, ""),
-            img : s.name,
+            uuid: s.uuid,
+            name : s.name,
+            img : s.img,
             type : s.type,
             index : s.index,
             tag : s.tag,
             objects : {
                 transitions : transitions,
                 switches : switches,
+                collectable_keys: keys,
+                locks : locks,
             },
             rules: rules,
         });
 
-        gameGraph['scenes'][newScene.img] = newScene;
-        gameGraph['neighbours'][newScene.img] = adj;
+        gameGraph['scenes'][newScene.name] = newScene;
+        gameGraph['neighbours'][newScene.name] = adj;
     })
     //console.log(gameGraph);
 }
@@ -294,7 +421,8 @@ function removeTag(tag_uuid) {
 export default {
     getByName: getByName,
     createScene: createScene,
-    getAllScenes: getAllScenes,
+    updateScene: updateScene,
+    getAllScenesAndTags: getAllScenesAndTags,
     deleteScene: deleteScene,
     getAllDetailedScenes: getAllDetailedScenes,
     saveTag: saveTag,

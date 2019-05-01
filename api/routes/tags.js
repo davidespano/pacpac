@@ -91,7 +91,48 @@ function putTag(req, res, next) {
         .catch(error => writeError(res, error, 500));
 }
 
+
+/**
+ * @swagger
+ * /api/v0/{gameID}/tags/{name}:
+ *  delete:
+ *      tags:
+ *      - tags
+ *      description: Delete the tag
+ *      summary: Delete a tag by name
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in: path
+ *          name: uuid
+ *          type: string
+ *          required: true
+ *          description: Uuid of the tag
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
+ *        - in : path
+ *          name : gameID
+ *          type : string
+ *          required : true
+ *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *      responses:
+ *          200:
+ *              type: integer
+ *              description: The number of deleted tag (1)
+ */
+function deleteTag(req,res, next){
+    const gameID = req.params.gameID;
+    const uuid = req.params.uuid;
+    Tags.deleteTag(dbUtils.getSession(req), uuid, gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
 module.exports = {
     list: list,
-    putTag: putTag
+    putTag: putTag,
+    deleteTag: deleteTag,
 };

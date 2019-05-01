@@ -11,7 +11,7 @@ AFRAME.registerComponent('pointsaver',
     },
     
     remove: function () {
-        let cursor = document.querySelector('#cursor');
+        let cursor = document.querySelector('a-cursor');
         if(cursor)
             cursor.removeEventListener('click', pointSaver);
     }
@@ -19,7 +19,11 @@ AFRAME.registerComponent('pointsaver',
 
 function pointSaver(evt)
 {
-    let a_point = document.querySelector('#cursor').getAttribute('pointsaver').points;
-    a_point.push(evt.detail.intersection.point);
+    //let a_point = document.querySelector('#cursor').components.pointsaver.points;
+    let cursor =  document.querySelector('#cursor');
+    if(!cursor.components.pointsaver.points){
+        cursor.components.pointsaver.points = [];
+    }
+    cursor.components.pointsaver.points.push(evt.detail.intersection.point);
 }
 

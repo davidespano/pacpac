@@ -2,6 +2,7 @@ import React from 'react';
 import MediaAPI from "../../utils/MediaAPI";
 import StoryAPI from "../../utils/StoryAPI";
 
+
 function InputStoryForm(props){
     return(
         <div id={"addStoryDiv"}>
@@ -15,26 +16,48 @@ function InputStoryForm(props){
                             </button>
                         </div>
                         <div className="modal-body modalOptions">
-							<label htmlFor={"relevance"}>Rilevanza oggetti (1-10):</label>
-							<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance" id="relevance"/>
-							<label htmlFor={"randomness"}>Casualit&agrave; (1-10):</label>
-							<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="randomness" id="randomness" />
-							<label htmlFor={"Image"}>Immagine</label>
-                            <input type="file"
-                                   name="image"
-                                   id="image"
-                            />
+							<div className="form-inline">
+								<div className="col-lg-12 form-group new-story-form">
+									<label className="col-lg-6 col-form-label" htmlFor={"randomness"}>Casualit&agrave; (1-10)</label>
+									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="randomness" id="randomness" />
+									<hr/>
+									<label className="col-lg-6 col-form-label"  htmlFor={"image_1"}>Immagine 1</label>
+									<input type="file" name="image_1" id="image_1" className={"fileUpload"}/>							
+									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_1"}>Rilevanza oggetti (1-10)</label>
+									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_1" id="relevance_1"/>		
+									<hr/>
+									<label className="col-lg-6 col-form-label"  htmlFor={"image_2"}>Immagine 2</label>
+									<input type="file" name="image_2" id="image_2" className={"fileUpload"} />							
+									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_2"}>Rilevanza oggetti (1-10)</label>
+									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_2" id="relevance_2"/>
+									<hr/>
+									<label className="col-lg-6 col-form-label"  htmlFor={"image_3"}>Immagine 3</label>
+									<input type="file" name="image_3" id="image_3" className={"fileUpload"} />							
+									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_3"}>Rilevanza oggetti (1-10)</label>
+									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_3" id="relevance_3"/>
+									<hr/>
+									<label className="col-lg-6 col-form-label"  htmlFor={"image_4"}>Immagine 4</label>
+									<input type="file" name="image_4" id="image_4" className={"fileUpload"} />							
+									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_4"}>Rilevanza oggetti (1-10)</label>
+									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_4" id="relevance_4"/>							
+									<hr/>
+									<label className="col-lg-6 col-form-label"  htmlFor={"image_5"}>Immagine 5</label>
+									<input type="file" name="image_5" id="image_5" className={"fileUpload"} />							
+									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_5"}>Rilevanza oggetti (1-10)</label>
+									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_5" id="relevance_5"/>
+								</div>
+							</div>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
-                                let name =Math.floor(Date.now()), relevance=document.getElementById("relevance").value, randomness=document.getElementById("randomness").value,
-								systemStory="We were barely able to catch the breeze at the beach, and it felt as if someone stepped out of my mind. She was in love with him for the first time in months, so she had no intention of escaping. The sun had risen from the ocean, making her feel more alive than normal. She's beautiful, but the truth is that I don't know what to do. The sun was just starting to fade away, leaving people scattered around the Atlantic Ocean. I'd seen the men in his life, who guided me at the beach once more.",
-								media = document.getElementById("image").files[0];
+                                let name =Math.floor(Date.now()).toString(), randomness=document.getElementById("randomness").value, media = [], relevance = [];
+								for(let i=1; i<= 5; i++) 
+									if (document.getElementById("image_"+i).files[0] != null) {
+										relevance.push(document.getElementById("relevance_"+i).value);
+										media.push(document.getElementById("image_"+i).files[0]);
+									}
 								if(name) {
-                                    addImageAndCreateStory(name,
-                                        media, systemStory,
-                                        relevance, randomness
-                                    );
+                                    addImageAndCreateStory(name, media, relevance, randomness);
                                 }
                             }
                             } data-dismiss="modal" >Conferma</button>
@@ -46,13 +69,14 @@ function InputStoryForm(props){
     );
 }
 
-function addImageAndCreateStory(name, media, systemStory, relevance, randomness){
-
-    let re = /(?:\.([^.]+))?$/;
-    let ext = re.exec(media.name)[1];
-    name = name + "." + ext;
+function addImageAndCreateStory(name, media, relevance, randomness){
 	
-    MediaAPI.addImageStory(name, media, systemStory, relevance, randomness);
+    let ext =[];
+	let re = /(?:\.([^.]+))?$/;
+	for(let i=0; i< media.length; i++)
+		ext.push(re.exec(media[i].name)[1]);
+	
+    MediaAPI.addImageStory(name, media, ext, relevance, randomness);
 
 }
 

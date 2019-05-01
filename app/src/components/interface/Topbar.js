@@ -1,14 +1,15 @@
 import React from 'react';
 import InputSceneForm from './InputSceneForm';
 import Transition from "../../interactives/Transition";
-import Actions from "../../actions/Actions";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import rules_utils from "../../interactives/rules/rules_utils";
-import scene_utils from "../../scene/scene_utils";
 import Switch from "../../interactives/Switch";
+import Key from "../../interactives/Key";
+import Lock from "../../interactives/Lock";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import InputTagForm from "./InputTagForm";
 import ActionTypes from "../../actions/ActionTypes";
+import AuthenticationAPI from "../../utils/AuthenticationAPI";
 
 let uuid = require('uuid');
 
@@ -17,7 +18,7 @@ function TopBar(props){
         <div className={'topbar'}>
             <nav>
                 <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a className="navbar-brand">PacPac</a>
+                    <button className="navbar-brand" onClick={() => AuthenticationAPI.getUserDetail()}>PacPac</button>
                     <a className="nav-item nav-link active"
                        id="nav-game-tab" data-toggle="tab" href="#nav-game" role="tab" aria-controls="nav-game"
                        aria-selected="true" onClick={() => handleNavbarSelection(props)}>Gioco</a>
@@ -31,7 +32,7 @@ function TopBar(props){
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
 					<a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
                        aria-controls="nav-story-editor" aria-selected="false" 
-					   onClick={() => {handleSwitchToStoryEditorMode(props)}}>Generatore</a>							   
+					   onClick={() => {handleSwitchToStoryEditorMode(props)}}>Generatore</a>						   
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">
@@ -39,7 +40,9 @@ function TopBar(props){
                     <InputSceneForm {...props} />
                     <InputTagForm {...props}/>
                     <div className={"flex-container"}>
-                        <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal">
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
+                                onClick={() => props.selectMediaToEdit(null)}
+                        >
                             <img src={"icons/icons8-add-image-100.png"}/>
                             <figcaption>Nuova scena</figcaption>
                         </figure>
@@ -54,8 +57,6 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.TRANSITION);
-                                    console.log(props.assets);
-                                    console.log(props.assets.toList());
                                 }}>
                             <img src={"icons/icons8-add-one-way-transition-100.png"}/>
                             <figcaption>Transizione</figcaption>
@@ -67,6 +68,20 @@ function TopBar(props){
                             <img src={"icons/icons8-add-toggle-on-filled-100.png"}/>
                             <figcaption>Interruttore</figcaption>
                         </figure>
+                        <figure className={'nav-figures'}
+                            onClick={() => {
+                                createObject(props, InteractiveObjectsTypes.KEY);
+                             }}>
+                            <img src={"icons/icons8-key-2-100.png"}/>
+                            <figcaption>Chiave</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.LOCK);
+                                }}>
+                            <img src={"icons/icons8-add-lock-100.png"}/>
+                            <figcaption>Lucchetto</figcaption>
+                        </figure>
                     </div>
                 </div>
             </div>
@@ -76,21 +91,14 @@ function TopBar(props){
 
 function handleNavbarSelection(props){
    // let items = document.getElementsByClassName("nav-item");
-    if(props.editor.mode != ActionTypes.EDIT_MODE_ON){
+    if(props.editor.mode !== ActionTypes.EDIT_MODE_ON){
         props.switchToEditMode();
         document.getElementById("nav-tabContent").hidden = false;
     }
-    // for(let i = 0; i < items.length; i++){
-    //     if(items[i].getAttribute("aria-selected") === 'true'){
-    //         items[i].setAttribute('color', '#EF562D !important');
-    //     } else {
-    //         items[i].setAttribute('color', '#FFFFFF');
-    //     }
-    // }
 }
 
 function handleAssetsMode(props){
-    if(props.editor.mode != ActionTypes.FILE_MANAGER_MODE_ON){
+    if(props.editor.mode !== ActionTypes.FILE_MANAGER_MODE_ON){
         props.switchToFileManager();
         document.getElementById("nav-tabContent").hidden = true;
     }
@@ -120,6 +128,20 @@ function createObject(props, type){
             case InteractiveObjectsTypes.SWITCH:
                 name = scene.name + '_sw' + (scene.objects.switches.length + 1);
                 obj = Switch({
+                    uuid : uuid.v4(),
+                    name : name,
+                });
+                break;
+            case InteractiveObjectsTypes.KEY:
+                name = scene.name + '_key' + (scene.objects.collectable_keys.length + 1);
+                obj = Key ({
+                    uuid : uuid.v4(),
+                    name : name,
+                });
+                break;
+            case InteractiveObjectsTypes.LOCK:
+                name = scene.name + '_lk' + (scene.objects.locks.length + 1);
+                obj = Lock ({
                     uuid : uuid.v4(),
                     name : name,
                 });

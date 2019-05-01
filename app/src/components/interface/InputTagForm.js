@@ -6,7 +6,7 @@ let uuid = require('uuid');
 
 function InputTagForm(props){
     return(
-        <div id={"addLabel"}>
+        <div id={"manage-tags"}>
             <div className="modal fade" id="add-tag-modal" tabIndex="-1" role="dialog" aria-labelledby="add-tag-modal-label" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
@@ -40,9 +40,7 @@ function InputTagForm(props){
                     </div>
                 </div>
             </div>
-
         </div>
-
     );
 }
 

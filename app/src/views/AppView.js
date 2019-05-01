@@ -5,25 +5,35 @@ import RightBar from "../components/interface/Rightbar";
 import Rules from "../components/interface/Rules";
 import VRScene from "../components/aframe/create_scene2";
 import '../components/look-controls_us';
-//import PlayTest from "../components/aframe/playtest";
 import CentralScene from "../components/interface/CentralScene";
 import GeometryScene from "../components/aframe/geometryScene";
-import Canvas from "../components/interface/Canvas";
 import FileContainer from "../components/interface/FileContainer";
+import FileForm from "../components/interface/FileForm";
+import MediaEditingform from "../components/interface/MediaEditingForm";
+import Login from "../components/interface/Login";
+import GameList from "../components/interface/GameList";
+import EudRuleEditor from "../components/interface/EudRuleEditor";
 import StoryEditor from "../components/interface/StoryEditor";
 
 function AppView(props) {
+
+    let propsAssets = {
+        props : props,
+        component : 'assets',
+    };
 
     switch(props.editor.mode){
         case 'EDIT_MODE_ON':
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>
                     <TopBar {...props} />
+                    <MediaEditingform {...props}/>
+                    <FileForm {...props}/>
                     <div className={'grid-container'}>
                         <LeftBar {...props} />
                         <RightBar {...props} />
                         <CentralScene {...props} />
-                        <Rules {...props} />
+                        <EudRuleEditor {...props} />
                     </div>
                 </div>
             );
@@ -31,18 +41,24 @@ function AppView(props) {
             return(
                 <div>
                     <TopBar {...props}/>
-                    <FileContainer {...props}/>
+                    <FileContainer {...propsAssets}/>
                 </div>
             );
         case 'PLAY_MODE_ON':
             return(
                     <VRScene {...props}/>
             );
+        case 'GAME_SELECTION_MODE_ON':
+            return (<GameList {...props}/>);
         case 'GEOMETRY_MODE_ON':
             return(
                 <div>
                     <GeometryScene {...props}/>
                 </div>
+            );
+        case 'LOGIN_MODE_ON':
+            return(
+                <Login {...props}/>
             );
         case 'STORY_EDITOR_MODE_ON':
             return (
@@ -50,7 +66,8 @@ function AppView(props) {
                     <TopBar {...props} />					
 					<StoryEditor {...props} />
                 </div>			
-            );		
+            );				
+				
         default:
             return(
                 <div>SOMETHING WENT WRONG!</div>
@@ -66,7 +83,10 @@ function AppView(props) {
  * @param props
  */
 function closeDropdowns(event, props){
-    props.dropdownScenesOrder(!(props.editor.scenesOrderMenu) && event.target.className.includes('dropdown-btn'));
+    if(event.target.className && typeof event.target.className !== 'object'){
+        props.dropdownScenesOrder(!(props.editor.scenesOrderMenu) && event.target.className.includes('dropdown-btn'));
+        props.dropdownTagsRightbar(!(props.editor.chooseTagRightbar) && event.target.className.includes('chosen-tag-rightbar'));
+    }
 }
 
 export default AppView;

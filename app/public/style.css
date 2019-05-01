@@ -1,7 +1,10 @@
 .leftbar { grid-area: leftbar; }
 .rightbar { grid-area: rightbar; }
 .scene { grid-area: scene; }
-.rules { grid-area: rules; }
+.rules {
+    grid-area: rules;
+    position: relative;
+}
 .topbar {grid-area: topbar;}
 
 
@@ -32,6 +35,15 @@
 
 }
 
+div.rules{
+    font-size: 12pt!important;
+}
+.rules-editor{
+    width: 100%;
+
+}
+
+
 .grid-container {
     display: grid;
     grid-template-columns: 15% auto auto 15%;
@@ -41,15 +53,22 @@
     grid-gap: 1.5px;
     padding: 1px;
     background-color: #ADB0B1;
-    height: 88.5vh !important;
+    height: 82vh !important;
+    max-height: 82vh !important;;
+    box-sizing: border-box;
 }
 
+
 body{
-    min-width: 1000px;
+    width: 100vw;
+    height: 100vh;
+
 }
 
 .topbar{
-    min-height: 11.5vh !important;
+    box-sizing: border-box;
+    min-height: 18vh !important;
+    max-height: 18vh !important;
 }
 
 .grid-container > div {
@@ -78,8 +97,7 @@ body{
 }
 
 .rules{
-    min-height: 33vh;
-    max-height: 33vh;
+
     overflow-y: auto;
 }
 
@@ -91,12 +109,13 @@ body{
 }
 
 .scene > img, .scene > video{
+    box-sizing: border-box;
     transition: .1s ease;
     backface-visibility: hidden;
     width: 100%;
     align-self: center;
-    min-height: 55vh;
-    max-height: 55vh;
+    min-height: 44vh;
+    max-height: 44vh;
     z-index: 1;
 }
 
@@ -120,9 +139,10 @@ body{
     cursor: pointer;
 }
 
-/*prove pop up*/
+/** MODAL BOXES **/
+
 .modal {
-    font-size: 12px;
+    font-size: 1em;
 }
 .modal > .header {
     width: 100%;
@@ -155,6 +175,47 @@ body{
     border: 1px solid #cfcece;
 }
 
+.modalOptions > label{
+    font-size: 20px;
+    width: 100%;
+}
+.modalOptions > select{
+    width: 20%;
+    height: 26px;
+}
+
+#scene_name{
+    background-color: #FFFFFF;
+    border: 1px solid darkgrey;
+    height: 26px;
+}
+
+.input-new-scene {
+    width: 70%;
+    padding: 2px 5px 2px 2px;
+    height: 30px;
+}
+
+#select-file-container {
+    display: inline-flex;
+    width: 100%;
+    height: 30px;
+}
+
+#file-selected-name {
+    border: solid 1px darkgrey;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.select-file-btn {
+    padding: 0 5px 0 5px;
+}
+
+.modal-footer{
+    display: inline;
+}
+
 .pop-button{
     border-radius: 5px;
 }
@@ -164,7 +225,6 @@ body{
 }
 
 .leftbar, .rightbar{
-    max-height: 88.5vh;
     overflow-y: auto;
 }
 
@@ -183,7 +243,7 @@ body{
 }
 
 .currentOptions {
-    width: 90%;
+    width: 95%;
     display: inline-block;
 }
 .currentOptions > button{
@@ -222,6 +282,9 @@ body{
 
 .navbar-brand{
     font-size: 22px;
+    padding: 0;
+    border: none;
+    background: none;
     background-color: #FFFFFF;
     color: #EF562D !important;
     font-family: playregular;
@@ -287,6 +350,10 @@ body{
     border-color: #EF562D;
 }
 
+.hidden-inputs {
+    display: none;
+}
+
 /* Geometry Scene */
 #keyMap{
     position: absolute;
@@ -346,27 +413,6 @@ body{
     width: 30%;
 }
 
-.modalOptions > label{
-    font-size: 20px;
-    width: 100%;
-}
-.modalOptions > select{
-    width: 20%;
-    height: 26px;
-}
-
-#scene_name{
-    background-color: #FFFFFF;
-    border: 1px solid #EF562D;
-    border-radius: 5px;
-    height: 26px;
-    width: 30%;
-}
-
-.modal-footer{
-    display: inline;
-}
-
 .action-buttons{
     width: 20px;
     height: 20px;
@@ -377,10 +423,18 @@ body{
     border-radius: .25rem;
     background-color: transparent;
     margin-right: 3px;
-
 }
 
-.action-buttons-container:hover, .objects-wrapper > .action-buttons:hover {
+
+.action-buttons-container:disabled {
+    border-color: darkgrey;
+}
+
+.action-buttons-container:disabled > img {
+    opacity: 0.5;
+}
+
+.action-buttons-container:enabled:hover, .objects-wrapper > .action-buttons:hover {
     cursor: pointer;
     background-color: #8C9093;
 }
@@ -408,6 +462,7 @@ body{
     height: 100%;
     font-size: 1em !important;
     padding-top: 1.5vh;
+    box-sizing: border-box;
 }
 
 .flex-container{
@@ -578,19 +633,18 @@ body{
             0 -2px 2px black;
 }
 
-/* Dropdown menu leftbar */
+/* Dropdown menu leftbar and tags */
 
 .dropdown-content {
     display: none;
     position: absolute;
     background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     border: 1px #DD4124 solid;
-    z-index: 1;
+    z-index: 2;
+    cursor: pointer;
 }
 
-/* Links inside the dropdown */
 .dropdown-content a {
     color: black;
     padding: 8px 8px;
@@ -598,7 +652,9 @@ body{
     display: block;
 }
 
-.dropdown-content a:hover {background-color: #ddd}
+.dropdown-content a:hover {
+    background-color: #ddd
+}
 
 .show {
     display:block;
@@ -608,8 +664,24 @@ body{
     background-color: rgba(239, 86, 45, .5);
 }
 
+.tag-manager-btn {
+    color: white;
+    background-color: #EF562D;
+    border-color: #DD4124;
+    margin-right: 1%;
+}
+
+.tag-manager-btn:hover {
+    background-color: #EF562D;
+    border-color: #DD4124;
+}
+
+
+    /** FILE MANAGER **/
+
 .filemanager{
     height: 80vh;
+    box-sizing: border-box;
 }
 
 /** TAG FORM **/
@@ -661,3 +733,479 @@ body{
     cursor: pointer;
     background-color: darkgrey;
 }
+
+
+/** MEDIA EDITING MODAL **/
+
+.media-editing-divs {
+    position: relative;
+}
+
+.media-editing-divs > label {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.selected-medias-and-masks {
+    border: solid 1px darkgrey;
+    width: 100%;
+    height: 25px;
+    margin-bottom: 10px;
+}
+
+.selected-medias-and-masks > button {
+    position: absolute;
+    right: 0;
+    height: 25px;
+    width: 25px;
+    padding: 0;
+}
+
+.selected-medias-and-masks > button:hover {
+    background-color: darkgrey;
+}
+
+.selected-medias-and-masks > button > img {
+    height: 15px;
+    width: 15px;
+}
+
+/** TAG DROPDOWN REPRISE **/
+
+.wrapper-dropdown-tags {
+    position:relative;
+    background-color: white;
+    padding: 5px;
+    margin: 0;
+    border: solid 1px darkgrey;
+}
+
+#wrapper-dropdown-tags-rightbar {
+    width: 100%;
+}
+
+#wrapper-dropdown-tags-topbar {
+    width: 70%;
+}
+
+.chosen-tag-rightbar, .chosen-tag-topbar {
+    position: relative;
+    cursor: pointer;
+}
+
+.arrow-up:after,
+.arrow-down:after {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    margin-top: -6px;
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+}
+
+.arrow-down:after {
+    border-top: 10px solid #EF562D;
+}
+
+.arrow-up:after {
+    border-bottom: 10px solid #EF562D;
+}
+
+.chosen-tag-rightbar > p, .chosen-tag-topbar > p {
+    margin-left: 40px;
+    margin-bottom: 0;
+    pointer-events: none;
+}
+
+.wrapper-dropdown-tags > ul {
+    position: absolute;
+    left: -1px;
+    width: 100%;
+    margin: 0;
+    z-index: 2;
+    max-height: 400px;
+    background-color: white;
+    border: solid 1px darkgrey;
+}
+
+.wrapper-dropdown-tags > ul > li {
+    padding: 2px;
+    position: relative;
+    list-style: none;
+    border-bottom: 1px solid darkgrey;
+}
+
+.wrapper-dropdown-tags > ul > li:hover {
+    background-color: darkgrey;
+}
+
+li > span, .chosen-tag-rightbar > p > span, .chosen-tag-topbar > p > span {
+    position: absolute;
+    height: 10px;
+    width: 20px;
+    padding: 10px;
+}
+
+li > span {
+    left: -30px;
+}
+
+.chosen-tag-rightbar > p > span,
+.chosen-tag-topbar > p > span {
+    left: 0;
+}
+
+.hide-tags {
+    display: none;
+}
+
+.show-tags {
+    display: block;
+}
+
+.tags-input-scene {
+    width: 100%;
+    display: inline-block;
+}
+
+.tags-input-scene {
+    width: 20%;
+}
+
+.loginlabel{
+  text-align: center;
+}
+
+.login-home{
+    margin: 0;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    width: 450px;
+    height: 290px;
+    border: solid 1.5px #EF562D;
+    border-radius: 20px;
+}
+.gameList{
+    overflow-y: auto;
+}
+
+
+/* mention */
+
+.mention {
+    color: #4a85bb;
+    text-decoration: none;
+}
+
+.mentionSuggestions {
+    border-top: 1px solid #eee;
+    background: #fff;
+    border-radius: 2px;
+    cursor: pointer;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    transform-origin: 50% 0%;
+    transform: scaleY(0);
+    margin: -16px;
+}
+
+.mentionSuggestionsEntryContainer {
+    display: table;
+    width: 100%;
+}
+
+.mentionSuggestionsEntryContainerLeft,
+.mentionSuggestionsEntryContainerRight {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.mentionSuggestionsEntryContainerRight {
+    width: 100%;
+    padding-left: 8px;
+}
+
+.mentionSuggestionsEntry {
+    padding: 7px 10px 3px 10px;
+    transition: background-color 0.4s cubic-bezier(.27,1.27,.48,.56);
+}
+
+.mentionSuggestionsEntry:active {
+    background-color: #cce7ff;
+}
+
+.mentionSuggestionsEntryFocused {
+    padding: 7px 10px 3px 10px;
+    transition: background-color 0.4s cubic-bezier(.27,1.27,.48,.56);
+    background-color: #e6f3ff;
+}
+
+.mentionSuggestionsEntryText,
+.mentionSuggestionsEntryTitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.mentionSuggestionsEntryTitle {
+    font-size: 80%;
+    color: #a7a7a7;
+}
+
+.mentionSuggestionsEntryAvatar {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+/* editor styles */
+
+.editor {
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    cursor: text;
+    padding: 16px;
+    border-radius: 2px;
+    margin-bottom: 2em;
+    font-size: 0.5em;
+    box-shadow: inset 0px 1px 8px -3px #ABABAB;
+    background: #fefefe;
+}
+
+.editor :global(.public-DraftEditor-content) {
+    min-height: 140px;
+}
+
+.public-DraftEditor-content > div > div {
+    display: flex;
+}
+
+.mediaBtn {
+    margin-top: 15px;
+}
+
+
+
+.eudRulePart {
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.eudCompletionRoot {
+    position: relative;
+}
+
+.eudCompletionPopup {
+    margin-top: 2px;
+    position: absolute;
+    left: 0px;
+    right:0px;
+    z-index: 1000;
+    border: solid 1px darkgrey;
+    background-color: white;
+    border-radius: 2px;
+    cursor: pointer;
+    max-height: 100px;
+    overflow: scroll;
+    width: 400px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%)
+
+}
+
+.eudCompletionPopup ul{
+    text-align: center;
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.eudCompletionPopup li:hover{
+    background-color: #FFD8AC;
+}
+
+span.eudObjectString {
+    position: relative;
+    display: inline-block;
+    min-width: 50px;
+    width:100%;
+}
+
+span.eudObjectString > span{
+    visibility: hidden;
+    display: inline-block;
+    min-width: 50px;
+    width:100%;
+}
+
+input.eudObjectString[type=text] {
+    position: absolute;
+    display:inline-block;
+    left:0px;
+    right:0px;
+    border:0px;
+    overflow: no-display;
+    width: 100%;
+    min-width: 50px;
+    color: #EF562D;
+    background-color: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.eudObjectButton{
+    display: inline-block;
+    position: absolute;
+    right: 2px;
+    width: 22px;
+    height: 22px;
+    box-sizing: border-box;
+    border-radius: 22px;
+    padding: 0px;
+    border: 0px solid transparent;
+    background-color: transparent;
+}
+
+.eudFloating{
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background-color: white;
+    text-align: right;
+}
+
+.propertyForm{
+    margin-right: 10px;
+}
+
+.eudHide{
+    display: none;
+}
+
+.eudRule{
+   display: grid;
+    grid-template-columns: 125px auto 5px 35px 5px;
+    width: 100%;
+    text-align: left;
+}
+
+.eudWhen, .eudThen, .eudIf{
+    grid-column: 1;
+    box-sizing: border-box;
+    text-align: right;
+    padding-right: 25px;
+    padding-left: 5px;
+    max-width: 100px;
+    margin-top: 5px;
+    position: relative;
+}
+
+.eudThen, .eudIf{
+    padding-left: 25px;
+}
+
+.eudAction{
+    grid-column: 2;
+    display: inline-block;
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+.eudsubject{
+    margin-right: 5%;
+}
+
+.eudoperation, .eudoperator{
+
+    margin-right: 5%;
+}
+
+.eudobject, .eudoperation, .eudsubject, .eudoperator, .eudvalue {
+    display: inline-block;
+    width: 30%;
+    box-sizing: border-box;
+    border:1px solid black;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.eudInputBox{
+    display: inline-block;
+    width: 100%;
+}
+
+.eudDelete{
+    grid-column: 2;
+}
+
+.eudDeleteAction, .eudDeleteCondition{
+    display: inline-block;
+    box-sizing: border-box;
+    margin-top: 4px;
+    grid-column: 4;
+}
+
+
+.eudHidden{
+    visibility: hidden;
+}
+
+.rule-container{
+    box-sizing: border-box;
+    position:relative;
+    height: 38vh;
+    min-height: 38vh;
+
+}
+
+.rule-editor{
+    box-sizing: border-box;
+    height: 38vh;
+    min-height: 38vh;
+    overflow: scroll;
+    background-color: white;
+}
+
+.rule-editor h2 {
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+.eudHighlight{
+    background-color: #FFD8AC;
+}
+
+.eudAction > button{
+    border-color: black;
+    background-color: #ededed;
+}
+
+.eudWhen:after,
+.eudThen:after,
+.eudIf:after,
+.eudsubject:after,
+.eudoperation:after,
+.eudoperator:after
+{
+    content:'';
+    width:5em;/* size of your margin */
+    border-bottom:1px solid;
+    position:absolute;
+    top:50%;
+
+}
+

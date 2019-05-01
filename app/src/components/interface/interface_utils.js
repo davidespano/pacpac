@@ -1,6 +1,6 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import Transition from "../../interactives/Transition";
-
+import {EditorState, Modifier, SelectionState} from 'draft-js';
+import inizializeMention from "./inizializeMention"
 /**
  * Updates object property with the given value, returns new object
  * @param object
@@ -9,17 +9,26 @@ import Transition from "../../interactives/Transition";
  * @param props
  */
 function setPropertyFromValue(object, property, value, props){
-    let newObject;
+    let newObject, subProperty;
+    let media = object.get('media');
+
+    if(property.includes('media')){
+        subProperty = property;
+        property = 'media';
+    }
 
     switch (property) {
         // generic properties belonging to any interactive object
         case "name":
-        case "media":
         case "mask":
         case "vertices":
             newObject = object.set(property, value);
             break;
         // specific properties
+        case "media":
+            media[subProperty] = value;
+            newObject = object.setIn(['media'], media);
+            break;
         default:
             let properties = object.get('properties');
             properties[property] = value;
@@ -137,6 +146,174 @@ function checkSelection(element, option, editor){
     }
 }
 
+/**
+ * Returns true if multiple chars are selected
+ * @param state
+ * @returns {boolean}
+ */
+function checkIfMultipleSelection(state){
+    const selectionLength = state.getSelection().getEndOffset() - state.getSelection().getStartOffset();
+    return selectionLength > 0;
+}
+
+
+/**
+ * Returns currently selected entity (doesn't check if selection spans over multiple blocks or entities)
+ * @param state
+ * @param offset
+ * returns entity
+ */
+function getEntity(state, offset = 0){
+    const selection = state.getSelection();
+    const block = state.getCurrentContent().getBlockForKey(selection.getAnchorKey());
+    const entity = block.getEntityAt(selection.getStartOffset() + offset);
+
+    return entity !== null ? state.getCurrentContent().getEntity(entity) : null;
+}
+
+/**
+ * check selected entity
+ * @param state
+ * @param offset (move selection n spaces)
+ * @returns {boolean}
+ */
+function checkIfEditableCursor(state, offset){
+    let entity = getEntity(state, offset);
+
+    console.log('ENTITY: ' + entity);
+
+    return entity !== null && entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
+}
+
+function checkKeyHendle(state) {
+    let entity = getEntity(state);
+
+    console.log('ENTITY: ' + entity);
+    if(entity == null){
+        return entity == null
+    } else {
+        return entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
+    }
+
+
+}
+
+/**
+ * check selected entity
+ * @param state
+ * return {boolean}
+ */
+function checkIfDeletableCursor(state){
+    return checkIfEditableCursor(state) && (getEntity(state) === getEntity(state, -1));
+}
+
+/**
+ * @param state
+ * return {boolean}
+ */
+function checkIfPlaceholderNeeded(state){
+    const entity = getEntity(state);
+    return ((getEntity(state, -2) !== entity) && (getEntity(state, 1) !== entity));
+}
+
+/**
+ * Given an EditorState, returns true only selection spans over a single block
+ * @param state
+ * @returns {boolean}
+ */
+function checkBlock(state){
+    const blockStart = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const blockEnd = state.getCurrentContent().getBlockForKey(state.getSelection().getFocusKey());
+
+    //checks if selection spans over multiple blocks
+    return (blockStart === blockEnd);
+}
+
+/**
+ * Given an EditorState, returns true only if the selection spans over a single entity.
+ * Doesn't check if selection spans over multiple blocks
+ * Offset "moves" the cursor of n spaces
+ * @param state (EditorState)
+ * @returns {boolean}
+ */
+function checkEntity(state) {
+
+    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
+    const entityEnd = block.getEntityAt(state.getSelection().getEndOffset());
+    //checks if entity is null or selection covers more than one entity
+    return (entityStart !== null && (entityStart === entityEnd));
+}
+
+/**
+ * check previous entity
+ * @param state
+ */
+function firstCheck(state){
+    return getEntity(state, -1) === getEntity(state, 0);
+}
+
+/**
+ * check previous entity
+ * @param state
+ */
+function secondCheck(state){
+    const selectionLength = state.getSelection().getEndOffset() - state.getSelection().getStartOffset();
+    return getEntity(state, selectionLength+1) === getEntity(state, 0);
+}
+
+/**
+ * check in an Entity is a mention
+ * @param state
+ * @returns {boolean}
+ */
+function isMention(state) {
+    let entity = getEntity(state);
+
+    console.log('ENTITY: ' + entity);
+
+    return entity !== null && entity.getType() === 'mention';
+}
+
+/**
+ * check if the previous character is @
+ * @param state
+ * @returns {boolean}
+ */
+function checkAt(state) {
+    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const text = block.text;
+    const blockStart = state.getSelection().anchorOffset;
+    return text.slice(blockStart-1,blockStart) === '@'
+}
+
+/**
+ * return the start index of an entity
+ * @param state
+ * @returns {*}
+ */
+function getStartIndexEntity(state) {
+    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
+    const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
+    let entityText;
+    if (state.getCurrentContent().getEntity(entityStart).getData().mention.link !== undefined){
+        entityText = state.getCurrentContent().getEntity(entityStart).getData().mention.name;
+    } else {
+        entityText = state.getCurrentContent().getEntity(entityStart).getData().mention._root.entries[0][1];
+    }
+    let index = inizializeMention.getIndicesOf( entityText, block.text);
+    return index;
+}
+
+
+/**
+ * check if a text selected contains a space at the end
+ */
+function checkEndSpace() {
+    const textSelected = window.getSelection().toString();
+    return  textSelected.slice(-1) === " ";
+}
+
 export default {
     onlyNumbers : onlyNumbers,
     setPropertyFromId : setPropertyFromId,
@@ -144,4 +321,18 @@ export default {
     title : title,
     centroid: calculateCentroid,
     checkSelection: checkSelection,
+    getEntity: getEntity,
+    checkIfEditableCursor: checkIfEditableCursor,
+    checkIfMultipleSelection: checkIfMultipleSelection,
+    checkIfDeletableCursor: checkIfDeletableCursor,
+    checkIfPlaceholderNeeded: checkIfPlaceholderNeeded,
+    checkBlock: checkBlock,
+    checkEntity: checkEntity,
+    firstCheck: firstCheck,
+    secondCheck: secondCheck,
+    checkEndSpace: checkEndSpace,
+    isMention: isMention,
+    checkAt: checkAt,
+    getStartIndexEntity: getStartIndexEntity,
+    checkKeyHendle: checkKeyHendle,
 }
