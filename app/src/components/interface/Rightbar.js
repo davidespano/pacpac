@@ -6,6 +6,7 @@ import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import interface_utils from "./interface_utils";
 import scene_utils from "../../scene/scene_utils";
 import TagDropdown from "./TagDropdown";
+import StoriesViewer from "./StoriesViewer";
 
 let THREE = require('three');
 
@@ -17,8 +18,11 @@ function RightBar(props){
     return(
         <div className={'rightbar'}>
             <div id={'rbContainer'}>
+				<StoriesViewer {...props} />
+				<button id="stories" className={"btn"} data-toggle="modal" data-target="#view-story-modal">Visualizzatore</button>	
                 {view(props)}
             </div>
+
         </div>
     );
 }

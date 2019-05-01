@@ -186,6 +186,7 @@ app.listen(app.get('port'), () => {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
+var request = require('request-promise');
 
 
 api.post('/:gameID/stories/generateStory', async function (req, res) {
