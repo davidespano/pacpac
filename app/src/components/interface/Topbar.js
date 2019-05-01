@@ -52,8 +52,8 @@ function TopBar(props){
                             <img src={"icons/icons8-tags-100.png"}/>
                             <figcaption>Gestisci etichette</figcaption>
                         </figure>
-                        <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
-                            <img src={"icons/icons8-tags-100.png"}/>
+                        <figure className={'nav-figures'} style={{opacity: 0.3, cursor: 'auto'}}>
+                            <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
                         </figure>
                     </div>
@@ -94,6 +94,13 @@ function TopBar(props){
         </div>
     );
 }
+
+/*
+<figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
+    <img src={"icons/icons8-audio-100.png"}/>
+    <figcaption>Gestisci audio</figcaption>
+</figure>
+*/
 
 function handleNavbarSelection(props){
    // let items = document.getElementsByClassName("nav-item");
