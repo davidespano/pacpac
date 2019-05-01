@@ -110,6 +110,53 @@ function login(req, res, next) {
 
 /**
  * @swagger
+ * /api/v0/create-game:
+ *  post:
+ *      tags:
+ *      - users
+ *      description: Create game
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in: body
+ *          name: name
+ *          type: object
+ *          schema:
+ *              parameters:
+ *                  name: name
+ *                  type: string
+ *                  description: Name of the new game
+ *          required: true
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
+ *      responses:
+ *          200:
+ *              description: game created
+ *              schema:
+ *                  properties:
+ *                      id:
+ *                          type: string
+ *                      name:
+ *                          type: string
+ *          404:
+ *              description: user not found
+ *          400:
+ *              description: game already existant
+ */
+function create_game(req, res, next) {
+    const user = req.user;
+    const name = req.body.name;
+
+    Users.create_game(dbUtils.getSession(req), user, name)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
+/**
+ * @swagger
  * /api/v0/users/me:
  *  get:
  *      tags:
@@ -138,5 +185,6 @@ function me(req, res, next) {
 module.exports = {
     register: register,
     me: me,
+    create_game: create_game,
     login: login
 };

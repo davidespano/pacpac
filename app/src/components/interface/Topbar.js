@@ -21,7 +21,11 @@ function TopBar(props){
         <div className={'topbar'}>
             <nav>
                 <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button className="navbar-brand" onClick={() => AuthenticationAPI.getUserDetail()}>PacPac</button>
+                    <button className="navbar-brand" onClick={() => {
+                        window.localStorage.removeItem("gameID");
+                        props.reset();
+                        AuthenticationAPI.getUserDetail();
+                    }}>PacPac</button>
                     <a className="nav-item nav-link active"
                        id="nav-game-tab" data-toggle="tab" href="#nav-game" role="tab" aria-controls="nav-game"
                        aria-selected="true" onClick={() => handleNavbarSelection(props)}>Gioco</a>

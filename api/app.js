@@ -131,6 +131,7 @@ api.use('/filemanager/:gameID', loginRequired, (req, res, next) => {
 api.post('/register', routes.users.register);
 api.post('/login', routes.users.login);
 api.get('/users/me', routes.users.me);
+api.post('/create-game', loginRequired,routes.users.create_game);
 
 /**SCENES**/
 api.get('/:gameID/scenes', routes.scenes.list);
