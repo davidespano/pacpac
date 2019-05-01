@@ -25,6 +25,8 @@ class AudioStore extends ReduceStore {
                 return state.delete(action.audio.uuid);
             case ActionTypes.UPDATE_AUDIO:
                 return state.set(action.audio.uuid, action.audio);
+            case ActionTypes.RESET:
+                return Immutable.Map();
             default:
                 return state;
         }

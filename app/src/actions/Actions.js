@@ -8,6 +8,15 @@ import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 
 const Actions = {
 
+    /**
+     * reset game data
+     */
+    reset(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RESET,
+        })
+    },
+
     //EDITOR
 
     /**

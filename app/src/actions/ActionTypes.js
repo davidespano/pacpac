@@ -1,5 +1,7 @@
 const ActionTypes = {
 
+    RESET: 'RESET',
+
     //EDITOR
 
     EDIT_MODE_ON : 'EDIT_MODE_ON',

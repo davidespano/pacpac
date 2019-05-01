@@ -25,6 +25,8 @@ class CurrentObjectStore extends ReduceStore {
                 return action.uuid;
             case ActionTypes.REMOVE_SCENE:
                 return null;
+            case ActionTypes.RESET:
+                return null;
             default:
                 return state;
         }

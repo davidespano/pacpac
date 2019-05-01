@@ -52,6 +52,8 @@ function getState() {
 
         //FUNCTIONS
 
+        reset: Actions.reset,
+        
         //editor
 
         changeAudioFormStatus: Actions.changeAudioFormStatus,

@@ -33,6 +33,8 @@ class AssetsStore extends ReduceStore {
             case ActionTypes.RECEIVE_SCENE:
                 a = action.scene.img;
                 return state.set(a, Asset({name: a, uuid: a}));
+            case ActionTypes.RESET:
+                return Immutable.Map();
             default:
                 return state;
         }

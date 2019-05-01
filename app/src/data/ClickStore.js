@@ -1,6 +1,7 @@
 import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
+import Immutable from "immutable";
 
 class ClickStore extends ReduceStore {
 
@@ -23,6 +24,8 @@ class ClickStore extends ReduceStore {
                     x: action.x,
                     y: action.y,
                 };
+            case ActionTypes.RESET:
+                return {x:0, y:0};
             default:
                 return state;
         }

@@ -28,6 +28,8 @@ class ModeTypeStore extends ReduceStore {
             case ActionTypes.GEOMETRY_MODE_ON:
                 console.log("Edit Geometry");
                 return ActionTypes.GEOMETRY_MODE_ON;
+            case ActionTypes.RESET:
+                return ActionTypes.LOGIN_MODE_ON;
             default:
                 return state;
         }

@@ -53,6 +53,8 @@ class RulesStore extends ReduceStore {
                     return rule.set('actions', actions).set('event', event);;
                 });
                 return state;
+            case ActionTypes.RESET:
+                return Immutable.Map();
             default:
                 return state;
         }

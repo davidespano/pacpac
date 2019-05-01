@@ -74,6 +74,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('audioFilter', action.filter);
             case ActionTypes.UPDATE_TAG_FILTER:
                 return state.set('tagFilter', action.filter);
+            case ActionTypes.RESET:
+                return EditorState();
             default:
                 return state;
         }
