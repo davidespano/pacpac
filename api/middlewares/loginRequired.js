@@ -3,7 +3,8 @@ function loginRequired(req, res, next) {
     if (user.id == null) {
         res.sendStatus(403)
     } else {
-        if (!user.games.includes(req.params.gameID)) {
+        const gameIDs = user.games.map( g => g.gameID);
+        if (req.params.gameID && !gameIDs.includes(req.params.gameID)) {
             res.sendStatus(403)
         }
         else {

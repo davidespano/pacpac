@@ -38,6 +38,8 @@ class ObjectsStore extends ReduceStore {
                 objects.forEach(obj => state = state.delete(obj));
 
                 return state;
+            case ActionTypes.RESET:
+                return Immutable.Map();
             default:
                 return state;
         }

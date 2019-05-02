@@ -2,6 +2,7 @@ import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import settings from "../../utils/settings";
 import './aframe_shader'
 import {Howl} from 'howler';
+import store_utils from '../../data/stores_utils'
 const THREE = require('three');
 const {mediaURL} = settings;
 const soundsHub = require('./soundsHub');
@@ -16,7 +17,6 @@ function executeAction(VRScene, rule, action){
     let sceneName = action.subj_uuid;
     let media = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
-    let changeBG = true;
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
@@ -33,13 +33,14 @@ function executeAction(VRScene, rule, action){
             cursor.setAttribute('raycaster', 'far: 0.1');
             if(current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
-                if(objectVideo_transition != null) {
+                if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
                     duration_transition = (objectVideo_transition.duration * 1000);
                 }
             }
             setTimeout(function () {
-                if(objectVideo_transition !== 0 && objectVideo_transition !== null) objectVideo_transition.pause();
+                if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
+                    (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
                 transition(state.activeScene, state.graph.scenes[media], duration);
             },duration_transition);
 
@@ -51,7 +52,7 @@ function executeAction(VRScene, rule, action){
             if(switchVideo != null) {
                 cursor.setAttribute('material', 'visible: false');
                 cursor.setAttribute('raycaster', 'far: 0.1');
-                switchVideo.play();
+                if(store_utils.getFileType(current_object.img) === 'video') switchVideo.play();
                 duration_switch = (switchVideo.duration * 1000);
             }
             setTimeout(function () {
@@ -76,7 +77,7 @@ function executeAction(VRScene, rule, action){
                 if(switchVideo != null) {
                     cursor.setAttribute('material', 'visible: false');
                     cursor.setAttribute('raycaster', 'far: 0.1');
-                    switchVideo.play();
+                    if(store_utils.getFileType(current_object.img) === 'video') switchVideo.play();
                     duration_switch = (switchVideo.duration * 1000);
                 }
                 setTimeout(function () {
@@ -98,7 +99,7 @@ function executeAction(VRScene, rule, action){
                 if(switchVideo != null) {
                     cursor.setAttribute('material', 'visible: false');
                     cursor.setAttribute('raycaster', 'far: 0.1');
-                    switchVideo.play();
+                    if(store_utils.getFileType(current_object.img) === 'video') switchVideo.play();
                     duration_switch = (switchVideo.duration * 1000);
                 }
                 setTimeout(function () {
@@ -113,19 +114,20 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
-            let skyId = runState[sceneName].background;
             runState[sceneName].background = media;
-            VRScene.setState({runState: runState, graph: game_graph});
+            VRScene.setState({runState: runState, game_graph: game_graph});
             let targetSceneVideo = document.getElementById(actual_sceneimg);
-            targetSceneVideo.play();
-            //cursor.setAttribute('material', 'visible: false');
-            //cursor.setAttribute('raycaster', 'far: 0.1');
-            //targetSceneVideo.onended = function () {console.log('finito')};
+            if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
             break;
         case RuleActionTypes.PLAY_AUDIO:
             let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;
             let sound = new Howl({
                 src: [media_audio],
+                onplayerror: function() {
+                    sound.once('unlock', function() {
+                        sound.play();
+                    });
+                }
                 //loop: action.loop,
             });
             soundsHub[media] = sound;
@@ -165,7 +167,7 @@ function executeAction(VRScene, rule, action){
 function transition(actualScene, targetScene, duration){
     let actualSky = document.querySelector('#' + actualScene.name);
     let actualSceneVideo = document.getElementById(actualScene.img);
-    actualSceneVideo.pause();
+    if(store_utils.getFileType(actualScene.img) === 'video') actualSceneVideo.pause();
     let targetSky = document.querySelector('#' + targetScene.name);
     let targetSceneVideo = document.getElementById(targetScene.img);
     let cursor = document.querySelector('#cursor');
@@ -184,7 +186,7 @@ function transition(actualScene, targetScene, duration){
     actualSky.dispatchEvent(disappear);
     targetSky.dispatchEvent(appear);
 
-    targetSceneVideo.play();
+    if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
 function transition2D(element){

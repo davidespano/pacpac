@@ -17,6 +17,8 @@ class EditorStateStore extends ReduceStore {
         switch (action.type) {
             case ActionTypes.ADD_NEW_OBJECT:
                 return state.set('rightbarSelection', 'objects');
+            case ActionTypes.AUDIO_FORM_STATUS:
+                return state.set('isEditAudioOn', action.status);
             case ActionTypes.DROPDOWN_SCENES_ORDER:
                 return state.set('scenesOrderMenu', action.status);
             case ActionTypes.DROPDOWN_TAGS_NEW_SCENE:
@@ -59,6 +61,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('selectedFile', action.selection);
             case ActionTypes.SELECT_MEDIA_TO_EDIT:
                 return state.set('selectedMediaToEdit', action.selection);
+            case ActionTypes.SELECT_AUDIO_TO_EDIT:
+                return state.set('selectedAudioToEdit', action.selection);
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SORT_SCENES:
@@ -66,6 +70,12 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.SET_MENTION_TYPE:
                 //console.log('update mention type to ' + action.mentionType)
                 return state.set('mentionType', action.mentionType);
+            case ActionTypes.UPDATE_AUDIO_FILTER:
+                return state.set('audioFilter', action.filter);
+            case ActionTypes.UPDATE_TAG_FILTER:
+                return state.set('tagFilter', action.filter);
+            case ActionTypes.RESET:
+                return EditorState();
             default:
                 return state;
         }

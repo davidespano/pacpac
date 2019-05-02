@@ -5,6 +5,7 @@ const dbUtils = require('../neo4j/dbUtils');
 const User = require('../models/neo4j/user');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const fs = require('fs');
 
 const saltRounds = 10;
 
@@ -51,11 +52,33 @@ function me(session, token) {
                 'MATCH (user:User {token: {token}}) ' +
                 'SET user.tokenExpire = {tokenExp} ', {token: token, tokenExp: now + 7200000}).then(res => {
                 u.games = _.map(results.records[0].get('games'), record => {
-                    return record.properties.gameID;
+                    return record.properties;
                 });
                 return u;
             })
         });
+}
+
+function create_game(session, user, name) {
+    return session.run('MATCH (user:User {id:{id}})-[:OWN_GAME]->(game:Game {name:{name}}) ' +
+        'RETURN user',{id: user.id, name: name}).then(results => {
+
+            if (!_.isEmpty(results.records)) {
+                throw {message: 'game already existent', status: 400}
+            }
+            const gameId = crypto.randomBytes(16).toString("hex");
+            return session.run(
+            'MATCH (user:User {id: {id}}) ' +
+            'CREATE (user)-[:OWN_GAME]->(game:Game {gameID:{gameId}, name:{name}}) ' +
+            'RETURN game', {id: user.id, name: name, gameId: gameId}).then(results => {
+            if (_.isEmpty(results.records)) {
+                throw {message: 'user not found', status: 404};
+            }
+            return results.records[0].get("game").properties;
+        }).then(game =>{
+            fs.mkdirSync(`public/${game.gameID}`);
+            return game;
+    })});
 }
 
 function login(session, username, password) {
@@ -95,8 +118,11 @@ function login(session, username, password) {
         });
 }
 
+
+
 module.exports = {
     register: register,
     me: me,
+    create_game: create_game,
     login: login
 };

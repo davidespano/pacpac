@@ -9,11 +9,10 @@ import CurrentObjectStore from "../data/CurrentObjectStore";
 import TagsStore from "../data/TagsStore";
 import EditorStateStore from "../data/EditorStateStore";
 import RulesStore from "../data/RulesStore";
-import DatalistStore from "../data/DatalistStore";
 import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
-import MentionsStore from "../data/MentionsStore";
+import AudioStore from "../data/AudioStore";
 
 
 function getStores() {
@@ -25,12 +24,11 @@ function getStores() {
         ObjectsStore,
         ObjectToSceneStore,
         CurrentObjectStore,
-        DatalistStore,
         CentroidsStore,
         EditorStateStore,
         AssetsStore,
-        MentionsStore,
-        RulesStore
+        RulesStore,
+        AudioStore,
     ];
 }
 
@@ -40,14 +38,13 @@ function getState() {
 
         //STATES
         assets: AssetsStore.getState(),
+        audios: AudioStore.getState(),
         centroids: CentroidsStore.getState(),
         click: ClickStore.getState(),
         currentScene: CentralSceneStore.getState(),
         currentObject: CurrentObjectStore.getState(),
-        datalists: DatalistStore.getState(),
         editor: EditorStateStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
-        mentions: MentionsStore.getState(),
         objectToScene: ObjectToSceneStore.getState(),
         rules: RulesStore.getState(),
         scenes: ScenesStore.getState(),
@@ -55,8 +52,11 @@ function getState() {
 
         //FUNCTIONS
 
+        reset: Actions.reset,
+        
         //editor
 
+        changeAudioFormStatus: Actions.changeAudioFormStatus,
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
@@ -64,6 +64,7 @@ function getState() {
         rightbarSelection: Actions.rightbarSelection,
         selectFile: Actions.selectFile,
         selectMediaToEdit: Actions.selectMediaToEdit,
+        selectAudioToEdit: Actions.selectAudioToEdit,
         selectTagNewScene: Actions.selectTagNewScene,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
@@ -71,6 +72,8 @@ function getState() {
         switchToLoginMode: Actions.loginModeOn,
         switchToFileManager: Actions.fileManagerModeOn,
         switchToGeometryMode: Actions.geometryModeOn,
+        updateAudioFilter: Actions.updateAudioFilter,
+        updateTagFilter: Actions.updateTagFilter,
 
         //scenes
 
@@ -114,6 +117,11 @@ function getState() {
             eudUpdateRule: Actions.updateRule,
         },
 
+        //audios
+
+        addNewAudio: Actions.addNewAudio,
+        removeAudio: Actions.removeAudio,
+        updateAudio: Actions.updateAudio,
 
         //OTHER
 

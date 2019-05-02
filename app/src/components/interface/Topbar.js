@@ -7,9 +7,12 @@ import Switch from "../../interactives/Switch";
 import Key from "../../interactives/Key";
 import Lock from "../../interactives/Lock";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
-import InputTagForm from "./InputTagForm";
+import TagMenu from "./TagMenu";
 import ActionTypes from "../../actions/ActionTypes";
 import AuthenticationAPI from "../../utils/AuthenticationAPI";
+import AudioMenu from "./AudioMenu";
+import AudioForm from "./AudioForm";
+
 
 let uuid = require('uuid');
 
@@ -18,7 +21,11 @@ function TopBar(props){
         <div className={'topbar'}>
             <nav>
                 <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button className="navbar-brand" onClick={() => AuthenticationAPI.getUserDetail()}>PacPac</button>
+                    <button className="navbar-brand" onClick={() => {
+                        window.localStorage.removeItem("gameID");
+                        props.reset();
+                        AuthenticationAPI.getUserDetail();
+                    }}>PacPac</button>
                     <a className="nav-item nav-link active"
                        id="nav-game-tab" data-toggle="tab" href="#nav-game" role="tab" aria-controls="nav-game"
                        aria-selected="true" onClick={() => handleNavbarSelection(props)}>Gioco</a>
@@ -35,7 +42,9 @@ function TopBar(props){
             <div className="tab-content" id="nav-tabContent">
                 <div className="tab-pane fade show active flex-container" id="nav-game" role="tabpanel" aria-labelledby="nav-game-tab">
                     <InputSceneForm {...props} />
-                    <InputTagForm {...props}/>
+                    <TagMenu {...props}/>
+                    <AudioMenu {...props}/>
+                    <AudioForm {...props}/>
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
                                 onClick={() => props.selectMediaToEdit(null)}
@@ -46,6 +55,10 @@ function TopBar(props){
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-tag-modal">
                             <img src={"icons/icons8-tags-100.png"}/>
                             <figcaption>Gestisci etichette</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'} style={{opacity: 0.3, cursor: 'auto'}}>
+                            <img src={"icons/icons8-audio-100.png"}/>
+                            <figcaption>Gestisci audio</figcaption>
                         </figure>
                     </div>
                 </div>
@@ -85,6 +98,13 @@ function TopBar(props){
         </div>
     );
 }
+
+/*
+<figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
+    <img src={"icons/icons8-audio-100.png"}/>
+    <figcaption>Gestisci audio</figcaption>
+</figure>
+*/
 
 function handleNavbarSelection(props){
    // let items = document.getElementsByClassName("nav-item");

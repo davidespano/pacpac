@@ -3,8 +3,11 @@ import ActionTypes from "../actions/ActionTypes";
 import Orders from "./Orders";
 
 const EditorState = Immutable.Record({
+    audioFilter: '',
     chooseTagNewScene: false,
     chooseTagRightbar: false,
+    isEditAudioOn: false,
+    selectedAudioToEdit: null,
     selectedFile: null,
     selectedMediaToEdit: null,
     mode: ActionTypes.LOGIN_MODE_ON,
@@ -14,6 +17,7 @@ const EditorState = Immutable.Record({
     scenesOrder: Orders.CHRONOLOGICAL,
     scenesOrderMenu: false,
     selectedTagNewScene: 'default',
+    tagFilter: '',
     user: null,
     mentionType: null,
     objectId: null,

@@ -61,6 +61,28 @@ function removeRuleFromScene(scene, rule){
 
 
 /**
+ * Updates the scene saving the given audio, returns updated scene
+ * @param scene
+ * @param audio
+ */
+function addAudioToScene(scene, audio){
+    let audios = scene.get('audio');
+    audios.push(audio.uuid);
+    return scene.set('audio', audios);
+}
+
+/**
+ * Removes given audio from the Scene and returns updated scene
+ * @param scene
+ * @param audio
+ */
+function removeAudioFromScene(scene, audio){
+    let audios = scene.get('audio');
+    audios = audios.filter((uuid) => uuid !== audio.uuid);
+    return scene.set('audio', audios);
+}
+
+/**
  * Updates scene property with the given value, returns new scene. DO NOT use this function to update nested properties
  * such as "objects"
  * @param scene
@@ -115,6 +137,8 @@ export default {
     removeInteractiveObject: removeInteractiveObject,
     addRuleToScene: addRuleToScene,
     removeRuleFromScene: removeRuleFromScene,
+    addAudioToScene: addAudioToScene,
+    removeAudioFromScene: removeAudioFromScene,
     setProperty: setProperty,
     defineField: defineField,
     allObjects: allObjects,

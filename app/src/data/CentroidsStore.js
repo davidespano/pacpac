@@ -30,6 +30,8 @@ class CentroidsStore extends ReduceStore {
             case ActionTypes.UPDATE_VERTICES:
                 state = state.set(action.obj.uuid, interface_utils.centroid(action.vertices));
                 return state;
+            case ActionTypes.RESET:
+                return Immutable.Map();
             default:
                 return state;
         }

@@ -146,6 +146,7 @@ function checkSelection(element, option, editor){
     }
 }
 
+
 /**
  * Returns true if multiple chars are selected
  * @param state

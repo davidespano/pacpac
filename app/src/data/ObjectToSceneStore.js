@@ -44,6 +44,8 @@ class ObjectToSceneStore extends ReduceStore {
                 objects.forEach(obj => state = state.set(obj, action.scene.name));
 
                 return state;
+            case ActionTypes.RESET:
+                return Immutable.Map();
             default:
                 return state;
         }

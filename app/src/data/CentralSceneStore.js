@@ -2,6 +2,7 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Scene from '../scene/Scene';
+import Immutable from "immutable";
 
 class CentralSceneStore extends ReduceStore {
 
@@ -20,6 +21,8 @@ class CentralSceneStore extends ReduceStore {
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 return action.name;
             case ActionTypes.REMOVE_SCENE:
+                return null;
+            case ActionTypes.RESET:
                 return null;
             default:
                 return state;

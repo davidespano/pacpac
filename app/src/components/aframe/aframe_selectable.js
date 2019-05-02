@@ -1,5 +1,10 @@
 //import 'aframe-animation-component';
+import {Howl, Howler} from "howler";
+import settings from "../../utils/settings";
+import {ResonanceAudio} from "resonance-audio";
+import stores_utils from "../../data/stores_utils";
 
+const {mediaURL} = settings;
 const AFRAME = require('aframe');
 const eventBus = require('./eventBus');
 
@@ -53,7 +58,7 @@ AFRAME.registerComponent('play_video', {
     init: function () {
         let videoID = this.data.video;
         let active= this.data.active;
-        if(active){
+        if(active && (stores_utils.getFileType(videoID) === 'video')){
             setTimeout(function() {
                 let video = document.getElementById(videoID).play();
                 if(video !== undefined){
@@ -75,3 +80,51 @@ AFRAME.registerComponent('auto-enter-vr', {
     }
 });
 
+AFRAME.registerComponent('dolby', {
+    schema:{
+        active: {type: 'boolean', default: false}
+    },
+
+    init: function () {
+
+        if(this.data.active ){
+
+            Howler.pos([0,0,0]);
+            Howler.orientation(-0.5,0,0,0,1,0);
+
+            /*let mono_F_L = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'alarm.mp3';
+            let mono_F_R = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'FR.mp3';
+            let mono_R_L = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'RL.mp3';
+            let mono_R_R = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'RR.mp3';
+
+            let FL = new Howl({ src: [mono_F_L], loop: true});
+            let FR = new Howl({ src: [mono_F_R], loop: true});
+            let RL = new Howl({ src: [mono_R_L], loop: true});
+            let RR = new Howl({ src: [mono_R_R], loop: true});
+
+            let idFL = FL.play();
+            let idFR = FR.play();
+            let idRL = RL.play();
+            let idRR = RR.play();
+
+            FL.pos(-2,2,-0.5, idFL);*/
+            //FR.pos(2,2,-0.5, idFR);
+            //RL.pos(-2,-2,-0.5, idRL);
+            //RR.pos(2,-2,-0.5, idRR);
+            let four_channel = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4';
+            let fChannel = new Howl({ src: [four_channel], loop: true});
+            let idf = fChannel.play();
+            fChannel.pos(0,0,0,idf);
+
+
+            /*FL.pannerAttr({
+                panningModel: 'equalpower',
+                refDistance: 1.5,
+                rolloffFactor: 2.5,
+                distanceModel: 'exponential'
+            }, sound);*/
+        }
+
+    }
+
+});

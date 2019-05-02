@@ -6,6 +6,8 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import interface_utils from "../interface/interface_utils";
 import settings from '../../utils/settings';
+import stores_utils from "../../data/stores_utils";
+
 const {mediaURL} = settings;
 
 function Curved(props)
@@ -33,7 +35,7 @@ class Bubble extends React.Component
         });
 
         return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={`${mediaURL}`+ this.props.img} radius="9.5">
+            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={'#' + this.props.name} radius="9.5">
                 {curves}
             </Entity>
         );
@@ -178,6 +180,18 @@ export default class GeometryScene extends React.Component{
         let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img}
                             curves={curvedImages} handler={() => this.handleSceneChange()}/>
 
+        let backGround;
+        if(stores_utils.getFileType(sky.img) === 'video'){
+            backGround = (
+                <video key={"key" + sky.name} crossorigin={"anonymous"} id={sky.img} loop={"true"}  preload="auto"
+                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + sky.img}
+                       playsInline={true} autoPlay muted={true}
+                />)
+        } else {
+            backGround = (<img id={sky.img} key={"key" + sky.name} crossorigin="Anonymous"
+                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + sky.img}
+            />)
+        }
         return(
             <div id="mainscene" tabIndex="0">
                 <div id="UI">
@@ -193,6 +207,9 @@ export default class GeometryScene extends React.Component{
                     </div>
                 </div>
                 <Scene>
+                    <a-assets>
+                        {backGround}
+                    </a-assets>
                     {skies}
 
 

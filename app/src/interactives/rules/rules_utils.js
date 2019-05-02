@@ -5,6 +5,7 @@ import RuleActionTypes from "./RuleActionTypes";
 import Immutable from 'immutable';
 import Action from "./Action";
 import Condition from "./Condition";
+import SuperCondition from "./SuperCondition";
 let uuid = require('uuid');
 
 /**
@@ -113,13 +114,49 @@ function deleteAction(rule, action){
 }
 
 function addEmptyCondition(rule){
-    rule = rule.set('condition', new Condition(uuid.v4()));
+    let c = new Condition(uuid.v4());
+
+    if (rule.condition instanceof Condition || rule.condition instanceof SuperCondition){
+        c = new SuperCondition(uuid.v4(), rule.condition, new Condition(uuid.v4()));
+    }
+
+    rule = rule.set('condition', c);
+
     return rule;
 }
 
-function deleteCondition(rule){
-    rule = rule.set('condition', {});
+/**
+ * Remove specific condition from the rule
+ * @param rule
+ * @param conditionToDelete
+ * @returns {rule}
+ */
+function deleteCondition(rule, conditionToDelete){
+    let newCondition = {};
+
+    if(rule.condition instanceof SuperCondition){
+        newCondition = findConditionInsideSuperCondition(rule.condition, conditionToDelete)
+    }
+
+    rule = rule.set('condition', newCondition);
     return rule;
+}
+
+function findConditionInsideSuperCondition(s, c){
+    console.log(c)
+    if(s.condition1 instanceof SuperCondition){
+        s.condition1 = findConditionInsideSuperCondition(s.condition1, c);
+    }
+    if(s.condition2 instanceof SuperCondition){
+        s.condition2 = findConditionInsideSuperCondition(s.condition2, c);
+    }
+    if(s.condition1 instanceof Condition && s.condition1.uuid === c.uuid){
+        return s.condition2;
+    }
+    if(s.condition2 instanceof Condition && s.condition2.uuid === c.uuid){
+        return s.condition1;
+    }
+    return s;
 }
 
 function setProperty(rule, property, value){

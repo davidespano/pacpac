@@ -8,11 +8,21 @@ import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 
 const Actions = {
 
+    /**
+     * reset game data
+     */
+    reset(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RESET,
+        })
+    },
+
     //EDITOR
 
     /**
      * This functions handle editor state variables (such as current mode and selected menus)
      **/
+
 
     editModeOn() {
         AppDispatcher.dispatch({
@@ -73,6 +83,7 @@ const Actions = {
 
     },
 
+
     selectFile(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_FILE,
@@ -83,6 +94,13 @@ const Actions = {
     selectMediaToEdit(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_MEDIA_TO_EDIT,
+            selection: selection,
+        })
+    },
+
+    selectAudioToEdit(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_AUDIO_TO_EDIT,
             selection: selection,
         })
     },
@@ -103,6 +121,27 @@ const Actions = {
     newSceneNameTyped(status){
         AppDispatcher.dispatch({
             type: ActionTypes.NEW_SCENE_NAME_TYPED,
+            status: status,
+        })
+    },
+
+    updateAudioFilter(filter){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_AUDIO_FILTER,
+            filter: filter,
+        })
+    },
+
+    updateTagFilter(filter){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_TAG_FILTER,
+            filter: filter,
+        })
+    },
+
+    changeAudioFormStatus(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.AUDIO_FORM_STATUS,
             status: status,
         })
     },
@@ -466,6 +505,61 @@ const Actions = {
             type: ActionTypes.EUD_SAVE_ORIGINAL_OBJECT,
             objectId: objectId,
         })
+    },
+
+    //AUDIO
+
+    /**
+     * Add new audio to stores and scene, dispatch db update
+     * @param audio
+     */
+    addNewAudio(audio){
+        if(audio.isLocal){
+            AppDispatcher.dispatch({
+                type: ActionTypes.ADD_NEW_LOCAL_AUDIO,
+                scene: audio.scene,
+                audio: audio,
+            })
+        } else {
+            AppDispatcher.dispatch({
+                type: ActionTypes.ADD_NEW_GLOBAL_AUDIO,
+                audio: audio,
+            })
+        }
+        /**TODO: Save audio to db here**/
+    },
+
+    /**
+     * Remove audio from stores and scene, dispatch db update
+     * @param audio
+     */
+    removeAudio(audio){
+        if(audio.isLocal){
+            AppDispatcher.dispatch({
+                type: ActionTypes.REMOVE_LOCAL_AUDIO,
+                scene: audio.scene,
+                audio: audio,
+            })
+        } else {
+            AppDispatcher.dispatch({
+                type: ActionTypes.REMOVE_GLOBAL_AUDIO,
+                audio: audio,
+            })
+        }
+        /**TODO: Dispatch db update here**/
+    },
+
+
+    /**
+     * Updates audio in stores, dispatch db update
+     * @param audio
+     */
+    updateAudio(audio){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_AUDIO,
+            audio: audio,
+        })
+        /**TODO: Dispatch db update here**/
     },
 
     //MEDIA

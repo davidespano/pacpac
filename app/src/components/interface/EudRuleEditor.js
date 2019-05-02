@@ -7,8 +7,10 @@ import Action from "../../interactives/rules/Action"
 import Rule from "../../interactives/rules/Rule";
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import {Operators} from "../../interactives/rules/Operators";
+import {Operators, SuperOperators} from "../../interactives/rules/Operators";
 import Values from "../../interactives/rules/Values";
+import Condition from "../../interactives/rules/Condition";
+import SuperCondition from "../../interactives/rules/SuperCondition";
 let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
@@ -121,13 +123,13 @@ class EudRule extends Component {
         );
     }
 
-    conditionBtn(rule){
+    conditionBtn(rule, condition){
         return (
             <button
                 title={"Cancella la condizione"}
                 className={"action-buttons-container eudDeleteCondition "}
                 onClick={() => {
-                    let newRule = rules_utils.deleteCondition(rule);
+                    let newRule = rules_utils.deleteCondition(rule, condition);
                     this.props.ruleEditorCallback.eudUpdateRule(newRule);
                 }}
             >
@@ -136,13 +138,75 @@ class EudRule extends Component {
         );
     }
 
+    generateConditions(props, condition, rule){
+        if(condition instanceof Condition){ //passo base
+            return (
+                <React.Fragment>
+                    <EudCondition
+                        editor={this.props.editor}
+                        condition={condition}
+                        interactiveObjects={this.props.interactiveObjects}
+                        assets={this.props.assets}
+                        scenes={this.props.scenes}
+                        rule={rule}
+                        rules={this.props.rules}
+                        ruleEditorCallback={this.props.ruleEditorCallback}
+                    />
+                    {this.conditionBtn(rule, condition)}
+                    <br/>
+                </React.Fragment>
+            );
+
+        } else {
+            return (
+                <React.Fragment>
+                    {this.generateConditions(props, condition.condition1, rule)}
+                    {this.generateOperatorSelector(props, condition, rule)}
+                    {this.generateConditions(props, condition.condition2, rule)}
+                </React.Fragment>
+            );
+        }
+    }
+
+
+    generateOperatorSelector(props, condition, rule){
+        return(
+            <span className={"eudIf"}>
+                <select defaultValue={condition.operator}
+                        id={"selectOperator" + condition.uuid}
+                        className={'eudOperator'}
+                        onChange={() => {
+                            let e = document.getElementById("selectOperator" + condition.uuid);
+                            let value = e.options[e.selectedIndex].value;
+                            this.editSuperConditionOperator(rule.condition, condition, value);
+                            this.props.ruleEditorCallback.eudUpdateRule(rule);
+                        }}
+                >
+                    <option value={SuperOperators.AND}>{superOperatorsToString(SuperOperators.AND)}</option>
+                    <option value={SuperOperators.OR}>{superOperatorsToString(SuperOperators.OR)}</option>
+                </select>
+            </span>
+        );
+    }
+
+    editSuperConditionOperator(condition, conditionToEdit, value){
+        if(condition === conditionToEdit){
+            condition.operator = value;
+            return;
+        } else {
+            if(condition instanceof SuperCondition){
+                this.editSuperConditionOperator(condition.condition1, conditionToEdit, value);
+                this.editSuperConditionOperator(condition.condition2, conditionToEdit, value);
+            }
+        }
+    }
+
 
     render() {
         let rule = this.props.rules.get(this.props.rule);
         let buttonBar = this.state.isMouseInside ? "eudAction" : "eudAction eudHidden";
         let ruleCssClass = this.state.isMouseInside ?  "eudRule eudHighlight" : "eudRule";
         let eudCondition = null;
-        let disabled = false;
         if (rule) {
             let actionRendering = rule.actions.map(
                 action => {
@@ -161,23 +225,13 @@ class EudRule extends Component {
                     </React.Fragment>
                 });
             // (Object.keys(this.props.rule.condition).length !== 0 || this.props.rule.condition.constructor !== Object)
-            if (rule.condition.uuid && rule.condition.uuid !== ""){
-                disabled = true;
-                eudCondition = <React.Fragment >
-                    <span className={"eudIf"}>se </span>
-                    <EudCondition
-                        editor={this.props.editor}
-                        condition={rule.condition}
-                        interactiveObjects={this.props.interactiveObjects}
-                        assets={this.props.assets}
-                        scenes={this.props.scenes}
-                        rule={rule}
-                        rules={this.props.rules}
-                        ruleEditorCallback={this.props.ruleEditorCallback}
-                    />
-                    {this.conditionBtn(rule)}
-                    <br/>
-                </React.Fragment>;
+            let conditions = null;
+            if (rule.condition instanceof Condition || rule.condition instanceof SuperCondition){
+                conditions =
+                    <React.Fragment>
+                        <span className={"eudIf"}>se </span>
+                        {this.generateConditions(this.props, rule.condition, rule)}
+                    </React.Fragment>
             }
 
             return <div className={ruleCssClass}
@@ -195,11 +249,11 @@ class EudRule extends Component {
                     action={rule.event}
                     ruleEditorCallback={this.props.ruleEditorCallback}
                 /><br/>
-                {eudCondition}
+                {conditions}
                 <span className={"eudThen"}>allora </span>
                 {actionRendering}
                 <div className={buttonBar}>
-                    <button title={"Aggiungi una condizione"} disabled={disabled} onClick={()=>{
+                    <button title={"Aggiungi una condizione"}  onClick={()=>{
                         let newRule = rules_utils.addEmptyCondition(rule);
                         this.props.ruleEditorCallback.eudUpdateRule(newRule);
                     }}
@@ -226,10 +280,8 @@ class EudRule extends Component {
             return <p>Regola non trovata</p>
         }
     }
-
-
-
 }
+
 
 class EudCondition extends Component {
     /**
@@ -369,25 +421,36 @@ class EudCondition extends Component {
         let rule = this.props.rule;
         let condition = this.props.condition;
 
+        this.editSubCondition(rule.condition, condition.uuid, role, ruleUpdate);
 
-        switch(role){
-            case 'subject':
-                condition['obj_uuid'] = ruleUpdate.item;
-                break;
-            case 'operator':
-                condition['operator'] = ruleUpdate.item;
-                break;
-            case 'value':
-                condition['state'] = ruleUpdate.item;
-                break;
-        }
-
-        rule = rule.set('condition', condition);
+        rule = rule.set('condition', rule.condition);
 
         this.props.ruleEditorCallback.eudUpdateRule(rule);
         this.props.ruleEditorCallback.eudShowCompletions(null, null);
 
     }
+
+    editSubCondition(condition, subConditionId, role, ruleUpdate){
+        if(condition instanceof Condition && condition.uuid === subConditionId) {
+            switch(role){
+                case 'subject':
+                    condition['obj_uuid'] = ruleUpdate.item;
+                    break;
+                case 'operator':
+                    condition['operator'] = ruleUpdate.item;
+                    break;
+                case 'value':
+                    condition['state'] = ruleUpdate.item;
+                    break;
+            }
+            return;
+        }
+        if(condition instanceof SuperCondition){
+            this.editSubCondition(condition.condition1, subConditionId, role, ruleUpdate);
+            this.editSubCondition(condition.condition2, subConditionId, role, ruleUpdate);
+        }
+    }
+
 
     showCompletion(actionId, role){
         return actionId != null &&
@@ -900,6 +963,18 @@ function operatorUuidToString(operatorUuid) {
             return "è maggiore o uguale di";
         default:
             return "operatore sconosciuto";
+    }
+}
+
+
+function superOperatorsToString(superoperatorUuid){
+    switch(superoperatorUuid){
+        case SuperOperators.AND:
+            return 'e';
+        case SuperOperators.OR:
+            return 'o';
+        default:
+            return '?';
     }
 }
 

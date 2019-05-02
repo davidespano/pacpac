@@ -36,6 +36,8 @@ class TagsStore extends ReduceStore {
                 return state.delete(action.uuid);
             case ActionTypes.UPDATE_TAG:
                 return state.set(action.tag.uuid, action.tag);
+            case ActionTypes.RESET:
+                return Immutable.Map().set('default', Tag());
             default:
                 return state;
         }

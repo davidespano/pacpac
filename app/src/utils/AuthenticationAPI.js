@@ -1,6 +1,7 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
 import User from "../data/User";
+import GameAPI from "./GameAPI";
 
 var request = require('superagent');
 
@@ -14,6 +15,12 @@ function login(username, password) {
             window.localStorage.removeItem("authToken");
             window.localStorage.setItem("authToken", response.body.token);
             });
+}
+
+function register(username, password) {
+    return request.post(`${apiBaseURL}/register`)
+        .set('Accept', 'application/json')
+        .send({username: username, password:password});
 }
 
 function getUserDetail() {
@@ -41,6 +48,7 @@ function isUserAuthenticated() {
 
 export default {
     login: login,
+    register: register,
     getUserDetail: getUserDetail,
     isUserAuthenticated: isUserAuthenticated,
 };

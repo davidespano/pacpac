@@ -11,6 +11,8 @@ import Orders from "../data/Orders";
 import Action from "../interactives/rules/Action";
 import Immutable from 'immutable';
 import stores_utils from "../data/stores_utils";
+import SuperCondition from "../interactives/rules/SuperCondition";
+import Condition from "../interactives/rules/Condition";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -130,7 +132,7 @@ function getByName(name, order = null) {
                             action: event.action,
                             obj_uuid: event.obj_uuid,
                         }),
-                        condition: JSON.parse(rule.condition),
+                        condition: conditionParser(JSON.parse(rule.condition)),
                         actions: actions,
                     });
                     Actions.receiveRule(r);
@@ -417,6 +419,19 @@ function removeTag(tag_uuid) {
         });
 }
 
+
+function conditionParser(c){
+
+    if(!c.hasOwnProperty('operator')){
+        return {};
+    }
+
+    if(c.hasOwnProperty('condition1')){
+        return new SuperCondition(c.uuid, conditionParser(c.condition1), conditionParser(c.condition2), c.operator);
+    } else {
+        return new Condition(c.uuid, c.obj_uuid, c.state, c.operator);
+    }
+}
 
 export default {
     getByName: getByName,
