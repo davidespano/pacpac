@@ -38,7 +38,7 @@ export default class VRScene extends React.Component {
     componentDidMount() {
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        //this.generateAudio()
+        this.generateAudio()
         this.interval = setInterval(() => this.tick(), 200);
     }
 
@@ -323,7 +323,7 @@ export default class VRScene extends React.Component {
         this.state.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
         let audioElement = document.createElement('audio');
         //TODO add src from buble media
-        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4';
+        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
         audioElement.crossOrigin = 'anonymous';
         audioElement.load();
         audioElement.loop = true;
@@ -334,9 +334,9 @@ export default class VRScene extends React.Component {
         audioElement.play();
     }
     updateAngles() {
-        //let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld
-        //this.state.resonanceAudioScene.setListenerFromMatrix(cameraMatrix4)
-        Howler.orientation(this.state.camera.x, this.state.camera.y, this.state.camera.z,0,0,-1)
+        let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld
+        this.state.resonanceAudioScene.setListenerFromMatrix(cameraMatrix4)
+        //Howler.orientation(this.state.camera.x, this.state.camera.y, this.state.camera.z,0,0,-1)
 
     }
 

@@ -88,18 +88,11 @@ AFRAME.registerComponent('dolby', {
     init: function () {
 
         if(this.data.active ){
-            //Listener position
-            Howler.usingWebAudio = true;
-            Howler.pos([0,0,0]);
-            Howler.orientation(0,0,1,0,0,-1);
 
-            /*FL.pannerAttr({
-                panningModel: 'equalpower',
-                refDistance: 1.5,
-                rolloffFactor: 2.5,
-                distanceModel: 'exponential'
-            }, sound);*/
-            let mono_F_L = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'FL.mp3';
+            Howler.pos([0,0,0]);
+            Howler.orientation(-0.5,0,0,0,1,0);
+
+            /*let mono_F_L = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'alarm.mp3';
             let mono_F_R = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'FR.mp3';
             let mono_R_L = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'RL.mp3';
             let mono_R_R = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'RR.mp3';
@@ -114,14 +107,22 @@ AFRAME.registerComponent('dolby', {
             let idRL = RL.play();
             let idRR = RR.play();
 
-            FL.pos(-2,2,-0.5, idFL);
-            FR.pos(2,2,-0.5, idFR);
-            RL.pos(-2,-2,-0.5, idRL);
-            RR.pos(2,-2,-0.5, idRR);
-            //let four_channel = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4';
-            //let fChannel = new Howl({ src: [four_channel], format: ['dolby'],loop: true});
-            //let idf = fChannel.play();
-            //fChannel.pos(0,0,0,idf);
+            FL.pos(-2,2,-0.5, idFL);*/
+            //FR.pos(2,2,-0.5, idFR);
+            //RL.pos(-2,-2,-0.5, idRL);
+            //RR.pos(2,-2,-0.5, idRR);
+            let four_channel = `${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4';
+            let fChannel = new Howl({ src: [four_channel], loop: true});
+            let idf = fChannel.play();
+            fChannel.pos(0,0,0,idf);
+
+
+            /*FL.pannerAttr({
+                panningModel: 'equalpower',
+                refDistance: 1.5,
+                rolloffFactor: 2.5,
+                distanceModel: 'exponential'
+            }, sound);*/
         }
 
     }

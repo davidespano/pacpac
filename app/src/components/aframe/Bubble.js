@@ -89,7 +89,7 @@ export default class Bubble extends React.Component
         return(
             <Entity _ref={elem => this.nv = elem} primitive={primitive} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
-                    material={material} play_video={active} dolby={'active: ' + this.props.isActive.toString() + ';'}>
+                    material={material} play_video={active} /*dolby={'active: ' + this.props.isActive.toString() + ';'}*/>
                 {curves}
             </Entity>
         );
