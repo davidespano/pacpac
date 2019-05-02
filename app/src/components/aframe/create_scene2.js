@@ -39,12 +39,12 @@ export default class VRScene extends React.Component {
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
         //this.generateAudio()
-        //this.interval = setInterval(() => this.tick(), 200);
+        this.interval = setInterval(() => this.tick(), 200);
     }
 
     tick() {
-        //document.querySelector('#camera').object3D.getWorldDirection(this.state.camera);
-        //this.updateAngles();
+        document.querySelector('#camera').object3D.getWorldDirection(this.state.camera);
+        this.updateAngles();
     }
 
     async loadEverything() {

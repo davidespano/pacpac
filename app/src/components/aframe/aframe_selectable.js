@@ -87,8 +87,9 @@ AFRAME.registerComponent('dolby', {
 
     init: function () {
 
-        if(this.data.active && false){
+        if(this.data.active ){
             //Listener position
+            Howler.usingWebAudio = true;
             Howler.pos([0,0,0]);
             Howler.orientation(0,0,1,0,0,-1);
 
