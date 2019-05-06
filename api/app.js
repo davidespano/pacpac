@@ -194,7 +194,7 @@ api.post('/:gameID/stories/generateStory', async function (req, res) {
 	let path = [];
 	
 	for(i=0; i<req.body.filename.length; i++){
-	path.push('public/'+req.params.gameID+'/story_editor/'+req.body.filename[i]);
+	path.push('http://cg3hci.dmi.unica.it/media/'+req.params.gameID+'/story_editor/'+req.body.filename[i]);
 	}
 	
     var data = { 
@@ -208,7 +208,7 @@ api.post('/:gameID/stories/generateStory', async function (req, res) {
 	
     var opts = {
 		method: 'POST',
-		uri: 'http://localhost:5000/story',
+		uri: 'http://10.132.0.15:5000/story',
 		body: data,
 		json: true
         };
