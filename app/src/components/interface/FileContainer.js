@@ -7,16 +7,16 @@ import interface_utils from "./interface_utils";
 
 const {apiBaseURL} = settings;
 
-const apiOptions = {
-    ...connectorNodeV1.apiOptions,
-    locale: "it",
-    apiRoot: apiBaseURL + '/filemanager/' + window.localStorage.getItem("gameID") // Or you local Server Node V1 installation.
-};
-
 function FileContainer(properties){
 
     let props = properties.props,
         component = properties.component;
+
+    const apiOptions = {
+        ...connectorNodeV1.apiOptions,
+        locale: "it",
+        apiRoot: apiBaseURL + '/filemanager/' + window.localStorage.getItem("gameID") // Or you local Server Node V1 installation.
+    };
 
     /**TODO: disabilitare selezione multipla se il component è modal**/
 
