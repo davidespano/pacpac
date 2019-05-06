@@ -179,6 +179,14 @@ margin-top: 10px;
 	height: 30px;
 }
 
+
+
+.rightstory li > span{
+	width: 100%;
+	left:500px;
+	height: 50px;
+}
+
 .foot {
     background-color: #FFFFFF;
 	padding-bottom:10px;
@@ -239,7 +247,7 @@ margin-top: 10px;
 }
 
 .stories-list li{
-	margin-top: 10px;	
+	margin-top: 50px;	
 }
 
 
