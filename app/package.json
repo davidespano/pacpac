@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@digaverse/aframe-resonance-audio-component": "^0.3.2",
     "@opuscapita/react-filemanager": "^1.1.0-beta.6",
     "@opuscapita/react-filemanager-connector-node-v1": "^1.1.0-beta.6",
     "aframe": "^0.9.0",

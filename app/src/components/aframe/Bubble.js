@@ -65,13 +65,14 @@ export default class Bubble extends React.Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
+        let is3Dscene = true;
+        let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         const curves = Object.values(scene.objects).flat().map(curve => {
             return(
                 <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.isActive?curve.uuid:""} vertices={curve.vertices}/>
             );
         });
-        //const sound = <Sound track={this.props.track} id = {this.props.name}/>;
         let material = "depthTest: true; ";
        /* if(this.nv !== undefined && this.nv.needShaderUpdate === true) {
             material += "shader: flat;";
@@ -86,13 +87,26 @@ export default class Bubble extends React.Component
         }
         else material += "opacity: 0; visible: false";
 
-        return(
-            <Entity _ref={elem => this.nv = elem} primitive={primitive} visible={this.props.isActive}
-                    id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
-                    material={material} play_video={active} /*dolby={'active: ' + this.props.isActive.toString() + ';'}*/>
+        if(is3Dscene){
+            sceneRender = (
+                <Entity _ref={elem => this.nv = elem} primitive={primitive} visible={this.props.isActive}
+                                   id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
+                                   material={material} play_video={active}>
                 {curves}
-            </Entity>
-        );
+                </Entity>)
+        } else {
+            let camera = document.querySelector('#camera');
+            console.log(camera.getAttribute('pac-look-controls'));
+            camera.setAttribute('pac-look-controls', {'pointerLockEnabled':'false'});
+            console.log(camera.getAttribute('look-controls'));
+            sceneRender = (
+                <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
+                    id={this.props.scene.name} src={'#' + this.props.scene.img} height="10.8" width="19.2"
+                    material={material} play_video={active} position="0 1.6 -6.44"/*dolby={'active: ' + this.props.isActive.toString() + ';'}*/>
+                {curves}
+                </Entity>)
+        }
+        return(sceneRender);
     }
 
     setShader(){

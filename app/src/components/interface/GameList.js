@@ -16,6 +16,11 @@ function GameList(props) {
                     {games(props)}
                 </div>
                 <button className="btn btn-primary" data-toggle="modal" data-target="#add-game-modal">Nuovo gioco</button>
+                <button className="btn btn-primary" onClick={()=> {
+                    props.reset();
+                    window.localStorage.clear();
+                    props.switchToLoginMode();
+                }}>Logout</button>
             </div>
         </React.Fragment>
     );

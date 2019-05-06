@@ -12,7 +12,6 @@ import settings from "../../utils/settings";
 import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
 import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
-import {Howler} from "howler";
 import stores_utils from "../../data/stores_utils";
 const THREE = require('three');
 const eventBus = require('./eventBus');
@@ -30,15 +29,17 @@ export default class VRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]",
             camera: {},
-            //resonanceAudioScene: {}
+            resonanceAudioScene: {}
         };
         document.querySelector('link[href*="bootstrap"]').remove();
     }
 
     componentDidMount() {
+        let audioContext = new AudioContext();
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        this.generateAudio()
+        this.generateRoom(audioContext)
+        this.generateAudio(audioContext)
         this.interval = setInterval(() => this.tick(), 200);
     }
 
@@ -130,10 +131,12 @@ export default class VRScene extends React.Component {
         }
         else
             this.currentLevel = [];
+        let assets = this.generateAssets()
+
         return (
-                <Scene stats>
+                <Scene stats background="color: black">
                     <a-assets>
-                        {this.generateAssets()}
+                        {assets}
                     </a-assets>
                     {this.generateBubbles()}
 
@@ -156,7 +159,7 @@ export default class VRScene extends React.Component {
             //first, push the background media.
             if(stores_utils.getFileType(scene.img) === 'video'){
                 sceneBackground = (
-                <video key={"key" + scene.name} crossorigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
+                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
                        playsInline={true} autoPlay muted={true}
                 />)
@@ -217,6 +220,9 @@ export default class VRScene extends React.Component {
                 })
 
             });
+            currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
+                                   preload="auto" onLoad={"this.generateAudio()"}/>)
             //third, push the media present in the actions
             //TODO do it! maybe not necessary
             scene.rules.forEach(()=>{});
@@ -301,42 +307,54 @@ export default class VRScene extends React.Component {
         });
     }
 
-    generateAudio(){
+    generateRoom(audioContext){
+        //TODO inserire scelta interno esterno
+        let isInterior = false;
+        let material = isInterior ? 'grass' : 'transparent';
 
-        let audioContext = new AudioContext();
         this.state.resonanceAudioScene = new ResonanceAudio(audioContext);
         this.state.resonanceAudioScene.output.connect(audioContext.destination);
         let roomDimensions = {
-            width: 3,
-            height: 3,
-            depth: 3,
+            width: 4,
+            height: 4,
+            depth: 4,
         };
         let roomMaterials = {
             // Room wall materials
-            left: 'transparent',
-            right: 'transparent',
-            front: 'transparent',
-            back: 'transparent',
-            down: 'transparent',
-            up: 'transparent',
+            left: material,
+            right: material,
+            front: material,
+            back: material,
+            down: material,
+            up: material,
         };
         this.state.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
-        let audioElement = document.createElement('audio');
-        //TODO add src from buble media
-        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
-        audioElement.crossOrigin = 'anonymous';
-        audioElement.load();
-        audioElement.loop = true;
-        let audioElementSource = audioContext.createMediaElementSource(audioElement);
-        let source = this.state.resonanceAudioScene.createSource();
-        audioElementSource.connect(source.input);
-        //source.setPosition(0, 0, 0);
-        audioElement.play();
     }
+
+    generateAudio(audioContext){
+
+        let audioElement = document.createElement('audio');
+
+        setTimeout(() => {
+            //let audio=document.getElementById('track');
+            //TODO add src from buble media
+            audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
+            audioElement.crossOrigin = 'anonymous';
+            audioElement.load();
+            audioElement.loop = true;
+            let audioElementSource = audioContext.createMediaElementSource(audioElement);
+            let source = this.state.resonanceAudioScene.createSource();
+            audioElementSource.connect(source.input);
+            //source.setPosition(0, 0, 0);
+            audioElement.play();
+        },50)
+
+
+    }
+
     updateAngles() {
         let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld
         this.state.resonanceAudioScene.setListenerFromMatrix(cameraMatrix4)
-        //Howler.orientation(this.state.camera.x, this.state.camera.y, this.state.camera.z,0,0,-1)
 
     }
 

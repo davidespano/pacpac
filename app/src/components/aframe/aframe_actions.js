@@ -3,6 +3,7 @@ import settings from "../../utils/settings";
 import './aframe_shader'
 import {Howl} from 'howler';
 import store_utils from '../../data/stores_utils'
+import AudioManager from './AudioManager'
 const THREE = require('three');
 const {mediaURL} = settings;
 const soundsHub = require('./soundsHub');
@@ -120,7 +121,9 @@ function executeAction(VRScene, rule, action){
             if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
             break;
         case RuleActionTypes.PLAY_AUDIO:
-            let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;
+            //TODO definire la sorgente audio dalla cena
+            let sound = AudioManager.generateAudio();
+            /*let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;
             let sound = new Howl({
                 src: [media_audio],
                 onplayerror: function() {
@@ -129,7 +132,7 @@ function executeAction(VRScene, rule, action){
                     });
                 }
                 //loop: action.loop,
-            });
+            });*/
             soundsHub[media] = sound;
             sound.play();
             break;
@@ -189,8 +192,17 @@ function transition(actualScene, targetScene, duration){
     if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
-function transition2D(element){
+function transition2D(actualScene){
+    let camera;
+    let actualSky = document.querySelector('#' + actualScene.name);
+    let disappear = new CustomEvent(actualSky.id + "dis");
+    actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: 500' +
+        '; easing: linear; from: 1; to: 0.1; startEvents: ' + actualSky.id + "dis");
 
+    document.querySelector('#camera').object3D.getWorldDirection(camera);
+    let plane = document.createElement('a-plane');
+
+    actualSky.dispatchEvent(disappear);
 }
 
 export {executeAction}
