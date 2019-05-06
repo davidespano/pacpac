@@ -141,7 +141,7 @@ export default class VRScene extends React.Component {
                     {this.generateBubbles()}
 
                     <Entity primitive="a-camera" key="keycamera" id="camera"
-                            look_controls={"pointerLockEnabled: true;"}>
+                            pac-look-controls="pointerLockEnabled: true;" look-controls="false" wasd-controls="false">
 
                             <Entity primitive="a-cursor" id="cursor" raycaster="objects: [data-raycastable];"
                                     fuse={false} pointsaver/>
@@ -333,20 +333,20 @@ export default class VRScene extends React.Component {
 
     generateAudio(audioContext){
 
-        //let audioElement = document.createElement('audio');
+        let audioElement = document.createElement('audio');
 
         setTimeout(() => {
-            let audio=document.getElementById('track');
+            //let audio=document.getElementById('track');
             //TODO add src from buble media
-            //audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
-            //audioElement.crossOrigin = 'anonymous';
-            //audioElement.load();
-            //audioElement.loop = true;
-            let audioElementSource = audioContext.createMediaElementSource(audio);
+            audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
+            audioElement.crossOrigin = 'anonymous';
+            audioElement.load();
+            audioElement.loop = true;
+            let audioElementSource = audioContext.createMediaElementSource(audioElement);
             let source = this.state.resonanceAudioScene.createSource();
             audioElementSource.connect(source.input);
             //source.setPosition(0, 0, 0);
-            audio.play();
+            audioElement.play();
         },50)
 
 
