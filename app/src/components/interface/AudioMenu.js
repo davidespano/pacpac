@@ -86,5 +86,4 @@ function checkSelection(props, uuid){
     return props.editor.selectedAudioToEdit === uuid ? 'selected-audio' : '';
 }
 
-
 export default AudioMenu;

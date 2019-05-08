@@ -16,7 +16,11 @@ function AudioForm(props){
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
                             <h5 className="modal-title" id="audio-form-modal-label">{title(props.editor)}</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" className="close" data-dismiss="modal"
+                                    aria-label="Close" onClick={() => {
+                                        resetFields();
+                                        props.selectFile(null);
+                                    }}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -157,7 +161,8 @@ function editAudio(props, audioToEdit){
 }
 
 function selectedFile(props, audioToEdit){
-    console.log(props.editor.selectedFile)
+    console.log(props.editor.selectedFile ? true : false)
+
     if(audioToEdit){
         return audioToEdit.file ? audioToEdit.file : 'No file selected';
     }
