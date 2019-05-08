@@ -17,6 +17,8 @@ class EditorStateStore extends ReduceStore {
         switch (action.type) {
             case ActionTypes.ADD_NEW_OBJECT:
                 return state.set('rightbarSelection', 'objects');
+            case ActionTypes.AUDIO_LOCAL_OPTION:
+                return state.set('isAudioLocal', action.status);
             case ActionTypes.AUDIO_FORM_STATUS:
                 return state.set('isEditAudioOn', action.status);
             case ActionTypes.DROPDOWN_SCENES_ORDER:

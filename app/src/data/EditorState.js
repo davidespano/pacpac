@@ -7,6 +7,7 @@ const EditorState = Immutable.Record({
     chooseTagNewScene: false,
     chooseTagRightbar: false,
     isEditAudioOn: false,
+    isAudioLocal: false,
     selectedAudioToEdit: null,
     selectedFile: null,
     selectedMediaToEdit: null,

@@ -146,6 +146,13 @@ const Actions = {
         })
     },
 
+    changeAudioLocalOptionStatus(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.AUDIO_LOCAL_OPTION,
+            status: status,
+        })
+    },
+
     //SCENES
 
     /**
@@ -517,7 +524,7 @@ const Actions = {
         if(audio.isLocal){
             AppDispatcher.dispatch({
                 type: ActionTypes.ADD_NEW_LOCAL_AUDIO,
-                scene: audio.scene,
+                scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
         } else {
@@ -537,7 +544,7 @@ const Actions = {
         if(audio.isLocal){
             AppDispatcher.dispatch({
                 type: ActionTypes.REMOVE_LOCAL_AUDIO,
-                scene: audio.scene,
+                scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
         } else {

@@ -24,7 +24,7 @@ function FileForm(props){
                             <FileContainer {...properties}/>
                             <button
                                 id={'button-file-selectiom'}
-                                type='button'
+                                type={'button'}
                                 className={'btn'}
                                 data-dismiss="modal"
                                 disabled={buttonStatus}

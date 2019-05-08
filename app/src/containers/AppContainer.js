@@ -57,6 +57,7 @@ function getState() {
         //editor
 
         changeAudioFormStatus: Actions.changeAudioFormStatus,
+        changeAudioLocalOptionStatus: Actions.changeAudioLocalOptionStatus,
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,

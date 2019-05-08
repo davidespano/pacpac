@@ -7,6 +7,7 @@ function FileSelectionBtn(properties){
 
     return(
         <button name={'image'}
+                type={'button'}
                 id={'select-file-btn-' + component}
                 className={'select-file-btn btn'}
                 data-toggle="modal"
