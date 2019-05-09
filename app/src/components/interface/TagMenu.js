@@ -34,10 +34,11 @@ function TagMenu(props){
                                 <button
                                     title={"Add new tag"}
                                     id={'tag-add-button'}
+                                    type={'button'}
                                     className={"tag-form-button"}
                                     onClick={() => createTag(props)}
                                 >
-                                    <img className={"action-buttons"} src={"icons/icons8-plus-math-filled-50.png"}/>
+                                    <img className={"action-buttons"} src={"icons/icons8-plus-white-30.png"}/>
                                 </button>
                             </div>
                         </div>
@@ -82,7 +83,7 @@ function generateTags(props){
                             SceneAPI.removeTag(tag.uuid);
                         }}
                     >
-                        <img className={"action-buttons"} src={"icons/icons8-subtract-filled-50.png"}/>
+                        <img className={"action-buttons"} src={"icons/icons8-white-waste-50.png"}/>
                     </button>
                 </div>
             );

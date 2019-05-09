@@ -56,7 +56,7 @@ function TopBar(props){
                             <img src={"icons/icons8-tags-100.png"}/>
                             <figcaption>Gestisci etichette</figcaption>
                         </figure>
-                        <figure className={'nav-figures'} style={{opacity: 0.3, cursor: 'auto'}}>
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
                         </figure>
@@ -100,10 +100,10 @@ function TopBar(props){
 }
 
 /*
-<figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
-    <img src={"icons/icons8-audio-100.png"}/>
-    <figcaption>Gestisci audio</figcaption>
-</figure>
+<figure className={'nav-figures'} style={{opacity: 0.3, cursor: 'auto'}}>
+                            <img src={"icons/icons8-audio-100.png"}/>
+                            <figcaption>Gestisci audio</figcaption>
+                        </figure>
 */
 
 function handleNavbarSelection(props){
@@ -169,10 +169,15 @@ function createObject(props, type){
 
         let defaultRule = rules_utils.generateDefaultRule(obj);
         props.addNewObject(scene, obj);
-        props.addNewRule(scene, defaultRule);
 
-        InteractiveObjectAPI.saveObject(scene, obj);
-        InteractiveObjectAPI.saveRule(scene, defaultRule);
+        if(obj.type === InteractiveObjectsTypes.SWITCH){ //switches have multiple default rules
+            console.log('switch')
+            props.addNewRule(scene, defaultRule[0]);
+            props.addNewRule(scene, defaultRule[1]);
+        }else{
+            console.log('other')
+            props.addNewRule(scene, defaultRule);
+        }
 
     } else {
         alert('Nessuna scena selezionata!');

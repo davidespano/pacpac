@@ -146,6 +146,13 @@ const Actions = {
         })
     },
 
+    changeAudioLocalOptionStatus(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.AUDIO_LOCAL_OPTION,
+            status: status,
+        })
+    },
+
     //SCENES
 
     /**
@@ -308,7 +315,7 @@ const Actions = {
     //INTERACTIVE OBJECTS
 
     /**
-     * Adds new object (also handles generation of default rule and scene update)
+     * Adds new object (also handles stores, scenes and db update)
      * @param scene
      * @param object
      */
@@ -317,7 +324,8 @@ const Actions = {
             type: ActionTypes.ADD_NEW_OBJECT,
             scene: scene,
             obj: object,
-        })
+        });
+        InteractiveObjectAPI.saveObject(scene, object);
     },
 
     /**
@@ -411,6 +419,7 @@ const Actions = {
             scene: scene,
             rule: rule,
         });
+        console.log('save')
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 
@@ -517,7 +526,7 @@ const Actions = {
         if(audio.isLocal){
             AppDispatcher.dispatch({
                 type: ActionTypes.ADD_NEW_LOCAL_AUDIO,
-                scene: audio.scene,
+                scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
         } else {
@@ -537,7 +546,7 @@ const Actions = {
         if(audio.isLocal){
             AppDispatcher.dispatch({
                 type: ActionTypes.REMOVE_LOCAL_AUDIO,
-                scene: audio.scene,
+                scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
         } else {

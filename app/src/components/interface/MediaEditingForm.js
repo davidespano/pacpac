@@ -14,7 +14,7 @@ function MediaEditingform(props){
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="edit-media-modal-label">Edit media</h5>
+                                <h5 className="modal-title" id="edit-media-modal-label">Modifica i media</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -45,32 +45,39 @@ function generateMediaModal(props, object){
                     <div id={'uploadMedia-off-to-on'}
                          className={'media-editing-divs'}
                     >
-                        <label htmlFor={"media-off-to-on"}>Media OFF to ON</label>
-                        <div className={'selected-medias-and-masks'}>
-                            {object.media.media0 ? object.media.media0 : "No file selected"}
+                        <label htmlFor={"media-off-to-on"} className={'box-titles'}>Da OFF a ON</label>
+                        <div className={'selected-medias-and-masks media-grid'}>
+                            <p className={'file-selected-name propertyForm'}>
+                                {object.media.media0 ? object.media.media0 : "Nessun file selezionato"}
+                            </p>
+                            {buttonFileSelection(props, "media0")}
                             {buttonRemoveFile(object, 'media0', props)}
                         </div>
-                        {buttonFileSelection(props, "media0")}
+
                     </div>
                     <div id={'uploadMedia-on-to-off'}
                          className={'media-editing-divs'}
                     >
-                        <label htmlFor={"media-on-to-off"}>Media ON to OFF</label>
-                        <div className={'selected-medias-and-masks'}>
-                            {object.media.media1 ? object.media.media1 : "No file selected"}
+                        <label htmlFor={"media-on-to-off"} className={'box-titles'}>Da ON a OFF</label>
+                        <div className={'selected-medias-and-masks media-grid'}>
+                            <p className={'file-selected-name propertyForm'}>
+                                {object.media.media1 ? object.media.media1 : "Nessun file selezionato"}
+                            </p>
+                            {buttonFileSelection(props, "media1")}
                             {buttonRemoveFile(object, 'media1', props)}
                         </div>
-                        {buttonFileSelection(props, "media1")}
                     </div>
                     <div id={'uploadMask'}
                          className={'media-editing-divs'}
                     >
-                        <label htmlFor={"mask"}>Mask</label>
-                        <div className={'selected-medias-and-masks'}>
-                            {object.mask ? object.mask : "No file selected"}
+                        <label htmlFor={"mask"} className={'box-titles'}>Maschera</label>
+                        <div className={'selected-medias-and-masks media-grid'}>
+                            <p className={'file-selected-name propertyForm'}>
+                                {object.mask ? object.mask : "Nessun file selezionato"}
+                            </p>
+                            {buttonFileSelection(props, "mask")}
                             {buttonRemoveFile(object, 'mask', props)}
                         </div>
-                        {buttonFileSelection(props, "mask")}
                     </div>
                 </div>
             );
@@ -80,22 +87,26 @@ function generateMediaModal(props, object){
                     <div id={'uploadMedia'}
                          className={'media-editing-divs'}
                     >
-                        <label htmlFor={"media"}>Media</label>
-                        <div className={'selected-medias-and-masks'}>
-                            {object.media.media0 ? object.media.media0 : "Nessun file selezionato"}
+                        <label htmlFor={"media"} className={'box-titles'}>Media</label>
+                        <div className={'selected-medias-and-masks media-grid'}>
+                            <p className={'file-selected-name propertyForm'}>
+                                {object.media.media0 ? object.media.media0 : "Nessun file selezionato"}
+                            </p>
+                            {buttonFileSelection(props, "media0")}
                             {buttonRemoveFile(object, 'media0', props)}
                         </div>
-                        {buttonFileSelection(props, "media0")}
                     </div>
                     <div id={'uploadMask'}
                          className={'media-editing-divs'}
                     >
-                        <label htmlFor={"mask"}>Mask</label>
-                        <div className={'selected-medias-and-masks'}>
-                            {object.mask ? object.mask : "Nessun file selezionato"}
+                        <label htmlFor={"mask"} className={'box-titles'}>Maschera</label>
+                        <div className={'selected-medias-and-masks media-grid'}>
+                            <p className={'file-selected-name propertyForm'}>
+                                {object.mask ? object.mask : "Nessun file selezionato"}
+                            </p>
+                            {buttonFileSelection(props, "mask")}
                             {buttonRemoveFile(object, 'mask', props)}
                         </div>
-                        {buttonFileSelection(props, "mask")}
                     </div>
                 </div>
             );
@@ -115,10 +126,10 @@ function buttonRemoveFile(object, property, props){
     return(
         <button
             title={"Remove file"}
-            className={""}
+            className={"btn-img"}
             onClick={()=> interface_utils.setPropertyFromValue(object, property, null, props)}
         >
-            <img className={"action-buttons"} src={"icons/icons8-delete-filled-50.png"} alt={'Rimuovi file'}/>
+            <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Rimuovi file'}/>
         </button>
     );
 }

@@ -22,30 +22,33 @@ function InputSceneForm(props){
                             </button>
                         </div>
                         <div className="modal-body modalOptions">
-                            <label>Nome</label>
-                            <input type="text"
-                                   id="scene_name"
-                                   name="scene_name"
-                                   className={'input-new-scene'}
-                                   onChange={() => {
-                                       let name = document.getElementById("scene_name").value;
-                                       props.newSceneNameTyped(name != "");
-                                   }}
-                            />
-                            <label>Etichetta</label>
-                            <div id={'tags-input-scene'}>
+                            <div className={'box-titles'}>Nome</div>
+                            <div className={'box-grid'}>
+                                <input type="text"
+                                       id="scene_name"
+                                       name="scene_name"
+                                       className={'input-new-scene'}
+                                       onChange={() => {
+                                           let name = document.getElementById("scene_name").value;
+                                           props.newSceneNameTyped(name != "");
+                                       }}
+                                />
+                            </div>
+                            <div className={'box-titles'}>Etichetta</div>
+                            <div className={'box-grid scene-grid'}>
                                 <TagDropdown {...properties}/>
                                 <button
                                     title={"Tag manager"}
-                                    className={"tag-manager-btn action-buttons-container dropdown-tags-btn-topbar"}
+                                    className={"select-file-btn btn"}
                                     data-toggle="modal"
                                     data-target="#add-tag-modal"
                                 >
-                                    <img className={"action-buttons dropdown-tags-btn-topbar"} src={"icons/icons8-tags-white-50.png"}/>
+                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-tags-white-50.png"}/>
+                                    Etichette
                                 </button>
                             </div>
-                            <label htmlFor={"image"}>Media</label>
-                            <div id={'select-file-container'} name="image">
+                            <div className={'box-titles'}>Media</div>
+                            <div className={'box-grid scene-grid'}>
                                 <p id={'file-selected-name'}
                                    className={'input-new-scene'}
                                 >
@@ -95,7 +98,7 @@ function checkFormAndCreateScene(name, media, index, type, tag, order){
 }
 
 function selectedFile(props){
-    return props.editor.selectedFile ? props.editor.selectedFile : 'No file selected';
+    return props.editor.selectedFile ? props.editor.selectedFile : 'Nessun file selezionato';
 }
 
 export default InputSceneForm;

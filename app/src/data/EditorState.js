@@ -3,28 +3,31 @@ import ActionTypes from "../actions/ActionTypes";
 import Orders from "./Orders";
 
 const EditorState = Immutable.Record({
+
+    actionId: null,
     audioFilter: '',
     chooseTagNewScene: false,
     chooseTagRightbar: false,
+    completionInput: null,
     isEditAudioOn: false,
+    isAudioLocal: false,
+    mentionType: null,
+    mode: ActionTypes.LOGIN_MODE_ON,
+    newSceneNameTyped: false,
+    objectsFilter: 'scene',
+    objectId: null,
+    navbarSelection: 'scene',
+    rightbarSelection: 'scene',
+    role: null,
+    scenesOrder: Orders.CHRONOLOGICAL,
+    scenesOrderMenu: false,
     selectedAudioToEdit: null,
     selectedFile: null,
     selectedMediaToEdit: null,
-    mode: ActionTypes.LOGIN_MODE_ON,
-    objectsFilter: 'scene',
-    navbarSelection: 'scene',
-    rightbarSelection: 'scene',
-    scenesOrder: Orders.CHRONOLOGICAL,
-    scenesOrderMenu: false,
     selectedTagNewScene: 'default',
     tagFilter: '',
     user: null,
-    mentionType: null,
-    objectId: null,
-    actionId: null,
-    role: null,
-    completionInput: null,
-    newSceneNameTyped: false,
+
 });
 
 export default EditorState;

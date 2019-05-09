@@ -44,9 +44,10 @@ export default class EudRuleEditor extends Component {
                          }}>
                         <h2>Regole della scena</h2>
                         {rulesRendering}
+                        <div className={'rules-footer'}></div>
                     </div>
                     <div className={"eudFloating"}>
-                        <button className={"propertyForm geometryBtn"}
+                        <button className={"btn select-file-btn"}
                                 onClick={() => {
                                     this.onNewRuleClick();
                                 }}>

@@ -21,7 +21,7 @@ function Login(props){
                         <label htmlFor="exampleInputPassword1">Password</label>
                         <input type="password" className="form-control" id="InputPassword" placeholder="Password"/>
                     </div>
-                    <button className="btn btn-primary" onClick={()=>submitUser()}>Invia</button>
+                    <button className="btn btn-primary" onClick={()=>submitUser()}>Accedi</button>
                     <button className="btn btn-primary" data-toggle="modal" data-target="#register-modal">Registrati</button>
                 </div>
                 <InputRegisterForm/>

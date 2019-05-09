@@ -6,6 +6,7 @@ import Immutable from 'immutable';
 import Action from "./Action";
 import Condition from "./Condition";
 import SuperCondition from "./SuperCondition";
+import Values from "./Values";
 let uuid = require('uuid');
 
 /**
@@ -13,7 +14,7 @@ let uuid = require('uuid');
  * @param object
  */
 function generateDefaultRule(object){
-    let r;
+    let r, r1, r2;
     switch(object.type){
         case InteractiveObjectsTypes.TRANSITION:
             r = Rule({
@@ -32,7 +33,7 @@ function generateDefaultRule(object){
             });
             break;
         case InteractiveObjectsTypes.SWITCH:
-            r = Rule({
+            r1 = Rule({
                 uuid : uuid.v4(),
                 event : Action({
                     uuid: uuid.v4(),
@@ -40,14 +41,21 @@ function generateDefaultRule(object){
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                actions : Immutable.List([Action({
+                condition : new Condition(uuid.v4(), object.uuid, Values.ON),
+                actions : Immutable.List([Action({uuid: uuid.v4()})]),
+            });
+            r2 = Rule({
+                uuid : uuid.v4(),
+                event : Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
-                    action: RuleActionTypes.FLIP_SWITCH,
+                    action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
-                })]),
+                }),
+                condition : new Condition(uuid.v4(), object.uuid, Values.OFF),
+                actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
-            break;
+            return [r1, r2];
         case InteractiveObjectsTypes.KEY:
             r = Rule({
                 uuid : uuid.v4(),

@@ -45,7 +45,7 @@ div.rules{
 
 .grid-container {
     display: grid;
-    grid-template-columns: 15% auto auto 15%;
+    grid-template-columns: 15% auto auto 20%;
     grid-template-areas:
             'leftbar scene scene rightbar'
             'leftbar rules rules rightbar';
@@ -190,9 +190,7 @@ body{
 }
 
 .input-new-scene {
-    width: 70%;
     padding: 2px 5px 2px 2px;
-    height: 30px;
 }
 
 #select-file-container {
@@ -201,10 +199,11 @@ body{
     height: 30px;
 }
 
-#file-selected-name {
+#file-selected-name, .file-selected-name {
     border: solid 1px darkgrey;
-    margin-right: 5px;
-    vertical-align: middle;
+    background-color: white;
+    height: 100%;
+    margin-bottom: 0 !important;
 }
 
 .select-file-btn {
@@ -236,47 +235,50 @@ body{
     font-size: 15px;
 }
 
-.currentOptions label {
-    font-size: 20px;
-    width: 100%;
-}
 
 .currentOptions {
     width: 95%;
     display: inline-block;
-}
-.currentOptions > button{
-    min-width: 80%;
-}
-
-.rotationInput{
-    width: 30px;
-    margin-right: auto;
-    margin-left: auto;
-    display: inline-block;
-    padding: 3px;
-}
-
-.transitionInput{
-    max-width: 50%;
-}
-#transitionDuration{
-    display: inline-block;
-    min-width: 88%;
 }
 
 #addSceneDiv{
     display: flex;
 }
 
-/*prove rightbar*/
-.propertyForm{
-    margin-right: auto;
-    margin-left: auto;
-    margin-bottom: 5px;
+.propertyForm, .propertyForm-right{
     background-color: #FFFFFF;
-    border: 1px solid #EF562D;
-    border-radius: 5px;
+    border: 1px solid darkgrey;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.propertyForm {
+    text-align: left;
+}
+
+.propertyForm-right {
+    text-align: right;
+}
+
+#transitionDuration {
+    width: 50%;
+}
+
+.figure-grid {
+    display: grid;
+    grid-template-columns: 40% auto;
+    margin-bottom: 10px;
+}
+
+.rightbar-img {
+    height: 50px;
+    width: 50px;
+    margin: 0 auto;
+}
+
+.figure-grid > p {
+    margin: auto;
+    font-weight: bold;
 }
 
 
@@ -309,18 +311,6 @@ body{
     border-color: #DD4124;
     background-color: #EF562D;
     width: 40%;
-}
-
-.geometryBtn{
-    background-color: #EF562D;
-    color: #FFFFFF;
-}
-
-.geometryBtn:hover{
-    background-color: #7e7b6d;
-    cursor: pointer;
-    border-color: #7e7b6d;
-
 }
 
 .rules{
@@ -399,13 +389,9 @@ body{
 }
 
 .measureUnit{
-    font-size: 10px;
-    margin-left:3px;
+    text-align: left;
 }
 
-.durationContainer{
-    padding-left: 8%;
-}
 
 #ruleObjSelection{
     border: 1px solid #EF562D;
@@ -465,7 +451,7 @@ body{
     box-sizing: border-box;
 }
 
-.flex-container{
+.flex-container, .flex{
     display: flex;
     flex-direction: row;
     height: 100%;
@@ -688,7 +674,7 @@ body{
 
 #tag-box, #audio-box {
     border: solid darkgrey 1px;
-    min-height: 30em;
+    height: 30em;
     overflow-y: auto;
 }
 
@@ -717,12 +703,13 @@ body{
 }
 
 #tag-add-text, .tag-element-text {
-    font-size: 1.1em;
+    font-size: 1em;
 }
 
 .tag-remove-button, .tag-form-button {
-    background-color: white;
-    border: 1px solid darkgrey;
+    background-color: #EF562D;
+    border: 1px solid white;
+    border-radius: 5px;
     position:absolute;
     height: 100%;
     right: 0;
@@ -736,12 +723,8 @@ body{
 
 #audio-box, #audio-search {
     width: 95%;
-    grid-area: left;
 }
 
-#audio-buttons-box {
-    grid-area: right;
-}
 
 #audio-form-general {
     height: 70%;
@@ -754,26 +737,49 @@ body{
 #modal-body-audio {
     display: grid;
     grid-template-columns: 70% 30%;
-    grid-template-rows: 6% 94%;
     grid-template-areas: 'left right';
     width: 100%;
 }
 
-.audio-form-box-grid{
+.box-grid, .rightbar-grid {
     display: grid;
-    grid-template-columns: 65% 35%;
-    grid-template-rows: auto auto auto auto;
-    grid-template-areas:
-            'left right'
-            'left right'
-            'left right'
-            'left right';
+    grid-template-areas: 'left right';
+    grid-template-rows: 30px;
     grid-gap: 10px;
     width: 100%;
 }
 
-#multichannel-checkbox {
-    margin-left: 5px;
+.box-grid {
+    grid-template-columns: 65% 35%;
+}
+
+.rightbar-grid {
+    grid-template-columns: 80% auto;
+    margin-bottom: 5px;
+}
+
+.media-grid, .options-grid {
+    display: grid;
+    grid-template-rows: 30px;
+    grid-gap: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.media-grid {
+    grid-template-columns: 65% auto auto;
+}
+
+.options-grid {
+    grid-template-columns: 35% auto;
+}
+
+.rightbar-btn{
+    font-size: 1em;
+}
+
+#select-file-btn-audio-form, .scene-grid > button {
+    width: 60%;
 }
 
 #modal-content-audio{
@@ -800,11 +806,25 @@ body{
     min-height: 30em;
 }
 
-.audio-form-box-titles{
+.audio-form-box-section, .box-grid{
+    margin-bottom: 15px;
+}
+
+.box-titles {
     color: grey;
     border-bottom: 1px solid darkgrey;
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.rightbar-titles {
+    color: grey;
+    border-bottom: 1px solid darkgrey;
+    width: 100%;
+    margin-bottom: 5px;
+    font-size: 1em !important;
+    text-align: left;
 }
 
 .input-audio-form {
@@ -818,41 +838,23 @@ body{
     margin-bottom: 0px;
 }
 
-
-/** MEDIA EDITING MODAL **/
-
-.media-editing-divs {
-    position: relative;
+.radio-audio-form, .checkbox-audio-form {
+    margin-right: 5px;
 }
 
-.media-editing-divs > label {
-    font-weight: bold;
-    font-size: 1.1em;
+.label-audio-form {
+    margin-right: 10px;
 }
 
-.selected-medias-and-masks {
-    border: solid 1px darkgrey;
-    width: 100%;
-    height: 25px;
-    margin-bottom: 10px;
+.audio-names:hover, .selected-audio{
+    background-color: #FFD8AC;
 }
 
-.selected-medias-and-masks > button {
-    position: absolute;
-    right: 0;
-    height: 25px;
-    width: 25px;
-    padding: 0;
+.audio-names {
+    padding-left: 5px;
+    margin-bottom: 0;
 }
 
-.selected-medias-and-masks > button:hover {
-    background-color: darkgrey;
-}
-
-.selected-medias-and-masks > button > img {
-    height: 15px;
-    width: 15px;
-}
 
 /** TAG DROPDOWN REPRISE **/
 
@@ -864,39 +866,33 @@ body{
     border: solid 1px darkgrey;
 }
 
-#wrapper-dropdown-tags-rightbar {
-    width: 100%;
-}
-
-#wrapper-dropdown-tags-topbar {
-    width: 70%;
-}
-
 .chosen-tag-rightbar, .chosen-tag-topbar {
     position: relative;
     cursor: pointer;
 }
 
-.arrow-up:after,
-.arrow-down:after {
+
+.arrow {
+    border: solid darkgrey;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
     position: absolute;
-    top: 50%;
-    right: 16px;
-    margin-top: -6px;
-    content: "";
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
+    right: 5px;
 }
 
-.arrow-down:after {
-    border-top: 10px solid #EF562D;
+.arrow-up{
+    top: 30%;
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
 }
 
-.arrow-up:after {
-    border-bottom: 10px solid #EF562D;
+.arrow-down{
+    top: 15%;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }
+
 
 .chosen-tag-rightbar > p, .chosen-tag-topbar > p {
     margin-left: 40px;
@@ -1172,9 +1168,6 @@ input.eudObjectString[type=text] {
     text-align: right;
 }
 
-.propertyForm{
-    margin-right: 10px;
-}
 
 .eudHide{
     display: none;
@@ -1246,6 +1239,10 @@ input.eudObjectString[type=text] {
 
 .eudHidden{
     visibility: hidden;
+}
+
+.rules-footer {
+    height: 10em;
 }
 
 .rule-container{

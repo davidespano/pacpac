@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { FileManager, FileNavigator } from '@opuscapita/react-filemanager';
 import connectorNodeV1 from '../../filemanager/connector-node-v1';
 import interface_utils from "./interface_utils";
+import scene_utils from "../../scene/scene_utils";
 
 const {apiBaseURL} = settings;
 
@@ -52,11 +53,6 @@ function handleFileSelection(props, data, component){
 
             path += data.name;
             props.selectFile(path);
-
-            if(props.editor.selectedMediaToEdit !== 'topbar' && props.editor.selectedMediaToEdit !== 'audio-form'){
-                let obj = props.interactiveObjects.get(props.currentObject);
-                interface_utils.setPropertyFromValue(obj, props.editor.selectedMediaToEdit, path, props);
-            }
         }
     }
 }
@@ -64,7 +60,23 @@ function handleFileSelection(props, data, component){
 function handleDoubleClick(props, data, component) {
     if(component === 'modal' && data.type === 'file') {
         handleFileSelection(props, data, component);
+        handleFileUpdate(props);
         document.getElementById('manage-files-close-btn').click();
+    }
+}
+
+function handleFileUpdate(props){
+    switch(props.editor.selectedMediaToEdit){
+        case 'mask':
+        case 'media0':
+        case 'media1':
+            let obj = props.interactiveObjects.get(props.currentObject);
+            interface_utils.setPropertyFromValue(obj, props.editor.selectedMediaToEdit, props.editor.selectedFile, props);
+            break;
+        case 'rightbar':
+            let scene = props.scenes.get(props.currentScene);
+            scene_utils.setProperty(scene, 'img', props.editor.selectedFile, props, props.editor.scenesOrder);
+            break;
     }
 }
 
