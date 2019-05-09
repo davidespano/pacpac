@@ -31,15 +31,16 @@ export default class VRScene extends React.Component {
             camera: {},
             resonanceAudioScene: {}
         };
-        document.querySelector('link[href*="bootstrap"]').remove();
+        //if(document.querySelector('link[href*="bootstrap"]'))
+            document.querySelector('link[href*="bootstrap"]').remove();
     }
 
     componentDidMount() {
         let audioContext = new AudioContext();
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        this.generateRoom(audioContext)
-        this.generateAudio(audioContext)
+        this.generateRoom(audioContext);
+        this.generateAudio(audioContext);
         this.interval = setInterval(() => this.tick(), 200);
     }
 
@@ -123,6 +124,17 @@ export default class VRScene extends React.Component {
 
     }
 
+    cameraChangeMode(is3Dscene){
+        let camera = document.getElementById('camera');
+        console.log(camera.getAttribute("pac-look-controls").pointerLockEnabled)
+        console.log(is3Dscene)
+        if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene){
+            camera.setAttribute("pac-look-controls", "pointerLockEnabled", is3Dscene.toString());
+            this.forceUpdate()
+        }
+
+    }
+
     render() {
         if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.name] !== undefined) {
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
@@ -132,7 +144,8 @@ export default class VRScene extends React.Component {
         else
             this.currentLevel = [];
         let assets = this.generateAssets()
-
+        //let is3dScene = this.state.activeScene.type === '3D' ;
+        let is3dScene = true;/*(this.state.activeScene.img === 'pianomp.mp4');*/
         return (
                 <Scene stats background="color: black">
                     <a-assets>
@@ -141,8 +154,7 @@ export default class VRScene extends React.Component {
                     {this.generateBubbles()}
 
                     <Entity primitive="a-camera" key="keycamera" id="camera"
-                            pac-look-controls="pointerLockEnabled: true;" look-controls="false" wasd-controls="false">
-
+                               pac-look-controls="pointerLockEnabled: true;" look-controls="false" wasd-controls="false">
                             <Entity primitive="a-cursor" id="cursor" raycaster="objects: [data-raycastable];"
                                     fuse={false} pointsaver/>
 
@@ -220,9 +232,9 @@ export default class VRScene extends React.Component {
                 })
 
             });
-            currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
+            /*currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
-                                   preload="auto" onLoad={"this.generateAudio()"}/>)
+                                   preload="auto" onLoad={"this.generateAudio()"}/>)*/
             //third, push the media present in the actions
             //TODO do it! maybe not necessary
             scene.rules.forEach(()=>{});
@@ -295,7 +307,7 @@ export default class VRScene extends React.Component {
                 return null;
         }
     }
-
+//cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
     generateBubbles(){
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
@@ -335,7 +347,7 @@ export default class VRScene extends React.Component {
 
         let audioElement = document.createElement('audio');
 
-        setTimeout(() => {
+        //setTimeout(() => {
             //let audio=document.getElementById('track');
             //TODO add src from buble media
             audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
@@ -347,7 +359,7 @@ export default class VRScene extends React.Component {
             audioElementSource.connect(source.input);
             //source.setPosition(0, 0, 0);
             audioElement.play();
-        },50)
+        //},50)
 
 
     }

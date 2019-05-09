@@ -43,6 +43,9 @@ export default class Bubble extends React.Component
         }else{
             if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
         }
+        //let is3Dscene = !(this.props.scene.img === 'pianomp.mp4');
+        //let camera = document.getElementById('camera');
+        //if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene && this.props.isActive) this.props.cameraChangeMode(is3Dscene)
         this.setVideoFrame();
     }
 
@@ -65,19 +68,17 @@ export default class Bubble extends React.Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
-        let is3Dscene = true;
+        let is3Dscene = !(this.props.scene.img === 'pianomp.mp4');
+        console.log(this.props.scene.img)
         let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
+
         const curves = Object.values(scene.objects).flat().map(curve => {
             return(
                 <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.isActive?curve.uuid:""} vertices={curve.vertices}/>
             );
         });
         let material = "depthTest: true; ";
-       /* if(this.nv !== undefined && this.nv.needShaderUpdate === true) {
-            material += "shader: flat;";
-            this.nv.needShaderUpdate = false;
-        }*/
         let active = 'active: false;';
         let radius = 9.9;
         if (this.props.isActive) {
@@ -87,7 +88,8 @@ export default class Bubble extends React.Component
         }
         else material += "opacity: 0; visible: false";
 
-        if(is3Dscene){
+
+        if(/*is3Dscene*/true){
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={primitive} visible={this.props.isActive}
                                    id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
@@ -95,13 +97,14 @@ export default class Bubble extends React.Component
                 {curves}
                 </Entity>)
         } else {
-            let camera = document.querySelector('#camera');
-            console.log(camera.getAttribute('pac-look-controls'));
-            camera.setAttribute('pac-look-controls', {'pointerLockEnabled':'false'});
-            console.log(camera.getAttribute('look-controls'));
+            //TODO aggiungere il controllo del ridimensionamento della canvas
+            let canvasWidth = document.documentElement.clientWidth / 100;
+            let canvasHight = canvasWidth /1.77;
+            //camera = document.getElementById('camera');
+            //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
-                    id={this.props.scene.name} src={'#' + this.props.scene.img} height="10.8" width="19.2"
+                    id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
                     material={material} play_video={active} position="0 1.6 -6.44"/*dolby={'active: ' + this.props.isActive.toString() + ';'}*/>
                 {curves}
                 </Entity>)
