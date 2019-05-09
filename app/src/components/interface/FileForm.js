@@ -1,5 +1,7 @@
 import React from 'react';
 import FileContainer from "./FileContainer";
+import scene_utils from "../../scene/scene_utils";
+import interface_utils from "./interface_utils";
 
 function FileForm(props){
     let properties = {
@@ -28,6 +30,7 @@ function FileForm(props){
                                 className={'btn'}
                                 data-dismiss="modal"
                                 disabled={buttonStatus}
+                                onClick={()=> handleFileUpdate(props)}
                             >
                                 Open file
                             </button>
@@ -38,6 +41,21 @@ function FileForm(props){
         </div>
 
     );
+}
+
+function handleFileUpdate(props){
+    switch(props.editor.selectedMediaToEdit){
+        case 'mask':
+        case 'media0':
+        case 'media1':
+            let obj = props.interactiveObjects.get(props.currentObject);
+            interface_utils.setPropertyFromValue(obj, props.editor.selectedMediaToEdit, props.editor.selectedFile, props);
+            break;
+        case 'rightbar':
+            let scene = props.scenes.get(props.currentScene);
+            scene_utils.setProperty(scene, 'img', props.editor.selectedFile, props, props.editor.scenesOrder);
+            break;
+    }
 }
 
 export default FileForm;

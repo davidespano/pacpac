@@ -14,8 +14,8 @@ function FileSelectionBtn(properties){
                 data-target="#add-file-modal"
                 onClick={() => props.selectMediaToEdit(component)}
         >
-            <img className={"action-buttons"} src={"icons/icons8-add-folder-50.png"}/>
-            Cerca
+            <img className={"action-buttons btn-img"} src={"icons/icons8-add-folder-50.png"}/>
+            {component === 'rightbar' ? '' : 'Cerca'}
         </button>
     );
 }

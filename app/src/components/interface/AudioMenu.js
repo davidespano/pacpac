@@ -54,14 +54,18 @@ function AudioMenu(props){
                                             props.changeAudioLocalOptionStatus(audio.isLocal);
                                         }}
                                 >
-                                    <img className={"action-buttons"} src={"icons/icons8-pencil-50.png"}/>
+                                    <img className={"action-buttons btn-img"} src={"icons/icons8-pencil-50.png"}/>
                                     Modifica oggetto
                                 </button>
                                 <button id={'remove-audio-btn'}
                                         className={'btn audio-btn btn-secondary'}
                                         disabled={props.editor.selectedAudioToEdit == null}
+                                        onClick={() => {
+                                            let audio = props.audios.get(props.editor.selectedAudioToEdit);
+                                            props.removeAudio(audio);
+                                        }}
                                 >
-                                    <img className={"action-buttons"} src={"icons/icons8-white-waste-50.png"}/>
+                                    <img className={"action-buttons btn-img"} src={"icons/icons8-white-waste-50.png"}/>
                                     Cancella oggetto
                                 </button>
                             </div>

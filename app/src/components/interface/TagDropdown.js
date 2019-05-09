@@ -16,12 +16,13 @@ function TagDropdown(properties){
         let selectedId = 'chosen-tag-' + selected.uuid;
         return (
             <div className={'wrapper-dropdown-tags'} id={'wrapper-dropdown-tags-' + component}>
-                <div className={'chosen-tag-' + component + " " + checkSelectionArrow(props, component)}
+                <div className={'chosen-tag-' + component}
                      onClick={() => display(props, component)}
                 >
-                    <p id={selectedId}>
+                    <p id={selectedId} className={'p-tag-form'}>
                         <span style={color(selected.color)}> </span>
                         {selected.name}
+                        <i className={'arrow '+ checkSelectionArrow(props, component)}></i>
                     </p>
                 </div>
                 <ul className={checkSelection(props, component)}>

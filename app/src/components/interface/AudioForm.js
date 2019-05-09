@@ -56,8 +56,8 @@ function generalOptions(props, audioToEdit){
 
     return(
         <div id={'audio-form-general'} className={'audio-form-box-section'}>
-            <div className={'audio-form-box-titles'}>Generali</div>
-            <div className={'audio-form-box-grid'}>
+            <div className={'box-titles'}>Generali</div>
+            <div className={'box-grid'}>
                 <input id={'input-name-audio'} className={'input-audio-form'} type={'text'} placeholder={'Nome'} defaultValue={name}/>
                 <div> </div>
                 <div id={'select-file-audio'}>
@@ -78,8 +78,8 @@ function sceneOption(props){
 
     return(
         <div id={'audio-form-scene'} className={'audio-form-box-section'}>
-            <div className={'audio-form-box-titles'}>Appartenenza</div>
-            <div className={'audio-form-box-grid'}>
+            <div className={'box-titles'}>Appartenenza</div>
+            <div className={'box-grid'}>
                 <form>
                     <input type={'radio'} name={'isLocal'} id={'local-radio'} className={'radio-audio-form'}
                            onClick={()=> props.changeAudioLocalOptionStatus(true)}
@@ -109,7 +109,7 @@ function playOption(props, audioToEdit){
 
     return(
         <div id={'audio-form-play'} className={'audio-form-box-section'}>
-            <div className={'audio-form-box-titles'}>Riproduzione</div>
+            <div className={'box-titles'}>Riproduzione</div>
             <input type={'checkbox'} className={'checkbox-audio-form'} id={'loop-checkbox'}/>
             <label htmlFor={'loop-checkbox'} className={'label-audio-form'} defaultChecked={checked}>Loop</label>
         </div>
@@ -162,9 +162,9 @@ function editAudio(props, audioToEdit){
 
 function selectedFile(props, audioToEdit){
     if(audioToEdit){
-        return audioToEdit.file ? audioToEdit.file : 'No file selected';
+        return audioToEdit.file ? audioToEdit.file : 'Nessun file selezionato';
     }
-    return props.editor.selectedFile ? props.editor.selectedFile : 'No file selected';
+    return props.editor.selectedFile ? props.editor.selectedFile : 'Nessun file selezionato';
 }
 
 function title(editor){
