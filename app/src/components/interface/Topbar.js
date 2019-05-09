@@ -169,10 +169,15 @@ function createObject(props, type){
 
         let defaultRule = rules_utils.generateDefaultRule(obj);
         props.addNewObject(scene, obj);
-        props.addNewRule(scene, defaultRule);
 
-        InteractiveObjectAPI.saveObject(scene, obj);
-        InteractiveObjectAPI.saveRule(scene, defaultRule);
+        if(obj.type === InteractiveObjectsTypes.SWITCH){ //switches have multiple default rules
+            console.log('switch')
+            props.addNewRule(scene, defaultRule[0]);
+            props.addNewRule(scene, defaultRule[1]);
+        }else{
+            console.log('other')
+            props.addNewRule(scene, defaultRule);
+        }
 
     } else {
         alert('Nessuna scena selezionata!');

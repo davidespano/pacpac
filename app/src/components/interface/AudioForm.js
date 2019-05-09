@@ -161,8 +161,6 @@ function editAudio(props, audioToEdit){
 }
 
 function selectedFile(props, audioToEdit){
-    console.log(props.editor.selectedFile ? true : false)
-
     if(audioToEdit){
         return audioToEdit.file ? audioToEdit.file : 'No file selected';
     }

@@ -315,7 +315,7 @@ const Actions = {
     //INTERACTIVE OBJECTS
 
     /**
-     * Adds new object (also handles generation of default rule and scene update)
+     * Adds new object (also handles stores, scenes and db update)
      * @param scene
      * @param object
      */
@@ -324,7 +324,8 @@ const Actions = {
             type: ActionTypes.ADD_NEW_OBJECT,
             scene: scene,
             obj: object,
-        })
+        });
+        InteractiveObjectAPI.saveObject(scene, object);
     },
 
     /**
@@ -418,6 +419,7 @@ const Actions = {
             scene: scene,
             rule: rule,
         });
+        console.log('save')
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 

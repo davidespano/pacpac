@@ -110,7 +110,7 @@ function sceneView(props){
                         </button>
                     </div>
                 </div>
-                <label>Nome:</label>
+                <label>Nome</label>
                 <div id={"sceneName"}
                      className={"propertyForm"}
                      contentEditable={true}
@@ -121,7 +121,7 @@ function sceneView(props){
                 >
                     {scene.name}
                 </div>
-                <label>Etichetta:</label>
+                <label>Etichetta</label>
                 <TagDropdown {...properties}/>
             </div>
         );
@@ -198,7 +198,7 @@ function generateProperties(props){
             {objectButtons(props)}
             <label>Proprietà</label>
             <label>Tipologia: {currentObject.type}</label>
-            <label>Nome:</label>
+            <label>Nome</label>
             <div id={"objectName"}
                  className={"propertyForm"}
                  contentEditable={true}

@@ -688,7 +688,7 @@ body{
 
 #tag-box, #audio-box {
     border: solid darkgrey 1px;
-    min-height: 30em;
+    height: 30em;
     overflow-y: auto;
 }
 
