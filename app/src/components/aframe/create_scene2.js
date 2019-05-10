@@ -232,6 +232,11 @@ export default class VRScene extends React.Component {
                 })
 
             });
+            /*scene.audio.forEach( audio => {
+                currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
+                                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
+                                       preload="auto" onLoad={"this.generateAudio()"}/>)
+            })*/
             /*currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
                                    preload="auto" onLoad={"this.generateAudio()"}/>)*/

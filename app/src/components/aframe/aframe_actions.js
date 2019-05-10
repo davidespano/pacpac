@@ -121,7 +121,7 @@ function executeAction(VRScene, rule, action){
             if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
             break;
         case RuleActionTypes.PLAY_AUDIO:
-            //TODO definire la sorgente audio dalla cena
+            //TODO definire la sorgente audio dalla scena, forse gli udio è meglio generarli in create_Scene2, prenderli da qui
             let sound = AudioManager.generateAudio();
             /*let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;
             let sound = new Howl({

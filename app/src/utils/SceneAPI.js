@@ -295,7 +295,7 @@ async function getAllDetailedScenes(gameGraph) {
     raw_scenes.forEach(s => {
         // neighbours list
         const adj = [];
-
+        console.log(s)
         // generates transitions
         const transitions = s.transitions.map(transition => {
            return ({ //Transition, but not the immutable one
@@ -364,6 +364,17 @@ async function getAllDetailedScenes(gameGraph) {
             });
         });
 
+        // generate audios
+        /*const audios = s.audio.map( audio => {
+            return ({
+                uuid: audio.uuid,
+                name: audio.name,
+                file: audio.file,
+                isLocal: audio.isLocal,
+                scene: audio.scene,
+                loop: audio.loop,
+            })
+        });*/
 
         // new Scene
         const newScene = ({ //Scene, not immutable
@@ -380,6 +391,7 @@ async function getAllDetailedScenes(gameGraph) {
                 locks : locks,
             },
             rules: rules,
+            //audio: audios,
         });
 
         gameGraph['scenes'][newScene.name] = newScene;
