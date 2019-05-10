@@ -69,15 +69,22 @@ export default class Bubble extends React.Component
         //generate the interactive areas
         let scene = this.props.scene;
         let is3Dscene = !(this.props.scene.img === 'pianomp.mp4');
-        console.log(this.props.scene.img)
         let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
 
         const curves = Object.values(scene.objects).flat().map(curve => {
-            return(
-                <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.isActive?curve.uuid:""} vertices={curve.vertices}/>
-            );
+            if(this.props.editMode){
+                return(
+                    <CurvedGeometry vertices={curve.vertices}/>
+                );
+            } else {
+                return(
+                    <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.isActive?curve.uuid:""} vertices={curve.vertices}/>
+                );
+            }
+
         });
+        console.log(this.props.scene)
         let material = "depthTest: true; ";
         let active = 'active: false;';
         let radius = 9.9;
@@ -233,4 +240,11 @@ export default class Bubble extends React.Component
         (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());
         (this.masksTextures?this.masksTextures:[]).forEach(t => t.dispose());
     }
+}
+
+function CurvedGeometry(props)
+{
+    return(
+        <Entity geometry={"primitive: polyline; vertices: " + props.vertices} scale= "-1 1 1" material="side: double; opacity: 0.50"/>
+    );
 }

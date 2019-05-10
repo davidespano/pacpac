@@ -7,10 +7,11 @@ import {Entity, Scene} from 'aframe-react';
 import interface_utils from "../interface/interface_utils";
 import settings from '../../utils/settings';
 import stores_utils from "../../data/stores_utils";
+import Bubble from './Bubble';
 
 const {mediaURL} = settings;
 
-function Curved(props)
+/*function Curved(props)
 {
     return(
         <Entity geometry={"primitive: polyline; vertices: " + props.vertices} scale= "-1 1 1" material="side: double; opacity: 0.50"/>
@@ -40,7 +41,7 @@ class Bubble extends React.Component
             </Entity>
         );
     }
-}
+}*/
 
 export function givePoints(props)
 {
