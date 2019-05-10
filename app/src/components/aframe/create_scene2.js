@@ -314,6 +314,7 @@ export default class VRScene extends React.Component {
     }
 //cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
     generateBubbles(){
+        console.log(this.currentLevel)
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
             return (
@@ -376,17 +377,6 @@ export default class VRScene extends React.Component {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -295,7 +295,6 @@ async function getAllDetailedScenes(gameGraph) {
     raw_scenes.forEach(s => {
         // neighbours list
         const adj = [];
-        console.log(s)
         // generates transitions
         const transitions = s.transitions.map(transition => {
            return ({ //Transition, but not the immutable one
