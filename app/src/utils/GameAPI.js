@@ -2,6 +2,7 @@ import settings from "./settings";
 import Actions from "../actions/Actions";
 import EditorStateStore from "../data/EditorStateStore";
 import Immutable from "immutable";
+import SceneAPI from "./SceneAPI";
 
 
 const request = require('superagent');
@@ -23,6 +24,7 @@ function createGame(name) {
 
             Actions.receiveUser(newUser);
 
+            SceneAPI.saveTag(new Tag(), response.body);
         });
 }
 

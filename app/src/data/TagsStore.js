@@ -14,7 +14,6 @@ class TagsStore extends ReduceStore {
     }
 
     getInitialState() {
-        SceneAPI.saveTag(Tag());
         return Immutable.Map().set('default', Tag());
     }
 

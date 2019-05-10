@@ -390,8 +390,14 @@ async function getAllDetailedScenes(gameGraph) {
     //console.log(gameGraph);
 }
 
-function saveTag(tag){
-    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/tags`)
+function saveTag(tag, gameID = null){
+    let game;
+    if(gameID){
+        game = gameID;
+    }
+    else
+        game = window.localStorage.getItem("gameID");
+    request.put(`${apiBaseURL}/${game}/tags`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send({
