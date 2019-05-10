@@ -3,6 +3,7 @@ import Actions from "../actions/Actions";
 import EditorStateStore from "../data/EditorStateStore";
 import Immutable from "immutable";
 import SceneAPI from "./SceneAPI";
+import Tag from "../scene/Tag";
 
 
 const request = require('superagent');
