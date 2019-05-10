@@ -47,7 +47,7 @@ export default class EudRuleEditor extends Component {
                         <div className={'rules-footer'}></div>
                     </div>
                     <div className={"eudFloating"}>
-                        <button className={"btn select-file-btn"}
+                        <button className={"btn select-file-btn new-rule-btn"}
                                 onClick={() => {
                                     this.onNewRuleClick();
                                 }}>

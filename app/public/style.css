@@ -44,35 +44,76 @@ div.rules{
 }
 
 
-.grid-container {
+@media screen and (min-width: 1400px) {
+    .grid-container {
     display: grid;
-    grid-template-columns: 15% auto auto 20%;
-    grid-template-areas:
-            'leftbar scene scene rightbar'
-            'leftbar rules rules rightbar';
-    grid-gap: 1.5px;
-    padding: 1px;
-    background-color: #ADB0B1;
-    height: 82vh !important;
-    max-height: 82vh !important;;
-    box-sizing: border-box;
+        grid-template-columns: 15% auto auto 20%;
+        grid-template-areas:
+    'leftbar scene scene rightbar'
+    'leftbar rules rules rightbar';
+        grid-gap: 1.5px;
+        padding: 1px;
+        background-color: #ADB0B1;
+        height: 84.5vh !important;
+        max-height: 84.5vh !important;
+        box-sizing: border-box;
+    }
+
+
+    body{
+        width: 100vw;
+        height: 100vh;
+    }
+
 }
 
+@media screen and (max-width: 1400px) {
+    body {
+        width: 1400px;
+    }
 
+    .leftbar {
+        position: absolute;
+        left: 0;
+        width: 210px;
+        border: solid 1px darkgrey;
+        height: 84.5vh;
+    }
 
-body{
-    width: 100vw;
-    height: 100vh;
+    .rightbar {
+        position: absolute;
+        left: 1120px;
+        width: 280px;
+        border: solid 1px darkgrey;
+        height: 84.5vh;
+    }
+
+    .scene {
+        position: absolute;
+        left: 210px;
+        width: 910px;
+        border: solid 1px darkgrey;
+    }
+
+    .rules {
+        position: absolute;
+        left: 210px;
+        width: 910px;
+    }
+
+    .new-rule-btn {
+        margin-bottom: 20px;
+    }
 }
 
 .topbar{
     box-sizing: border-box;
-    min-height: 18vh !important;
-    max-height: 18vh !important;
+    height: 15vh !important;
+    min-height: 150px;
 }
 
 .grid-container > div {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #EFF0F0;
     text-align: center;
     font-size: 30px;
 
@@ -1298,3 +1339,7 @@ input.eudObjectString[type=text] {
     color: #ef562d;
 }
 
+
+.new-rule-btn {
+    margin-right: 10px;
+}
