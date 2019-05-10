@@ -60,7 +60,7 @@ export default class GeometryScene extends React.Component{
         super(props);
         this.state = {
             scenes: props.scenes.get(props.objectToScene.get(props.currentObject)),
-            completeScene: {}
+
         };
         console.log(props.objectToScene.get(props.currentObject));
         console.log(props.currentObject);
@@ -106,10 +106,13 @@ export default class GeometryScene extends React.Component{
         }
     }
 
+    componentWillMount(){
+        this.createScene();
+    }
     componentDidMount() {
 
         console.log('ciao')
-        this.createScene();
+
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
@@ -167,6 +170,7 @@ export default class GeometryScene extends React.Component{
             }
         });
     }
+
     async createScene(){
         let scenaaa = {};
         await SceneAPI.getAllDetailedScenes(scenaaa);
@@ -174,12 +178,19 @@ export default class GeometryScene extends React.Component{
         this.setState({completeScene: scenaaa})
 
     }
-    generateAssets2(){
-        return aframe_utils.generateAsset(this.state.completeScene, this.state.completeScene.img)
-    }
 
     render()
     {
+
+        if (this.state.completeScene !== undefined ) {
+            console.log(this.state.scenes)
+            this.currentLevel = [this.state.scenes.name]
+        }
+        else{
+            this.currentLevel = [];
+        }
+
+
         let sky = this.state.scenes;
         let curvedImages = [];
         let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
@@ -192,8 +203,7 @@ export default class GeometryScene extends React.Component{
         }
         let assets = this.generateAssets2();
         console.log(assets)
-        let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img}
-                            curves={curvedImages} handler={() => this.handleSceneChange()}/>
+        let skies = this.generateBubbles();
 
 
 
@@ -238,6 +248,23 @@ export default class GeometryScene extends React.Component{
                 </Scene>
             </div>
         );
+    }
+
+    generateAssets2(){
+        return this.currentLevel.map(sceneName =>{
+            console.log(this.state.completeScene)
+            return aframe_utils.generateAsset(this.state.completeScene.scenes[sceneName], this.state.completeScene.scenes[sceneName].img)
+        })
+    }
+
+    generateBubbles(){
+        return this.currentLevel.map(sceneName =>{
+            return (
+                <Bubble key={"key" + sceneName} scene={this.state.completeScene.scenes[this.state.scenes.name]} isActive={true}
+                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
+                />
+            );
+        });
     }
 }
 //Aggiungere due text, button, qualcosa che indichi all'utente come utilizzare salvataggio e edit.

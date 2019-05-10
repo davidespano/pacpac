@@ -56,6 +56,7 @@ export default class VRScene extends React.Component {
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.state.activeScene.name];
         let runState = this.createGameState(gameGraph);
+        console.log(gameGraph)
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
@@ -135,6 +136,7 @@ export default class VRScene extends React.Component {
     }
 
     render() {
+        console.log(this.state.graph)
         if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.name] !== undefined) {
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
                 this.state.graph.neighbours[this.state.activeScene.name].includes(name)
