@@ -24,7 +24,6 @@ class AssetsStore extends ReduceStore {
             case ActionTypes.LOAD_ALL_ASSETS:
                 // if state isn't undefined
                 if(state) {
-                    action.list.push('gnigni.mp4')
                     action.list.forEach(a => {
                         state = state.set(a, Asset({name: a, uuid: a, type: stores_utils.getFileType(a)}));
                     })
@@ -32,7 +31,7 @@ class AssetsStore extends ReduceStore {
                 return state;
             case ActionTypes.RECEIVE_SCENE:
                 a = action.scene.img;
-                return state.set(a, Asset({name: a, uuid: a}));
+                return state.set(a, Asset({name: a, uuid: a, type: stores_utils.getFileType(a)}));
             case ActionTypes.RESET:
                 return Immutable.Map();
             default:
