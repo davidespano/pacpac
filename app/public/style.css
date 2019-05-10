@@ -54,8 +54,8 @@ div.rules{
         grid-gap: 1.5px;
         padding: 1px;
         background-color: #ADB0B1;
-        height: 84.5vh !important;
-        max-height: 84.5vh !important;
+        height: 85vh !important;
+        max-height: 85vh !important;
         box-sizing: border-box;
     }
 
@@ -1337,9 +1337,4 @@ input.eudObjectString[type=text] {
     border-radius: 5px;
     background-color: white;
     color: #ef562d;
-}
-
-
-.new-rule-btn {
-    margin-right: 10px;
 }
