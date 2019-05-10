@@ -47,8 +47,6 @@ class EditorStateStore extends ReduceStore {
                 return state.set('newSceneNameTyped', action.status);
             case ActionTypes.FILE_MANAGER_MODE_ON:
                 return state.set('mode', ActionTypes.FILE_MANAGER_MODE_ON);
-            case ActionTypes.OBJECTS_FILTER:
-                return state.set('objectsFilter', action.filter);
             case ActionTypes.PLAY_MODE_ON:
                 return state.set('mode', ActionTypes.PLAY_MODE_ON);
             case ActionTypes.RECEIVE_SCENE:
@@ -74,6 +72,10 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mentionType', action.mentionType);
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
+            case ActionTypes.UPDATE_OBJECTS_NAME_FILTER:
+                return state.set('objectsNameFilter', action.filter);
+            case ActionTypes.UPDATE_OBJECTS_TYPE_FILTER:
+                return state.set('objectsTypeFilter', action.filter);
             case ActionTypes.UPDATE_TAG_FILTER:
                 return state.set('tagFilter', action.filter);
             case ActionTypes.RESET:

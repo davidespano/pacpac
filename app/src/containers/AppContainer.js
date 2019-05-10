@@ -99,7 +99,8 @@ function getState() {
         selectAllObjects: Actions.selectAllObjects,
         updateCurrentObject: Actions.updateCurrentObject,
         updateObject: Actions.updateObject,
-        filterObjectFunction: Actions.filterObject,
+        updateObjectNameFilter: Actions.updateObjectNameFilter,
+        updateObjectTypeFilter: Actions.updateObjectTypeFilter,
         editVertices: Actions.editVertices,
 
         //rules

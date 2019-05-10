@@ -87,13 +87,8 @@ function list(props, path) {
 function buttonsBar(props){
     return(
         <div className={'currentOptions'}>
-            <div className={"buttonGroup"}>
-                <button
-                    title={"Cerca una scena"}
-                    className={"action-buttons-container"}
-                >
-                    <img className={"action-buttons"} src={"icons/icons8-search-filled-50.png"}/>
-                </button>
+            <div className={"buttonGroup buttonGroup-bar"}>
+                <input type={'text'} id={'scene-filter-text'} placeholder={'Filtra...'}/>
                 <button
                     title={"Ordina..."}
                     className={"action-buttons-container dropdown-btn"}

@@ -453,7 +453,6 @@ div.rules{
     margin-right: 3px;
 }
 
-
 .action-buttons-container:disabled {
     border-color: darkgrey;
 }
@@ -472,7 +471,11 @@ div.rules{
     margin-top: 10px;
     margin-bottom: 10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #8C9093;
+    border-bottom: 1px solid darkgrey;
+}
+
+.buttonGroup-bar {
+    display: flex;
 }
 
 .navbar-brand{
@@ -591,6 +594,7 @@ div.rules{
     word-break: break-all;
     text-align: left;
     margin-bottom: 0px;
+    padding-bottom: 2px;
 }
 
 .objects-wrapper > .action-buttons-container{

@@ -79,7 +79,7 @@ function sceneView(props){
         return(
             <div className={'currentOptions'}>
                 <div>
-                    <div className={"buttonGroup"}>
+                    <div className={"buttonGroup buttonGroup-bar"}>
                         <button
                             title={"Elimina la scena corrente"}
                             className={"action-buttons-container"}
@@ -155,34 +155,44 @@ function optionsView(props){
 function showObjects(interactiveObjects, props) {
     return (
         <div id={'objectsList'} className={'currentOptions'}>
-            <div className={"buttonGroup"}>
-                <button
-                    title={"Cerca un oggetto"}
-                    className={"action-buttons-container"}
-                >
-                    <img className={"action-buttons"} src={"icons/icons8-search-filled-50.png"} alt={'Cerca un oggetto'}/>
-                </button>
-                <button
-                    title={"Filtra per scena corrente"}
-                    className={"action-buttons-container"}
-                    onClick={() => props.filterObjectFunction('scene')}
-                >
-                    <img className={"action-buttons"} src={"icons/icons8-image-100.png"} alt={'Filtra per scena corrente'}/>
-                </button>
-                <button
-                    title={"Tutti gli oggetti"}
-                    className={"action-buttons-container"}
-                    onClick={()=> props.filterObjectFunction('all')}
-                >
-                    <img className={"action-buttons"} src={"icons/icons8-gallery-50.png"} alt={'Tutti gli oggetti'}/>
-                </button>
-
+            <div className={"buttonGroup buttonGroup-bar"}>
+                <input type={'text'} id={'objects-filter-text'} className={'bar-filters'} placeholder={'Filtra...'}
+                       onChange={() => {
+                           let filter = document.getElementById('objects-filter-text').value;
+                           props.updateObjectNameFilter(filter);
+                       }}/>
+                <div>
+                    <button
+                        title={"Filtra per scena corrente"}
+                        className={"action-buttons-container"}
+                        onClick={() => props.updateObjectTypeFilter('scene')}
+                    >
+                        <img className={"action-buttons"} src={"icons/icons8-image-100.png"} alt={'Filtra per scena corrente'}/>
+                    </button>
+                    <button
+                        title={"Tutti gli oggetti"}
+                        className={"action-buttons-container"}
+                        onClick={()=> props.updateObjectTypeFilter('all')}
+                    >
+                        <img className={"action-buttons"} src={"icons/icons8-gallery-50.png"} alt={'Tutti gli oggetti'}/>
+                    </button>
+                </div>
             </div>
             {generateObjectsList(props)}
         </div>
     );
 }
 
+
+/*
+<button
+    title={"Cerca un oggetto"}
+    className={"action-buttons-container"}
+>
+    <img className={"action-buttons"} src={"icons/icons8-search-filled-50.png"} alt={'Cerca un oggetto'}/>
+</button>
+
+*/
 
 /**
  * Generates options of currently selected object
@@ -364,17 +374,17 @@ function objectButtons(props){
  * @returns {*}
  */
 function generateObjectsList(props) {
-    //console.log(props.interactiveObjects);
 
     // filter "all" or no scene selected
-    if(props.currentScene == null || props.editor.objectsFilter === 'all'){
+    if(props.currentScene == null || props.editor.objectsTypeFilter === 'all'){
 
         // no objects
         if(props.interactiveObjects.size === 0)
             return (<div>Non ci sono oggetti</div>)
 
         // objects mapping
-        return ([...props.interactiveObjects.values()].map( obj => {
+        return ([...props.interactiveObjects.values()].filter(obj =>
+            obj.name.includes(props.editor.objectsNameFilter)).map( obj => {
             return (
                 <div key={obj.uuid} className={'objects-wrapper-no-buttons'}>
                     <p className={'objectsList-element'}
@@ -387,16 +397,17 @@ function generateObjectsList(props) {
     }
 
     // filter "scene"
-    if (props.editor.objectsFilter === 'scene'){
+    if (props.editor.objectsTypeFilter === 'scene'){
 
         let scene = props.scenes.get(props.currentScene);
-        let objects = scene.objects;
         //let allObjects = objects.transitions.concat(objects.switches).concat(objects.collectable_keys);
         let allObjects = Object.values(scene.objects).flat();
         // no objects in scene
         if (allObjects.length === 0 ){
             return (<div>Non ci sono oggetti associati a questa scena</div>)
         }
+
+        allObjects = allObjects.filter(obj => obj.name.includes(props.editor.objectsNameFilter));
 
         // scene objects mapping
         return (allObjects.map(obj_uuid => {

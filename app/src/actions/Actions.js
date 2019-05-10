@@ -399,9 +399,20 @@ const Actions = {
      * Dispatch new filter selection
      * @param filterType
      */
-    filterObject(filterType){
+    updateObjectTypeFilter(filterType){
         AppDispatcher.dispatch({
-            type: ActionTypes.OBJECTS_FILTER,
+            type: ActionTypes.UPDATE_OBJECTS_TYPE_FILTER,
+            filter: filterType,
+        })
+    },
+
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
+    updateObjectNameFilter(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OBJECTS_NAME_FILTER,
             filter: filterType,
         })
     },
@@ -419,7 +430,6 @@ const Actions = {
             scene: scene,
             rule: rule,
         });
-        console.log('save')
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 
