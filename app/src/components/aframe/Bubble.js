@@ -74,6 +74,7 @@ export default class Bubble extends React.Component
 
         const curves = Object.values(scene.objects).flat().map(curve => {
             if(this.props.editMode){
+                console.log(this.props.editMode)
                 return(
                     <CurvedGeometry vertices={curve.vertices}/>
                 );

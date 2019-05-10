@@ -111,8 +111,6 @@ export default class GeometryScene extends React.Component{
     }
     componentDidMount() {
 
-        console.log('ciao')
-
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
@@ -261,7 +259,7 @@ export default class GeometryScene extends React.Component{
         return this.currentLevel.map(sceneName =>{
             return (
                 <Bubble key={"key" + sceneName} scene={this.state.completeScene.scenes[this.state.scenes.name]} isActive={true}
-                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
+                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene) } editMode={true}
                 />
             );
         });
