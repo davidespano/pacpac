@@ -13,6 +13,7 @@ import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
 import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
+import aframe_utils from "./aframe_utils"
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -126,8 +127,6 @@ export default class VRScene extends React.Component {
 
     cameraChangeMode(is3Dscene){
         let camera = document.getElementById('camera');
-        console.log(camera.getAttribute("pac-look-controls").pointerLockEnabled)
-        console.log(is3Dscene)
         if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene){
             camera.setAttribute("pac-look-controls", "pointerLockEnabled", is3Dscene.toString());
             this.forceUpdate()
@@ -143,7 +142,8 @@ export default class VRScene extends React.Component {
         }
         else
             this.currentLevel = [];
-        let assets = this.generateAssets()
+        //let assets = this.generateAssets()
+        let assets = this.generateAssets2();
         //let is3dScene = this.state.activeScene.type === '3D' ;
         let is3dScene = true;/*(this.state.activeScene.img === 'pianomp.mp4');*/
         return (
@@ -163,6 +163,12 @@ export default class VRScene extends React.Component {
         )
     }
 
+    generateAssets2(){
+        return this.currentLevel.map(sceneName => {
+            return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
+            this.state.runState[sceneName].background, this.state.runState)
+        }).flat();
+    }
     generateAssets(){
         return this.currentLevel.map(sceneName => {
             let scene = this.state.graph.scenes[sceneName];
@@ -314,7 +320,6 @@ export default class VRScene extends React.Component {
     }
 //cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
     generateBubbles(){
-        console.log(this.currentLevel)
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
             return (

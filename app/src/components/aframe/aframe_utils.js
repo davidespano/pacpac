@@ -5,27 +5,27 @@ import React from 'react';
 
 const {mediaURL} = settings;
 
-function generateAssets(){
-    return this.currentLevel.map(sceneName => {
-        let scene = this.state.graph.scenes[sceneName];
+function generateAsset(scene, srcBackground, runState = []){
         let currAssets = [];
         let sceneBackground;
         //first, push the background media.
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
                 <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
-                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
+                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + srcBackground}
                        playsInline={true} autoPlay muted={true}
                 />)
         } else {
             sceneBackground =(<img id={scene.img} key={"key" + scene.name} crossorigin="Anonymous"
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + srcBackground}
             />)
         }
         currAssets.push(sceneBackground);
         let objAsset;
+        console.log(scene)
         //second, push the media of the interactive objs
         Object.values(scene.objects).flat().forEach(obj => {
+            console.log(obj)
             Object.keys(obj.media).map(k => {
                 if(obj.media[k] !== null){
                     if(stores_utils.getFileType(obj.media[k]) === 'video'){
@@ -43,7 +43,7 @@ function generateAssets(){
                 }
             });
 
-            let v = this.generateCurrentAsset(obj);
+            let v = generateCurrentAsset(obj, runState);
             if(v!==null) currAssets.push(v);
 
             if(obj.mask !== "" && obj.mask !== undefined&& obj.mask !== null){
@@ -87,10 +87,9 @@ function generateAssets(){
         scene.rules.forEach(()=>{});
         //return the assets
         return currAssets;
-    }).flat();
 }
 
-function generateCurrentAsset(obj){
+function generateCurrentAsset(obj, runState){
     let currentAsset;
     switch (obj.type) {
         case InteractiveObjectsTypes.TRANSITION:
@@ -108,7 +107,13 @@ function generateCurrentAsset(obj){
             }
             else return null;
         case InteractiveObjectsTypes.SWITCH:
-            let i = (this.state.runState[obj.uuid].state === "OFF")?0:1;
+            let i;
+            if(runState === {}){
+                i = (obj.properties.state === "OFF")?0:1;
+            } else {
+                i = (runState[obj.uuid].state === "OFF")?0:1;
+            }
+
             if(obj.media["media"+i] !== null){
                 if(stores_utils.getFileType(obj.media.media0) === 'video'){
                     currentAsset = (
@@ -153,4 +158,8 @@ function generateCurrentAsset(obj){
         default:
             return null;
     }
+}
+
+export default {
+    generateAsset: generateAsset
 }

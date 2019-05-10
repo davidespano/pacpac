@@ -68,7 +68,7 @@ export default class Bubble extends React.Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
-        let is3Dscene = !(this.props.scene.img === 'pianomp.mp4');
+        //let is3Dscene = !(this.props.scene.img === 'pianomp.mp4');
         let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
 

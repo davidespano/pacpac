@@ -5,11 +5,9 @@ import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import interface_utils from "../interface/interface_utils";
-import settings from '../../utils/settings';
-import stores_utils from "../../data/stores_utils";
 import Bubble from './Bubble';
-
-const {mediaURL} = settings;
+import aframe_utils from "./aframe_utils";
+import SceneAPI from "../../utils/SceneAPI";
 
 /*function Curved(props)
 {
@@ -61,10 +59,12 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         this.state = {
-            scenes: props.scenes.get(props.objectToScene.get(props.currentObject))
+            scenes: props.scenes.get(props.objectToScene.get(props.currentObject)),
+            completeScene: {}
         };
         console.log(props.objectToScene.get(props.currentObject));
         console.log(props.currentObject);
+
     }
 
     handleSceneChange()
@@ -106,7 +106,10 @@ export default class GeometryScene extends React.Component{
         }
     }
 
-    componentDidMount () {
+    componentDidMount() {
+
+        console.log('ciao')
+        this.createScene();
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
@@ -164,6 +167,16 @@ export default class GeometryScene extends React.Component{
             }
         });
     }
+    async createScene(){
+        let scenaaa = {};
+        await SceneAPI.getAllDetailedScenes(scenaaa);
+        console.log(scenaaa)
+        this.setState({completeScene: scenaaa})
+
+    }
+    generateAssets2(){
+        return aframe_utils.generateAsset(this.state.completeScene, this.state.completeScene.img)
+    }
 
     render()
     {
@@ -177,12 +190,14 @@ export default class GeometryScene extends React.Component{
                 })
             }
         }
-
+        let assets = this.generateAssets2();
+        console.log(assets)
         let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img}
                             curves={curvedImages} handler={() => this.handleSceneChange()}/>
 
-        let backGround;
-        if(stores_utils.getFileType(sky.img) === 'video'){
+
+
+        /*if(stores_utils.getFileType(sky.img) === 'video'){
             backGround = (
                 <video key={"key" + sky.name} crossorigin={"anonymous"} id={sky.img} loop={"true"}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + sky.img}
@@ -192,7 +207,8 @@ export default class GeometryScene extends React.Component{
             backGround = (<img id={sky.img} key={"key" + sky.name} crossorigin="Anonymous"
                                     src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + sky.img}
             />)
-        }
+        }*/
+
         return(
             <div id="mainscene" tabIndex="0">
                 <div id="UI">
@@ -209,7 +225,7 @@ export default class GeometryScene extends React.Component{
                 </div>
                 <Scene>
                     <a-assets>
-                        {backGround}
+                        {assets}
                     </a-assets>
                     {skies}
 
