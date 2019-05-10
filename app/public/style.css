@@ -36,8 +36,9 @@
 }
 
 div.rules{
-    font-size: 12pt!important;
+    font-size: 0.8em!important;
 }
+
 .rules-editor{
     width: 100%;
 }
@@ -58,10 +59,10 @@ div.rules{
 }
 
 
+
 body{
     width: 100vw;
     height: 100vh;
-
 }
 
 .topbar{
@@ -141,7 +142,7 @@ body{
 /** MODAL BOXES **/
 
 .modal {
-    font-size: 1em;
+    font-size: 0.9em;
 }
 .modal > .header {
     width: 100%;
@@ -439,14 +440,14 @@ body{
 
 .nav-item {
     height: 50px;
-    font-size: 1.3em !important;
+    font-size: 1.2em !important;
     font-weight: bold;
 }
 
 .tab-content {
     width: 100%;
     height: 100%;
-    font-size: 1em !important;
+    font-size: 0.9em !important;
     padding-top: 1.5vh;
     box-sizing: border-box;
 }
@@ -469,7 +470,7 @@ body{
     border-right: 5px;
     height: 80%;
     text-align: center;
-    font-size: 0.8em !important;
+    font-size: 0.7em !important;
 }
 
 .nav-figures > img {
@@ -514,13 +515,13 @@ body{
     background-color: #000000;
     opacity: 1;
     color: white;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 /* Actions reprentation in rules editor */
 
 .single-action {
-    font-size: 0.8em;
+    font-size: 0.7em;
     width: 90%;
     margin-left: 5%;
     text-align: left;
@@ -576,7 +577,7 @@ body{
 .nav-tab-rightbar {
     width: 100%;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: bold;
 }
 
@@ -611,7 +612,7 @@ body{
 
 .icons-labels {
     color: white;
-    font-size: 0.5em;
+    font-size: 0.4em;
     text-shadow:
             2px 0 2px black,
             -2px 0 2px black,
@@ -703,7 +704,7 @@ body{
 }
 
 #tag-add-text, .tag-element-text {
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 .tag-remove-button, .tag-form-button {
@@ -775,7 +776,7 @@ body{
 }
 
 .rightbar-btn{
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 #select-file-btn-audio-form, .scene-grid > button {
@@ -789,7 +790,7 @@ body{
 .audio-btn {
     width: 100%;
     margin-top: 5%;
-    font-size: 0.9em;
+    font-size: 0.8em;
     position: relative;
 }
 
@@ -815,7 +816,7 @@ body{
     border-bottom: 1px solid darkgrey;
     width: 100%;
     margin-bottom: 10px;
-    font-size: 1.1em;
+    font-size: 1em;
 }
 
 .rightbar-titles {
@@ -823,7 +824,7 @@ body{
     border-bottom: 1px solid darkgrey;
     width: 100%;
     margin-bottom: 5px;
-    font-size: 1em !important;
+    font-size: 0.8em !important;
     text-align: left;
 }
 
@@ -1058,7 +1059,7 @@ li > span {
     padding: 16px;
     border-radius: 2px;
     margin-bottom: 2em;
-    font-size: 0.5em;
+    font-size: 0.4em;
     box-shadow: inset 0px 1px 8px -3px #ABABAB;
     background: #fefefe;
 }
