@@ -5,6 +5,7 @@ import { FileManager, FileNavigator } from '@opuscapita/react-filemanager';
 import connectorNodeV1 from '../../filemanager/connector-node-v1';
 import interface_utils from "./interface_utils";
 import scene_utils from "../../scene/scene_utils";
+import MediaAPI from "../../utils/MediaAPI";
 
 const {apiBaseURL} = settings;
 
@@ -37,6 +38,7 @@ function FileContainer(properties){
                     onResourceItemDoubleClick={
                         ({ event, number, rowData }) => handleDoubleClick(props, rowData, component)
                     }
+                    onResourceChange={() => MediaAPI.getAllAssets()}
                 />
             </FileManager>
         </div>
