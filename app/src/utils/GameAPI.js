@@ -25,7 +25,7 @@ function createGame(name) {
 
             Actions.receiveUser(newUser);
 
-            SceneAPI.saveTag(new Tag(), response.body);
+            SceneAPI.saveTag(new Tag(), response.body.gameID);
         });
 }
 
