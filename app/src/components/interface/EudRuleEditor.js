@@ -579,6 +579,10 @@ class EudAction extends Component {
             return this.props.assets.get(uuid);
         }
 
+        if(ValuesMap.has(uuid)){
+            return ValuesMap.get(uuid);
+        }
+
         return this.props.interactiveObjects.get(uuid);
     }
 
@@ -602,6 +606,7 @@ class EudAction extends Component {
         }
 
         let list = rule.get('actions');
+
         switch(role){
             case "subject":
                 if(event){
@@ -705,6 +710,7 @@ class EudRulePart extends Component {
     }
 
     render() {
+        console.log(this.props.inputText)
         let autocomplete = null;
         let buttonVisible="eudHide";
         let text = this.props.originalText;
@@ -873,6 +879,7 @@ class EudAutoCompleteItem extends Component {
             action: this.props.verb,
             item: (this.props.item.type === '3D' || this.props.item.type === '2D') ? this.props.item.name : this.props.item.uuid
         };
+
         this.props.updateRule(ruleUpdate, this.props.role);
     }
 }
@@ -1248,10 +1255,12 @@ const RulesActionMap = Immutable.Map([
             type: "operation",
             subj_type: [
                 InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.LOCK,
             ],
             obj_type: ['value'],
             name: eventTypeToString(RuleActionTypes.CHANGE_STATE),
-            uuid: RuleActionTypes.CHANGE_STATE
+            uuid: RuleActionTypes.CHANGE_STATE,
         },
     ],
 ]);
