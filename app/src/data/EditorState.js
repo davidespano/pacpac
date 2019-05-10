@@ -22,7 +22,7 @@ const EditorState = Immutable.Record({
     role: null,
     scenesOrder: Orders.CHRONOLOGICAL,
     scenesOrderMenu: false,
-    scenesFilter: '',
+    scenesNameFilter: '',
     selectedAudioToEdit: null,
     selectedFile: null,
     selectedMediaToEdit: null,

@@ -710,7 +710,6 @@ class EudRulePart extends Component {
     }
 
     render() {
-        console.log(this.props.inputText)
         let autocomplete = null;
         let buttonVisible="eudHide";
         let text = this.props.originalText;

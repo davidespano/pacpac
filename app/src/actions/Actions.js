@@ -125,6 +125,10 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
     updateAudioFilter(filter){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_AUDIO_FILTER,
@@ -132,6 +136,43 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
+    updateObjectTypeFilter(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OBJECTS_TYPE_FILTER,
+            filter: filterType,
+        })
+    },
+
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
+    updateObjectNameFilter(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OBJECTS_NAME_FILTER,
+            filter: filterType,
+        })
+    },
+
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
+    updateSceneNameFilter(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SCENE_NAME_FILTER,
+            filter: filterType,
+        })
+    },
+
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
     updateTagFilter(filter){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_TAG_FILTER,
@@ -395,27 +436,6 @@ const Actions = {
         })
     },
 
-    /**
-     * Dispatch new filter selection
-     * @param filterType
-     */
-    updateObjectTypeFilter(filterType){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_OBJECTS_TYPE_FILTER,
-            filter: filterType,
-        })
-    },
-
-    /**
-     * Dispatch new filter selection
-     * @param filterType
-     */
-    updateObjectNameFilter(filterType){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_OBJECTS_NAME_FILTER,
-            filter: filterType,
-        })
-    },
 
     //RULES
 

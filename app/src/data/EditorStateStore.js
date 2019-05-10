@@ -76,6 +76,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('objectsNameFilter', action.filter);
             case ActionTypes.UPDATE_OBJECTS_TYPE_FILTER:
                 return state.set('objectsTypeFilter', action.filter);
+            case ActionTypes.UPDATE_SCENE_NAME_FILTER:
+                return state.set('scenesNameFilter', action.filter);
             case ActionTypes.UPDATE_TAG_FILTER:
                 return state.set('tagFilter', action.filter);
             case ActionTypes.RESET:

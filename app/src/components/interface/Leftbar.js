@@ -29,7 +29,7 @@ function Leftbar(props) {
 function list(props, path) {
     let regex = RegExp('.*\.mp4$');
 
-    return ([...props.scenes.values()].map(child => {
+    return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
         if (!(regex.test(child.img))) {
             return (
                 <div key={child.name} className={'node_element'}>
@@ -87,32 +87,47 @@ function list(props, path) {
 function buttonsBar(props){
     return(
         <div className={'currentOptions'}>
-            <div className={"buttonGroup buttonGroup-bar"}>
-                <input type={'text'} id={'scene-filter-text'} placeholder={'Filtra...'}/>
-                <button
-                    title={"Ordina..."}
-                    className={"action-buttons-container dropdown-btn"}
-                >
-                    <img className={"action-buttons dropdown-btn"} src={"icons/icons8-sort-filled-50.png"}/>
-                </button>
+            <div className={"buttonGroup"}>
+                <input type={'text'} id={'scene-filter-text'} placeholder={'Filtra...'}
+                       onChange={() => {
+                           let filter = document.getElementById('scene-filter-text').value;
+                           props.updateSceneNameFilter(filter);
+                       }}/>
+                <select id={'select-leftbar'}
+                        onChange={() => {
+                            let e = document.getElementById('select-leftbar');
+                            let order = e.options[e.selectedIndex].value;
+                            props.sortScenes(order);
+                        }}>
+                    <option className={'' + checkCurrentOrder(props.editor.scenesOrder, Orders.ALPHABETICAL)}
+                            value={Orders.ALPHABETICAL}
+                    >Nome (A-Z)</option>
+                    <option className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_ALPHABETICAL)}
+                            value={Orders.REV_ALPHABETICAL}
+                    >Nome (Z-A)</option>
+                    <option className={checkCurrentOrder(props.editor.scenesOrder, Orders.CHRONOLOGICAL)}
+                            value={Orders.CHRONOLOGICAL}
+                    >Dalla prima all'ultima</option>
+                    <option className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_CHRONOLOGICAL)}
+                            value={Orders.REV_CHRONOLOGICAL}
+                    >Dall'ultima alla prima</option>
+                </select>
                 <div id="scenes-order-menu" className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>
-                    <a className={'' + checkCurrentOrder(props.editor.scenesOrder, Orders.ALPHABETICAL)}
-                       onClick={() => props.sortScenes(Orders.ALPHABETICAL)}
-                    >Per nome (A-Z)</a>
-                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_ALPHABETICAL)}
-                       onClick={() => props.sortScenes(Orders.REV_ALPHABETICAL)}
-                    >Per nome (Z-A)</a>
-                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.CHRONOLOGICAL)}
-                        onClick={() => props.sortScenes(Orders.CHRONOLOGICAL)}
-                    >Dalla prima all'ultima</a>
-                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_CHRONOLOGICAL)}
-                       onClick={() => props.sortScenes(Orders.REV_CHRONOLOGICAL)}
-                    >Dall'ultima alla prima</a>
+
                 </div>
             </div>
         </div>
     );
 }
+
+/*
+<button
+    title={"Ordina..."}
+    className={"action-buttons-container dropdown-btn"}
+>
+    <img className={"action-buttons dropdown-btn"} src={"icons/icons8-sort-filled-50.png"}/>
+</button>
+*/
 
 function checkSelection(scenesOrderMenu){
     return scenesOrderMenu ? 'show' : '';

@@ -472,6 +472,7 @@ div.rules{
     margin-bottom: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid darkgrey;
+    position: relative;
 }
 
 .buttonGroup-bar {
@@ -686,6 +687,10 @@ div.rules{
 
 .dropdown-content a:hover {
     background-color: #ddd
+}
+
+#select-leftbar, #scene-filter-text {
+    width: 100%;
 }
 
 .show {

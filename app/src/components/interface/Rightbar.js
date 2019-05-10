@@ -407,30 +407,29 @@ function generateObjectsList(props) {
             return (<div>Non ci sono oggetti associati a questa scena</div>)
         }
 
-        allObjects = allObjects.filter(obj => obj.name.includes(props.editor.objectsNameFilter));
 
         // scene objects mapping
         return (allObjects.map(obj_uuid => {
             let obj = props.interactiveObjects.get(obj_uuid);
-            return (
-                <div key={obj.uuid} className={"objects-wrapper"}>
-                    <p className={'objectsList-element-delete-button'}
-                         onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
-                        {obj.name}
-                    </p>
-                    <img className={"action-buttons"}
-                         src={"icons/icons8-waste-50.png"}
-                         alt={'Cancella'}
-                         onClick={() => {
-                            InteractiveObjectAPI.removeObject(scene, obj);
-                            props.updateCurrentObject(null);
-                         }}
-                    />
-                </div>
-            );
+            if(obj.name.includes(props.editor.objectsNameFilter)){
+                return (
+                    <div key={obj.uuid} className={"objects-wrapper"}>
+                        <p className={'objectsList-element-delete-button'}
+                           onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
+                            {obj.name}
+                        </p>
+                        <img className={"action-buttons"}
+                             src={"icons/icons8-waste-50.png"}
+                             alt={'Cancella'}
+                             onClick={() => {
+                                 InteractiveObjectAPI.removeObject(scene, obj);
+                                 props.updateCurrentObject(null);
+                             }}
+                        />
+                    </div>
+                );
             }
-        ));
-
+        }));
     }
 }
 
