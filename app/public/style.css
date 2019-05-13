@@ -1011,10 +1011,6 @@ li > span {
     width: 20%;
 }
 
-.gameList{
-    overflow-y: auto;
-}
-
 
 /* mention */
 
@@ -1343,12 +1339,12 @@ input.eudObjectString[type=text] {
     width: 50%;
 }
 
-#register-link {
+#register-link, #logout-link {
     color: #EF562D;
     text-decoration: underline #EF562D;
 }
 
-#register-link:hover{
+#register-link:hover, #logout-link:hover{
     cursor: pointer;
 }
 
@@ -1364,7 +1360,36 @@ input.eudObjectString[type=text] {
     transform: translate(-50%, -50%);
     padding: 20px;
     width: 450px;
-    height: 320px;
+    height: 500px;
     border: solid 1.5px #EF562D;
     border-radius: 20px;
+}
+
+.gameList{
+    border: solid 1px darkgrey;
+    overflow-y: auto;
+    position: relative;
+    height: 100%;
+    margin-bottom: 10px;
+}
+
+.game-item-wrapper{
+    display: grid;
+    grid-template-columns: 90% auto;
+}
+
+.game-item {
+    width: 100%;
+    border-bottom: solid 1px darkgrey;
+    padding: 2px;
+}
+
+.game-item:hover{
+    background-color: #FFD8AC;
+    cursor: pointer;
+}
+
+.remove-game-btn {
+    position: absolute;
+    right: 0;
 }
