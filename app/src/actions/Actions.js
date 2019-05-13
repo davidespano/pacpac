@@ -244,14 +244,14 @@ const Actions = {
 
     /**
      * Dispatch current scene update
-     * @param name of the scene
+     * @param uuid of the scene
      */
-    updateCurrentScene(name){
+    updateCurrentScene(uuid){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
-            name: name,
+            uuid: uuid,
             objectsToScene: ObjectToSceneStore.getState(),
-            scene: ScenesStore.getState().get(name),
+            scene: ScenesStore.getState().get(uuid),
         });
     },
 
@@ -270,14 +270,14 @@ const Actions = {
     /**
      * Dispatch scene name update (since the name is the scene key in ScenesStore map, it needs a specific update)
      * @param scene
-     * @param oldScene
+     * @param oldName
      * @param order of scenes
      */
-    updateSceneName(scene, oldScene, order){
+    updateSceneName(scene, oldName, order){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE_NAME,
             scene: scene,
-            oldScene: oldScene,
+            oldName: oldName,
             order: order,
         });
         SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
@@ -291,7 +291,8 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_SCENE,
             scene: scene,
-        })
+        });
+        SceneAPI.deleteScene(scene);
     },
 
     /**

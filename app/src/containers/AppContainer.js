@@ -13,6 +13,7 @@ import CentroidsStore from "../data/CentroidsStore";
 import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
 import AudioStore from "../data/AudioStore";
+import ScenesNamesStore from "../data/ScenesNamesStore";
 
 
 function getStores() {
@@ -29,6 +30,7 @@ function getStores() {
         AssetsStore,
         RulesStore,
         AudioStore,
+        ScenesNamesStore,
     ];
 }
 
@@ -48,6 +50,7 @@ function getState() {
         objectToScene: ObjectToSceneStore.getState(),
         rules: RulesStore.getState(),
         scenes: ScenesStore.getState(),
+        scenesNames: ScenesNamesStore.getState(),
         tags: TagsStore.getState(),
 
         //FUNCTIONS

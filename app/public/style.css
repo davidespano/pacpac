@@ -54,15 +54,15 @@ div.rules{
         grid-gap: 1.5px;
         padding: 1px;
         background-color: #ADB0B1;
-        height: 85vh !important;
-        max-height: 85vh !important;
+        height: 84vh !important;
+        max-height: 84vh !important;
         box-sizing: border-box;
     }
 
 
     body{
         width: 100vw;
-        height: 100vh;
+        height: 99vh;
     }
 
 }
@@ -829,6 +829,11 @@ div.rules{
     font-size: 0.9em;
 }
 
+.btn:hover{
+    background-color: grey;
+    border-color: grey;
+}
+
 #select-file-btn-audio-form, .scene-grid > button {
     width: 60%;
 }
@@ -1006,22 +1011,6 @@ li > span {
     width: 20%;
 }
 
-.loginlabel{
-  text-align: center;
-}
-
-.login-home{
-    margin: 0;
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    width: 450px;
-    height: 290px;
-    border: solid 1.5px #EF562D;
-    border-radius: 20px;
-}
 .gameList{
     overflow-y: auto;
 }
@@ -1346,4 +1335,36 @@ input.eudObjectString[type=text] {
     border-radius: 5px;
     background-color: white;
     color: #ef562d;
+}
+
+/* LOGIN FORM */
+
+.login-btn {
+    width: 50%;
+}
+
+#register-link {
+    color: #EF562D;
+    text-decoration: underline #EF562D;
+}
+
+#register-link:hover{
+    cursor: pointer;
+}
+
+.loginlabel{
+    text-align: center;
+}
+
+.login-home{
+    margin: 0;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    width: 450px;
+    height: 320px;
+    border: solid 1.5px #EF562D;
+    border-radius: 20px;
 }

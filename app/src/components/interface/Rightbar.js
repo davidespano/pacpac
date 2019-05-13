@@ -84,7 +84,7 @@ function sceneView(props){
                             title={"Elimina la scena corrente"}
                             className={"action-buttons-container"}
                             onClick={() => {
-                                SceneAPI.deleteScene(scene);
+                                checkAndRemoveScene(props, scene);
                             }}
                         >
                             <img className={"action-buttons scene-buttons-img"} src={"icons/icons8-waste-50.png"}/>
@@ -430,6 +430,13 @@ function generateObjectsList(props) {
                 );
             }
         }));
+    }
+}
+
+function checkAndRemoveScene(props, scene){
+    let answer = window.confirm('Vuoi rimuovere la scena? Verranno rimossi tutti gli oggetti, regole e audio ad essa collegati.');
+    if(answer){
+        props.removeScene(scene);
     }
 }
 

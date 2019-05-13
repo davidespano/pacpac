@@ -20,6 +20,7 @@ export default class EudRuleEditor extends Component {
 
     render() {
         let scene = this.props.scenes.get(this.props.currentScene);
+
         if (this.props.currentScene) {
             let rules = scene.get('rules');
             let rulesRendering = rules.map(
@@ -193,7 +194,6 @@ class EudRule extends Component {
     editSuperConditionOperator(condition, conditionToEdit, value){
         if(condition === conditionToEdit){
             condition.operator = value;
-            return;
         } else {
             if(condition instanceof SuperCondition){
                 this.editSuperConditionOperator(condition.condition1, conditionToEdit, value);
@@ -564,6 +564,7 @@ class EudAction extends Component {
     }
 
     getInteractiveObjectReference(uuid){
+
         if(uuid == InteractiveObjectsTypes.PLAYER){
             return InteractiveObject({
                 type: InteractiveObjectsTypes.PLAYER,
@@ -876,7 +877,7 @@ class EudAutoCompleteItem extends Component {
     changeSelection(){
         const ruleUpdate = {
             action: this.props.verb,
-            item: (this.props.item.type === '3D' || this.props.item.type === '2D') ? this.props.item.name : this.props.item.uuid
+            item: this.props.item.uuid
         };
 
         this.props.updateRule(ruleUpdate, this.props.role);
@@ -909,6 +910,8 @@ function getCompletions(props) {
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets);
+            console.log(props.assets)
+            console.log(allObjects)
             if(props.subject){
                 allObjects = allObjects.merge(ValuesMap.filter(x => x.subj_type.includes(props.subject.type)));
             }

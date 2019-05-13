@@ -23,6 +23,11 @@ class AudioStore extends ReduceStore {
                 return state.delete(action.audio.uuid);
             case ActionTypes.REMOVE_LOCAL_AUDIO:
                 return state.delete(action.audio.uuid);
+            case ActionTypes.REMOVE_SCENE:
+                action.scene.get('audio').map(audio => {
+                    state = state.delete(audio)
+                });
+                return state;
             case ActionTypes.UPDATE_AUDIO:
                 return state.set(action.audio.uuid, action.audio);
             case ActionTypes.RESET:

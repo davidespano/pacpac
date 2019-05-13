@@ -16,7 +16,7 @@ function TagDropdown(properties){
         let selectedId = 'chosen-tag-' + selected.uuid;
         return (
             <div className={'wrapper-dropdown-tags'} id={'wrapper-dropdown-tags-' + component}>
-                <div className={'chosen-tag-' + component}
+                <div className={'chosen-tag chosen-tag-' + component}
                      onClick={() => display(props, component)}
                 >
                     <p id={selectedId} className={'p-tag-form'}>

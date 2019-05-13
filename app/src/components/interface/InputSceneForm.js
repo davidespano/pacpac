@@ -33,6 +33,13 @@ function InputSceneForm(props){
                                            props.newSceneNameTyped(name != "");
                                        }}
                                 />
+                                <div>
+                                    <label htmlFor={'select-scene-type'}>Tipo:</label>
+                                    <select id={'select-scene-type'}>
+                                        <option value={"3D"}>3D</option>
+                                        <option value={"2D"}>2D</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className={'box-titles'}>Etichetta</div>
                             <div className={'box-grid scene-grid'}>
@@ -58,25 +65,9 @@ function InputSceneForm(props){
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
-                                let name = document.getElementById("scene_name").value,
-                                    media = props.editor.selectedFile,
-                                    tag_uuid = props.editor.selectedTagNewScene;
-                                let type = "3D";
-                                if(!props.scenes.has(name) && media != null) {
-                                    checkFormAndCreateScene(
-                                        name,
-                                        media,
-                                        props.scenes._map.last() + 1,
-                                        type,
-                                        tag_uuid,
-                                        props.editor.scenesOrder,
-                                    );
-                                    props.rightbarSelection('scene');
-                                    props.selectFile(null);
-                                }
-                            }
-                            } data-dismiss="modal" disabled={checkIfDisabled(props)}>Conferma</button>
+                            <button type="button" className="btn btn-secondary buttonConferm"
+                                    onClick={()=>checkFormAndCreateScene(props)} data-dismiss="modal"
+                                    disabled={checkIfDisabled(props)}>Conferma</button>
                         </div>
                     </div>
                 </div>
@@ -91,10 +82,21 @@ function checkIfDisabled(props){
     return !(props.editor.selectedFile && props.editor.newSceneNameTyped);
 }
 
-function checkFormAndCreateScene(name, media, index, type, tag, order){
-    name = name.trim();
-    if(!index) index = 0;
-    SceneAPI.createScene(name, media, index, type, tag, order);
+function checkFormAndCreateScene(props){
+
+    let name = document.getElementById("scene_name").value.trim(),
+        media = props.editor.selectedFile,
+        index = props.scenes._map.last() + 1,
+        tag = props.editor.selectedTagNewScene;
+    let e = document.getElementById("select-scene-type");
+    let type = e.options[e.selectedIndex].value;
+
+    if(!props.scenesNames.has(name) && media != null) {
+        if(!index) index = 0;
+        SceneAPI.createScene(name, media, index, type, tag, props.editor.scenesOrder);
+        props.rightbarSelection('scene');
+        props.selectFile(null);
+    }
 }
 
 function selectedFile(props){

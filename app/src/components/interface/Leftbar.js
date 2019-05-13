@@ -37,15 +37,15 @@ function list(props, path) {
                         src={path + child.img}
                         className={'list-img'}
                         alt={child.name}
-                        title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
+                        title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                         onClick={() => {
-                            props.updateCurrentScene(child.name);
+                            props.updateCurrentScene(child.uuid);
                         }}
                         style={borderStyle(props.tags.get(child.tag).color)}
                     />
                     <div className={'list-labels'}
                          onClick={() => {
-                            props.updateCurrentScene(child.name);
+                            props.updateCurrentScene(child.uuid);
                          }}
                     >
                         <div className={'label-text'}>
@@ -60,7 +60,7 @@ function list(props, path) {
                         muted preload={"auto"}
                         className={'video_element list-video'}
                         onClick={() => {
-                            props.updateCurrentScene(child.name);
+                            props.updateCurrentScene(child.uuid);
                         }}
                         title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
                         style={borderStyle(props.tags.get(child.tag).color)}
@@ -99,17 +99,13 @@ function buttonsBar(props){
                             let order = e.options[e.selectedIndex].value;
                             props.sortScenes(order);
                         }}>
-                    <option className={'' + checkCurrentOrder(props.editor.scenesOrder, Orders.ALPHABETICAL)}
-                            value={Orders.ALPHABETICAL}
+                    <option value={Orders.ALPHABETICAL}
                     >Nome (A-Z)</option>
-                    <option className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_ALPHABETICAL)}
-                            value={Orders.REV_ALPHABETICAL}
+                    <option value={Orders.REV_ALPHABETICAL}
                     >Nome (Z-A)</option>
-                    <option className={checkCurrentOrder(props.editor.scenesOrder, Orders.CHRONOLOGICAL)}
-                            value={Orders.CHRONOLOGICAL}
+                    <option value={Orders.CHRONOLOGICAL}
                     >Dalla prima all'ultima</option>
-                    <option className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_CHRONOLOGICAL)}
-                            value={Orders.REV_CHRONOLOGICAL}
+                    <option value={Orders.REV_CHRONOLOGICAL}
                     >Dall'ultima alla prima</option>
                 </select>
                 <div id="scenes-order-menu" className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>

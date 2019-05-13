@@ -6,7 +6,6 @@ import Tag from "../scene/Tag";
 import SceneAPI from "../utils/SceneAPI";
 
 
-
 class TagsStore extends ReduceStore {
 
     constructor() {

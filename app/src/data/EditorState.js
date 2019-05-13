@@ -21,7 +21,6 @@ const EditorState = Immutable.Record({
     rightbarSelection: 'scene',
     role: null,
     scenesOrder: Orders.CHRONOLOGICAL,
-    scenesOrderMenu: false,
     scenesNameFilter: '',
     selectedAudioToEdit: null,
     selectedFile: null,
