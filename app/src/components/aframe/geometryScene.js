@@ -64,6 +64,7 @@ export default class GeometryScene extends React.Component{
         };
         console.log(props.objectToScene.get(props.currentObject));
         console.log(props.currentObject);
+        console.log(this.state.scenes.name)
 
     }
 
@@ -71,13 +72,24 @@ export default class GeometryScene extends React.Component{
     {
         let a_point = document.querySelector('#cursor').components.pointsaver.points;
         let lengthLine = a_point.length;
+        let scene;
+        if(document.querySelector('a-sky')){
+            scene = document.querySelector('a-sky')
+        } else {
+            if(document.querySelector('a-videosphere')) {
+                scene = document.querySelector('a-videosphere')
+            } else {
+                scene = document.querySelector('a-plane')
+            }
+        }
         if (lengthLine >= 2) {
             let tmp = document.createElement('a-entity');
             tmp.setAttribute('scale', '-1 1 1');
             tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 1)].toArray().join(" "));
             tmp.setAttribute('line', 'end: ' + a_point[(0)].toArray().join(" "));
-            document.querySelector('a-sky').appendChild(tmp);
+            scene.appendChild(tmp);
         }
+        //document.querySelector('a-sky').setAttribute('scene', this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)))
         this.setState({
             scenes: this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
         })
@@ -91,6 +103,16 @@ export default class GeometryScene extends React.Component{
             let length = a_point.length;
             let idPoint = "point" + (length - 1).toString();
             let tmp = document.createElement('a-entity');
+            let scene;
+            if(document.querySelector('a-sky')){
+                scene = document.querySelector('a-sky')
+            } else {
+                if(document.querySelector('a-videosphere')) {
+                    scene = document.querySelector('a-videosphere')
+                } else {
+                    scene = document.querySelector('a-plane')
+                }
+            }
             tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
             a_point[(length-1)].x *= -1;
             tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
@@ -98,7 +120,7 @@ export default class GeometryScene extends React.Component{
             tmp.setAttribute('id', idPoint);
             tmp.setAttribute('material', 'color: green; shader: flat');
             tmp.setAttribute('class', 'points');
-            document.querySelector('a-sky').appendChild(tmp);
+            scene.appendChild(tmp);
 
 
             //Linee, purtroppo è poco intuitivo. Provandolo sembra bellino
@@ -109,7 +131,7 @@ export default class GeometryScene extends React.Component{
                 tmp.setAttribute('scale', '-1 1 1');
                 tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
                 tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
-                document.querySelector('a-sky').appendChild(tmp);
+                scene.appendChild(tmp);
             }
 
         }
@@ -128,9 +150,9 @@ export default class GeometryScene extends React.Component{
                     this.handleSceneChange();
                     cursor.setAttribute('color', 'black');
                     cursor.removeEventListener('click', function pointSaver(evt) {});
-                    cursor.removeEventListener('click', this.handleFeedbackChange);
+                    cursor.removeEventListener('click', this.handleFeedbackChange());
                     cursor.components.pointsaver.points = [];
-                    let scene = document.querySelector("a-sky");
+                    let scene = document.getElementById(this.state.scenes.name);
                     let points = scene.querySelectorAll(".points");
 
                     points.forEach(point => {
@@ -142,7 +164,7 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'e' || keyName === 'E')
             {
-                let scene = document.querySelector("a-sky");
+                let scene = document.getElementById(this.state.scenes.name);
                 let removeSphere = scene.querySelectorAll(".points");
                 removeSphere.forEach(point => {
                     scene.removeChild(point);
@@ -160,7 +182,7 @@ export default class GeometryScene extends React.Component{
                 if(pointsaver != null && pointsaver.points.length != 0){
                     let points = pointsaver.points;
                     let lastID = points.length - 1;
-                    let scene = document.querySelector('a-sky');
+                    let scene = document.getElementById(this.state.scenes.name);
                     let lastChild = scene.querySelector('#point' + lastID.toString());
                     points.splice(-1);
                     scene.removeChild(lastChild);
