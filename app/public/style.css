@@ -244,8 +244,9 @@ div.rules{
 #file-selected-name, .file-selected-name {
     border: solid 1px darkgrey;
     background-color: white;
-    height: 100%;
+    height: 30px;
     margin-bottom: 0 !important;
+    padding: 5px;
 }
 
 .select-file-btn {
@@ -290,8 +291,7 @@ div.rules{
 .propertyForm, .propertyForm-right{
     background-color: #FFFFFF;
     border: 1px solid darkgrey;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 5px;
 }
 
 .propertyForm {
@@ -300,6 +300,10 @@ div.rules{
 
 .propertyForm-right {
     text-align: right;
+}
+
+#select-scene-type-rightbar{
+    height: 100%;
 }
 
 .options-labels, .measure-units{
@@ -385,9 +389,23 @@ div.rules{
 
 .btn{
     color: #FFFFFF;
-    border-color: #DD4124;
+    border-color: #EF562D;
     background-color: #EF562D;
 }
+
+
+.btn:enabled:hover{
+    background-color: #ff724f;
+    border-color: #ff724f;
+}
+
+
+.btn:disabled{
+    background-color: grey;
+    cursor: auto;
+    border-color: grey;
+}
+
 
 .custom-select{
     border-color: #EF562D;
@@ -815,6 +833,29 @@ div.rules{
     margin-bottom: 5px;
 }
 
+#audio-list-box{
+    max-height: 150px;
+    overflow-y: scroll;
+    border: solid 1px darkgrey;
+    padding: 5px;
+}
+
+.audio-list-grid {
+    display : grid;
+    grid-template-columns: 70% auto auto;
+    grid-template-rows: 25px;
+    width: 100%;
+    text-align: left;
+}
+
+.audio-list-element {
+    padding: 5px;
+}
+
+.show-btns > button {
+    visibility: visible !important;
+}
+
 .media-grid, .options-grid {
     display: grid;
     grid-template-rows: 30px;
@@ -835,12 +876,7 @@ div.rules{
     font-size: 0.9em;
 }
 
-.btn:hover{
-    background-color: grey;
-    border-color: grey;
-}
-
-#select-file-btn-audio-form, .scene-grid > button {
+#select-file-btn-audio-form, .scene-grid > button, .position-btn {
     width: 60%;
 }
 
@@ -891,7 +927,7 @@ div.rules{
 
 .input-audio-form {
     width: 100%;
-    padding: 2px;
+    padding: 5px;
 }
 
 .input-new-audio-file {

@@ -18,8 +18,9 @@ function AudioForm(props){
                             <h5 className="modal-title" id="audio-form-modal-label">{title(props.editor)}</h5>
                             <button type="button" className="close" data-dismiss="modal"
                                     aria-label="Close" onClick={() => {
-                                        resetFields();
+                                        resetFields(props);
                                         props.selectFile(null);
+                                        props.newAudioNameTyped(false);
                                     }}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -27,7 +28,7 @@ function AudioForm(props){
                         <div className="modal-body modalOptions" id={'modal-body-audio-form'}>
                             <form id={'audio-form-box'}>
                                 {generalOptions(props, audioToEdit)}
-                                {sceneOption(props, audioToEdit)}
+                                {spatialOption(props, audioToEdit)}
                                 {playOption(props, audioToEdit)}
                             </form>
                         </div>
@@ -36,8 +37,9 @@ function AudioForm(props){
                                     data-dismiss="modal"
                                     onClick={() => {
                                         audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
-                                        resetFields();
+                                        resetFields(props);
                                     }}
+                                    disabled={checkIfDisabled(props, audioToEdit)}
                             >Salva</button>
                         </div>
                     </div>
@@ -45,6 +47,10 @@ function AudioForm(props){
             </div>
         </div>
     );
+}
+
+function checkIfDisabled(props, audioToEdit) {
+    return audioToEdit ? false : !(props.editor.selectedFile && props.editor.newAudioNameTyped);
 }
 
 function generalOptions(props, audioToEdit){
@@ -58,7 +64,12 @@ function generalOptions(props, audioToEdit){
         <div id={'audio-form-general'} className={'audio-form-box-section'}>
             <div className={'box-titles'}>Generali</div>
             <div className={'box-grid'}>
-                <input id={'input-name-audio'} className={'input-audio-form'} type={'text'} placeholder={'Nome'} defaultValue={name}/>
+                <input id={'input-name-audio'} className={'input-audio-form'}
+                       type={'text'} placeholder={'Nome'} defaultValue={name}
+                       onChange={() => {
+                           let name = document.getElementById("input-name-audio").value;
+                           props.newAudioNameTyped(name != "");
+                       }}/>
                 <div> </div>
                 <div id={'select-file-audio'}>
                     <p id={'file-selected-name'}
@@ -73,31 +84,37 @@ function generalOptions(props, audioToEdit){
     );
 }
 
-function sceneOption(props){
-    let local = props.editor.isAudioLocal;
+function spatialOption(props){
+    let spatial = props.editor.isAudioSpatial;
+
+    console.log(spatial)
 
     return(
         <div id={'audio-form-scene'} className={'audio-form-box-section'}>
-            <div className={'box-titles'}>Appartenenza</div>
+            <div className={'box-titles'}>Opzioni</div>
             <div className={'box-grid'}>
                 <form>
-                    <input type={'radio'} name={'isLocal'} id={'local-radio'} className={'radio-audio-form'}
-                           onClick={()=> props.changeAudioLocalOptionStatus(true)}
-                           defaultChecked={local}
+                    <input type={'radio'} name={'isSpatial'} id={'spatial-radio'} className={'radio-audio-form'}
+                           onClick={()=> props.changeAudioSpatialOptionStatus(true)}
+                           defaultChecked={spatial}
                     />
-                    <label htmlFor={'local-radio'} className={'label-audio-form'}>Scena</label>
-                    <input type={'radio'} name={'isLocal'} id={'global-radio'} className={'radio-audio-form'}
-                           onClick={()=> props.changeAudioLocalOptionStatus(false)}
-                           defaultChecked={!local}
+                    <label htmlFor={'spatial-radio'} className={'label-audio-form'}>Spaziale</label>
+                    <input type={'radio'} name={'isSpatial'} id={'global-radio'} className={'radio-audio-form'}
+                           onClick={()=> props.changeAudioSpatialOptionStatus(false)}
+                           defaultChecked={!spatial}
                     />
-                    <label htmlFor={'local-radio'} className={'label-audio-form'}>Progetto</label>
+                    <label htmlFor={'spatial-radio'} className={'label-audio-form'}>Non spaziale</label>
                 </form>
                 <div> </div>
                 <select id={'input-scene-audio'} className={'input-audio-form'}
-                        disabled={!local}>
+                        disabled={!spatial}>
                     {[...props.scenes.values()].map(scene =>
-                        <option>{scene.name}</option>)}
+                        <option value={scene.uuid}>{scene.name}</option>)}
                 </select>
+                <button className={'btn position-btn'} disabled={!spatial}>
+                    <img className={"action-buttons btn-img"} src={"icons/icons8-white-image-50.png"}/>
+                    Posiziona
+                </button>
             </div>
         </div>
     );
@@ -119,22 +136,20 @@ function playOption(props, audioToEdit){
 
 
 function saveNewAudio(props){
-    console.log('salvaa')
     let name = document.getElementById('input-name-audio').value,
         file = props.editor.selectedFile,
-        isLocal = props.editor.isAudioLocal,
+        isSpatial = props.editor.isAudioSpatial,
         loop = document.getElementById('loop-checkbox').value == 'on' ? true : false;
 
     let e = document.getElementById('input-scene-audio');
     let scene = e.options[e.selectedIndex].value;
 
-
     props.addNewAudio(Audio({
         uuid: uuid.v4(),
         name: name,
         file: file,
-        isLocal: isLocal,
-        scene: isLocal ? scene : null,
+        isSpatial: isSpatial,
+        scene: isSpatial ? scene : null,
         loop: loop,
     }))
 
@@ -143,19 +158,18 @@ function saveNewAudio(props){
 function editAudio(props, audioToEdit){
     let name = document.getElementById('input-name-audio').value,
         file = document.getElementById('file-selected-name').innerText,
-        isLocal = props.editor.isAudioLocal,
+        isSpatial = props.editor.isAudioSpatial,
         loop = document.getElementById('loop-checkbox').value == 'on' ? true : false;
 
     let e = document.getElementById('input-scene-audio');
     let scene = e.options[e.selectedIndex].value;
 
-
     props.updateAudio(Audio({
         uuid: audioToEdit.uuid,
         name: name,
         file: file,
-        isLocal: isLocal,
-        scene: isLocal ? scene : null,
+        isSpatial: isSpatial,
+        scene: isSpatial ? scene : null,
         loop: loop,
     }))
 }
@@ -171,8 +185,9 @@ function title(editor){
     return editor.selectedAudioToEdit ? 'Modifica audio' : 'Nuovo audio';
 }
 
-function resetFields(){
+function resetFields(props){
     document.getElementById('audio-form-box').reset();
+    props.selectFile(null);
 }
 
 export default AudioForm;

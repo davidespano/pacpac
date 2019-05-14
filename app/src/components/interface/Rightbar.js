@@ -91,7 +91,7 @@ function sceneView(props){
                         </button>
                     </div>
                 </div>
-                <label className={'rightbar-titles'}>Nome</label>
+                <label className={'rightbar-titles'}>Nome e tipologia</label>
                 <div className={'rightbar-grid'}>
                     <div id={"sceneName"}
                          className={"propertyForm rightbar-box"}
@@ -102,6 +102,12 @@ function sceneView(props){
                          }}
                     >
                         {scene.name}
+                    </div>
+                    <div>
+                        <select id={'select-scene-type-rightbar'} defaultValue={scene.type}>
+                            <option value={"3D"}>3D</option>
+                            <option value={"2D"}>2D</option>
+                        </select>
                     </div>
                 </div>
                 <label className={'rightbar-titles'}>Etichetta</label>
@@ -123,11 +129,64 @@ function sceneView(props){
                     </div>
                     <FileSelectionBtn {...properties} />
                 </div>
+                <label className={'rightbar-titles'}>Audio spaziali</label>
+                {spatialAudioList(props, scene)}
             </div>
         );
     } else {
         return(
             <div>Nessuna scena selezionata</div>
+        );
+    }
+}
+
+
+function spatialAudioList(props, scene){
+    if(scene.audio.length > 0){
+        return (
+            <div id={'audio-list-box'}>
+                {scene.audio.map(a => {
+                    let audio = props.audios.get(a);
+                    return (
+                        <div className={'audio-list-grid'}>
+                            <p className={'audio-list-element'}>
+                                {audio.name}
+                            </p>
+                            <button
+                                title={"Modifica"}
+                                className={"action-buttons-container"}
+                                data-toggle="modal"
+                                data-target="#audio-form-modal"
+                            >
+                                <img className={"action-buttons"} src={"icons/icons8-pencil-50.png"} alt={'Modifica'}/>
+                            </button>
+                            <button
+                                title={"Cancella"}
+                                className={"action-buttons-container"}
+                                onClick={() => {
+                                    props.removeAudio(audio);
+                                }}
+                            >
+                                <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Modifica'}/>
+                            </button>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    } else {
+        return (
+            <div className={'rightbar-grid'}>
+                <p className={'options-labels'}>Nessun audio spaziale inserito</p>
+                <button
+                    title={"Audio manager"}
+                    className={"select-file-btn btn"}
+                    data-toggle="modal"
+                    data-target="#manage-audio-modal"
+                >
+                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-white-audio-50.png"}/>
+                </button>
+            </div>
         );
     }
 }

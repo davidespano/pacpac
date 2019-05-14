@@ -118,6 +118,13 @@ const Actions = {
        })
     },
 
+    newAudioNameTyped(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.NEW_AUDIO_NAME_TYPED,
+            status: status,
+        })
+    },
+
     newSceneNameTyped(status){
         AppDispatcher.dispatch({
             type: ActionTypes.NEW_SCENE_NAME_TYPED,
@@ -187,9 +194,9 @@ const Actions = {
         })
     },
 
-    changeAudioLocalOptionStatus(status){
+    changeAudioSpatialOptionStatus(status){
         AppDispatcher.dispatch({
-            type: ActionTypes.AUDIO_LOCAL_OPTION,
+            type: ActionTypes.AUDIO_SPATIAL_OPTION,
             status: status,
         })
     },
@@ -554,9 +561,9 @@ const Actions = {
      * @param audio
      */
     addNewAudio(audio){
-        if(audio.isLocal){
+        if(audio.isSpatial){
             AppDispatcher.dispatch({
-                type: ActionTypes.ADD_NEW_LOCAL_AUDIO,
+                type: ActionTypes.ADD_NEW_SPATIAL_AUDIO,
                 scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
@@ -574,9 +581,9 @@ const Actions = {
      * @param audio
      */
     removeAudio(audio){
-        if(audio.isLocal){
+        if(audio.isSpatial){
             AppDispatcher.dispatch({
-                type: ActionTypes.REMOVE_LOCAL_AUDIO,
+                type: ActionTypes.REMOVE_SPATIAL_AUDIO,
                 scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
@@ -598,7 +605,7 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_AUDIO,
             audio: audio,
-        })
+        });
         /**TODO: Dispatch db update here**/
     },
 

@@ -60,10 +60,11 @@ function getState() {
         //editor
 
         changeAudioFormStatus: Actions.changeAudioFormStatus,
-        changeAudioLocalOptionStatus: Actions.changeAudioLocalOptionStatus,
+        changeAudioSpatialOptionStatus: Actions.changeAudioSpatialOptionStatus,
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
+        newAudioNameTyped: Actions.newAudioNameTyped,
         newSceneNameTyped: Actions.newSceneNameTyped,
         rightbarSelection: Actions.rightbarSelection,
         selectFile: Actions.selectFile,

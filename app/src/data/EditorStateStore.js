@@ -17,8 +17,8 @@ class EditorStateStore extends ReduceStore {
         switch (action.type) {
             case ActionTypes.ADD_NEW_OBJECT:
                 return state.set('rightbarSelection', 'objects');
-            case ActionTypes.AUDIO_LOCAL_OPTION:
-                return state.set('isAudioLocal', action.status);
+            case ActionTypes.AUDIO_SPATIAL_OPTION:
+                return state.set('isAudioSpatial', action.status);
             case ActionTypes.AUDIO_FORM_STATUS:
                 return state.set('isEditAudioOn', action.status);
             case ActionTypes.DROPDOWN_TAGS_NEW_SCENE:
@@ -41,6 +41,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.GEOMETRY_MODE_ON);
             case ActionTypes.LOGIN_MODE_ON:
                 return state.set('mode', ActionTypes.LOGIN_MODE_ON);
+            case ActionTypes.NEW_AUDIO_NAME_TYPED:
+                return state.set('newAudioNameTyped', action.status);
             case ActionTypes.NEW_SCENE_NAME_TYPED:
                 return state.set('newSceneNameTyped', action.status);
             case ActionTypes.FILE_MANAGER_MODE_ON:

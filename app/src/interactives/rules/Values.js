@@ -19,6 +19,10 @@ const Values = {
     COLLECTED : 'COLLECTED',
     NOT_COLLECTED : 'NOT_COLLECTED',
 
+    // scene types
+    THREE_DIM : '3D',
+    TWO_DIM : '2D',
+
 };
 
 export default Values;

@@ -1,4 +1,5 @@
 import Immutable from "immutable";
+import Values from "../interactives/rules/Values";
 
 /**
  * @type {*|Immutable.Record.Class}
@@ -16,7 +17,7 @@ const Scene = Immutable.Record({
     name : "",
     img : "",
     index : 0,
-    type : "3D",
+    type : Values.THREE_DIM,
     tag : 'default',
     objects : {
         // uuid lists
@@ -27,7 +28,6 @@ const Scene = Immutable.Record({
     },
     rules : [], // uuid list
     audio : [], // uuid list
-
 });
 
 export default Scene;

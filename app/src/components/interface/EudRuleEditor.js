@@ -323,7 +323,7 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={subject == null? "" : objectTypeToString(subject.type) + " " + subject.name}
+                originalText={subject == null? "" : objectTypeToString(subject.type) + subject.name}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText = {(text, role) => this.changeText(text, role)}
@@ -495,7 +495,7 @@ class EudAction extends Component {
             complement={this.props.rule.object_uuid}
             verb={this.props.action}
             ruleEditorCallback={this.props.ruleEditorCallback}
-            originalText={subject == null? "" : objectTypeToString(subject.type) + " " + subject.name}
+            originalText={subject == null? "" : objectTypeToString(subject.type) + subject.name}
             inputText={this.props.editor.get('completionInput')}
             showCompletion={subjectCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
@@ -538,7 +538,7 @@ class EudAction extends Component {
             complement={this.props.rule.object_uuid}
             verb={this.props.action}
             ruleEditorCallback={this.props.ruleEditorCallback}
-            originalText={object == null? "" : objectTypeToString(object.type) + " " + object.name}
+            originalText={object == null? "" : objectTypeToString(object.type) + object.name}
             inputText={this.props.editor.get('completionInput')}
             showCompletion={objectCompletion}
             changeText = {(text, role) => this.changeText(text, role)}
@@ -823,7 +823,7 @@ class EudAutoComplete extends Component {
         });
         let li = items.valueSeq()
             .filter(i => {
-                let key = objectTypeToString(i.type) + " " + i.name;
+                let key = objectTypeToString(i.type) + i.name;
                 let n = (this.props.input ? this.props.input : "").split(" ");
                 const word = n[n.length - 1];
                 return key.includes(word);
@@ -862,7 +862,7 @@ class EudAutoCompleteItem extends Component {
 
     render() {
 
-        let text = objectTypeToString(this.props.item.type) + " " +  this.props.item.name;
+        let text = objectTypeToString(this.props.item.type) +  this.props.item.name;
 
         return <li
             key={this.props.item.name}
@@ -895,9 +895,7 @@ class EudAutoCompleteItem extends Component {
  */
 function getCompletions(props) {
     // TODO [davide] stub implemenation
-
-    console.log(props);
-
+    
     switch(props.role){
         case "subject":
             let subjects = props.interactiveObjects.filter(x => x.type !== InteractiveObjectsTypes.TRANSITION).set(
@@ -964,7 +962,7 @@ function eventTypeToString(eventType) {
         case RuleActionTypes.CHANGE_STATE:
             return 'cambia stato a';
         case RuleActionTypes.CHANGE_VISIBILITY:
-            return 'diventa'
+            return 'diventa';
         default:
             return "";
     }
@@ -1002,43 +1000,45 @@ function superOperatorsToString(superoperatorUuid){
 }
 
 function objectTypeToString(objectType) {
+    let type = "";
     switch (objectType) {
         case InteractiveObjectsTypes.BUTTON:
-            return "il pulsante";
+            type = "il pulsante"; break;
         case InteractiveObjectsTypes.COUNTER:
-            return "il contatore";
+            type = "il contatore"; break;
         case InteractiveObjectsTypes.CUMULABLE:
-            return "l'oggetto";
+            type = "l'oggetto"; break;
         case InteractiveObjectsTypes.LOCK:
-            return "la serratura";
+            type =  "la serratura"; break;
         case InteractiveObjectsTypes.SELECTOR:
-            return "il selettore";
+            type =  "il selettore"; break;
         case InteractiveObjectsTypes.SWITCH:
-            return "l'interruttore";
+            type =  "l'interruttore"; break;
         case InteractiveObjectsTypes.TIMER:
-            return "il timer";
+            type =  "il timer"; break;
         case InteractiveObjectsTypes.KEY:
-            return "la chiave";
+            type =  "la chiave"; break;
         case InteractiveObjectsTypes.TRANSITION:
-            return "la transizione";
+            type =  "la transizione"; break;
         case InteractiveObjectsTypes.PLAYER:
-            return "il giocatore";
-        case '3D':
-        case '2D':
-            return "la scena";
+            type =  "il giocatore"; break;
+        case Values.THREE_DIM:
+        case Values.TWO_DIM:
+            type =  "la scena"; break;
         case "operation":
         case "operator":
         case "value":
-            return "";
+            return type;
         case 'video':
-            return 'il video';
+            type =  'il video'; break;
         case 'img':
-            return "l'immagine";
+            type =  "l'immagine"; break;
         case 'file':
-            return 'il file';
+            type =  'il file'; break;
         default:
-            return "l'oggetto sconosciuto";
+            type =  "l'oggetto sconosciuto"; break;
     }
+    return type + " ";
 }
 
 function valueUuidToString(valueUuid){
@@ -1260,7 +1260,7 @@ const RulesActionMap = Immutable.Map([
         {
             type: "operation",
             subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: ['2D', '3D'],
+            obj_type: [Values.THREE_DIM, Values.TWO_DIM],
             name: eventTypeToString(RuleActionTypes.TRANSITION),
             uuid: RuleActionTypes.TRANSITION
         }
@@ -1299,7 +1299,7 @@ const RulesActionMap = Immutable.Map([
         RuleActionTypes.CHANGE_BACKGROUND,
         {
             type: "operation",
-            subj_type: ['2D', '3D'],
+            subj_type: [Values.THREE_DIM, Values.TWO_DIM],
             obj_type: ['video'],
             name: eventTypeToString(RuleActionTypes.CHANGE_BACKGROUND),
             uuid: RuleActionTypes.CHANGE_BACKGROUND

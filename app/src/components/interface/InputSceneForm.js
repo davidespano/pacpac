@@ -2,6 +2,7 @@ import React from 'react';
 import SceneAPI from "../../utils/SceneAPI";
 import TagDropdown from "./TagDropdown";
 import FileSelectionBtn from "./FileSelectionBtn";
+import Values from "../../interactives/rules/Values";
 
 function InputSceneForm(props){
 
@@ -36,8 +37,8 @@ function InputSceneForm(props){
                                 <div>
                                     <label htmlFor={'select-scene-type'}>Tipo:</label>
                                     <select id={'select-scene-type'}>
-                                        <option value={"3D"}>3D</option>
-                                        <option value={"2D"}>2D</option>
+                                        <option value={Values.THREE_DIM}>3D</option>
+                                        <option value={Values.TWO_DIM}>2D</option>
                                     </select>
                                 </div>
                             </div>
