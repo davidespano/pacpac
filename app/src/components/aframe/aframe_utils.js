@@ -22,10 +22,8 @@ function generateAsset(scene, srcBackground, runState = []){
         }
         currAssets.push(sceneBackground);
         let objAsset;
-        console.log(scene)
         //second, push the media of the interactive objs
         Object.values(scene.objects).flat().forEach(obj => {
-            console.log(obj)
             Object.keys(obj.media).map(k => {
                 if(obj.media[k] !== null){
                     if(stores_utils.getFileType(obj.media[k]) === 'video'){

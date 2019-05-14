@@ -69,8 +69,17 @@ export default class GeometryScene extends React.Component{
 
     handleSceneChange()
     {
+        let a_point = document.querySelector('#cursor').components.pointsaver.points;
+        let lengthLine = a_point.length;
+        if (lengthLine >= 2) {
+            let tmp = document.createElement('a-entity');
+            tmp.setAttribute('scale', '-1 1 1');
+            tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 1)].toArray().join(" "));
+            tmp.setAttribute('line', 'end: ' + a_point[(0)].toArray().join(" "));
+            document.querySelector('a-sky').appendChild(tmp);
+        }
         this.setState({
-            scenes: this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject))
+            scenes: this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
         })
     }
 
@@ -106,17 +115,14 @@ export default class GeometryScene extends React.Component{
         }
     }
 
-    componentWillMount(){
-        this.createScene();
-    }
     componentDidMount() {
-
+        this.createScene();
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
             {
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
-                if(pointsaver != null && pointsaver.points.length != 0) {
+                if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
                     this.handleSceneChange();
@@ -125,8 +131,9 @@ export default class GeometryScene extends React.Component{
                     cursor.removeEventListener('click', this.handleFeedbackChange);
                     cursor.components.pointsaver.points = [];
                     let scene = document.querySelector("a-sky");
-                    let removeSphere = scene.querySelectorAll(".points");
-                    removeSphere.forEach(point => {
+                    let points = scene.querySelectorAll(".points");
+
+                    points.forEach(point => {
                         scene.removeChild(point);
                     });
                     this.handleSceneChange();
@@ -170,10 +177,9 @@ export default class GeometryScene extends React.Component{
     }
 
     async createScene(){
-        let scenaaa = {};
-        await SceneAPI.getAllDetailedScenes(scenaaa);
-        console.log(scenaaa)
-        this.setState({completeScene: scenaaa})
+        let scene = {};
+        await SceneAPI.getAllDetailedScenes(scene);
+        this.setState({completeScene: scene})
 
     }
 
@@ -181,7 +187,6 @@ export default class GeometryScene extends React.Component{
     {
 
         if (this.state.completeScene !== undefined ) {
-            console.log(this.state.scenes)
             this.currentLevel = [this.state.scenes.name]
         }
         else{
@@ -199,9 +204,8 @@ export default class GeometryScene extends React.Component{
                 })
             }
         }
-        let assets = this.generateAssets2();
-        console.log(assets)
-        let skies = this.generateBubbles();
+        let assets = this.generateAssets();
+        let skie = this.generateBubbles();
 
 
 
@@ -235,12 +239,10 @@ export default class GeometryScene extends React.Component{
                     <a-assets>
                         {assets}
                     </a-assets>
-                    {skies}
-
-
+                    {skie}
                     <Entity primitive="a-camera" key="keycamera" id="camera" look-controls_us="pointerLockEnabled: true">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" pointsaver id="cursor" />
+                            <Entity primitive="a-cursor" pointsaver id="cursor"  />
                         </Entity>
                     </Entity>
                 </Scene>
@@ -248,9 +250,8 @@ export default class GeometryScene extends React.Component{
         );
     }
 
-    generateAssets2(){
+    generateAssets(){
         return this.currentLevel.map(sceneName =>{
-            console.log(this.state.completeScene)
             return aframe_utils.generateAsset(this.state.completeScene.scenes[sceneName], this.state.completeScene.scenes[sceneName].img)
         })
     }
@@ -259,7 +260,7 @@ export default class GeometryScene extends React.Component{
         return this.currentLevel.map(sceneName =>{
             return (
                 <Bubble key={"key" + sceneName} scene={this.state.completeScene.scenes[this.state.scenes.name]} isActive={true}
-                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene) } editMode={true}
+                        handler={() => this.handleSceneChange() } editMode={true} update={this.state.update}
                 />
             );
         });

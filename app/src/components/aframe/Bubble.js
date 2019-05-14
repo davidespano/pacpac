@@ -1,6 +1,6 @@
-import React from "react";
+import React,{Component} from "react";
 import {Entity} from 'aframe-react';
-import {Curved, Sound} from './aframe_entities';
+import {Curved, CurvedGeometry} from './aframe_entities';
 import settings from "../../utils/settings";
 import {Howl} from "howler";
 import '../../data/stores_utils'
@@ -9,8 +9,12 @@ const THREE = require('three');
 const {mediaURL} = settings;
 
 
-export default class Bubble extends React.Component
+export default class Bubble extends Component
 {
+    constructor(props){
+        super(props)
+    }
+
     componentDidMount()
     {
         let el = this;
@@ -30,6 +34,10 @@ export default class Bubble extends React.Component
         //if(stores_utils.getFileType(this.props.scene.img) === 'video')
         this.setShader();
         if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame();
+    }
+
+    componentWillReceiveProps({props}) {
+        this.setState({...this.state,props})
     }
 
     componentDidUpdate(){
@@ -74,9 +82,8 @@ export default class Bubble extends React.Component
 
         const curves = Object.values(scene.objects).flat().map(curve => {
             if(this.props.editMode){
-                console.log(this.props.editMode)
                 return(
-                    <CurvedGeometry vertices={curve.vertices}/>
+                    <CurvedGeometry key={"keyC"+ curve.uuid} vertices={curve.vertices} id={curve.uuid} />
                 );
             } else {
                 return(
@@ -85,7 +92,6 @@ export default class Bubble extends React.Component
             }
 
         });
-        console.log(this.props.scene)
         let material = "depthTest: true; ";
         let active = 'active: false;';
         let radius = 9.9;
@@ -111,7 +117,7 @@ export default class Bubble extends React.Component
             //camera = document.getElementById('camera');
             //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
             sceneRender = (
-                <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
+                <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive} radius="9.5"
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
                     material={material} play_video={active} position="0 1.6 -6.44"/*dolby={'active: ' + this.props.isActive.toString() + ';'}*/>
                 {curves}
@@ -243,9 +249,3 @@ export default class Bubble extends React.Component
     }
 }
 
-function CurvedGeometry(props)
-{
-    return(
-        <Entity geometry={"primitive: polyline; vertices: " + props.vertices} scale= "-1 1 1" material="side: double; opacity: 0.50"/>
-    );
-}
