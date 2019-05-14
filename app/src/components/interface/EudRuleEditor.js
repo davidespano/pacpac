@@ -896,6 +896,8 @@ class EudAutoCompleteItem extends Component {
 function getCompletions(props) {
     // TODO [davide] stub implemenation
 
+    console.log(props);
+
     switch(props.role){
         case "subject":
             let subjects = props.interactiveObjects.filter(x => x.type !== InteractiveObjectsTypes.TRANSITION).set(
@@ -910,11 +912,8 @@ function getCompletions(props) {
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets);
-            console.log(props.assets)
-            console.log(allObjects)
-            if(props.subject){
-                allObjects = allObjects.merge(ValuesMap.filter(x => x.subj_type.includes(props.subject.type)));
-            }
+            allObjects = allObjects.merge(filterValues(props.subject, props.verb));
+
             if(props.verb.action){
                 let objType = RulesActionMap.get(props.verb.action).obj_type;
                 allObjects = allObjects.filter(x => objType.includes(x.type));
@@ -925,10 +924,22 @@ function getCompletions(props) {
         case "operator":
             return OperatorsMap;
         case 'value':
-            return props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
+            return props.subject ? ValuesMap.filter(x =>
+                x.subj_type.includes(props.subject.type)) : ValuesMap;
 
     }
 
+}
+
+function filterValues(subject, verb){
+    let v = ValuesMap;
+    if(subject){
+        v = v.filter(x => x.subj_type.includes(subject.type));
+        if(verb){
+            v = v.filter(x => x.verb_type.includes(verb.action));
+        }
+    }
+    return v;
 }
 
 
@@ -952,6 +963,8 @@ function eventTypeToString(eventType) {
             return 'preme';
         case RuleActionTypes.CHANGE_STATE:
             return 'cambia stato a';
+        case RuleActionTypes.CHANGE_VISIBILITY:
+            return 'diventa'
         default:
             return "";
     }
@@ -1030,6 +1043,10 @@ function objectTypeToString(objectType) {
 
 function valueUuidToString(valueUuid){
     switch(valueUuid){
+        case Values.VISIBLE:
+            return 'visibile';
+        case Values.INVISIBLE:
+            return 'invisibile';
         case Values.ON:
             return 'acceso';
         case Values.OFF:
@@ -1050,10 +1067,42 @@ function valueUuidToString(valueUuid){
 
 const ValuesMap = Immutable.Map([
     [
+        Values.VISIBLE,
+        {
+            type: 'value',
+            subj_type: [
+                InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.KEY
+            ],
+            verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
+            name: valueUuidToString(Values.VISIBLE),
+            uuid: Values.VISIBLE,
+        },
+
+    ],
+    [
+        Values.INVISIBLE,
+        {
+            type: 'value',
+            subj_type: [
+                InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.KEY],
+            verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
+            name: valueUuidToString(Values.INVISIBLE),
+            uuid: Values.INVISIBLE,
+        },
+
+    ],
+    [
         Values.ON,
         {
             type: 'value',
             subj_type: [InteractiveObjectsTypes.SWITCH],
+            verb_type: [RuleActionTypes.CHANGE_STATE],
             name: valueUuidToString(Values.ON),
             uuid: Values.ON,
         },
@@ -1064,6 +1113,7 @@ const ValuesMap = Immutable.Map([
         {
             type: 'value',
             subj_type: [InteractiveObjectsTypes.SWITCH],
+            verb_type: [RuleActionTypes.CHANGE_STATE],
             name: valueUuidToString(Values.OFF),
             uuid: Values.OFF,
         },
@@ -1074,6 +1124,7 @@ const ValuesMap = Immutable.Map([
         {
             type: 'value',
             subj_type: [InteractiveObjectsTypes.LOCK],
+            verb_type: [RuleActionTypes.CHANGE_STATE],
             name: valueUuidToString(Values.LOCKED),
             uuid: Values.LOCKED,
         },
@@ -1084,6 +1135,7 @@ const ValuesMap = Immutable.Map([
         {
             type: 'value',
             subj_type: [InteractiveObjectsTypes.LOCK],
+            verb_type: [RuleActionTypes.CHANGE_STATE],
             name: valueUuidToString(Values.UNLOCKED),
             uuid: Values.UNLOCKED,
         },
@@ -1094,6 +1146,7 @@ const ValuesMap = Immutable.Map([
         {
             type: 'value',
             subj_type: [InteractiveObjectsTypes.KEY],
+            verb_type: [RuleActionTypes.CHANGE_STATE],
             name: valueUuidToString(Values.COLLECTED),
             uuid: Values.COLLECTED,
         },
@@ -1104,6 +1157,7 @@ const ValuesMap = Immutable.Map([
         {
             type: 'value',
             subj_type: [InteractiveObjectsTypes.KEY],
+            verb_type: [RuleActionTypes.CHANGE_STATE],
             name: valueUuidToString(Values.NOT_COLLECTED),
             uuid: Values.NOT_COLLECTED,
         },
@@ -1263,6 +1317,21 @@ const RulesActionMap = Immutable.Map([
             obj_type: ['value'],
             name: eventTypeToString(RuleActionTypes.CHANGE_STATE),
             uuid: RuleActionTypes.CHANGE_STATE,
+        },
+    ],
+    [
+        RuleActionTypes.CHANGE_VISIBILITY,
+        {
+            type: "operation",
+            subj_type: [
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.TRANSITION,
+            ],
+            obj_type: ['value'],
+            name: eventTypeToString(RuleActionTypes.CHANGE_VISIBILITY),
+            uuid: RuleActionTypes.CHANGE_VISIBILITY,
         },
     ],
 ]);

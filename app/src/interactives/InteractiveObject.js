@@ -1,4 +1,5 @@
 import Immutable from "immutable"
+import Values from "./rules/Values";
 
 /**
  * @type {*|Immutable.Record.Class}
@@ -16,6 +17,7 @@ const InteractiveObject = Immutable.Record({
     type : null,
     media : null,
     mask: null,
+    visible: Values.VISIBLE,
     vertices : null,
     properties : null,
 

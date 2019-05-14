@@ -1,6 +1,8 @@
-import Immutable from "immutable";
 
 const Values = {
+
+    VISIBLE: 'VISIBLE',
+    INVISIBLE: 'INVISIBLE',
 
     //switch
 

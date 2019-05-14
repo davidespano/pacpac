@@ -164,14 +164,14 @@ function showObjects(interactiveObjects, props) {
                 <div>
                     <button
                         title={"Filtra per scena corrente"}
-                        className={"action-buttons-container"}
+                        className={"action-buttons-container " + checkFilters(props, 'scene')}
                         onClick={() => props.updateObjectTypeFilter('scene')}
                     >
                         <img className={"action-buttons"} src={"icons/icons8-image-100.png"} alt={'Filtra per scena corrente'}/>
                     </button>
                     <button
                         title={"Tutti gli oggetti"}
-                        className={"action-buttons-container"}
+                        className={"action-buttons-container " + checkFilters(props, 'all')}
                         onClick={()=> props.updateObjectTypeFilter('all')}
                     >
                         <img className={"action-buttons"} src={"icons/icons8-gallery-50.png"} alt={'Tutti gli oggetti'}/>
@@ -184,15 +184,9 @@ function showObjects(interactiveObjects, props) {
 }
 
 
-/*
-<button
-    title={"Cerca un oggetto"}
-    className={"action-buttons-container"}
->
-    <img className={"action-buttons"} src={"icons/icons8-search-filled-50.png"} alt={'Cerca un oggetto'}/>
-</button>
-
-*/
+function checkFilters(props, filter){
+    return props.editor.objectsTypeFilter === filter ? 'selected-filter' : '';
+}
 
 /**
  * Generates options of currently selected object
@@ -222,6 +216,20 @@ function generateProperties(props){
                 </div>
             </div>
             <label className={'rightbar-titles'}>Opzioni</label>
+            <div className={'options-grid'}>
+                <label className={'options-labels'}>Visibilità:</label>
+                <select id={'visibilityDefaultState'}
+                        defaultValue={currentObject.visible}
+                        onChange={() => {
+                            let e = document.getElementById('visibilityDefaultState');
+                            let value = e.options[e.selectedIndex].value;
+                            interface_utils.setPropertyFromValue(currentObject, 'state', value, props);
+                        }}
+                >
+                    <option value={Values.VISIBLE}>Visibile</option>
+                    <option value={Values.INVISIBLE}>Invisibile</option>
+                </select>
+            </div>
             {generateSpecificProperties(currentObject, props)}
             <div className={'options-grid'}>
                 <label className={'options-labels'}>Media:</label>
@@ -265,7 +273,7 @@ function generateSpecificProperties(object, props){
                         >
                             {object.properties.duration}
                         </div>
-                        ms
+                        <span className={'measure-units'}>ms</span>
                     </div>
                 </div>
             );
@@ -281,8 +289,8 @@ function generateSpecificProperties(object, props){
                                 interface_utils.setPropertyFromValue(object, 'state', value, props);
                     }}
                     >
-                        <option value={'ON'}>ON</option>
-                        <option value={'OFF'}>OFF</option>
+                        <option value={Values.ON}>ON</option>
+                        <option value={Values.OFF}>OFF</option>
                     </select>
                 </div>
             );
@@ -356,9 +364,11 @@ function objectButtons(props){
                 title={"Cancella"}
                 className={"action-buttons-container"}
                 onClick={() => {
-                    InteractiveObjectAPI.removeObject(scene, currentObject);
-                    props.updateCurrentObject(null);
-                }
+                    let answer = window.confirm("Vuoi cancellare l'oggetto " + currentObject.name + "?");
+                    if(answer){
+                        InteractiveObjectAPI.removeObject(scene, currentObject);
+                        props.updateCurrentObject(null);
+                    }}
                 }
             >
                 <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella'}/>
@@ -422,8 +432,11 @@ function generateObjectsList(props) {
                              src={"icons/icons8-waste-50.png"}
                              alt={'Cancella'}
                              onClick={() => {
-                                 InteractiveObjectAPI.removeObject(scene, obj);
-                                 props.updateCurrentObject(null);
+                                 let answer = window.confirm("Vuoi cancellare l'oggetto " + obj.name + "?");
+                                 if (answer) {
+                                     InteractiveObjectAPI.removeObject(scene, obj);
+                                     props.updateCurrentObject(null);
+                                 }
                              }}
                         />
                     </div>

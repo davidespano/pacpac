@@ -302,7 +302,18 @@ div.rules{
     text-align: right;
 }
 
+.options-labels, .measure-units{
+    margin:0;
+    padding-top: 5px;
+}
+
+.selected-filter{
+    background-color: darkgrey !important;
+    border-color: darkgrey !important;
+}
+
 #transitionDuration {
+    padding: 5px;
     width: 50%;
 }
 
@@ -429,11 +440,6 @@ div.rules{
 .nav-link:hover{
     color: #FFFFFF;
 }
-
-.measureUnit{
-    text-align: left;
-}
-
 
 #ruleObjSelection{
     border: 1px solid #EF562D;
