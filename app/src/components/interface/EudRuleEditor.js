@@ -11,6 +11,7 @@ import {Operators, SuperOperators} from "../../interactives/rules/Operators";
 import Values from "../../interactives/rules/Values";
 import Condition from "../../interactives/rules/Condition";
 import SuperCondition from "../../interactives/rules/SuperCondition";
+import interface_utils from "./interface_utils";
 let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
@@ -368,7 +369,7 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={value == null? "" : valueUuidToString(value.uuid)}
+                originalText={value == null? "" : interface_utils.valueUuidToString(value.uuid)}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={valueCompletion}
                 changeText = {(text, role) => this.changeText(text, role)}
@@ -1041,29 +1042,6 @@ function objectTypeToString(objectType) {
     return type + " ";
 }
 
-function valueUuidToString(valueUuid){
-    switch(valueUuid){
-        case Values.VISIBLE:
-            return 'visibile';
-        case Values.INVISIBLE:
-            return 'invisibile';
-        case Values.ON:
-            return 'acceso';
-        case Values.OFF:
-            return 'spento';
-        case Values.LOCKED:
-            return 'chiuso';
-        case Values.UNLOCKED:
-            return 'aperto';
-        case Values.COLLECTED:
-            return 'raccolto';
-        case Values.NOT_COLLECTED:
-            return 'non raccolto';
-        default:
-            return 'stato sconosciuto';
-    }
-
-}
 
 const ValuesMap = Immutable.Map([
     [
@@ -1077,7 +1055,7 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.KEY
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
-            name: valueUuidToString(Values.VISIBLE),
+            name: interface_utils.valueUuidToString(Values.VISIBLE),
             uuid: Values.VISIBLE,
         },
 
@@ -1092,7 +1070,7 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.KEY],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
-            name: valueUuidToString(Values.INVISIBLE),
+            name: interface_utils.valueUuidToString(Values.INVISIBLE),
             uuid: Values.INVISIBLE,
         },
 
@@ -1103,7 +1081,7 @@ const ValuesMap = Immutable.Map([
             type: 'value',
             subj_type: [InteractiveObjectsTypes.SWITCH],
             verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: valueUuidToString(Values.ON),
+            name: interface_utils.valueUuidToString(Values.ON),
             uuid: Values.ON,
         },
 
@@ -1114,7 +1092,7 @@ const ValuesMap = Immutable.Map([
             type: 'value',
             subj_type: [InteractiveObjectsTypes.SWITCH],
             verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: valueUuidToString(Values.OFF),
+            name: interface_utils.valueUuidToString(Values.OFF),
             uuid: Values.OFF,
         },
 
@@ -1125,7 +1103,7 @@ const ValuesMap = Immutable.Map([
             type: 'value',
             subj_type: [InteractiveObjectsTypes.LOCK],
             verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: valueUuidToString(Values.LOCKED),
+            name: interface_utils.valueUuidToString(Values.LOCKED),
             uuid: Values.LOCKED,
         },
 
@@ -1136,7 +1114,7 @@ const ValuesMap = Immutable.Map([
             type: 'value',
             subj_type: [InteractiveObjectsTypes.LOCK],
             verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: valueUuidToString(Values.UNLOCKED),
+            name: interface_utils.valueUuidToString(Values.UNLOCKED),
             uuid: Values.UNLOCKED,
         },
 
@@ -1147,7 +1125,7 @@ const ValuesMap = Immutable.Map([
             type: 'value',
             subj_type: [InteractiveObjectsTypes.KEY],
             verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: valueUuidToString(Values.COLLECTED),
+            name: interface_utils.valueUuidToString(Values.COLLECTED),
             uuid: Values.COLLECTED,
         },
 
@@ -1158,7 +1136,7 @@ const ValuesMap = Immutable.Map([
             type: 'value',
             subj_type: [InteractiveObjectsTypes.KEY],
             verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: valueUuidToString(Values.NOT_COLLECTED),
+            name: interface_utils.valueUuidToString(Values.NOT_COLLECTED),
             uuid: Values.NOT_COLLECTED,
         },
 

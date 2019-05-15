@@ -829,27 +829,35 @@ div.rules{
 }
 
 .rightbar-grid {
-    grid-template-columns: 80% auto;
+    grid-template-columns: 70% auto;
     margin-bottom: 5px;
 }
 
-#audio-list-box{
-    max-height: 150px;
-    overflow-y: scroll;
-    border: solid 1px darkgrey;
-    padding: 5px;
+.audio-list-box-btns{
+    display: flex;
+    margin-bottom: 5px;
 }
 
-.audio-list-grid {
-    display : grid;
-    grid-template-columns: 70% auto auto;
-    grid-template-rows: 25px;
-    width: 100%;
-    text-align: left;
+.audio-list-box-btns > button {
+    margin-right: 5px;
+}
+
+.audio-list-box{
+    max-height: 125px;
+    overflow-y: scroll;
+    border: solid 1px darkgrey;
+    background-color: white;
 }
 
 .audio-list-element {
-    padding: 5px;
+    padding: 2px;
+    border-bottom: dotted 1px darkgrey;
+    text-align: left;
+}
+
+.no-audio{
+    color: darkgrey;
+    text-align: center !important;
 }
 
 .show-btns > button {
@@ -878,6 +886,10 @@ div.rules{
 
 #select-file-btn-audio-form, .scene-grid > button, .position-btn {
     width: 60%;
+}
+
+.btn-img {
+    padding: 0;
 }
 
 #modal-content-audio{
@@ -951,6 +963,7 @@ div.rules{
 .audio-names {
     padding-left: 5px;
     margin-bottom: 0;
+    border-bottom: dotted 1px darkgrey;
 }
 
 
@@ -1434,4 +1447,15 @@ input.eudObjectString[type=text] {
 .remove-game-btn {
     position: absolute;
     right: 0;
+}
+
+/** GENERIC DROPDOWNS WITH REACT-SELECT **/
+
+.react-select {
+    max-height: 30px;
+    border-radius: 0;
+}
+
+.react-select > div > div, .react-select > div > div > div {
+    padding: 2px;
 }

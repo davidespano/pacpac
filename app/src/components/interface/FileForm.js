@@ -9,7 +9,8 @@ function FileForm(props){
         component : 'modal',
     };
 
-    let buttonStatus = !props.editor.selectedFile;
+    let disabled = props.editor.selectedMediaToEdit === 'audio-form' ?
+        !props.editor.selectedAudioFile : !props.editor.selectedFile;
 
     return(
         <div id={"manage-files"}>
@@ -29,8 +30,8 @@ function FileForm(props){
                                 type={'button'}
                                 className={'btn'}
                                 data-dismiss="modal"
-                                disabled={buttonStatus}
-                                onClick={()=> handleFileUpdate(props)}
+                                disabled={disabled}
+                                onClick={()=> interface_utils.handleFileUpdate(props)}
                             >
                                 Open file
                             </button>
@@ -41,21 +42,6 @@ function FileForm(props){
         </div>
 
     );
-}
-
-function handleFileUpdate(props){
-    switch(props.editor.selectedMediaToEdit){
-        case 'mask':
-        case 'media0':
-        case 'media1':
-            let obj = props.interactiveObjects.get(props.currentObject);
-            interface_utils.setPropertyFromValue(obj, props.editor.selectedMediaToEdit, props.editor.selectedFile, props);
-            break;
-        case 'rightbar':
-            let scene = props.scenes.get(props.currentScene);
-            scene_utils.setProperty(scene, 'img', props.editor.selectedFile, props, props.editor.scenesOrder);
-            break;
-    }
 }
 
 export default FileForm;

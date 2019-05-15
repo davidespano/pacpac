@@ -54,7 +54,12 @@ function handleFileSelection(props, data, component){
             }
 
             path += data.name;
-            props.selectFile(path);
+
+            if(props.editor.selectedMediaToEdit === 'audio-form'){
+                props.selectAudioFile(path);
+            } else {
+                props.selectFile(path);
+            }
         }
     }
 }
@@ -62,24 +67,11 @@ function handleFileSelection(props, data, component){
 function handleDoubleClick(props, data, component) {
     if(component === 'modal' && data.type === 'file') {
         handleFileSelection(props, data, component);
-        handleFileUpdate(props);
+        interface_utils.handleFileUpdate(props);
         document.getElementById('manage-files-close-btn').click();
     }
 }
 
-function handleFileUpdate(props){
-    switch(props.editor.selectedMediaToEdit){
-        case 'mask':
-        case 'media0':
-        case 'media1':
-            let obj = props.interactiveObjects.get(props.currentObject);
-            interface_utils.setPropertyFromValue(obj, props.editor.selectedMediaToEdit, props.editor.selectedFile, props);
-            break;
-        case 'rightbar':
-            let scene = props.scenes.get(props.currentScene);
-            scene_utils.setProperty(scene, 'img', props.editor.selectedFile, props, props.editor.scenesOrder);
-            break;
-    }
-}
+
 
 export default FileContainer;

@@ -1,6 +1,6 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import {EditorState, Modifier, SelectionState} from 'draft-js';
-import inizializeMention from "./inizializeMention"
+import scene_utils from "../../scene/scene_utils";
+import Values from "../../interactives/rules/Values";
 /**
  * Updates object property with the given value, returns new object
  * @param object
@@ -22,6 +22,7 @@ function setPropertyFromValue(object, property, value, props){
         case "name":
         case "mask":
         case "vertices":
+        case 'visible':
             newObject = object.set(property, value);
             break;
         // specific properties
@@ -148,172 +149,66 @@ function checkSelection(element, option, editor){
 
 
 /**
- * Returns true if multiple chars are selected
- * @param state
- * @returns {boolean}
+ * dispatch file updating when closing audio, edit media and input scene form
+ * @param props
  */
-function checkIfMultipleSelection(state){
-    const selectionLength = state.getSelection().getEndOffset() - state.getSelection().getStartOffset();
-    return selectionLength > 0;
-}
-
-
-/**
- * Returns currently selected entity (doesn't check if selection spans over multiple blocks or entities)
- * @param state
- * @param offset
- * returns entity
- */
-function getEntity(state, offset = 0){
-    const selection = state.getSelection();
-    const block = state.getCurrentContent().getBlockForKey(selection.getAnchorKey());
-    const entity = block.getEntityAt(selection.getStartOffset() + offset);
-
-    return entity !== null ? state.getCurrentContent().getEntity(entity) : null;
+function handleFileUpdate(props){
+    switch(props.editor.selectedMediaToEdit){
+        case 'mask':
+        case 'media0':
+        case 'media1':
+            let obj = props.interactiveObjects.get(props.currentObject);
+            setPropertyFromValue(obj, props.editor.selectedMediaToEdit, props.editor.selectedFile, props);
+            break;
+        case 'rightbar':
+            let scene = props.scenes.get(props.currentScene);
+            scene_utils.setProperty(scene, 'img', props.editor.selectedFile);
+            break;
+    }
 }
 
 /**
- * check selected entity
- * @param state
- * @param offset (move selection n spaces)
- * @returns {boolean}
+ * reset form fields
+ * @id form id
  */
-function checkIfEditableCursor(state, offset){
-    let entity = getEntity(state, offset);
-
-    console.log('ENTITY: ' + entity);
-
-    return entity !== null && entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
+function resetFields(id){
+    document.getElementById(id).reset();
 }
 
-function checkKeyHendle(state) {
-    let entity = getEntity(state);
-
-    console.log('ENTITY: ' + entity);
-    if(entity == null){
-        return entity == null
-    } else {
-        return entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
+/**
+ * returns string according to the given value
+ * @param valueUuid
+ * @returns {string}
+ */
+function valueUuidToString(valueUuid){
+    switch(valueUuid){
+        case Values.VISIBLE:
+            return 'visibile';
+        case Values.INVISIBLE:
+            return 'invisibile';
+        case Values.ON:
+            return 'acceso';
+        case Values.OFF:
+            return 'spento';
+        case Values.LOCKED:
+            return 'chiuso';
+        case Values.UNLOCKED:
+            return 'aperto';
+        case Values.COLLECTED:
+            return 'raccolto';
+        case Values.NOT_COLLECTED:
+            return 'non raccolto';
+        case Values.THREE_DIM:
+            return '3D';
+        case Values.TWO_DIM:
+            return '2D';
+        default:
+            return 'stato sconosciuto';
     }
 
-
-}
-
-/**
- * check selected entity
- * @param state
- * return {boolean}
- */
-function checkIfDeletableCursor(state){
-    return checkIfEditableCursor(state) && (getEntity(state) === getEntity(state, -1));
-}
-
-/**
- * @param state
- * return {boolean}
- */
-function checkIfPlaceholderNeeded(state){
-    const entity = getEntity(state);
-    return ((getEntity(state, -2) !== entity) && (getEntity(state, 1) !== entity));
-}
-
-/**
- * Given an EditorState, returns true only selection spans over a single block
- * @param state
- * @returns {boolean}
- */
-function checkBlock(state){
-    const blockStart = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const blockEnd = state.getCurrentContent().getBlockForKey(state.getSelection().getFocusKey());
-
-    //checks if selection spans over multiple blocks
-    return (blockStart === blockEnd);
-}
-
-/**
- * Given an EditorState, returns true only if the selection spans over a single entity.
- * Doesn't check if selection spans over multiple blocks
- * Offset "moves" the cursor of n spaces
- * @param state (EditorState)
- * @returns {boolean}
- */
-function checkEntity(state) {
-
-    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
-    const entityEnd = block.getEntityAt(state.getSelection().getEndOffset());
-    //checks if entity is null or selection covers more than one entity
-    return (entityStart !== null && (entityStart === entityEnd));
-}
-
-/**
- * check previous entity
- * @param state
- */
-function firstCheck(state){
-    return getEntity(state, -1) === getEntity(state, 0);
-}
-
-/**
- * check previous entity
- * @param state
- */
-function secondCheck(state){
-    const selectionLength = state.getSelection().getEndOffset() - state.getSelection().getStartOffset();
-    return getEntity(state, selectionLength+1) === getEntity(state, 0);
-}
-
-/**
- * check in an Entity is a mention
- * @param state
- * @returns {boolean}
- */
-function isMention(state) {
-    let entity = getEntity(state);
-
-    console.log('ENTITY: ' + entity);
-
-    return entity !== null && entity.getType() === 'mention';
-}
-
-/**
- * check if the previous character is @
- * @param state
- * @returns {boolean}
- */
-function checkAt(state) {
-    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const text = block.text;
-    const blockStart = state.getSelection().anchorOffset;
-    return text.slice(blockStart-1,blockStart) === '@'
-}
-
-/**
- * return the start index of an entity
- * @param state
- * @returns {*}
- */
-function getStartIndexEntity(state) {
-    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
-    let entityText;
-    if (state.getCurrentContent().getEntity(entityStart).getData().mention.link !== undefined){
-        entityText = state.getCurrentContent().getEntity(entityStart).getData().mention.name;
-    } else {
-        entityText = state.getCurrentContent().getEntity(entityStart).getData().mention._root.entries[0][1];
-    }
-    let index = inizializeMention.getIndicesOf( entityText, block.text);
-    return index;
 }
 
 
-/**
- * check if a text selected contains a space at the end
- */
-function checkEndSpace() {
-    const textSelected = window.getSelection().toString();
-    return  textSelected.slice(-1) === " ";
-}
 
 export default {
     onlyNumbers : onlyNumbers,
@@ -322,18 +217,7 @@ export default {
     title : title,
     centroid: calculateCentroid,
     checkSelection: checkSelection,
-    getEntity: getEntity,
-    checkIfEditableCursor: checkIfEditableCursor,
-    checkIfMultipleSelection: checkIfMultipleSelection,
-    checkIfDeletableCursor: checkIfDeletableCursor,
-    checkIfPlaceholderNeeded: checkIfPlaceholderNeeded,
-    checkBlock: checkBlock,
-    checkEntity: checkEntity,
-    firstCheck: firstCheck,
-    secondCheck: secondCheck,
-    checkEndSpace: checkEndSpace,
-    isMention: isMention,
-    checkAt: checkAt,
-    getStartIndexEntity: getStartIndexEntity,
-    checkKeyHendle: checkKeyHendle,
+    handleFileUpdate: handleFileUpdate,
+    resetFields: resetFields,
+    valueUuidToString: valueUuidToString,
 }

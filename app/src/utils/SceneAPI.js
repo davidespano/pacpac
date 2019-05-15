@@ -13,6 +13,7 @@ import Immutable from 'immutable';
 import stores_utils from "../data/stores_utils";
 import SuperCondition from "../interactives/rules/SuperCondition";
 import Condition from "../interactives/rules/Condition";
+import Audio from "../audio/Audio";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -38,6 +39,7 @@ function getByName(name, order = null) {
             let collectable_keys_uuids = [];
             let locks_uuids = [];
             let rules_uuids = [];
+            let audio_uuids = [];
 
             // generates transitions and saves them to the objects store
             response.body.transitions.map((transition) => {
@@ -141,6 +143,21 @@ function getByName(name, order = null) {
 
             });
 
+            /*
+            response.body.audio.map(audio => {
+               audio_uuids.push(audio.uuid);
+               let a = Audio({
+                   uuid: audio.uuid,
+                   name: audio.name,
+                   file: audio.file,
+                   isSpatial: audio.isSpatial,
+                   scene: audio.scene,
+                   loop: audio.loop,
+               });
+               Actions.addNewAudio(a);
+            });
+            */
+
             let tag = response.body.tag.uuid ? response.body.tag.uuid : "default";
 
             // new Scene object
@@ -158,6 +175,7 @@ function getByName(name, order = null) {
                     locks: locks_uuids,
                 },
                 rules : rules_uuids,
+                audio : audio_uuids,
             });
 
             Actions.receiveScene(newScene, order);

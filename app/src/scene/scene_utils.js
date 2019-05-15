@@ -89,13 +89,12 @@ function removeAudioFromScene(scene, audio){
  * @param property
  * @param value
  * @param props
- * @param order of scenes
  */
-function setProperty(scene, property, value, props, order){
+function setProperty(scene, property, value, props){
     let newScene = scene.set(property, value);
 
     if(property === 'name'){
-        props.updateSceneName(newScene, scene.name, order);
+        props.updateSceneName(newScene, scene.name, props.editor.scenesOrder);
     } else {
         props.updateScene(newScene);
     }

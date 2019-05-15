@@ -84,6 +84,14 @@ const Actions = {
     },
 
 
+    selectAudioFile(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_AUDIO_FILE,
+            selection: selection,
+        })
+    },
+
+
     selectFile(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_FILE,
@@ -101,6 +109,13 @@ const Actions = {
     selectAudioToEdit(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_AUDIO_TO_EDIT,
+            selection: selection,
+        })
+    },
+
+    selectSceneSpatialAudio(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_SCENE_SPATIAL_AUDIO,
             selection: selection,
         })
     },

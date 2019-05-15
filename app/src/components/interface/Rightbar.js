@@ -8,6 +8,7 @@ import scene_utils from "../../scene/scene_utils";
 import TagDropdown from "./TagDropdown";
 import FileSelectionBtn from "./FileSelectionBtn";
 import Values from "../../interactives/rules/Values";
+import Dropdown from "./Dropdown";
 
 let THREE = require('three');
 
@@ -98,16 +99,13 @@ function sceneView(props){
                          contentEditable={true}
                          onBlur={() => {
                              let value = document.getElementById('sceneName').textContent;
-                             scene_utils.setProperty(scene, 'name', value, props, props.editor.scenesOrder);
+                             scene_utils.setProperty(scene, 'name', value, props);
                          }}
                     >
                         {scene.name}
                     </div>
                     <div>
-                        <select id={'select-scene-type-rightbar'} defaultValue={scene.type}>
-                            <option value={"3D"}>3D</option>
-                            <option value={"2D"}>2D</option>
-                        </select>
+                        <Dropdown props={props} component={'scene-type'} defaultValue={scene.type}/>
                     </div>
                 </div>
                 <label className={'rightbar-titles'}>Etichetta</label>
@@ -142,42 +140,25 @@ function sceneView(props){
 
 
 function spatialAudioList(props, scene){
-    if(scene.audio.length > 0){
-        return (
-            <div id={'audio-list-box'}>
-                {scene.audio.map(a => {
-                    let audio = props.audios.get(a);
-                    return (
-                        <div className={'audio-list-grid'}>
-                            <p className={'audio-list-element'}>
-                                {audio.name}
-                            </p>
-                            <button
-                                title={"Modifica"}
-                                className={"action-buttons-container"}
-                                data-toggle="modal"
-                                data-target="#audio-form-modal"
-                            >
-                                <img className={"action-buttons"} src={"icons/icons8-pencil-50.png"} alt={'Modifica'}/>
-                            </button>
-                            <button
-                                title={"Cancella"}
-                                className={"action-buttons-container"}
-                                onClick={() => {
-                                    props.removeAudio(audio);
-                                }}
-                            >
-                                <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Modifica'}/>
-                            </button>
-                        </div>
-                    );
-                })}
-            </div>
-        );
+    let audioRendering;
+    if(scene.audio.length > 0) {
+        audioRendering = scene.audio.map(a => {
+            let audio = props.audios.get(a);
+            return (
+                <p className={'audio-list-element ' + checkSelection(props, audio.uuid)}
+                   onClick={() => selection(props, audio.uuid)}>
+                    {audio.name}
+                </p>
+            );
+        });
     } else {
-        return (
-            <div className={'rightbar-grid'}>
-                <p className={'options-labels'}>Nessun audio spaziale inserito</p>
+        audioRendering = <p className={'audio-list-element no-audio'}>Nessun audio spaziale</p>
+    }
+
+
+    return (
+        <React.Fragment>
+            <div className={'audio-list-box-btns'}>
                 <button
                     title={"Audio manager"}
                     className={"select-file-btn btn"}
@@ -186,10 +167,34 @@ function spatialAudioList(props, scene){
                 >
                     <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-white-audio-50.png"}/>
                 </button>
+                <button
+                    title={"Modifica"}
+                    className={"action-buttons-container"}
+                    data-toggle="modal"
+                    data-target="#audio-form-modal"
+                    disabled={props.editor.selectedAudioToEdit == null}
+                >
+                    <img className={"action-buttons"} src={"icons/icons8-pencil-50.png"} alt={'Modifica'}/>
+                </button>
+                <button
+                    title={"Cancella"}
+                    className={"action-buttons-container"}
+                    onClick={() => {
+                        props.removeAudio(props.editor.selectedAudioToEdit);
+                    }}
+                    disabled={props.editor.selectedAudioToEdit == null}
+                >
+                    <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Modifica'}/>
+                </button>
             </div>
-        );
-    }
+            <div className={'audio-list-box'}>
+                {audioRendering}
+            </div>
+        </React.Fragment>
+    );
 }
+
+
 
 /**
  * Generates currently selected object's options
@@ -247,6 +252,14 @@ function checkFilters(props, filter){
     return props.editor.objectsTypeFilter === filter ? 'selected-filter' : '';
 }
 
+function checkSelection(props, uuid){
+    return props.editor.selectedAudioToEdit === uuid ? 'selected-audio' : '';
+}
+
+function selection(props, uuid){
+    props.editor.selectedAudioToEdit === uuid ? props.selectAudioToEdit(null) : props.selectAudioToEdit(uuid);
+}
+
 /**
  * Generates options of currently selected object
  * @param props
@@ -277,17 +290,7 @@ function generateProperties(props){
             <label className={'rightbar-titles'}>Opzioni</label>
             <div className={'options-grid'}>
                 <label className={'options-labels'}>Visibilità:</label>
-                <select id={'visibilityDefaultState'}
-                        defaultValue={currentObject.visible}
-                        onChange={() => {
-                            let e = document.getElementById('visibilityDefaultState');
-                            let value = e.options[e.selectedIndex].value;
-                            interface_utils.setPropertyFromValue(currentObject, 'state', value, props);
-                        }}
-                >
-                    <option value={Values.VISIBLE}>Visibile</option>
-                    <option value={Values.INVISIBLE}>Invisibile</option>
-                </select>
+                <Dropdown props={props} component={'visibility'} defaultValue={currentObject.visible}/>
             </div>
             {generateSpecificProperties(currentObject, props)}
             <div className={'options-grid'}>
@@ -340,34 +343,14 @@ function generateSpecificProperties(object, props){
             return(
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato iniziale:</label>
-                    <select id={'switchDefaultState'}
-                            defaultValue={object.properties.state}
-                            onChange={() => {
-                                let e = document.getElementById('switchDefaultState');
-                                let value = e.options[e.selectedIndex].value;
-                                interface_utils.setPropertyFromValue(object, 'state', value, props);
-                    }}
-                    >
-                        <option value={Values.ON}>ON</option>
-                        <option value={Values.OFF}>OFF</option>
-                    </select>
+                    <Dropdown props={props} component={'on-off'} defaultValue={object.properties.state}/>
                 </div>
             );
         case InteractiveObjectsTypes.KEY:
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato iniziale:</label>
-                    <select id={'keyDefaultState'}
-                            defaultValue={object.properties.state}
-                            onChange={() => {
-                                let e = document.getElementById('keyDefaultState');
-                                let value = e.options[e.selectedIndex].value;
-                                interface_utils.setPropertyFromValue(object, 'state', value, props);
-                            }}
-                    >
-                        <option value={Values.COLLECTED}>Raccolta</option>
-                        <option value={Values.NOT_COLLECTED}>Non raccolta</option>
-                    </select>
+                    <Dropdown props={props} component={'collected-not'} defaultValue={object.properties.state}/>
                 </div>
             );
         case InteractiveObjectsTypes.LOCK:

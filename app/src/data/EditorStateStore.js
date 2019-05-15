@@ -57,18 +57,21 @@ class EditorStateStore extends ReduceStore {
                 return state.set('rightbarSelection', 'scene');
             case ActionTypes.RIGHTBAR_SELECTION:
                 return state.set('rightbarSelection', action.selection);
+            case ActionTypes.SELECT_AUDIO_FILE:
+                return state.set('selectedAudioFile', action.selection);
             case ActionTypes.SELECT_FILE:
                 return state.set('selectedFile', action.selection);
             case ActionTypes.SELECT_MEDIA_TO_EDIT:
                 return state.set('selectedMediaToEdit', action.selection);
             case ActionTypes.SELECT_AUDIO_TO_EDIT:
                 return state.set('selectedAudioToEdit', action.selection);
+            case ActionTypes.SELECT_SCENE_SPATIAL_AUDIO:
+                return state.set('selectedSceneSpatialAudio', action.selection);
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SORT_SCENES:
                 return state.set('scenesOrder', action.order);
             case ActionTypes.SET_MENTION_TYPE:
-                //console.log('update mention type to ' + action.mentionType)
                 return state.set('mentionType', action.mentionType);
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);

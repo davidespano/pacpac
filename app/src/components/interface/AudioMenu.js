@@ -9,7 +9,8 @@ function AudioMenu(props){
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
                             <h5 className="modal-title" id="manage-audio-modal-label">Gestione audio</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close"
+                                    onClick={() => props.selectAudioToEdit(null)}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -72,7 +73,8 @@ function AudioMenu(props){
                         </div>
                         <div className="modal-footer" id={'modal-footer-media'}>
                             <button type="button" className="btn btn-secondary buttonConferm"
-                                    data-dismiss="modal" >Ok</button>
+                                    data-dismiss="modal" onClick={() => props.selectAudioToEdit(null)}
+                            >Ok</button>
                         </div>
                     </div>
                 </div>

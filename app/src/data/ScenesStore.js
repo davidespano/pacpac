@@ -35,6 +35,7 @@ class ScenesStore extends ReduceStore {
                             type : scene.type,
                             tag : tag,
                             rules: [],
+                            audio : [],
                             objects: {
                                 transitions: [],
                                 switches: [],
