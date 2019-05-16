@@ -87,6 +87,7 @@ function generalOptions(props, audioToEdit){
 
 function spatialOption(props){
     let spatial = props.editor.isAudioSpatial;
+    let selectedScene = props.editor.selectedSceneSpatialAudio;
 
     return(
         <div id={'audio-form-scene'} className={'audio-form-box-section'}>
@@ -105,9 +106,12 @@ function spatialOption(props){
                     <label htmlFor={'spatial-radio'} className={'label-audio-form'}>Non spaziale</label>
                 </form>
                 <div> </div>
-                <Dropdown props={props} component={'scenes'} defaultValue={props.currentScene} disabled={!spatial}/>
+                <Dropdown props={props}
+                          component={'scenes'}
+                          defaultValue={selectedScene ? selectedScene : props.currentScene}
+                          disabled={!spatial}/>
                 <button className={'btn position-btn'} disabled={!spatial}>
-                    <img className={"action-buttons btn-img"} src={"icons/icons8-white-image-50.png"}/>
+                    <img className={"action-buttons"} src={"icons/icons8-white-image-50.png"}/>
                     Posiziona
                 </button>
             </div>
@@ -135,7 +139,7 @@ function saveNewAudio(props){
         file = props.editor.selectedAudioFile,
         isSpatial = props.editor.isAudioSpatial,
         loop = document.getElementById('loop-checkbox').value == 'on' ? true : false,
-        scene = props.selectedSceneSpatialAudio;
+        scene = props.editor.selectedSceneSpatialAudio;
 
     props.addNewAudio(Audio({
         uuid: uuid.v4(),
@@ -152,10 +156,10 @@ function editAudio(props, audioToEdit){
     let name = document.getElementById('input-name-audio').value,
         file = document.getElementById('file-selected-name').innerText,
         isSpatial = props.editor.isAudioSpatial,
-        loop = document.getElementById('loop-checkbox').value == 'on' ? true : false;
+        loop = document.getElementById('loop-checkbox').value == 'on' ? true : false,
+        scene = props.editor.selectedSceneSpatialAudio;
 
-    let e = document.getElementById('input-scene-audio');
-    let scene = e.options[e.selectedIndex].value;
+    console.log('modifica audio')
 
     props.updateAudio(Audio({
         uuid: audioToEdit.uuid,

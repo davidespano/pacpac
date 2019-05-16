@@ -172,7 +172,7 @@ function handleFileUpdate(props){
  * @id form id
  */
 function resetFields(id){
-    document.getElementById(id).reset();
+    //document.getElementById(id).reset();
 }
 
 /**

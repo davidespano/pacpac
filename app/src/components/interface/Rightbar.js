@@ -152,7 +152,7 @@ function spatialAudioList(props, scene){
             );
         });
     } else {
-        audioRendering = <p className={'audio-list-element no-audio'}>Nessun audio spaziale</p>
+        audioRendering = <p className={'no-audio'}>Nessun audio spaziale</p>
     }
 
 

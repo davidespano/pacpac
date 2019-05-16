@@ -50,7 +50,7 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.PLAY_MODE_ON:
                 return state.set('mode', ActionTypes.PLAY_MODE_ON);
             case ActionTypes.RECEIVE_SCENE:
-                return state.set('rightbarSelection', 'scene');
+                return state.set('rightbarSelection', 'scene').set('selectedSceneSpatialAudio', action.scene.uuid);
             case ActionTypes.RECEIVE_USER:
                 return state.set('user', action.user);
             case ActionTypes.REMOVE_SCENE:
@@ -75,6 +75,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mentionType', action.mentionType);
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
+            case ActionTypes.UPDATE_CURRENT_SCENE:
+                return state.set('selectedSceneSpatialAudio', action.scene.uuid);
             case ActionTypes.UPDATE_OBJECTS_NAME_FILTER:
                 return state.set('objectsNameFilter', action.filter);
             case ActionTypes.UPDATE_OBJECTS_TYPE_FILTER:

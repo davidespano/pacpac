@@ -17,7 +17,7 @@ function Dropdown(properties){
             onChange={onChange}
             className={'react-select react-select-' + component}
             styles={customStyle}
-            disabled={ properties.disabled ? properties.disabled : false}
+            isDisabled={ properties.disabled ? properties.disabled : false}
         />
     );
 }

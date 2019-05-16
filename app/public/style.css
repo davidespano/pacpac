@@ -849,10 +849,14 @@ div.rules{
     background-color: white;
 }
 
-.audio-list-element {
+.audio-list-element, .no-audio {
     padding: 2px;
     border-bottom: dotted 1px darkgrey;
     text-align: left;
+}
+
+.audio-list-element:hover{
+    cursor: pointer;
 }
 
 .no-audio{
@@ -888,7 +892,7 @@ div.rules{
     width: 60%;
 }
 
-.btn-img {
+.position-btn{
     padding: 0;
 }
 
