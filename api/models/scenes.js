@@ -3,6 +3,7 @@ const Scene = require('../models/neo4j/scene');
 const Tag = require('../models/neo4j/tag');
 const Rule = require('../models/neo4j/rule');
 const Interactiveobject = require('../models/neo4j/interactiveObject');
+const Audio = require('../models/neo4j/audio')
 const fs = require('fs');
 
 function singleScene(results) {
@@ -47,6 +48,10 @@ function buildScene(record) {
         const locks = record.get('locks');
         scene.locks = locks.map(t => new Interactiveobject(t));
     }catch (error){}
+    try {
+        const audios = record.get('audios');
+        scene.audios = audios.map(t => new Audio(t));
+    }catch (error){}
     return scene;
 }
 
@@ -88,7 +93,9 @@ function getByName(session, name, gameID){
         'WITH scene, tag, transitions, switches, collectable_keys, locks, rule ' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
         'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, collect(action) as acts ' +
-        'RETURN scene, tag, transitions, switches, collectable_keys, locks, collect(rule { .*,  actions :acts}) as rules',
+        'OPTIONAL MATCH (scene)-[:CONTAINS_AUDIO]->(audio:Audio) ' +
+        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, acts, collect(audio) as audios ' +
+        'RETURN scene, tag, transitions, switches, collectable_keys, locks, audios, collect(rule { .*,  actions :acts}) as rules',
         {'name': name})
         .then(result => {
             const scene = singleScene(result);
@@ -118,7 +125,9 @@ function getAllDetailed(session, gameID) {
         'WITH scene, tag, transitions, switches, collectable_keys, locks, rule ' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
         'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, collect(action) as acts ' +
-        'RETURN scene, tag, transitions, switches, collectable_keys, locks, collect(rule { .*,  actions :acts}) as rules',)
+        'OPTIONAL MATCH (scene)-[:CONTAINS_AUDIO]->(audio:Audio) ' +
+        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, acts, collect(audio) as audios ' +
+        'RETURN scene, tag, transitions, switches, collectable_keys, locks, audios, collect(rule { .*,  actions :acts}) as rules',)
         .then(result => {
                 if (!_.isEmpty(result.records)) {
                     return multipleScenes(result);

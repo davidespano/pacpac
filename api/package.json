@@ -13,6 +13,7 @@
     "@opuscapita/filemanager-server": "^1.1.0-beta.4",
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
+    "del": "^4.1.1",
     "errorhandler": "^1.5.0",
     "express": "^4.16.3",
     "lodash": "^4.17.10",

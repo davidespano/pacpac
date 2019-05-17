@@ -2,6 +2,7 @@ import React from 'react';
 import SceneAPI from "../../utils/SceneAPI";
 import MediaAPI from "../../utils/MediaAPI";
 import InputGameForm from "./InputGameForm";
+import GameAPI from "../../utils/GameAPI";
 
 
 function GameList(props) {
@@ -41,6 +42,8 @@ function games(props){
                     onClick={() => {
                         let answer = window.confirm("Sei sicuro di voler cancellare il gioco " + g.name + '?');
                         console.log(answer);
+                        if(answer)
+                            GameAPI.deleteGame(g.gameID);
                     }}
                 >
                     <img className={"action-buttons"} src={"icons/icons8-waste-50.png"}/>

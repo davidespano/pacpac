@@ -131,7 +131,10 @@ api.use('/filemanager/:gameID', loginRequired, (req, res, next) => {
 api.post('/register', routes.users.register);
 api.post('/login', routes.users.login);
 api.get('/users/me', routes.users.me);
-api.post('/create-game', loginRequired,routes.users.create_game);
+
+/**GAMES**/
+api.post('/create-game', loginRequired,routes.games.create_game);
+api.delete('/:gameID/delete-game', loginRequired, routes.games.delete_game);
 
 /**SCENES**/
 api.get('/:gameID/scenes', routes.scenes.list);
@@ -161,6 +164,11 @@ api.delete('/:gameID/rules/scenes/:name/rules/:ruuid', loginRequired, routes.rul
 api.get('/:gameID/assets', routes.media.list);
 api.delete('/:gameID/assets/:name',loginRequired, routes.media.deleteAsset);
 handleMediaAPI(api);
+
+/**AUDIO**/
+api.put('/:gameID/audios', loginRequired, routes.audios.putGlobalAudio);
+api.put('/:gameID/audios/scenes/:uuid', loginRequired, routes.audios.putLocalAudio);
+api.get('/:gameID/audios', routes.audios.list);
 
 //api error handler
 api.use(function (err, req, res, next) {

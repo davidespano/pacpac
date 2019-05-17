@@ -5,6 +5,7 @@ import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import ScenesStore from "../data/ScenesStore";
 import CentralSceneStore from "../data/CentralSceneStore";
 import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
+import AudioAPI from "../utils/AudioAPI";
 
 const Actions = {
 
@@ -582,13 +583,15 @@ const Actions = {
                 scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
+            AudioAPI.createUpdateLocalAudio(audio.scene);
         } else {
             AppDispatcher.dispatch({
                 type: ActionTypes.ADD_NEW_GLOBAL_AUDIO,
                 audio: audio,
             })
+            AudioAPI.createUpdateGlobalAudio(audio);
         }
-        /**TODO: Save audio to db here**/
+
     },
 
     /**
@@ -621,7 +624,11 @@ const Actions = {
             type: ActionTypes.UPDATE_AUDIO,
             audio: audio,
         });
-        /**TODO: Dispatch db update here**/
+
+        if(audio.isSpatial)
+            AudioAPI.createUpdateLocalAudio(audio.scene);
+        else
+            AudioAPI.createUpdateGlobalAudio(audio);
     },
 
     //MEDIA

@@ -29,6 +29,23 @@ function createGame(name) {
         });
 }
 
+function deleteGame(id) {
+    return request.delete(`${apiBaseURL}/${id}/delete-game`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .then((response) => {
+
+            let user = EditorStateStore.getState().get("user");
+            let games = user.get("games").slice();
+            games = games.filter((g)=> g.gameID!==id);
+
+            let newUser = user.set("games",games);
+
+            Actions.receiveUser(newUser);
+        });
+}
+
 export default{
     createGame: createGame,
+    deleteGame: deleteGame,
 }
