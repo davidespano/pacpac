@@ -14,6 +14,8 @@ import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
 import aframe_utils from "./aframe_utils"
+import Values from '../../interactives/rules/Values'
+import 'aframe-mouse-cursor-component';
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -144,21 +146,24 @@ export default class VRScene extends React.Component {
         }
         else
             this.currentLevel = [];
+
+        //Assets generati qui non dal nuovo componente
         //let assets = this.generateAssets()
+
         let assets = this.generateAssets2();
-        //let is3dScene = this.state.activeScene.type === '3D' ;
-        let is3dScene = true;/*(this.state.activeScene.img === 'pianomp.mp4');*/
+        let is3dScene = this.state.activeScene.type===Values.THREE_DIM;
+        //console.log(is3dScene)
         return (
-                <Scene stats background="color: black">
+                <Scene stats background="color: black" >
                     <a-assets>
                         {assets}
                     </a-assets>
                     {this.generateBubbles()}
 
                     <Entity primitive="a-camera" key="keycamera" id="camera"
-                               pac-look-controls="pointerLockEnabled: true;" look-controls="false" wasd-controls="false">
-                            <Entity primitive="a-cursor" id="cursor" raycaster="objects: [data-raycastable];"
-                                    fuse={false} pointsaver/>
+                               pac-look-controls="pointerLockEnabled: false;" look-controls="false" wasd-controls="false">
+                            <a-cursor id="cursor"  cursor="rayOrigin: mouse" raycaster="objects: [data-raycastable];"
+                                    fuse={false} pointsaver />
 
                     </Entity>
                 </Scene>
@@ -320,14 +325,14 @@ export default class VRScene extends React.Component {
                 return null;
         }
     }
-//cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+    //cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
     generateBubbles(){
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
             return (
                 <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
-                        editMode={false}
+                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                 />
             );
         });
@@ -372,7 +377,7 @@ export default class VRScene extends React.Component {
             let source = this.state.resonanceAudioScene.createSource();
             audioElementSource.connect(source.input);
             //source.setPosition(0, 0, 0);
-            audioElement.play();
+            //audioElement.play();
         //},50)
 
 

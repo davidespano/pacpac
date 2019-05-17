@@ -4,7 +4,7 @@ import settings from "../../utils/settings";
 import React from 'react';
 
 const {mediaURL} = settings;
-
+//TODO trasformarlo in un componente React
 function generateAsset(scene, srcBackground, runState = []){
         let currAssets = [];
         let sceneBackground;

@@ -5,6 +5,7 @@ import settings from "../../utils/settings";
 import {Howl} from "howler";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
+import Values from "../../interactives/rules/Values";
 const THREE = require('three');
 const {mediaURL} = settings;
 
@@ -18,8 +19,10 @@ export default class Bubble extends Component
     componentDidMount()
     {
         let el = this;
+        let is3Dscene = this.props.scene.type!==Values.THREE_DIM;
+        let cursor = document.querySelector('#cursor');
         this.nv.addEventListener("animationcomplete", function animationListener(evt){
-            if(evt.detail.name === "animation__appear")
+            if(evt.detail.name === "animation__appear" && is3Dscene)
             {
                 //Riattivo la lunghezza del raycast
                 let cursor = document.querySelector("#cursor");
@@ -31,6 +34,9 @@ export default class Bubble extends Component
             }
             this.components[evt.detail.name].animation.reset();
         });
+        if(!is3Dscene) {
+            cursor.setAttribute('material', 'visible: false');
+        }
         //if(stores_utils.getFileType(this.props.scene.img) === 'video')
         this.setShader();
         if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame();
@@ -76,7 +82,8 @@ export default class Bubble extends Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
-        //let is3Dscene = !(this.props.scene.img === 'pianomp.mp4');
+        let is3Dscene = this.props.scene.type!==Values.THREE_DIM;
+        console.log(is3Dscene)
         let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
 
@@ -103,7 +110,7 @@ export default class Bubble extends Component
         else material += "opacity: 0; visible: false";
 
 
-        if(/*is3Dscene*/true){
+        if(is3Dscene){
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={primitive} visible={this.props.isActive}
                                    id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
@@ -114,12 +121,12 @@ export default class Bubble extends Component
             //TODO aggiungere il controllo del ridimensionamento della canvas
             let canvasWidth = document.documentElement.clientWidth / 100;
             let canvasHight = canvasWidth /1.77;
-            //camera = document.getElementById('camera');
-            //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
+            let camera = document.getElementById('camera');
+            camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive} radius="9.5"
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
-                    material={material} play_video={active} position="0 1.6 -6.44"/*dolby={'active: ' + this.props.isActive.toString() + ';'}*/>
+                    material={material} play_video={active} position="0 1.6 -6.44">
                 {curves}
                 </Entity>)
         }

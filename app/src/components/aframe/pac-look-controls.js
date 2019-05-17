@@ -129,9 +129,9 @@ AFRAME.registerComponent('pac-look-controls', {
         }
 
         // Mouse events.
-        canvasEl.addEventListener('mousedown', this.onMouseDown, false);
-        window.addEventListener('mousemove', this.onMouseMove, false);
-        window.addEventListener('mouseup', this.onMouseUp, false);
+        //canvasEl.addEventListener('mousedown', this.onMouseDown, false);
+        //window.addEventListener('mousemove', this.onMouseMove, false);
+        //window.addEventListener('mouseup', this.onMouseUp, false);
 
         // Touch events.
         canvasEl.addEventListener('touchstart', this.onTouchStart);
