@@ -169,6 +169,7 @@ handleMediaAPI(api);
 api.put('/:gameID/audios', loginRequired, routes.audios.putGlobalAudio);
 api.put('/:gameID/audios/scenes/:uuid', loginRequired, routes.audios.putLocalAudio);
 api.get('/:gameID/audios', routes.audios.list);
+api.delete('/:gameID/audios/:uuid', loginRequired, routes.audios.deleteAudio);
 
 //api error handler
 api.use(function (err, req, res, next) {

@@ -583,7 +583,7 @@ const Actions = {
                 scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
-            AudioAPI.createUpdateLocalAudio(audio.scene);
+            AudioAPI.createUpdateLocalAudio(audio.scene, audio);
         } else {
             AppDispatcher.dispatch({
                 type: ActionTypes.ADD_NEW_GLOBAL_AUDIO,
@@ -611,7 +611,7 @@ const Actions = {
                 audio: audio,
             })
         }
-        /**TODO: Dispatch db update here**/
+        AudioAPI.deleteAudio(audio.uuid);
     },
 
 
@@ -626,7 +626,7 @@ const Actions = {
         });
 
         if(audio.isSpatial)
-            AudioAPI.createUpdateLocalAudio(audio.scene);
+            AudioAPI.createUpdateLocalAudio(audio.scene, audio);
         else
             AudioAPI.createUpdateGlobalAudio(audio);
     },

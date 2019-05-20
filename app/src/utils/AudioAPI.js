@@ -46,8 +46,22 @@ function getAllAudios() {
         });
 }
 
+function deleteAudio(uuid){
+    return request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/audios/${uuid}`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .end(function (err, response) {
+            if (err) {
+                console.error(err);
+                return false;
+            }
+            return true;
+        });
+}
+
 export default{
     createUpdateLocalAudio: createUpdateLocalAudio,
     createUpdateGlobalAudio: createUpdateGlobalAudio,
     getAllAudios: getAllAudios,
+    deleteAudio: deleteAudio,
 }

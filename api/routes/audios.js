@@ -101,10 +101,13 @@ function putLocalAudio(req, res, next) {
     const sceneUuid = req.params.uuid;
     const gameID = req.params.gameID;
     const audio = req.body;
-    Audio.createUpdateLocalAudio(dbUtils.getSession(req), audio, sceneName, gameID)
+    Audio.createUpdateLocalAudio(dbUtils.getSession(req), audio, sceneUuid, gameID)
         .then(response => writeResponse(res, response[0], response[1]?201:200)) //the function return true if created, so 201
-        .catch(error => writeError(res, error, 500));
-};
+        .catch(error => {
+            writeError(res, error, 500)
+            console.error(error);
+        });
+}
 
 /**
  * @swagger
@@ -149,8 +152,49 @@ function putGlobalAudio(req, res, next) {
         .catch(error => writeError(res, error, 500));
 }
 
+/**
+ * @swagger
+ * /api/v0/{gameID}/audios/{uuid}:
+ *  delete:
+ *      tags:
+ *      - audios
+ *      description: Delete an audio by id
+ *      summary: Delete an audio
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *        - in: path
+ *          name : gameID
+ *          type : string
+ *          required : true
+ *          description : ID of the game  Example 3f585c1514024e9391954890a61d0a04
+ *        - name: Authorization
+ *          in: header
+ *          type: string
+ *          required: true
+ *          description: Token (token goes here)
+ *        - in: path
+ *          name: uuid
+ *          type: string
+ *          required: true
+ *          description: UUID of audio
+ *      responses:
+ *          200:
+ *              type: integer
+ *              description: The number of deleted scenes (1)
+ */
+function deleteAudio(req, res, next){
+    const uuid = req.params.uuid;
+    const gameID = req.params.gameID;
+    Audio.deleteAudio(dbUtils.getSession(req), uuid, gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
+
 module.exports = {
     putLocalAudio: putLocalAudio,
     putGlobalAudio: putGlobalAudio,
     list: list,
+    deleteAudio: deleteAudio,
 }
