@@ -6,6 +6,7 @@ import ScenesStore from "../data/ScenesStore";
 import CentralSceneStore from "../data/CentralSceneStore";
 import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 import AudioAPI from "../utils/AudioAPI";
+import StoryAPI from '../utils/StoryAPI';
 
 const Actions = {
 
@@ -210,12 +211,20 @@ const Actions = {
         })
     },
 
-    changeAudioSpatialOptionStatus(status){
+	changeAudioSpatialOptionStatus(status){
         AppDispatcher.dispatch({
             type: ActionTypes.AUDIO_SPATIAL_OPTION,
             status: status,
         })
     },
+	
+	//STORY EDITOR MODE
+    storyEditorModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.STORY_EDITOR_MODE_ON
+        })
+    },		
+	
 
     //SCENES
 
@@ -523,29 +532,6 @@ const Actions = {
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 
-
-    updateRuleEditorFromState(state){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_RULE_EDITOR_STATE,
-            state: state,
-        })
-    },
-
-    updateRuleEditorFromContent(content, selection){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_RULE_EDITOR_CONTENT,
-            content: content,
-            selection: selection,
-        })
-    },
-
-    updateRuleEditorFromRaw(raw){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_RULE_EDITOR_RAW,
-            raw: raw,
-        })
-    },
-
     updateSuggestion(state){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SUGGESTION,
@@ -664,7 +650,105 @@ const Actions = {
         })
     },
 
+	//STORY EDITOR ACTIONS
 
+    loadAllCollections(response){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOAD_ALL_COLLECTIONS,
+            response: response,
+        });
+        response.forEach(collection => {
+            StoryAPI.getCollectionByName(collection.name);
+        })
+
+    },	
+
+    receiveCollection(collection) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_COLLECTION,
+			collection:collection
+        })
+    },		
+
+    updateCollection(collection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_COLLECTION,
+            collection: collection,
+        })
+    },		
+	
+    removeCollection(collection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_COLLECTION,
+            collection: collection,
+        })
+    },			
+	
+
+    receiveImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_IMAGE,
+			image:image
+        })
+    },	
+	
+    updateImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_IMAGE,
+			image:image
+        })
+    },	
+	
+    updateStory(story){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_STORY,
+            story: story,
+        })
+    },	
+	
+    receiveStory(story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_STORY,
+			story:story
+        })
+    },
+	
+    restoreStory(story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RESTORE_STORY,
+			story: story			
+        })
+    },	
+
+    editStory(uuid, userStory) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.EDIT_STORY,
+			uuid: uuid,
+			userStory: userStory			
+        })
+    },	
+
+    removeStory(collection, story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_STORY,
+			collection: collection,
+			story: story
+        })
+    },
+	
+    startEditingStory(uuid) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.START_EDITING_STORY,
+			uuid: uuid			
+        })
+    },	
+	
+    stopEditingStory() {
+        AppDispatcher.dispatch({
+            type: ActionTypes.STOP_EDITING_STORY
+        })
+    },	
+	
 };
 
 export default Actions;

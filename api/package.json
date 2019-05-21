@@ -26,6 +26,8 @@
     "node-uuid": "^1.4.8",
     "randomstring": "^1.1.5",
     "readdirp": "^2.2.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "swagger-jsdoc": "^1.9.7",
     "swagger-node-express": "^2.1.3"
   }

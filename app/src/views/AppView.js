@@ -13,6 +13,7 @@ import Login from "../components/interface/Login";
 import GameList from "../components/interface/GameList";
 import EudRuleEditor from "../components/interface/EudRuleEditor";
 import activePlayAudio from "../components/aframe/aframeUtils"
+import StoryEditor from "../components/interface/StoryEditor";
 
 function AppView(props) {
 
@@ -62,6 +63,14 @@ function AppView(props) {
             return(
                 <Login {...props}/>
             );
+        case 'STORY_EDITOR_MODE_ON':
+            return (
+                <div>
+                    <TopBar {...props} />					
+					<StoryEditor {...props} />
+                </div>			
+            );				
+				
         default:
             return(
                 <div>SOMETHING WENT WRONG!</div>

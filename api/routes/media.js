@@ -165,10 +165,20 @@ function deleteAsset(req, res, next) {
     return res.status(200).end();
 }
 
+function addStoryImage(req, res, next) {
+    if (req.file) {
+        console.log(req.file);
+        return res.status(200).end();
+    }
+    else {
+        writeResponse(res, {message: 'Another media has already this name', status: 422}, 422);
+    }
+}
 
 module.exports = {
     list: list,
     deleteAsset: deleteAsset,
     addSceneMedia: addSceneMedia,
     addInteractiveMedia: addInteractiveMedia,
+	addStoryImage: addStoryImage,		
 };

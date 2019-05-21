@@ -14,6 +14,10 @@ import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import AssetsStore from "../data/AssetsStore";
 import AudioStore from "../data/AudioStore";
 import ScenesNamesStore from "../data/ScenesNamesStore";
+import StoryCollectionsStore from '../data/StoryCollectionsStore';
+import StoryImagesStore from '../data/StoryImagesStore';
+import StoriesStore from '../data/StoriesStore';
+import EditStoriesStore from '../data/EditStoriesStore';
 
 
 function getStores() {
@@ -31,6 +35,10 @@ function getStores() {
         RulesStore,
         AudioStore,
         ScenesNamesStore,
+		StoriesStore,
+	    EditStoriesStore,
+		StoryCollectionsStore,
+	    StoryImagesStore,
     ];
 }
 
@@ -52,6 +60,11 @@ function getState() {
         scenes: ScenesStore.getState(),
         scenesNames: ScenesNamesStore.getState(),
         tags: TagsStore.getState(),
+		
+		stories: StoriesStore.getState(),
+		editStories: EditStoriesStore.getState(),
+		storyCollections: StoryCollectionsStore.getState(),
+		storyImages: StoryImagesStore.getState(),		
 
         //FUNCTIONS
 
@@ -79,6 +92,7 @@ function getState() {
         switchToLoginMode: Actions.loginModeOn,
         switchToFileManager: Actions.fileManagerModeOn,
         switchToGeometryMode: Actions.geometryModeOn,
+        switchToStoryEditorMode: Actions.storyEditorModeOn,
         updateAudioFilter: Actions.updateAudioFilter,
         updateTagFilter: Actions.updateTagFilter,
 
@@ -136,6 +150,22 @@ function getState() {
 
         onDrop: Actions.onDrop,
         updateDatalist: Actions.updateDatalist,
+		
+		
+		
+		//STORY EDITOR
+		
+		receiveCollection: Actions.receiveCollection,
+		removeCollection: Actions.removeCollection,		
+		receiveImage: Actions.receiveImage,		
+		
+		receiveStory: Actions.receiveStory,
+		removeStory: Actions.removeStory,
+		restoreStory: Actions.restoreStory,
+		updateStory: Actions.updateStory,
+		onEditStory: Actions.editStory,
+		startEditingStory: Actions.startEditingStory,
+		stopEditingStory: Actions.stopEditingStory,
 
     };
 }

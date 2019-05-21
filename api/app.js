@@ -171,6 +171,17 @@ api.put('/:gameID/audios/scenes/:uuid', loginRequired, routes.audios.putLocalAud
 api.get('/:gameID/audios', routes.audios.list);
 api.delete('/:gameID/audios/:uuid', loginRequired, routes.audios.deleteAudio);
 
+/**STORIES**/
+api.get('/:gameID/stories', routes.stories.listStories);
+api.get('/:gameID/stories/:name', routes.stories.getStoryByName);
+api.post('/:gameID/stories/addStory', loginRequired, routes.stories.addStory);
+api.put('/:gameID/stories/updateStory', routes.stories.updateStory);
+api.put('/:gameID/stories/updateRandomness', routes.stories.updateRandomness);
+api.put('/:gameID/stories/updateRelevance', routes.stories.updateRelevance);
+api.delete('/:gameID/stories/:name/:uuid', loginRequired, routes.stories.deleteStory);
+api.delete('/:gameID/stories/:name', loginRequired, routes.stories.deleteCollection);
+
+
 //api error handler
 api.use(function (err, req, res, next) {
     if (err && err.status) {
@@ -182,3 +193,44 @@ api.use(function (err, req, res, next) {
 app.listen(app.get('port'), () => {
     console.log('Express server listening on port ' + app.get('port'));
 });
+
+/*
+var request = require('request-promise');
+
+
+api.post('/:gameID/stories/generateStory', async function (req, res) {
+	
+	let path = [];
+	
+	for(i=0; i<req.body.filename.length; i++){
+	path.push('http://cg3hci.dmi.unica.it/media/'+req.params.gameID+'/story_editor/'+req.body.filename[i]);
+	}
+	
+    var data = { 
+        paths: path,
+        relevance: req.body.relevance,
+		randomness: req.body.randomness,
+		genres: req.body.genres
+       }
+	
+	console.log(data);
+	
+    var opts = {
+		method: 'POST',
+		uri: 'http://10.132.0.15:5000/story',
+		body: data,
+		json: true
+        };
+        
+	var returndata;
+	var sendrequest = await request(opts)
+	.then(function (parsedBody) {
+		console.log(parsedBody); // parsedBody contains the data sent back from the Flask server
+		returndata = parsedBody; // do something with this data, here I'm assigning it to a variable.
+        })
+	.catch(function (err) {
+		console.log(err);
+    });
+        
+		res.send(returndata);   
+	});*/

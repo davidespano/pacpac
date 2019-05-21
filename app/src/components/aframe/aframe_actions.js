@@ -25,7 +25,6 @@ function executeAction(VRScene, rule, action){
         }
     });
 
-    console.log(action)
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;

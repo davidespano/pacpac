@@ -34,6 +34,9 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-assets" data-toggle="tab" role="tab" href="#nav-assets"
                        aria-controls="nav-assets" aria-selected="false"
                        onClick={() => handleAssetsMode(props)}>Assets</a>
+                    <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
+                       aria-controls="nav-story-editor" aria-selected="false"
+                       onClick={() => {handleSwitchToStoryEditorMode(props)}}>Generatore</a>
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
@@ -182,6 +185,14 @@ function createObject(props, type){
     } else {
         alert('Nessuna scena selezionata!');
     }
+}
+
+function handleSwitchToStoryEditorMode(props){
+	if(props.editor.mode != ActionTypes.STORY_EDITOR_MODE_ON)
+		{
+		props.switchToStoryEditorMode();
+		document.getElementById("nav-tabContent").hidden = true;
+		}
 }
 
 export default TopBar;

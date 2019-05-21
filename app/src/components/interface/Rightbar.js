@@ -9,6 +9,7 @@ import TagDropdown from "./TagDropdown";
 import FileSelectionBtn from "./FileSelectionBtn";
 import Values from "../../interactives/rules/Values";
 import Dropdown from "./Dropdown";
+import StoriesViewer from "./StoriesViewer";
 
 let THREE = require('three');
 
@@ -16,7 +17,9 @@ function RightBar(props){
 
     return(
         <div className={'rightbar'}>
-            {view(props)}
+        	<StoriesViewer {...props} />
+			<button id="stories" className={"btn"} data-toggle="modal" data-target="#view-story-modal">Visualizzatore</button>	
+        	{view(props)}
         </div>
     );
 }

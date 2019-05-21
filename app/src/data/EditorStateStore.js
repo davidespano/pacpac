@@ -57,6 +57,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('rightbarSelection', 'scene');
             case ActionTypes.RIGHTBAR_SELECTION:
                 return state.set('rightbarSelection', action.selection);
+			case ActionTypes.STORY_EDITOR_MODE_ON:
+                return state.set('mode', ActionTypes.STORY_EDITOR_MODE_ON);
             case ActionTypes.SELECT_AUDIO_FILE:
                 return state.set('selectedAudioFile', action.selection);
             case ActionTypes.SELECT_FILE:
