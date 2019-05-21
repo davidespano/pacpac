@@ -411,8 +411,8 @@ async function getAllDetailedScenes(gameGraph) {
             //audio: audios,
         });
 
-        gameGraph['scenes'][newScene.name] = newScene;
-        gameGraph['neighbours'][newScene.name] = adj;
+        gameGraph['scenes'][newScene.uuid] = newScene;
+        gameGraph['neighbours'][newScene.uuid] = adj;
     })
     //console.log(gameGraph);
 }

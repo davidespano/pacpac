@@ -106,9 +106,10 @@ function generateCurrentAsset(obj, runState){
             else return null;
         case InteractiveObjectsTypes.SWITCH:
             let i;
-            if(runState === {}){
+            if(runState.length === 0){
                 i = (obj.properties.state === "OFF")?0:1;
             } else {
+                console.log(runState)
                 i = (runState[obj.uuid].state === "OFF")?0:1;
             }
 

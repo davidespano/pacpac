@@ -1463,3 +1463,8 @@ input.eudObjectString[type=text] {
 .react-select > div > div, .react-select > div > div > div {
     padding: 2px;
 }
+
+element {
+    cursor: pointer;
+    cursor: hand;
+}

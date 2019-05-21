@@ -5,7 +5,8 @@ import settings from "../../utils/settings";
 import {Howl} from "howler";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
-import Values from "../../interactives/rules/Values";
+import Values from '../../interactives/rules/Values'
+
 const THREE = require('three');
 const {mediaURL} = settings;
 
@@ -19,10 +20,10 @@ export default class Bubble extends Component
     componentDidMount()
     {
         let el = this;
-        let is3Dscene = this.props.scene.type!==Values.THREE_DIM;
+        let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let cursor = document.querySelector('#cursor');
         this.nv.addEventListener("animationcomplete", function animationListener(evt){
-            if(evt.detail.name === "animation__appear" && is3Dscene)
+            if(evt.detail.name === "animation__appear" /*&& is3Dscene*/)
             {
                 //Riattivo la lunghezza del raycast
                 let cursor = document.querySelector("#cursor");
@@ -30,12 +31,12 @@ export default class Bubble extends Component
                 cursor.setAttribute('material', 'visible: true');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                 cursor.setAttribute('color', 'black');
-                el.props.handler(el.props.scene.name);
+                el.props.handler(el.props.scene.uuid);
             }
             this.components[evt.detail.name].animation.reset();
         });
         if(!is3Dscene) {
-            cursor.setAttribute('material', 'visible: false');
+            //cursor.setAttribute('material', 'visible: false');
         }
         //if(stores_utils.getFileType(this.props.scene.img) === 'video')
         this.setShader();
@@ -57,18 +58,20 @@ export default class Bubble extends Component
         }else{
             if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
         }
-        //let is3Dscene = !(this.props.scene.img === 'pianomp.mp4');
-        //let camera = document.getElementById('camera');
-        //if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene && this.props.isActive) this.props.cameraChangeMode(is3Dscene)
+        let is3Dscene = this.props.scene.type === Values.THREE_DIM;
+        let camera = document.getElementById('camera');
+        if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene && this.props.isActive && !this.props.editMode)
+            this.props.cameraChangeMode(is3Dscene)
         this.setVideoFrame();
     }
 
     setVideoFrame(){
         //if(!this.props.isActive) return;
         this.props.scene.objects.switches.forEach(s => {
+            let state = this.props.runState?this.props.runState[s.uuid].state:s.state;
             if(s.media.media0 === null && s.media.media1 === null) return;
-            if((this.props.runState[s.uuid].state === "ON"  && s.media.media1 === null )||
-               (this.props.runState[s.uuid].state === "OFF" && s.media.media0 === null )){
+            if((state === "ON"  && s.media.media1 === null )||
+               (state === "OFF" && s.media.media0 === null )){
                 let asset = document.getElementById("media_"+s.uuid);
                 asset.addEventListener('durationchange', function (ev) {
                     asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
@@ -82,7 +85,7 @@ export default class Bubble extends Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
-        let is3Dscene = this.props.scene.type!==Values.THREE_DIM;
+        let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         console.log(is3Dscene)
         let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
@@ -122,9 +125,10 @@ export default class Bubble extends Component
             let canvasWidth = document.documentElement.clientWidth / 100;
             let canvasHight = canvasWidth /1.77;
             let camera = document.getElementById('camera');
-            camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
+            if(!this.props.editMode)
+                camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
             sceneRender = (
-                <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive} radius="9.5"
+                <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
                     material={material} play_video={active} position="0 1.6 -6.44">
                 {curves}

@@ -25,6 +25,7 @@ function executeAction(VRScene, rule, action){
         }
     });
 
+    console.log(action)
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -171,6 +172,8 @@ function transition(actualScene, targetScene, duration){
     let actualSky = document.querySelector('#' + actualScene.name);
     let actualSceneVideo = document.getElementById(actualScene.img);
     if(store_utils.getFileType(actualScene.img) === 'video') actualSceneVideo.pause();
+    //TODO a volte non trova la scena, verificare perché
+    console.log(targetScene.name)
     let targetSky = document.querySelector('#' + targetScene.name);
     let targetSceneVideo = document.getElementById(targetScene.img);
     let cursor = document.querySelector('#cursor');

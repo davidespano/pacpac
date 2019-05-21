@@ -1,6 +1,7 @@
 import 'aframe';
 import './aframe_selectable'
 import './aframe_newGeometry'
+import './pac-look-controls'
 import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
@@ -8,6 +9,7 @@ import interface_utils from "../interface/interface_utils";
 import Bubble from './Bubble';
 import aframe_utils from "./aframe_utils";
 import SceneAPI from "../../utils/SceneAPI";
+import Values from "../../interactives/rules/Values";
 
 /*function Curved(props)
 {
@@ -64,7 +66,7 @@ export default class GeometryScene extends React.Component{
         };
         console.log(props.objectToScene.get(props.currentObject));
         console.log(props.currentObject);
-        console.log(this.state.scenes.name)
+        console.log(this.state.scenes)
 
     }
 
@@ -73,6 +75,7 @@ export default class GeometryScene extends React.Component{
         let a_point = document.querySelector('#cursor').components.pointsaver.points;
         let lengthLine = a_point.length;
         let scene;
+        //TODO migliore questo controllo, ci sono casi in cui non funziona
         if(document.querySelector('a-sky')){
             scene = document.querySelector('a-sky')
         } else {
@@ -113,6 +116,7 @@ export default class GeometryScene extends React.Component{
                     scene = document.querySelector('a-plane')
                 }
             }
+            console.log(a_point)
             tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
             a_point[(length-1)].x *= -1;
             tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
@@ -169,7 +173,6 @@ export default class GeometryScene extends React.Component{
                 removeSphere.forEach(point => {
                     scene.removeChild(point);
                 });
-
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
                 cursor.components.pointsaver.points = [];
@@ -202,6 +205,7 @@ export default class GeometryScene extends React.Component{
         let scene = {};
         await SceneAPI.getAllDetailedScenes(scene);
         this.setState({completeScene: scene})
+        console.log(scene)
 
     }
 
@@ -209,16 +213,18 @@ export default class GeometryScene extends React.Component{
     {
 
         if (this.state.completeScene !== undefined ) {
-            this.currentLevel = [this.state.scenes.name]
+            this.currentLevel = [this.state.scenes.uuid]
         }
         else{
             this.currentLevel = [];
         }
 
 
-        let sky = this.state.scenes;
+        let is3dScene = this.state.scenes.type===Values.THREE_DIM;
+        let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
         let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
+        //TODO verificiare shader delle curved, problema non trasparenza
         for(let key in objects){
             if(objects.hasOwnProperty(key)){
                 objects[key].forEach((uuid) => {
@@ -257,14 +263,15 @@ export default class GeometryScene extends React.Component{
 
                     </div>
                 </div>
-                <Scene>
+                <Scene background="color: black">
                     <a-assets>
                         {assets}
                     </a-assets>
                     {skie}
-                    <Entity primitive="a-camera" key="keycamera" id="camera" look-controls_us="pointerLockEnabled: true">
+                    <Entity primitive="a-camera" key="keycamera" id="camera"
+                            pac-look-controls={"pointerLockEnabled: true" /*+ is3dScene.toString()*/} look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" pointsaver id="cursor"  />
+                            <Entity primitive="a-cursor" id="cursor" pointsaver />
                         </Entity>
                     </Entity>
                 </Scene>
@@ -281,7 +288,7 @@ export default class GeometryScene extends React.Component{
     generateBubbles(){
         return this.currentLevel.map(sceneName =>{
             return (
-                <Bubble key={"key" + sceneName} scene={this.state.completeScene.scenes[this.state.scenes.name]} isActive={true}
+                <Bubble key={"key" + sceneName} scene={this.state.completeScene.scenes[this.state.scenes.uuid]} isActive={true}
                         handler={() => this.handleSceneChange() } editMode={true} update={this.state.update}
                 />
             );

@@ -19,7 +19,8 @@ AFRAME.registerComponent('pac-look-controls', {
         pointerLockEnabled: {default: false},
         reverseMouseDrag: {default: false},
         reverseTouchDrag: {default: false},
-        touchEnabled: {default: true}
+        touchEnabled: {default: true},
+        planarScene: {default: false}
     },
 
     init: function () {
@@ -67,6 +68,12 @@ AFRAME.registerComponent('pac-look-controls', {
         if (oldData && !data.pointerLockEnabled !== oldData.pointerLockEnabled) {
             this.removeEventListeners();
             this.addEventListeners();
+            if (this.pointerLocked) { this.exitPointerLock(); }
+        }
+
+        if (oldData && !data.planarScene !== oldData.planarScene) {
+            this.removeEventListeners();
+            this.addEventListenersPlanar();
             if (this.pointerLocked) { this.exitPointerLock(); }
         }
     },
@@ -129,9 +136,47 @@ AFRAME.registerComponent('pac-look-controls', {
         }
 
         // Mouse events.
-        //canvasEl.addEventListener('mousedown', this.onMouseDown, false);
+        if(!this.data.planarScene){
+            canvasEl.addEventListener('mousedown', this.onMouseDown, false);
+            window.addEventListener('mousemove', this.onMouseMove, false);
+            window.addEventListener('mouseup', this.onMouseUp, false);
+        }
+
+
+        // Touch events.
+        canvasEl.addEventListener('touchstart', this.onTouchStart);
+        window.addEventListener('touchmove', this.onTouchMove);
+        window.addEventListener('touchend', this.onTouchEnd);
+
+        // sceneEl events.
+        sceneEl.addEventListener('enter-vr', this.onEnterVR);
+        sceneEl.addEventListener('exit-vr', this.onExitVR);
+
+        // Pointer Lock events.
+        if (this.data.pointerLockEnabled) {
+            document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
+            document.addEventListener('mozpointerlockchange', this.onPointerLockChange, false);
+            document.addEventListener('pointerlockerror', this.onPointerLockError, false);
+        }
+    },
+
+    /**
+     * Add mouse and touch event listeners to canvas.
+     */
+    addEventListenersPlanar: function () {
+        var sceneEl = this.el.sceneEl;
+        var canvasEl = sceneEl.canvas;
+
+        // Wait for canvas to load.
+        if (!canvasEl) {
+            sceneEl.addEventListener('render-target-loaded', bind(this.addEventListeners, this));
+            return;
+        }
+
+        // Mouse events.
+        canvasEl.addEventListener('mousedown', this.onMouseDown, false);
         //window.addEventListener('mousemove', this.onMouseMove, false);
-        //window.addEventListener('mouseup', this.onMouseUp, false);
+        window.addEventListener('mouseup', this.onMouseUp, false);
 
         // Touch events.
         canvasEl.addEventListener('touchstart', this.onTouchStart);

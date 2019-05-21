@@ -56,9 +56,8 @@ export default class VRScene extends React.Component {
 
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
-        let scene = gameGraph['scenes'][this.state.activeScene.name];
+        let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
-        console.log(gameGraph)
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
@@ -110,7 +109,7 @@ export default class VRScene extends React.Component {
         let runState = {};
         Object.values(gameGraph.scenes).forEach(scene => {
             //create the state for the scene
-            runState[scene.name] = {background: scene.img};
+            runState[scene.uuid] = {background: scene.img};
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
                 runState[obj.uuid] = {state: obj.properties.state}
@@ -120,6 +119,7 @@ export default class VRScene extends React.Component {
     }
 
     handleSceneChange(newActiveScene) {
+        console.log(newActiveScene)
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: this.state.graph,
@@ -139,10 +139,11 @@ export default class VRScene extends React.Component {
 
     render() {
         console.log(this.state.graph)
-        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.name] !== undefined) {
-            this.currentLevel = Object.keys(this.state.graph.scenes).filter(name =>
-                this.state.graph.neighbours[this.state.activeScene.name].includes(name)
-                || name === this.state.activeScene.name);
+        console.log(this.state.activeScene)
+        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.uuid] !== undefined) {
+            this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>
+                this.state.graph.neighbours[this.state.activeScene.uuid].includes(uuid)
+                || uuid === this.state.activeScene.uuid);
         }
         else
             this.currentLevel = [];
@@ -152,6 +153,7 @@ export default class VRScene extends React.Component {
 
         let assets = this.generateAssets2();
         let is3dScene = this.state.activeScene.type===Values.THREE_DIM;
+        let rayCastOrigin = is3dScene?'cursor':'mouse';
         //console.log(is3dScene)
         return (
                 <Scene stats background="color: black" >
@@ -161,8 +163,8 @@ export default class VRScene extends React.Component {
                     {this.generateBubbles()}
 
                     <Entity primitive="a-camera" key="keycamera" id="camera"
-                               pac-look-controls="pointerLockEnabled: false;" look-controls="false" wasd-controls="false">
-                            <a-cursor id="cursor"  cursor="rayOrigin: mouse" raycaster="objects: [data-raycastable];"
+                               pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()} look-controls="false" wasd-controls="false">
+                            <a-cursor id="cursor"  cursor={"rayOrigin: " + rayCastOrigin} raycaster="objects: [data-raycastable];"
                                     fuse={false} pointsaver />
 
                     </Entity>
