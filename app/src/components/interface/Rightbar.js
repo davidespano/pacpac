@@ -141,8 +141,8 @@ function sceneView(props){
 
 function spatialAudioList(props, scene){
     let audioRendering;
-    if(scene.audio.length > 0) {
-        audioRendering = scene.audio.map(a => {
+    if(scene.audios.length > 0) {
+        audioRendering = scene.audios.map(a => {
             let audio = props.audios.get(a);
             return (
                 <p className={'audio-list-element ' + checkSelection(props, audio.uuid)}

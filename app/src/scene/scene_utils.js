@@ -66,9 +66,9 @@ function removeRuleFromScene(scene, rule){
  * @param audio
  */
 function addAudioToScene(scene, audio){
-    let audios = scene.get('audio');
+    let audios = scene.get('audios');
     audios.push(audio.uuid);
-    return scene.set('audio', audios);
+    return scene.set('audios', audios);
 }
 
 /**
@@ -77,9 +77,9 @@ function addAudioToScene(scene, audio){
  * @param audio
  */
 function removeAudioFromScene(scene, audio){
-    let audios = scene.get('audio');
+    let audios = scene.get('audios');
     audios = audios.filter((uuid) => uuid !== audio.uuid);
-    return scene.set('audio', audios);
+    return scene.set('audios', audios);
 }
 
 /**

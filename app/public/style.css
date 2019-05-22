@@ -853,6 +853,7 @@ div.rules{
     padding: 2px;
     border-bottom: dotted 1px darkgrey;
     text-align: left;
+    margin-bottom: 0;
 }
 
 .audio-list-element:hover{
@@ -1467,3 +1468,4 @@ input.eudObjectString[type=text] {
 element {
     cursor: pointer;
     cursor: hand;
+}

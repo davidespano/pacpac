@@ -57,7 +57,7 @@ function deleteAudio(session, uuid, gameID){
 
 module.exports = {
     createUpdateGlobalAudio: createUpdateGlobalAudio,
-    createUpdateLocalAudio: createUpdateLocalAudio,
+    createUpdateSpatialAudio: createUpdateLocalAudio,
     getAll: getAll,
     deleteAudio: deleteAudio,
 };

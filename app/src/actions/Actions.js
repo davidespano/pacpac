@@ -568,16 +568,27 @@ const Actions = {
                 type: ActionTypes.ADD_NEW_SPATIAL_AUDIO,
                 scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
-            })
-            AudioAPI.createUpdateLocalAudio(audio.scene, audio);
+            });
+            AudioAPI.createUpdateSpatialAudio(audio.scene, audio);
         } else {
             AppDispatcher.dispatch({
                 type: ActionTypes.ADD_NEW_GLOBAL_AUDIO,
                 audio: audio,
-            })
+            });
             AudioAPI.createUpdateGlobalAudio(audio);
         }
 
+    },
+
+    /**
+     * Handles audio received from db
+     * @param audio
+     */
+    receiveAudio(audio){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_GLOBAL_AUDIO,
+            audio: audio,
+        });
     },
 
     /**
@@ -612,7 +623,7 @@ const Actions = {
         });
 
         if(audio.isSpatial)
-            AudioAPI.createUpdateLocalAudio(audio.scene, audio);
+            AudioAPI.createUpdateSpatialAudio(audio.scene, audio);
         else
             AudioAPI.createUpdateGlobalAudio(audio);
     },

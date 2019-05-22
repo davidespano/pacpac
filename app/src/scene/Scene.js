@@ -27,7 +27,7 @@ const Scene = Immutable.Record({
         locks: [],
     },
     rules : [], // uuid list
-    audio : [], // uuid list
+    audios : [], // uuid list
 });
 
 export default Scene;

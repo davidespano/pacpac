@@ -1,12 +1,13 @@
 import settings from "./settings";
 import Actions from "../actions/Actions";
+import Audio from "../audio/Audio";
 
 
 const request = require('superagent');
 
 const {apiBaseURL} = settings;
 
-function createUpdateLocalAudio(sceneUuid, audio) {
+function createUpdateSpatialAudio(sceneUuid, audio) {
     return request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/audios/scenes/${sceneUuid}`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -42,7 +43,20 @@ function getAllAudios() {
                 console.error(err);
                 return;
             }
-            return response.body;
+            console.log(response.body);
+            response.body.forEach(audio => {
+                if(!audio.isSpatial){
+                    let a = Audio({
+                        uuid: audio.uuid,
+                        name: audio.name,
+                        file: audio.file,
+                        isSpatial: audio.isSpatial,
+                        scene: audio.scene,
+                        loop: audio.loop,
+                    });
+                    Actions.receiveAudio(a);
+                }
+            })
         });
 }
 
@@ -60,7 +74,7 @@ function deleteAudio(uuid){
 }
 
 export default{
-    createUpdateLocalAudio: createUpdateLocalAudio,
+    createUpdateSpatialAudio: createUpdateSpatialAudio,
     createUpdateGlobalAudio: createUpdateGlobalAudio,
     getAllAudios: getAllAudios,
     deleteAudio: deleteAudio,

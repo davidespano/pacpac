@@ -41,6 +41,7 @@ function getByName(name, order = null) {
             let rules_uuids = [];
             let audio_uuids = [];
 
+
             // generates transitions and saves them to the objects store
             response.body.transitions.map((transition) => {
                 transitions_uuids.push(transition.uuid); // save uuid
@@ -143,8 +144,7 @@ function getByName(name, order = null) {
 
             });
 
-            /*
-            response.body.audio.map(audio => {
+            response.body.audios.map(audio => {
                audio_uuids.push(audio.uuid);
                let a = Audio({
                    uuid: audio.uuid,
@@ -154,9 +154,10 @@ function getByName(name, order = null) {
                    scene: audio.scene,
                    loop: audio.loop,
                });
-               Actions.addNewAudio(a);
+               Actions.receiveAudio(a);
             });
-            */
+
+
 
             let tag = response.body.tag.uuid ? response.body.tag.uuid : "default";
 
@@ -175,7 +176,7 @@ function getByName(name, order = null) {
                     locks: locks_uuids,
                 },
                 rules : rules_uuids,
-                audio : audio_uuids,
+                audios : audio_uuids,
             });
 
             Actions.receiveScene(newScene, order);

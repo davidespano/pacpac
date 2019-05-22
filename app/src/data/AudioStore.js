@@ -19,12 +19,16 @@ class AudioStore extends ReduceStore {
                 return state.set(action.audio.uuid, action.audio);
             case ActionTypes.ADD_NEW_SPATIAL_AUDIO:
                 return state.set(action.audio.uuid, action.audio);
+            case ActionTypes.RECEIVE_GLOBAL_AUDIO:
+                return state.set(action.audio.uuid, action.audio);
+            case ActionTypes.RECEIVE_SPATIAL_AUDIO:
+                return state.set(action.audio.uuid, action.audio);
             case ActionTypes.REMOVE_GLOBAL_AUDIO:
                 return state.delete(action.audio.uuid);
             case ActionTypes.REMOVE_SPATIAL_AUDIO:
                 return state.delete(action.audio.uuid);
             case ActionTypes.REMOVE_SCENE:
-                action.scene.get('audio').map(audio => {
+                action.scene.get('audios').map(audio => {
                     state = state.delete(audio)
                 });
                 return state;

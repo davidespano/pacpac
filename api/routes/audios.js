@@ -101,7 +101,7 @@ function putLocalAudio(req, res, next) {
     const sceneUuid = req.params.uuid;
     const gameID = req.params.gameID;
     const audio = req.body;
-    Audio.createUpdateLocalAudio(dbUtils.getSession(req), audio, sceneUuid, gameID)
+    Audio.createUpdateSpatialAudio(dbUtils.getSession(req), audio, sceneUuid, gameID)
         .then(response => writeResponse(res, response[0], response[1]?201:200)) //the function return true if created, so 201
         .catch(error => {
             writeError(res, error, 500)

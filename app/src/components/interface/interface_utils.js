@@ -162,7 +162,7 @@ function handleFileUpdate(props){
             break;
         case 'rightbar':
             let scene = props.scenes.get(props.currentScene);
-            scene_utils.setProperty(scene, 'img', props.editor.selectedFile);
+            scene_utils.setProperty(scene, 'img', props.editor.selectedFile, props);
             break;
     }
 }
