@@ -227,7 +227,7 @@ margin-top: 10px;
 
 
 
-#stories { position: fixed; bottom: 10px; right: 35px; }
+/*#stories { position: fixed; bottom: 10px; right: 35px; }*/
 
 .story-content textarea{
     min-height: 150px;

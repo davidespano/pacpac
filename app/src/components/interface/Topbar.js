@@ -12,6 +12,7 @@ import ActionTypes from "../../actions/ActionTypes";
 import AuthenticationAPI from "../../utils/AuthenticationAPI";
 import AudioMenu from "./AudioMenu";
 import AudioForm from "./AudioForm";
+import StoriesViewer from "./StoriesViewer";
 
 
 let uuid = require('uuid');
@@ -36,7 +37,7 @@ function TopBar(props){
                        onClick={() => handleAssetsMode(props)}>Assets</a>
                     <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
                        aria-controls="nav-story-editor" aria-selected="false"
-                       onClick={() => {handleSwitchToStoryEditorMode(props)}}>Generatore</a>
+                       onClick={() => {handleSwitchToStoryEditorMode(props)}}>Generatore storie</a>
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
@@ -48,6 +49,7 @@ function TopBar(props){
                     <TagMenu {...props}/>
                     <AudioMenu {...props}/>
                     <AudioForm {...props}/>
+					<StoriesViewer {...props}/>
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
                                 onClick={() => props.selectMediaToEdit(null)}
@@ -62,6 +64,10 @@ function TopBar(props){
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#view-story-modal">
+                            <img src={"icons/icons8-stories-100.png"}/>
+                            <figcaption>Visualizza storie</figcaption>
                         </figure>
                     </div>
                 </div>
