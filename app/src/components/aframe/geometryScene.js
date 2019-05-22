@@ -51,7 +51,7 @@ export function givePoints(props)
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
-    //console.log(puntisalvati.join())
+    console.log(puntisalvati.join())
     interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
 }
 
@@ -75,21 +75,27 @@ export default class GeometryScene extends React.Component{
         let a_point = document.querySelector('#cursor').components.pointsaver.points;
         let lengthLine = a_point.length;
         let scene;
+        let scene2 = document.querySelector('a-scene')
         //TODO migliore questo controllo, ci sono casi in cui non funziona
+        let scale;
         if(document.querySelector('a-sky')){
             scene = document.querySelector('a-sky')
+            scale = "-1 1 1"
         } else {
             if(document.querySelector('a-videosphere')) {
                 scene = document.querySelector('a-videosphere')
+                scale = "-1 1 1"
             } else {
-                scene = document.querySelector('a-plane')
+                scene = document.querySelector('a-scene')
+                scale = "1 1 1"
             }
         }
         if (lengthLine >= 2) {
             let tmp = document.createElement('a-entity');
-            tmp.setAttribute('scale', '-1 1 1');
+            tmp.setAttribute('scale', scale);
             tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 1)].toArray().join(" "));
             tmp.setAttribute('line', 'end: ' + a_point[(0)].toArray().join(" "));
+            tmp.setAttribute('class', 'line');
             scene.appendChild(tmp);
         }
         //document.querySelector('a-sky').setAttribute('scene', this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)))
@@ -107,20 +113,28 @@ export default class GeometryScene extends React.Component{
             let idPoint = "point" + (length - 1).toString();
             let tmp = document.createElement('a-entity');
             let scene;
+            let scene2 = document.querySelector('a-scene');
+            let scale;
+            let moltiplier;
             if(document.querySelector('a-sky')){
                 scene = document.querySelector('a-sky')
+                scale = "-1 1 1"
+                moltiplier = -1;
             } else {
                 if(document.querySelector('a-videosphere')) {
                     scene = document.querySelector('a-videosphere')
+                    scale = "-1 1 1"
+                    moltiplier = -1;
                 } else {
-                    scene = document.querySelector('a-plane')
+                    scene = document.querySelector('a-scene');
+                    scale = "1 1 1"
+                    moltiplier = 1;
                 }
             }
-            console.log(a_point)
             tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
-            a_point[(length-1)].x *= -1;
+            a_point[(length-1)].x *= moltiplier;
             tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
-            a_point[(length-1)].x *= -1;
+            a_point[(length-1)].x *= moltiplier;
             tmp.setAttribute('id', idPoint);
             tmp.setAttribute('material', 'color: green; shader: flat');
             tmp.setAttribute('class', 'points');
@@ -132,9 +146,10 @@ export default class GeometryScene extends React.Component{
             let lengthLine = a_point.length;
             if (lengthLine >= 2) {
                 let tmp = document.createElement('a-entity');
-                tmp.setAttribute('scale', '-1 1 1');
+                tmp.setAttribute('scale', scale);
                 tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
                 tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
+                tmp.setAttribute('class', 'line');
                 scene.appendChild(tmp);
             }
 
@@ -143,6 +158,9 @@ export default class GeometryScene extends React.Component{
 
     componentDidMount() {
         this.createScene();
+
+        let is3dScene = this.state.scenes.type===Values.THREE_DIM;
+        let scene;
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
@@ -156,7 +174,7 @@ export default class GeometryScene extends React.Component{
                     cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange());
                     cursor.components.pointsaver.points = [];
-                    let scene = document.getElementById(this.state.scenes.name);
+                    let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let points = scene.querySelectorAll(".points");
 
                     points.forEach(point => {
@@ -168,7 +186,11 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'e' || keyName === 'E')
             {
-                let scene = document.getElementById(this.state.scenes.name);
+                scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+                let lines = scene.querySelectorAll(".line")
+                lines.forEach(line => {
+                    scene.removeChild(line);
+                });
                 let removeSphere = scene.querySelectorAll(".points");
                 removeSphere.forEach(point => {
                     scene.removeChild(point);
@@ -181,11 +203,12 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'u' || keyName === 'U')
             {
+                //TODO rimuovere le linee non solo i punti
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 if(pointsaver != null && pointsaver.points.length != 0){
                     let points = pointsaver.points;
                     let lastID = points.length - 1;
-                    let scene = document.getElementById(this.state.scenes.name);
+                    let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let lastChild = scene.querySelector('#point' + lastID.toString());
                     points.splice(-1);
                     scene.removeChild(lastChild);
@@ -205,7 +228,6 @@ export default class GeometryScene extends React.Component{
         let scene = {};
         await SceneAPI.getAllDetailedScenes(scene);
         this.setState({completeScene: scene})
-        console.log(scene)
 
     }
 

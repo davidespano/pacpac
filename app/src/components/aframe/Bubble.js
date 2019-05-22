@@ -86,18 +86,19 @@ export default class Bubble extends Component
         //generate the interactive areas
         let scene = this.props.scene;
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
-        console.log(is3Dscene)
         let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
+        let position = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
 
         const curves = Object.values(scene.objects).flat().map(curve => {
             if(this.props.editMode){
                 return(
-                    <CurvedGeometry key={"keyC"+ curve.uuid} vertices={curve.vertices} id={curve.uuid} />
+                    <CurvedGeometry key={"keyC"+ curve.uuid} position={position} vertices={curve.vertices} id={curve.uuid} is3Dscene={is3Dscene}/>
                 );
             } else {
                 return(
-                    <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.isActive?curve.uuid:""} vertices={curve.vertices}/>
+                    <Curved key={"keyC"+ curve.uuid} position={position} object_uuid={this.props.isActive?curve.uuid:""}
+                            is3Dscene={is3Dscene} vertices={curve.vertices}/>
                 );
             }
 

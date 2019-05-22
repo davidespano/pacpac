@@ -25,5 +25,6 @@ function pointSaver(evt)
         cursor.components.pointsaver.points = [];
     }
     cursor.components.pointsaver.points.push(evt.detail.intersection.point);
+
 }
 

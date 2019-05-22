@@ -10,9 +10,11 @@ class Curved extends Component
     }
 
     render(){
+        let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
         return(
             <Entity material="opacity: 0; visible: false; side: double" geometry={"primitive: polyline; vertices: " +
-            this.props.vertices} id={"curv" + this.props.object_uuid} selectable={'object_uuid:' + this.props.object_uuid} scale="-1 1 1"/>
+            this.props.vertices} id={"curv" + this.props.object_uuid} selectable={'object_uuid:' + this.props.object_uuid}
+                    position={this.props.position} scale={scale}/>
         );
     }
 
@@ -26,8 +28,10 @@ class CurvedGeometry extends Component
 
 
     render() {
+        let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
         return(
-            <Entity id={'curve_' + this.props.id} geometry={"primitive: polyline; vertices: " + this.props.vertices} scale="-1 1 1" material="side: double; opacity: 0.50"/>
+            <Entity id={'curve_' + this.props.id} geometry={"primitive: polyline; vertices: " + this.props.vertices} scale={scale}
+                    material="side: double; opacity: 0.50" position={this.props.position}/>
         )
     }
 }
