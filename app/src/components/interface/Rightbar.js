@@ -146,7 +146,8 @@ function spatialAudioList(props, scene){
             let audio = props.audios.get(a);
             return (
                 <p className={'audio-list-element ' + checkSelection(props, audio.uuid)}
-                   onClick={() => selection(props, audio.uuid)}>
+                   key={'audio-list-element-' + audio.uuid}
+                   onClick={() => interface_utils.audioSelection(props, audio)}>
                     {audio.name}
                 </p>
             );
@@ -256,9 +257,6 @@ function checkSelection(props, uuid){
     return props.editor.selectedAudioToEdit === uuid ? 'selected-audio' : '';
 }
 
-function selection(props, uuid){
-    props.editor.selectedAudioToEdit === uuid ? props.selectAudioToEdit(null) : props.selectAudioToEdit(uuid);
-}
 
 /**
  * Generates options of currently selected object

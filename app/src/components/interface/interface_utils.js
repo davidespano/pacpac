@@ -172,8 +172,20 @@ function handleFileUpdate(props){
  * @id form id
  */
 function resetFields(id){
-    //document.getElementById(id).reset();
+    document.getElementById(id).reset();
 }
+
+
+/**
+ * checks and sets audio selection
+ * @param props
+ * @param audio
+ */
+function audioSelection(props, audio){
+    props.editor.selectedAudioToEdit === audio.uuid ? props.selectAudioToEdit(null) :
+        props.selectAudioToEdit(audio.uuid, audio.file, audio.isSpatial);
+}
+
 
 /**
  * returns string according to the given value
@@ -220,4 +232,5 @@ export default {
     handleFileUpdate: handleFileUpdate,
     resetFields: resetFields,
     valueUuidToString: valueUuidToString,
+    audioSelection: audioSelection,
 }

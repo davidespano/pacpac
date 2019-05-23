@@ -38,7 +38,7 @@ function AudioForm(props){
                                     data-dismiss="modal"
                                     onClick={() => {
                                         audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
-                                        interface_utils.resetFields('audio-form-modal');
+                                        interface_utils.resetFields('audio-form-box');
                                     }}
                                     disabled={checkIfDisabled(props, audioToEdit)}
                             >Salva</button>
@@ -76,7 +76,7 @@ function generalOptions(props, audioToEdit){
                     <p id={'file-selected-name'}
                        className={'input-new-audio-file'}
                     >
-                        {selectedFile(props, audioToEdit)}
+                        {selectedFile(props)}
                     </p>
                 </div>
                 <FileSelectionBtn {...properties} />
@@ -93,18 +93,20 @@ function spatialOption(props){
         <div id={'audio-form-scene'} className={'audio-form-box-section'}>
             <div className={'box-titles'}>Opzioni</div>
             <div className={'box-grid'}>
-                <form>
+                <div>
                     <input type={'radio'} name={'isSpatial'} id={'spatial-radio'} className={'radio-audio-form'}
                            onClick={()=> props.changeAudioSpatialOptionStatus(true)}
-                           defaultChecked={spatial}
+                           checked={spatial}
+                           onChange={()=>{}}
                     />
                     <label htmlFor={'spatial-radio'} className={'label-audio-form'}>Spaziale</label>
                     <input type={'radio'} name={'isSpatial'} id={'global-radio'} className={'radio-audio-form'}
                            onClick={()=> props.changeAudioSpatialOptionStatus(false)}
-                           defaultChecked={!spatial}
+                           checked={!spatial}
+                           onChange={()=>{}}
                     />
                     <label htmlFor={'spatial-radio'} className={'label-audio-form'}>Non spaziale</label>
-                </form>
+                </div>
                 <div> </div>
                 <Dropdown props={props}
                           component={'scenes'}
@@ -154,10 +156,12 @@ function saveNewAudio(props){
 
 function editAudio(props, audioToEdit){
     let name = document.getElementById('input-name-audio').value,
-        file = document.getElementById('file-selected-name').innerText,
+        file = props.editor.selectedAudioFile,
         isSpatial = props.editor.isAudioSpatial,
         loop = document.getElementById('loop-checkbox').value == 'on' ? true : false,
         scene = props.editor.selectedSceneSpatialAudio;
+
+    file = file === 'Nessun file selezionato' ? null : file;
 
     console.log('modifica audio')
 
@@ -169,8 +173,6 @@ function editAudio(props, audioToEdit){
         scene: isSpatial ? scene : null,
         loop: loop,
     }));
-
-    console.log(audioToEdit)
 
     if(!isSpatial && audioToEdit.isSpatial){
         console.log('da spaziale a non spaziale')
@@ -189,10 +191,7 @@ function editAudio(props, audioToEdit){
     }
 }
 
-function selectedFile(props, audioToEdit){
-    if(audioToEdit){
-        return audioToEdit.file ? audioToEdit.file : 'Nessun file selezionato';
-    }
+function selectedFile(props){
     return props.editor.selectedAudioFile ? props.editor.selectedAudioFile : 'Nessun file selezionato';
 }
 

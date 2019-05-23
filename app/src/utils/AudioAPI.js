@@ -43,9 +43,8 @@ function getAllAudios() {
                 console.error(err);
                 return;
             }
-            console.log(response.body);
+            
             response.body.forEach(audio => {
-                if(!audio.isSpatial){
                     let a = Audio({
                         uuid: audio.uuid,
                         name: audio.name,
@@ -55,7 +54,6 @@ function getAllAudios() {
                         loop: audio.loop,
                     });
                     Actions.receiveAudio(a);
-                }
             })
         });
 }

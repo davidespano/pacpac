@@ -1,4 +1,5 @@
 import React from 'react';
+import interface_utils from "./interface_utils";
 let uuid = require('uuid');
 
 function AudioMenu(props){
@@ -28,7 +29,8 @@ function AudioMenu(props){
                                         if(audio.name.includes(props.editor.audioFilter)){
                                             return (
                                                 <p className={'audio-names ' + checkSelection(props, audio.uuid)}
-                                                   onClick={()=> selection(props, audio.uuid)}>
+                                                   key={audio.uuid}
+                                                   onClick={()=> interface_utils.audioSelection(props, audio)}>
                                                     {audio.name}
                                                 </p>
                                             );
@@ -50,10 +52,6 @@ function AudioMenu(props){
                                         data-toggle="modal"
                                         data-target="#audio-form-modal"
                                         disabled={props.editor.selectedAudioToEdit == null}
-                                        onClick={() => {
-                                            let audio = props.audios.get(props.editor.selectedAudioToEdit);
-                                            props.changeAudioSpatialOptionStatus(audio.isLocal);
-                                        }}
                                 >
                                     <img className={"action-buttons btn-img"} src={"icons/icons8-white-pencil-50.png"}/>
                                     Modifica oggetto
@@ -81,10 +79,6 @@ function AudioMenu(props){
             </div>
         </div>
     );
-}
-
-function selection(props, uuid){
-    props.editor.selectedAudioToEdit === uuid ? props.selectAudioToEdit(null) : props.selectAudioToEdit(uuid);
 }
 
 

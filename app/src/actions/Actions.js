@@ -108,10 +108,12 @@ const Actions = {
         })
     },
 
-    selectAudioToEdit(selection){
+    selectAudioToEdit(selection, file = null, isSpatial = false){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_AUDIO_TO_EDIT,
             selection: selection,
+            file: file,
+            isSpatial: isSpatial,
         })
     },
 

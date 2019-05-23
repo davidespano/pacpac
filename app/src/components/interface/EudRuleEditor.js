@@ -26,17 +26,21 @@ export default class EudRuleEditor extends Component {
             let rules = scene.get('rules');
             let rulesRendering = rules.map(
                 rule => {
-                    return <EudRule
-                        editor={this.props.editor}
-                        interactiveObjects={this.props.interactiveObjects}
-                        scenes={this.props.scenes}
-                        assets={this.props.assets}
-                        currentScene={this.props.currentScene}
-                        rules={this.props.rules}
-                        rule={rule}
-                        ruleEditorCallback={this.props.ruleEditorCallback}
-                        removeRule = {(rule) => {this.onRemoveRuleClick(rule)}}
-                    />
+                    return (
+                        <React.Fragment key={'fragment-' + rule.uuid}>
+                            <EudRule
+                                editor={this.props.editor}
+                                interactiveObjects={this.props.interactiveObjects}
+                                scenes={this.props.scenes}
+                                assets={this.props.assets}
+                                currentScene={this.props.currentScene}
+                                rules={this.props.rules}
+                                rule={rule}
+                                ruleEditorCallback={this.props.ruleEditorCallback}
+                                removeRule = {(rule) => {this.onRemoveRuleClick(rule)}}
+                            />
+                        </React.Fragment>
+                    );
                 });
             return <div className={"rules"}>
                 <div className={"rule-container"}>
@@ -115,6 +119,7 @@ class EudRule extends Component {
             <button
                 title={"Cancella l'azione"}
                 className={"action-buttons-container eudDeleteAction "}
+                key={'remove-btn-' + action.uuid}
                 onClick={() => {
                     let newRule = rules_utils.deleteAction(rule, action);
                     this.props.ruleEditorCallback.eudUpdateRule(newRule);
@@ -130,6 +135,7 @@ class EudRule extends Component {
         return (
             <button
                 title={"Cancella la condizione"}
+                key={'remove-btn-' + condition.uuid}
                 className={"action-buttons-container eudDeleteCondition "}
                 onClick={() => {
                     let newRule = rules_utils.deleteCondition(rule, condition);
@@ -144,7 +150,7 @@ class EudRule extends Component {
     generateConditions(props, condition, rule){
         if(condition instanceof Condition){ //passo base
             return (
-                <React.Fragment>
+                <React.Fragment key={'fragment-' + condition.uuid}>
                     <EudCondition
                         editor={this.props.editor}
                         condition={condition}
@@ -162,7 +168,7 @@ class EudRule extends Component {
 
         } else {
             return (
-                <React.Fragment>
+                <React.Fragment key={'fragment-' + condition.uuid}>
                     {this.generateConditions(props, condition.condition1, rule)}
                     {this.generateOperatorSelector(props, condition, rule)}
                     {this.generateConditions(props, condition.condition2, rule)}
@@ -177,6 +183,7 @@ class EudRule extends Component {
             <span className={"eudIf"}>
                 <select defaultValue={condition.operator}
                         id={"selectOperator" + condition.uuid}
+                        key={'select-operator-'+ condition.uuid}
                         className={'eudOperator'}
                         onChange={() => {
                             let e = document.getElementById("selectOperator" + condition.uuid);
@@ -212,7 +219,7 @@ class EudRule extends Component {
         if (rule) {
             let actionRendering = rule.actions.map(
                 action => {
-                    return <React.Fragment >
+                    return <React.Fragment key={'fragment-' + action.uuid} >
                         <EudAction
                         editor={this.props.editor}
                         interactiveObjects={this.props.interactiveObjects}
@@ -237,7 +244,7 @@ class EudRule extends Component {
             }
 
             return <div className={ruleCssClass}
-                        key={rule.uuid}
+                        key={'eud-rule-' + rule.uuid}
                         onMouseEnter={() => {this.mouseEnter()}}
                         onMouseLeave={() => {this.mouseLeave()}}>
                 <span className={"eudWhen"}>Quando </span>
@@ -255,7 +262,9 @@ class EudRule extends Component {
                 <span className={"eudThen"}>allora </span>
                 {actionRendering}
                 <div className={buttonBar}>
-                    <button title={"Aggiungi una condizione"}  onClick={()=>{
+                    <button title={"Aggiungi una condizione"}
+                            key={'add-condition-' + rule.uuid}
+                            onClick={()=>{
                         let newRule = rules_utils.addEmptyCondition(rule);
                         this.props.ruleEditorCallback.eudUpdateRule(newRule);
                     }}
@@ -263,7 +272,9 @@ class EudRule extends Component {
                         <img className={"action-buttons"} src={"icons/icons8-condition-128.png"} alt={"Aggiungi una condizione"}/>
                         &nbsp;Aggiungi Condizione
                     </button>
-                    <button title={"Aggiungi un'azione"} onClick={()=>{
+                    <button title={"Aggiungi un'azione"}
+                            key={'add-action-' + rule.uuid}
+                            onClick={()=>{
                         let newRule = rules_utils.addEmptyAction(rule);
                         this.props.ruleEditorCallback.eudUpdateRule(newRule);
                     }}
@@ -271,7 +282,9 @@ class EudRule extends Component {
                         <img className={"action-buttons"} src={"icons/icons8-action-128.png"} alt={"Aggiungi un'azione"}/>
                         &nbsp;Aggiungi Azione
                     </button>
-                    <button title={"Cancella la regola"} onClick={()=>{this.props.removeRule(this.props.rule)}}
+                    <button title={"Cancella la regola"}
+                            key={'remove-rule-' + rule.uuid}
+                            onClick={()=>{this.props.removeRule(this.props.rule)}}
                             className={"eudDelete action-buttons-container"}>
                         <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={"Elimina la regola"}/>
                         &nbsp;Elimina Regola
@@ -279,7 +292,7 @@ class EudRule extends Component {
                 </div>
             </div>
         } else {
-            return <p>Regola non trovata</p>
+            return <p key={'rule-not-found-'+rule.uuid}>Regola non trovata</p>
         }
     }
 }

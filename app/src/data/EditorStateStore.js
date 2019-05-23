@@ -66,7 +66,10 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.SELECT_MEDIA_TO_EDIT:
                 return state.set('selectedMediaToEdit', action.selection);
             case ActionTypes.SELECT_AUDIO_TO_EDIT:
-                return state.set('selectedAudioToEdit', action.selection);
+                state = state.set('selectedAudioToEdit', action.selection);
+                state = state.set('isAudioSpatial', action.isSpatial);
+                state = state.set('selectedAudioFile', action.file);
+                return state;
             case ActionTypes.SELECT_SCENE_SPATIAL_AUDIO:
                 return state.set('selectedSceneSpatialAudio', action.selection);
             case ActionTypes.SELECT_TAG_NEW_SCENE:

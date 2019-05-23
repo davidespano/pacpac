@@ -60,7 +60,6 @@ function getState() {
         scenes: ScenesStore.getState(),
         scenesNames: ScenesNamesStore.getState(),
         tags: TagsStore.getState(),
-		
 		stories: StoriesStore.getState(),
 		editStories: EditStoriesStore.getState(),
 		storyCollections: StoryCollectionsStore.getState(),
