@@ -9,6 +9,8 @@ import TagDropdown from "./TagDropdown";
 import FileSelectionBtn from "./FileSelectionBtn";
 import Values from "../../interactives/rules/Values";
 import Dropdown from "./Dropdown";
+import stores_utils from "../../data/stores_utils";
+import Orders from "../../data/Orders";
 
 let THREE = require('three');
 
@@ -141,9 +143,10 @@ function sceneView(props){
 
 function spatialAudioList(props, scene){
     let audioRendering;
+    let audios = scene.get('audios').map(a => props.audios.get(a)).sort(stores_utils.chooseComparator(Orders.ALPHABETICAL));
+
     if(scene.audios.length > 0) {
-        audioRendering = scene.audios.map(a => {
-            let audio = props.audios.get(a);
+        audioRendering = audios.map(audio => {
             return (
                 <p className={'audio-list-element ' + checkSelection(props, audio.uuid)}
                    key={'audio-list-element-' + audio.uuid}
