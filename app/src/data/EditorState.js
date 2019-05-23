@@ -11,6 +11,7 @@ const EditorState = Immutable.Record({
     completionInput: null,
     isEditAudioOn: false,
     isAudioSpatial: false,
+    loopChecked: false,
     mentionType: null,
     mode: ActionTypes.LOGIN_MODE_ON,
     newAudioNameTyped: false,

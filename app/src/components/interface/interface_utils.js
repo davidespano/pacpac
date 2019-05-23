@@ -182,8 +182,9 @@ function resetFields(id){
  * @param audio
  */
 function audioSelection(props, audio){
+    console.log(audio)
     props.editor.selectedAudioToEdit === audio.uuid ? props.selectAudioToEdit(null) :
-        props.selectAudioToEdit(audio.uuid, audio.file, audio.isSpatial);
+        props.selectAudioToEdit(audio.uuid, audio.file, audio.isSpatial, audio.loop);
 }
 
 

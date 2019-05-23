@@ -76,6 +76,7 @@ function getState() {
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
+        loopCheck: Actions.loopCheck,
         newAudioNameTyped: Actions.newAudioNameTyped,
         newSceneNameTyped: Actions.newSceneNameTyped,
         rightbarSelection: Actions.rightbarSelection,

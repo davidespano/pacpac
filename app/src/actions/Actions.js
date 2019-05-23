@@ -56,6 +56,13 @@ const Actions = {
         })
     },
 
+    loopCheck(check){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOOP_CHECK,
+            check: check,
+        })
+    },
+
     rightbarSelection(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.RIGHTBAR_SELECTION,
@@ -108,12 +115,13 @@ const Actions = {
         })
     },
 
-    selectAudioToEdit(selection, file = null, isSpatial = false){
+    selectAudioToEdit(selection, file = null, isSpatial = false, check = false){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_AUDIO_TO_EDIT,
             selection: selection,
             file: file,
             isSpatial: isSpatial,
+            check: check,
         })
     },
 

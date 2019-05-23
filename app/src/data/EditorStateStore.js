@@ -41,6 +41,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.GEOMETRY_MODE_ON);
             case ActionTypes.LOGIN_MODE_ON:
                 return state.set('mode', ActionTypes.LOGIN_MODE_ON);
+            case ActionTypes.LOOP_CHECK:
+                return state.set('loopChecked', action.check);
             case ActionTypes.NEW_AUDIO_NAME_TYPED:
                 return state.set('newAudioNameTyped', action.status);
             case ActionTypes.NEW_SCENE_NAME_TYPED:
@@ -69,6 +71,7 @@ class EditorStateStore extends ReduceStore {
                 state = state.set('selectedAudioToEdit', action.selection);
                 state = state.set('isAudioSpatial', action.isSpatial);
                 state = state.set('selectedAudioFile', action.file);
+                state = state.set('loopChecked', action.check);
                 return state;
             case ActionTypes.SELECT_SCENE_SPATIAL_AUDIO:
                 return state.set('selectedSceneSpatialAudio', action.selection);

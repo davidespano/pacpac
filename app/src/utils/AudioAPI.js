@@ -43,7 +43,7 @@ function getAllAudios() {
                 console.error(err);
                 return;
             }
-            
+
             response.body.forEach(audio => {
                     let a = Audio({
                         uuid: audio.uuid,

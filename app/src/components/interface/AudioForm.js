@@ -11,6 +11,7 @@ let uuid = require('uuid');
 function AudioForm(props){
 
     let audioToEdit = props.editor.selectedAudioToEdit ? props.audios.get(props.editor.selectedAudioToEdit) : null;
+    console.log(audioToEdit)
 
     return(
         <div id={"audio-form"}>
@@ -122,14 +123,18 @@ function spatialOption(props){
 }
 
 
-function playOption(props, audioToEdit){
-    let checked = audioToEdit ? audioToEdit.loop : false;
+function playOption(props){
+    let checked = props.editor.loopChecked;
+    console.log(checked);
 
     return(
         <div id={'audio-form-play'} className={'audio-form-box-section'}>
             <div className={'box-titles'}>Riproduzione</div>
-            <input type={'checkbox'} className={'checkbox-audio-form'} id={'loop-checkbox'}/>
-            <label htmlFor={'loop-checkbox'} className={'label-audio-form'} defaultChecked={checked}>Loop</label>
+            <input type={'checkbox'} className={'checkbox-audio-form'}
+                   id={'loop-checkbox'} checked={checked}
+                   onChange={() => props.loopCheck(!checked)}
+            />
+            <label htmlFor={'loop-checkbox'} className={'label-audio-form'}>Loop</label>
         </div>
     );
 }
@@ -158,7 +163,7 @@ function editAudio(props, audioToEdit){
     let name = document.getElementById('input-name-audio').value,
         file = props.editor.selectedAudioFile,
         isSpatial = props.editor.isAudioSpatial,
-        loop = document.getElementById('loop-checkbox').value == 'on' ? true : false,
+        loop = props.editor.loopChecked,
         scene = props.editor.selectedSceneSpatialAudio;
 
     file = file === 'Nessun file selezionato' ? null : file;
