@@ -843,7 +843,7 @@ div.rules{
 }
 
 .audio-list-box{
-    max-height: 125px;
+    height: 100px;
     overflow-y: scroll;
     border: solid 1px darkgrey;
     background-color: white;

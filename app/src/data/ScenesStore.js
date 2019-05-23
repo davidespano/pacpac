@@ -92,10 +92,10 @@ class ScenesStore extends ReduceStore {
                 state = state.set(newScene.uuid, newScene);
                 return state;
             case ActionTypes.ADD_NEW_SPATIAL_AUDIO:
-                newScene = scene_utils.addAudioToScene(action.scene, action.audio);
+                newScene = scene_utils.addAudioToScene(action.scene, action.audio.uuid);
                 return state.set(newScene.uuid, newScene);
             case ActionTypes.REMOVE_SPATIAL_AUDIO:
-                newScene = scene_utils.removeAudioFromScene(action.scene, action.audio);
+                newScene = scene_utils.removeAudioFromScene(action.scene, action.audio.uuid);
                 return state.set(newScene.uuid, newScene);
             case ActionTypes.RESET:
                 return Immutable.OrderedMap();

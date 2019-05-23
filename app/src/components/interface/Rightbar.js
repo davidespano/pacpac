@@ -181,7 +181,8 @@ function spatialAudioList(props, scene){
                     title={"Cancella"}
                     className={"action-buttons-container"}
                     onClick={() => {
-                        props.removeAudio(props.editor.selectedAudioToEdit);
+                        let audio = props.audios.get(props.editor.selectedAudioToEdit);
+                        props.removeAudio(audio);
                     }}
                     disabled={props.editor.selectedAudioToEdit == null}
                 >

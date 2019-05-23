@@ -11,7 +11,6 @@ let uuid = require('uuid');
 function AudioForm(props){
 
     let audioToEdit = props.editor.selectedAudioToEdit ? props.audios.get(props.editor.selectedAudioToEdit) : null;
-    console.log(audioToEdit)
 
     return(
         <div id={"audio-form"}>
@@ -125,8 +124,6 @@ function spatialOption(props){
 
 function playOption(props){
     let checked = props.editor.loopChecked;
-    console.log(checked);
-
     return(
         <div id={'audio-form-play'} className={'audio-form-box-section'}>
             <div className={'box-titles'}>Riproduzione</div>
@@ -168,8 +165,6 @@ function editAudio(props, audioToEdit){
 
     file = file === 'Nessun file selezionato' ? null : file;
 
-    console.log('modifica audio')
-
     props.updateAudio(Audio({
         uuid: audioToEdit.uuid,
         name: name,
@@ -179,20 +174,17 @@ function editAudio(props, audioToEdit){
         loop: loop,
     }));
 
+    //from spatial to non spatial
     if(!isSpatial && audioToEdit.isSpatial){
-        console.log('da spaziale a non spaziale')
         scene = props.scenes.get(audioToEdit.scene);
         scene = scene_utils.removeAudioFromScene(scene, audioToEdit.uuid);
         props.updateScene(scene);
-        console.log(scene)
     }
-
+    //from non spatial to spatial
     if(isSpatial && !audioToEdit.isSpatial){
-        console.log('da non spaziale a spaziale')
         scene = props.scenes.get(scene);
         scene = scene_utils.addAudioToScene(scene, audioToEdit.uuid);
         props.updateScene(scene);
-        console.log(scene)
     }
 }
 
