@@ -1,14 +1,24 @@
 const fs = require('fs');
 const readdirp = require('readdirp');
+const ffprobe = require('ffprobe');
+const ffprobeStatic = require('ffprobe-static');
+//const sharp = require('sharp');
 
-
-function getAll(session, gameID) {
+async function getAll(session, gameID) {
     let fileList = [];
     const path = "public/" + gameID;
-    const promise = new Promise(function(resolve, reject){
+    fileList = await new Promise(function(resolve, reject){
 
         readdirp({root: path})
-            .on('data',(file) => fileList.push(file.path.replace(/\\/g,'/')))
+            .on('data', (file) => {
+
+                const filePath = file.path.replace(/(\\)/g,'/');
+
+                let fileObj = {path: filePath};
+
+                fileList.push(fileObj);
+                //console.log(filedata);
+            })
             .on('error', (error) => reject(error))
             .on('warn', (error) => reject(error))
             .on('end', () => resolve(fileList));
@@ -19,7 +29,23 @@ function getAll(session, gameID) {
         //     else resolve(files);
         // })
     });
-    return promise;
+
+
+    for(let i = 0; i<fileList.length; i++){
+        const fileObj = fileList[i];
+        const filePath = fileObj.path;
+        try{
+            console.log(path+'/'+filePath);
+            await ffprobe(path+'/'+filePath,{path: ffprobeStatic.path}).then((info)=>{
+                fileObj.width = info.streams[0].width;
+                fileObj.height = info.streams[0].height;
+            });
+        }catch(err){
+            console.error(err);
+        }
+    }
+
+    return fileList;
 }
 
 function deleteAsset(session, name, gameID) {

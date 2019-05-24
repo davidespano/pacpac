@@ -16,6 +16,8 @@
     "del": "^4.1.1",
     "errorhandler": "^1.5.0",
     "express": "^4.16.3",
+    "ffprobe": "^1.1.0",
+    "ffprobe-static": "^3.0.0",
     "lodash": "^4.17.10",
     "md5": "^2.2.1",
     "method-override": "^2.3.10",
@@ -28,6 +30,7 @@
     "readdirp": "^2.2.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "sharp": "^0.22.1",
     "swagger-jsdoc": "^1.9.7",
     "swagger-node-express": "^2.1.3"
   }
