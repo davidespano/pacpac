@@ -104,12 +104,14 @@ function generateOptions(props, component, property){
 function getDefaultValue(props, defaultValue, component){
     let label = null;
 
+    console.log(component)
+
     if(defaultValue){
         switch(component){
             case 'scenes':
                 label = props.scenes.get(defaultValue).name; break;
             case 'assets':
-                label = defaultValue;
+                label = defaultValue; break;
             default:
                 label = interface_utils.valueUuidToString(defaultValue);
             }

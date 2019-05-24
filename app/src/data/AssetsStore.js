@@ -18,20 +18,24 @@ class AssetsStore extends ReduceStore {
     }
 
     reduce(state, action) {
-        let a;
+        let a, asset;
 
         switch (action.type) {
             case ActionTypes.LOAD_ALL_ASSETS:
                 // if state isn't undefined
                 if(state) {
                     action.list.forEach(a => {
-                        state = state.set(a, Asset({name: a, uuid: a, type: stores_utils.getFileType(a)}));
+                        asset = Asset({
+                            name: a.path,
+                            uuid: a.path,
+                            width: a.width,
+                            height: a.height,
+                            type: stores_utils.getFileType(a.path),
+                        });
+                        state = state.set(asset.uuid, asset);
                     })
                 }
                 return state;
-            case ActionTypes.RECEIVE_SCENE:
-                a = action.scene.img;
-                return state.set(a, Asset({name: a, uuid: a, type: stores_utils.getFileType(a)}));
             case ActionTypes.RESET:
                 return Immutable.Map();
             default:

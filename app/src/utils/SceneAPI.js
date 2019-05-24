@@ -53,6 +53,7 @@ function getByName(name, order = null) {
                     type: transition.type,
                     media: JSON.parse(transition.media),
                     mask: transition.mask,
+                    audio: JSON.parse(transition.audio),
                     vertices: transition.vertices,
                     properties: JSON.parse(transition.properties),
                 });
@@ -68,6 +69,7 @@ function getByName(name, order = null) {
                     type: sw.type,
                     media: JSON.parse(sw.media),
                     mask: sw.mask,
+                    audio: JSON.parse(sw.audio),
                     vertices: sw.vertices,
                     properties: JSON.parse(sw.properties),
                 });
@@ -83,6 +85,7 @@ function getByName(name, order = null) {
                     type: key.type,
                     media: JSON.parse(key.media),
                     mask: key.mask,
+                    audio: JSON.parse(key.audio),
                     vertices: key.vertices,
                     properties: JSON.parse(key.properties),
                 });
@@ -98,6 +101,7 @@ function getByName(name, order = null) {
                     type: lock.type,
                     media: JSON.parse(lock.media),
                     mask: lock.mask,
+                    audio: JSON.parse(lock.audio),
                     vertices: lock.vertices,
                     properties: JSON.parse(lock.properties),
                 });

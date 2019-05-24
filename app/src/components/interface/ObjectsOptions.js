@@ -96,14 +96,6 @@ function generateProperties(props){
             </div>
             {generateSpecificProperties(currentObject, props)}
             <div className={'options-grid'}>
-                <label className={'options-labels'}>Media:</label>
-                <button id={'edit-media-btn'}
-                        className={'btn select-file-btn rightbar-btn'}
-                        data-toggle="modal"
-                        data-target="#edit-media-modal"
-                >
-                    Modifica media
-                </button>
                 <label className={'options-labels'}>Geometria:</label>
                 <button
                     className={"btn select-file-btn rightbar-btn"}
@@ -218,12 +210,6 @@ function generateSpecificProperties(object, props){
     }
 }
 
-
-function generateMediaAndAudioOptions(object, props){
-    return(
-        <label className={'rightbar-titles'}>Nome</label>
-    );
-}
 
 /**
  * Generates buttons for currently selected object options

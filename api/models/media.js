@@ -30,12 +30,11 @@ async function getAll(session, gameID) {
         // })
     });
 
-
+    /*
     for(let i = 0; i<fileList.length; i++){
         const fileObj = fileList[i];
         const filePath = fileObj.path;
         try{
-            console.log(path+'/'+filePath);
             await ffprobe(path+'/'+filePath,{path: ffprobeStatic.path}).then((info)=>{
                 fileObj.width = info.streams[0].width;
                 fileObj.height = info.streams[0].height;
@@ -44,6 +43,7 @@ async function getAll(session, gameID) {
             console.error(err);
         }
     }
+    */
 
     return fileList;
 }
