@@ -44,7 +44,7 @@ function setPropertyFromValue(object, property, value, props){
     InteractiveObjectAPI.saveObject(scene, newObject);
 
     if(property === "vertices"){
-        props.editVertices(newObject);
+        props.editVertices(newObject, scene.type);
     }
 }
 
@@ -63,16 +63,18 @@ function setPropertyFromId(object, property, id, props){
 /**
  * Generates approximative 2d centroid for the interaction area starting from the given vertices.
  * @param vertices is a string that contains all of the vertices values
+ * @param scene_type
  * @param radius of the sphere
  * @returns [longitude, latitude]
  * This function returns latitude and longitude because they are fixed values that can be easily stored in
  * CentroidsStore. x and y must be calculated later, since the size of central image is variable.
  */
-function calculateCentroid(vertices, radius = 9.5) {
+function calculateCentroid(vertices, scene_type = Values.THREE_DIM, radius = 9.5) {
 
     vertices = vertices.split(',').join(" "); //replace commas with whitespaces
     let coordinates = vertices.split(" ").map(x => parseFloat(x));
     let medianPoint = [0.0, 0.0, 0.0];
+    let x,y;
 
     for (let i = 0; i < coordinates.length; i += 3) {
         medianPoint[0] += coordinates[i];
@@ -84,26 +86,35 @@ function calculateCentroid(vertices, radius = 9.5) {
         return x / (coordinates.length / 3)
     });
 
-    //project median onto sphere to obtain approximate 3d centroid
-    /*https://stackoverflow.com/questions/9604132/how-to-project-a-point-on-to-a-sphere*/
+    if(scene_type === Values.THREE_DIM){
+        //project median onto sphere to obtain approximate 3d centroid
+        /*https://stackoverflow.com/questions/9604132/how-to-project-a-point-on-to-a-sphere*/
 
-    let length = Math.sqrt(Math.pow(medianPoint[0], 2) + Math.pow(medianPoint[1], 2) + Math.pow(medianPoint[2], 2));
+        let length = Math.sqrt(Math.pow(medianPoint[0], 2) + Math.pow(medianPoint[1], 2) + Math.pow(medianPoint[2], 2));
 
-    let centroid = medianPoint.map(x => {
-        return radius / length * x
-    });
+        let centroid = medianPoint.map(x => {
+            return radius / length * x
+        });
 
-    // calculate latitude and longitude to obtain approximate 2d centroid
+        // calculate latitude and longitude to obtain approximate 2d centroid
 
-    let lat = 90 - (Math.acos(centroid[1] / radius)) * 180 / Math.PI;
-    let lon = ((270 + (Math.atan2(centroid[0] , centroid[2])) * 180 / Math.PI) % 360) -180;
+        let lat = 90 - (Math.acos(medianPoint[1] / radius)) * 180 / Math.PI;
+        let lon = ((270 + (Math.atan2(medianPoint[0] , medianPoint[2])) * 180 / Math.PI) % 360) -180;
 
 
-    // adjust latitude and longitude to obtain values in percentage
+        // adjust latitude and longitude to obtain values in percentage
 
-    const x = (180 - lon) * 100 / 360;
-    const y = (180 - lat) * 100 / 360;
-
+        x = (180 - lon) * 100 / 360;
+        y = (180 - lat) * 100 / 360;
+    } else {
+        /*
+        if(document.getElementById('central-scene')){
+            let width = document.getElementById('central-scene').offsetWidth;
+            let height = document.getElementById('central-scene').offsetHeight;
+            console.log(width, height);
+        }
+        */
+    }
 
     return [x, y];
 }
@@ -182,7 +193,6 @@ function resetFields(id){
  * @param audio
  */
 function audioSelection(props, audio){
-    console.log(audio)
     props.editor.selectedAudioToEdit === audio.uuid ? props.selectAudioToEdit(null) :
         props.selectAudioToEdit(audio.uuid, audio.file, audio.isSpatial, audio.loop);
 }

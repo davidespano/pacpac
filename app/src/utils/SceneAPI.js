@@ -41,6 +41,8 @@ function getByName(name, order = null) {
             let rules_uuids = [];
             let audio_uuids = [];
 
+            let scene_type = response.body.type;
+
 
             // generates transitions and saves them to the objects store
             response.body.transitions.map((transition) => {
@@ -54,7 +56,7 @@ function getByName(name, order = null) {
                     vertices: transition.vertices,
                     properties: JSON.parse(transition.properties),
                 });
-                Actions.receiveObject(t);
+                Actions.receiveObject(t, scene_type);
             });
 
             // generates switches and saves them to the objects store
@@ -69,7 +71,7 @@ function getByName(name, order = null) {
                     vertices: sw.vertices,
                     properties: JSON.parse(sw.properties),
                 });
-                Actions.receiveObject(s);
+                Actions.receiveObject(s, scene_type);
             });
 
             // generates key and saves them to the objects store
@@ -84,7 +86,7 @@ function getByName(name, order = null) {
                     vertices: key.vertices,
                     properties: JSON.parse(key.properties),
                 });
-                Actions.receiveObject(k);
+                Actions.receiveObject(k, scene_type);
             });
 
             // generates lock and saves them to the objects store
@@ -99,7 +101,7 @@ function getByName(name, order = null) {
                     vertices: lock.vertices,
                     properties: JSON.parse(lock.properties),
                 });
-                Actions.receiveObject(l);
+                Actions.receiveObject(l, scene_type);
             });
 
             // generates rules and saves them to the rules store

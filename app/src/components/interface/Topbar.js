@@ -180,11 +180,9 @@ function createObject(props, type){
         props.addNewObject(scene, obj);
 
         if(obj.type === InteractiveObjectsTypes.SWITCH){ //switches have multiple default rules
-            console.log('switch')
             props.addNewRule(scene, defaultRule[0]);
             props.addNewRule(scene, defaultRule[1]);
         }else{
-            console.log('other')
             props.addNewRule(scene, defaultRule);
         }
 
@@ -194,11 +192,10 @@ function createObject(props, type){
 }
 
 function handleSwitchToStoryEditorMode(props){
-	if(props.editor.mode != ActionTypes.STORY_EDITOR_MODE_ON)
-		{
+	if(props.editor.mode != ActionTypes.STORY_EDITOR_MODE_ON) {
 		props.switchToStoryEditorMode();
 		document.getElementById("nav-tabContent").hidden = true;
-		}
+    }
 }
 
 export default TopBar;

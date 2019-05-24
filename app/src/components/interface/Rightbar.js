@@ -114,7 +114,7 @@ function sceneView(props){
                 <div className={'rightbar-grid'}>
                     <TagDropdown {...properties}/>
                     <button
-                        title={"Tag manager"}
+                        title={"Gestisci etichette"}
                         className={"select-file-btn btn"}
                         data-toggle="modal"
                         data-target="#add-tag-modal"
@@ -164,7 +164,7 @@ function spatialAudioList(props, scene){
         <React.Fragment>
             <div className={'audio-list-box-btns'}>
                 <button
-                    title={"Audio manager"}
+                    title={"Gestisci audio"}
                     className={"select-file-btn btn"}
                     data-toggle="modal"
                     data-target="#manage-audio-modal"
@@ -172,7 +172,7 @@ function spatialAudioList(props, scene){
                     <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-white-audio-50.png"}/>
                 </button>
                 <button
-                    title={"Modifica"}
+                    title={"Modifica audio"}
                     className={"action-buttons-container"}
                     data-toggle="modal"
                     data-target="#audio-form-modal"
@@ -181,7 +181,7 @@ function spatialAudioList(props, scene){
                     <img className={"action-buttons"} src={"icons/icons8-pencil-50.png"} alt={'Modifica'}/>
                 </button>
                 <button
-                    title={"Cancella"}
+                    title={"Cancella audio"}
                     className={"action-buttons-container"}
                     onClick={() => {
                         let audio = props.audios.get(props.editor.selectedAudioToEdit);

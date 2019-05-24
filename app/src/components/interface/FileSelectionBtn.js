@@ -12,6 +12,7 @@ function FileSelectionBtn(properties){
                 className={'select-file-btn btn'}
                 data-toggle="modal"
                 data-target="#add-file-modal"
+                title={'Cerca un file'}
                 onClick={() => {
                     props.selectMediaToEdit(component)
                 }}

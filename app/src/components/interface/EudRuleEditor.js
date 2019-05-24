@@ -27,7 +27,7 @@ export default class EudRuleEditor extends Component {
             let rulesRendering = rules.map(
                 rule => {
                     return (
-                        <React.Fragment key={'fragment-' + rule.uuid}>
+                        <React.Fragment key={'fragment-' + rule}>
                             <EudRule
                                 editor={this.props.editor}
                                 interactiveObjects={this.props.interactiveObjects}

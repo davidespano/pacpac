@@ -7,6 +7,7 @@ import CentralSceneStore from "../data/CentralSceneStore";
 import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 import AudioAPI from "../utils/AudioAPI";
 import StoryAPI from '../utils/StoryAPI';
+import Values from "../interactives/rules/Values";
 
 const Actions = {
 
@@ -415,11 +416,13 @@ const Actions = {
     /**
      * Handles an object received from db
      * @param object
+     * @param scene_type (to calculate centroid)
      */
-    receiveObject(object){
+    receiveObject(object, scene_type = Values.THREE_DIM){
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_OBJECT,
             obj: object,
+            scene_type: scene_type,
         })
     },
 
@@ -470,12 +473,14 @@ const Actions = {
     /**
      * Dispatch update of any object to the objects store
      * @param object
+     * @param scene_type (for calculating centroid)
      */
-    editVertices(object){
+    editVertices(object, scene_type = Values.THREE_DIM){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_VERTICES,
             obj: object,
             vertices: object.get('vertices'),
+            scene_type: scene_type,
         })
     },
 

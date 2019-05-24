@@ -857,7 +857,7 @@ div.rules{
 }
 
 .audio-list-element:hover{
-    cursor: pointer;
+    background-color: #FFD8AC;
 }
 
 .no-audio{
