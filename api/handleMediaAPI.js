@@ -48,7 +48,8 @@ const uploadObjectsMedia = multer({
 
 const storageStoryImage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "public/" + req.params.gameID + "/story_editor")
+        const dir = "public/" + req.params.gameID + "/story_editor";
+		mkdirp(dir, err => cb(err, dir))
     },
     filename: function (req, file, cb) {
         cb(null, req.headers.name)
