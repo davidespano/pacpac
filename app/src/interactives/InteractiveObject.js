@@ -17,6 +17,7 @@ const InteractiveObject = Immutable.Record({
     type : null,
     media : null,
     mask: null,
+    audio: null,
     visible: Values.VISIBLE,
     vertices : null,
     properties : null,

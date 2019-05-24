@@ -110,6 +110,7 @@ function spatialOption(props){
                 <div> </div>
                 <Dropdown props={props}
                           component={'scenes'}
+                          property={'scene'}
                           defaultValue={selectedScene ? selectedScene : props.currentScene}
                           disabled={!spatial}/>
                 <button className={'btn position-btn'} disabled={!spatial}>

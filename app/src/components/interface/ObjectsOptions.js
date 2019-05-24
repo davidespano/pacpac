@@ -88,7 +88,11 @@ function generateProperties(props){
             <label className={'rightbar-titles'}>Opzioni</label>
             <div className={'options-grid'}>
                 <label className={'options-labels'}>Visibilità:</label>
-                <Dropdown props={props} component={'visibility'} defaultValue={currentObject.visible}/>
+                <Dropdown
+                    props={props}
+                    component={'visibility'}
+                    property={'visible'}
+                    defaultValue={currentObject.visible}/>
             </div>
             {generateSpecificProperties(currentObject, props)}
             <div className={'options-grid'}>
@@ -107,6 +111,40 @@ function generateProperties(props){
                 >
                     Modifica geometria
                 </button>
+            </div>
+            <label className={'rightbar-titles'}>Media:</label>
+            <div className={'rightbar-audio-media-grid'}>
+                {Object.keys(currentObject.media).map( m => {
+                    return(
+                        <React.Fragment key={currentObject.uuid + '-' + m}>
+                            <p className={'rightbar-audio-media-grid-title'}>Media {optionToName(currentObject.type, m)}</p>
+                            <Dropdown props={props}
+                                      component={'assets'}
+                                      property={m}
+                                      defaultValue={currentObject.media[m]} />
+                        </React.Fragment>
+                    );
+                })}
+                <p className={'rightbar-audio-media-grid-title'}>Maschera</p>
+                <Dropdown props={props}
+                          component={'assets'}
+                          property={'mask'}
+                          defaultValue={currentObject.mask} />
+            </div>
+            <label className={'rightbar-titles'}>Audio:</label>
+            <div className={'rightbar-audio-media-grid'}>
+                {Object.keys(currentObject.audio).map( a => {
+                    return(
+                        <React.Fragment key={currentObject.uuid + '-' + a}>
+                            <p className={'rightbar-audio-media-grid-title'}>Audio {optionToName(currentObject.type, a)}</p>
+                            <Dropdown
+                                props={props}
+                                component={'assets'}
+                                property={a}
+                                defaultValue={currentObject.audio[a]} mediaToEdit={a}/>
+                        </React.Fragment>
+                    );
+                })}
             </div>
         </div>
     );
@@ -141,14 +179,22 @@ function generateSpecificProperties(object, props){
             return(
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato iniziale:</label>
-                    <Dropdown props={props} component={'on-off'} defaultValue={object.properties.state}/>
+                    <Dropdown
+                        props={props}
+                        component={'on-off'}
+                        property={'state'}
+                        defaultValue={object.properties.state}/>
                 </div>
             );
         case InteractiveObjectsTypes.KEY:
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato iniziale:</label>
-                    <Dropdown props={props} component={'collected-not'} defaultValue={object.properties.state}/>
+                    <Dropdown
+                        props={props}
+                        component={'collected-not'}
+                        property={'state'}
+                        defaultValue={object.properties.state}/>
                 </div>
             );
         case InteractiveObjectsTypes.LOCK:
@@ -170,6 +216,13 @@ function generateSpecificProperties(object, props){
             return(<div>Error!</div>);
 
     }
+}
+
+
+function generateMediaAndAudioOptions(object, props){
+    return(
+        <label className={'rightbar-titles'}>Nome</label>
+    );
 }
 
 /**
@@ -286,6 +339,24 @@ function generateObjectsList(props) {
     }
 }
 
+function optionToName(objType, option){
+    switch(objType){
+        case InteractiveObjectsTypes.SWITCH:
+            return switchOptionsNames(option);
+        default:
+            return '';
+    }
+}
+
+function switchOptionsNames(option){
+    switch(option){
+        case 'audio0':
+        case 'media0': return 'on-off';
+        case 'audio1':
+        case 'media1': return 'off-on';
+        default: break;
+    }
+}
 
 
 function objectTypeToString(objectType) {

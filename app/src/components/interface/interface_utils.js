@@ -11,10 +11,16 @@ import Values from "../../interactives/rules/Values";
 function setPropertyFromValue(object, property, value, props){
     let newObject, subProperty;
     let media = object.get('media');
+    let audio = object.get('audio');
 
     if(property.includes('media')){
         subProperty = property;
         property = 'media';
+    }
+
+    if(property.includes('audio')){
+        subProperty = property;
+        property = 'audio';
     }
 
     switch (property) {
@@ -29,6 +35,10 @@ function setPropertyFromValue(object, property, value, props){
         case "media":
             media[subProperty] = value;
             newObject = object.setIn(['media'], media);
+            break;
+        case "audio":
+            audio[subProperty] = value;
+            newObject = object.setIn(['audio'], audio);
             break;
         default:
             let properties = object.get('properties');

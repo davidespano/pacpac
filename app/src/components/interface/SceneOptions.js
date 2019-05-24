@@ -44,7 +44,10 @@ function SceneOptions(props){
                         {scene.name}
                     </div>
                     <div>
-                        <Dropdown props={props} component={'scene-type'} defaultValue={scene.type}/>
+                        <Dropdown props={props}
+                                  component={'scene-type'}
+                                  property={'type'}
+                                  defaultValue={scene.type}/>
                     </div>
                 </div>
                 <label className={'rightbar-titles'}>Etichetta</label>

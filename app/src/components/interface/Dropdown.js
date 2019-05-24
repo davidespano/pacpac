@@ -6,9 +6,11 @@ import scene_utils from "../../scene/scene_utils";
 
 function Dropdown(properties){
     let props = properties.props,
-        component = properties.component;
-    let defaultValue = getDefaultValue(props, properties.defaultValue);
-    let [options, onChange] = generateOptions(props, component);
+        component = properties.component,
+        property = properties.property;
+    let defaultValue = getDefaultValue(props, properties.defaultValue, component);
+    let [options, onChange] = generateOptions(props, component, property);
+    let styles = component === 'assets' ? assetStyle : customStyle;
 
     return(
         <Select
@@ -16,13 +18,13 @@ function Dropdown(properties){
             value={defaultValue}
             onChange={onChange}
             className={'react-select react-select-' + component}
-            styles={customStyle}
+            styles={styles}
             isDisabled={ properties.disabled ? properties.disabled : false}
         />
     );
 }
 
-function generateOptions(props, component){
+function generateOptions(props, component, property){
     switch(component){
         case 'scene-type':
             return [
@@ -32,7 +34,7 @@ function generateOptions(props, component){
                 ],
                 (e) => {
                     let scene = props.scenes.get(props.currentScene);
-                    scene_utils.setProperty(scene, 'type', e.value, props)
+                    scene_utils.setProperty(scene, property, e.value, props)
                 }
             ];
         case 'visibility':
@@ -43,7 +45,7 @@ function generateOptions(props, component){
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, 'visible', e.value, props);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 }
             ];
         case 'on-off':
@@ -54,7 +56,7 @@ function generateOptions(props, component){
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, 'state', e.value, props);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 }
             ];
         case 'scenes':
@@ -74,23 +76,48 @@ function generateOptions(props, component){
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, 'state', e.value, props);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                }
+            ];
+        case 'assets':
+            return [
+                [...props.assets.values()].map( a => {
+                    return {value: a.uuid, label: a.name}
+                }),
+                (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                }
+            ];
+        case 'audios':
+            return [
+                [...props.audios.values()].map( a => {
+                    return {value: a.uuid, label: a.name}
+                }),
+                (e) => {
+                    console.log(e.value);
                 }
             ];
     }
 }
 
-function getDefaultValue(props, defaultValue){
-    if(props.scenes.has(defaultValue)){
-        return {
-            value: defaultValue,
-            label: props.scenes.get(defaultValue).name,
-        };
-    } else {
-        return {
-            value: defaultValue,
-            label: interface_utils.valueUuidToString(defaultValue)
-        };
+function getDefaultValue(props, defaultValue, component){
+    let label = null;
+
+    if(defaultValue){
+        switch(component){
+            case 'scenes':
+                label = props.scenes.get(defaultValue).name; break;
+            case 'assets':
+                label = defaultValue;
+            default:
+                label = interface_utils.valueUuidToString(defaultValue);
+            }
+    }
+
+    return  {
+        value: defaultValue,
+        label: label,
     }
 }
 
@@ -112,6 +139,36 @@ const customStyle = {
     menu: (provided, state) => ({
         ...provided,
         margin: 0,
+    }),
+};
+
+const assetStyle = {
+    option: (provided, state) => ({
+        color: state.isSelected ? '#EF562D' : 'black',
+        '&:hover': { backgroundColor: '#FFD8AC'},
+    }),
+    control: (provided, state) => ({
+        ...provided,
+        minHeight: '25px',
+        height: '25px',
+        '&:hover': { border: 'none'},
+        border: 'none',
+        borderRadius: 0,
+        boxShadow: 'none',
+    }),
+    menu: (provided, state) => ({
+        ...provided,
+        margin: 0,
+    }),
+    singleValue: (provided, state) => ({
+        ...provided,
+        height: '25px',
+        minHeight: '25px',
+    }),
+    valueContainer: (provided, state) => ({
+        ...provided,
+        height: '25px',
+        minHeight: '25px',
     }),
 };
 

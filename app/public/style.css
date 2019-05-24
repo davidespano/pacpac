@@ -649,6 +649,7 @@ div.rules{
     text-align: center;
     font-size: 1.1em;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .inactive:hover {
@@ -828,6 +829,7 @@ div.rules{
     grid-template-columns: 65% 35%;
 }
 
+
 .rightbar-grid {
     grid-template-columns: 70% auto;
     margin-bottom: 5px;
@@ -872,17 +874,44 @@ div.rules{
 .media-grid, .options-grid {
     display: grid;
     grid-template-rows: 30px;
-    grid-gap: 10px;
     width: 100%;
     margin-bottom: 10px;
 }
 
 .media-grid {
     grid-template-columns: 65% auto auto;
+    grid-gap: 10px;
 }
+
 
 .options-grid {
     grid-template-columns: 35% auto;
+    grid-gap: 10px;
+}
+
+.rightbar-audio-media-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 35% auto;
+    border:solid 1px darkgrey;
+}
+
+.rightbar-audio-media-grid-title, .rightbar-audio-media-grid-value {
+    background-color: white;
+    margin-bottom: 0;
+    text-align:left;
+    padding:2px;
+}
+
+.rightbar-audio-media-grid-title {
+    border-right: dotted 1px darkgrey;
+    padding-top: 5px;
+    padding-bottom: 0;
+    border-bottom: dotted 1px darkgrey;
+}
+
+.no-bottom-border {
+    border-bottom: none !important;
 }
 
 .rightbar-btn{
