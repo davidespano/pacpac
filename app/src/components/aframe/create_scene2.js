@@ -14,7 +14,7 @@ import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
 import aframe_utils from "./aframe_utils"
-import Values from '../../interactives/rules/Values'
+import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
 const THREE = require('three');
 const eventBus = require('./eventBus');
@@ -34,6 +34,8 @@ export default class VRScene extends React.Component {
             camera: {},
             resonanceAudioScene: {}
         };
+        console.log(props)
+        console.log(this.props.scenes.toArray()[0])
         //if(document.querySelector('link[href*="bootstrap"]'))
             document.querySelector('link[href*="bootstrap"]').remove();
     }
@@ -119,7 +121,6 @@ export default class VRScene extends React.Component {
     }
 
     handleSceneChange(newActiveScene) {
-        console.log(newActiveScene)
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: this.state.graph,
@@ -130,16 +131,26 @@ export default class VRScene extends React.Component {
 
     cameraChangeMode(is3Dscene){
         let camera = document.getElementById('camera');
+        //TODO il controlli per il cambio camera vanno nella transizione
+        //TODO verificare questo controllo, forse è fatto un po' a cazzo
         if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene){
-            camera.setAttribute("pac-look-controls", "pointerLockEnabled", is3Dscene.toString());
+            //camera.setAttribute('rotation', '0 0 0');
+            //let activeCursor = new Event('pointerlockchange');
+            camera.setAttribute("pac-look-controls", "planarScene: " + !is3Dscene);
+            camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + is3Dscene);
+            document.querySelector('canvas').requestPointerLock();
+            console.log(this)
+            this.forceUpdate()
+        } else {
+            camera.setAttribute("pac-look-controls", "planarScene: " + is3Dscene);
+            camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + !is3Dscene);
+            //document.querySelector('canvas').requestPointerLock()
             this.forceUpdate()
         }
 
     }
 
     render() {
-        console.log(this.state.graph)
-        console.log(this.state.activeScene)
         if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.uuid] !== undefined) {
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>
                 this.state.graph.neighbours[this.state.activeScene.uuid].includes(uuid)
@@ -163,9 +174,13 @@ export default class VRScene extends React.Component {
                     {this.generateBubbles()}
 
                     <Entity primitive="a-camera" key="keycamera" id="camera"
-                               pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()} look-controls="false" wasd-controls="false">
-                            <a-cursor id="cursor"  cursor={"rayOrigin: " + rayCastOrigin} raycaster="objects: [data-raycastable];"
-                                    fuse={false} pointsaver />
+                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
+                            look-controls="false" wasd-controls="false">
+                            <Entity mouse-cursor>
+                                <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
+                                        fuse={false}   visible={is3dScene} raycaster="objects: [data-raycastable];"/>
+                            </Entity>
+
 
                     </Entity>
                 </Scene>

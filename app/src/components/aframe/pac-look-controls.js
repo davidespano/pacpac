@@ -73,7 +73,7 @@ AFRAME.registerComponent('pac-look-controls', {
 
         if (oldData && !data.planarScene !== oldData.planarScene) {
             this.removeEventListeners();
-            this.addEventListenersPlanar();
+            this.addEventListeners();
             if (this.pointerLocked) { this.exitPointerLock(); }
         }
     },
@@ -134,7 +134,6 @@ AFRAME.registerComponent('pac-look-controls', {
             sceneEl.addEventListener('render-target-loaded', bind(this.addEventListeners, this));
             return;
         }
-
         // Mouse events.
         if(!this.data.planarScene){
             canvasEl.addEventListener('mousedown', this.onMouseDown, false);
@@ -161,41 +160,6 @@ AFRAME.registerComponent('pac-look-controls', {
     },
 
     /**
-     * Add mouse and touch event listeners to canvas.
-     */
-    addEventListenersPlanar: function () {
-        var sceneEl = this.el.sceneEl;
-        var canvasEl = sceneEl.canvas;
-
-        // Wait for canvas to load.
-        if (!canvasEl) {
-            sceneEl.addEventListener('render-target-loaded', bind(this.addEventListeners, this));
-            return;
-        }
-
-        // Mouse events.
-        canvasEl.addEventListener('mousedown', this.onMouseDown, false);
-        //window.addEventListener('mousemove', this.onMouseMove, false);
-        window.addEventListener('mouseup', this.onMouseUp, false);
-
-        // Touch events.
-        canvasEl.addEventListener('touchstart', this.onTouchStart);
-        window.addEventListener('touchmove', this.onTouchMove);
-        window.addEventListener('touchend', this.onTouchEnd);
-
-        // sceneEl events.
-        sceneEl.addEventListener('enter-vr', this.onEnterVR);
-        sceneEl.addEventListener('exit-vr', this.onExitVR);
-
-        // Pointer Lock events.
-        if (this.data.pointerLockEnabled) {
-            document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
-            document.addEventListener('mozpointerlockchange', this.onPointerLockChange, false);
-            document.addEventListener('pointerlockerror', this.onPointerLockError, false);
-        }
-    },
-
-    /**
      * Remove mouse and touch event listeners from canvas.
      */
     removeEventListeners: function () {
@@ -203,7 +167,6 @@ AFRAME.registerComponent('pac-look-controls', {
         var canvasEl = sceneEl && sceneEl.canvas;
 
         if (!canvasEl) { return; }
-
         // Mouse events.
         canvasEl.removeEventListener('mousedown', this.onMouseDown);
         window.removeEventListener('mousemove', this.onMouseMove);

@@ -22,6 +22,8 @@ export default class Bubble extends Component
         let el = this;
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let cursor = document.querySelector('#cursor');
+
+        // Riattivo il cursore, e resetto evento animation complete
         this.nv.addEventListener("animationcomplete", function animationListener(evt){
             if(evt.detail.name === "animation__appear" /*&& is3Dscene*/)
             {
@@ -35,10 +37,11 @@ export default class Bubble extends Component
             }
             this.components[evt.detail.name].animation.reset();
         });
-        if(!is3Dscene) {
+
+        // Se la scena è 2D rendo invisibile il cursor, uso solo il mouse (potrebbe non servire)
+        if(!is3Dscene && this.props.isActive) {
             //cursor.setAttribute('material', 'visible: false');
         }
-        //if(stores_utils.getFileType(this.props.scene.img) === 'video')
         this.setShader();
         if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame();
     }
@@ -58,15 +61,18 @@ export default class Bubble extends Component
         }else{
             if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
         }
+
+        // Check forzare l'aggiornamento della camera nella nuova scena se passo da 2D a 3D o viceverse
         let is3Dscene = this.props.scene.type === Values.THREE_DIM;
         let camera = document.getElementById('camera');
         if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene && this.props.isActive && !this.props.editMode)
             this.props.cameraChangeMode(is3Dscene)
+
         this.setVideoFrame();
     }
 
     setVideoFrame(){
-        //if(!this.props.isActive) return;
+        if(!this.props.isActive) return;
         this.props.scene.objects.switches.forEach(s => {
             let state = this.props.runState?this.props.runState[s.uuid].state:s.state;
             if(s.media.media0 === null && s.media.media1 === null) return;
@@ -88,16 +94,16 @@ export default class Bubble extends Component
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
-        let position = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
-
+        let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
+        let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9"
         const curves = Object.values(scene.objects).flat().map(curve => {
             if(this.props.editMode){
                 return(
-                    <CurvedGeometry key={"keyC"+ curve.uuid} position={position} vertices={curve.vertices} id={curve.uuid} is3Dscene={is3Dscene}/>
+                    <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid} is3Dscene={is3Dscene}/>
                 );
             } else {
                 return(
-                    <Curved key={"keyC"+ curve.uuid} position={position} object_uuid={this.props.isActive?curve.uuid:""}
+                    <Curved key={"keyC"+ curve.uuid} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
                             is3Dscene={is3Dscene} vertices={curve.vertices}/>
                 );
             }
@@ -126,12 +132,14 @@ export default class Bubble extends Component
             let canvasWidth = document.documentElement.clientWidth / 100;
             let canvasHight = canvasWidth /1.77;
             let camera = document.getElementById('camera');
-            if(!this.props.editMode)
-                camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
+            if(this.props.isActive){
+                //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
+                //camera.setAttribute("pac-look-controls", "planarScene: true");
+            }
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
-                    material={material} play_video={active} position="0 1.6 -6.44">
+                    material={material} play_video={active} position={positionPlane}>
                 {curves}
                 </Entity>)
         }
