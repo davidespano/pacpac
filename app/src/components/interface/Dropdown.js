@@ -9,8 +9,7 @@ function Dropdown(properties){
         component = properties.component,
         property = properties.property;
     let defaultValue = getDefaultValue(props, properties.defaultValue, component);
-    let [options, onChange] = generateOptions(props, component, property);
-    let styles = component === 'assets' ? assetStyle : customStyle;
+    let [options, onChange, style] = generateOptions(props, component, property);
 
     return(
         <Select
@@ -18,7 +17,7 @@ function Dropdown(properties){
             value={defaultValue}
             onChange={onChange}
             className={'react-select react-select-' + component}
-            styles={styles}
+            styles={style}
             isDisabled={ properties.disabled ? properties.disabled : false}
         />
     );
@@ -35,7 +34,8 @@ function generateOptions(props, component, property){
                 (e) => {
                     let scene = props.scenes.get(props.currentScene);
                     scene_utils.setProperty(scene, property, e.value, props)
-                }
+                },
+                customStyle,
             ];
         case 'visibility':
             return [
@@ -46,7 +46,8 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     interface_utils.setPropertyFromValue(obj, property, e.value, props);
-                }
+                },
+                customStyle,
             ];
         case 'on-off':
             return [
@@ -57,7 +58,8 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     interface_utils.setPropertyFromValue(obj, property, e.value, props);
-                }
+                },
+                customStyle,
             ];
         case 'scenes':
             return [
@@ -77,7 +79,8 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     interface_utils.setPropertyFromValue(obj, property, e.value, props);
-                }
+                },
+                customStyle,
             ];
         case 'assets':
             return [
@@ -87,7 +90,8 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     interface_utils.setPropertyFromValue(obj, property, e.value, props);
-                }
+                },
+                audioMediaOptionsStyle,
             ];
         case 'audios':
             return [
@@ -95,8 +99,10 @@ function generateOptions(props, component, property){
                     return {value: a.uuid, label: a.name}
                 }),
                 (e) => {
-                    console.log(e.value);
-                }
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                },
+                audioMediaOptionsStyle,
             ];
     }
 }
@@ -104,14 +110,14 @@ function generateOptions(props, component, property){
 function getDefaultValue(props, defaultValue, component){
     let label = null;
 
-    console.log(component)
-
     if(defaultValue){
         switch(component){
             case 'scenes':
                 label = props.scenes.get(defaultValue).name; break;
             case 'assets':
                 label = defaultValue; break;
+            case 'audios':
+                label = props.audios.get(defaultValue).name; break;
             default:
                 label = interface_utils.valueUuidToString(defaultValue);
             }
@@ -144,7 +150,7 @@ const customStyle = {
     }),
 };
 
-const assetStyle = {
+const audioMediaOptionsStyle = {
     option: (provided, state) => ({
         color: state.isSelected ? '#EF562D' : 'black',
         '&:hover': { backgroundColor: '#FFD8AC'},

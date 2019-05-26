@@ -131,7 +131,7 @@ function generateProperties(props){
                             <p className={'rightbar-audio-media-grid-title'}>Audio {optionToName(currentObject.type, a)}</p>
                             <Dropdown
                                 props={props}
-                                component={'assets'}
+                                component={'audios'}
                                 property={a}
                                 defaultValue={currentObject.audio[a]} mediaToEdit={a}/>
                         </React.Fragment>
@@ -227,17 +227,6 @@ function objectButtons(props){
                 onClick={()=> props.selectAllObjects()}
             >
                 <img  className={"action-buttons"} src={"icons/icons8-go-back-50.png"} alt={'Torna all\'elenco degli oggetti'}/>
-            </button>
-            <button
-                title={"Salva"}
-                className={"action-buttons-container"}
-                onClick={() => {
-                    InteractiveObjectAPI.saveObject(scene, currentObject);
-                    alert("Hai salvato!")
-                }
-                }
-            >
-                <img className={"action-buttons"} src={"icons/icons8-save-as-50.png"} alt={'Salva'}/>
             </button>
             <button
                 title={"Cancella"}
@@ -385,5 +374,19 @@ function findImg(object) {
     }
 
 }
+
+/*
+<button
+    title={"Salva"}
+    className={"action-buttons-container"}
+    onClick={() => {
+        InteractiveObjectAPI.saveObject(scene, currentObject);
+        alert("Hai salvato!")
+    }
+    }
+>
+    <img className={"action-buttons"} src={"icons/icons8-save-as-50.png"} alt={'Salva'}/>
+</button>
+*/
 
 export default ObjectOptions;
