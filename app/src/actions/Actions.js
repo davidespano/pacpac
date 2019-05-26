@@ -204,6 +204,29 @@ const Actions = {
         })
     },
 
+
+    /**
+     * Dispatch update input status
+     * @param name
+     */
+    updateSceneNameRightbar(name){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SCENE_NAME_RIGHTBAR,
+            name: name,
+        })
+    },
+
+    /**
+     * Dispatch update input status
+     * @param name
+     */
+    updateObjectNameRightbar(name){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OBJECT_NAME_RIGHTBAR,
+            name: name,
+        })
+    },
+
     /**
      * Dispatch new filter selection
      * @param filterType
@@ -452,10 +475,11 @@ const Actions = {
      * Dispatch current object update (rightbar)
      * @param uuid
      */
-    updateCurrentObject(uuid){
+    updateCurrentObject(obj){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_OBJECT,
-            uuid: uuid,
+            obj: obj,
+
         })
     },
 

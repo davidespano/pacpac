@@ -29,6 +29,8 @@ function InputSceneForm(props){
                                        id="scene_name"
                                        name="scene_name"
                                        className={'input-new-scene'}
+                                       maxLength={50}
+                                       minLength={1}
                                        onChange={() => {
                                            let name = document.getElementById("scene_name").value;
                                            props.newSceneNameTyped(name != "");

@@ -76,15 +76,23 @@ function generateProperties(props){
                 <p>{type}</p>
             </div>
             <label className={'rightbar-titles'}>Nome</label>
-            <div className={'rightbar-grid'}>
-                <div id={"objectName"}
-                     className={"propertyForm"}
-                     contentEditable={true}
-                     onBlur={()=> interface_utils.setPropertyFromId(currentObject,'name',"objectName", props)}
-                >
-                    {currentObject.name}
-                </div>
-            </div>
+            <input id={"objectName"}
+                   className={"propertyForm"}
+                   value={props.editor.objectNameRightbar}
+                   minLength={1}
+                   maxLength={50}
+                   onChange={(e) => {
+                       let value = e.target.value;
+                       if(value!==''){
+                           props.updateObjectNameRightbar(value);
+                       }
+                   }}
+                   onBlur={() => {
+                       if(currentObject.name !== props.editor.objectNameRightbar){
+                           interface_utils.setPropertyFromValue(currentObject,'name', props.editor.objectNameRightbar, props);
+                       }
+                   }}
+            />
             <label className={'rightbar-titles'}>Opzioni</label>
             <div className={'options-grid'}>
                 <label className={'options-labels'}>Visibilità:</label>
@@ -266,7 +274,7 @@ function generateObjectsList(props) {
             return (
                 <div key={obj.uuid} className={'objects-wrapper-no-buttons'}>
                     <p className={'objectsList-element'}
-                       onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
+                       onClick={()=> props.updateCurrentObject(obj)}>
                         {obj.name}
                     </p>
                 </div>
@@ -293,7 +301,7 @@ function generateObjectsList(props) {
                 return (
                     <div key={obj.uuid} className={"objects-wrapper"}>
                         <p className={'objectsList-element-delete-button'}
-                           onClick={()=> Actions.updateCurrentObject(obj.uuid)}>
+                           onClick={()=> props.updateCurrentObject(obj)}>
                             {obj.name}
                         </p>
                         <img className={"action-buttons"}

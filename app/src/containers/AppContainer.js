@@ -95,6 +95,9 @@ function getState() {
         switchToStoryEditorMode: Actions.storyEditorModeOn,
         updateAudioFilter: Actions.updateAudioFilter,
         updateTagFilter: Actions.updateTagFilter,
+        updateObjectNameRightbar: Actions.updateObjectNameRightbar,
+        updateSceneNameRightbar: Actions.updateSceneNameRightbar,
+
 
         //scenes
 
@@ -130,9 +133,6 @@ function getState() {
         removeRule: Actions.removeRule,
         setMentionType: Actions.setMentionType,
         updateRule: Actions.updateRule,
-        updateRuleEditorFromState: Actions.updateRuleEditorFromState,
-        updateRuleEditorFromContent: Actions.updateRuleEditorFromContent,
-        updateRuleEditorFromRaw: Actions.updateRuleEditorFromRaw,
         updateSuggestion: Actions.updateSuggestion,
         ruleEditorCallback: {
             eudShowCompletions: Actions.eudShowCompletions,

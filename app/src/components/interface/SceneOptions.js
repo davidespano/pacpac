@@ -33,16 +33,23 @@ function SceneOptions(props){
                 </div>
                 <label className={'rightbar-titles'}>Nome e tipologia</label>
                 <div className={'rightbar-grid'}>
-                    <div id={"sceneName"}
-                         className={"propertyForm rightbar-box"}
-                         contentEditable={true}
-                         onBlur={() => {
-                             let value = document.getElementById('sceneName').textContent;
-                             scene_utils.setProperty(scene, 'name', value, props);
-                         }}
-                    >
-                        {scene.name}
-                    </div>
+                    <input id={"sceneName"}
+                           className={"propertyForm rightbar-box"}
+                           value={props.editor.sceneNameRightbar}
+                           maxLength={50}
+                           minLength={1}
+                           onChange={(e) => {
+                               let value = e.target.value;
+                               if(value !== ''){
+                                   props.updateSceneNameRightbar(value);
+                               }
+                           }}
+                           onBlur={() => {
+                               if(scene.name !== props.editor.sceneNameRightbar){
+                                   scene_utils.setProperty(scene, 'name', props.editor.sceneNameRightbar, props);
+                               }
+                           }}
+                    />
                     <div>
                         <Dropdown props={props}
                                   component={'scene-type'}

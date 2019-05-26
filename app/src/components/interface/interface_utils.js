@@ -46,7 +46,6 @@ function setPropertyFromValue(object, property, value, props){
             newObject = object.setIn(['properties'], properties);
     }
 
-    props.updateCurrentObject(newObject.uuid);
     props.updateObject(newObject);
 
     let scene = props.scenes.get(props.objectToScene.get(newObject.uuid));

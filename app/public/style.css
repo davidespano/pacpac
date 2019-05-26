@@ -615,6 +615,10 @@ div.rules{
             'object-name button';
 }
 
+#object-name{
+    width: 100%;
+}
+
 .objects-wrapper > p, .objects-wrapper-no-buttons > p {
     word-break: break-all;
     text-align: left;
@@ -1206,6 +1210,8 @@ li > span {
     display: inline-block;
     width: 100%;
     box-sizing: border-box;
+    white-space: nowrap;
+    text-overflow: ellipsis
 }
 
 .eudCompletionRoot {

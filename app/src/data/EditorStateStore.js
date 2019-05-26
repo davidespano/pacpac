@@ -16,7 +16,7 @@ class EditorStateStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.ADD_NEW_OBJECT:
-                return state.set('rightbarSelection', 'objects');
+                return state.set('rightbarSelection', 'objects').set('objectNameRightbar', action.obj.name);
             case ActionTypes.AUDIO_SPATIAL_OPTION:
                 return state.set('isAudioSpatial', action.status);
             case ActionTypes.AUDIO_FORM_STATUS:
@@ -52,11 +52,16 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.PLAY_MODE_ON:
                 return state.set('mode', ActionTypes.PLAY_MODE_ON);
             case ActionTypes.RECEIVE_SCENE:
-                return state.set('rightbarSelection', 'scene').set('selectedSceneSpatialAudio', action.scene.uuid);
+                state = state.set('rightbarSelection', 'scene');
+                state = state.set('selectedSceneSpatialAudio', action.scene.uuid);
+                state = state.set('sceneNameRightbar', action.scene.name);
+                return state;
             case ActionTypes.RECEIVE_USER:
                 return state.set('user', action.user);
             case ActionTypes.REMOVE_SCENE:
                 return state.set('rightbarSelection', 'scene');
+            case ActionTypes.REMOVE_OBJECT:
+                return state.set('objectNameRightbar', null);
             case ActionTypes.RIGHTBAR_SELECTION:
                 return state.set('rightbarSelection', action.selection);
 			case ActionTypes.STORY_EDITOR_MODE_ON:
@@ -84,13 +89,20 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
             case ActionTypes.UPDATE_CURRENT_SCENE:
-                return state.set('selectedSceneSpatialAudio', action.scene.uuid);
+                return state.set('selectedSceneSpatialAudio', action.scene.uuid).set('sceneNameRightbar', action.scene.name);
+            case ActionTypes.UPDATE_CURRENT_OBJECT:
+                return state.set('objectNameRightbar', action.obj.name);
+            case ActionTypes.UPDATE_OBJECT_NAME_RIGHTBAR:
+                console.log(action.name);
+                return state.set('objectNameRightbar', action.name);
             case ActionTypes.UPDATE_OBJECTS_NAME_FILTER:
                 return state.set('objectsNameFilter', action.filter);
             case ActionTypes.UPDATE_OBJECTS_TYPE_FILTER:
                 return state.set('objectsTypeFilter', action.filter);
             case ActionTypes.UPDATE_SCENE_NAME_FILTER:
                 return state.set('scenesNameFilter', action.filter);
+            case ActionTypes.UPDATE_SCENE_NAME_RIGHTBAR:
+                return state.set('sceneNameRightbar', action.name);
             case ActionTypes.UPDATE_TAG_FILTER:
                 return state.set('tagFilter', action.filter);
             case ActionTypes.RESET:

@@ -85,7 +85,7 @@ function generateObjectsIcons(props){
         return(
             <figure className={'icons'}
                     onClick={() => {
-                        props.updateCurrentObject(obj.uuid);
+                        props.updateCurrentObject(obj);
                         props.rightbarSelection('objects');
                     }}
                     style={getPosition(props.centroids, obj.uuid)}
