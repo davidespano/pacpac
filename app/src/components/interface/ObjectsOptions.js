@@ -66,6 +66,7 @@ function checkFilters(props, filter){
 function generateProperties(props){
 
     let currentObject = props.interactiveObjects.get(props.currentObject);
+    let objectScene = props.scenes.get(props.objectToScene.get(currentObject.uuid));
     let type = objectTypeToString(currentObject.type);
 
     return(
@@ -93,6 +94,23 @@ function generateProperties(props){
                        }
                    }}
             />
+            <label className={'rightbar-titles'}>Appartenenza</label>
+            <div className={'rightbar-grid'}>
+                <input className={'propertyForm objectName'}
+                       value={objectScene.name}
+                />
+                <button
+                    title={"Vai alla scena"}
+                    className={"select-file-btn btn"}
+                    onClick={() => {
+                        props.updateCurrentScene(objectScene.uuid);
+                        props.updateCurrentObject(currentObject);
+                        props.rightbarSelection('objects');
+                    }}
+                >
+                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-white-image-50.png"}/>
+                </button>
+            </div>
             <label className={'rightbar-titles'}>Opzioni</label>
             <div className={'options-grid'}>
                 <label className={'options-labels'}>Visibilità:</label>

@@ -292,6 +292,8 @@ div.rules{
     background-color: #FFFFFF;
     border: 1px solid darkgrey;
     padding: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .propertyForm {
@@ -616,6 +618,7 @@ div.rules{
 }
 
 #objectName{
+    margin-bottom: 5px;
     width: 100%;
 }
 
@@ -897,7 +900,10 @@ div.rules{
     display: grid;
     width: 100%;
     grid-template-columns: 35% auto;
-    border:solid 1px darkgrey;
+    border-right:solid 1px darkgrey;
+    border-left:solid 1px darkgrey;
+    border-top:solid 1px darkgrey;
+    margin-bottom: 5px;
 }
 
 .rightbar-audio-media-grid-title, .rightbar-audio-media-grid-value {
@@ -909,9 +915,8 @@ div.rules{
 
 .rightbar-audio-media-grid-title {
     border-right: dotted 1px darkgrey;
-    padding-top: 5px;
     padding-bottom: 0;
-    border-bottom: dotted 1px darkgrey;
+    border-bottom: solid 1px darkgrey;
 }
 
 .no-bottom-border {
@@ -1211,7 +1216,7 @@ li > span {
     width: 100%;
     box-sizing: border-box;
     white-space: nowrap;
-    text-overflow: ellipsis
+    text-overflow: ellipsis;
 }
 
 .eudCompletionRoot {
@@ -1497,10 +1502,15 @@ input.eudObjectString[type=text] {
 }
 
 .react-select > div > div, .react-select > div > div > div {
-    padding: 2px;
+    padding: 1px 2px 2px 2px;;
 }
 
-element {
-    cursor: pointer;
-    cursor: hand;
+.ellipsis, .ellipsis-no-inline {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.ellipsis {
+    display: inline-block;
 }

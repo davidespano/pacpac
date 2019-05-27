@@ -60,7 +60,7 @@ function InputSceneForm(props){
                             <div className={'box-titles'}>Media</div>
                             <div className={'box-grid scene-grid'}>
                                 <p id={'file-selected-name'}
-                                   className={'input-new-scene'}
+                                   className={'input-new-scene ellipsis'}
                                 >
                                     {selectedFile(props)}
                                 </p>

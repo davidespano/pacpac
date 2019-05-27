@@ -68,7 +68,8 @@ function generateOptions(props, component, property){
                 }),
                 (e) => {
                     props.selectSceneSpatialAudio(e.value);
-                }
+                },
+                customStyle,
             ];
         case 'collected-not':
             return [
@@ -161,6 +162,7 @@ const audioMediaOptionsStyle = {
         height: '25px',
         '&:hover': { border: 'none'},
         border: 'none',
+        borderBottom: 'solid 1px darkgrey',
         borderRadius: 0,
         boxShadow: 'none',
     }),
