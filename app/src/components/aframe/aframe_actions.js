@@ -217,7 +217,6 @@ function transition2D(actualScene, targetScene, duration, VRScene){
 
     let rayCastOrigin = is3dScene?'cursor':'mouse';
 
-
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
     targetSky.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
@@ -241,12 +240,11 @@ function transition2D(actualScene, targetScene, duration, VRScene){
     actualSky.dispatchEvent(disappear);
     if(!is3dScene) {
         sceneMovement.dispatchEvent(movement);
-
     }
     setTimeout(function () {
         lookObject(targetSky.id);
-        //targetSky.dispatchEvent(appear);
-        //sceneMovement.dispatchEvent(movement);
+        targetSky.dispatchEvent(appear);
+        sceneMovement.dispatchEvent(movement);
         //camera.setAttribute("pac-look-controls", "planarScene: " + !is3dScene);
         //camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + is3dScene);
         //cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
@@ -267,13 +265,14 @@ function lookObject(idObject){
     quaternion.setFromUnitVectors(v, l);
     let euler = new THREE.Euler();
     euler.setFromQuaternion(quaternion, 'YXZ', false);
+    camera.setAttribute("pac-look-controls", "planarScene: true" );
+    camera.setAttribute("pac-look-controls", "pointerLockEnabled: false" );
     camera.components["pac-look-controls"].yawObject.rotation._y = euler._y
     camera.components["pac-look-controls"].yawObject.rotation._x = 0;
     camera.components["pac-look-controls"].yawObject.rotation._z = 0;
     camera.components["pac-look-controls"].pitchObject.rotation._x = euler._x
     camera.components["pac-look-controls"].pitchObject.rotation._z =  0;
     camera.components["pac-look-controls"].pitchObject.rotation._y =  0;
-    camera.components["pac-look-controls"].pointerLockEnabled = false;
     //document.exitPointerLock()
 }
 

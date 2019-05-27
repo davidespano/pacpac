@@ -255,9 +255,11 @@ AFRAME.registerComponent('pac-look-controls', {
 
         // Calculate rotation.
         direction = this.data.reverseMouseDrag ? 1 : -1;
-        yawObject.rotation.y += movementX * 0.002 * direction;
-        pitchObject.rotation.x += movementY * 0.002 * direction;
-        pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        if(!this.data.planarScene) {
+            yawObject.rotation.y += movementX * 0.002 * direction;
+            pitchObject.rotation.x += movementY * 0.002 * direction;
+            pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        }
     },
 
     /**
@@ -338,9 +340,12 @@ AFRAME.registerComponent('pac-look-controls', {
 
         direction = this.data.reverseTouchDrag ? 1 : -1;
         // Limit touch orientaion to to yaw (y axis).
-        yawObject.rotation.y -= deltaY * 0.4 * direction;
-        pitchObject.rotation.x -= deltaX * 0.4 * direction;
-        pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        if(!this.data.planarScene){
+            yawObject.rotation.y -= deltaY * 0.4 * direction;
+            pitchObject.rotation.x -= deltaX * 0.4 * direction;
+            pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        }
+
         this.touchStart = {
             x: evt.touches[0].pageX,
             y: evt.touches[0].pageY

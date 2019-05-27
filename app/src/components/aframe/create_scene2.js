@@ -131,20 +131,21 @@ export default class VRScene extends React.Component {
 
     cameraChangeMode(is3Dscene){
         let camera = document.getElementById('camera');
+        let cursor = document.getElementById('cursor');
+        let rayCastOrigin = is3Dscene?'cursor':'mouse';
         //TODO il controlli per il cambio camera vanno nella transizione
         //TODO verificare questo controllo, forse è fatto un po' a cazzo
         if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene){
-            //camera.setAttribute('rotation', '0 0 0');
-            //let activeCursor = new Event('pointerlockchange');
             camera.setAttribute("pac-look-controls", "planarScene: " + !is3Dscene);
             camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + is3Dscene);
+            cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
             document.querySelector('canvas').requestPointerLock();
-            console.log(this)
             this.forceUpdate()
         } else {
             camera.setAttribute("pac-look-controls", "planarScene: " + is3Dscene);
             camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + !is3Dscene);
-            //document.querySelector('canvas').requestPointerLock()
+            cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
+            document.querySelector('canvas').requestPointerLock()
             this.forceUpdate()
         }
 

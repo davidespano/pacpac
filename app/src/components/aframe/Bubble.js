@@ -136,6 +136,7 @@ export default class Bubble extends Component
                 //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
                 //camera.setAttribute("pac-look-controls", "planarScene: true");
             }
+            camera.setAttribute("pac-look-controls", "planarScene: true");
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
