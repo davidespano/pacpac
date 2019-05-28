@@ -73,8 +73,8 @@ function generalOptions(props, audioToEdit){
                        }}/>
                 <div> </div>
                 <div id={'select-file-audio'}>
-                    <p id={'file-selected-name ellipsis-no-inline'}
-                       className={'input-new-audio-file'}
+                    <p id={'file-selected-name'}
+                       className={'input-new-audio-file ellipsis-no-inline'}
                     >
                         {selectedFile(props)}
                     </p>
