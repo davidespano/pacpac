@@ -105,6 +105,17 @@ function generateOptions(props, component, property){
                 },
                 audioMediaOptionsStyle,
             ];
+        case 'music':
+            return [
+                [...props.audios.values()].map( a => {
+                    return {value: a.uuid, label: a.name}
+                }),
+                (e) => {
+                    let scene = props.scenes.get(props.currentScene);
+                    scene_utils.setProperty(scene, property, e.value, props)
+                },
+                customStyle,
+            ];
     }
 }
 
@@ -160,7 +171,7 @@ const audioMediaOptionsStyle = {
         ...provided,
         minHeight: '25px',
         height: '25px',
-        '&:hover': { border: 'none'},
+        '&:hover': { borderBottom: 'solid 1px darkgrey'},
         border: 'none',
         borderBottom: 'solid 1px darkgrey',
         borderRadius: 0,

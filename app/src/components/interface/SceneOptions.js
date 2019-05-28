@@ -78,6 +78,13 @@ function SceneOptions(props){
                 </div>
                 <label className={'rightbar-titles'}>Audio spaziali</label>
                 {spatialAudioList(props, scene)}
+                <label className={'rightbar-titles'}>Musica di sottofondo</label>
+                <Dropdown
+                    props={props}
+                    component={'music'}
+                    property={'music'}
+                    defaultValue={scene.music} mediaToEdit={'music'}
+                />
             </div>
         );
     } else {
