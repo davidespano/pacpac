@@ -222,21 +222,11 @@ function addScene(req, res, next) {
  *          schema:
  *              properties:
  *                  uuid:
- *                      type: string
+ *                      type: object
  *                      required: true
- *                      description: uuid of the scene
- *                  name:
- *                      type: string
- *                      required: true
- *                      description: Name of the scene
- *                  img:
- *                      type: string
- *                      required: true
- *                      description: Img of the scene
- *                  type:
- *                      type: string
- *                      required: true
- *                      description: Type of the scene (3D / 2D)
+ *                      description: scene
+ *                      schema:
+ *                          $ref: '#/definitions/Scenes'
  *                  tag:
  *                      type: string
  *                      description: Uuid of the tag
@@ -261,14 +251,11 @@ function addScene(req, res, next) {
  *              description: Scene/Tag does not exists
  */
 function updateScene(req, res, next) {
-    const uuid = req.body.uuid;
-    const name = req.body.name;
-    const img = req.body.img;
+    const scene = req.body.scene;
     const tag = req.body.tag;
-    const type = req.body.type;
     const gameID = req.params.gameID;
 
-    Scenes.updateScene(dbUtils.getSession(req), uuid, name, img, type, tag, gameID)
+    Scenes.updateScene(dbUtils.getSession(req), scene, tag, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }

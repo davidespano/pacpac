@@ -237,17 +237,11 @@ function createScene(name, img, index, type, tag, order) {
  * Update a scene inside db
  * @param scene
  */
-function updateScene(scene) {
+function updateScene(scene, tag) {
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({
-            uuid: scene.uuid,
-            name: scene.name,
-            img: scene.img,
-            type: scene.type,
-            tag: scene.tag,
-        })
+        .send({scene: scene, tag: tag})
         .end(function (err, response) {
             if (err) {
                 return console.error(err);

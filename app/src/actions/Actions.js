@@ -330,7 +330,7 @@ const Actions = {
             type: ActionTypes.UPDATE_SCENE,
             scene: scene,
         });
-        SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
+        SceneAPI.updateScene(scene, scene.tag);
     },
 
     /**
@@ -346,7 +346,7 @@ const Actions = {
             oldName: oldName,
             order: order,
         });
-        SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
+        SceneAPI.updateScene(scene, scene.tag);
     },
 
     /**

@@ -186,10 +186,13 @@ function addScene(session, uuid, name, img, index, type, tag, gameID) {
 }
 
 //update a scene
-function updateScene( session, uuid, name, img, type, tag, gameID){
+function updateScene( session, scene, tag, gameID){
+    
+    delete scene.tag;
+
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})' +
-        'RETURN scene', {uuid: uuid})
+        'RETURN scene', {uuid: scene.uuid})
         .then(result => {
             if (_.isEmpty(result.records)) {
                 throw {message: "Scene doesn't exists", status: 404};
@@ -197,10 +200,10 @@ function updateScene( session, uuid, name, img, type, tag, gameID){
             else {
                 return session.run(
                     'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})-[r:TAGGED_AS]->(tagS), (tag:Tag:`' + gameID + '` {uuid: $tag}) ' +
-                    'SET scene.name = $name, scene.type = $type, scene.img = $img ' +
+                    'SET scene=$scene ' +
                     'CREATE (scene) -[:TAGGED_AS]-> (tag) ' +
                     'DELETE r ' +
-                    'RETURN scene,tag', {uuid: uuid, name: name, img: img, type: type, tag: tag})
+                    'RETURN scene,tag', {uuid: scene.uuid, scene: scene, tag: tag})
             }
         })
         .then(result => {
