@@ -397,6 +397,18 @@ const Actions = {
     },
 
     /**
+     * Receive single tag from db
+     * @param tag
+     */
+    receiveTag(tag){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_TAG,
+            uuid: tag.uuid,
+            tag: tag,
+        });
+    },
+
+    /**
      * Dispatch tag removal
      * @param tag_uuid
      */

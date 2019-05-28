@@ -175,6 +175,7 @@ function getByName(name, order = null) {
                 type : response.body.type,
                 index : response.body.index,
                 tag : tag,
+                music: response.body.music,
                 objects : {
                     transitions : transitions_uuids,
                     switches : switches_uuids,
@@ -219,6 +220,7 @@ function createScene(name, img, index, type, tag, order) {
                 index : index,
                 tag : tag,
                 rules: [],
+                audios: [],
                 objects: {
                     transitions: [],
                     switches: [],
@@ -233,16 +235,19 @@ function createScene(name, img, index, type, tag, order) {
 
 /**
  * Update a scene inside db
- * @param uuid
- * @param name
- * @param type
- * @param tag
+ * @param scene
  */
-function updateScene(uuid, name, img, type, tag) {
+function updateScene(scene) {
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({uuid: uuid, name: name, img: img, type: type, tag: tag})
+        .send({
+            uuid: scene.uuid,
+            name: scene.name,
+            img: scene.img,
+            type: scene.type,
+            tag: scene.tag,
+        })
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
@@ -270,6 +275,10 @@ function getAllScenesAndTags() {
                         if (response.body && response.body !== []) {
                             const scenes_tags = {scenes: response.body, tags: responseT.body};
                             Actions.loadAllScenes(scenes_tags, Orders.CHRONOLOGICAL);
+                        } else {
+                            responseT.body.forEach( tag => {
+                                Actions.receiveTag(tag);
+                            })
                         }
                     });
         });
@@ -389,16 +398,16 @@ async function getAllDetailedScenes(gameGraph) {
         });
 
         // generate audios
-        /*const audios = s.audio.map( audio => {
+        const audios = s.audio.map( audio => {
             return ({
                 uuid: audio.uuid,
                 name: audio.name,
                 file: audio.file,
-                isLocal: audio.isLocal,
+                isSpatial: audio.isSpatial,
                 scene: audio.scene,
                 loop: audio.loop,
             })
-        });*/
+        });
 
         // new Scene
         const newScene = ({ //Scene, not immutable
@@ -408,14 +417,15 @@ async function getAllDetailedScenes(gameGraph) {
             type : s.type,
             index : s.index,
             tag : s.tag,
+            music : s.music,
             objects : {
                 transitions : transitions,
                 switches : switches,
                 collectable_keys: keys,
                 locks : locks,
             },
-            rules: rules,
-            //audio: audios,
+            rules : rules,
+            audios : audios,
         });
 
         gameGraph['scenes'][newScene.uuid] = newScene;

@@ -50,6 +50,7 @@ const ActionTypes = {
     // TAGS
 
     ADD_NEW_TAG : 'ADD_NEW_TAG',
+    RECEIVE_TAG : 'RECEIVE_TAG',
     REMOVE_TAG : 'REMOVE_TAG',
     UPDATE_TAG: 'UPDATE_TAG',
 
