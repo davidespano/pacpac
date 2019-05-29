@@ -41,6 +41,9 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
+                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-debug"
+                       aria-controls="nav-debug" aria-selected="false"
+                       onClick={() => {handleDebugMode(props)}} >Debug</a>
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">
@@ -127,6 +130,16 @@ function handleAssetsMode(props){
     if(props.editor.mode !== ActionTypes.FILE_MANAGER_MODE_ON){
         props.switchToFileManager();
         document.getElementById("nav-tabContent").hidden = true;
+    }
+}
+
+//TODO [debug] add to origin master
+function handleDebugMode(props) {
+    if(props.editor.mode !== ActionTypes.DEBUG_MODE_ON){
+        props.updateCurrentScene(props.scenes.toArray()[0].uuid);
+        props.switchToDebugMode();
+        document.getElementById("nav-tabContent").hidden = true;
+
     }
 }
 

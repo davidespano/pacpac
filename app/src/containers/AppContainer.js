@@ -88,6 +88,8 @@ function getState() {
         selectTagNewScene: Actions.selectTagNewScene,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
+        switchToDebugMode: Actions.debugModeOn, //TODO [debug] add to origin master
+        updateDebugState: Actions.updateDebugState, //TODO [debug] add to origin master
         switchToEditMode: Actions.editModeOn,
         switchToLoginMode: Actions.loginModeOn,
         switchToFileManager: Actions.fileManagerModeOn,

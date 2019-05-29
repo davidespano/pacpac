@@ -51,6 +51,21 @@ const Actions = {
         })
     },
 
+    //TODO [debug] add to origin master
+    debugModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DEBUG_MODE_ON
+        })
+    },
+
+    //TODO [debug] add to origin master
+    updateDebugState(state){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_DEBUG_STATE,
+            state: state
+        })
+    },
+
     loginModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.LOGIN_MODE_ON

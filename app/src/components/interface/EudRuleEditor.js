@@ -4,6 +4,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObject from "../../interactives/InteractiveObject"
 import Immutable from "immutable";
 import Action from "../../interactives/rules/Action"
+import ActionTypes from "../../actions/ActionTypes"
 import Rule from "../../interactives/rules/Rule";
 import rules_utils from "../../interactives/rules/rules_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
@@ -12,6 +13,7 @@ import Values from "../../interactives/rules/Values";
 import Condition from "../../interactives/rules/Condition";
 import SuperCondition from "../../interactives/rules/SuperCondition";
 import interface_utils from "./interface_utils";
+
 let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
@@ -37,31 +39,49 @@ export default class EudRuleEditor extends Component {
                                 rules={this.props.rules}
                                 rule={rule}
                                 ruleEditorCallback={this.props.ruleEditorCallback}
-                                removeRule = {(rule) => {this.onRemoveRuleClick(rule)}}
+                                removeRule={(rule) => {
+                                    this.onRemoveRuleClick(rule)
+                                }}
                             />
                         </React.Fragment>
                     );
                 });
-            return <div className={"rules"}>
-                <div className={"rule-container"}>
-                    <div className={"rule-editor"}
-                         onClick={() => {
-                             this.onOutsideClick();
-                         }}>
-                        <h2>Regole della scena</h2>
-                        {rulesRendering}
-                        <div className={'rules-footer'}></div>
+            //TODO [debug] add to origin master
+            if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                return <div className={"rules"}>
+                    <div className={"rule-container"}>
+                        <div className={"rule-editor"}
+                             onClick={() => {
+                                 this.onOutsideClick();
+                             }}>
+                            <h2>Regole della scena</h2>
+                            {rulesRendering}
+                        </div>
                     </div>
-                    <div className={"eudFloating"}>
-                        <button className={"btn select-file-btn new-rule-btn"}
-                                onClick={() => {
-                                    this.onNewRuleClick();
-                                }}>
-                            Nuova Regola
-                        </button>
+                </div>;
+            } else {
+                return <div className={"rules"}>
+                    <div className={"rule-container"}>
+                        <div className={"rule-editor"}
+                             onClick={() => {
+                                 this.onOutsideClick();
+                             }}>
+                            <h2>Regole della scena</h2>
+                            {rulesRendering}
+                            <div className={'rules-footer'}></div>
+                        </div>
+                        <div className={"eudFloating"}>
+                            <button className={"btn select-file-btn new-rule-btn"}
+                                    onClick={() => {
+                                        this.onNewRuleClick();
+                                    }}>
+                                Nuova Regola
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </div>;
+                </div>;
+            }
+            //TODO END of [debug] add to origin master
         } else {
             return <p>Nessuna scena selezionata</p>
         }
@@ -71,7 +91,7 @@ export default class EudRuleEditor extends Component {
         this.props.ruleEditorCallback.eudShowCompletions(null, null)
     }
 
-    onNewRuleClick(){
+    onNewRuleClick() {
         let scene = this.props.scenes.get(this.props.currentScene);
         let event = Action().set("uuid", uuid.v4());
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
@@ -79,7 +99,7 @@ export default class EudRuleEditor extends Component {
         this.props.addNewRule(scene, rule);
     }
 
-    onRemoveRuleClick(ruleId){
+    onRemoveRuleClick(ruleId) {
         let scene = this.props.scenes.get(this.props.currentScene);
         let rule = this.props.rules.get(ruleId);
         this.props.removeRule(scene, rule);
@@ -105,50 +125,55 @@ class EudRule extends Component {
         };
     }
 
-    mouseEnter(){
+    mouseEnter() {
         this.setState({isMouseInside: true});
     }
 
-    mouseLeave(){
+    mouseLeave() {
         this.setState({isMouseInside: false});
     }
 
-    actionBtn(rule, action){
+
+    actionBtn(rule, action) {
         let disabled = rule.actions.size <= 1;
-        return (
-            <button
-                title={"Cancella l'azione"}
-                className={"action-buttons-container eudDeleteAction "}
-                key={'remove-btn-' + action.uuid}
-                onClick={() => {
-                    let newRule = rules_utils.deleteAction(rule, action);
-                    this.props.ruleEditorCallback.eudUpdateRule(newRule);
-                }}
-                disabled={disabled}
-            >
-                <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella l\'azione'}/>
-            </button>
-        );
+        //TODO [debug] add to master
+        if (this.props.editor.mode !== ActionTypes.DEBUG_MODE_ON)
+            return (
+                <button
+                    title={"Cancella l'azione"}
+                    className={"action-buttons-container eudDeleteAction "}
+                    onClick={() => {
+                        let newRule = rules_utils.deleteAction(rule, action);
+                        this.props.ruleEditorCallback.eudUpdateRule(newRule);
+                    }}
+                    disabled={disabled}
+                >
+                    <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella l\'azione'}/>
+                </button>
+            );
     }
 
-    conditionBtn(rule, condition){
-        return (
-            <button
-                title={"Cancella la condizione"}
-                key={'remove-btn-' + condition.uuid}
-                className={"action-buttons-container eudDeleteCondition "}
-                onClick={() => {
-                    let newRule = rules_utils.deleteCondition(rule, condition);
-                    this.props.ruleEditorCallback.eudUpdateRule(newRule);
-                }}
-            >
-                <img  className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella la condizione'}/>
-            </button>
-        );
+    conditionBtn(rule, condition) {
+        //TODO [debug] add to origin master
+        if (this.props.editor.mode !== ActionTypes.DEBUG_MODE_ON)
+            return (
+                <button
+                    title={"Cancella la condizione"}
+                    key={'remove-btn-' + condition.uuid}
+                    className={"action-buttons-container eudDeleteCondition "}
+                    onClick={() => {
+                        let newRule = rules_utils.deleteCondition(rule, condition);
+                        this.props.ruleEditorCallback.eudUpdateRule(newRule);
+                    }}
+                >
+                    <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella la condizione'}/>
+                </button>
+            );
+
     }
 
-    generateConditions(props, condition, rule){
-        if(condition instanceof Condition){ //passo base
+    generateConditions(props, condition, rule) {
+        if (condition instanceof Condition) { //passo base
             return (
                 <React.Fragment key={'fragment-' + condition.uuid}>
                     <EudCondition
@@ -178,12 +203,12 @@ class EudRule extends Component {
     }
 
 
-    generateOperatorSelector(props, condition, rule){
-        return(
+    generateOperatorSelector(props, condition, rule) {
+        return (
             <span className={"eudIf"}>
                 <select defaultValue={condition.operator}
                         id={"selectOperator" + condition.uuid}
-                        key={'select-operator-'+ condition.uuid}
+                        key={'select-operator-' + condition.uuid}
                         className={'eudOperator'}
                         onChange={() => {
                             let e = document.getElementById("selectOperator" + condition.uuid);
@@ -199,11 +224,11 @@ class EudRule extends Component {
         );
     }
 
-    editSuperConditionOperator(condition, conditionToEdit, value){
-        if(condition === conditionToEdit){
+    editSuperConditionOperator(condition, conditionToEdit, value) {
+        if (condition === conditionToEdit) {
             condition.operator = value;
         } else {
-            if(condition instanceof SuperCondition){
+            if (condition instanceof SuperCondition) {
                 this.editSuperConditionOperator(condition.condition1, conditionToEdit, value);
                 this.editSuperConditionOperator(condition.condition2, conditionToEdit, value);
             }
@@ -214,28 +239,88 @@ class EudRule extends Component {
     render() {
         let rule = this.props.rules.get(this.props.rule);
         let buttonBar = this.state.isMouseInside ? "eudAction" : "eudAction eudHidden";
-        let ruleCssClass = this.state.isMouseInside ?  "eudRule eudHighlight" : "eudRule";
+        let ruleCssClass = this.state.isMouseInside ? "eudRule eudHighlight" : "eudRule";
+        let buttonBarRendering = null;
         let eudCondition = null;
+
+        //TODO [debug] add to origin master
+        if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+            buttonBar = "eudAction eudHidden";
+            ruleCssClass = "eudRule";
+            buttonBarRendering =
+                <React.Fragment>
+                    <div className={"eudNext"}>
+                        <button className={"select-file-btn btn btnNext"} id={"next" + rule.uuid} title={"Avanti"}
+                                onClick={() => {
+                                    alert("Avanti")
+                                }}>
+                            <img className={"action-buttons btn-img"} src={"icons/icons8-play-50.png"}
+                                 alt={"Prossima regola"}/>
+                            &nbsp;Avanti
+                        </button>
+                    </div>
+                </React.Fragment>
+        } else {
+            buttonBarRendering =
+                <React.Fragment>
+                    <div className={buttonBar}>
+                        <button title={"Aggiungi una condizione"}
+                                key={'add-condition-' + rule.uuid}
+                                onClick={() => {
+                                    let newRule = rules_utils.addEmptyCondition(rule);
+                                    this.props.ruleEditorCallback.eudUpdateRule(newRule);
+                                }}
+                                className={"eudDelete action-buttons-container"}>
+                            <img className={"action-buttons"} src={"icons/icons8-condition-128.png"}
+                                 alt={"Aggiungi una condizione"}/>
+                            &nbsp;Aggiungi Condizione
+                        </button>
+                        <button title={"Aggiungi un'azione"}
+                                key={'add-action-' + rule.uuid}
+                                onClick={() => {
+                                    let newRule = rules_utils.addEmptyAction(rule);
+                                    this.props.ruleEditorCallback.eudUpdateRule(newRule);
+                                }}
+                                className={"eudDelete action-buttons-container"}>
+                            <img className={"action-buttons"} src={"icons/icons8-action-128.png"}
+                                 alt={"Aggiungi un'azione"}/>
+                            &nbsp;Aggiungi Azione
+                        </button>
+                        <button title={"Cancella la regola"}
+                                key={'remove-rule-' + rule.uuid}
+                                onClick={() => {
+                                    this.props.removeRule(this.props.rule)
+                                }}
+                                className={"eudDelete action-buttons-container"}>
+                            <img className={"action-buttons"} src={"icons/icons8-waste-50.png"}
+                                 alt={"Elimina la regola"}/>
+                            &nbsp;Elimina Regola
+                        </button>
+                    </div>
+                </React.Fragment>
+        }
+
         if (rule) {
+            console.log(rule);
             let actionRendering = rule.actions.map(
                 action => {
-                    return <React.Fragment key={'fragment-' + action.uuid} >
+                    return <React.Fragment key={'fragment-' + action.uuid}>
                         <EudAction
-                        editor={this.props.editor}
-                        interactiveObjects={this.props.interactiveObjects}
-                        scenes={this.props.scenes}
-                        assets={this.props.assets}
-                        rules={this.props.rules}
-                        rule={rule}
-                        action={action}
-                        ruleEditorCallback={this.props.ruleEditorCallback}
+                            editor={this.props.editor}
+                            interactiveObjects={this.props.interactiveObjects}
+                            scenes={this.props.scenes}
+                            assets={this.props.assets}
+                            rules={this.props.rules}
+                            rule={rule}
+                            action={action}
+                            ruleEditorCallback={this.props.ruleEditorCallback}
                         />
                         {this.actionBtn(rule, action)}
                     </React.Fragment>
                 });
             // (Object.keys(this.props.rule.condition).length !== 0 || this.props.rule.condition.constructor !== Object)
             let conditions = null;
-            if (rule.condition instanceof Condition || rule.condition instanceof SuperCondition){
+            if (rule.condition instanceof Condition || rule.condition instanceof SuperCondition) {
                 conditions =
                     <React.Fragment>
                         <span className={"eudIf"}>se </span>
@@ -243,10 +328,16 @@ class EudRule extends Component {
                     </React.Fragment>
             }
 
+            //TODO [debug] add to origin master (id rule)
             return <div className={ruleCssClass}
+                        id={'rule' + rule.uuid}
                         key={'eud-rule-' + rule.uuid}
-                        onMouseEnter={() => {this.mouseEnter()}}
-                        onMouseLeave={() => {this.mouseLeave()}}>
+                        onMouseEnter={() => {
+                            this.mouseEnter()
+                        }}
+                        onMouseLeave={() => {
+                            this.mouseLeave()
+                        }}>
                 <span className={"eudWhen"}>Quando </span>
                 <EudAction
                     editor={this.props.editor}
@@ -261,38 +352,10 @@ class EudRule extends Component {
                 {conditions}
                 <span className={"eudThen"}>allora </span>
                 {actionRendering}
-                <div className={buttonBar}>
-                    <button title={"Aggiungi una condizione"}
-                            key={'add-condition-' + rule.uuid}
-                            onClick={()=>{
-                        let newRule = rules_utils.addEmptyCondition(rule);
-                        this.props.ruleEditorCallback.eudUpdateRule(newRule);
-                    }}
-                            className={"eudDelete action-buttons-container"}>
-                        <img className={"action-buttons"} src={"icons/icons8-condition-128.png"} alt={"Aggiungi una condizione"}/>
-                        &nbsp;Aggiungi Condizione
-                    </button>
-                    <button title={"Aggiungi un'azione"}
-                            key={'add-action-' + rule.uuid}
-                            onClick={()=>{
-                        let newRule = rules_utils.addEmptyAction(rule);
-                        this.props.ruleEditorCallback.eudUpdateRule(newRule);
-                    }}
-                            className={"eudDelete action-buttons-container"}>
-                        <img className={"action-buttons"} src={"icons/icons8-action-128.png"} alt={"Aggiungi un'azione"}/>
-                        &nbsp;Aggiungi Azione
-                    </button>
-                    <button title={"Cancella la regola"}
-                            key={'remove-rule-' + rule.uuid}
-                            onClick={()=>{this.props.removeRule(this.props.rule)}}
-                            className={"eudDelete action-buttons-container"}>
-                        <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={"Elimina la regola"}/>
-                        &nbsp;Elimina Regola
-                    </button>
-                </div>
+                {buttonBarRendering}
             </div>
         } else {
-            return <p key={'rule-not-found-'+rule.uuid}>Regola non trovata</p>
+            return <p key={'rule-not-found-' + rule.uuid}>Regola non trovata</p>
         }
     }
 }
@@ -337,11 +400,11 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={subject == null? "" : objectTypeToString(subject.type) + subject.name}
+                originalText={subject == null ? "" : objectTypeToString(subject.type) + subject.name}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
-                changeText = {(text, role) => this.changeText(text, role)}
-                updateRule = {(rule, role) => this.updateRule(rule, role)}
+                changeText={(text, role) => this.changeText(text, role)}
+                updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
                 role={"subject"}
@@ -362,13 +425,13 @@ class EudCondition extends Component {
                 originalText={operatorUuidToString(this.props.condition.operator)}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={operatorCompletion}
-                changeText = {(text, role) => this.changeText(text, role)}
-                updateRule = {(rule, role) => this.updateRule(rule, role)}
+                changeText={(text, role) => this.changeText(text, role)}
+                updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
                 role={"operator"}
 
-        /> ;
+            />;
 
         let valueCompletion = this.showCompletion(actionId, "value");
         let value = this.getValuesReference(this.props.condition.state);
@@ -382,11 +445,11 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={value == null? "" : interface_utils.valueUuidToString(value.uuid)}
+                originalText={value == null ? "" : interface_utils.valueUuidToString(value.uuid)}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={valueCompletion}
-                changeText = {(text, role) => this.changeText(text, role)}
-                updateRule = {(rule, role) => this.updateRule(rule, role)}
+                changeText={(text, role) => this.changeText(text, role)}
+                updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
                 role={"value"}
@@ -394,44 +457,45 @@ class EudCondition extends Component {
 
 
         return <span className={"eudAction"} key={this.props.condition.uuid}>
-            {subjectRendering}
+                {subjectRendering}
             {operatorRendering}
             {valueRendering}
-            </span>;
+                </span>;
 
     }
 
-    changeText(text, role){
+    changeText(text, role) {
         let actionId = this.props.condition.uuid;
         this.props.ruleEditorCallback.eudShowCompletions(
             actionId, role, text)
     }
 
 
-    getInteractiveObjectReference(uuid){
-        if(uuid == InteractiveObjectsTypes.PLAYER){
+    getInteractiveObjectReference(uuid) {
+        if (uuid == InteractiveObjectsTypes.PLAYER) {
             return InteractiveObject({
                 type: InteractiveObjectsTypes.PLAYER,
                 uuid: InteractiveObjectsTypes.PLAYER,
-                name:""});
+                name: ""
+            });
         }
 
-        if(this.props.scenes.has(uuid)){
+        if (this.props.scenes.has(uuid)) {
             return this.props.scenes.get(uuid);
         }
 
-        if(this.props.assets.has(uuid)){
+        if (this.props.assets.has(uuid)) {
             return this.props.assets(uuid);
         }
 
         return this.props.interactiveObjects.get(uuid);
     }
 
-    getValuesReference(uuid){
+    getValuesReference(uuid) {
         return ValuesMap.get(uuid);
     }
 
-    updateRule(ruleUpdate, role){
+    updateRule(ruleUpdate, role) {
 
         let rule = this.props.rule;
         let condition = this.props.condition;
@@ -445,9 +509,9 @@ class EudCondition extends Component {
 
     }
 
-    editSubCondition(condition, subConditionId, role, ruleUpdate){
-        if(condition instanceof Condition && condition.uuid === subConditionId) {
-            switch(role){
+    editSubCondition(condition, subConditionId, role, ruleUpdate) {
+        if (condition instanceof Condition && condition.uuid === subConditionId) {
+            switch (role) {
                 case 'subject':
                     condition['obj_uuid'] = ruleUpdate.item;
                     break;
@@ -460,14 +524,14 @@ class EudCondition extends Component {
             }
             return;
         }
-        if(condition instanceof SuperCondition){
+        if (condition instanceof SuperCondition) {
             this.editSubCondition(condition.condition1, subConditionId, role, ruleUpdate);
             this.editSubCondition(condition.condition2, subConditionId, role, ruleUpdate);
         }
     }
 
 
-    showCompletion(actionId, role){
+    showCompletion(actionId, role) {
         return actionId != null &&
             role == this.props.editor.get('role') &&
             actionId == this.props.condition.uuid;
@@ -501,23 +565,23 @@ class EudAction extends Component {
         let subject = this.getInteractiveObjectReference(this.props.action.subj_uuid);
         let actionRendering =
             <EudRulePart
-            interactiveObjects={this.props.interactiveObjects}
-            rules={this.props.rules}
-            rule={this.props.rule}
-            rulePartType={'action'}
-            subject={subject}
-            complement={this.props.rule.object_uuid}
-            verb={this.props.action}
-            ruleEditorCallback={this.props.ruleEditorCallback}
-            originalText={subject == null? "" : objectTypeToString(subject.type) + subject.name}
-            inputText={this.props.editor.get('completionInput')}
-            showCompletion={subjectCompletion}
-            changeText = {(text, role) => this.changeText(text, role)}
-            updateRule = {(rule, role) => this.updateRule(rule, role)}
-            scenes={this.props.scenes}
-            assets={this.props.assets}
-            role={"subject"}
-        />;
+                interactiveObjects={this.props.interactiveObjects}
+                rules={this.props.rules}
+                rule={this.props.rule}
+                rulePartType={'action'}
+                subject={subject}
+                complement={this.props.rule.object_uuid}
+                verb={this.props.action}
+                ruleEditorCallback={this.props.ruleEditorCallback}
+                originalText={subject == null ? "" : objectTypeToString(subject.type) + subject.name}
+                inputText={this.props.editor.get('completionInput')}
+                showCompletion={subjectCompletion}
+                changeText={(text, role) => this.changeText(text, role)}
+                updateRule={(rule, role) => this.updateRule(rule, role)}
+                scenes={this.props.scenes}
+                assets={this.props.assets}
+                role={"subject"}
+            />;
 
 
         let operationCompletion = this.showCompletion(actionId, "operation");
@@ -533,88 +597,89 @@ class EudAction extends Component {
             originalText={eventTypeToString(this.props.action.get('action'))}
             inputText={this.props.editor.get('completionInput')}
             showCompletion={operationCompletion}
-            changeText = {(text, role) => this.changeText(text, role)}
-            updateRule = {(rule, role) => this.updateRule(rule, role)}
+            changeText={(text, role) => this.changeText(text, role)}
+            updateRule={(rule, role) => this.updateRule(rule, role)}
             scenes={this.props.scenes}
             assets={this.props.assets}
             role={"operation"}
-        /> ;
+        />;
 
         let objectCompletion = this.showCompletion(actionId, "object");
         let object = this.getInteractiveObjectReference(this.props.action.obj_uuid);
         let objectRendering =
             <EudRulePart
-            interactiveObjects={this.props.interactiveObjects}
-            rules={this.props.rules}
-            rule={this.props.rule}
-            rulePartType={'action'}
-            subject={subject}
-            complement={this.props.rule.object_uuid}
-            verb={this.props.action}
-            ruleEditorCallback={this.props.ruleEditorCallback}
-            originalText={object == null? "" : objectTypeToString(object.type) + object.name}
-            inputText={this.props.editor.get('completionInput')}
-            showCompletion={objectCompletion}
-            changeText = {(text, role) => this.changeText(text, role)}
-            updateRule = {(rule, role) => this.updateRule(rule, role)}
-            scenes={this.props.scenes}
-            assets={this.props.assets}
-            role={"object"}
-        />;
+                interactiveObjects={this.props.interactiveObjects}
+                rules={this.props.rules}
+                rule={this.props.rule}
+                rulePartType={'action'}
+                subject={subject}
+                complement={this.props.rule.object_uuid}
+                verb={this.props.action}
+                ruleEditorCallback={this.props.ruleEditorCallback}
+                originalText={object == null ? "" : objectTypeToString(object.type) + object.name}
+                inputText={this.props.editor.get('completionInput')}
+                showCompletion={objectCompletion}
+                changeText={(text, role) => this.changeText(text, role)}
+                updateRule={(rule, role) => this.updateRule(rule, role)}
+                scenes={this.props.scenes}
+                assets={this.props.assets}
+                role={"object"}
+            />;
 
 
         return <span className={"eudAction"} key={this.props.action.uuid}>
                 {actionRendering}
-                {operationRendering}
-                {objectRendering}
+            {operationRendering}
+            {objectRendering}
                 </span>;
 
     }
 
-    changeText(text, role){
+    changeText(text, role) {
         let actionId = this.props.action.uuid;
         this.props.ruleEditorCallback.eudShowCompletions(
             actionId, role, text)
     }
 
-    getInteractiveObjectReference(uuid){
+    getInteractiveObjectReference(uuid) {
 
-        if(uuid == InteractiveObjectsTypes.PLAYER){
+        if (uuid == InteractiveObjectsTypes.PLAYER) {
             return InteractiveObject({
                 type: InteractiveObjectsTypes.PLAYER,
                 uuid: InteractiveObjectsTypes.PLAYER,
-                name:""});
+                name: ""
+            });
         }
 
-        if(this.props.scenes.has(uuid)){
+        if (this.props.scenes.has(uuid)) {
             return this.props.scenes.get(uuid);
         }
 
-        if(this.props.assets.has(uuid)){
+        if (this.props.assets.has(uuid)) {
             return this.props.assets.get(uuid);
         }
 
-        if(ValuesMap.has(uuid)){
+        if (ValuesMap.has(uuid)) {
             return ValuesMap.get(uuid);
         }
 
         return this.props.interactiveObjects.get(uuid);
     }
 
-    updateRule(ruleUpdate, role){
+    updateRule(ruleUpdate, role) {
 
         let rule = this.props.rule;
         // TODO [davide] inefficiente, utilizzare i metodi di immutable
         let index = -1;
         let action;
         let event = false;
-        for(var i = 0; i < rule.actions.size; i++){
-            if(rule.actions.get(i).uuid == ruleUpdate.action.uuid){
+        for (var i = 0; i < rule.actions.size; i++) {
+            if (rule.actions.get(i).uuid == ruleUpdate.action.uuid) {
                 index = i;
                 action = rule.actions.get(i);
             }
         }
-        if(index == -1 && ruleUpdate.action.uuid == rule.event.uuid){
+        if (index == -1 && ruleUpdate.action.uuid == rule.event.uuid) {
             // TODO [davide] gestire la parte nell'evento
             action = rule.event;
             event = true;
@@ -622,9 +687,9 @@ class EudAction extends Component {
 
         let list = rule.get('actions');
 
-        switch(role){
+        switch (role) {
             case "subject":
-                if(event){
+                if (event) {
                     rule = rule.set('event',
                         Action({
                             uuid: action.uuid,
@@ -633,7 +698,7 @@ class EudAction extends Component {
                             obj_uuid: null,
                             index: action.index,
                         }));
-                }else {
+                } else {
                     list = list.set(index,
                         Action({
                             uuid: action.uuid,
@@ -645,7 +710,7 @@ class EudAction extends Component {
                 }
                 break;
             case "object":
-                if(event){
+                if (event) {
                     rule = rule.set('event',
                         Action({
                             uuid: action.uuid,
@@ -654,7 +719,7 @@ class EudAction extends Component {
                             obj_uuid: ruleUpdate.item,
                             index: action.index,
                         }));
-                }else{
+                } else {
                     list = list.set(index,
                         Action({
                             uuid: action.uuid,
@@ -667,7 +732,7 @@ class EudAction extends Component {
 
                 break;
             case "operation":
-                if(event){
+                if (event) {
                     rule = rule.set('event',
                         Action({
                             uuid: action.uuid,
@@ -676,7 +741,7 @@ class EudAction extends Component {
                             obj_uuid: null,
                             index: action.index,
                         }));
-                }else{
+                } else {
                     list = list.set(index,
                         Action({
                             uuid: action.uuid,
@@ -694,7 +759,7 @@ class EudAction extends Component {
 
     }
 
-    showCompletion(actionId, role){
+    showCompletion(actionId, role) {
         return actionId != null &&
             role == this.props.editor.get('role') &&
             actionId == this.props.action.uuid;
@@ -726,69 +791,70 @@ class EudRulePart extends Component {
 
     render() {
         let autocomplete = null;
-        let buttonVisible="eudHide";
+        let buttonVisible = "eudHide";
         let text = this.props.originalText;
-        let css = "eudRulePart eudCompletionRoot eud" +  this.props.role;
-        if(this.props.showCompletion){
+        let css = "eudRulePart eudCompletionRoot eud" + this.props.role;
+        if (this.props.showCompletion) {
             autocomplete = <EudAutoComplete
                 subject={this.props.subject}
                 verb={this.props.verb}
                 interactiveObjects={this.props.interactiveObjects}
                 input={this.props.inputText}
                 originalId={this.props.complement}
-                changeText = {(text, role) => this.changeText(text, role)}
-                updateRule = {(rule, role) => this.props.updateRule(rule, role)}
-                role = {this.props.role}
+                changeText={(text, role) => this.changeText(text, role)}
+                updateRule={(rule, role) => this.props.updateRule(rule, role)}
+                role={this.props.role}
                 rulePartType={this.props.rulePartType}
-                scenes = {this.props.scenes}
+                scenes={this.props.scenes}
                 assets={this.props.assets}
             />;
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
         }
         return <div className={css} key={this.props.rule.uuid + this.props.role}>
-            <span className={"eudInputBox"}
-               onClick = {
-                   (e) => {
-                       e.stopPropagation();
-                       if(!this.props.showCompletion){
-                           this.props.changeText(this.props.originalText, this.props.role);
-                       }
-                   }
-               }
-            >
+                <span className={"eudInputBox"}
+                      onClick={
+                          (e) => {
+                              e.stopPropagation();
+                              if (!this.props.showCompletion) {
+                                  this.props.changeText(this.props.originalText, this.props.role);
+                              }
+                          }
+                      }
+                >
                 <span>
-                    <span className={"eudObjectString"}>
-                        <span>{text == "" ? this.getPlaceholder(this.props.role) : text}</span>
-                        <input type={"text"}
-                              className={"eudObjectString"} placeholder={this.getPlaceholder(this.props.role)}
-                              onChange={(e) => this.onChange(e)}
-                             value={text}
-                             />
-                    </span>
-                    <button className={buttonVisible}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                this.onClear();
-                            }}><img className={"action-buttons"} src={"icons/icons8-x-128.png"} alt={"Cancella la regola"}/></button>
+                <span className={"eudObjectString"}>
+                <span>{text == "" ? this.getPlaceholder(this.props.role) : text}</span>
+                <input type={"text"}
+                       className={"eudObjectString"} placeholder={this.getPlaceholder(this.props.role)}
+                       onChange={(e) => this.onChange(e)}
+                       value={text}
+                />
                 </span>
-            </span>
+                <button className={buttonVisible}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            this.onClear();
+                        }}><img className={"action-buttons"} src={"icons/icons8-x-128.png"}
+                                alt={"Cancella la regola"}/></button>
+                </span>
+                </span>
             {autocomplete}
         </div>;
     }
 
-    getPlaceholder(partType){
-        switch(partType){
-            case "subject":{
+    getPlaceholder(partType) {
+        switch (partType) {
+            case "subject": {
                 return "[un soggetto]";
             }
-            case "operation":{
+            case "operation": {
                 return "[aziona]";
             }
-            case "object":{
+            case "object": {
                 return "[un oggetto]";
             }
-            case "operator":{
+            case "operator": {
                 return "[è nello stato]";
             }
             case "value": {
@@ -803,7 +869,7 @@ class EudRulePart extends Component {
         this.props.changeText(e.target.value, this.props.role);
     }
 
-    onClear(){
+    onClear() {
         this.props.changeText("", this.props.role);
     }
 }
@@ -847,11 +913,11 @@ class EudAutoComplete extends Component {
                                             verb={this.props.verb}
                                             subject={this.props.subject}
                                             role={this.props.role}
-                                            changeText = {(text, role) => this.changeText(text, role)}
-                                            updateRule = {(rule, role) => this.props.updateRule(rule, role)}
+                                            changeText={(text, role) => this.changeText(text, role)}
+                                            updateRule={(rule, role) => this.props.updateRule(rule, role)}
                 />
             });
-        return <div className={"eudCompletionPopup"} >
+        return <div className={"eudCompletionPopup"}>
             <ul>
                 {li}
             </ul>
@@ -876,19 +942,19 @@ class EudAutoCompleteItem extends Component {
 
     render() {
 
-        let text = objectTypeToString(this.props.item.type) +  this.props.item.name;
+        let text = objectTypeToString(this.props.item.type) + this.props.item.name;
 
         return <li
             key={this.props.item.name}
-            onClick={(e) =>{
+            onClick={(e) => {
                 e.stopPropagation();
                 this.changeSelection(text);
             }}>
             {text}
-            </li>;
+        </li>;
     }
 
-    changeSelection(){
+    changeSelection() {
         const ruleUpdate = {
             action: this.props.verb,
             item: this.props.item.uuid
@@ -909,15 +975,15 @@ class EudAutoCompleteItem extends Component {
  */
 function getCompletions(props) {
     // TODO [davide] stub implemenation
-    
-    switch(props.role){
+
+    switch (props.role) {
         case "subject":
             let subjects = props.interactiveObjects.filter(x => x.type !== InteractiveObjectsTypes.TRANSITION).set(
                 InteractiveObjectsTypes.PLAYER,
                 InteractiveObject({
                     type: InteractiveObjectsTypes.PLAYER,
                     uuid: InteractiveObjectsTypes.PLAYER,
-                    name:""
+                    name: ""
                 })
             );
 
@@ -926,7 +992,7 @@ function getCompletions(props) {
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets);
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
-            if(props.verb.action){
+            if (props.verb.action) {
                 let objType = RulesActionMap.get(props.verb.action).obj_type;
                 allObjects = allObjects.filter(x => objType.includes(x.type));
             }
@@ -943,11 +1009,11 @@ function getCompletions(props) {
 
 }
 
-function filterValues(subject, verb){
+function filterValues(subject, verb) {
     let v = ValuesMap;
-    if(subject){
+    if (subject) {
         v = v.filter(x => x.subj_type.includes(subject.type));
-        if(verb){
+        if (verb) {
             v = v.filter(x => x.verb_type.includes(verb.action));
         }
     }
@@ -1002,8 +1068,8 @@ function operatorUuidToString(operatorUuid) {
 }
 
 
-function superOperatorsToString(superoperatorUuid){
-    switch(superoperatorUuid){
+function superOperatorsToString(superoperatorUuid) {
+    switch (superoperatorUuid) {
         case SuperOperators.AND:
             return 'e';
         case SuperOperators.OR:
@@ -1017,40 +1083,55 @@ function objectTypeToString(objectType) {
     let type = "";
     switch (objectType) {
         case InteractiveObjectsTypes.BUTTON:
-            type = "il pulsante"; break;
+            type = "il pulsante";
+            break;
         case InteractiveObjectsTypes.COUNTER:
-            type = "il contatore"; break;
+            type = "il contatore";
+            break;
         case InteractiveObjectsTypes.CUMULABLE:
-            type = "l'oggetto"; break;
+            type = "l'oggetto";
+            break;
         case InteractiveObjectsTypes.LOCK:
-            type =  "la serratura"; break;
+            type = "la serratura";
+            break;
         case InteractiveObjectsTypes.SELECTOR:
-            type =  "il selettore"; break;
+            type = "il selettore";
+            break;
         case InteractiveObjectsTypes.SWITCH:
-            type =  "l'interruttore"; break;
+            type = "l'interruttore";
+            break;
         case InteractiveObjectsTypes.TIMER:
-            type =  "il timer"; break;
+            type = "il timer";
+            break;
         case InteractiveObjectsTypes.KEY:
-            type =  "la chiave"; break;
+            type = "la chiave";
+            break;
         case InteractiveObjectsTypes.TRANSITION:
-            type =  "la transizione"; break;
+            type = "la transizione";
+            break;
         case InteractiveObjectsTypes.PLAYER:
-            type =  "il giocatore"; break;
+            type = "il giocatore";
+            break;
         case Values.THREE_DIM:
         case Values.TWO_DIM:
-            type =  "la scena"; break;
+            type = "la scena";
+            break;
         case "operation":
         case "operator":
         case "value":
             return type;
         case 'video':
-            type =  'il video'; break;
+            type = 'il video';
+            break;
         case 'img':
-            type =  "l'immagine"; break;
+            type = "l'immagine";
+            break;
         case 'file':
-            type =  'il file'; break;
+            type = 'il file';
+            break;
         default:
-            type =  "l'oggetto sconosciuto"; break;
+            type = "l'oggetto sconosciuto";
+            break;
     }
     return type + " ";
 }

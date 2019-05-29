@@ -34,6 +34,7 @@ const EditorState = Immutable.Record({
     selectedTagNewScene: 'default',
     tagFilter: '',
     user: null,
+    debugState: null, //TODO [debug] add to origin master
 
 });
 

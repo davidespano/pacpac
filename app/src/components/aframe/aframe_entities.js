@@ -11,8 +11,11 @@ class Curved extends Component
 
     render(){
         let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
+        //TODO [debug] add to origin
+        let playMaterial = "opacity:0;visible:false;side:double";
+        let material = "opacity:0.5;visible:true;side:double";
         return(
-            <Entity material="opacity: 0; visible: false; side: double" geometry={"primitive: polyline; vertices: " +
+            <Entity material={playMaterial} geometry={"primitive: polyline; vertices: " +
             this.props.vertices} id={"curv" + this.props.object_uuid} selectable={'object_uuid:' + this.props.object_uuid}
                     position={this.props.position} scale={scale}/>
         );

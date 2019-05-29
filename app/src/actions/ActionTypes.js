@@ -9,6 +9,8 @@ const ActionTypes = {
     GEOMETRY_MODE_ON : 'GEOMETRY_MODE_ON',
     NAVBAR_SELECTION : 'NAVBAR_SELECTION',
     PLAY_MODE_ON : 'PLAY_MODE_ON',
+    DEBUG_MODE_ON : 'DEBUG_MODE_ON', //TODO [debug] add to origin master
+    UPDATE_DEBUG_STATE : 'UPDATE_DEBUG_STATE', //TODO [debug] add to origin master
     LOGIN_MODE_ON : 'LOGIN_MODE_ON',
     LOOP_CHECK : 'LOOP_CHECK',
     FILE_MANAGER_MODE_ON : 'FILE_MANAGER_MODE_ON',

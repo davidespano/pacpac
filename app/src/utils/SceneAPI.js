@@ -390,7 +390,7 @@ async function getAllDetailedScenes(gameGraph) {
                 actions: rule.actions,
             });
         });
-
+/*
         // generate audios
         const audios = s.audio.map( audio => {
             return ({
@@ -401,7 +401,7 @@ async function getAllDetailedScenes(gameGraph) {
                 scene: audio.scene,
                 loop: audio.loop,
             })
-        });
+        });*/
 
         // new Scene
         const newScene = ({ //Scene, not immutable
@@ -419,7 +419,7 @@ async function getAllDetailedScenes(gameGraph) {
                 locks : locks,
             },
             rules : rules,
-            audios : audios,
+            //audios : audios,
         });
 
         gameGraph['scenes'][newScene.uuid] = newScene;

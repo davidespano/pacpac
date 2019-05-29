@@ -1514,3 +1514,147 @@ input.eudObjectString[type=text] {
 .ellipsis {
     display: inline-block;
 }
+
+/*TODO [debug] add to origin master*/
+.debug-div {
+    height: 100%;
+    padding: 1% 3%;
+}
+
+.rightbar-debug-element {
+    grid-column: 1;
+    width: 100%;
+    padding: 1% 0%;
+    text-align: left;
+    display: inline-table;
+}
+
+.icon-obj-left {
+    float: left;
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+}
+
+.current-obj-name {
+    float: inherit;
+}
+
+.obj-name {
+    text-align: left;
+    margin-left: 5%;
+    font-size: 0.9em;
+    padding-top: 0.4em;
+}
+
+.other-obj-name {
+    float: inherit;
+}
+
+.icon-obj-right {
+    width: 25px;
+    height: 25px;
+    margin-right: 6%;
+    float: right;
+    padding: 1%;
+}
+.icon-obj-right:hover {
+    border-radius: 5px;
+    background-color: rgba(239, 86, 45, .3);
+    padding: 0%;
+}
+
+.rightbar-sections {
+    display: grid;
+    grid-template-areas: 'left right';
+    grid-template-rows: 30px;
+    grid-gap: 10px;
+    width: 100%;
+    grid-template-columns: 20% auto 25%;
+    margin-top: 2%;
+    padding-left: 3%;
+    cursor: pointer;
+}
+
+.rightbar-sections > span:hover{
+    color: rgb(239, 142, 113);
+}
+
+.debug-div h2 {
+    padding-bottom: 1%;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#searchBar {
+    padding-left: 3%;
+    font-size: 0.7em;
+    width: 70%;
+    height: 3em;
+}
+
+.rightbar-other-scene {
+    margin-bottom: 5%;
+
+}
+
+.rightbar-scene-name {
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.objs-element {
+    display: block;
+}
+
+.player-div {
+    width: 100%;
+    padding-left: 3%;
+    float: left;
+}
+
+.player-action {
+    float: left;
+    font-size: 1em;
+}
+
+.player-obj {
+    float: left;
+    margin-left: 5%;
+    padding-top: 0.1em;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.player-obj:hover {
+    cursor: pointer;
+    color: rgb(249, 152, 123);
+}
+
+.obj-props {
+    grid-column: 1;
+    text-align: left;
+    width: 100%;
+}
+
+.obj-props > span {
+    margin-left: 5%;
+}
+
+#debug-scene {
+    height: 44.5vh;
+}
+
+.eudNext {
+    visibility: hidden;
+    font-size: 0.5em;
+    grid-column: 2;
+    display: inline-block;
+    grid-template-columns: auto auto;
+    box-sizing: border-box;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: right;
+}
+/********* END debug css ************/
