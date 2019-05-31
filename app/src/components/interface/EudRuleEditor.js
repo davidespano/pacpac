@@ -301,7 +301,6 @@ class EudRule extends Component {
         }
 
         if (rule) {
-            console.log(rule);
             let actionRendering = rule.actions.map(
                 action => {
                     return <React.Fragment key={'fragment-' + action.uuid}>

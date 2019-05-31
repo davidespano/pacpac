@@ -6,7 +6,9 @@ import Dropdown from "./Dropdown";
 import Actions from "../../actions/Actions";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import DebugVRScene from "../aframe/create_debug_scene";
+import "../aframe/debug_utils"
 import EditorState from "../../data/EditorState";
+import debug_utils from "../aframe/debug_utils";
 
 let THREE = require('three');
 
@@ -237,9 +239,14 @@ function listCurrentSceneObjs(scene, props) {
                             }
 
                             EditorState.debugState = props.scenes.get(props.currentScene).uuid;
-                            console.log("Scene: " + scene.uuid + " " + scene.name + " " + scene.index);
-                            console.log("SCENA: " + props.scenes.get(props.currentScene).name);
-                            console.log(obj.uuid);
+
+                            console.log(document.getElementById("debug-scene"));
+                            let newAssets = debug_utils.generateNewAssets(scene);
+                            document.querySelector("a-assets").append(newAssets);
+                            /*
+                            let newScene = debug_utils.generateNewBubble(scene, props);
+                            document.querySelector("a-scene").append(newScene);*/
+
                             props.updateCurrentObject(obj);
                         }}>
                             <img className={"action-buttons btn-img"} src={"icons/icons8-pencil-white-50.png"}
