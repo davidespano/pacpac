@@ -4,12 +4,11 @@ import './pac-look-controls'
 import './aframeUtils'
 import React from 'react';
 import Bubble from './Bubble';
-import SceneAPI from "../../utils/SceneAPI";
 import aframe_utils from "./aframe_utils";
+import EditorState from "../../data/EditorState";
 
-async function generateNewAssets(sceneName) {
-    let gameGraph = {};
-    await SceneAPI.getAllDetailedScenes(gameGraph);
+function generateNewAssets(newScene) {
+    let gameGraph = EditorState.gameGraph;
 
     let runState = {};
     Object.values(gameGraph.scenes).forEach(scene => {
@@ -20,14 +19,13 @@ async function generateNewAssets(sceneName) {
             runState[obj.uuid] = {state: obj.properties.state}
         });
     });
-    let scene = gameGraph['scenes'][sceneName.uuid];
+    let scene = gameGraph['scenes'][newScene.uuid];
     return aframe_utils.generateAsset(scene,
-        runState[sceneName.uuid].background, runState);
+        runState[newScene.uuid].background, runState);
 }
 
-async function generateNewBubble(sceneName, props) {
-    let gameGraph = {};
-    await SceneAPI.getAllDetailedScenes(gameGraph);
+function generateNewBubble(newScene, props) {
+    let gameGraph = EditorState.gameGraph;
 
     let runState = {};
     Object.values(gameGraph.scenes).forEach(scene => {
@@ -38,7 +36,7 @@ async function generateNewBubble(sceneName, props) {
             runState[obj.uuid] = {state: obj.properties.state}
         });
     });
-    let scene = gameGraph['scenes'][sceneName.uuid];
+    let scene = gameGraph['scenes'][newScene.uuid];
     return (
         <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === props.scenes.get(props.currentScene).name}
                 handler={(newActiveScene) => handleSceneChange(newActiveScene, props)} runState={runState}

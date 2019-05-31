@@ -3,9 +3,6 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import interface_utils from "./interface_utils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import Dropdown from "./Dropdown";
-import Actions from "../../actions/Actions";
-import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import DebugVRScene from "../aframe/create_debug_scene";
 import "../aframe/debug_utils"
 import EditorState from "../../data/EditorState";
 import debug_utils from "../aframe/debug_utils";
@@ -242,10 +239,11 @@ function listCurrentSceneObjs(scene, props) {
 
                             console.log(document.getElementById("debug-scene"));
                             let newAssets = debug_utils.generateNewAssets(scene);
+                            console.log(newAssets);
                             document.querySelector("a-assets").append(newAssets);
-                            /*
+
                             let newScene = debug_utils.generateNewBubble(scene, props);
-                            document.querySelector("a-scene").append(newScene);*/
+                            document.querySelector("a-scene").append(newScene);
 
                             props.updateCurrentObject(obj);
                         }}>
@@ -276,10 +274,6 @@ function listOtherScenesObjs(props) {
             );
         }
     }));
-}
-
-function stateDebugVrScene(DebugVrScene, scene) {
-    DebugVrScene.setState({activeScene: scene});
 }
 
 /**
@@ -425,30 +419,6 @@ function turnCamera(camera, objId) {
     camera.components["pac-look-controls"].pitchObject.rotation._x = euler._x;
     camera.components["pac-look-controls"].pitchObject.rotation._z =  0;
     camera.components["pac-look-controls"].pitchObject.rotation._y =  0;
-}
-
-/**
- * Generates approximative 2d centroid for the interaction area starting from the given vertices.
- * @param vertices is a string that contains all of the vertices values
- * @param radius of the sphere
- * @returns [longitude, latitude]
- * This function returns latitude and longitude because they are fixed values that can be easily stored in
- * CentroidsStore. x and y must be calculated later, since the size of central image is variable.
- */
-function calculateCentroid(vertices) {
-    let medianPoint = [0.0, 0.0, 0.0];
-
-    let choords = vertices.map(item => {
-        medianPoint[0] += item.split(" ").map(Number)[0];
-        medianPoint[1] += item.split(" ").map(Number)[1];
-        medianPoint[2] += item.split(" ").map(Number)[2];
-    });
-
-    medianPoint = medianPoint.map(x => {
-        return x / (choords.length / 3)
-    });
-
-    return medianPoint;
 }
 
 export default DebugTab;

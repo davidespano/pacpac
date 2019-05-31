@@ -35,7 +35,7 @@ const EditorState = Immutable.Record({
     tagFilter: '',
     user: null,
     debugState: null, //TODO [debug] add to origin master
-
+    gameGraph: null, //TODO [debug] add to origin master (maybe)
 });
 
 export default EditorState;

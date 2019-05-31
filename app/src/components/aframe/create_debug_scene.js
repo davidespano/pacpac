@@ -16,6 +16,7 @@ import stores_utils from "../../data/stores_utils";
 import aframe_utils from "./aframe_utils"
 import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
+import EditorState from "../../data/EditorState";
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -54,7 +55,7 @@ export default class DebugVRScene extends React.Component {
         this.loadEverything();
         this.generateRoom(audioContext);
         this.generateAudio(audioContext);
-        this.interval = setInterval(() => this.tick(), 200);
+        //this.interval = setInterval(() => this.tick(), 200);
     }
 
     tick() {
@@ -75,6 +76,8 @@ export default class DebugVRScene extends React.Component {
             runState: runState,
         });
         this.createRuleListeners();
+
+        EditorState.gameGraph = this.state.graph;
         document.querySelector('#camera').removeAttribute('look-controls');
         document.querySelector('#camera').removeAttribute('wasd-controls');
     }
