@@ -24,7 +24,15 @@ export default class DebugVRScene extends React.Component {
 
     constructor(props) {
         super(props);
-        let scene = this.props.scenes.toArray()[0];
+
+        let scene = null;
+
+        if(this.props.currentScene === null) {
+            scene = this.props.scenes.toArray()[0];
+        }else {
+            scene = this.props.scenes.get(this.props.currentScene);
+        }
+
         let gameGraph = {};
         this.state = {
             scenes: this.props.scenes.toArray(),
@@ -126,6 +134,9 @@ export default class DebugVRScene extends React.Component {
             graph: this.state.graph,
             activeScene: this.state.graph.scenes[newActiveScene]
         });
+
+        //Update current scene
+        this.props.updateCurrentScene(this.state.activeScene.uuid);
 
     }
 
