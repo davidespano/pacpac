@@ -13,8 +13,8 @@ const express = require('express')
     , checkInteractiveObjectType = require('./middlewares/checkInteractiveObjectType').checkInteractiveObjectType
     , loginRequired = require('./middlewares/loginRequired').loginRequired
     , handleMediaAPI = require('./handleMediaAPI').handleMediaAPI
+    , handleFilemanagerAPI = require('./handleFilemanagerAPI').handleFilemanagerAPI
     , fs = require('fs')
-    , filemanagerMiddleware = require('@opuscapita/filemanager-server').middleware
 	, storiesAPI = require('./storiesAPI').storiesAPI;
 const app = express()
     , api = express();
@@ -118,15 +118,8 @@ api.use(neo4jSessionCleanup);
 api.param('gameID', checkGameID);
 api.param('objectType', checkInteractiveObjectType);
 
-const fileManagerConfig = {
-    fsRoot: path.resolve(__dirname, 'public'),
-    rootName: 'Main Root'
-};
 
-api.use('/filemanager/:gameID', loginRequired, (req, res, next) => {
-    fileManagerConfig.fsRoot = path.resolve(__dirname, 'public') + '/' + req.params.gameID;
-    filemanagerMiddleware(fileManagerConfig)(req,res,next);
-});
+handleFilemanagerAPI(api);
 
 //api routes
 api.post('/register', routes.users.register);

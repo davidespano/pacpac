@@ -17,7 +17,8 @@ function FileContainer(properties){
     const apiOptions = {
         ...connectorNodeV1.apiOptions,
         locale: "it",
-        apiRoot: apiBaseURL + '/filemanager/' + window.localStorage.getItem("gameID") // Or you local Server Node V1 installation.
+        apiRoot: apiBaseURL + '/filemanager/' + window.localStorage.getItem("gameID"), // Or you local Server Node V1 installation.,
+        childFilter: (child) => {return child.type !== "dir" || child.name !== "_thumbnails_"}
     };
 
     /**TODO: disabilitare selezione multipla se il component è modal**/

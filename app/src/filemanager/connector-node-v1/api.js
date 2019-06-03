@@ -57,7 +57,9 @@ async function getChildrenForId(options, { id, sortBy = 'name', sortDirection = 
     //console.log("sono qui");
     const response = await request.get(route).set('authorization', `Token ${window.localStorage.getItem('authToken')}`);
     //console.log(response);
-    return response.body.items.map(normalizeResource)
+    const childFilter = options.childFilter || function(){return true};
+
+    return response.body.items.filter(childFilter).map(normalizeResource)
 }
 
 async function getParentsForId(options, id, result = []) {
@@ -166,7 +168,7 @@ async function renameResource(options, id, newName) {
 async function removeResource(options, resource) {
     const route = `${options.apiRoot}/files/${resource.id}`;
     const method = 'DELETE';
-    return request(method, route).set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+    return request(method, route).set('authorization', `Token ${window.localStorage.getItem('authToken')}`).send(resource)
 }
 
 async function removeResources(options, selectedResources) {
