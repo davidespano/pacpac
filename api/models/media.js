@@ -1,6 +1,5 @@
 const fs = require('fs');
 const readdirp = require('readdirp');
-const ffprobe = require('ffprobe');
 const ffprobeStatic = require('ffprobe-static');
 //const sharp = require('sharp');
 
