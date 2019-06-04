@@ -3,9 +3,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import interface_utils from "./interface_utils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import Dropdown from "./Dropdown";
-import "../aframe/debug_utils"
 import EditorState from "../../data/EditorState";
-import debug_utils from "../aframe/debug_utils";
 
 let THREE = require('three');
 
@@ -236,14 +234,6 @@ function listCurrentSceneObjs(scene, props) {
                             }
 
                             EditorState.debugState = props.scenes.get(props.currentScene).uuid;
-
-                            console.log(document.getElementById("debug-scene"));
-                            let newAssets = debug_utils.generateNewAssets(scene);
-                            console.log(newAssets);
-                            document.querySelector("a-assets").append(newAssets);
-
-                            let newScene = debug_utils.generateNewBubble(scene, props);
-                            document.querySelector("a-scene").append(newScene);
 
                             props.updateCurrentObject(obj);
                         }}>

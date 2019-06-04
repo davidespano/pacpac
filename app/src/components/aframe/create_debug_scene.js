@@ -67,7 +67,7 @@ export default class DebugVRScene extends React.Component {
 
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
-        let scene = gameGraph['scenes'][this.state.activeScene.uuid];
+        let scene = gameGraph['scenes'][this.props.currentScene];
         let runState = this.createGameState(gameGraph);
         this.setState({
             scenes: this.props.scenes.toArray(),
@@ -166,10 +166,10 @@ export default class DebugVRScene extends React.Component {
     }
 
     render() {
-        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.state.activeScene.uuid] !== undefined) {
+        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[this.props.currentScene] !== undefined) {
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>
-                this.state.graph.neighbours[this.state.activeScene.uuid].includes(uuid)
-                || uuid === this.state.activeScene.uuid);
+                this.state.graph.neighbours[this.props.currentScene].includes(uuid)
+                || uuid === this.props.currentScene);
         }
         else
             this.currentLevel = [];
@@ -180,7 +180,7 @@ export default class DebugVRScene extends React.Component {
         let assets = this.generateAssets2();
         let is3dScene = this.state.activeScene.type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
-        //console.log(is3dScene)
+        //console.log(is3dScene) {this.props.editor.mode == "debug" ? "embedded" : ""}
         return (
             <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
                 <a-assets>
@@ -362,7 +362,7 @@ export default class DebugVRScene extends React.Component {
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
             return (
-                <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
+                <Bubble currentScene={this.props.currentScene} key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
                         editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                 />
