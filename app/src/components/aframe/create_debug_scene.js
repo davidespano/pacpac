@@ -135,11 +135,11 @@ export default class DebugVRScene extends React.Component {
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: this.state.graph,
-            activeScene: this.state.graph.scenes[newActiveScene]
+            activeScene: this.state.graph.scenes[this.props.currentScene]
         });
 
         //Update current scene
-        this.props.updateCurrentScene(this.state.activeScene.uuid);
+        this.props.updateCurrentScene(this.state.graph.scenes[newActiveScene].uuid);
 
     }
 
@@ -178,7 +178,7 @@ export default class DebugVRScene extends React.Component {
         //let assets = this.generateAssets()
 
         let assets = this.generateAssets2();
-        let is3dScene = this.state.activeScene.type===Values.THREE_DIM;
+        let is3dScene = this.props.scenes.get(this.props.currentScene).type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         //console.log(is3dScene) {this.props.editor.mode == "debug" ? "embedded" : ""}
         return (
@@ -401,7 +401,7 @@ export default class DebugVRScene extends React.Component {
         //setTimeout(() => {
         //let audio=document.getElementById('track');
         //TODO add src from buble media
-        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
+        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.props.scenes.get(this.props.currentScene).img;
         audioElement.crossOrigin = 'anonymous';
         audioElement.load();
         audioElement.loop = true;

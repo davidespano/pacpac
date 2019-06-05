@@ -50,14 +50,19 @@ function view(props) {
 function objPropsView(props) {
     let currentObject = props.interactiveObjects.get(props.currentObject);
     let camera = document.querySelector("#camera");
-    //let scenePrev = EditorState.debugState;
+    let objGeometry = null;
 
-    let objGeometry = document.getElementById("curv" + currentObject.uuid);
+    setTimeout(()=> {
+        objGeometry = document.getElementById("curv" + currentObject.uuid);
+        if (objGeometry) {
+            objGeometry.setAttribute('material', 'color', 'green');
+            turnCamera(camera, currentObject.uuid);
+            interface_utils.highlightRule(props, currentObject);
+        }
+    }, 100);
 
-    if (objGeometry) {
-        objGeometry.setAttribute('material', 'color', 'green');
-        turnCamera(camera, currentObject.uuid);
-    }
+    console.log("cazzo: " +  interface_utils.highlightRule(props, currentObject));
+
 
     return (
         <div>
