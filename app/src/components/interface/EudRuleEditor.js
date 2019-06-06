@@ -252,7 +252,7 @@ class EudRule extends Component {
                     <div className={"eudNext"}>
                         <button className={"select-file-btn btn btnNext"} id={"next" + rule.uuid} title={"Avanti"}
                                 onClick={() => {
-                                    alert("Avanti")
+                                    alert("Not yet implemented");
                                 }}>
                             <img className={"action-buttons btn-img"} src={"icons/icons8-play-50.png"}
                                  alt={"Prossima regola"}/>

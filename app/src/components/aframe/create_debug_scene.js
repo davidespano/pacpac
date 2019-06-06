@@ -7,6 +7,7 @@ import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
 import SceneAPI from "../../utils/SceneAPI";
 import ConditionUtils from "../../interactives/rules/ConditionUtils";
+import interface_utils from "../interface/interface_utils"
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
 import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
@@ -100,7 +101,9 @@ export default class DebugVRScene extends React.Component {
                 eventBus.on('click-' + rule.event.obj_uuid, function () {
                     if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                         setTimeout(function () {
-                            executeAction(me, rule, action)
+                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                            if(me.props.currentObject === null)
+                                executeAction(me, rule, action)
                         }, duration);
                         if(action.action === 'CHANGE_BACKGROUND'){
                             objectVideo = document.getElementById(action.obj_uuid);
@@ -135,7 +138,7 @@ export default class DebugVRScene extends React.Component {
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: this.state.graph,
-            activeScene: this.state.graph.scenes[this.props.currentScene]
+            activeScene: this.state.graph.scenes[newActiveScene]
         });
 
         //Update current scene
@@ -362,7 +365,7 @@ export default class DebugVRScene extends React.Component {
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
             return (
-                <Bubble currentScene={this.props.currentScene} key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
+                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.currentObject !== null} key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
                         editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                 />

@@ -54,9 +54,6 @@ class EditorStateStore extends ReduceStore {
             //TODO [debug] add to origin master
             case ActionTypes.DEBUG_MODE_ON:
                 return state.set('mode', ActionTypes.DEBUG_MODE_ON);
-            //TODO [debug] add to origin master
-            case ActionTypes.UPDATE_DEBUG_STATE:
-                return state.set('debugState', action.state);
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
                 state = state.set('selectedSceneSpatialAudio', action.scene.uuid);

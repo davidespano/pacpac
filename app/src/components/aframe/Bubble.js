@@ -97,9 +97,6 @@ export default class Bubble extends Component
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
         let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9"
 
-        //todo togliere
-        console.log("Primitive: " + primitive);
-        console.log("IsActive: " + this.props.isActive);
 
         const curves = Object.values(scene.objects).flat().map(curve => {
             if(this.props.editMode){
@@ -108,7 +105,7 @@ export default class Bubble extends Component
                 );
             } else {
                 return(
-                    <Curved key={"keyC"+ curve.uuid} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
+                    <Curved key={"keyC"+ curve.uuid} onDebugMode={this.props.onDebugMode} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
                             is3Dscene={is3Dscene} vertices={curve.vertices}/>
                 );
             }
@@ -123,9 +120,6 @@ export default class Bubble extends Component
             radius = 10;
         }
         else material += "opacity: 0; visible: false";
-
-        //todo togliere
-        console.log("Material: " + material);
 
         if(is3Dscene){
             sceneRender = (
@@ -155,7 +149,7 @@ export default class Bubble extends Component
     }
 
     setShader(){
-        console.log('set shader');
+        //console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
             let sky = document.getElementById(scene.name);
@@ -164,8 +158,8 @@ export default class Bubble extends Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-            console.log("Scene: " + scene);
-            if(sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
+            console.log("Scene: " + scene.name);
+            if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive ) document.getElementById(scene.img).play();
                 return;
             }
@@ -266,10 +260,11 @@ export default class Bubble extends Component
     }
 
     resetShader(sky){
-        if(sky.getAttribute('material').shader !== 'multi-video'){
+        if(sky && sky.getAttribute('material').shader !== 'multi-video'){
             return;
         }
-        sky.setAttribute('material', "shader:flat;");
+        if(sky)
+            sky.setAttribute('material', "shader:flat;");
     }
     componentWillUnmount(){
         delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img];

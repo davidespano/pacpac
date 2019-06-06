@@ -242,14 +242,14 @@ function valueUuidToString(valueUuid){
 
 
 //TODO [debug] add to origin master
-function setClassColor(classHighlight, style) {
+function setClassStyle(classHighlight, style) {
     [...document.querySelectorAll(classHighlight)].forEach(function (item) {
         item.style = style;
     })
 }
 
 //TODO [debug] add to origin master
-function setIdColor(idHighlight, style) {
+function setIdStyle(idHighlight, style) {
     let el = document.getElementById(idHighlight);
     if (el != null)
         el.style = style;
@@ -266,17 +266,17 @@ function highlightRule(props, obj) {
 
             props.rules.get(rule).actions._tail.array.forEach(function (sub) {
                 if (sub.subj_uuid === obj.uuid) {
-                    setIdColor("rule" + item, "background: rgba(239, 86, 55, .3)");
+                    setIdStyle("rule" + item, "background: rgba(239, 86, 55, .3)");
 
-                    if(next != null)
+                    if(next !== null && props.currentObject === null)
                         next.style = "visibility: visible";
                 }
             });
 
             if (props.rules.get(rule).event.obj_uuid === obj.uuid) {
-                setIdColor("rule" + item, "background: rgba(239, 86, 55, .3)");
+                setIdStyle("rule" + item, "background: rgba(239, 86, 55, .3)");
 
-                if(next != null)
+                if(next !== null && props.currentObject === null)
                     next.style = "visibility: visible";
             }
 
@@ -296,7 +296,7 @@ export default {
     resetFields: resetFields,
     valueUuidToString: valueUuidToString,
     audioSelection: audioSelection,
-    setClassColor: setClassColor,
-    setIdColor: setIdColor,
+    setClassStyle: setClassStyle,
+    setIdStyle: setIdStyle,
     highlightRule: highlightRule,
 }

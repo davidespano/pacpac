@@ -52,6 +52,8 @@ function objPropsView(props) {
     let camera = document.querySelector("#camera");
     let objGeometry = null;
 
+    interface_utils.setClassStyle(".btnNext", "visibility: hidden");
+
     setTimeout(()=> {
         objGeometry = document.getElementById("curv" + currentObject.uuid);
         if (objGeometry) {
@@ -59,9 +61,7 @@ function objPropsView(props) {
             turnCamera(camera, currentObject.uuid);
             interface_utils.highlightRule(props, currentObject);
         }
-    }, 100);
-
-    console.log("cazzo: " +  interface_utils.highlightRule(props, currentObject));
+    }, 50);
 
 
     return (
@@ -74,10 +74,9 @@ function objPropsView(props) {
                     onClick={() => {
                         if (objGeometry)
                             objGeometry.setAttribute('material', 'color', 'white');
-                        interface_utils.setClassColor(".eudRule", "background: ");
-                        interface_utils.setClassColor(".btnNext", "visibility: hidden");
+                        interface_utils.setClassStyle(".eudRule", "background: ");
 
-                        props.updateCurrentScene(EditorState.debugState);
+                        props.updateCurrentScene(EditorState.debugFromScene);
 
                     }}>
                     <img className={"action-buttons"} src={"icons/icons8-go-back-50.png"}
@@ -145,7 +144,7 @@ function debugOptionsView(props) {
  */
 function listPlayerActions(scene, props) {
     if (props.currentScene && scene) {
-        if (scene.get('rules').length == 0) {
+        if (scene.get('rules').length === 0) {
             return <div className={"player-div"}>
                 <span>
                 Non ci sono Azioni giocatore
@@ -159,18 +158,18 @@ function listPlayerActions(scene, props) {
                         let objName = obj.name.length > 20 ? obj.name.substring(0, 16).concat("...") : obj.name;
                         let role = props.rules.get(rule).uuid;
                         return (
-                            <div className={"player-div"}>
+                            <div className={"player-div"} key={role}>
                                 {getActionName(props.rules.get(rule).event.action)}
                                 <span className={"player-obj"} id={"player-obj" + obj.uuid} onClick={() => {
-                                    interface_utils.setClassColor(".player-obj, .obj-name", "color: ");
-                                    interface_utils.setIdColor("obj-name" + obj.uuid, "color: rgba(239, 86, 55, 1)");
-                                    interface_utils.setIdColor("player-obj" + obj.uuid, "color: rgba(239, 86, 55, 1)");
-                                    interface_utils.setClassColor(".eudRule", "background: ");
-                                    interface_utils.setClassColor(".btnNext", "visibility: hidden");
+                                    interface_utils.setClassStyle(".player-obj, .obj-name", "color: ");
+                                    interface_utils.setIdStyle("obj-name" + obj.uuid, "color: rgba(239, 86, 55, 1)");
+                                    interface_utils.setIdStyle("player-obj" + obj.uuid, "color: rgba(239, 86, 55, 1)");
+                                    interface_utils.setClassStyle(".eudRule", "background: ");
+                                    interface_utils.setClassStyle(".btnNext", "visibility: hidden");
 
                                     props.rules.get(rule).actions._tail.array.forEach(function (sub) {
                                         if (sub.subj_uuid === obj.uuid) {
-                                            interface_utils.setIdColor("rule" + role, "background: rgba(239, 86, 55, .3)");
+                                            interface_utils.setIdStyle("rule" + role, "background: rgba(239, 86, 55, .3)");
 
                                             let next = document.getElementById("next" + role);
                                             if(next != null)
@@ -179,7 +178,7 @@ function listPlayerActions(scene, props) {
                                     });
 
                                     if (props.rules.get(rule).event.obj_uuid === obj.uuid) {
-                                        interface_utils.setIdColor("rule" + role, "background: rgba(239, 86, 55, .3)");
+                                        interface_utils.setIdStyle("rule" + role, "background: rgba(239, 86, 55, .3)");
 
                                         let next = document.getElementById("next" + role);
                                         if(next != null)
@@ -204,9 +203,8 @@ function listPlayerActions(scene, props) {
  */
 function listCurrentSceneObjs(scene, props) {
     let objects = Object.values(scene.objects).flat();
-    let currentScene = props.scenes.get(props.currentScene);
 
-    if (objects.length == 0) {
+    if (objects.length === 0) {
         return <div className={"player-div"}>
             Non ci sono oggetti nella scena
         </div>
@@ -217,28 +215,28 @@ function listCurrentSceneObjs(scene, props) {
 
             if (objName.includes(props.editor.objectsNameFilter)) {
                 return (
-                    <div className={"rightbar-sections"}>
+                    <div className={"rightbar-sections"} key={obj_uuid}>
                         <img className={"icon-obj-left"} alt={obj.name} src={getImage(obj.type)}/>
                         <span className={"obj-name"} id={"obj-name" + obj.uuid} onClick={() => {
-                            interface_utils.setClassColor(".player-obj, .obj-name", "color: ");
-                            interface_utils.setIdColor("obj-name" + obj.uuid, "color: rgba(239, 86, 55, 1)");
-                            interface_utils.setIdColor("player-obj" + obj.uuid, "color: rgba(239, 86, 55, 1)");
-                            interface_utils.setClassColor(".eudRule", "background: ");
-                            interface_utils.setClassColor(".btnNext", "visibility: hidden");
+                            interface_utils.setClassStyle(".player-obj, .obj-name", "color: ");
+                            interface_utils.setIdStyle("obj-name" + obj.uuid, "color: rgba(239, 86, 55, 1)");
+                            interface_utils.setIdStyle("player-obj" + obj.uuid, "color: rgba(239, 86, 55, 1)");
+                            interface_utils.setClassStyle(".eudRule", "background: ");
+                            interface_utils.setClassStyle(".btnNext", "visibility: hidden");
                             interface_utils.highlightRule(props, obj);
                             props.updateObject(objects);
                         }}>{objName}</span>
                         <button className={"select-file-btn btn"} id={"changeButton"} onClick={() => {
 
-                            interface_utils.setClassColor(".eudRule", "background: ");
-                            interface_utils.setClassColor(".btnNext", "visibility: hidden");
+                            interface_utils.setClassStyle(".eudRule", "background: ");
+                            interface_utils.setClassStyle(".btnNext", "visibility: hidden");
                             interface_utils.highlightRule(props, obj);
 
                             if (scene.uuid !== props.scenes.get(props.currentScene).uuid) {
                                 props.updateCurrentScene(scene.uuid);
                             }
 
-                            EditorState.debugState = props.scenes.get(props.currentScene).uuid;
+                            EditorState.debugFromScene = props.scenes.get(props.currentScene).uuid;
 
                             props.updateCurrentObject(obj);
                         }}>
@@ -261,7 +259,7 @@ function listOtherScenesObjs(props) {
     return ([...props.scenes.values()].map(child => {
         if (child.uuid !== props.scenes.get(props.currentScene).uuid) {
             return (
-                <div className={"rightbar-other-scene"}>
+                <div className={"rightbar-other-scene"} key={child.uuid}>
                     <span className={"rightbar-scene-name"}>
                         {child.name}</span>
                     {listCurrentSceneObjs(child, props)}
@@ -387,10 +385,10 @@ function handleClickOutside(props) {
         } while (targetElement);
 
         // This is a click outside.
-        interface_utils.setClassColor(".player-obj, .obj-name", "color: ");
+        interface_utils.setClassStyle(".player-obj, .obj-name", "color: ");
         if (classTarget !== "select-file-btn btn" && classTarget !== "a-canvas a-grab-cursor" && classTarget !== "action-buttons btn-img") {
-            interface_utils.setClassColor(".eudRule", "background: ");
-            interface_utils.setClassColor(".btnNext", "visibility: hidden");
+            interface_utils.setClassStyle(".eudRule", "background: ");
+            interface_utils.setClassStyle(".btnNext", "visibility: hidden");
         }
 
     });
