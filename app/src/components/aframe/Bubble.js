@@ -104,6 +104,7 @@ export default class Bubble extends Component
                     <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid} is3Dscene={is3Dscene}/>
                 );
             } else {
+                //TODO [debug] add to origin master
                 return(
                     <Curved key={"keyC"+ curve.uuid} onDebugMode={this.props.onDebugMode} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
                             is3Dscene={is3Dscene} vertices={curve.vertices}/>
@@ -158,7 +159,7 @@ export default class Bubble extends Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-            console.log("Scene: " + scene.name);
+            //TODO [debug] add to origin master
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive ) document.getElementById(scene.img).play();
                 return;
@@ -260,6 +261,7 @@ export default class Bubble extends Component
     }
 
     resetShader(sky){
+        //TODO [debug] add to origin master
         if(sky && sky.getAttribute('material').shader !== 'multi-video'){
             return;
         }

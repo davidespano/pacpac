@@ -169,7 +169,6 @@ class EudRule extends Component {
                     <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Cancella la condizione'}/>
                 </button>
             );
-
     }
 
     generateConditions(props, condition, rule) {
@@ -190,7 +189,6 @@ class EudRule extends Component {
                     <br/>
                 </React.Fragment>
             );
-
         } else {
             return (
                 <React.Fragment key={'fragment-' + condition.uuid}>

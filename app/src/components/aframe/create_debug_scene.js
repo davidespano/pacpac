@@ -10,7 +10,6 @@ import ConditionUtils from "../../interactives/rules/ConditionUtils";
 import interface_utils from "../interface/interface_utils"
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
-import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
 import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
@@ -31,7 +30,7 @@ export default class DebugVRScene extends React.Component {
 
         if(this.props.currentScene === null) {
             scene = this.props.scenes.toArray()[0];
-        }else {
+        }else{
             scene = this.props.scenes.get(this.props.currentScene);
         }
 
@@ -44,8 +43,7 @@ export default class DebugVRScene extends React.Component {
             camera: {},
             resonanceAudioScene: {}
         };
-        console.log(props)
-        console.log(this.props.scenes.toArray()[0])
+
         //if(document.querySelector('link[href*="bootstrap"]'))
         //document.querySelector('link[href*="bootstrap"]').remove();
     }
@@ -65,7 +63,6 @@ export default class DebugVRScene extends React.Component {
     }
 
     async loadEverything() {
-
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.props.currentScene];
@@ -114,9 +111,7 @@ export default class DebugVRScene extends React.Component {
                             duration = (objectVideo.duration * 1000);
                         }
                     }
-
                 })
-
             })
         })
     }
@@ -198,8 +193,6 @@ export default class DebugVRScene extends React.Component {
                         <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
                                 fuse={false} visible={is3dScene} raycaster="objects: [data-raycastable];"/>
                     </Entity>
-
-
                 </Entity>
             </a-scene>
         )
@@ -211,155 +204,7 @@ export default class DebugVRScene extends React.Component {
                 this.state.runState[sceneName].background, this.state.runState)
         }).flat();
     }
-    generateAssets(){
-        return this.currentLevel.map(sceneName => {
-            let scene = this.state.graph.scenes[sceneName];
-            let currAssets = [];
-            let sceneBackground;
-            //first, push the background media.
-            if(stores_utils.getFileType(scene.img) === 'video'){
-                sceneBackground = (
-                    <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
-                           src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
-                           playsInline={true} autoPlay muted={true}
-                    />)
-            } else {
-                sceneBackground =(<img id={scene.img} key={"key" + scene.name} crossorigin="Anonymous"
-                                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.runState[scene.name].background}
-                />)
-            }
-            currAssets.push(sceneBackground);
-            let objAsset;
-            //second, push the media of the interactive objs
-            Object.values(scene.objects).flat().forEach(obj => {
-                Object.keys(obj.media).map(k => {
-                    if(obj.media[k] !== null){
-                        if(stores_utils.getFileType(obj.media[k]) === 'video'){
-                            objAsset = (
-                                <video key={k+"_" + obj.uuid} crossorigin={"anonymous"} id={k+"_" + obj.uuid} loop={"true"}  preload="auto"
-                                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
-                                       playsInline={true} autoPlay muted={true}
-                                />)
-                        } else {
-                            objAsset = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossorigin="Anonymous"
-                                             src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
-                            />)
-                        }
-                        currAssets.push(objAsset)
-                    }
-                });
 
-                let v = this.generateCurrentAsset(obj);
-                if(v!==null) currAssets.push(v);
-
-                if(obj.mask !== "" && obj.mask !== undefined&& obj.mask !== null){
-                    currAssets.push(
-                        <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossorigin="Anonymous"
-                                      preload="auto"
-                                      src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.mask}
-                        />
-                    )
-                }
-            });
-            scene.rules.forEach( rule => {
-                rule.actions.forEach(action => {
-                    if(action.action === 'CHANGE_BACKGROUND'){
-                        if(stores_utils.getFileType(action.obj_uuid) === 'video'){
-                            currAssets.push(
-                                <video id={action.obj_uuid} key={"key" + action.obj_uuid}
-                                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
-                                       preload="auto" loop={'true'} crossorigin="anonymous" playsInline={true} muted={true}
-                                />
-                            )
-                        } else {
-                            currAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid} crossorigin="Anonymous"
-                                                 src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
-                            />)
-                        }
-                    }
-                })
-
-            });
-            /*scene.audio.forEach( audio => {
-                currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
-                                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
-                                       preload="auto" onLoad={"this.generateAudio()"}/>)
-            })*/
-            /*currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
-                                   preload="auto" onLoad={"this.generateAudio()"}/>)*/
-            //third, push the media present in the actions
-            //TODO do it! maybe not necessary
-            scene.rules.forEach(()=>{});
-            //return the assets
-            return currAssets;
-        }).flat();
-    }
-
-    generateCurrentAsset(obj){
-        let currentAsset;
-        switch (obj.type) {
-            case InteractiveObjectsTypes.TRANSITION:
-                if(obj.media.media0 !== null){
-                    if(stores_utils.getFileType(obj.media.media0) === 'video'){
-                        currentAsset = (
-                            <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}
-                                   preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}/>)
-                    } else {
-                        currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossorigin="Anonymous"
-                                             src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}/>)
-                    }
-                    return(currentAsset)
-                }
-                else return null;
-            case InteractiveObjectsTypes.SWITCH:
-                let i = (this.state.runState[obj.uuid].state === "OFF")?0:1;
-                if(obj.media["media"+i] !== null){
-                    if(stores_utils.getFileType(obj.media.media0) === 'video'){
-                        currentAsset = (
-                            <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i] + "#t=0.1"}
-                                   preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
-                            />)
-                    } else {
-                        currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossorigin="Anonymous"
-                                             src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i] + "#t=0.1"}/>)
-                    }
-                    return(currentAsset)
-                }
-                else if (obj.media["media"+((i+1)%2)] !== null){
-                    if(stores_utils.getFileType(obj.media.media0) === 'video'){
-                        currentAsset = (
-                            <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}
-                                   preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
-                            />)
-                    } else {
-                        currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossorigin="Anonymous"
-                                             src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}/>)
-                    }
-                    return(currentAsset)
-                }
-                else return null;
-            case InteractiveObjectsTypes.KEY:
-                if(obj.media.media0 !== null){
-                    if(stores_utils.getFileType(obj.media.media0) === 'video'){
-                        currentAsset = (
-                            <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}
-                                   preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}/>)
-                    } else {
-                        currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossorigin="Anonymous"
-                                             src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}/>)
-                    }
-                    return(currentAsset)
-                }
-                else return null;
-            default:
-                return null;
-        }
-    }
     //cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
     generateBubbles(){
         return this.currentLevel.map(sceneName =>{
@@ -401,8 +246,6 @@ export default class DebugVRScene extends React.Component {
 
         let audioElement = document.createElement('audio');
 
-        //setTimeout(() => {
-        //let audio=document.getElementById('track');
         //TODO add src from buble media
         audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.props.scenes.get(this.props.currentScene).img;
         audioElement.crossOrigin = 'anonymous';
@@ -411,28 +254,11 @@ export default class DebugVRScene extends React.Component {
         let audioElementSource = audioContext.createMediaElementSource(audioElement);
         let source = this.state.resonanceAudioScene.createSource();
         audioElementSource.connect(source.input);
-        //source.setPosition(0, 0, 0);
-        //audioElement.play();
-        //},50)
-
-
     }
 
     updateAngles() {
         let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld
         this.state.resonanceAudioScene.setListenerFromMatrix(cameraMatrix4)
-
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
