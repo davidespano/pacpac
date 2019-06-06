@@ -49,6 +49,7 @@ function view(props) {
  */
 function objPropsView(props) {
     let currentObject = props.interactiveObjects.get(props.currentObject);
+    let camera = document.getElementById('camera');
     let objGeometry = null;
 
     interface_utils.setClassStyle(".btnNext", "visibility: hidden");
@@ -74,6 +75,7 @@ function objPropsView(props) {
                             objGeometry.setAttribute('material', 'color', 'white');
                         interface_utils.setClassStyle(".eudRule", "background: ");
                         props.updateCurrentScene(EditorState.debugFromScene);
+                        camera.setAttribute("pac-look-controls", "pointerLockEnabled: true");
                     }}>
                     <img className={"action-buttons"} src={"icons/icons8-go-back-50.png"}
                          alt={'Torna all\'elenco degli oggetti'}/>
