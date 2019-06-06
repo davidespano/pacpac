@@ -11,12 +11,12 @@ function generateAsset(scene, srcBackground, runState = []){
         //first, push the background media.
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
-                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={"true"}  preload="auto"
+                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={true}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + srcBackground}
                        playsInline={true} autoPlay muted={true}
                 />)
         } else {
-            sceneBackground =(<img id={scene.img} key={"key" + scene.name} crossorigin="Anonymous"
+            sceneBackground =(<img id={scene.img} key={"key" + scene.name} crossOrigin="Anonymous"
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + srcBackground}
             />)
         }
@@ -28,12 +28,12 @@ function generateAsset(scene, srcBackground, runState = []){
                 if(obj.media[k] !== null){
                     if(stores_utils.getFileType(obj.media[k]) === 'video'){
                         objAsset = (
-                            <video key={k+"_" + obj.uuid} crossorigin={"anonymous"} id={k+"_" + obj.uuid} loop={"true"}  preload="auto"
+                            <video key={k+"_" + obj.uuid} crossOrigin={"anonymous"} id={k+"_" + obj.uuid} loop={true}  preload="auto"
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
                                    playsInline={true} autoPlay muted={true}
                             />)
                     } else {
-                        objAsset = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossorigin="Anonymous"
+                        objAsset = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossOrigin="Anonymous"
                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
                         />)
                     }
@@ -46,7 +46,7 @@ function generateAsset(scene, srcBackground, runState = []){
 
             if(obj.mask !== "" && obj.mask !== undefined&& obj.mask !== null){
                 currAssets.push(
-                    <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossorigin="Anonymous"
+                    <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossOrigin="Anonymous"
                                   preload="auto"
                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.mask}
                     />
@@ -60,11 +60,11 @@ function generateAsset(scene, srcBackground, runState = []){
                         currAssets.push(
                             <video id={action.obj_uuid} key={"key" + action.obj_uuid}
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
-                                   preload="auto" loop={'true'} crossorigin="anonymous" playsInline={true} muted={true}
+                                   preload="auto" loop={'true'} crossOrigin="anonymous" playsInline={true} muted={true}
                             />
                         )
                     } else {
-                        currAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid} crossorigin="Anonymous"
+                        currAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid} crossOrigin="Anonymous"
                                              src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
                         />)
                     }
@@ -96,9 +96,9 @@ function generateCurrentAsset(obj, runState){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
                                src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}
-                               preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}/>)
+                               preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}/>)
                 } else {
-                    currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossorigin="Anonymous"
+                    currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}/>)
                 }
                 return(currentAsset)
@@ -118,10 +118,10 @@ function generateCurrentAsset(obj, runState){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
                                src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i] + "#t=0.1"}
-                               preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
+                               preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}
                         />)
                 } else {
-                    currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossorigin="Anonymous"
+                    currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i] + "#t=0.1"}/>)
                 }
                 return(currentAsset)
@@ -131,10 +131,10 @@ function generateCurrentAsset(obj, runState){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
                                src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}
-                               preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}
+                               preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}
                         />)
                 } else {
-                    currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossorigin="Anonymous"
+                    currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}/>)
                 }
                 return(currentAsset)
@@ -146,9 +146,9 @@ function generateCurrentAsset(obj, runState){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
                                src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}
-                               preload="auto" loop={false} crossorigin="anonymous" muted={true} playsInline={true}/>)
+                               preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}/>)
                 } else {
-                    currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossorigin="Anonymous"
+                    currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}/>)
                 }
                 return(currentAsset)

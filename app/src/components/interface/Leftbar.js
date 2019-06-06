@@ -3,7 +3,7 @@ import settings from '../../utils/settings';
 import SceneAPI from "../../utils/SceneAPI";
 import interface_utils from "./interface_utils";
 import Orders from "../../data/Orders";
-
+import ActionTypes from "../../actions/ActionTypes";
 
 
 const {mediaURL} = settings;
@@ -30,6 +30,13 @@ function list(props, path) {
     let regex = RegExp('.*\.mp4$');
 
     return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
+        let s;
+        if (props.editor.mode === ActionTypes.DEBUG_MODE_ON) { //TODO [debug] add to origin master
+            s = {border: '2px solid black'};
+            if (props.currentScene == child.uuid)
+                s = {border: '2px solid #EF562D'}
+        } else
+            s = borderStyle(props.tags.get(child.tag).color);
         if (!(regex.test(child.img))) {
             return (
                 <div key={child.name} className={'node_element'}>
@@ -39,13 +46,15 @@ function list(props, path) {
                         alt={child.name}
                         title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                         onClick={() => {
-                            props.updateCurrentScene(child.uuid);
+                            if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                                props.updateCurrentScene(child.uuid);
                         }}
-                        style={borderStyle(props.tags.get(child.tag).color)}
+                        style={s}
                     />
                     <div className={'list-labels'}
                          onClick={() => {
-                            props.updateCurrentScene(child.uuid);
+                             if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                                 props.updateCurrentScene(child.uuid);
                          }}
                     >
                         <div className={'label-text'}>
@@ -60,10 +69,11 @@ function list(props, path) {
                         muted preload={"auto"}
                         className={'video_element list-video'}
                         onClick={() => {
-                            props.updateCurrentScene(child.uuid);
+                            if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                                props.updateCurrentScene(child.uuid);
                         }}
                         title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
-                        style={borderStyle(props.tags.get(child.tag).color)}
+                        style={s}
                     >
                         <source src={path + child.img} type="video/mp4"/>
                     </video>
@@ -84,8 +94,8 @@ function list(props, path) {
  * @param props
  * @returns {*}
  */
-function buttonsBar(props){
-    return(
+function buttonsBar(props) {
+    return (
         <div className={'currentOptions'}>
             <div className={"buttonGroup"}>
                 <input type={'text'} id={'scene-filter-text'} placeholder={'Filtra...'}
@@ -100,15 +110,20 @@ function buttonsBar(props){
                             props.sortScenes(order);
                         }}>
                     <option value={Orders.ALPHABETICAL}
-                    >Nome (A-Z)</option>
+                    >Nome (A-Z)
+                    </option>
                     <option value={Orders.REV_ALPHABETICAL}
-                    >Nome (Z-A)</option>
+                    >Nome (Z-A)
+                    </option>
                     <option value={Orders.CHRONOLOGICAL}
-                    >Dalla prima all'ultima</option>
+                    >Dalla prima all'ultima
+                    </option>
                     <option value={Orders.REV_CHRONOLOGICAL}
-                    >Dall'ultima alla prima</option>
+                    >Dall'ultima alla prima
+                    </option>
                 </select>
-                <div id="scenes-order-menu" className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>
+                <div id="scenes-order-menu"
+                     className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>
 
                 </div>
             </div>
@@ -125,16 +140,16 @@ function buttonsBar(props){
 </button>
 */
 
-function checkSelection(scenesOrderMenu){
+function checkSelection(scenesOrderMenu) {
     return scenesOrderMenu ? 'show' : '';
 }
 
-function checkCurrentOrder(scenesOrder, value){
+function checkCurrentOrder(scenesOrder, value) {
     return scenesOrder === value ? 'order-selected' : '';
 }
 
-function borderStyle(color){
-    return {border: '2px solid '+ color};
+function borderStyle(color) {
+    return {border: '2px solid ' + color};
 }
 
 

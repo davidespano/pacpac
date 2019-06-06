@@ -96,14 +96,17 @@ export default class Bubble extends Component
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
         let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9"
+
+
         const curves = Object.values(scene.objects).flat().map(curve => {
             if(this.props.editMode){
                 return(
                     <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid} is3Dscene={is3Dscene}/>
                 );
             } else {
+                //TODO [debug] add to origin master
                 return(
-                    <Curved key={"keyC"+ curve.uuid} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
+                    <Curved key={"keyC"+ curve.uuid} onDebugMode={this.props.onDebugMode} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
                             is3Dscene={is3Dscene} vertices={curve.vertices}/>
                 );
             }
@@ -113,16 +116,15 @@ export default class Bubble extends Component
         let active = 'active: false;';
         let radius = 9.9;
         if (this.props.isActive) {
-            material += "opacity: 1; visible: true;";
+            material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
         }
         else material += "opacity: 0; visible: false";
 
-
         if(is3Dscene){
             sceneRender = (
-                <Entity _ref={elem => this.nv = elem} primitive={primitive} visible={this.props.isActive}
+                <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere" primitive={primitive} visible={this.props.isActive}
                                    id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
                                    material={material} play_video={active}>
                 {curves}
@@ -148,7 +150,7 @@ export default class Bubble extends Component
     }
 
     setShader(){
-        console.log('set shader');
+        //console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
             let sky = document.getElementById(scene.name);
@@ -157,7 +159,8 @@ export default class Bubble extends Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-            if(sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
+            //TODO [debug] add to origin master
+            if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive ) document.getElementById(scene.img).play();
                 return;
             }
@@ -258,10 +261,12 @@ export default class Bubble extends Component
     }
 
     resetShader(sky){
-        if(sky.getAttribute('material').shader !== 'multi-video'){
+        //TODO [debug] add to origin master
+        if(sky && sky.getAttribute('material').shader !== 'multi-video'){
             return;
         }
-        sky.setAttribute('material', "shader:flat;");
+        if(sky)
+            sky.setAttribute('material', "shader:flat;");
     }
     componentWillUnmount(){
         delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img];

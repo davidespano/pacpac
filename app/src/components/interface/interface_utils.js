@@ -267,6 +267,53 @@ function valueUuidToString(valueUuid){
 }
 
 
+//TODO [debug] add to origin master
+function setClassStyle(classHighlight, style) {
+    console.log("CLASS " + classHighlight + "STYLE " + style);
+    [...document.querySelectorAll(classHighlight)].forEach(function (item) {
+        item.style = style;
+    })
+}
+
+//TODO [debug] add to origin master
+function setIdStyle(classHighlight, idHighlight, style) {
+    setClassStyle(".".concat(classHighlight), style.substring(0, style.indexOf(" ")).concat(" ;"));
+    let el = document.getElementById(classHighlight+idHighlight);
+    if (el != null)
+        el.style = style;
+}
+
+//TODO [debug] add to origin master
+function highlightRule(props, obj) {
+    let scene = props.scenes.get(props.currentScene);
+    setClassStyle(".eudRule", "background: ");
+    setClassStyle(".btnNext", "visibility: hidden");
+
+    return scene.get('rules').map(
+        rule => {
+            let item = props.rules.get(rule).uuid;
+            let next = document.getElementById('btnNext' + item);
+
+            props.rules.get(rule).actions._tail.array.forEach(function (sub) {
+                if (sub.subj_uuid === obj.uuid) {
+                    setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .3)");
+
+                    if(next !== null && props.currentObject === null)
+                        next.style = "visibility: visible";
+                }
+            });
+
+            if (props.rules.get(rule).event.obj_uuid === obj.uuid) {
+                setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .3)");
+
+                if(next !== null && props.currentObject === null)
+                    next.style = "visibility: visible";
+            }
+
+        });
+}
+
+
 
 export default {
     onlyNumbers : onlyNumbers,
@@ -280,4 +327,7 @@ export default {
     valueUuidToString: valueUuidToString,
     audioSelection: audioSelection,
     changeKeypadSize: changeKeypadSize,
+    setClassStyle: setClassStyle,
+    setIdStyle: setIdStyle,
+    highlightRule: highlightRule,
 }
