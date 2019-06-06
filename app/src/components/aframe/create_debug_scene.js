@@ -17,6 +17,8 @@ import aframe_utils from "./aframe_utils"
 import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
 import EditorState from "../../data/EditorState";
+import ActionTypes from "../../actions/ActionTypes";
+
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -28,11 +30,16 @@ export default class DebugVRScene extends React.Component {
 
         let scene = null;
 
-        if(this.props.currentScene === null) {
-            scene = this.props.scenes.toArray()[0];
-        }else{
-            scene = this.props.scenes.get(this.props.currentScene);
+        if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+            if(this.props.currentScene === null) {
+                scene = this.props.scenes.toArray()[0];
+            }else{
+                scene = this.props.scenes.get(this.props.currentScene);
+            }
+        } else {
+            props.updateCurrentScene(props.scenes.toArray()[0].uuid);
         }
+
 
         let gameGraph = {};
         this.state = {
@@ -178,24 +185,47 @@ export default class DebugVRScene extends React.Component {
         let assets = this.generateAssets2();
         let is3dScene = this.props.scenes.get(this.props.currentScene).type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
-        //console.log(is3dScene) {this.props.editor.mode == "debug" ? "embedded" : ""}
-        return (
-            <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
-                <a-assets>
-                    {assets}
-                </a-assets>
-                {this.generateBubbles()}
 
-                <Entity primitive="a-camera" key="keycamera" id="camera"
-                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
-                        look-controls="false" wasd-controls="false">
-                    <Entity mouse-cursor>
-                        <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
-                                fuse={false} visible={is3dScene} raycaster="objects: [data-raycastable];"/>
+        if(this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+            return (
+                <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
+                    <a-assets>
+                        {assets}
+                    </a-assets>
+                    {this.generateBubbles()}
+
+                    <Entity primitive="a-camera" key="keycamera" id="camera"
+                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
+                            look-controls="false" wasd-controls="false">
+                        <Entity mouse-cursor>
+                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
+                                    fuse={false} visible={is3dScene} raycaster="objects: [data-raycastable];"/>
+                        </Entity>
                     </Entity>
-                </Entity>
-            </a-scene>
-        )
+                </a-scene>
+            )
+        } else {
+            return (
+                <Scene stats background="color: black" >
+                    <a-assets>
+                        {assets}
+                    </a-assets>
+                    {this.generateBubbles()}
+
+                    <Entity primitive="a-camera" key="keycamera" id="camera"
+                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
+                            look-controls="false" wasd-controls="false">
+                        <Entity mouse-cursor>
+                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
+                                    fuse={false}   visible={is3dScene} raycaster="objects: [data-raycastable];"/>
+                        </Entity>
+
+
+                    </Entity>
+                </Scene>
+            )
+        }
+
     }
 
     generateAssets2(){
