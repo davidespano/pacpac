@@ -90,13 +90,23 @@ function generateDefaultRule(object){
                 })]),
             });
             break;
+        case InteractiveObjectsTypes.KEYPAD:
+            r = Rule({
+                uuid: uuid.v4(),
+                actions: Immutable.List(),
+            });
+            break;
         default:
             return;
     }
     return r;
 }
 
-
+/**
+ * Add new empty action to given rule, returns rule updated
+ * @param rule
+ * @returns {*}
+ */
 function addEmptyAction(rule){
      let list = rule.get('actions');
      let index = list.size > 0 ? list.get(list.size-1).get('index') + 1 : 0;
@@ -109,9 +119,15 @@ function addEmptyAction(rule){
      return rule;
 }
 
+/**
+ * Removes given action from the rule, returns updated rule (or null if rule does not contain given action)
+ * @param rule
+ * @param action
+ * @returns {*}
+ */
 function deleteAction(rule, action){
     for(var i = 0; i < rule.actions.size; i++){
-        if(rule.actions.get(i).uuid == action.uuid){
+        if(rule.actions.get(i).uuid === action.uuid){
             let list = rule.get('actions');
             list = list.delete(i);
             rule = rule.set('actions', list);
@@ -121,6 +137,12 @@ function deleteAction(rule, action){
     return null;
 }
 
+
+/**
+ * Add new empty condition to given rule, returns rule updated
+ * @param rule
+ * @returns {*}
+ */
 function addEmptyCondition(rule){
     let c = new Condition(uuid.v4());
 
@@ -150,23 +172,35 @@ function deleteCondition(rule, conditionToDelete){
     return rule;
 }
 
+/**
+ * Search recursively inside a supercondition and returns given condition
+ * @param s supercondition
+ * @param c condition
+ * @returns {*}
+ */
 function findConditionInsideSuperCondition(s, c){
-    console.log(c)
-    if(s.condition1 instanceof SuperCondition){
-        s.condition1 = findConditionInsideSuperCondition(s.condition1, c);
-    }
-    if(s.condition2 instanceof SuperCondition){
-        s.condition2 = findConditionInsideSuperCondition(s.condition2, c);
-    }
     if(s.condition1 instanceof Condition && s.condition1.uuid === c.uuid){
         return s.condition2;
     }
     if(s.condition2 instanceof Condition && s.condition2.uuid === c.uuid){
         return s.condition1;
     }
+    if(s.condition1 instanceof SuperCondition){
+        s.condition1 = findConditionInsideSuperCondition(s.condition1, c);
+    }
+    if(s.condition2 instanceof SuperCondition){
+        s.condition2 = findConditionInsideSuperCondition(s.condition2, c);
+    }
+
     return s;
 }
 
+/**
+ * Set rule property to given value
+ * @param rule
+ * @param property
+ * @param value
+ */
 function setProperty(rule, property, value){
     return rule.set(property, value);
 }

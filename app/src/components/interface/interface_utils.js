@@ -207,6 +207,32 @@ function audioSelection(props, audio){
 }
 
 
+function changeKeypadSize(keypad, size){
+    size = size < 3 ? 3 : size;
+    let properties = keypad.get('properties');
+
+    if( size > properties.inputSize){
+
+    }
+
+}
+
+
+/**
+ * Generate keypad property specified by parameter "name" according to the given input size
+ * @param length
+ * @param name
+ * @returns {{}}
+ */
+function keypadProperties(length, name){
+    let property = {};
+    for(let i = 0; i < length; i++){
+        property[name+i] = null;
+    }
+    return property;
+}
+
+
 /**
  * returns string according to the given value
  * @param valueUuid
@@ -253,4 +279,5 @@ export default {
     resetFields: resetFields,
     valueUuidToString: valueUuidToString,
     audioSelection: audioSelection,
+    changeKeypadSize: changeKeypadSize,
 }

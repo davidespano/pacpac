@@ -349,6 +349,7 @@ div.rules{
     background-color: #FFFFFF;
     color: #EF562D !important;
     font-family: playregular;
+    cursor: pointer;
 }
 
 .navbar-toggler{

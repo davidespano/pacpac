@@ -230,6 +230,26 @@ function generateSpecificProperties(object, props){
                     </select>*/}
                 </div>
             );
+        case InteractiveObjectsTypes.KEYPAD:
+            return(
+                <div className={"options-grid"}>
+                    <label className={'options-labels'}>Numero tasti:</label>
+                    <div className={'flex'}>
+                        <div id={"keypadSize"}
+                             className={"propertyForm-right"}
+                             contentEditable={true}
+                             onBlur={()=> {
+                                 let size = document.getElementById('keypadSize').textContent;
+                                 interface_utils.changeKeypadSize(object, size);
+                             }}
+                             onInput={() => interface_utils.onlyNumbers("keypadSize")}
+                        >
+                            {object.properties.duration}
+                        </div>
+                        <span className={'measure-units'}>ms</span>
+                    </div>
+                </div>
+            );
         default:
             return(<div>Error!</div>);
 

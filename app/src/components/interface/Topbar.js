@@ -13,6 +13,7 @@ import AuthenticationAPI from "../../utils/AuthenticationAPI";
 import AudioMenu from "./AudioMenu";
 import AudioForm from "./AudioForm";
 import StoriesViewer from "./StoriesViewer";
+import Keypad from "../../interactives/Keypad";
 
 
 let uuid = require('uuid');
@@ -37,7 +38,7 @@ function TopBar(props){
                        onClick={() => handleAssetsMode(props)}>Assets</a>
                     <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
                        aria-controls="nav-story-editor" aria-selected="false"
-                       onClick={() => {handleSwitchToStoryEditorMode(props)}}>Generatore storie</a>
+                       onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
@@ -100,6 +101,13 @@ function TopBar(props){
                                 }}>
                             <img src={"icons/icons8-add-lock-100.png"}/>
                             <figcaption>Lucchetto</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.KEYPAD);
+                                }}>
+                            <img src={"icons/icons8-add-keypad-50.png"}/>
+                            <figcaption>Tastierino</figcaption>
                         </figure>
                     </div>
                 </div>
@@ -170,6 +178,18 @@ function createObject(props, type){
                 obj = Lock ({
                     uuid : uuid.v4(),
                     name : name,
+                });
+                break;
+            case InteractiveObjectsTypes.KEYPAD:
+                name = scene.name + '_kp' + (scene.objects.keypads.length + 1);
+                obj = Keypad ({
+                    uuid : uuid.v4(),
+                    name : name,
+                    properties: {
+                        state: null,
+                        inputSize: 3,
+                        combination : [Math.floor(Math.random() * 1000)],
+                    }
                 });
                 break;
             default:

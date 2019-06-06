@@ -10,6 +10,8 @@ import Values from "../interactives/rules/Values";
  * @param tag default object containing tagName (default ---) and tagColor (default black)
  * @param objects default object containing empty arrays for each InteractiveObject type
  * @param rules default empty array
+ * @param audios default empty arrat
+ * @param music containing audio uuid for background music
  */
 const Scene = Immutable.Record({
 
@@ -26,6 +28,7 @@ const Scene = Immutable.Record({
         switches: [],
         collectable_keys: [],
         locks: [],
+        keypads: [],
     },
     rules : [], // uuid list
     audios : [], // uuid list

@@ -38,6 +38,7 @@ function getByName(name, order = null) {
             let switches_uuids = [];
             let collectable_keys_uuids = [];
             let locks_uuids = [];
+            let keypads_uuids = [];
             let rules_uuids = [];
             let audio_uuids = [];
 
@@ -181,6 +182,7 @@ function getByName(name, order = null) {
                     switches : switches_uuids,
                     collectable_keys: collectable_keys_uuids,
                     locks: locks_uuids,
+                    keypads: keypads_uuids,
                 },
                 rules : rules_uuids,
                 audios : audio_uuids,
@@ -226,6 +228,7 @@ function createScene(name, img, index, type, tag, order) {
                     switches: [],
                     collectable_keys: [],
                     locks: [],
+                    keypads: [],
                 }
             });
 
@@ -333,6 +336,7 @@ async function getAllDetailedScenes(gameGraph) {
                mask: transition.mask,
                vertices: transition.vertices,
                properties: JSON.parse(transition.properties),
+               visible: transition.visible,
            });
         });
 
@@ -345,6 +349,7 @@ async function getAllDetailedScenes(gameGraph) {
                 mask: sw.mask,
                 vertices : sw.vertices,
                 properties: JSON.parse(sw.properties),
+                visible: sw.visible,
             });
         });
 
@@ -358,6 +363,7 @@ async function getAllDetailedScenes(gameGraph) {
                 mask: key.mask,
                 vertices: key.vertices,
                 properties: JSON.parse(key.properties),
+                visible: key.visible,
             });
         });
 
@@ -371,6 +377,21 @@ async function getAllDetailedScenes(gameGraph) {
                 mask: lock.mask,
                 vertices: lock.vertices,
                 properties: JSON.parse(lock.properties),
+                visible: lock.visible,
+            });
+        });
+
+        // generates keypads
+        const keypads = s.keypads.map((keypad) => {
+            return ({ //keypad, not the immutable
+                uuid: keypad.uuid,
+                name: keypad.name,
+                type: keypad.type,
+                media: JSON.parse(keypad.media),
+                mask: keypad.mask,
+                vertices: keypad.vertices,
+                properties: JSON.parse(keypad.properties),
+                visible: keypad.visible,
             });
         });
 
@@ -417,6 +438,7 @@ async function getAllDetailedScenes(gameGraph) {
                 switches : switches,
                 collectable_keys: keys,
                 locks : locks,
+                keypads: keypads,
             },
             rules : rules,
             audios : audios,
