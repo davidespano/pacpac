@@ -1,5 +1,6 @@
 import React from 'react';
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
+import {lookObject} from "../aframe/aframe_actions";
 import interface_utils from "./interface_utils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import Dropdown from "./Dropdown";
@@ -20,9 +21,8 @@ function DebugTab(props) {
     );
 }
 
-
 /**
- * Generates upper buttons for scene or objects selection, and calls upon another function to generate content
+ * Generates scene or objects selection, and calls upon another function to generate content
  * @param props
  * @returns {*}
  */
@@ -49,20 +49,18 @@ function view(props) {
  */
 function objPropsView(props) {
     let currentObject = props.interactiveObjects.get(props.currentObject);
-    let camera = document.querySelector("#camera");
     let objGeometry = null;
 
     interface_utils.setClassStyle(".btnNext", "visibility: hidden");
 
-    setTimeout(()=> {
+    setTimeout(() => {
         objGeometry = document.getElementById("curv" + currentObject.uuid);
         if (objGeometry) {
             objGeometry.setAttribute('material', 'color', 'green');
-            turnCamera(camera, currentObject.uuid);
+            lookObject("curv" + currentObject.uuid);
             interface_utils.highlightRule(props, currentObject);
         }
-    }, 50);
-
+    }, 100);
 
     return (
         <div>
@@ -75,9 +73,7 @@ function objPropsView(props) {
                         if (objGeometry)
                             objGeometry.setAttribute('material', 'color', 'white');
                         interface_utils.setClassStyle(".eudRule", "background: ");
-
                         props.updateCurrentScene(EditorState.debugFromScene);
-
                     }}>
                     <img className={"action-buttons"} src={"icons/icons8-go-back-50.png"}
                          alt={'Torna all\'elenco degli oggetti'}/>
@@ -147,7 +143,7 @@ function listPlayerActions(scene, props) {
         if (scene.get('rules').length === 0) {
             return <div className={"player-div"}>
                 <span>
-                Non ci sono Azioni giocatore
+                    Non ci sono Azioni giocatore
                 </span>
             </div>
         } else {
@@ -161,27 +157,25 @@ function listPlayerActions(scene, props) {
                             <div className={"player-div"} key={role}>
                                 {getActionName(props.rules.get(rule).event.action)}
                                 <span className={"player-obj"} id={"player-obj" + obj.uuid} onClick={() => {
-                                    interface_utils.setClassStyle(".player-obj, .obj-name", "color: ");
-                                    interface_utils.setIdStyle("obj-name" + obj.uuid, "color: rgba(239, 86, 55, 1)");
-                                    interface_utils.setIdStyle("player-obj" + obj.uuid, "color: rgba(239, 86, 55, 1)");
-                                    interface_utils.setClassStyle(".eudRule", "background: ");
+                                    interface_utils.setIdStyle("obj-name", obj.uuid, "color: rgba(239, 86, 55, 1)");
+                                    interface_utils.setIdStyle("player-obj", obj.uuid, "color: rgba(239, 86, 55, 1)");
                                     interface_utils.setClassStyle(".btnNext", "visibility: hidden");
 
                                     props.rules.get(rule).actions._tail.array.forEach(function (sub) {
                                         if (sub.subj_uuid === obj.uuid) {
-                                            interface_utils.setIdStyle("rule" + role, "background: rgba(239, 86, 55, .3)");
+                                            interface_utils.setIdStyle("eudRule", role, "background: rgba(239, 86, 55, .3)");
 
-                                            let next = document.getElementById("next" + role);
-                                            if(next != null)
+                                            let next = document.getElementById("btnNext" + role);
+                                            if (next != null)
                                                 next.style = "visibility: visible";
                                         }
                                     });
 
                                     if (props.rules.get(rule).event.obj_uuid === obj.uuid) {
-                                        interface_utils.setIdStyle("rule" + role, "background: rgba(239, 86, 55, .3)");
+                                        interface_utils.setIdStyle("eudRule", role, "background: rgba(239, 86, 55, .3)");
 
-                                        let next = document.getElementById("next" + role);
-                                        if(next != null)
+                                        let next = document.getElementById("btnNext" + role);
+                                        if (next != null)
                                             next.style = "visibility: visible";
                                     }
                                 }
@@ -218,18 +212,13 @@ function listCurrentSceneObjs(scene, props) {
                     <div className={"rightbar-sections"} key={obj_uuid}>
                         <img className={"icon-obj-left"} alt={obj.name} src={getImage(obj.type)}/>
                         <span className={"obj-name"} id={"obj-name" + obj.uuid} onClick={() => {
-                            interface_utils.setClassStyle(".player-obj, .obj-name", "color: ");
-                            interface_utils.setIdStyle("obj-name" + obj.uuid, "color: rgba(239, 86, 55, 1)");
-                            interface_utils.setIdStyle("player-obj" + obj.uuid, "color: rgba(239, 86, 55, 1)");
-                            interface_utils.setClassStyle(".eudRule", "background: ");
-                            interface_utils.setClassStyle(".btnNext", "visibility: hidden");
+                            interface_utils.setIdStyle("obj-name", obj.uuid, "color: rgba(239, 86, 55, 1)");
+                            interface_utils.setIdStyle("player-obj", obj.uuid, "color: rgba(239, 86, 55, 1)");
                             interface_utils.highlightRule(props, obj);
                             props.updateObject(objects);
                         }}>{objName}</span>
                         <button className={"select-file-btn btn"} id={"changeButton"} onClick={() => {
 
-                            interface_utils.setClassStyle(".eudRule", "background: ");
-                            interface_utils.setClassStyle(".btnNext", "visibility: hidden");
                             interface_utils.highlightRule(props, obj);
 
                             if (scene.uuid !== props.scenes.get(props.currentScene).uuid) {
@@ -311,16 +300,7 @@ function generateSpecificProperties(object, props) {
         case InteractiveObjectsTypes.LOCK:
             return (
                 <div>
-                    {/* <select id={'keyDefaultState'}
-                            defaultValue={object.properties.key_uuid}
-                            onChange={() => {
-                                let e = document.getElementById('keyDefaultState');
-                                let value = e.options[e.selectedIndex].value;
-                                interface_utils.setPropertyFromValue(object, 'key_uuid', value, props);
-                            }}
-                    >
-                        {generateKeyList(props, object)}
-                    </select>*/}
+
                 </div>
             );
         default:
@@ -359,17 +339,21 @@ function getImage(type) {
 function getActionName(action) {
     switch (action) {
         case RuleActionTypes.CLICK:
-            return <span className={"player-action"}>Preme </span>;
+            return <span className={"player-action"}>Clicca </span>;
         case RuleActionTypes.FLIP_SWITCH:
             return <span className={"player-action"}>Aziona </span>;
         case RuleActionTypes.COLLECT_KEY:
-            return <span className={"player-action"}>Raccoglie</span>;
+            return <span className={"player-action"}>Raccoglie </span>;
         default:
             return <span className={"player-action"}>Interagisce </span>
     }
 
 }
 
+/**
+ * Restore interface highlighting
+ * @param props
+ */
 function handleClickOutside(props) {
     document.addEventListener("click", (evt) => {
         const debugDiv = document.getElementById("rbContainer");
@@ -394,24 +378,5 @@ function handleClickOutside(props) {
     });
 }
 
-function turnCamera(camera, objId) {
-    var obj = document.querySelector("#curv" + objId);
-    obj.components.geometry.geometry.computeBoundingSphere();
-    var center = obj.components.geometry.geometry.boundingSphere;
-    var l = center.center.normalize();
-    var cameraPosition = camera.getAttribute('position');
-    var radius = document.querySelector("a-videosphere").getAttribute('radius');
-    var v = new THREE.Vector3(cameraPosition.x, cameraPosition.y, -radius).normalize();
-    var quaternion = new THREE.Quaternion();
-    quaternion.setFromUnitVectors(v, l);
-    var euler = new THREE.Euler();
-    euler.setFromQuaternion(quaternion, 'YXZ', false);
-    camera.components["pac-look-controls"].yawObject.rotation._y = euler._y;
-    camera.components["pac-look-controls"].yawObject.rotation._x = 0;
-    camera.components["pac-look-controls"].yawObject.rotation._z = 0;
-    camera.components["pac-look-controls"].pitchObject.rotation._x = euler._x;
-    camera.components["pac-look-controls"].pitchObject.rotation._z =  0;
-    camera.components["pac-look-controls"].pitchObject.rotation._y =  0;
-}
 
 export default DebugTab;

@@ -248,7 +248,7 @@ class EudRule extends Component {
             buttonBarRendering =
                 <React.Fragment>
                     <div className={"eudNext"}>
-                        <button className={"select-file-btn btn btnNext"} id={"next" + rule.uuid} title={"Avanti"}
+                        <button className={"select-file-btn btn btnNext"} id={"btnNext" + rule.uuid} title={"Avanti"}
                                 onClick={() => {
                                     alert("Not yet implemented");
                                 }}>
@@ -327,7 +327,7 @@ class EudRule extends Component {
 
             //TODO [debug] add to origin master (id rule)
             return <div className={ruleCssClass}
-                        id={'rule' + rule.uuid}
+                        id={'eudRule' + rule.uuid}
                         key={'eud-rule-' + rule.uuid}
                         onMouseEnter={() => {
                             this.mouseEnter()

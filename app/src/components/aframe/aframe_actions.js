@@ -276,4 +276,5 @@ function lookObject(idObject){
     //document.exitPointerLock()
 }
 
-export {executeAction}
+export {executeAction,
+lookObject}
