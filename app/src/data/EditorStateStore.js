@@ -94,7 +94,8 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 return state.set('selectedSceneSpatialAudio', action.scene.uuid).set('sceneNameRightbar', action.scene.name);
             case ActionTypes.UPDATE_CURRENT_OBJECT:
-                return state.set('objectNameRightbar', action.obj.name);
+                let o = action.obj ? action.obj.name : null;
+                return state.set('objectNameRightbar', o);
             case ActionTypes.UPDATE_OBJECT_NAME_RIGHTBAR:
                 console.log(action.name);
                 return state.set('objectNameRightbar', action.name);
