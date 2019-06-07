@@ -189,7 +189,10 @@ function addScene(session, uuid, name, img, index, type, tag, gameID) {
 function updateScene( session, scene, tag, gameID){
     
     delete scene.tag;
-
+    delete scene.objects;
+    delete scene.audios;
+    delete scene.rules;
+    
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})' +
         'RETURN scene', {uuid: scene.uuid})
