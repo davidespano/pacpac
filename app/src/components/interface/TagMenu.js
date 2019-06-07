@@ -78,12 +78,12 @@ function generateTags(props){
                     <button
                         title={"Remove " + tag.name}
                         id={'tag-' + tag.uuid + '-remove-button'}
-                        className={"tag-remove-button tag-form-button"}
+                        className={"action-buttons-container"}
                         onClick={() => {
                             SceneAPI.removeTag(tag.uuid);
                         }}
                     >
-                        <img className={"action-buttons"} src={"icons/icons8-white-waste-50.png"}/>
+                        <img className={"action-buttons"} src={"icons/icons8-waste-50.png"}/>
                     </button>
                 </div>
             );
