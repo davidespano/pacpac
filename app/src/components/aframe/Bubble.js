@@ -96,6 +96,7 @@ export default class Bubble extends Component
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
         let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9"
+        let cursor = document.getElementById('cursor');
 
 
         const curves = Object.values(scene.objects).flat().map(curve => {
@@ -119,12 +120,15 @@ export default class Bubble extends Component
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
+            //this.props.cameraChangeMode(is3Dscene)
         }
         else material += "opacity: 0; visible: false";
-
+        let camera = document.getElementById('camera');
         if(is3Dscene){
+            //camera.setAttribute("pac-look-controls", "planarScene: false");
+
             sceneRender = (
-                <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere" primitive={primitive} visible={this.props.isActive}
+                <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
                                    id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
                                    material={material} play_video={active}>
                 {curves}
@@ -133,16 +137,17 @@ export default class Bubble extends Component
             //TODO aggiungere il controllo del ridimensionamento della canvas
             let canvasWidth = document.documentElement.clientWidth / 100;
             let canvasHight = canvasWidth /1.77;
-            let camera = document.getElementById('camera');
+
             if(this.props.isActive){
+                //cursor.addAttribute('mouse-cursor', 'true');
                 //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
                 //camera.setAttribute("pac-look-controls", "planarScene: true");
             }
-            camera.setAttribute("pac-look-controls", "planarScene: true");
+            //camera.setAttribute("pac-look-controls", "planarScene: true");
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
-                    material={material} play_video={active} position={positionPlane}>
+                    material={material} play_video={active} position={positionPlane} >
                 {curves}
                 </Entity>)
         }

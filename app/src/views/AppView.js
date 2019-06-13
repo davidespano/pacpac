@@ -49,7 +49,7 @@ function AppView(props) {
         case 'PLAY_MODE_ON':
             return (
                 <div>
-                    <DebugVRScene {...props}/>
+                    <VRScene {...props}/>
                 </div>
 
             );

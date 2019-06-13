@@ -382,7 +382,7 @@ async function getAllDetailedScenes(gameGraph) {
         });
 
         // generates keypads
-        const keypads = s.keypads.map((keypad) => {
+        /*const keypads = s.keypads.map((keypad) => {
             return ({ //keypad, not the immutable
                 uuid: keypad.uuid,
                 name: keypad.name,
@@ -393,7 +393,7 @@ async function getAllDetailedScenes(gameGraph) {
                 properties: JSON.parse(keypad.properties),
                 visible: keypad.visible,
             });
-        });
+        });*/
 
         // generates rules
         const rules = s.rules.map(rule => {
@@ -438,7 +438,7 @@ async function getAllDetailedScenes(gameGraph) {
                 switches : switches,
                 collectable_keys: keys,
                 locks : locks,
-                keypads: keypads,
+                //keypads: keypads,
             },
             rules : rules,
             //audios : audios,
