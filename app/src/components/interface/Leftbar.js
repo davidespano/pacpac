@@ -37,54 +37,33 @@ function list(props, path) {
                 s = {border: '2px solid #EF562D'}
         } else
             s = borderStyle(props.tags.get(child.tag).color);
-        if (!(regex.test(child.img))) {
-            return (
-                <div key={child.name} className={'node_element'}>
-                    <img
-                        src={path + child.img}
-                        className={'list-img'}
-                        alt={child.name}
-                        title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
-                        onClick={() => {
-                            if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
-                                props.updateCurrentScene(child.uuid);
-                        }}
-                        style={s}
-                    />
-                    <div className={'list-labels'}
-                         onClick={() => {
-                             if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
-                                 props.updateCurrentScene(child.uuid);
-                         }}
-                    >
-                        <div className={'label-text'}>
-                            {child.name}
-                        </div>
-                    </div>
-                </div>)
-        } else {
-            return (
-                <div key={child.name} className={'node_element'}>
-                    <video
-                        muted preload={"auto"}
-                        className={'video_element list-video'}
-                        onClick={() => {
-                            if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
-                                props.updateCurrentScene(child.uuid);
-                        }}
-                        title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
-                        style={s}
-                    >
-                        <source src={path + child.img} type="video/mp4"/>
-                    </video>
-                    <div className={'list-labels'}>
-                        <div className={'label-text'}>
-                            {child.name}
-                        </div>
+
+        let src = path + '/_thumbnails_/' + child.img + (regex.test(child.img)? ".png" : "");
+
+        return (
+            <div key={child.name} className={'node_element'}>
+                <img
+                    src={src}
+                    className={'list-img'}
+                    alt={child.name}
+                    title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
+                    onClick={() => {
+                        if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                            props.updateCurrentScene(child.uuid);
+                    }}
+                    style={s}
+                />
+                <div className={'list-labels'}
+                     onClick={() => {
+                         if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                             props.updateCurrentScene(child.uuid);
+                     }}
+                >
+                    <div className={'label-text'}>
+                        {child.name}
                     </div>
                 </div>
-            )
-        }
+            </div>);
     }));
 
 }

@@ -41,7 +41,7 @@ async function createThumbnails(session, files, dir, gameID){
 
     await new Promise((resolve, reject) => fs.mkdir(dir + '/_thumbnails_'),(err) => {
         if(!err)
-            resolve()
+            resolve();
         reject(err);
     }).catch(()=>{});
 
