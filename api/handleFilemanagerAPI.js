@@ -5,7 +5,7 @@ const path = require('path')
     , ffmpeg = require('fluent-ffmpeg')
     , ffmpegPath = require('ffmpeg-static').path
     , ffprobePath = require('ffprobe-static').path
-    , fs = require('fs').promises
+    , fs = require('fs')
     , Media = require('./models/media')
     , dbUtils = require('./neo4j/dbUtils');
 
@@ -39,7 +39,11 @@ function genVideoScreenshot(file, dir){
 async function createThumbnails(session, files, dir, gameID){
     const promises = [];
 
-    await fs.mkdir(dir + '/_thumbnails_').catch(() => {});
+    await new Promise((resolve, reject) => fs.mkdir(dir + '/_thumbnails_'),(err) => {
+        if(!err)
+            resolve()
+        reject(err);
+    }).catch(()=>{});
 
     files.forEach((file) => {
         let promise;
@@ -100,7 +104,11 @@ function deleteHandler(req, res, next){
 
     Media.deleteByName(dbUtils.getSession({}),req.body.name, req.params.gameID);
 
-    fs.unlink(dir + '/_thumbnails_/' + filename)
+    new Promise((resolve,reject) => fs.unlink(dir + '/_thumbnails_/' + filename, err => {
+        if(!err)
+            resolve();
+        reject(err);
+    }))
         .catch((err) => console.error("delete",err));
     next()
 }
