@@ -192,7 +192,7 @@ function updateScene( session, scene, tag, gameID){
     delete scene.objects;
     delete scene.audios;
     delete scene.rules;
-    
+
     return session.run(
         'MATCH (scene:Scene:`' + gameID + '` {uuid: $uuid})' +
         'RETURN scene', {uuid: scene.uuid})
