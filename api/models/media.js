@@ -11,7 +11,6 @@ async function getAll(session, gameID) {
         {gameID: gameID}
     );
 
-    console.log("here",result.records[0].get('a'));
     if(result.records[0])
         return result.records.map((record) => record.get('a').properties);
     return [];
