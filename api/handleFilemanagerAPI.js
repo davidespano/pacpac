@@ -51,7 +51,8 @@ async function createThumbnails(session, files, dir, gameID){
         let promise;
         //relative path of the file
         let filePath = path.resolve(__dirname,file.path).replace(/(^.*?[\\/]public[\\/].*?\\)/,"");
-        let fileAncestorsPath = filePath.replace(/[\\/].*?$/,"");//ancestors without filename
+        let fileAncestorsPath = filePath.replace(/(?:(.*)[\\/])*.*?$/,"$1");//ancestors without filename
+        
 
         promises.push(new Promise((resolve,reject) => {
             mkdirp(fileAncestorsPath, (err) => {
