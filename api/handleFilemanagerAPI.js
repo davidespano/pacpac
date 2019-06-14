@@ -39,11 +39,11 @@ function genVideoScreenshot(file, dir){
 async function createThumbnails(session, files, dir, gameID){
     const promises = [];
 
-    await new Promise((resolve, reject) => fs.mkdir(dir + '/_thumbnails_'),(err) => {
+    await new Promise((resolve, reject) => fs.mkdir(dir + '/_thumbnails_',(err) => {
         if(!err)
             resolve();
         reject(err);
-    }).catch(()=>{});
+    })).catch(()=>{});
 
     files.forEach((file) => {
         let promise;
@@ -63,7 +63,7 @@ async function createThumbnails(session, files, dir, gameID){
                 return Media.createUpdateAsset(session, asset, gameID).then(()=>{
                     //using a buffer to override the old image
                     return image
-                        .resize(300)
+                        .resize(900)
                         .toBuffer(function(err, buffer) {
                             fs.writeFile(dir + '/_thumbnails_/' + path.parse(res).base, buffer, function(e) {
 
