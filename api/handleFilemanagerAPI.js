@@ -50,9 +50,9 @@ async function createThumbnails(session, files, dir, gameID){
     files.forEach((file) => {
         let promise;
         //relative path of the file
-        let filePath = path.resolve(__dirname,file.path).replace(/(^.*?[\\/]public[\\/].*?\\)/,"");
+        let filePath = path.resolve(__dirname,file.path).replace(/(^.*?[\\/]public[\\/].*?[\\/])/,"");
         let fileAncestorsPath = filePath.replace(/(?:(.*)[\\/])*.*?$/,"$1");//ancestors without filename
-        
+
 
         promises.push(new Promise((resolve,reject) => {
             mkdirp(fileAncestorsPath, (err) => {
@@ -103,7 +103,7 @@ function uploadHandler(req, res, next) {
     if(req.files){
         req.files.forEach((file)=>{
             //relative path of the file
-            let filePath = path.resolve(__dirname,file.path).replace(/(^.*?[\\/]public[\\/].*?\\)/,"");
+            let filePath = path.resolve(__dirname,file.path).replace(/(^.*?[\\/]public[\\/].*?[\\/])/,"");
             let asset = new Asset({path: filePath,filename:file.filename});
 
             promises.push(Media.createUpdateAsset(dbUtils.getSession({}), asset, gameID));
