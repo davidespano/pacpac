@@ -106,9 +106,8 @@ function TopBar(props){
                             <figcaption>Lucchetto</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
-                                onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.KEYPAD);
-                                }}>
+                                style={{opacity: 0.3, cursor: 'auto'}}
+                        >
                             <img src={"icons/icons8-add-keypad-50.png"}/>
                             <figcaption>Tastierino</figcaption>
                         </figure>

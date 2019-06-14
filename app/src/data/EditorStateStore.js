@@ -62,7 +62,7 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.RECEIVE_USER:
                 return state.set('user', action.user);
             case ActionTypes.REMOVE_SCENE:
-                return state.set('rightbarSelection', 'scene');
+                return state.set('rightbarSelection', 'scene').set('selectedSceneSpatialAudio', null);
             case ActionTypes.REMOVE_OBJECT:
                 return state.set('objectNameRightbar', null);
             case ActionTypes.RIGHTBAR_SELECTION:
