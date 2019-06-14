@@ -74,7 +74,7 @@ function createUpdateAsset(session, asset, gameID){
     console.log("Assets Create", gameID);
     return session.run(
         'MATCH (g:Game {gameID:{gameID}}) ' +
-        'MERGE (a:Asset:`' + gameID + '` {filename: $asset.filename}) ' +
+        'MERGE (a:Asset:`' + gameID + '` {path: $asset.path}) ' +
         'SET a += $asset ' +
         'WITH a,g ' +
         'MERGE (a)<-[:CONTAINS_ASSET]-(g)' +
@@ -82,11 +82,11 @@ function createUpdateAsset(session, asset, gameID){
         {asset: asset, gameID: gameID}).catch((err) => console.error("Asset Create",err));
 }
 
-function deleteByName(session, filename, gameID){
+function deleteByPath(session, path, gameID){
     return session.run(
-        'MATCH (asset:Asset:`' + gameID + '` {filename: $filename}) ' +
+        'MATCH (asset:Asset:`' + gameID + '` {path: $path}) ' +
         'DETACH DELETE asset ' +
-        'RETURN COUNT(asset)', {filename: filename})
+        'RETURN COUNT(asset)', {path: path})
         .then(result => result.records[0].get('COUNT(asset)').low).catch(err => console.error(err));
 }
 
@@ -94,5 +94,5 @@ module.exports = {
     getAll: getAll,
     deleteAsset: deleteAsset,
     createUpdateAsset: createUpdateAsset,
-    deleteByName: deleteByName,
+    deleteByPath: deleteByPath,
 };

@@ -38,7 +38,7 @@ function list(props, path) {
         } else
             s = borderStyle(props.tags.get(child.tag).color);
 
-        let src = path + '/_thumbnails_/' + child.img + (regex.test(child.img)? ".png" : "");
+        let src = path + '_thumbnails_/' + child.img + (regex.test(child.img)? ".png" : "");
 
         return (
             <div key={child.name} className={'node_element'}>
