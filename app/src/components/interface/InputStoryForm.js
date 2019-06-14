@@ -1,82 +1,131 @@
 import React from 'react';
-import MediaAPI from "../../utils/MediaAPI";
+import FileSelectionBtn from "./FileSelectionBtn";
+import FormImage from '../../data/FormImage';
 import StoryAPI from "../../utils/StoryAPI";
 
+function InputStoryForm(props) {
 
-function InputStoryForm(props){
-    return(
+    return (
         <div id={"addStoryDiv"}>
-            <div className="modal fade" id="add-story-modal" tabIndex="-1" role="dialog" aria-labelledby="add-story-modal-label" aria-hidden="true">
+            <div className="modal fade" id="add-story-modal" tabIndex="-1" role="dialog"
+                 aria-labelledby="add-story-modal-label" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="add-scene-modal-label">Nuova Storia</h5>
+                            <h5 className="modal-title" id="add-story-modal-label">Nuova Storia</h5>
                             <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div className="modal-body modalOptions">
-							<div className="form-inline">
-								<div className="col-lg-12 form-group new-story-form">
-									<label className="col-lg-6 col-form-label" htmlFor={"randomness"}>Casualit&agrave; (1-10)</label>
-									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="randomness" id="randomness" />
-									<hr/>
-									<label className="col-lg-6 col-form-label"  htmlFor={"image_1"}>Immagine 1</label>
-									<input type="file" name="image_1" id="image_1" className={"fileUpload"}/>							
-									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_1"}>Rilevanza oggetti (1-10)</label>
-									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_1" id="relevance_1"/>		
-									<hr/>
-									<label className="col-lg-6 col-form-label"  htmlFor={"image_2"}>Immagine 2</label>
-									<input type="file" name="image_2" id="image_2" className={"fileUpload"} />							
-									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_2"}>Rilevanza oggetti (1-10)</label>
-									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_2" id="relevance_2"/>
-									<hr/>
-									<label className="col-lg-6 col-form-label"  htmlFor={"image_3"}>Immagine 3</label>
-									<input type="file" name="image_3" id="image_3" className={"fileUpload"} />							
-									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_3"}>Rilevanza oggetti (1-10)</label>
-									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_3" id="relevance_3"/>
-									<hr/>
-									<label className="col-lg-6 col-form-label"  htmlFor={"image_4"}>Immagine 4</label>
-									<input type="file" name="image_4" id="image_4" className={"fileUpload"} />							
-									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_4"}>Rilevanza oggetti (1-10)</label>
-									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_4" id="relevance_4"/>							
-									<hr/>
-									<label className="col-lg-6 col-form-label"  htmlFor={"image_5"}>Immagine 5</label>
-									<input type="file" name="image_5" id="image_5" className={"fileUpload"} />							
-									<label className="col-lg-6 col-form-label"  htmlFor={"relevance_5"}>Rilevanza oggetti (1-10)</label>
-									<input type="range" min="1" max="10" defaultValue="5" step="1" className={"slider"} name="relevance_5" id="relevance_5"/>
-								</div>
-							</div>
+                            <div className={'box-titles'}>Casualit&agrave;</div>
+                            <div className={'slider-form'}>
+                                <span>1</span><input type="range" min="1" max="10" defaultValue="5" step="1"
+                                                     className={"slider"} name="randomness"
+                                                     id="randomness"/><span>10</span>
+                            </div>
+
+                            {[...props.formImages.values()].map((image, id) => {
+
+                                let properties = {
+                                    props: props,
+                                    component: 'story-form-' + image.index,
+                                };
+
+                                return (
+                                    <div key={image.index}>
+                                        <br/>
+                                        <div className={'box-titles story-form-name'}>Immagine {id + 1}
+                                            <button hidden={image.index === 0 ? 'hidden' : ''} className={"action-buttons-container"}
+                                                    onClick={() => props.removeFormImage(image.index)}>
+                                                <img className={"action-buttons"} src={"icons/icons8-waste-50.png"}
+                                                     alt={'Cancella'}/>
+                                            </button>
+                                        </div>
+                                        <div className={'box-grid scene-grid'}>
+                                            <p id={'file-selected-name'}
+                                               className={'input-new-story ellipsis'}
+                                            >
+                                                {image.name === '' ? 'Nessuna immagine selezionata' : image.name}
+                                            </p>
+                                            <FileSelectionBtn {...properties} />
+                                        </div>
+                                        <div className={'slider-form'}>
+                                            Rilevanza<span>1</span>
+                                            <input type="range" min="1" max="10" value={image.relevance}
+                                                   step="1" className={"relevance slider"}
+                                                   name={'relevance-' + image.index} id={'relevance-' + image.index}
+                                                   onChange={() => {
+                                                       let value = document.getElementById('relevance-' + image.index).value;
+                                                       changeRelevance(image, value, props)
+                                                   }}
+                                            />
+                                            <span>10</span>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                            }
+                            <br/>
+                            <button className={"btn"} onClick={() => addFormImage(props)}
+                                    disabled={checkIfAddButtonDisabled(props)}>+ Immagine
+                            </button>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary buttonConferm" onClick={()=>{
-                                let name =Math.floor(Date.now()).toString(), randomness=document.getElementById("randomness").value, media = [], relevance = [];
-								for(let i=1; i<= 5; i++) 
-									if (document.getElementById("image_"+i).files[0] != null) {
-										relevance.push(document.getElementById("relevance_"+i).value);
-										media.push(document.getElementById("image_"+i).files[0]);
-									}
-								if(name) {
-                                    addImageAndCreateStory(name, media, relevance, randomness);
-                                }
-                            }
-                            } data-dismiss="modal" >Conferma</button>
+                            <button type="button" className="btn btn-secondary buttonConferm" data-dismiss="modal"
+                                    onClick={() => {
+                                        processForm(props)
+                                    }}
+                                    disabled={checkIfConfirmButtonDisabled(props)}>Crea Storia
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
-function addImageAndCreateStory(name, media, relevance, randomness){
-	
-    let ext =[];
-	let re = /(?:\.([^.]+))?$/;
-	for(let i=0; i< media.length; i++)
-		ext.push(re.exec(media[i].name)[1]);
-	
-    MediaAPI.addImageStory(name, media, ext, relevance, randomness);
+function processForm(props) {
+    let randomness = document.getElementById('randomness').value, name = [], relevance = [],
+        collectionName = Math.floor(Date.now()).toString()
+    props.formImages.map((image) => {
+        name.push(image.name);
+        relevance.push(image.relevance);
+    });
+    StoryAPI.generateSystemStory(collectionName, name, relevance, randomness);
+}
+
+
+function checkIfAddButtonDisabled(props) {
+    return !(props.formImages.count() < 5 && props.formImages.last().name);
+}
+
+function checkIfConfirmButtonDisabled(props) {
+    return !(props.formImages.last().name);
+}
+
+function changeRelevance(image, value, props) {
+
+    let newImage = FormImage({
+        index: image.index,
+        name: image.name,
+        relevance: value,
+    });
+
+    props.updateFormImage(newImage);
+}
+
+function addFormImage(props) {
+
+    let index = props.formImages.last().index + 1;
+    let image = FormImage({
+        index: index,
+        name: '',
+        relevance: 6,
+    });
+
+    props.addFormImage(image);
 
 }
 

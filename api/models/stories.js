@@ -220,27 +220,6 @@ function getStoryByName(session, name, gameID){
         });
 }
 
-
-//add a story
-/*
-function addStory(session, name, systemStory, relevance, randomness, userStory, lastUpdate, gameID) {
-     return session.run(
-        'MATCH (story:Story:`' + gameID + '` {name: $name})' +
-        'RETURN story', {name: name})
-        .then(result => {
-           if (!_.isEmpty(result.records)) {
-                throw {message: "Story already exists", status: 422};
-            }
-            else {
-                return session.run(
-                    'CREATE (story:Story:`' + gameID + '` {name: $name, systemStory:$systemStory, relevance:$relevance, randomness: $randomness, userStory:$userStory, lastUpdate:$lastUpdate}) ' +
-                    'RETURN story', {name: name, systemStory: systemStory, relevance: relevance, randomness:  randomness, userStory: userStory, lastUpdate: lastUpdate})
-            }
-        })
-        .then(result => singleStory(result.records[0]));		
-}
-*/
-
 module.exports = {
     addStory: addStory,
 	updateStory: updateStory,

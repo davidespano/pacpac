@@ -85,6 +85,7 @@ function AppView(props) {
                 <div>
                     <TopBar {...props} />
                     <StoryEditor {...props} />
+					<FileForm {...props}/>
                 </div>
             );
 

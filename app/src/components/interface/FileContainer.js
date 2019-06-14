@@ -22,7 +22,7 @@ function FileContainer(properties){
     };
 
     /**TODO: disabilitare selezione multipla se il component è modal**/
-
+	
     return (
         <div className={"filemanager"}>
             <FileManager>
@@ -55,10 +55,17 @@ function handleFileSelection(props, data, component){
             }
 
             path += data.name;
+			
 
             if(props.editor.selectedMediaToEdit === 'audio-form'){
                 props.selectAudioFile(path);
-            } else {
+            }
+			else if(props.editor.selectedMediaToEdit.search('story-form-') !== -1){
+				let id = parseInt(props.editor.selectedMediaToEdit.replace('story-form-',''));
+				props.updateFormImageName(id, path);
+				props.selectFile(path);
+			}
+			else {
                 props.selectFile(path);
             }
         }

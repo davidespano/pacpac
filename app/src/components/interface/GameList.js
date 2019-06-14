@@ -3,6 +3,7 @@ import SceneAPI from "../../utils/SceneAPI";
 import MediaAPI from "../../utils/MediaAPI";
 import InputGameForm from "./InputGameForm";
 import GameAPI from "../../utils/GameAPI";
+import StoryAPI from "../../utils/StoryAPI";
 
 
 function GameList(props) {
@@ -60,6 +61,7 @@ function gameSelection(gameUuid,props){
     props.switchToEditMode();
     SceneAPI.getAllScenesAndTags();
     MediaAPI.getAllAssets();
+	StoryAPI.getAllCollections();
 
 }
 
