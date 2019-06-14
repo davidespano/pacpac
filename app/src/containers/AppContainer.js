@@ -18,7 +18,7 @@ import StoryCollectionsStore from '../data/StoryCollectionsStore';
 import StoryImagesStore from '../data/StoryImagesStore';
 import StoriesStore from '../data/StoriesStore';
 import EditStoriesStore from '../data/EditStoriesStore';
-
+import FormImagesStore from '../data/FormImagesStore';
 
 function getStores() {
     return [
@@ -39,6 +39,7 @@ function getStores() {
 	    EditStoriesStore,
 		StoryCollectionsStore,
 	    StoryImagesStore,
+		FormImagesStore,
     ];
 }
 
@@ -63,7 +64,8 @@ function getState() {
 		stories: StoriesStore.getState(),
 		editStories: EditStoriesStore.getState(),
 		storyCollections: StoryCollectionsStore.getState(),
-		storyImages: StoryImagesStore.getState(),		
+		storyImages: StoryImagesStore.getState(),	
+		formImages: FormImagesStore.getState(),
 
         //FUNCTIONS
 
@@ -167,6 +169,13 @@ function getState() {
 		onEditStory: Actions.editStory,
 		startEditingStory: Actions.startEditingStory,
 		stopEditingStory: Actions.stopEditingStory,
+		
+		addFormImage: Actions.addFormImage,
+		receiveFormImage: Actions.receiveFormImage,
+		updateFormImage: Actions.updateFormImage,
+		updateFormImageName: Actions.updateFormImageName,
+		removeFormImage: Actions.removeFormImage,
+		resetFormImage: Actions.resetFormImage,
 
     };
 }

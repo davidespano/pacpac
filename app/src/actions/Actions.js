@@ -814,10 +814,52 @@ const Actions = {
 	
     stopEditingStory() {
         AppDispatcher.dispatch({
-            type: ActionTypes.STOP_EDITING_STORY
+            type: ActionTypes.STOP_EDITING_STORY,
         })
     },	
 	
+    addFormImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.ADD_FORM_IMAGE,
+			index: image.index,
+			image: image,			
+        })
+    },		
+	
+    receiveFormImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_FORM_IMAGE,
+			image: image,
+        })
+    },		
+	
+    updateFormImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_FORM_IMAGE,
+			index: image.index,
+			image: image,
+        })
+    },		
+
+    updateFormImageName(index, name) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_FORM_IMAGE_NAME,
+			index: index,
+			name: name,
+        })
+    },		
+    removeFormImage(index) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_FORM_IMAGE,
+			index: index,
+        })
+    },		
+
+    resetFormImage() {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RESET_FORM_IMAGE,
+        })
+    },		
 };
 
 export default Actions;

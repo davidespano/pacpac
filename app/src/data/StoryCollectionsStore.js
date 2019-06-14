@@ -51,6 +51,8 @@ class StoryCollectionsStore extends ReduceStore {
 				state = state.delete(action.collection.name);		
 				return state;			
 
+            case ActionTypes.RESET:
+                return Immutable.OrderedMap();
 	
             default:
                 return state;
