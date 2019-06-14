@@ -1,4 +1,5 @@
 import React from 'react';
+import interface_utils from "./interface_utils";
 let uuid = require('uuid');
 
 function AudioMenu(props){
@@ -9,7 +10,8 @@ function AudioMenu(props){
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
                             <h5 className="modal-title" id="manage-audio-modal-label">Gestione audio</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close"
+                                    onClick={() => props.selectAudioToEdit(null)}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -27,7 +29,8 @@ function AudioMenu(props){
                                         if(audio.name.includes(props.editor.audioFilter)){
                                             return (
                                                 <p className={'audio-names ' + checkSelection(props, audio.uuid)}
-                                                   onClick={()=> selection(props, audio.uuid)}>
+                                                   key={audio.uuid}
+                                                   onClick={()=> interface_utils.audioSelection(props, audio)}>
                                                     {audio.name}
                                                 </p>
                                             );
@@ -49,12 +52,8 @@ function AudioMenu(props){
                                         data-toggle="modal"
                                         data-target="#audio-form-modal"
                                         disabled={props.editor.selectedAudioToEdit == null}
-                                        onClick={() => {
-                                            let audio = props.audios.get(props.editor.selectedAudioToEdit);
-                                            props.changeAudioLocalOptionStatus(audio.isLocal);
-                                        }}
                                 >
-                                    <img className={"action-buttons btn-img"} src={"icons/icons8-pencil-50.png"}/>
+                                    <img className={"action-buttons btn-img"} src={"icons/icons8-white-pencil-50.png"}/>
                                     Modifica oggetto
                                 </button>
                                 <button id={'remove-audio-btn'}
@@ -72,17 +71,14 @@ function AudioMenu(props){
                         </div>
                         <div className="modal-footer" id={'modal-footer-media'}>
                             <button type="button" className="btn btn-secondary buttonConferm"
-                                    data-dismiss="modal" >Ok</button>
+                                    data-dismiss="modal" onClick={() => props.selectAudioToEdit(null)}
+                            >Ok</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     );
-}
-
-function selection(props, uuid){
-    props.editor.selectedAudioToEdit === uuid ? props.selectAudioToEdit(null) : props.selectAudioToEdit(uuid);
 }
 
 

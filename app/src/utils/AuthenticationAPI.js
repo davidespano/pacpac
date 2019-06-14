@@ -34,7 +34,7 @@ function getUserDetail() {
                 username: rawUser.username,
                 games: rawUser.games,
             });
-            console.log(user)
+            //console.log(user)
             Actions.receiveUser(user);
             Actions.gameSelectionModeOn();
         });

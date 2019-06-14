@@ -1,21 +1,31 @@
-import React from "react";
+import React,{Component} from "react";
 import {Entity} from 'aframe-react';
-import {Curved, Sound} from './aframe_entities';
+import {Curved, CurvedGeometry} from './aframe_entities';
 import settings from "../../utils/settings";
 import {Howl} from "howler";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
+import Values from '../../interactives/rules/Values'
+
 const THREE = require('three');
 const {mediaURL} = settings;
 
 
-export default class Bubble extends React.Component
+export default class Bubble extends Component
 {
+    constructor(props){
+        super(props)
+    }
+
     componentDidMount()
     {
         let el = this;
+        let is3Dscene = this.props.scene.type===Values.THREE_DIM;
+        let cursor = document.querySelector('#cursor');
+
+        // Riattivo il cursore, e resetto evento animation complete
         this.nv.addEventListener("animationcomplete", function animationListener(evt){
-            if(evt.detail.name === "animation__appear")
+            if(evt.detail.name === "animation__appear" /*&& is3Dscene*/)
             {
                 //Riattivo la lunghezza del raycast
                 let cursor = document.querySelector("#cursor");
@@ -23,13 +33,21 @@ export default class Bubble extends React.Component
                 cursor.setAttribute('material', 'visible: true');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                 cursor.setAttribute('color', 'black');
-                el.props.handler(el.props.scene.name);
+                el.props.handler(el.props.scene.uuid);
             }
             this.components[evt.detail.name].animation.reset();
         });
-        //if(stores_utils.getFileType(this.props.scene.img) === 'video')
+
+        // Se la scena è 2D rendo invisibile il cursor, uso solo il mouse (potrebbe non servire)
+        if(!is3Dscene && this.props.isActive) {
+            //cursor.setAttribute('material', 'visible: false');
+        }
         this.setShader();
         if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame();
+    }
+
+    componentWillReceiveProps({props}) {
+        this.setState({...this.state,props})
     }
 
     componentDidUpdate(){
@@ -43,15 +61,23 @@ export default class Bubble extends React.Component
         }else{
             if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
         }
+
+        // Check forzare l'aggiornamento della camera nella nuova scena se passo da 2D a 3D o viceverse
+        let is3Dscene = this.props.scene.type === Values.THREE_DIM;
+        let camera = document.getElementById('camera');
+        if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene && this.props.isActive && !this.props.editMode)
+            this.props.cameraChangeMode(is3Dscene)
+
         this.setVideoFrame();
     }
 
     setVideoFrame(){
-        //if(!this.props.isActive) return;
+        if(!this.props.isActive) return;
         this.props.scene.objects.switches.forEach(s => {
+            let state = this.props.runState?this.props.runState[s.uuid].state:s.state;
             if(s.media.media0 === null && s.media.media1 === null) return;
-            if((this.props.runState[s.uuid].state === "ON"  && s.media.media1 === null )||
-               (this.props.runState[s.uuid].state === "OFF" && s.media.media0 === null )){
+            if((state === "ON"  && s.media.media1 === null )||
+               (state === "OFF" && s.media.media0 === null )){
                 let asset = document.getElementById("media_"+s.uuid);
                 asset.addEventListener('durationchange', function (ev) {
                     asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
@@ -65,44 +91,63 @@ export default class Bubble extends React.Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
-        let is3Dscene = true;
+        let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
+        let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
+        let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9"
+        let cursor = document.getElementById('cursor');
+
+
         const curves = Object.values(scene.objects).flat().map(curve => {
-            return(
-                <Curved key={"keyC"+ curve.uuid} object_uuid={this.props.isActive?curve.uuid:""} vertices={curve.vertices}/>
-            );
+            if(this.props.editMode){
+                return(
+                    <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid} is3Dscene={is3Dscene}/>
+                );
+            } else {
+                //TODO [debug] add to origin master
+                return(
+                    <Curved key={"keyC"+ curve.uuid} onDebugMode={this.props.onDebugMode} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
+                            is3Dscene={is3Dscene} vertices={curve.vertices}/>
+                );
+            }
+
         });
         let material = "depthTest: true; ";
-       /* if(this.nv !== undefined && this.nv.needShaderUpdate === true) {
-            material += "shader: flat;";
-            this.nv.needShaderUpdate = false;
-        }*/
         let active = 'active: false;';
         let radius = 9.9;
         if (this.props.isActive) {
-            material += "opacity: 1; visible: true;";
+            material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
+            //this.props.cameraChangeMode(is3Dscene)
         }
         else material += "opacity: 0; visible: false";
-
+        let camera = document.getElementById('camera');
         if(is3Dscene){
+            //camera.setAttribute("pac-look-controls", "planarScene: false");
+
             sceneRender = (
-                <Entity _ref={elem => this.nv = elem} primitive={primitive} visible={this.props.isActive}
+                <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
                                    id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
                                    material={material} play_video={active}>
                 {curves}
                 </Entity>)
         } else {
-            let camera = document.querySelector('#camera');
-            console.log(camera.getAttribute('pac-look-controls'));
-            camera.setAttribute('pac-look-controls', {'pointerLockEnabled':'false'});
-            console.log(camera.getAttribute('look-controls'));
+            //TODO aggiungere il controllo del ridimensionamento della canvas
+            let canvasWidth = document.documentElement.clientWidth / 100;
+            let canvasHight = canvasWidth /1.77;
+
+            if(this.props.isActive){
+                //cursor.addAttribute('mouse-cursor', 'true');
+                //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
+                //camera.setAttribute("pac-look-controls", "planarScene: true");
+            }
+            //camera.setAttribute("pac-look-controls", "planarScene: true");
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
-                    id={this.props.scene.name} src={'#' + this.props.scene.img} height="10.8" width="19.2"
-                    material={material} play_video={active} position="0 1.6 -6.44"/*dolby={'active: ' + this.props.isActive.toString() + ';'}*/>
+                    id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
+                    material={material} play_video={active} position={positionPlane} >
                 {curves}
                 </Entity>)
         }
@@ -110,7 +155,7 @@ export default class Bubble extends React.Component
     }
 
     setShader(){
-        console.log('set shader');
+        //console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
             let sky = document.getElementById(scene.name);
@@ -119,7 +164,8 @@ export default class Bubble extends React.Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-            if(sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
+            //TODO [debug] add to origin master
+            if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive ) document.getElementById(scene.img).play();
                 return;
             }
@@ -220,10 +266,12 @@ export default class Bubble extends React.Component
     }
 
     resetShader(sky){
-        if(sky.getAttribute('material').shader !== 'multi-video'){
+        //TODO [debug] add to origin master
+        if(sky && sky.getAttribute('material').shader !== 'multi-video'){
             return;
         }
-        sky.setAttribute('material', "shader:flat;");
+        if(sky)
+            sky.setAttribute('material', "shader:flat;");
     }
     componentWillUnmount(){
         delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img];
@@ -231,3 +279,4 @@ export default class Bubble extends React.Component
         (this.masksTextures?this.masksTextures:[]).forEach(t => t.dispose());
     }
 }
+

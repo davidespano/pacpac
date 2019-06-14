@@ -6,7 +6,6 @@ import Tag from "../scene/Tag";
 import SceneAPI from "../utils/SceneAPI";
 
 
-
 class TagsStore extends ReduceStore {
 
     constructor() {
@@ -14,7 +13,6 @@ class TagsStore extends ReduceStore {
     }
 
     getInitialState() {
-        SceneAPI.saveTag(Tag());
         return Immutable.Map().set('default', Tag());
     }
 
@@ -32,6 +30,8 @@ class TagsStore extends ReduceStore {
                     state = state.set(t.uuid, t);
                 });
                 return state;
+            case ActionTypes.RECEIVE_TAG:
+                return state.set(action.uuid, action.tag);
             case ActionTypes.REMOVE_TAG:
                 return state.delete(action.uuid);
             case ActionTypes.UPDATE_TAG:

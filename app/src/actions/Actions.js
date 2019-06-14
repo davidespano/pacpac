@@ -5,6 +5,9 @@ import ObjectToSceneStore from "../data/ObjectToSceneStore";
 import ScenesStore from "../data/ScenesStore";
 import CentralSceneStore from "../data/CentralSceneStore";
 import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
+import AudioAPI from "../utils/AudioAPI";
+import StoryAPI from '../utils/StoryAPI';
+import Values from "../interactives/rules/Values";
 
 const Actions = {
 
@@ -48,9 +51,23 @@ const Actions = {
         })
     },
 
+    //TODO [debug] add to origin master
+    debugModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DEBUG_MODE_ON
+        })
+    },
+
     loginModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.LOGIN_MODE_ON
+        })
+    },
+
+    loopCheck(check){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOOP_CHECK,
+            check: check,
         })
     },
 
@@ -84,6 +101,14 @@ const Actions = {
     },
 
 
+    selectAudioFile(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_AUDIO_FILE,
+            selection: selection,
+        })
+    },
+
+
     selectFile(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_FILE,
@@ -98,9 +123,19 @@ const Actions = {
         })
     },
 
-    selectAudioToEdit(selection){
+    selectAudioToEdit(selection, file = null, isSpatial = false, check = false){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_AUDIO_TO_EDIT,
+            selection: selection,
+            file: file,
+            isSpatial: isSpatial,
+            check: check,
+        })
+    },
+
+    selectSceneSpatialAudio(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SELECT_SCENE_SPATIAL_AUDIO,
             selection: selection,
         })
     },
@@ -118,6 +153,13 @@ const Actions = {
        })
     },
 
+    newAudioNameTyped(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.NEW_AUDIO_NAME_TYPED,
+            status: status,
+        })
+    },
+
     newSceneNameTyped(status){
         AppDispatcher.dispatch({
             type: ActionTypes.NEW_SCENE_NAME_TYPED,
@@ -125,6 +167,10 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
     updateAudioFilter(filter){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_AUDIO_FILTER,
@@ -132,6 +178,66 @@ const Actions = {
         })
     },
 
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
+    updateObjectTypeFilter(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OBJECTS_TYPE_FILTER,
+            filter: filterType,
+        })
+    },
+
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
+    updateObjectNameFilter(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OBJECTS_NAME_FILTER,
+            filter: filterType,
+        })
+    },
+
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
+    updateSceneNameFilter(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SCENE_NAME_FILTER,
+            filter: filterType,
+        })
+    },
+
+
+    /**
+     * Dispatch update input status
+     * @param name
+     */
+    updateSceneNameRightbar(name){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_SCENE_NAME_RIGHTBAR,
+            name: name,
+        })
+    },
+
+    /**
+     * Dispatch update input status
+     * @param name
+     */
+    updateObjectNameRightbar(name){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OBJECT_NAME_RIGHTBAR,
+            name: name,
+        })
+    },
+
+    /**
+     * Dispatch new filter selection
+     * @param filterType
+     */
     updateTagFilter(filter){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_TAG_FILTER,
@@ -146,12 +252,20 @@ const Actions = {
         })
     },
 
-    changeAudioLocalOptionStatus(status){
+	changeAudioSpatialOptionStatus(status){
         AppDispatcher.dispatch({
-            type: ActionTypes.AUDIO_LOCAL_OPTION,
+            type: ActionTypes.AUDIO_SPATIAL_OPTION,
             status: status,
         })
     },
+	
+	//STORY EDITOR MODE
+    storyEditorModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.STORY_EDITOR_MODE_ON
+        })
+    },		
+	
 
     //SCENES
 
@@ -203,14 +317,14 @@ const Actions = {
 
     /**
      * Dispatch current scene update
-     * @param name of the scene
+     * @param uuid of the scene
      */
-    updateCurrentScene(name){
+    updateCurrentScene(uuid){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
-            name: name,
+            uuid: uuid,
             objectsToScene: ObjectToSceneStore.getState(),
-            scene: ScenesStore.getState().get(name),
+            scene: ScenesStore.getState().get(uuid),
         });
     },
 
@@ -223,23 +337,23 @@ const Actions = {
             type: ActionTypes.UPDATE_SCENE,
             scene: scene,
         });
-        SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
+        SceneAPI.updateScene(scene, scene.tag);
     },
 
     /**
      * Dispatch scene name update (since the name is the scene key in ScenesStore map, it needs a specific update)
      * @param scene
-     * @param oldScene
+     * @param oldName
      * @param order of scenes
      */
-    updateSceneName(scene, oldScene, order){
+    updateSceneName(scene, oldName, order){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE_NAME,
             scene: scene,
-            oldScene: oldScene,
+            oldName: oldName,
             order: order,
         });
-        SceneAPI.updateScene(scene.uuid, scene.name, scene.img, scene.type, scene.tag);
+        SceneAPI.updateScene(scene, scene.tag);
     },
 
     /**
@@ -250,7 +364,8 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_SCENE,
             scene: scene,
-        })
+        });
+        SceneAPI.deleteScene(scene);
     },
 
     /**
@@ -286,6 +401,18 @@ const Actions = {
             tag: tag,
         });
         SceneAPI.saveTag(tag);
+    },
+
+    /**
+     * Receive single tag from db
+     * @param tag
+     */
+    receiveTag(tag){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_TAG,
+            uuid: tag.uuid,
+            tag: tag,
+        });
     },
 
     /**
@@ -331,11 +458,13 @@ const Actions = {
     /**
      * Handles an object received from db
      * @param object
+     * @param scene_type (to calculate centroid)
      */
-    receiveObject(object){
+    receiveObject(object, scene_type = Values.THREE_DIM){
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_OBJECT,
             obj: object,
+            scene_type: scene_type,
         })
     },
 
@@ -365,10 +494,11 @@ const Actions = {
      * Dispatch current object update (rightbar)
      * @param uuid
      */
-    updateCurrentObject(uuid){
+    updateCurrentObject(obj){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_OBJECT,
-            uuid: uuid,
+            obj: obj,
+
         })
     },
 
@@ -386,25 +516,17 @@ const Actions = {
     /**
      * Dispatch update of any object to the objects store
      * @param object
+     * @param scene_type (for calculating centroid)
      */
-    editVertices(object){
+    editVertices(object, scene_type = Values.THREE_DIM){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_VERTICES,
             obj: object,
             vertices: object.get('vertices'),
+            scene_type: scene_type,
         })
     },
 
-    /**
-     * Dispatch new filter selection
-     * @param filterType
-     */
-    filterObject(filterType){
-        AppDispatcher.dispatch({
-            type: ActionTypes.OBJECTS_FILTER,
-            filter: filterType,
-        })
-    },
 
     //RULES
 
@@ -419,7 +541,6 @@ const Actions = {
             scene: scene,
             rule: rule,
         });
-        console.log('save')
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 
@@ -469,29 +590,6 @@ const Actions = {
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 
-
-    updateRuleEditorFromState(state){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_RULE_EDITOR_STATE,
-            state: state,
-        })
-    },
-
-    updateRuleEditorFromContent(content, selection){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_RULE_EDITOR_CONTENT,
-            content: content,
-            selection: selection,
-        })
-    },
-
-    updateRuleEditorFromRaw(raw){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_RULE_EDITOR_RAW,
-            raw: raw,
-        })
-    },
-
     updateSuggestion(state){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SUGGESTION,
@@ -523,19 +621,32 @@ const Actions = {
      * @param audio
      */
     addNewAudio(audio){
-        if(audio.isLocal){
+        if(audio.isSpatial){
             AppDispatcher.dispatch({
-                type: ActionTypes.ADD_NEW_LOCAL_AUDIO,
+                type: ActionTypes.ADD_NEW_SPATIAL_AUDIO,
                 scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
-            })
+            });
+            AudioAPI.createUpdateSpatialAudio(audio.scene, audio);
         } else {
             AppDispatcher.dispatch({
                 type: ActionTypes.ADD_NEW_GLOBAL_AUDIO,
                 audio: audio,
-            })
+            });
+            AudioAPI.createUpdateGlobalAudio(audio);
         }
-        /**TODO: Save audio to db here**/
+
+    },
+
+    /**
+     * Handles audio received from db
+     * @param audio
+     */
+    receiveAudio(audio){
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_GLOBAL_AUDIO,
+            audio: audio,
+        });
     },
 
     /**
@@ -543,9 +654,9 @@ const Actions = {
      * @param audio
      */
     removeAudio(audio){
-        if(audio.isLocal){
+        if(audio.isSpatial){
             AppDispatcher.dispatch({
-                type: ActionTypes.REMOVE_LOCAL_AUDIO,
+                type: ActionTypes.REMOVE_SPATIAL_AUDIO,
                 scene: ScenesStore.getState().get(audio.scene),
                 audio: audio,
             })
@@ -555,7 +666,7 @@ const Actions = {
                 audio: audio,
             })
         }
-        /**TODO: Dispatch db update here**/
+        AudioAPI.deleteAudio(audio.uuid);
     },
 
 
@@ -567,8 +678,12 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_AUDIO,
             audio: audio,
-        })
-        /**TODO: Dispatch db update here**/
+        });
+
+        if(audio.isSpatial)
+            AudioAPI.createUpdateSpatialAudio(audio.scene, audio);
+        else
+            AudioAPI.createUpdateGlobalAudio(audio);
     },
 
     //MEDIA
@@ -604,7 +719,105 @@ const Actions = {
         })
     },
 
+	//STORY EDITOR ACTIONS
 
+    loadAllCollections(response){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOAD_ALL_COLLECTIONS,
+            response: response,
+        });
+        response.forEach(collection => {
+            StoryAPI.getCollectionByName(collection.name);
+        })
+
+    },	
+
+    receiveCollection(collection) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_COLLECTION,
+			collection:collection
+        })
+    },		
+
+    updateCollection(collection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_COLLECTION,
+            collection: collection,
+        })
+    },		
+	
+    removeCollection(collection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_COLLECTION,
+            collection: collection,
+        })
+    },			
+	
+
+    receiveImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_IMAGE,
+			image:image
+        })
+    },	
+	
+    updateImage(image) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_IMAGE,
+			image:image
+        })
+    },	
+	
+    updateStory(story){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_STORY,
+            story: story,
+        })
+    },	
+	
+    receiveStory(story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RECEIVE_STORY,
+			story:story
+        })
+    },
+	
+    restoreStory(story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.RESTORE_STORY,
+			story: story			
+        })
+    },	
+
+    editStory(uuid, userStory) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.EDIT_STORY,
+			uuid: uuid,
+			userStory: userStory			
+        })
+    },	
+
+    removeStory(collection, story) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.REMOVE_STORY,
+			collection: collection,
+			story: story
+        })
+    },
+	
+    startEditingStory(uuid) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.START_EDITING_STORY,
+			uuid: uuid			
+        })
+    },	
+	
+    stopEditingStory() {
+        AppDispatcher.dispatch({
+            type: ActionTypes.STOP_EDITING_STORY
+        })
+    },	
+	
 };
 
 export default Actions;

@@ -12,6 +12,8 @@ import ActionTypes from "../../actions/ActionTypes";
 import AuthenticationAPI from "../../utils/AuthenticationAPI";
 import AudioMenu from "./AudioMenu";
 import AudioForm from "./AudioForm";
+import StoriesViewer from "./StoriesViewer";
+import Keypad from "../../interactives/Keypad";
 
 
 let uuid = require('uuid');
@@ -34,9 +36,15 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-assets" data-toggle="tab" role="tab" href="#nav-assets"
                        aria-controls="nav-assets" aria-selected="false"
                        onClick={() => handleAssetsMode(props)}>Assets</a>
+                    <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
+                       aria-controls="nav-story-editor" aria-selected="false"
+                       onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
+                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-debug"
+                       aria-controls="nav-debug" aria-selected="false"
+                       onClick={() => {handleDebugMode(props)}} >Debug</a>
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">
@@ -45,6 +53,7 @@ function TopBar(props){
                     <TagMenu {...props}/>
                     <AudioMenu {...props}/>
                     <AudioForm {...props}/>
+					<StoriesViewer {...props}/>
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
                                 onClick={() => props.selectMediaToEdit(null)}
@@ -59,6 +68,10 @@ function TopBar(props){
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#view-story-modal">
+                            <img src={"icons/icons8-stories-100.png"}/>
+                            <figcaption>Visualizza storie</figcaption>
                         </figure>
                     </div>
                 </div>
@@ -92,6 +105,12 @@ function TopBar(props){
                             <img src={"icons/icons8-add-lock-100.png"}/>
                             <figcaption>Lucchetto</figcaption>
                         </figure>
+                        <figure className={'nav-figures'}
+                                style={{opacity: 0.3, cursor: 'auto'}}
+                        >
+                            <img src={"icons/icons8-add-keypad-50.png"}/>
+                            <figcaption>Tastierino</figcaption>
+                        </figure>
                     </div>
                 </div>
             </div>
@@ -118,6 +137,16 @@ function handleAssetsMode(props){
     if(props.editor.mode !== ActionTypes.FILE_MANAGER_MODE_ON){
         props.switchToFileManager();
         document.getElementById("nav-tabContent").hidden = true;
+    }
+}
+
+//TODO [debug] add to origin master
+function handleDebugMode(props) {
+    if(props.editor.mode !== ActionTypes.DEBUG_MODE_ON){
+        props.updateCurrentScene(props.scenes.toArray()[0].uuid);
+        props.switchToDebugMode();
+        document.getElementById("nav-tabContent").hidden = true;
+
     }
 }
 
@@ -163,6 +192,18 @@ function createObject(props, type){
                     name : name,
                 });
                 break;
+            case InteractiveObjectsTypes.KEYPAD:
+                name = scene.name + '_kp' + (scene.objects.keypads.length + 1);
+                obj = Keypad ({
+                    uuid : uuid.v4(),
+                    name : name,
+                    properties: {
+                        state: null,
+                        inputSize: 3,
+                        combination : [Math.floor(Math.random() * 1000)],
+                    }
+                });
+                break;
             default:
                 return;
         }
@@ -171,16 +212,21 @@ function createObject(props, type){
         props.addNewObject(scene, obj);
 
         if(obj.type === InteractiveObjectsTypes.SWITCH){ //switches have multiple default rules
-            console.log('switch')
             props.addNewRule(scene, defaultRule[0]);
             props.addNewRule(scene, defaultRule[1]);
         }else{
-            console.log('other')
             props.addNewRule(scene, defaultRule);
         }
 
     } else {
         alert('Nessuna scena selezionata!');
+    }
+}
+
+function handleSwitchToStoryEditorMode(props){
+	if(props.editor.mode != ActionTypes.STORY_EDITOR_MODE_ON) {
+		props.switchToStoryEditorMode();
+		document.getElementById("nav-tabContent").hidden = true;
     }
 }
 

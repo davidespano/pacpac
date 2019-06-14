@@ -1,15 +1,16 @@
 const InteractiveObjectsTypes = {
 
-    TRANSITION : 'TRANSITION',
-    TIMER : 'TIMER',
-    SWITCH : 'SWITCH',
-    SELECTOR : 'SELECTOR',
+    BUTTON : 'BUTTON',
+    COUNTER : 'COUNTER',
     CUMULABLE : 'CUMULABLE',
     KEY : 'KEY',
-    COUNTER : 'COUNTER',
-    BUTTON : 'BUTTON',
-    LOCK: 'LOCK',
-    PLAYER: 'PLAYER'
+    KEYPAD : 'KEYPAD',
+    LOCK : 'LOCK',
+    PLAYER : 'PLAYER',
+    SELECTOR : 'SELECTOR',
+    SWITCH : 'SWITCH',
+    TIMER : 'TIMER',
+    TRANSITION : 'TRANSITION',
 
 };
 

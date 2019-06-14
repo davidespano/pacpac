@@ -24,11 +24,11 @@ class CentroidsStore extends ReduceStore {
                 return state;
             case ActionTypes.RECEIVE_OBJECT:
                 if(action.obj.vertices != null){
-                    state = state.set(action.obj.uuid, interface_utils.centroid(action.obj.vertices));
+                    state = state.set(action.obj.uuid, interface_utils.centroid(action.obj.vertices, action.scene_type));
                 }
                 return state;
             case ActionTypes.UPDATE_VERTICES:
-                state = state.set(action.obj.uuid, interface_utils.centroid(action.vertices));
+                state = state.set(action.obj.uuid, interface_utils.centroid(action.vertices, action.scene_type));
                 return state;
             case ActionTypes.RESET:
                 return Immutable.Map();

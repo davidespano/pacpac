@@ -3,10 +3,12 @@ import SceneAPI from "./SceneAPI";
 import interface_utils from "../components/interface/interface_utils";
 import Actions from "../actions/Actions";
 import Orders from "../data/Orders";
+import StoryAPI from "./StoryAPI";
 
 const request = require('superagent');
 
 const {apiBaseURL} = settings;
+const fs = require('fs');
 
 
 /**
@@ -74,8 +76,31 @@ function uploadMedia(object, file, type, props){
         });
 }
 
+function addImageStory(name, media, ext, relevance, randomness) {
+	
+	let filename = [];
+	
+	for(let i=0; i<media.length; i++) 
+		filename.push(name+'_'+i+'.'+ext[i]);
+	
+	for(let i=0; i<media.length; i++) {
+    request.post(`${apiBaseURL}/public/${window.localStorage.getItem("gameID")}/addImage`)
+        .set('name', filename[i])
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .attach('upfile', media[i])
+        .end(function(err, response) {
+            if (err) {
+                return console.error(err);
+            }
+        });
+	}
+	
+	StoryAPI.generateSystemStory(name, filename, relevance, randomness);
+}
+
 export default {
     getAllAssets: getAllAssets,
     addMediaScene: addMediaScene,
     uploadMedia: uploadMedia,
+	addImageStory: addImageStory,	
 };

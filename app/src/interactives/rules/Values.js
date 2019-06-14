@@ -1,6 +1,8 @@
-import Immutable from "immutable";
 
 const Values = {
+
+    VISIBLE: 'VISIBLE',
+    INVISIBLE: 'INVISIBLE',
 
     //switch
 
@@ -16,6 +18,10 @@ const Values = {
 
     COLLECTED : 'COLLECTED',
     NOT_COLLECTED : 'NOT_COLLECTED',
+
+    // scene types
+    THREE_DIM : '3D',
+    TWO_DIM : '2D',
 
 };
 

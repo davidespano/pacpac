@@ -50,7 +50,12 @@ class RulesStore extends ReduceStore {
                         return a;
                     });
 
-                    return rule.set('actions', actions).set('event', event);;
+                    return rule.set('actions', actions).set('event', event);
+                });
+                return state;
+            case ActionTypes.REMOVE_SCENE:
+                action.scene.get('rules').map(rule => {
+                    state = state.delete(rule)
                 });
                 return state;
             case ActionTypes.RESET:

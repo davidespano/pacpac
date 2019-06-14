@@ -1,0 +1,282 @@
+.collection {grid-area: collection;}
+.foot {grid-area: foot;}
+.leftstory { grid-area: leftstory; }
+.rightstory { grid-area: rightstory; }
+.topstory { grid-area: topstory; }
+
+
+.story-editor-container {
+    display: grid;
+    grid-template-rows: auto auto;	
+    grid-template-areas: 
+								'collection'
+								'foot';
+    background-color: #FFFFFF;
+    height: 88.5vh !important;
+		margin-right: 8vw;
+		margin-left: 8vw;
+}
+
+.collection h1{
+	text-align: center;	
+	}
+
+.collection-container {
+    display: grid;
+    grid-template-columns: 28% 72%;	
+	grid-template-rows: 8vh auto;
+    grid-template-areas: 
+								'topstory topstory'
+								'leftstory rightstory';						
+    background-color: #FFFFFF;
+	margin: 10px;
+}
+
+
+
+.collection ol{
+list-style: none;	
+counter-reset: elementcounter;
+/* padding: 10px;
+margin: 0px;*/
+}
+
+.collection-list > li{
+margin-top: 0px;
+list-style: none;
+}
+
+.collection-list  > li:first-child{
+margin-top: 0px;
+}
+
+.collection-list > li:before{
+	content: "Storia #" counter(elementcounter);
+	counter-increment:elementcounter;
+	font-weight: bold;
+	font-size: 35px;
+	margin-left: 20px;
+}
+
+/*
+.stories-list li.editing{
+border: 2px solid #ef562d;
+border-radius: 5px;
+}*/
+
+/* di default casella di testo ausiliaria non mostrata */
+.stories-list li .edit{
+display: none;
+}
+
+/*Mostra in modalita modifica*/
+.stories-list li.editing .edit{
+display: block;
+}
+
+/* se in modalita modifca non mostrare */
+.stories-list li.editing .view{
+	display: none;
+}
+
+.stories-list li.editing textarea{
+border: 3px solid #ef562d;
+border-radius: 5px;
+outline: none;
+}
+
+/* di default casella di testo ausiliaria non mostrata */
+.stories-list li .edit{
+display: none;
+}
+
+/*Mostra in modalita modifica*/
+.stories-list li.editing .edit{
+display: block;
+}
+
+/* se in modalita modifca non mostrare */
+.stories-list li.editing .view{
+	display: none;
+}
+
+
+
+
+
+
+.topstory {
+text-align: right;	
+font-weight: bold;
+font-size: 20px;
+}
+
+.topstory span{
+    color: #EF562D;
+}
+
+.leftstory {
+font-weight: bold;
+}
+
+.leftstory label {
+margin-top: 10px;
+}
+
+.leftstory output {
+	color: #ef562d;
+	padding-left: 5px;
+}
+
+.leftstory img{
+	margin-top: 10px;
+    min-height: 27vh;
+    max-height: 27vh;
+	max-width: 18vw;
+	min-width: 18vw;
+}
+
+
+.leftstory span{
+    color: #EF562D;
+}
+
+.story-header {
+	height: 40px;
+	text-align: right;
+}
+
+.story-header span{
+    color: #EF562D;
+	font-weight: bold;
+	font-size: 20px;
+	float:left;
+}
+
+
+.story-header img{
+    margin-left: 40px;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.rightstory {
+ padding-left: 0%;
+}
+
+.rightstory textarea{
+    min-height: 250px;
+	width: 100%;
+	border: none;
+	overflow: auto;
+	font-size: 20px;
+	background-color: #ffffff;
+}
+
+.rightstory img{
+	width: 30px;
+	height: 30px;
+}
+
+
+
+.rightstory li > span{
+	width: 100%;
+	left:500px;
+	height: 50px;
+}
+
+.foot {
+    background-color: #FFFFFF;
+	padding-bottom:10px;
+}
+
+.foot > button {
+	float: right;
+	min-width:60px;
+    color: #FFFFFF;
+    border-color: #28a745;
+    background-color: #28a745;
+}
+
+
+ .slider {
+      width: 13vw;
+	  height: 18px;
+      -webkit-appearance: none;
+      background-color: #ffffff;
+	  border: 2px solid #d3d3d3;
+      border-radius: 5px; 	  
+	  overflow: hidden;
+    }
+
+.slider::-webkit-slider-thumb {
+      -webkit-appearance: none;	
+      width: 18px;
+      height:18px;
+      cursor: pointer;
+      border: 3px solid #d3d3d3; 	  
+      border-radius: 5px;	  
+      background: #ef562d;
+      box-shadow: -20vw 0 0 19.8vw #ef562d;	 
+
+    }
+
+
+
+
+
+/*#stories { position: fixed; bottom: 10px; right: 35px; }*/
+
+.story-content textarea{
+    min-height: 150px;
+	width: 100%;
+	border: none;
+	overflow: auto;
+	font-size: 15px;
+	background-color: #ffffff;
+}
+
+.story-content {
+
+}
+
+.stories-list {
+	list-style: none;	
+}
+
+.stories-list li{
+	margin-top: 50px;	
+}
+
+
+
+
+.new-story-form input{
+	float:right;
+}
+
+.new-story-form label{
+	float:left;
+}
+
+
+
+.form-inline label{
+	font-weight: bold;
+	font-size: 16px;
+	text-align: left;
+}
+	
+ .fileUpload {
+      width: 13vw;
+}
+
+hr {
+border-top:solid 2px #EF562D;
+width: 96%;
+height: 1px;
+margin-top: -0.5em;
+margin-bottom: -0.5em;
+}	

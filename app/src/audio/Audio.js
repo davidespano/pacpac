@@ -4,7 +4,7 @@ const Audio = Immutable.Record({
     uuid: null,
     name: null,
     file: null,
-    isLocal: false,
+    isSpatial: false,
     scene: null,
     loop: false,
 });

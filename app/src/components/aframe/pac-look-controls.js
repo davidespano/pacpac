@@ -19,7 +19,8 @@ AFRAME.registerComponent('pac-look-controls', {
         pointerLockEnabled: {default: false},
         reverseMouseDrag: {default: false},
         reverseTouchDrag: {default: false},
-        touchEnabled: {default: true}
+        touchEnabled: {default: true},
+        planarScene: {default: false}
     },
 
     init: function () {
@@ -65,6 +66,12 @@ AFRAME.registerComponent('pac-look-controls', {
         }
 
         if (oldData && !data.pointerLockEnabled !== oldData.pointerLockEnabled) {
+            this.removeEventListeners();
+            this.addEventListeners();
+            if (this.pointerLocked) { this.exitPointerLock(); }
+        }
+
+        if (oldData && !data.planarScene !== oldData.planarScene) {
             this.removeEventListeners();
             this.addEventListeners();
             if (this.pointerLocked) { this.exitPointerLock(); }
@@ -127,11 +134,13 @@ AFRAME.registerComponent('pac-look-controls', {
             sceneEl.addEventListener('render-target-loaded', bind(this.addEventListeners, this));
             return;
         }
-
         // Mouse events.
-        canvasEl.addEventListener('mousedown', this.onMouseDown, false);
-        window.addEventListener('mousemove', this.onMouseMove, false);
-        window.addEventListener('mouseup', this.onMouseUp, false);
+        if(!this.data.planarScene){
+            canvasEl.addEventListener('mousedown', this.onMouseDown, false);
+            window.addEventListener('mousemove', this.onMouseMove, false);
+            window.addEventListener('mouseup', this.onMouseUp, false);
+        }
+
 
         // Touch events.
         canvasEl.addEventListener('touchstart', this.onTouchStart);
@@ -158,7 +167,6 @@ AFRAME.registerComponent('pac-look-controls', {
         var canvasEl = sceneEl && sceneEl.canvas;
 
         if (!canvasEl) { return; }
-
         // Mouse events.
         canvasEl.removeEventListener('mousedown', this.onMouseDown);
         window.removeEventListener('mousemove', this.onMouseMove);
@@ -247,9 +255,11 @@ AFRAME.registerComponent('pac-look-controls', {
 
         // Calculate rotation.
         direction = this.data.reverseMouseDrag ? 1 : -1;
-        yawObject.rotation.y += movementX * 0.002 * direction;
-        pitchObject.rotation.x += movementY * 0.002 * direction;
-        pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        if(!this.data.planarScene) {
+            yawObject.rotation.y += movementX * 0.002 * direction;
+            pitchObject.rotation.x += movementY * 0.002 * direction;
+            pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        }
     },
 
     /**
@@ -330,9 +340,12 @@ AFRAME.registerComponent('pac-look-controls', {
 
         direction = this.data.reverseTouchDrag ? 1 : -1;
         // Limit touch orientaion to to yaw (y axis).
-        yawObject.rotation.y -= deltaY * 0.4 * direction;
-        pitchObject.rotation.x -= deltaX * 0.4 * direction;
-        pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        if(!this.data.planarScene){
+            yawObject.rotation.y -= deltaY * 0.4 * direction;
+            pitchObject.rotation.x -= deltaX * 0.4 * direction;
+            pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        }
+
         this.touchStart = {
             x: evt.touches[0].pageX,
             y: evt.touches[0].pageY

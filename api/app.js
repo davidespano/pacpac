@@ -13,8 +13,9 @@ const express = require('express')
     , checkInteractiveObjectType = require('./middlewares/checkInteractiveObjectType').checkInteractiveObjectType
     , loginRequired = require('./middlewares/loginRequired').loginRequired
     , handleMediaAPI = require('./handleMediaAPI').handleMediaAPI
+    , handleFilemanagerAPI = require('./handleFilemanagerAPI').handleFilemanagerAPI
     , fs = require('fs')
-    , filemanagerMiddleware = require('@opuscapita/filemanager-server').middleware;
+	, storiesAPI = require('./storiesAPI').storiesAPI;
 const app = express()
     , api = express();
 
@@ -117,21 +118,17 @@ api.use(neo4jSessionCleanup);
 api.param('gameID', checkGameID);
 api.param('objectType', checkInteractiveObjectType);
 
-const fileManagerConfig = {
-    fsRoot: path.resolve(__dirname, 'public'),
-    rootName: 'Main Root'
-};
 
-api.use('/filemanager/:gameID', loginRequired, (req, res, next) => {
-    fileManagerConfig.fsRoot = path.resolve(__dirname, 'public') + '/' + req.params.gameID;
-    filemanagerMiddleware(fileManagerConfig)(req,res,next);
-});
+handleFilemanagerAPI(api);
 
 //api routes
 api.post('/register', routes.users.register);
 api.post('/login', routes.users.login);
 api.get('/users/me', routes.users.me);
-api.post('/create-game', loginRequired,routes.users.create_game);
+
+/**GAMES**/
+api.post('/create-game', loginRequired,routes.games.create_game);
+api.delete('/:gameID/delete-game', loginRequired, routes.games.delete_game);
 
 /**SCENES**/
 api.get('/:gameID/scenes', routes.scenes.list);
@@ -161,6 +158,24 @@ api.delete('/:gameID/rules/scenes/:name/rules/:ruuid', loginRequired, routes.rul
 api.get('/:gameID/assets', routes.media.list);
 api.delete('/:gameID/assets/:name',loginRequired, routes.media.deleteAsset);
 handleMediaAPI(api);
+
+/**AUDIO**/
+api.put('/:gameID/audios', loginRequired, routes.audios.putGlobalAudio);
+api.put('/:gameID/audios/scenes/:uuid', loginRequired, routes.audios.putLocalAudio);
+api.get('/:gameID/audios', routes.audios.list);
+api.delete('/:gameID/audios/:uuid', loginRequired, routes.audios.deleteAudio);
+
+/**STORIES**/
+api.get('/:gameID/stories', routes.stories.listStories);
+api.get('/:gameID/stories/:name', routes.stories.getStoryByName);
+api.post('/:gameID/stories/addStory', loginRequired, routes.stories.addStory);
+api.put('/:gameID/stories/updateStory', routes.stories.updateStory);
+api.put('/:gameID/stories/updateRandomness', routes.stories.updateRandomness);
+api.put('/:gameID/stories/updateRelevance', routes.stories.updateRelevance);
+api.delete('/:gameID/stories/:name/:uuid', loginRequired, routes.stories.deleteStory);
+api.delete('/:gameID/stories/:name', loginRequired, routes.stories.deleteCollection);
+storiesAPI(api);
+
 
 //api error handler
 api.use(function (err, req, res, next) {

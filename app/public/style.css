@@ -36,42 +36,84 @@
 }
 
 div.rules{
-    font-size: 12pt!important;
+    font-size: 0.8em!important;
 }
+
 .rules-editor{
     width: 100%;
 }
 
 
-.grid-container {
+@media screen and (min-width: 1400px) {
+    .grid-container {
     display: grid;
-    grid-template-columns: 15% auto auto 20%;
-    grid-template-areas:
-            'leftbar scene scene rightbar'
-            'leftbar rules rules rightbar';
-    grid-gap: 1.5px;
-    padding: 1px;
-    background-color: #ADB0B1;
-    height: 82vh !important;
-    max-height: 82vh !important;;
-    box-sizing: border-box;
+        grid-template-columns: 15% auto auto 20%;
+        grid-template-areas:
+    'leftbar scene scene rightbar'
+    'leftbar rules rules rightbar';
+        grid-gap: 1.5px;
+        padding: 1px;
+        background-color: #ADB0B1;
+        height: 84vh !important;
+        max-height: 84vh !important;
+        box-sizing: border-box;
+    }
+
+
+    body{
+        width: 100vw;
+        height: 99vh;
+    }
+
 }
 
+@media screen and (max-width: 1400px) {
+    body {
+        width: 1400px;
+    }
 
-body{
-    width: 100vw;
-    height: 100vh;
+    .leftbar {
+        position: absolute;
+        left: 0;
+        width: 210px;
+        border: solid 1px darkgrey;
+        height: 84.5vh;
+    }
 
+    .rightbar {
+        position: absolute;
+        left: 1120px;
+        width: 280px;
+        border: solid 1px darkgrey;
+        height: 84.5vh;
+    }
+
+    .scene {
+        position: absolute;
+        left: 210px;
+        width: 910px;
+        border: solid 1px darkgrey;
+    }
+
+    .rules {
+        position: absolute;
+        left: 210px;
+        width: 910px;
+    }
+
+    .new-rule-btn {
+        margin-bottom: 20px;
+    }
 }
 
 .topbar{
     box-sizing: border-box;
-    min-height: 18vh !important;
-    max-height: 18vh !important;
+    height: 15vh !important;
+    min-height: 150px;
 }
 
 .grid-container > div {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #EFF0F0;
     text-align: center;
     font-size: 30px;
 
@@ -141,7 +183,7 @@ body{
 /** MODAL BOXES **/
 
 .modal {
-    font-size: 1em;
+    font-size: 0.9em;
 }
 .modal > .header {
     width: 100%;
@@ -202,8 +244,9 @@ body{
 #file-selected-name, .file-selected-name {
     border: solid 1px darkgrey;
     background-color: white;
-    height: 100%;
+    height: 30px;
     margin-bottom: 0 !important;
+    padding: 5px;
 }
 
 .select-file-btn {
@@ -248,8 +291,9 @@ body{
 .propertyForm, .propertyForm-right{
     background-color: #FFFFFF;
     border: 1px solid darkgrey;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .propertyForm {
@@ -260,7 +304,22 @@ body{
     text-align: right;
 }
 
+#select-scene-type-rightbar{
+    height: 100%;
+}
+
+.options-labels, .measure-units{
+    margin:0;
+    padding-top: 5px;
+}
+
+.selected-filter{
+    background-color: darkgrey !important;
+    border-color: darkgrey !important;
+}
+
 #transitionDuration {
+    padding: 5px;
     width: 50%;
 }
 
@@ -290,6 +349,7 @@ body{
     background-color: #FFFFFF;
     color: #EF562D !important;
     font-family: playregular;
+    cursor: pointer;
 }
 
 .navbar-toggler{
@@ -332,9 +392,23 @@ body{
 
 .btn{
     color: #FFFFFF;
-    border-color: #DD4124;
+    border-color: #EF562D;
     background-color: #EF562D;
 }
+
+
+.btn:enabled:hover{
+    background-color: #ff724f;
+    border-color: #ff724f;
+}
+
+
+.btn:disabled{
+    background-color: grey;
+    cursor: auto;
+    border-color: grey;
+}
+
 
 .custom-select{
     border-color: #EF562D;
@@ -388,11 +462,6 @@ body{
     color: #FFFFFF;
 }
 
-.measureUnit{
-    text-align: left;
-}
-
-
 #ruleObjSelection{
     border: 1px solid #EF562D;
     border-radius: 5px;
@@ -410,7 +479,6 @@ body{
     background-color: transparent;
     margin-right: 3px;
 }
-
 
 .action-buttons-container:disabled {
     border-color: darkgrey;
@@ -430,7 +498,12 @@ body{
     margin-top: 10px;
     margin-bottom: 10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #8C9093;
+    border-bottom: 1px solid darkgrey;
+    position: relative;
+}
+
+.buttonGroup-bar {
+    display: flex;
 }
 
 .navbar-brand{
@@ -439,14 +512,14 @@ body{
 
 .nav-item {
     height: 50px;
-    font-size: 1.3em !important;
+    font-size: 1.2em !important;
     font-weight: bold;
 }
 
 .tab-content {
     width: 100%;
     height: 100%;
-    font-size: 1em !important;
+    font-size: 0.9em !important;
     padding-top: 1.5vh;
     box-sizing: border-box;
 }
@@ -469,7 +542,7 @@ body{
     border-right: 5px;
     height: 80%;
     text-align: center;
-    font-size: 0.8em !important;
+    font-size: 0.7em !important;
 }
 
 .nav-figures > img {
@@ -514,13 +587,13 @@ body{
     background-color: #000000;
     opacity: 1;
     color: white;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 /* Actions reprentation in rules editor */
 
 .single-action {
-    font-size: 0.8em;
+    font-size: 0.7em;
     width: 90%;
     margin-left: 5%;
     text-align: left;
@@ -545,10 +618,16 @@ body{
             'object-name button';
 }
 
+#objectName{
+    margin-bottom: 5px;
+    width: 100%;
+}
+
 .objects-wrapper > p, .objects-wrapper-no-buttons > p {
     word-break: break-all;
     text-align: left;
     margin-bottom: 0px;
+    padding-bottom: 2px;
 }
 
 .objects-wrapper > .action-buttons-container{
@@ -576,8 +655,9 @@ body{
 .nav-tab-rightbar {
     width: 100%;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .inactive:hover {
@@ -611,7 +691,7 @@ body{
 
 .icons-labels {
     color: white;
-    font-size: 0.5em;
+    font-size: 0.4em;
     text-shadow:
             2px 0 2px black,
             -2px 0 2px black,
@@ -640,6 +720,10 @@ body{
 
 .dropdown-content a:hover {
     background-color: #ddd
+}
+
+#select-leftbar, #scene-filter-text {
+    width: 100%;
 }
 
 .show {
@@ -703,7 +787,7 @@ body{
 }
 
 #tag-add-text, .tag-element-text {
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 .tag-remove-button, .tag-form-button {
@@ -753,33 +837,103 @@ body{
     grid-template-columns: 65% 35%;
 }
 
+
 .rightbar-grid {
-    grid-template-columns: 80% auto;
+    grid-template-columns: 70% auto;
     margin-bottom: 5px;
+}
+
+.audio-list-box-btns{
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.audio-list-box-btns > button {
+    margin-right: 5px;
+}
+
+.audio-list-box{
+    height: 100px;
+    overflow-y: scroll;
+    border: solid 1px darkgrey;
+    background-color: white;
+}
+
+.audio-list-element, .no-audio {
+    padding: 2px;
+    border-bottom: dotted 1px darkgrey;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.audio-list-element:hover{
+    background-color: #FFD8AC;
+}
+
+.no-audio{
+    color: darkgrey;
+    text-align: center !important;
+}
+
+.show-btns > button {
+    visibility: visible !important;
 }
 
 .media-grid, .options-grid {
     display: grid;
     grid-template-rows: 30px;
-    grid-gap: 10px;
     width: 100%;
     margin-bottom: 10px;
 }
 
 .media-grid {
     grid-template-columns: 65% auto auto;
+    grid-gap: 10px;
 }
+
 
 .options-grid {
     grid-template-columns: 35% auto;
+    grid-gap: 10px;
+}
+
+.rightbar-audio-media-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 35% auto;
+    border-right:solid 1px darkgrey;
+    border-left:solid 1px darkgrey;
+    border-top:solid 1px darkgrey;
+    margin-bottom: 5px;
+}
+
+.rightbar-audio-media-grid-title, .rightbar-audio-media-grid-value {
+    background-color: white;
+    margin-bottom: 0;
+    text-align:left;
+    padding:2px;
+}
+
+.rightbar-audio-media-grid-title {
+    border-right: dotted 1px darkgrey;
+    padding-bottom: 0;
+    border-bottom: solid 1px darkgrey;
+}
+
+.no-bottom-border {
+    border-bottom: none !important;
 }
 
 .rightbar-btn{
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
-#select-file-btn-audio-form, .scene-grid > button {
+#select-file-btn-audio-form, .scene-grid > button, .position-btn {
     width: 60%;
+}
+
+.position-btn{
+    padding: 0;
 }
 
 #modal-content-audio{
@@ -789,7 +943,7 @@ body{
 .audio-btn {
     width: 100%;
     margin-top: 5%;
-    font-size: 0.9em;
+    font-size: 0.8em;
     position: relative;
 }
 
@@ -815,7 +969,7 @@ body{
     border-bottom: 1px solid darkgrey;
     width: 100%;
     margin-bottom: 10px;
-    font-size: 1.1em;
+    font-size: 1em;
 }
 
 .rightbar-titles {
@@ -823,13 +977,13 @@ body{
     border-bottom: 1px solid darkgrey;
     width: 100%;
     margin-bottom: 5px;
-    font-size: 1em !important;
+    font-size: 0.8em !important;
     text-align: left;
 }
 
 .input-audio-form {
     width: 100%;
-    padding: 2px;
+    padding: 5px;
 }
 
 .input-new-audio-file {
@@ -853,6 +1007,7 @@ body{
 .audio-names {
     padding-left: 5px;
     margin-bottom: 0;
+    border-bottom: dotted 1px darkgrey;
 }
 
 
@@ -955,26 +1110,6 @@ li > span {
     width: 20%;
 }
 
-.loginlabel{
-  text-align: center;
-}
-
-.login-home{
-    margin: 0;
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    width: 450px;
-    height: 290px;
-    border: solid 1.5px #EF562D;
-    border-radius: 20px;
-}
-.gameList{
-    overflow-y: auto;
-}
-
 
 /* mention */
 
@@ -1058,7 +1193,7 @@ li > span {
     padding: 16px;
     border-radius: 2px;
     margin-bottom: 2em;
-    font-size: 0.5em;
+    font-size: 0.4em;
     box-shadow: inset 0px 1px 8px -3px #ABABAB;
     background: #fefefe;
 }
@@ -1081,6 +1216,8 @@ li > span {
     display: inline-block;
     width: 100%;
     box-sizing: border-box;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .eudCompletionRoot {
@@ -1297,3 +1434,228 @@ input.eudObjectString[type=text] {
     color: #ef562d;
 }
 
+/* LOGIN FORM */
+
+.login-btn {
+    width: 50%;
+}
+
+#register-link, #logout-link {
+    color: #EF562D;
+    text-decoration: underline #EF562D;
+}
+
+#register-link:hover, #logout-link:hover{
+    cursor: pointer;
+}
+
+.loginlabel{
+    text-align: center;
+}
+
+.login-home{
+    margin: 0;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    width: 450px;
+    height: 500px;
+    border: solid 1.5px #EF562D;
+    border-radius: 20px;
+}
+
+.gameList{
+    border: solid 1px darkgrey;
+    overflow-y: auto;
+    position: relative;
+    height: 100%;
+    margin-bottom: 10px;
+}
+
+.game-item-wrapper{
+    display: grid;
+    grid-template-columns: 90% auto;
+}
+
+.game-item {
+    width: 100%;
+    border-bottom: solid 1px darkgrey;
+    padding: 2px;
+}
+
+.game-item:hover{
+    background-color: #FFD8AC;
+    cursor: pointer;
+}
+
+.remove-game-btn {
+    position: absolute;
+    right: 0;
+}
+
+/** GENERIC DROPDOWNS WITH REACT-SELECT **/
+
+.react-select {
+    max-height: 30px;
+    border-radius: 0;
+}
+
+.react-select > div > div, .react-select > div > div > div {
+    padding: 1px 2px 2px 2px;;
+}
+
+.ellipsis, .ellipsis-no-inline {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.ellipsis {
+    display: inline-block;
+}
+
+/*TODO [debug] add to origin master*/
+.debug-div {
+    height: 100%;
+    padding: 1% 3%;
+}
+
+.rightbar-debug-element {
+    grid-column: 1;
+    width: 100%;
+    padding: 1% 0%;
+    text-align: left;
+    display: inline-table;
+}
+
+.icon-obj-left {
+    float: left;
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+}
+
+.current-obj-name {
+    float: inherit;
+}
+
+.obj-name {
+    text-align: left;
+    margin-left: 5%;
+    font-size: 0.9em;
+    padding-top: 0.4em;
+}
+
+.other-obj-name {
+    float: inherit;
+}
+
+.icon-obj-right {
+    width: 25px;
+    height: 25px;
+    margin-right: 6%;
+    float: right;
+    padding: 1%;
+}
+.icon-obj-right:hover {
+    border-radius: 5px;
+    background-color: rgba(239, 86, 45, .3);
+    padding: 0%;
+}
+
+.rightbar-sections {
+    display: grid;
+    grid-template-areas: 'left right';
+    grid-template-rows: 30px;
+    grid-gap: 10px;
+    width: 100%;
+    grid-template-columns: 20% auto 25%;
+    margin-top: 2%;
+    padding-left: 3%;
+    cursor: pointer;
+}
+
+.rightbar-sections > span:hover{
+    color: rgb(239, 142, 113);
+}
+
+.debug-div h2 {
+    padding-bottom: 1%;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#searchBar {
+    padding-left: 3%;
+    font-size: 0.7em;
+    width: 70%;
+    height: 3em;
+}
+
+.rightbar-other-scene {
+    margin-bottom: 5%;
+
+}
+
+.rightbar-scene-name {
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.objs-element {
+    display: block;
+}
+
+.player-div {
+    width: 100%;
+    padding-left: 3%;
+    float: left;
+}
+
+.player-action {
+    float: left;
+    font-size: 1em;
+}
+
+.player-obj {
+    float: left;
+    margin-left: 5%;
+    padding-top: 0.1em;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.player-obj:hover {
+    cursor: pointer;
+    color: rgb(249, 152, 123);
+}
+
+.obj-props {
+    grid-column: 1;
+    text-align: left;
+    width: 100%;
+}
+
+.obj-props > span {
+    margin-left: 5%;
+}
+
+#debug-scene {
+    height: 44.5vh;
+}
+
+.eudNext {
+    visibility: hidden;
+    font-size: 0.5em;
+    grid-column: 2;
+    display: inline-block;
+    grid-template-columns: auto auto;
+    box-sizing: border-box;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: right;
+}
+/********* END debug css ************/

@@ -3,7 +3,7 @@ import settings from '../../utils/settings';
 import SceneAPI from "../../utils/SceneAPI";
 import interface_utils from "./interface_utils";
 import Orders from "../../data/Orders";
-
+import ActionTypes from "../../actions/ActionTypes";
 
 
 const {mediaURL} = settings;
@@ -29,52 +29,41 @@ function Leftbar(props) {
 function list(props, path) {
     let regex = RegExp('.*\.mp4$');
 
-    return ([...props.scenes.values()].map(child => {
-        if (!(regex.test(child.img))) {
-            return (
-                <div key={child.name} className={'node_element'}>
-                    <img
-                        src={path + child.img}
-                        className={'list-img'}
-                        alt={child.name}
-                        title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
-                        onClick={() => {
-                            props.updateCurrentScene(child.name);
-                        }}
-                        style={borderStyle(props.tags.get(child.tag).color)}
-                    />
-                    <div className={'list-labels'}
-                         onClick={() => {
-                            props.updateCurrentScene(child.name);
-                         }}
-                    >
-                        <div className={'label-text'}>
-                            {child.name}
-                        </div>
-                    </div>
-                </div>)
-        } else {
-            return (
-                <div key={child.name} className={'node_element'}>
-                    <video
-                        muted preload={"auto"}
-                        className={'video_element list-video'}
-                        onClick={() => {
-                            props.updateCurrentScene(child.name);
-                        }}
-                        title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
-                        style={borderStyle(props.tags.get(child.tag).color)}
-                    >
-                        <source src={path + child.img} type="video/mp4"/>
-                    </video>
-                    <div className={'list-labels'}>
-                        <div className={'label-text'}>
-                            {child.name}
-                        </div>
+    return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
+        let s;
+        if (props.editor.mode === ActionTypes.DEBUG_MODE_ON) { //TODO [debug] add to origin master
+            s = {border: '2px solid black'};
+            if (props.currentScene == child.uuid)
+                s = {border: '2px solid #EF562D'}
+        } else
+            s = borderStyle(props.tags.get(child.tag).color);
+
+        let src = path + '_thumbnails_/' + child.img + (regex.test(child.img)? ".png" : "");
+
+        return (
+            <div key={child.name} className={'node_element'}>
+                <img
+                    src={src}
+                    className={'list-img'}
+                    alt={child.name}
+                    title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
+                    onClick={() => {
+                        if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                            props.updateCurrentScene(child.uuid);
+                    }}
+                    style={s}
+                />
+                <div className={'list-labels'}
+                     onClick={() => {
+                         if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                             props.updateCurrentScene(child.uuid);
+                     }}
+                >
+                    <div className={'label-text'}>
+                        {child.name}
                     </div>
                 </div>
-            )
-        }
+            </div>);
     }));
 
 }
@@ -84,51 +73,62 @@ function list(props, path) {
  * @param props
  * @returns {*}
  */
-function buttonsBar(props){
-    return(
+function buttonsBar(props) {
+    return (
         <div className={'currentOptions'}>
             <div className={"buttonGroup"}>
-                <button
-                    title={"Cerca una scena"}
-                    className={"action-buttons-container"}
-                >
-                    <img className={"action-buttons"} src={"icons/icons8-search-filled-50.png"}/>
-                </button>
-                <button
-                    title={"Ordina..."}
-                    className={"action-buttons-container dropdown-btn"}
-                >
-                    <img className={"action-buttons dropdown-btn"} src={"icons/icons8-sort-filled-50.png"}/>
-                </button>
-                <div id="scenes-order-menu" className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>
-                    <a className={'' + checkCurrentOrder(props.editor.scenesOrder, Orders.ALPHABETICAL)}
-                       onClick={() => props.sortScenes(Orders.ALPHABETICAL)}
-                    >Per nome (A-Z)</a>
-                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_ALPHABETICAL)}
-                       onClick={() => props.sortScenes(Orders.REV_ALPHABETICAL)}
-                    >Per nome (Z-A)</a>
-                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.CHRONOLOGICAL)}
-                        onClick={() => props.sortScenes(Orders.CHRONOLOGICAL)}
-                    >Dalla prima all'ultima</a>
-                    <a className={checkCurrentOrder(props.editor.scenesOrder, Orders.REV_CHRONOLOGICAL)}
-                       onClick={() => props.sortScenes(Orders.REV_CHRONOLOGICAL)}
-                    >Dall'ultima alla prima</a>
+                <input type={'text'} id={'scene-filter-text'} placeholder={'Filtra...'}
+                       onChange={() => {
+                           let filter = document.getElementById('scene-filter-text').value;
+                           props.updateSceneNameFilter(filter);
+                       }}/>
+                <select id={'select-leftbar'}
+                        onChange={() => {
+                            let e = document.getElementById('select-leftbar');
+                            let order = e.options[e.selectedIndex].value;
+                            props.sortScenes(order);
+                        }}>
+                    <option value={Orders.ALPHABETICAL}
+                    >Nome (A-Z)
+                    </option>
+                    <option value={Orders.REV_ALPHABETICAL}
+                    >Nome (Z-A)
+                    </option>
+                    <option value={Orders.CHRONOLOGICAL}
+                    >Dalla prima all'ultima
+                    </option>
+                    <option value={Orders.REV_CHRONOLOGICAL}
+                    >Dall'ultima alla prima
+                    </option>
+                </select>
+                <div id="scenes-order-menu"
+                     className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>
+
                 </div>
             </div>
         </div>
     );
 }
 
-function checkSelection(scenesOrderMenu){
+/*
+<button
+    title={"Ordina..."}
+    className={"action-buttons-container dropdown-btn"}
+>
+    <img className={"action-buttons dropdown-btn"} src={"icons/icons8-sort-filled-50.png"}/>
+</button>
+*/
+
+function checkSelection(scenesOrderMenu) {
     return scenesOrderMenu ? 'show' : '';
 }
 
-function checkCurrentOrder(scenesOrder, value){
+function checkCurrentOrder(scenesOrder, value) {
     return scenesOrder === value ? 'order-selected' : '';
 }
 
-function borderStyle(color){
-    return {border: '2px solid '+ color};
+function borderStyle(color) {
+    return {border: '2px solid ' + color};
 }
 
 

@@ -63,23 +63,23 @@ function removeRuleFromScene(scene, rule){
 /**
  * Updates the scene saving the given audio, returns updated scene
  * @param scene
- * @param audio
+ * @param audio_uuid
  */
-function addAudioToScene(scene, audio){
-    let audios = scene.get('audio');
-    audios.push(audio.uuid);
-    return scene.set('audio', audios);
+function addAudioToScene(scene, audio_uuid){
+    let audios = scene.get('audios');
+    audios.push(audio_uuid);
+    return scene.set('audios', audios);
 }
 
 /**
  * Removes given audio from the Scene and returns updated scene
  * @param scene
- * @param audio
+ * @param audio_uuid
  */
-function removeAudioFromScene(scene, audio){
-    let audios = scene.get('audio');
-    audios = audios.filter((uuid) => uuid !== audio.uuid);
-    return scene.set('audio', audios);
+function removeAudioFromScene(scene, audio_uuid){
+    let audios = scene.get('audios');
+    audios = audios.filter((uuid) => uuid !== audio_uuid);
+    return scene.set('audios', audios);
 }
 
 /**
@@ -89,14 +89,12 @@ function removeAudioFromScene(scene, audio){
  * @param property
  * @param value
  * @param props
- * @param order of scenes
  */
-function setProperty(scene, property, value, props, order){
+function setProperty(scene, property, value, props){
     let newScene = scene.set(property, value);
 
     if(property === 'name'){
-        props.updateSceneName(newScene, scene, order);
-        props.updateCurrentScene(newScene.name);
+        props.updateSceneName(newScene, scene.name, props.editor.scenesOrder);
     } else {
         props.updateScene(newScene);
     }

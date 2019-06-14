@@ -1,6 +1,6 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import {EditorState, Modifier, SelectionState} from 'draft-js';
-import inizializeMention from "./inizializeMention"
+import scene_utils from "../../scene/scene_utils";
+import Values from "../../interactives/rules/Values";
 /**
  * Updates object property with the given value, returns new object
  * @param object
@@ -11,10 +11,16 @@ import inizializeMention from "./inizializeMention"
 function setPropertyFromValue(object, property, value, props){
     let newObject, subProperty;
     let media = object.get('media');
+    let audio = object.get('audio');
 
     if(property.includes('media')){
         subProperty = property;
         property = 'media';
+    }
+
+    if(property.includes('audio')){
+        subProperty = property;
+        property = 'audio';
     }
 
     switch (property) {
@@ -22,6 +28,7 @@ function setPropertyFromValue(object, property, value, props){
         case "name":
         case "mask":
         case "vertices":
+        case 'visible':
             newObject = object.set(property, value);
             break;
         // specific properties
@@ -29,13 +36,16 @@ function setPropertyFromValue(object, property, value, props){
             media[subProperty] = value;
             newObject = object.setIn(['media'], media);
             break;
+        case "audio":
+            audio[subProperty] = value;
+            newObject = object.setIn(['audio'], audio);
+            break;
         default:
             let properties = object.get('properties');
             properties[property] = value;
             newObject = object.setIn(['properties'], properties);
     }
 
-    props.updateCurrentObject(newObject.uuid);
     props.updateObject(newObject);
 
     let scene = props.scenes.get(props.objectToScene.get(newObject.uuid));
@@ -43,7 +53,7 @@ function setPropertyFromValue(object, property, value, props){
     InteractiveObjectAPI.saveObject(scene, newObject);
 
     if(property === "vertices"){
-        props.editVertices(newObject);
+        props.editVertices(newObject, scene.type);
     }
 }
 
@@ -62,16 +72,18 @@ function setPropertyFromId(object, property, id, props){
 /**
  * Generates approximative 2d centroid for the interaction area starting from the given vertices.
  * @param vertices is a string that contains all of the vertices values
+ * @param scene_type
  * @param radius of the sphere
  * @returns [longitude, latitude]
  * This function returns latitude and longitude because they are fixed values that can be easily stored in
  * CentroidsStore. x and y must be calculated later, since the size of central image is variable.
  */
-function calculateCentroid(vertices, radius = 9.5) {
+function calculateCentroid(vertices, scene_type = Values.THREE_DIM, radius = 9.5) {
 
     vertices = vertices.split(',').join(" "); //replace commas with whitespaces
     let coordinates = vertices.split(" ").map(x => parseFloat(x));
     let medianPoint = [0.0, 0.0, 0.0];
+    let x,y;
 
     for (let i = 0; i < coordinates.length; i += 3) {
         medianPoint[0] += coordinates[i];
@@ -83,26 +95,35 @@ function calculateCentroid(vertices, radius = 9.5) {
         return x / (coordinates.length / 3)
     });
 
-    //project median onto sphere to obtain approximate 3d centroid
-    /*https://stackoverflow.com/questions/9604132/how-to-project-a-point-on-to-a-sphere*/
+    if(scene_type === Values.THREE_DIM){
+        //project median onto sphere to obtain approximate 3d centroid
+        /*https://stackoverflow.com/questions/9604132/how-to-project-a-point-on-to-a-sphere*/
 
-    let length = Math.sqrt(Math.pow(medianPoint[0], 2) + Math.pow(medianPoint[1], 2) + Math.pow(medianPoint[2], 2));
+        let length = Math.sqrt(Math.pow(medianPoint[0], 2) + Math.pow(medianPoint[1], 2) + Math.pow(medianPoint[2], 2));
 
-    let centroid = medianPoint.map(x => {
-        return radius / length * x
-    });
+        let centroid = medianPoint.map(x => {
+            return radius / length * x
+        });
 
-    // calculate latitude and longitude to obtain approximate 2d centroid
+        // calculate latitude and longitude to obtain approximate 2d centroid
 
-    let lat = 90 - (Math.acos(centroid[1] / radius)) * 180 / Math.PI;
-    let lon = ((270 + (Math.atan2(centroid[0] , centroid[2])) * 180 / Math.PI) % 360) -180;
+        let lat = 90 - (Math.acos(medianPoint[1] / radius)) * 180 / Math.PI;
+        let lon = ((270 + (Math.atan2(medianPoint[0] , medianPoint[2])) * 180 / Math.PI) % 360) -180;
 
 
-    // adjust latitude and longitude to obtain values in percentage
+        // adjust latitude and longitude to obtain values in percentage
 
-    const x = (180 - lon) * 100 / 360;
-    const y = (180 - lat) * 100 / 360;
-
+        x = (180 - lon) * 100 / 360;
+        y = (180 - lat) * 100 / 360;
+    } else {
+        /*
+        if(document.getElementById('central-scene')){
+            let width = document.getElementById('central-scene').offsetWidth;
+            let height = document.getElementById('central-scene').offsetHeight;
+            console.log(width, height);
+        }
+        */
+    }
 
     return [x, y];
 }
@@ -148,172 +169,151 @@ function checkSelection(element, option, editor){
 
 
 /**
- * Returns true if multiple chars are selected
- * @param state
- * @returns {boolean}
+ * dispatch file updating when closing audio, edit media and input scene form
+ * @param props
  */
-function checkIfMultipleSelection(state){
-    const selectionLength = state.getSelection().getEndOffset() - state.getSelection().getStartOffset();
-    return selectionLength > 0;
+function handleFileUpdate(props){
+    switch(props.editor.selectedMediaToEdit){
+        case 'mask':
+        case 'media0':
+        case 'media1':
+            let obj = props.interactiveObjects.get(props.currentObject);
+            setPropertyFromValue(obj, props.editor.selectedMediaToEdit, props.editor.selectedFile, props);
+            break;
+        case 'rightbar':
+            let scene = props.scenes.get(props.currentScene);
+            scene_utils.setProperty(scene, 'img', props.editor.selectedFile, props);
+            break;
+    }
+}
+
+/**
+ * reset form fields
+ * @id form id
+ */
+function resetFields(id){
+    document.getElementById(id).reset();
 }
 
 
 /**
- * Returns currently selected entity (doesn't check if selection spans over multiple blocks or entities)
- * @param state
- * @param offset
- * returns entity
+ * checks and sets audio selection
+ * @param props
+ * @param audio
  */
-function getEntity(state, offset = 0){
-    const selection = state.getSelection();
-    const block = state.getCurrentContent().getBlockForKey(selection.getAnchorKey());
-    const entity = block.getEntityAt(selection.getStartOffset() + offset);
-
-    return entity !== null ? state.getCurrentContent().getEntity(entity) : null;
+function audioSelection(props, audio){
+    props.editor.selectedAudioToEdit === audio.uuid ? props.selectAudioToEdit(null) :
+        props.selectAudioToEdit(audio.uuid, audio.file, audio.isSpatial, audio.loop);
 }
 
-/**
- * check selected entity
- * @param state
- * @param offset (move selection n spaces)
- * @returns {boolean}
- */
-function checkIfEditableCursor(state, offset){
-    let entity = getEntity(state, offset);
 
-    console.log('ENTITY: ' + entity);
+function changeKeypadSize(keypad, size){
+    size = size < 3 ? 3 : size;
+    let properties = keypad.get('properties');
 
-    return entity !== null && entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
-}
+    if( size > properties.inputSize){
 
-function checkKeyHendle(state) {
-    let entity = getEntity(state);
-
-    console.log('ENTITY: ' + entity);
-    if(entity == null){
-        return entity == null
-    } else {
-        return entity.getType() !== 'quando' && entity.getType() !== 'se' && entity.getType() !== 'allora';
     }
 
-
 }
 
-/**
- * check selected entity
- * @param state
- * return {boolean}
- */
-function checkIfDeletableCursor(state){
-    return checkIfEditableCursor(state) && (getEntity(state) === getEntity(state, -1));
-}
 
 /**
- * @param state
- * return {boolean}
+ * Generate keypad property specified by parameter "name" according to the given input size
+ * @param length
+ * @param name
+ * @returns {{}}
  */
-function checkIfPlaceholderNeeded(state){
-    const entity = getEntity(state);
-    return ((getEntity(state, -2) !== entity) && (getEntity(state, 1) !== entity));
-}
-
-/**
- * Given an EditorState, returns true only selection spans over a single block
- * @param state
- * @returns {boolean}
- */
-function checkBlock(state){
-    const blockStart = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const blockEnd = state.getCurrentContent().getBlockForKey(state.getSelection().getFocusKey());
-
-    //checks if selection spans over multiple blocks
-    return (blockStart === blockEnd);
-}
-
-/**
- * Given an EditorState, returns true only if the selection spans over a single entity.
- * Doesn't check if selection spans over multiple blocks
- * Offset "moves" the cursor of n spaces
- * @param state (EditorState)
- * @returns {boolean}
- */
-function checkEntity(state) {
-
-    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
-    const entityEnd = block.getEntityAt(state.getSelection().getEndOffset());
-    //checks if entity is null or selection covers more than one entity
-    return (entityStart !== null && (entityStart === entityEnd));
-}
-
-/**
- * check previous entity
- * @param state
- */
-function firstCheck(state){
-    return getEntity(state, -1) === getEntity(state, 0);
-}
-
-/**
- * check previous entity
- * @param state
- */
-function secondCheck(state){
-    const selectionLength = state.getSelection().getEndOffset() - state.getSelection().getStartOffset();
-    return getEntity(state, selectionLength+1) === getEntity(state, 0);
-}
-
-/**
- * check in an Entity is a mention
- * @param state
- * @returns {boolean}
- */
-function isMention(state) {
-    let entity = getEntity(state);
-
-    console.log('ENTITY: ' + entity);
-
-    return entity !== null && entity.getType() === 'mention';
-}
-
-/**
- * check if the previous character is @
- * @param state
- * @returns {boolean}
- */
-function checkAt(state) {
-    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const text = block.text;
-    const blockStart = state.getSelection().anchorOffset;
-    return text.slice(blockStart-1,blockStart) === '@'
-}
-
-/**
- * return the start index of an entity
- * @param state
- * @returns {*}
- */
-function getStartIndexEntity(state) {
-    const block = state.getCurrentContent().getBlockForKey(state.getSelection().getAnchorKey());
-    const entityStart = block.getEntityAt(state.getSelection().getStartOffset());
-    let entityText;
-    if (state.getCurrentContent().getEntity(entityStart).getData().mention.link !== undefined){
-        entityText = state.getCurrentContent().getEntity(entityStart).getData().mention.name;
-    } else {
-        entityText = state.getCurrentContent().getEntity(entityStart).getData().mention._root.entries[0][1];
+function keypadProperties(length, name){
+    let property = {};
+    for(let i = 0; i < length; i++){
+        property[name+i] = null;
     }
-    let index = inizializeMention.getIndicesOf( entityText, block.text);
-    return index;
+    return property;
 }
 
 
 /**
- * check if a text selected contains a space at the end
+ * returns string according to the given value
+ * @param valueUuid
+ * @returns {string}
  */
-function checkEndSpace() {
-    const textSelected = window.getSelection().toString();
-    return  textSelected.slice(-1) === " ";
+function valueUuidToString(valueUuid){
+    switch(valueUuid){
+        case Values.VISIBLE:
+            return 'visibile';
+        case Values.INVISIBLE:
+            return 'invisibile';
+        case Values.ON:
+            return 'acceso';
+        case Values.OFF:
+            return 'spento';
+        case Values.LOCKED:
+            return 'chiuso';
+        case Values.UNLOCKED:
+            return 'aperto';
+        case Values.COLLECTED:
+            return 'raccolto';
+        case Values.NOT_COLLECTED:
+            return 'non raccolto';
+        case Values.THREE_DIM:
+            return '3D';
+        case Values.TWO_DIM:
+            return '2D';
+        default:
+            return 'stato sconosciuto';
+    }
+
 }
+
+
+//TODO [debug] add to origin master
+function setClassStyle(classHighlight, style) {
+    console.log("CLASS " + classHighlight + "STYLE " + style);
+    [...document.querySelectorAll(classHighlight)].forEach(function (item) {
+        item.style = style;
+    })
+}
+
+//TODO [debug] add to origin master
+function setIdStyle(classHighlight, idHighlight, style) {
+    setClassStyle(".".concat(classHighlight), style.substring(0, style.indexOf(" ")).concat(" ;"));
+    let el = document.getElementById(classHighlight+idHighlight);
+    if (el != null)
+        el.style = style;
+}
+
+//TODO [debug] add to origin master
+function highlightRule(props, obj) {
+    let scene = props.scenes.get(props.currentScene);
+    setClassStyle(".eudRule", "background: ");
+    setClassStyle(".btnNext", "visibility: hidden");
+
+    return scene.get('rules').map(
+        rule => {
+            let item = props.rules.get(rule).uuid;
+            let next = document.getElementById('btnNext' + item);
+
+            props.rules.get(rule).actions._tail.array.forEach(function (sub) {
+                if (sub.subj_uuid === obj.uuid) {
+                    setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .3)");
+
+                    if(next !== null && props.currentObject === null)
+                        next.style = "visibility: visible";
+                }
+            });
+
+            if (props.rules.get(rule).event.obj_uuid === obj.uuid) {
+                setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .3)");
+
+                if(next !== null && props.currentObject === null)
+                    next.style = "visibility: visible";
+            }
+
+        });
+}
+
+
 
 export default {
     onlyNumbers : onlyNumbers,
@@ -322,18 +322,12 @@ export default {
     title : title,
     centroid: calculateCentroid,
     checkSelection: checkSelection,
-    getEntity: getEntity,
-    checkIfEditableCursor: checkIfEditableCursor,
-    checkIfMultipleSelection: checkIfMultipleSelection,
-    checkIfDeletableCursor: checkIfDeletableCursor,
-    checkIfPlaceholderNeeded: checkIfPlaceholderNeeded,
-    checkBlock: checkBlock,
-    checkEntity: checkEntity,
-    firstCheck: firstCheck,
-    secondCheck: secondCheck,
-    checkEndSpace: checkEndSpace,
-    isMention: isMention,
-    checkAt: checkAt,
-    getStartIndexEntity: getStartIndexEntity,
-    checkKeyHendle: checkKeyHendle,
+    handleFileUpdate: handleFileUpdate,
+    resetFields: resetFields,
+    valueUuidToString: valueUuidToString,
+    audioSelection: audioSelection,
+    changeKeypadSize: changeKeypadSize,
+    setClassStyle: setClassStyle,
+    setIdStyle: setIdStyle,
+    highlightRule: highlightRule,
 }

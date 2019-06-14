@@ -13,16 +13,20 @@ function Login(props){
                     }}}>
                     <h4 className={"loginlabel"}>Login</h4>
                     <div className="form-group">
-                        <label htmlFor="exampleInputEmail1">Username</label>
+                        <label className={'box-titles'} htmlFor="exampleInputEmail1">Username</label>
                         <input type="text" className="form-control" id="InputUser" aria-describedby="emailHelp"
                                placeholder="Username"/>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Password</label>
+                        <label className={'box-titles'} htmlFor="exampleInputPassword1">Password</label>
                         <input type="password" className="form-control" id="InputPassword" placeholder="Password"/>
                     </div>
-                    <button className="btn btn-primary" onClick={()=>submitUser()}>Accedi</button>
-                    <button className="btn btn-primary" data-toggle="modal" data-target="#register-modal">Registrati</button>
+                    <div className={'form-group'}>
+                        <button className="btn login-btn" onClick={()=>submitUser()}>Accedi</button>
+                    </div>
+                    <div className={'form-group'}>
+                        <a id={'register-link'} data-toggle="modal" data-target="#register-modal">Registrati</a>
+                    </div>
                 </div>
                 <InputRegisterForm/>
             </React.Fragment>

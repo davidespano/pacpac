@@ -25,6 +25,10 @@ class ModeTypeStore extends ReduceStore {
             case ActionTypes.PLAY_MODE_ON:
                 console.log("PLAY");
                 return ActionTypes.PLAY_MODE_ON;
+                //TODO [debug] add to origin master
+            case ActionTypes.DEBUG_MODE_ON:
+                console.log("DEBUG");
+                return ActionTypes.DEBUG_MODE_ON;
             case ActionTypes.GEOMETRY_MODE_ON:
                 console.log("Edit Geometry");
                 return ActionTypes.GEOMETRY_MODE_ON;

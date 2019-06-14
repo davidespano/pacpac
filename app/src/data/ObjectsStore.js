@@ -19,18 +19,16 @@ class ObjectsStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
-                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
-                //console.log(action.obj);
-                //console.log(state);
+                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.alphabetical);
                 return state;
             case ActionTypes.RECEIVE_OBJECT:
-                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
+                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.alphabetical);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
                 state = state.delete(action.obj.uuid);
                 return state;
             case ActionTypes.UPDATE_OBJECT:
-                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.crescent_comparator);
+                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.alphabetical);
                 return state;
             case ActionTypes.REMOVE_SCENE:
 

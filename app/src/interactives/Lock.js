@@ -10,6 +10,9 @@ const Lock = defaultValues => InteractiveObject({
     media : {
         media0: null,
     },
+    audio : {
+        audio0: null,
+    },
     ...defaultValues
 });
 

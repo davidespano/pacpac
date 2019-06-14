@@ -5,6 +5,8 @@ import SceneAPI from './utils/SceneAPI';
 import AuthenticationApi from './utils/AuthenticationAPI';
 import MediaAPI from "./utils/MediaAPI";
 import Actions from "./actions/Actions";
+import StoryAPI from "./utils/StoryAPI";
+import AudioAPI from "./utils/AudioAPI";
 
 //import '../public/style.css';
 //import './aframe.js';
@@ -19,6 +21,8 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
         Actions.editModeOn();
         SceneAPI.getAllScenesAndTags();
         MediaAPI.getAllAssets();
+        AudioAPI.getAllAudios();
+		StoryAPI.getAllCollections();
     }
 }).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));

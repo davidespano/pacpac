@@ -15,6 +15,10 @@ const Switch = defaultValues => InteractiveObject({
         media0 : null,
         media1 : null,
     },
+    audio : {
+        audio0: null,
+        audio1: null,
+    },
     ...defaultValues
 });
 

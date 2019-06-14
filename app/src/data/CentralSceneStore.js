@@ -17,9 +17,9 @@ class CentralSceneStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.RECEIVE_SCENE:
-                return action.scene.name;
+                return action.scene.uuid;
             case ActionTypes.UPDATE_CURRENT_SCENE:
-                return action.name;
+                return action.uuid;
             case ActionTypes.REMOVE_SCENE:
                 return null;
             case ActionTypes.RESET:

@@ -1,16 +1,17 @@
 import 'aframe';
 import './aframe_selectable'
 import './aframe_newGeometry'
+import './pac-look-controls'
 import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI'
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import interface_utils from "../interface/interface_utils";
-import settings from '../../utils/settings';
-import stores_utils from "../../data/stores_utils";
+import Bubble from './Bubble';
+import aframe_utils from "./aframe_utils";
+import SceneAPI from "../../utils/SceneAPI";
+import Values from "../../interactives/rules/Values";
 
-const {mediaURL} = settings;
-
-function Curved(props)
+/*function Curved(props)
 {
     return(
         <Entity geometry={"primitive: polyline; vertices: " + props.vertices} scale= "-1 1 1" material="side: double; opacity: 0.50"/>
@@ -40,7 +41,7 @@ class Bubble extends React.Component
             </Entity>
         );
     }
-}
+}*/
 
 export function givePoints(props)
 {
@@ -60,16 +61,46 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         this.state = {
-            scenes: props.scenes.get(props.objectToScene.get(props.currentObject))
+            scenes: props.scenes.get(props.objectToScene.get(props.currentObject)),
+
         };
         console.log(props.objectToScene.get(props.currentObject));
         console.log(props.currentObject);
+        console.log(this.state.scenes)
+
     }
 
     handleSceneChange()
     {
+        let a_point = document.querySelector('#cursor').components.pointsaver.points;
+        let lengthLine = a_point.length;
+        let scene;
+        //TODO migliore questo controllo, ci sono casi in cui non funziona, capire come passare un parametro, cosi non serve il controllo
+
+        let scale;
+        if(document.querySelector('a-sky')){
+            scene = document.querySelector('a-sky');
+            scale = "-1 1 1";
+        } else {
+            if(document.querySelector('a-videosphere')) {
+                scene = document.querySelector('a-videosphere');
+                scale = "-1 1 1";
+            } else {
+                scene = document.querySelector('a-scene');
+                scale = "1 1 1";
+            }
+        }
+        if (lengthLine >= 2) {
+            let tmp = document.createElement('a-entity');
+            tmp.setAttribute('scale', scale);
+            tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 1)].toArray().join(" "));
+            tmp.setAttribute('line', 'end: ' + a_point[(0)].toArray().join(" "));
+            tmp.setAttribute('class', 'line');
+            scene.appendChild(tmp);
+        }
+        //document.querySelector('a-sky').setAttribute('scene', this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)))
         this.setState({
-            scenes: this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject))
+            scenes: this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
         })
     }
 
@@ -81,14 +112,30 @@ export default class GeometryScene extends React.Component{
             let length = a_point.length;
             let idPoint = "point" + (length - 1).toString();
             let tmp = document.createElement('a-entity');
+            let scene, scale, moltiplier;
+            if(document.querySelector('a-sky')){
+                scene = document.querySelector('a-sky');
+                scale = "-1 1 1";
+                moltiplier = -1;
+            } else {
+                if(document.querySelector('a-videosphere')) {
+                    scene = document.querySelector('a-videosphere');
+                    scale = "-1 1 1";
+                    moltiplier = -1;
+                } else {
+                    scene = document.querySelector('a-scene');
+                    scale = "1 1 1";
+                    moltiplier = 1;
+                }
+            }
             tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
-            a_point[(length-1)].x *= -1;
+            a_point[(length-1)].x *= moltiplier;
             tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
-            a_point[(length-1)].x *= -1;
+            a_point[(length-1)].x *= moltiplier;
             tmp.setAttribute('id', idPoint);
             tmp.setAttribute('material', 'color: green; shader: flat');
             tmp.setAttribute('class', 'points');
-            document.querySelector('a-sky').appendChild(tmp);
+            scene.appendChild(tmp);
 
 
             //Linee, purtroppo è poco intuitivo. Provandolo sembra bellino
@@ -96,32 +143,38 @@ export default class GeometryScene extends React.Component{
             let lengthLine = a_point.length;
             if (lengthLine >= 2) {
                 let tmp = document.createElement('a-entity');
-                tmp.setAttribute('scale', '-1 1 1');
+                tmp.setAttribute('scale', scale);
                 tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
                 tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
-                document.querySelector('a-sky').appendChild(tmp);
+                tmp.setAttribute('class', 'line');
+                scene.appendChild(tmp);
             }
 
         }
     }
 
-    componentDidMount () {
+    componentDidMount() {
+        this.createScene();
+
+        let is3dScene = this.state.scenes.type===Values.THREE_DIM;
+        let scene;
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
             {
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
-                if(pointsaver != null && pointsaver.points.length != 0) {
+                if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
                     this.handleSceneChange();
                     cursor.setAttribute('color', 'black');
                     cursor.removeEventListener('click', function pointSaver(evt) {});
-                    cursor.removeEventListener('click', this.handleFeedbackChange);
+                    cursor.removeEventListener('click', this.handleFeedbackChange());
                     cursor.components.pointsaver.points = [];
-                    let scene = document.querySelector("a-sky");
-                    let removeSphere = scene.querySelectorAll(".points");
-                    removeSphere.forEach(point => {
+                    let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+                    let points = scene.querySelectorAll(".points");
+
+                    points.forEach(point => {
                         scene.removeChild(point);
                     });
                     this.handleSceneChange();
@@ -130,12 +183,15 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'e' || keyName === 'E')
             {
-                let scene = document.querySelector("a-sky");
+                scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+                let lines = scene.querySelectorAll(".line");
+                lines.forEach(line => {
+                    scene.removeChild(line);
+                });
                 let removeSphere = scene.querySelectorAll(".points");
                 removeSphere.forEach(point => {
                     scene.removeChild(point);
                 });
-
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
                 cursor.components.pointsaver.points = [];
@@ -144,11 +200,12 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'u' || keyName === 'U')
             {
+                //TODO rimuovere le linee non solo i punti
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
-                if(pointsaver != null && pointsaver.points.length != 0){
+                if(pointsaver != null && pointsaver.points.length !== 0){
                     let points = pointsaver.points;
                     let lastID = points.length - 1;
-                    let scene = document.querySelector('a-sky');
+                    let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let lastChild = scene.querySelector('#point' + lastID.toString());
                     points.splice(-1);
                     scene.removeChild(lastChild);
@@ -164,11 +221,29 @@ export default class GeometryScene extends React.Component{
         });
     }
 
+    async createScene(){
+        let scene = {};
+        await SceneAPI.getAllDetailedScenes(scene);
+        this.setState({completeScene: scene})
+
+    }
+
     render()
     {
-        let sky = this.state.scenes;
+
+        if (this.state.completeScene !== undefined ) {
+            this.currentLevel = [this.state.scenes.uuid]
+        }
+        else{
+            this.currentLevel = [];
+        }
+
+
+        let is3dScene = this.state.scenes.type===Values.THREE_DIM;
+        let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
         let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
+        //TODO verificiare shader delle curved, problema non trasparenza
         for(let key in objects){
             if(objects.hasOwnProperty(key)){
                 objects[key].forEach((uuid) => {
@@ -176,12 +251,12 @@ export default class GeometryScene extends React.Component{
                 })
             }
         }
+        let assets = this.generateAssets();
+        let skie = this.generateBubbles();
 
-        let skies = <Bubble key={"key" + sky.img} name={sky.img} img={`${window.localStorage.getItem("gameID")}/` + sky.img}
-                            curves={curvedImages} handler={() => this.handleSceneChange()}/>
 
-        let backGround;
-        if(stores_utils.getFileType(sky.img) === 'video'){
+
+        /*if(stores_utils.getFileType(sky.img) === 'video'){
             backGround = (
                 <video key={"key" + sky.name} crossorigin={"anonymous"} id={sky.img} loop={"true"}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + sky.img}
@@ -191,7 +266,8 @@ export default class GeometryScene extends React.Component{
             backGround = (<img id={sky.img} key={"key" + sky.name} crossorigin="Anonymous"
                                     src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + sky.img}
             />)
-        }
+        }*/
+
         return(
             <div id="mainscene" tabIndex="0">
                 <div id="UI">
@@ -206,22 +282,40 @@ export default class GeometryScene extends React.Component{
 
                     </div>
                 </div>
-                <Scene>
+                <Scene background="color: black">
                     <a-assets>
-                        {backGround}
+                        {assets}
                     </a-assets>
-                    {skies}
-
-
-                    <Entity primitive="a-camera" key="keycamera" id="camera" look-controls_us="pointerLockEnabled: true">
+                    {skie}
+                    <Entity primitive="a-camera" key="keycamera" id="camera"
+                            pac-look-controls={"pointerLockEnabled: " + is3dScene + ";planarScene:" + !is3dScene +";"}
+                            look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" pointsaver id="cursor" />
+                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin} pointsaver  visible={is3dScene}/>
                         </Entity>
                     </Entity>
                 </Scene>
             </div>
         );
     }
+
+    generateAssets(){
+        return this.currentLevel.map(sceneName =>{
+            console.log(sceneName)
+            return aframe_utils.generateAsset(this.state.completeScene.scenes[sceneName], this.state.completeScene.scenes[sceneName].img)
+        })
+    }
+
+    generateBubbles(){
+        return this.currentLevel.map(sceneName =>{
+            return (
+                <Bubble key={"key" + sceneName} scene={this.state.completeScene.scenes[this.state.scenes.uuid]} isActive={true}
+                        handler={() => this.handleSceneChange() } editMode={true}
+                />
+            );
+        });
+    }
+
 }
 //Aggiungere due text, button, qualcosa che indichi all'utente come utilizzare salvataggio e edit.
 //Meglio non usare le linee, usa semplicemente i punti che indicano come fare
