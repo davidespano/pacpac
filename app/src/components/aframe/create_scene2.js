@@ -133,28 +133,17 @@ export default class VRScene extends React.Component {
         let camera = document.getElementById('camera');
         let cursorMouse = document.getElementById('cursorMouse');
         let cursorEnity = document.getElementById('cursor');
-        let rayCastOrigin = is3Dscene?'entity':'mouse';
-        //TODO il controlli per il cambio camera vanno nella transizione
-        //TODO verificare questo controllo, forse è fatto un po' a cazzo
         if(is3Dscene){
             camera.setAttribute("pac-look-controls", "planarScene: " + !is3Dscene);
             camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + is3Dscene);
-            //cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
             cursorMouse.setAttribute('raycaster', 'enabled: false');
             cursorEnity.setAttribute('raycaster', 'enabled: true');
-            //cursor.removeAttribute('mouse-cursor');
             document.querySelector('canvas').requestPointerLock();
-            //this.forceUpdate()
         } else {
             camera.setAttribute("pac-look-controls", "planarScene: " + is3Dscene);
             camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + !is3Dscene);
             cursorMouse.setAttribute('raycaster', 'enabled: true');
             cursorEnity.setAttribute('raycaster', 'enabled: false');
-            //cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
-            //cursor.addAttribute('mouse-cursor', 'true');
-
-            //document.querySelector('canvas').requestPointerLock()
-            //this.forceUpdate()
         }
 
     }
@@ -168,13 +157,8 @@ export default class VRScene extends React.Component {
         else
             this.currentLevel = [];
 
-        //Assets generati qui non dal nuovo componente
-        //let assets = this.generateAssets()
-
         let assets = this.generateAssets2();
         let is3dScene = this.state.activeScene.type===Values.THREE_DIM;
-        let rayCastOrigin = is3dScene?'entity':'mouse';
-        //console.log(is3dScene)
         return (
                 <Scene stats background="color: black" >
                     <a-assets>
@@ -203,7 +187,6 @@ export default class VRScene extends React.Component {
         }).flat();
     }
 
-    //cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
     generateBubbles(){
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
