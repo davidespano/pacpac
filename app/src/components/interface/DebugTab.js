@@ -5,6 +5,7 @@ import interface_utils from "./interface_utils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import Dropdown from "./Dropdown";
 import EditorState from "../../data/EditorState";
+import DebugAPI from "../../utils/DebugAPI";
 
 let THREE = require('three');
 
@@ -17,6 +18,12 @@ function DebugTab(props) {
             <div id={'rbContainer'}>
                 {view(props)}
             </div>
+            <button className={"btn select-file-btn new-rule-btn"}
+                    onClick={() => {
+                        DebugAPI.saveDebugState(props.scenes.get(props.currentScene).name);
+                    }}>
+                Salva
+            </button>
         </div>
     );
 }
