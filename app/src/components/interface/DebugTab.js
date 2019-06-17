@@ -84,7 +84,7 @@ function objPropsView(props) {
             <div className={'figure-grid'}>
                 <img className={'rightbar-img'} src={getImage(currentObject.type)} alt={currentObject.type}
                      title={currentObject.type}/>
-                <p>{currentObject.type}</p>
+                <p>{objectTypeToString(currentObject.type)}</p>
             </div>
             <label className={'rightbar-titles'}>Nome</label>
             <div className={'obj-props'}>
@@ -378,6 +378,32 @@ function handleClickOutside(props) {
         }
 
     });
+}
+
+
+function objectTypeToString(objectType) {
+    switch (objectType) {
+        case InteractiveObjectsTypes.BUTTON:
+            return "Pulsante";
+        case InteractiveObjectsTypes.COUNTER:
+            return "Contatore";
+        case InteractiveObjectsTypes.CUMULABLE:
+            return "Oggetto";
+        case InteractiveObjectsTypes.LOCK:
+            return "Serratura";
+        case InteractiveObjectsTypes.SELECTOR:
+            return "Selettore";
+        case InteractiveObjectsTypes.SWITCH:
+            return "Interruttore";
+        case InteractiveObjectsTypes.TIMER:
+            return "Timer";
+        case InteractiveObjectsTypes.KEY:
+            return "Chiave";
+        case InteractiveObjectsTypes.TRANSITION:
+            return "Transizione";
+        default:
+            return "Sconosciuto";
+    }
 }
 
 

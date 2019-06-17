@@ -53,12 +53,9 @@ async function createThumbnails(session, files, dir, gameID){
         let filePath = path.resolve(__dirname,file.path).replace(/(^.*?[\\/]public[\\/].*?[\\/])/,"");
         let fileAncestorsPath = filePath.replace(/(?:(.*)[\\/])*.*?$/,"$1");//ancestors without filename
 
-
+        console.log("fileAncestorPAth mkdirp", fileAncestorsPath);
         promises.push(new Promise((resolve,reject) => {
-            mkdirp(fileAncestorsPath, (err) => {
-                if(err)
-                    reject(err);
-                else
+            mkdirp(path.resolve(__dirname,file.path) + '/_thumbnails_/' + fileAncestorsPath, (err) => {
                     resolve();
             });
         }));
@@ -136,13 +133,13 @@ function deleteHandler(req, res, next){
     });
     }
 
-    filePath += req.body.name;
+    filePath += filename;
 
     console.log("haha",filePath);
 
     Media.deleteByPath(dbUtils.getSession({}),filePath, req.params.gameID);
 
-    new Promise((resolve,reject) => fs.unlink(dir + '/_thumbnails_/' + filename, err => {
+    new Promise((resolve,reject) => fs.unlink(dir + '/_thumbnails_/' + filePath, err => {
         if(!err)
             resolve();
         reject(err);
