@@ -39,7 +39,7 @@ function FileContainer(properties){
                     onResourceItemDoubleClick={
                         ({ event, number, rowData }) => handleDoubleClick(props, rowData, component)
                     }
-                    onResourceChange={() => MediaAPI.getAllAssets()}
+                    onResourceLocationChange={() => MediaAPI.getAllAssets()}
                 />
             </FileManager>
         </div>
