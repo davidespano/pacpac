@@ -177,9 +177,6 @@ api.delete('/:gameID/stories/:name/:uuid', loginRequired, routes.stories.deleteS
 api.delete('/:gameID/stories/:name', loginRequired, routes.stories.deleteCollection);
 storiesAPI(api);
 
-/**DEBUG**/
-api.put('/:gameID/debug/state', loginRequired, routes.debug.putDebugState);
-api.get('/:gameID/debug/state', routes.debug.getDebugState);
 
 //api error handler
 api.use(function (err, req, res, next) {
