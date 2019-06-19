@@ -1,4 +1,4 @@
-import Actions from '../actions/Actions'
+/*import Actions from '../actions/Actions'
 import settings from './settings'
 import Scene from "../scene/Scene";
 import Transition from "../interactives/Transition";
@@ -40,4 +40,4 @@ function saveDebugState(name) {
 export default {
     loadDebugState : loadDebugState,
     saveDebugState : saveDebugState
-}
+}*/

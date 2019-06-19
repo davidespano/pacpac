@@ -41,7 +41,9 @@ function genVideoScreenshot(file, dir, subPath){
 async function createThumbnails(session, files, dir, gameID){
     const promises = [];
 
+    console.log("createThumbnails")
     await new Promise((resolve, reject) => fs.mkdir(dir + '/_thumbnails_',(err) => {
+        console.log("creazione _thumbnails_")
         if(!err)
             resolve();
         reject(err);
@@ -57,6 +59,8 @@ async function createThumbnails(session, files, dir, gameID){
         promises.push(new Promise((resolve,reject) => {
             mkdirp(path.resolve(__dirname,file.path) + '/_thumbnails_/' + fileAncestorsPath, (err) => {
                     resolve();
+                    if(err)
+                        console.error(err);
             });
         }));
 
@@ -96,26 +100,29 @@ function uploadHandler(req, res, next) {
     const session = dbUtils.getSession(req);
 
     let promises = [];
-
-    if(req.files){
-        req.files.forEach((file)=>{
+    console.log("upload handler", req)
+    if(req.files) {
+        req.files.forEach((file) => {
             //relative path of the file
-            let filePath = path.resolve(__dirname,file.path).replace(/(^.*?[\\/]public[\\/].*?[\\/])/,"");
-            let asset = new Asset({path: filePath,filename:file.filename});
+            let filePath = path.resolve(__dirname, file.path).replace(/(^.*?[\\/]public[\\/].*?[\\/])/, "");
+            let asset = new Asset({path: filePath, filename: file.filename});
 
             promises.push(Media.createUpdateAsset(dbUtils.getSession({}), asset, gameID));
         });
+    }
         console.log("uploadHandler",req.params.gameID);
 //override send function, used to check when the file is uploaded completely
         res.send = function (body) {
-            //Creation of the thumbnails and call of the former send fuction
-            createThumbnails(session, req.files, dir, gameID)
-                .then(() => {
-                    send.call(this, body);
-                    return Promise.all(promises);
-                }).catch(err => console.error("uploadHandler",err));
+            if(req.files) {
+                //Creation of the thumbnails and call of the former send fuction
+                createThumbnails(session, req.files, dir, gameID)
+                    .then(() => {
+                        send.call(this, body);
+                        return Promise.all(promises);
+                    }).catch(err => console.error("uploadHandler", err));
+            }
         };
-    }
+
     next();
 }
 

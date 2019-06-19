@@ -2,11 +2,12 @@
 const _ = require('lodash');
 const assert = require('assert');
 
-var Debug = module.exports = function (_node) {
+let DebugState = module.exports = function (_node) {
     if(_node.properties) {
         _.extend(this, _node.properties);
     } else {
         _.extend(this, _node);
     }
-    assert(this.name, "the scene must have a name");
+    assert(this.currentScene, "the debug state must contain the current scene id");
+    assert(this.objectStates, "the debug state must contain the state of objects");
 };

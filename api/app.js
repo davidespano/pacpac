@@ -139,7 +139,6 @@ api.post('/:gameID/scenes/addScene', loginRequired, routes.scenes.addScene);
 api.put('/:gameID/scenes/updateScene', loginRequired, routes.scenes.updateScene);
 api.delete('/:gameID/scenes/:name', loginRequired, routes.scenes.deleteScene);
 api.post('/:gameID/scenes/:name/setHome', loginRequired, routes.scenes.setHome);
-api.post('/:gameID/debug/createDebugState', loginRequired, routes.debug.createDebugState);
 
 /**TAGS**/
 api.get('/:gameID/tags', routes.tags.list);
@@ -177,6 +176,9 @@ api.delete('/:gameID/stories/:name/:uuid', loginRequired, routes.stories.deleteS
 api.delete('/:gameID/stories/:name', loginRequired, routes.stories.deleteCollection);
 storiesAPI(api);
 
+/**DEBUG**/
+api.put('/:gameID/debug/state', loginRequired, routes.debug.putDebugState);
+api.get('/:gameID/debug/state', routes.debug.getDebugState);
 
 //api error handler
 api.use(function (err, req, res, next) {
