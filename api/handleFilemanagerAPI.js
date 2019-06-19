@@ -105,18 +105,17 @@ function uploadHandler(req, res, next) {
 
             promises.push(Media.createUpdateAsset(dbUtils.getSession({}), asset, gameID));
         });
-    };
-
-    console.log("uploadHandler",req.params.gameID);
+        console.log("uploadHandler",req.params.gameID);
 //override send function, used to check when the file is uploaded completely
-    res.send = function (body) {
-        //Creation of the thumbnails and call of the former send fuction
-        createThumbnails(session, req.files, dir, gameID)
-            .then(() => {
-                send.call(this, body);
-                return Promise.all(promises);
-            }).catch(err => console.error("uploadHandler",err));
-    };
+        res.send = function (body) {
+            //Creation of the thumbnails and call of the former send fuction
+            createThumbnails(session, req.files, dir, gameID)
+                .then(() => {
+                    send.call(this, body);
+                    return Promise.all(promises);
+                }).catch(err => console.error("uploadHandler",err));
+        };
+    }
     next();
 }
 
