@@ -571,7 +571,7 @@ div.rules{
 
 .list-labels {
     transition: .5s ease;
-    top: 15%;
+    top: 6%;
     left: 50%;
     width: 100%;
 }
@@ -1657,5 +1657,9 @@ input.eudObjectString[type=text] {
     margin-top: 5px;
     margin-bottom: 10px;
     text-align: right;
+}
+
+.save-img {
+    display: none;
 }
 /********* END debug css ************/
