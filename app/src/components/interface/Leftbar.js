@@ -4,6 +4,7 @@ import SceneAPI from "../../utils/SceneAPI";
 import interface_utils from "./interface_utils";
 import Orders from "../../data/Orders";
 import ActionTypes from "../../actions/ActionTypes";
+import DebugAPI from "../../utils/DebugAPI";
 
 
 const {mediaURL} = settings;
@@ -79,6 +80,7 @@ function list(props, path) {
                             console.log(date);
                             if (window.confirm("Vuoi caricare questo salvataggio creato il " + date + "?")) {
                                 //insert load function here!
+                                DebugAPI.loadDebugState();
                                 alert('caricato');
                             } else {
                                 // Do nothing

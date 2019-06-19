@@ -26,7 +26,8 @@ function DebugTab(props) {
                         for(i = 0; i < saveDivs.length; i++) {
                             if(saveDivs[i].children[1].alt === props.scenes.get(props.currentScene).name) {
                                 document.getElementsByClassName('save-img')[i].setAttribute("style", "display: block");
-                                //DebugAPI.saveDebugState(props.scenes.get(props.currentScene).name);
+                                DebugAPI.saveDebugState(props.currentScene, props.interactiveObjects);
+                                console.log(props.interactiveObjects.toArray());
                             }
                         }
                     }}>

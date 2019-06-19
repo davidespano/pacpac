@@ -269,7 +269,7 @@ function valueUuidToString(valueUuid){
 
 //TODO [debug] add to origin master
 function setClassStyle(classHighlight, style) {
-    console.log("CLASS " + classHighlight + "STYLE " + style);
+    //console.log("CLASS " + classHighlight + "STYLE " + style);
     [...document.querySelectorAll(classHighlight)].forEach(function (item) {
         item.style = style;
     })
