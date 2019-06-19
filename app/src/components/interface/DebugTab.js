@@ -20,15 +20,7 @@ function DebugTab(props) {
             </div>
             <button className={"btn select-file-btn new-rule-btn"}
                     onClick={() => {
-                        let saveDivs = document.getElementsByClassName('save-img');
-                        var i
-
-                        for(i = 0; i < saveDivs.length; i++) {
-                            if(saveDivs[i].children[1].alt === props.scenes.get(props.currentScene).name) {
-                                document.getElementsByClassName('save-img')[i].setAttribute("style", "display: block");
-                                //DebugAPI.saveDebugState(props.scenes.get(props.currentScene).name);
-                            }
-                        }
+                        DebugAPI.saveDebugState(props.scenes.get(props.currentScene).name);
                     }}>
                 Salva
             </button>

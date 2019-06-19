@@ -63,30 +63,6 @@ function list(props, path) {
                         {child.name}
                     </div>
                 </div>
-
-                <div className={'save-img'}>
-                    <div>
-                       Salvataggio: {child.name}
-                    </div>
-                    <img
-                        src={src}
-                        className={'list-img'}
-                        alt={child.name}
-                        title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
-                        onClick={() => {
-                            var date = new Date();
-                            date = date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
-                            console.log(date);
-                            if (window.confirm("Vuoi caricare questo salvataggio creato il " + date + "?")) {
-                                //insert load function here!
-                                alert('caricato');
-                            } else {
-                                // Do nothing
-                            }
-                        }}
-                        style={s}
-                    />
-                </div>
             </div>);
     }));
 
