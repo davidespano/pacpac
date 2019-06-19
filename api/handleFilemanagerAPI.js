@@ -121,6 +121,8 @@ function uploadHandler(req, res, next) {
                         return Promise.all(promises);
                     }).catch(err => console.error("uploadHandler", err));
             }
+            else
+                send.call(this, body);
         };
 
     next();
