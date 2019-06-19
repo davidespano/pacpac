@@ -1,46 +1,32 @@
 const _ = require('lodash');
-const DebugState = require('../models/neo4j/debugState');
+const Debug = require('../models/neo4j/debug');
 
-function createUpdateDebugState(session, debugState, gameID) {
-    let state = new DebugState(debugState);
-    let objectStates = state.objectStates;
-
-    delete state.objectStates;
-
+function createDebugState(session, uuid, name, gameID) {
+    console.log(name);
     return session.run(
-        'MERGE (state:Debug:DebugState:`' + gameID + '`) ' +
-        'SET state += $state ' +
-        'WITH state ' +
-        'UNWIND $objectStates as object ' +
-        'MERGE (o:Debug:DebugObject {uuid: object.uuid}) ' +
-        'SET o += object ' +
-        'MERGE (state)-[:STORES_OBJECT]->(o) ' +
-        'RETURN state', {state: state, objectStates: objectStates})
-        .then(() => debugState);
-}
-
-function getDebugState(session, gameID){
-    return session.run(
-        'MATCH (state:Debug:DebugState:`' + gameID + '`)-[:STORES_OBJECT]->(object:DebugObject) ' +
-        'RETURN state, collect(object) AS objects'
-    ).then(result => {
-        const record = result.records[0];
-        const currentScene = record.get('state').properties.currentScene;
-        const objectsStates = record.get('objects').map(obj => obj.properties);
-
-        const debugState = new DebugState({
-            currentScene: currentScene,
-            objectStates: objectsStates,
+        'MATCH (scene:Debug:`' + gameID + '` {name: $name}) ' +
+        'RETURN scene', {name: name})
+        .then(result => {
+            if (!_.isEmpty(result.records)) {
+                throw {message: "Debug scene already exists", status: 422};
+            }
+            else {
+                return session.run(
+                    'MERGE (scene:Debug:`' + gameID + '`{name: $name}) ' +
+                    'SET scene={uuid:$uuid, name: $name} ' +
+                    'RETURN scene', {uuid: uuid, name: name})
+            }
         })
-
-        if(debugState)
-            return debugState;
-        else
-            throw {message: 'state not found', status: 404};
-    })
+        .then(result => {
+            if (result.records[0]) {
+                console.log("New Debug Node ok");
+            }
+            else {
+                console.log("Something went wrong");
+            }
+        });
 }
 
 module.exports = {
-    createUpdateDebugState : createUpdateDebugState,
-    getDebugState: getDebugState,
+    createDebugState : createDebugState
 }
