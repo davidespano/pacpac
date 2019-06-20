@@ -131,6 +131,7 @@ function getDefaultValue(props, defaultValue, component){
             case 'assets':
                 label = defaultValue; break;
             case 'audios':
+            case 'music':
                 label = props.audios.get(defaultValue).name; break;
             default:
                 label = interface_utils.valueUuidToString(defaultValue);
