@@ -115,7 +115,7 @@ div.rules{
 .grid-container > div {
     background-color: #EFF0F0;
     text-align: center;
-    font-size: 30px;
+    font-size: 16px;
 
 }
 .grid-container > .topbar{
@@ -1662,4 +1662,16 @@ input.eudObjectString[type=text] {
 .save-img {
     display: none;
 }
+
+
+#nav-tab-scenes { grid-area: scenes; border-right: 1px solid #8C9093; }
+#nav-tab-saves { grid-area: saves; }
+
+#nav-leftbar {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas: 'scenes saves';
+}
+
 /********* END debug css ************/

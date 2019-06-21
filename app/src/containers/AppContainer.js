@@ -78,6 +78,7 @@ function getState() {
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
+        leftbarSelection: Actions.leftbarSelection, //TODO tentativo debug
         loopCheck: Actions.loopCheck,
         newAudioNameTyped: Actions.newAudioNameTyped,
         newSceneNameTyped: Actions.newSceneNameTyped,
@@ -90,7 +91,7 @@ function getState() {
         selectTagNewScene: Actions.selectTagNewScene,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
-        switchToDebugMode: Actions.debugModeOn, //TODO [debug] add to origin master
+        switchToDebugMode: Actions.debugModeOn,
         switchToEditMode: Actions.editModeOn,
         switchToLoginMode: Actions.loginModeOn,
         switchToFileManager: Actions.fileManagerModeOn,

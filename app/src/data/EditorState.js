@@ -9,8 +9,11 @@ const EditorState = Immutable.Record({
     chooseTagNewScene: false,
     chooseTagRightbar: false,
     completionInput: null,
+    debugFromScene: null,
+    debugRunState: null,
     isEditAudioOn: false,
     isAudioSpatial: false,
+    leftbarSelection: 'scenes',
     loopChecked: false,
     mentionType: null,
     mode: ActionTypes.LOGIN_MODE_ON,
@@ -34,8 +37,6 @@ const EditorState = Immutable.Record({
     selectedTagNewScene: 'default',
     tagFilter: '',
     user: null,
-    debugFromScene: null,
-    debugRunState: null,
 });
 
 export default EditorState;

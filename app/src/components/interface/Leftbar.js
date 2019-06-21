@@ -5,6 +5,7 @@ import interface_utils from "./interface_utils";
 import Orders from "../../data/Orders";
 import ActionTypes from "../../actions/ActionTypes";
 import DebugAPI from "../../utils/DebugAPI";
+import SavesOptions from "./SavesOptions";
 
 
 const {mediaURL} = settings;
@@ -13,12 +14,49 @@ function Leftbar(props) {
 
     let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
 
-    return (
-        <div className={'leftbar'} id={'leftbar'}>
-            {buttonsBar(props)}
-            {list(props, path)}
-        </div>
-    )
+    if (props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+        return(
+            <div id={'leftbar'} className={'leftbar'}>
+                <nav id={'nav-leftbar'}>
+                    <div id={'nav-tab-scenes'}
+                         className={'nav-tab-rightbar ' + interface_utils.checkSelection('leftbar', 'scenes', props.editor)}
+                         onClick={() => {
+                             props.leftbarSelection('scenes');
+                         }}>
+                        Scene
+                    </div>
+                    <div id={'nav-tab-saves'}
+                         className={'nav-tab-rightbar ' + interface_utils.checkSelection('leftbar', 'saves', props.editor)}
+                         onClick={() => {
+                             props.leftbarSelection('saves')
+                         }}>
+                        Salvataggi
+                    </div>
+                </nav>
+                <div className={'tab-content'}>
+                    {contentLeftbar(props)}
+                </div>
+            </div>
+        )
+    }
+    else {
+        return (
+            <div className={'leftbar'} id={'leftbar'}>
+                {buttonsBar(props)}
+                {list(props, path)}
+            </div>
+        )
+    }
+}
+
+function contentLeftbar(props){
+    let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
+
+    return props.editor.leftbarSelection === 'scenes' ? <div>
+                                                            {buttonsBar(props)}
+                                                            {list(props, path)}
+                                                        </div>
+                                                      : <SavesOptions {...props}/>;
 }
 
 /**

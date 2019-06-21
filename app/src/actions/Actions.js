@@ -51,7 +51,6 @@ const Actions = {
         })
     },
 
-    //TODO [debug] add to origin master
     debugModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.DEBUG_MODE_ON
@@ -61,6 +60,13 @@ const Actions = {
     loginModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.LOGIN_MODE_ON
+        })
+    },
+
+    leftbarSelection(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LEFTBAR_SELECTION,
+            selection: selection,
         })
     },
 

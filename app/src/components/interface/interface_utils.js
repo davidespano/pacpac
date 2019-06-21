@@ -162,6 +162,8 @@ function checkSelection(element, option, editor){
     switch(element){
         case 'rightbar':
             return ((editor.rightbarSelection === option) ? '' : 'inactive');
+        case 'leftbar':
+            return ((editor.leftbarSelection === option) ? '' : 'inactive');
         default:
             return 'inactive';
     }

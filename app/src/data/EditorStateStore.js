@@ -39,6 +39,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.GAME_SELECTION_MODE_ON);
             case ActionTypes.GEOMETRY_MODE_ON:
                 return state.set('mode', ActionTypes.GEOMETRY_MODE_ON);
+            case ActionTypes.LEFTBAR_SELECTION:
+                return state.set('leftbarSelection', action.selection);
             case ActionTypes.LOGIN_MODE_ON:
                 return state.set('mode', ActionTypes.LOGIN_MODE_ON);
             case ActionTypes.LOOP_CHECK:
