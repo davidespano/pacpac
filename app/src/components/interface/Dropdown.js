@@ -3,6 +3,8 @@ import Select from "react-select";
 import Values from "../../interactives/rules/Values";
 import interface_utils from "./interface_utils";
 import scene_utils from "../../scene/scene_utils";
+import EditorState from "../../data/EditorState";
+import ActionTypes from "../../actions/ActionTypes"
 
 function Dropdown(properties){
     let props = properties.props,
@@ -59,7 +61,13 @@ function generateOptions(props, component, property){
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        console.log("SONO IN DEBUG");
+                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        console.log(EditorState.debugRunState);
+                    }
+                    else
+                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 },
                 customStyle,
             ];
@@ -81,7 +89,13 @@ function generateOptions(props, component, property){
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        console.log("SONO IN DEBUG");
+                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        console.log(EditorState.debugRunState);
+                    }
+                    else
+                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 },
                 customStyle,
             ];

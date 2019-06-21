@@ -5,6 +5,7 @@ import interface_utils from "./interface_utils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import Dropdown from "./Dropdown";
 import EditorState from "../../data/EditorState";
+import Immutable, {OrderedMap} from 'immutable'
 import DebugAPI from "../../utils/DebugAPI";
 
 let THREE = require('three');
@@ -25,9 +26,19 @@ function DebugTab(props) {
 
                         for(i = 0; i < saveDivs.length; i++) {
                             if(saveDivs[i].children[1].alt === props.scenes.get(props.currentScene).name) {
-                                document.getElementsByClassName('save-img')[i].setAttribute("style", "display: block");
-                                DebugAPI.saveDebugState(props.currentScene, props.interactiveObjects);
-                                console.log(props.interactiveObjects.toArray());
+                                //document.getElementsByClassName('save-img')[i].setAttribute("style", "display: block");
+                                /*
+                                let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
+                                    .map(i =>
+                                        [i, new Immutable.Record({
+                                            uuid: i,
+                                            properties: EditorState.debugRunState[i.toString()],
+                                        })])).filter((k,v) =>props.interactiveObjects.get(v) !== undefined);
+                                * */
+                                let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState).map(i => [i, EditorState.debugRunState[i.toString()]])).filter((k,v) =>props.interactiveObjects.get(v) !== undefined);
+                                console.log(objStateMap);
+                                //DebugAPI.saveDebugState(props.currentScene, objStateMap);
+
                             }
                         }
                     }}>
@@ -292,10 +303,10 @@ function generateSpecificProperties(object, props) {
                         <div id={"transitionDuration"}
                              className={"propertyForm-right"}
                              contentEditable={true}
-                             onBlur={() => interface_utils.setPropertyFromId(object, 'duration', "transitionDuration", props)}
-                             onInput={() => interface_utils.onlyNumbers("transitionDuration")}
-                        >
-                            {object.properties.duration}
+                             onBlur={() => {
+                                 EditorState.debugRunState[object.uuid.toString()].state = document.getElementById("transitionDuration").textContent;
+                             }}>
+                            {EditorState.debugRunState[object.uuid.toString()].state}
                         </div>
                         <span className={'measure-units'}>ms</span>
                     </div>
@@ -305,14 +316,14 @@ function generateSpecificProperties(object, props) {
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato iniziale:</label>
-                    <Dropdown props={props} component={'on-off'} defaultValue={object.properties.state}/>
+                    <Dropdown props={props} component={'on-off'} defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
         case InteractiveObjectsTypes.KEY:
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato iniziale:</label>
-                    <Dropdown props={props} component={'collected-not'} defaultValue={object.properties.state}/>
+                    <Dropdown props={props} component={'collected-not'} defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
         case InteractiveObjectsTypes.LOCK:

@@ -30,10 +30,10 @@ export default class DebugVRScene extends React.Component {
 
         let scene = null;
 
-        if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-            if(this.props.currentScene === null) {
+        if (props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+            if (this.props.currentScene === null) {
                 scene = this.props.scenes.toArray()[0];
-            }else{
+            } else {
                 scene = this.props.scenes.get(this.props.currentScene);
             }
         } else {
@@ -82,12 +82,13 @@ export default class DebugVRScene extends React.Component {
         });
         this.createRuleListeners();
 
-        EditorState.gameGraph = this.state.graph;
+        EditorState.debugRunState = runState;
+
         document.querySelector('#camera').removeAttribute('look-controls');
         document.querySelector('#camera').removeAttribute('wasd-controls');
     }
 
-    createRuleListeners(){
+    createRuleListeners() {
         let me = this;
 
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
@@ -103,13 +104,13 @@ export default class DebugVRScene extends React.Component {
             rule.actions.sort(stores_utils.actionComparator)
             rule.actions.forEach(action => {
                 eventBus.on('click-' + rule.event.obj_uuid, function () {
-                    if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                    if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                         setTimeout(function () {
                             interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
-                            if(me.props.currentObject === null)
+                            if (me.props.currentObject === null)
                                 executeAction(me, rule, action)
                         }, duration);
-                        if(action.action === 'CHANGE_BACKGROUND'){
+                        if (action.action === 'CHANGE_BACKGROUND') {
                             objectVideo = document.getElementById(action.obj_uuid);
                         } else {
                             objectVideo = document.querySelector('#media_' + action.obj_uuid);
@@ -123,7 +124,7 @@ export default class DebugVRScene extends React.Component {
         })
     }
 
-    createGameState(gameGraph){
+    createGameState(gameGraph) {
         let runState = {};
         Object.values(gameGraph.scenes).forEach(scene => {
             //create the state for the scene
@@ -148,13 +149,13 @@ export default class DebugVRScene extends React.Component {
 
     }
 
-    cameraChangeMode(is3Dscene){
+    cameraChangeMode(is3Dscene) {
         let camera = document.getElementById('camera');
         let cursor = document.getElementById('cursor');
-        let rayCastOrigin = is3Dscene?'cursor':'mouse';
+        let rayCastOrigin = is3Dscene ? 'cursor' : 'mouse';
         //TODO il controlli per il cambio camera vanno nella transizione
         //TODO verificare questo controllo, forse è fatto un po' a cazzo
-        if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene){
+        if (camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene) {
             camera.setAttribute("pac-look-controls", "planarScene: " + !is3Dscene);
             camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + is3Dscene);
             cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
@@ -175,18 +176,17 @@ export default class DebugVRScene extends React.Component {
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>
                 this.state.graph.neighbours[this.props.currentScene].includes(uuid)
                 || uuid === this.props.currentScene);
-        }
-        else
+        } else
             this.currentLevel = [];
 
         //Assets generati qui non dal nuovo componente
         //let assets = this.generateAssets()
 
         let assets = this.generateAssets2();
-        let is3dScene = this.props.scenes.get(this.props.currentScene).type===Values.THREE_DIM;
-        let rayCastOrigin = is3dScene?'cursor':'mouse';
+        let is3dScene = this.props.scenes.get(this.props.currentScene).type === Values.THREE_DIM;
+        let rayCastOrigin = is3dScene ? 'cursor' : 'mouse';
 
-        if(this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+        if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
             return (
                 <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
                     <a-assets>
@@ -195,7 +195,7 @@ export default class DebugVRScene extends React.Component {
                     {this.generateBubbles()}
 
                     <Entity primitive="a-camera" key="keycamera" id="camera"
-                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
+                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
                             look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
                             <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
@@ -206,18 +206,18 @@ export default class DebugVRScene extends React.Component {
             )
         } else {
             return (
-                <Scene stats background="color: black" >
+                <Scene stats background="color: black">
                     <a-assets>
                         {assets}
                     </a-assets>
                     {this.generateBubbles()}
 
                     <Entity primitive="a-camera" key="keycamera" id="camera"
-                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
+                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
                             look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
                             <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
-                                    fuse={false}   visible={is3dScene} raycaster="objects: [data-raycastable];"/>
+                                    fuse={false} visible={is3dScene} raycaster="objects: [data-raycastable];"/>
                         </Entity>
 
 
@@ -228,7 +228,7 @@ export default class DebugVRScene extends React.Component {
 
     }
 
-    generateAssets2(){
+    generateAssets2() {
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
                 this.state.runState[sceneName].background, this.state.runState)
@@ -236,19 +236,21 @@ export default class DebugVRScene extends React.Component {
     }
 
     //cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
-    generateBubbles(){
-        return this.currentLevel.map(sceneName =>{
+    generateBubbles() {
+        return this.currentLevel.map(sceneName => {
             let scene = this.state.graph.scenes[sceneName];
             return (
-                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.currentObject !== null} key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
-                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
+                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.currentObject !== null}
+                        key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
+                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
+                        runState={this.state.runState}
                         editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                 />
             );
         });
     }
 
-    generateRoom(audioContext){
+    generateRoom(audioContext) {
         //TODO inserire scelta interno esterno
         let isInterior = false;
         let material = isInterior ? 'grass' : 'transparent';
@@ -272,7 +274,7 @@ export default class DebugVRScene extends React.Component {
         this.state.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
     }
 
-    generateAudio(audioContext){
+    generateAudio(audioContext) {
 
         let audioElement = document.createElement('audio');
 
