@@ -34,19 +34,15 @@ function loadDebugState() {
 }
 
 function saveDebugState(sceneUuid, objects) {
-    let objs = objects.toArray().map(o => {
-        return {...o.toJSON(),
-            media : JSON.stringify(o.media),
-            audio : JSON.stringify(o.audio),
-            properties : JSON.stringify(o.properties)}
-    });
+
+    let map = objects.map((v,k) => Object({uuid:k,...v})).toArray()
 
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send({
             currentScene: sceneUuid,
-            objectStates: objs
+            objectStates: map,
         })
         .end(function (err, response) {
         if (err) {
