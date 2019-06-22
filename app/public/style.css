@@ -1659,11 +1659,6 @@ input.eudObjectString[type=text] {
     text-align: right;
 }
 
-.save-img {
-    display: none;
-}
-
-
 #nav-tab-scenes { grid-area: scenes; border-right: 1px solid #8C9093; }
 #nav-tab-saves { grid-area: saves; }
 
@@ -1672,6 +1667,20 @@ input.eudObjectString[type=text] {
     display: grid;
     grid-template-columns: auto auto;
     grid-template-areas: 'scenes saves';
+}
+
+h6 {
+    font-size: 15px;
+    margin-top: 3%;
+    margin-bottom: 2%;
+}
+
+
+.list-saves-img {
+    width: 100%;
+    max-width: 150px;
+    max-height: 75px;
+    position: relative;
 }
 
 /********* END debug css ************/

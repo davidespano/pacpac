@@ -53,7 +53,6 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.FILE_MANAGER_MODE_ON);
             case ActionTypes.PLAY_MODE_ON:
                 return state.set('mode', ActionTypes.PLAY_MODE_ON);
-            //TODO [debug] add to origin master
             case ActionTypes.DEBUG_MODE_ON:
                 return state.set('mode', ActionTypes.DEBUG_MODE_ON);
             case ActionTypes.RECEIVE_SCENE:

@@ -78,7 +78,7 @@ function getState() {
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
-        leftbarSelection: Actions.leftbarSelection, //TODO tentativo debug
+        leftbarSelection: Actions.leftbarSelection,
         loopCheck: Actions.loopCheck,
         newAudioNameTyped: Actions.newAudioNameTyped,
         newSceneNameTyped: Actions.newSceneNameTyped,

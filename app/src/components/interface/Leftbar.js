@@ -56,7 +56,40 @@ function contentLeftbar(props){
                                                             {buttonsBar(props)}
                                                             {list(props, path)}
                                                         </div>
-                                                      : <SavesOptions {...props}/>;
+                                                      : <SavesOptions {...props}/>
+}
+
+/**
+ * Generates saves list
+ * @param props
+ * @param path
+ * @returns {any[]}
+ */
+function listSaves(props, path) {
+    let regex = RegExp('.*\.mp4$');
+
+    return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
+        let s;
+            s = {border: '2px solid black'};
+
+            if (props.currentScene == child.uuid)
+                s = {border: '2px solid #EF562D'}
+
+        let src = path + '_thumbnails_/' + child.img + (regex.test(child.img)? ".png" : "");
+
+        return (
+            <div key={child.name} className={'node_element'}>
+                <h6>Salvataggi: {child.name}</h6>
+                <img
+                    src={src}
+                    className={'list-saves-img'}
+                    alt={child.name}
+                    title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
+                    style={s}
+                />
+            </div>);
+    }));
+
 }
 
 /**
@@ -70,7 +103,7 @@ function list(props, path) {
 
     return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
         let s;
-        if (props.editor.mode === ActionTypes.DEBUG_MODE_ON) { //TODO [debug] add to origin master
+        if (props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
             s = {border: '2px solid black'};
             if (props.currentScene == child.uuid)
                 s = {border: '2px solid #EF562D'}
@@ -87,45 +120,20 @@ function list(props, path) {
                     alt={child.name}
                     title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                     onClick={() => {
-                        if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                        if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON)
                             props.updateCurrentScene(child.uuid);
                     }}
                     style={s}
                 />
                 <div className={'list-labels'}
                      onClick={() => {
-                         if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON) //TODO [debug] add to origin master
+                         if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON)
                              props.updateCurrentScene(child.uuid);
                      }}
                 >
                     <div className={'label-text'}>
                         {child.name}
                     </div>
-                </div>
-
-                <div className={'save-img'}>
-                    <div>
-                       Salvataggio: {child.name}
-                    </div>
-                    <img
-                        src={src}
-                        className={'list-img'}
-                        alt={child.name}
-                        title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
-                        onClick={() => {
-                            var date = new Date();
-                            date = date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
-                            console.log(date);
-                            if (window.confirm("Vuoi caricare questo salvataggio creato il " + date + "?")) {
-                                //insert load function here!
-                                DebugAPI.loadDebugState();
-                                alert('caricato');
-                            } else {
-                                // Do nothing
-                            }
-                        }}
-                        style={s}
-                    />
                 </div>
             </div>);
     }));

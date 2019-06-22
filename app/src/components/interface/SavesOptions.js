@@ -1,41 +1,75 @@
 import React from 'react';
-import Leftbar from './Leftbar';
 import Immutable from "immutable";
 import EditorState from "../../data/EditorState";
 import DebugAPI from "../../utils/DebugAPI";
+import interface_utils from "./interface_utils";
+import settings from "../../utils/settings";
+
+const {mediaURL} = settings;
 
 function SavesOptions(props) {
+    let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
+
     return(
         <div>
-            <h4>SALVATAGGIO</h4>
+            {listSaves(props, path)}
+            <br/><br/>
             <button className={"btn select-file-btn new-rule-btn"}
                     onClick={() => {
-                        let saveDivs = document.getElementsByClassName('save-img');
-
                         let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
                             .map(i => [i, EditorState.debugRunState[i.toString()]]))
                             .filter((k,v) =>props.interactiveObjects.get(v) !== undefined);
 
-                        DebugAPI.saveDebugState(props.currentScene, objStateMap);
-
-                        for(let i = 0; i < saveDivs.length; i++) {
-                            if(saveDivs[i].children[1].alt === props.scenes.get(props.currentScene).name) {
-                                //document.getElementsByClassName('save-img')[i].setAttribute("style", "display: block");
-                            }
-
+                        if(window.confirm("Vuoi salvare?")) {
+                            DebugAPI.saveDebugState(props.currentScene, objStateMap);
                         }
+
+
                     }}>
                 Salva
             </button>
             <br/><br/>
             <button className={"btn select-file-btn new-rule-btn"}
                     onClick={() => {
-                        DebugAPI.loadDebugState();
+                        if(window.confirm("Vuoi caricare questo salvataggio?")) {
+                            DebugAPI.loadDebugState();
+                        }
                     }}
-            > Carica</button>
+            > Carica
+            </button>
         </div>
 
     )
+}
+
+/**
+ * Generates saves list
+ * @param props
+ * @param path
+ * @returns {any[]}
+ */
+function listSaves(props, path) {
+    let regex = RegExp('.*\.mp4$');
+
+    return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
+        let s;
+        s = {border: '2px solid black'};
+
+        let src = path + '_thumbnails_/' + child.img + (regex.test(child.img)? ".png" : "");
+
+        return (
+            <div key={child.name} className={'node_element'}>
+                <h6>Salvataggi: {child.name}</h6>
+                <img
+                    src={src}
+                    className={'list-saves-img'}
+                    alt={child.name}
+                    title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
+                    style={s}
+                />
+            </div>);
+    }));
+
 }
 
 export default SavesOptions;
