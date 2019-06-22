@@ -272,19 +272,8 @@ function generateSpecificProperties(object, props) {
     switch (object.type) {
         case InteractiveObjectsTypes.TRANSITION:
             return (
-                <div className={"options-grid"}>
-                    <label className={'options-labels'}>Durata:</label>
-                    <div className={'flex'}>
-                        <div id={"transitionDuration"}
-                             className={"propertyForm-right"}
-                             contentEditable={true}
-                             onBlur={() => {
-                                 EditorState.debugRunState[object.uuid.toString()].state = document.getElementById("transitionDuration").textContent;
-                             }}>
-                            {EditorState.debugRunState[object.uuid.toString()].state}
-                        </div>
-                        <span className={'measure-units'}>ms</span>
-                    </div>
+                <div>
+                    Non ci sono proprietà da modificare
                 </div>
             );
         case InteractiveObjectsTypes.SWITCH:

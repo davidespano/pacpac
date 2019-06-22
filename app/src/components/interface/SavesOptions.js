@@ -11,31 +11,28 @@ function SavesOptions(props) {
             <button className={"btn select-file-btn new-rule-btn"}
                     onClick={() => {
                         let saveDivs = document.getElementsByClassName('save-img');
-                        var i
 
                         let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
                             .map(i => [i, EditorState.debugRunState[i.toString()]]))
                             .filter((k,v) =>props.interactiveObjects.get(v) !== undefined);
-                        console.log(objStateMap);
+
                         DebugAPI.saveDebugState(props.currentScene, objStateMap);
 
-                        for(i = 0; i < saveDivs.length; i++) {
+                        for(let i = 0; i < saveDivs.length; i++) {
                             if(saveDivs[i].children[1].alt === props.scenes.get(props.currentScene).name) {
                                 //document.getElementsByClassName('save-img')[i].setAttribute("style", "display: block");
-                                /*
-                                let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
-                                    .map(i =>
-                                        [i, new Immutable.Record({
-                                            uuid: i,
-                                            properties: EditorState.debugRunState[i.toString()],
-                                        })])).filter((k,v) =>props.interactiveObjects.get(v) !== undefined);
-                                * */
                             }
 
                         }
                     }}>
                 Salva
             </button>
+            <br/><br/>
+            <button className={"btn select-file-btn new-rule-btn"}
+                    onClick={() => {
+                        DebugAPI.loadDebugState();
+                    }}
+            > Carica</button>
         </div>
 
     )

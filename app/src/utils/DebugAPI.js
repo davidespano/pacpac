@@ -1,5 +1,7 @@
 import settings from './settings'
 import Immutable from 'immutable';
+import Actions from "../actions/Actions";
+import EditorState from "../data/EditorState";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -13,21 +15,23 @@ function loadDebugState() {
             if (err) {
                 return console.error(err);
             }
+
             if (response.body && response.body !== []) {
-                response.body.objectsStates.map((rec) => {
+                response.body.objectStates.map((rec) => {
                     let s = Immutable.Record({
                         uuid: rec.uuid,
-                        name: rec.name,
-                        type: rec.type,
-                        media: JSON.parse(rec.media),
-                        mask: rec.mask,
-                        audio: JSON.parse(rec.audio),
-                        vertices: rec.vertices,
-                        properties: JSON.parse(rec.properties),
+                        state: rec.state,
                     });
-                    console.log(response.body);
-                    return response.body;
                 });
+
+                let arr = response.body.objectStates.reduce(function (map, obj) {
+                    map[obj.uuid] = Object({state: obj.state});
+                    return map;
+                }, {});
+
+                Actions.updateCurrentScene(response.body.currentScene);
+                EditorState.debugRunState = arr;
+
             }
 
         });
@@ -35,7 +39,7 @@ function loadDebugState() {
 
 function saveDebugState(sceneUuid, objects) {
 
-    let map = objects.map((v,k) => Object({uuid:k,...v})).toArray()
+    let map = objects.map((v,k) => Object({uuid:k,...v})).toArray();
 
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
         .set('Accept', 'application/json')
