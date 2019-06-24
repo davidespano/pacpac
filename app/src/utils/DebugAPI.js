@@ -17,8 +17,6 @@ function loadDebugState(saveName, flag) {
             if (err) {
                 return console.error(err);
             }
-
-            console.log(response.body);
             if (flag === "loadSave") {
                 if (response.body && response.body !== []) {
                     response.body.objectStates.map((rec) => {
@@ -39,9 +37,8 @@ function loadDebugState(saveName, flag) {
             } else {
                 if (EditorState.debugSaves === undefined) {
                     EditorState.debugSaves = new Immutable.OrderedMap({
-                        currentScene: {
                             currentScene: new Immutable.Set
-                        }
+
                     });
                 }
                 let oldSaves = null;
@@ -53,7 +50,6 @@ function loadDebugState(saveName, flag) {
                         EditorState.debugSaves[el.currentScene] = newSaves;
                     }
                 );
-
             }
 
 
