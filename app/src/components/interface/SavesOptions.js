@@ -4,6 +4,7 @@ import EditorState from "../../data/EditorState";
 import DebugAPI from "../../utils/DebugAPI";
 import interface_utils from "./interface_utils";
 import settings from "../../utils/settings";
+import InputSaveForm from "./InputSaveForm";
 
 const {mediaURL} = settings;
 
@@ -14,20 +15,10 @@ function SavesOptions(props) {
         <div>
             {listSaves(props, path)}
             <br/><br/>
-            <button className={"btn select-file-btn new-rule-btn"}
-                    onClick={() => {
-                        let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
-                            .map(i => [i, EditorState.debugRunState[i.toString()]]))
-                            .filter((k,v) =>props.interactiveObjects.get(v) !== undefined);
-
-                        if(window.confirm("Vuoi salvare?")) {
-                            DebugAPI.saveDebugState(props.currentScene, objStateMap);
-                        }
-
-
-                    }}>
+            <button className={"btn select-file-btn new-rule-btn"} data-toggle="modal" data-target="#save-modal">
                 Salva
             </button>
+            <InputSaveForm {...props}/>
             <br/><br/>
             <button className={"btn select-file-btn new-rule-btn"}
                     onClick={() => {

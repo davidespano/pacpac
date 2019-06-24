@@ -65,7 +65,6 @@ function AppView(props) {
             return (
                 <Login {...props}/>
             );
-        //TODO [debug] add to origin master
         case 'DEBUG_MODE_ON':
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>
