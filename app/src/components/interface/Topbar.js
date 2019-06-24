@@ -55,7 +55,7 @@ function TopBar(props){
                     <AudioMenu {...props}/>
                     <AudioForm {...props}/>
 					<StoriesViewer {...props}/>
-                    <InputSaveForm {...props}/>
+
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
                                 onClick={() => props.selectMediaToEdit(null)}
@@ -118,12 +118,12 @@ function TopBar(props){
                 <div className="tab-pane fade show active flex-container" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
-                                onClick={() => {
-                                    alert("inserire salvataggio qui");
-                                }}>
+                                data-toggle="modal" data-target="#save-modal">
+
                             <img src={"icons/icons8-save-100.png"}/>
                             <figcaption>Salva</figcaption>
                         </figure>
+                        <InputSaveForm {...props}/>
                     </div>
                 </div>
             </div>
@@ -153,7 +153,6 @@ function handleAssetsMode(props){
     }
 }
 
-//TODO [debug] add to origin master
 function handleDebugMode(props) {
     if(props.editor.mode !== ActionTypes.DEBUG_MODE_ON){
         props.updateCurrentScene(props.scenes.toArray()[0].uuid);

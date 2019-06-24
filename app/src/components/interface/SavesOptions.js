@@ -5,6 +5,7 @@ import DebugAPI from "../../utils/DebugAPI";
 import interface_utils from "./interface_utils";
 import settings from "../../utils/settings";
 import InputSaveForm from "./InputSaveForm";
+import InputLoadForm from "./InputLoadForm";
 
 const {mediaURL} = settings;
 
@@ -14,17 +15,7 @@ function SavesOptions(props) {
     return (
         <div>
             {listSaves(props, path)}
-            <br/><br/>
-            <button className={"btn select-file-btn new-rule-btn"} data-toggle="modal" data-target="#save-modal">
-                Salva
-            </button>
             <InputSaveForm {...props}/>
-            <br/><br/>
-            <button className={"btn select-file-btn new-rule-btn"}
-                    onClick={() => {
-                    }}
-            > Carica
-            </button>
         </div>
 
     )
@@ -40,11 +31,13 @@ function SavesOptions(props) {
 function listSaves(props, path) {
     let regex = RegExp('.*\.mp4$');
 
-    return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
+    return ([...props.scenes.values()].map(child => {
         let s;
         s = {border: '2px solid black'};
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
+
+        console.log(child.name);
 
 
         return (
@@ -53,36 +46,16 @@ function listSaves(props, path) {
                 <img
                     src={src}
                     data-toggle="modal" data-target="#load-modal"
-                    className={'list-saves-img'}
+                    className={'list-img'}
                     alt={child.name}
                     title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                     style={s}
                 />
-                {listSceneSaves(props, child.uuid)}
+                <InputLoadForm {...props} />
             </div>);
     }));
 }
 
-function listSceneSaves(props, sceneUuid) {
-    if(EditorState.debugSaves !== null && EditorState.debugSaves !== undefined && EditorState.debugSaves[sceneUuid]) {
-        let savesList = EditorState.debugSaves[sceneUuid].toArray();
-        console.log(savesList);
-        return savesList.map(saveName => {
-                return <div>
-                    <button className={"btn select-file-btn new-rule-btn"}
-                            onClick={() => {
-                                if (window.confirm("Vuoi caricare questo salvataggio?")) {
-                                    DebugAPI.loadDebugState({saveName}, "loadSave");
-                                }
-                            }}
-                    > Carica
-                    </button>
-                </div>
-            }
-        );
-    }
-    else
-        return;
-}
+
 
 export default SavesOptions;

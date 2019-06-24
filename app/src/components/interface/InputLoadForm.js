@@ -18,18 +18,46 @@ function InputLoadForm(props){
                         <div className="modal-body modalOptions">
                             <div className="form-group">
                                 <label htmlFor="exampleInputEmail1">Seleziona caricamento</label>
-
+                                <div>
+                                    {listSceneSaves(props, props.sceneUuid)}
+                                </div>
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary buttonConferm"
-                                    onClick={() => {alert("caricamento")}} data-dismiss="modal">Carica</button>
+                            <button type="button" className="btn btn-secondary buttonConferm"  data-dismiss="modal"
+                                    onClick={() => {
+                                        //DebugAPI.loadDebugState({saveName}, "loadSave");
+                                    }}>
+                            Carica
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     );
+}
+
+function listSceneSaves(props, sceneUuid) {
+    if(EditorState.debugSaves !== null && EditorState.debugSaves !== undefined && EditorState.debugSaves[sceneUuid]) {
+        let savesList = EditorState.debugSaves[sceneUuid].toArray();
+        console.log(savesList);
+        return savesList.map(saveName => {
+                return <div>
+                    <button className={"btn select-file-btn new-rule-btn"}
+                            onClick={() => {
+                                if (window.confirm("Vuoi caricare questo salvataggio?")) {
+                                    DebugAPI.loadDebugState({saveName}, "loadSave");
+                                }
+                            }}
+                    > {saveName}
+                    </button>
+                </div>
+            }
+        );
+    }
+    else
+        return;
 }
 
 export default InputLoadForm;

@@ -59,38 +59,6 @@ function contentLeftbar(props){
                                                       : <SavesOptions {...props}/>
 }
 
-/**
- * Generates saves list
- * @param props
- * @param path
- * @returns {any[]}
- */
-function listSaves(props, path) {
-    let regex = RegExp('.*\.mp4$');
-
-    return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
-        let s;
-            s = {border: '2px solid black'};
-
-            if (props.currentScene == child.uuid)
-                s = {border: '2px solid #EF562D'}
-
-        let src = path + '_thumbnails_/' + child.img + (regex.test(child.img)? ".png" : "");
-
-        return (
-            <div key={child.name} className={'node_element'}>
-                <h6>Salvataggi: {child.name}</h6>
-                <img
-                    src={src}
-                    className={'list-saves-img'}
-                    alt={child.name}
-                    title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
-                    style={s}
-                />
-            </div>);
-    }));
-
-}
 
 /**
  * Generates scenes list

@@ -2,7 +2,6 @@ import React from "react";
 import Immutable from "immutable";
 import EditorState from "../../data/EditorState";
 import DebugAPI from "../../utils/DebugAPI";
-import AuthenticationAPI from "../../utils/AuthenticationAPI";
 
 function InputSaveForm(props){
     return(
