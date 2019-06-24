@@ -8,9 +8,10 @@ const request = require('superagent');
 
 const {apiBaseURL} = settings;
 
-function loadDebugState() {
+function loadDebugState(saveName, flag) {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
         .set('Accept', 'application/json')
+        .send(saveName)
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
@@ -29,15 +30,27 @@ function loadDebugState() {
                     return map;
                 }, {});
 
-                Actions.updateCurrentScene(response.body.currentScene);
-                EditorState.debugRunState = arr;
+                if(flag === "loadSave") {
+                    Actions.updateCurrentScene(response.body.currentScene);
+                    EditorState.debugRunState = arr;
+                } else if (flag === "getAllSaves") {
+                    if(EditorState.debugSaves === undefined) {
+                        EditorState.debugSaves = new Immutable.OrderedMap({ currentScene : {
+                            currentScene: new Immutable.Set
+                        }});
+                    }
+                    console.log(EditorState.debugSaves);
+                    let oldSaves = EditorState.debugSaves[response.body.currentScene];
+                    let newSaves = new Immutable.Set(oldSaves).add(response.body.saveName);
+                    EditorState.debugSaves[response.body.currentScene] = newSaves;
+                }
 
             }
 
         });
 }
 
-function saveDebugState(sceneUuid, objects) {
+function saveDebugState(saveName, sceneUuid, objects) {
 
     let map = objects.map((v,k) => Object({uuid:k,...v})).toArray();
 
@@ -45,6 +58,7 @@ function saveDebugState(sceneUuid, objects) {
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send({
+            saveName: saveName,
             currentScene: sceneUuid,
             objectStates: map,
         })

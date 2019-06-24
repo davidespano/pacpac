@@ -46,7 +46,8 @@ function saveForm(props){
         .map(i => [i, EditorState.debugRunState[i.toString()]]))
         .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
 
-    DebugAPI.saveDebugState(props.currentScene, objStateMap);
+    DebugAPI.saveDebugState(name, props.currentScene, objStateMap);
+    DebugAPI.loadDebugState(null, "getAllSaves");
 }
 
 export default InputSaveForm;

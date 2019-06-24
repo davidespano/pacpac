@@ -11,7 +11,7 @@ const {mediaURL} = settings;
 function SavesOptions(props) {
     let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
 
-    return(
+    return (
         <div>
             {listSaves(props, path)}
             <br/><br/>
@@ -22,9 +22,6 @@ function SavesOptions(props) {
             <br/><br/>
             <button className={"btn select-file-btn new-rule-btn"}
                     onClick={() => {
-                        if(window.confirm("Vuoi caricare questo salvataggio?")) {
-                            DebugAPI.loadDebugState();
-                        }
                     }}
             > Carica
             </button>
@@ -32,6 +29,7 @@ function SavesOptions(props) {
 
     )
 }
+
 
 /**
  * Generates saves list
@@ -46,21 +44,45 @@ function listSaves(props, path) {
         let s;
         s = {border: '2px solid black'};
 
-        let src = path + '_thumbnails_/' + child.img + (regex.test(child.img)? ".png" : "");
+        let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
+
 
         return (
             <div key={child.name} className={'node_element'}>
                 <h6>Salvataggi: {child.name}</h6>
                 <img
                     src={src}
+                    data-toggle="modal" data-target="#load-modal"
                     className={'list-saves-img'}
                     alt={child.name}
                     title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                     style={s}
                 />
+                {listSceneSaves(props, child.uuid)}
             </div>);
     }));
+}
 
+function listSceneSaves(props, sceneUuid) {
+    if(EditorState.debugSaves !== null && EditorState.debugSaves !== undefined && EditorState.debugSaves[sceneUuid]) {
+        let savesList = EditorState.debugSaves[sceneUuid].toArray();
+        console.log(savesList);
+        return savesList.map(saveName => {
+                return <div>
+                    <button className={"btn select-file-btn new-rule-btn"}
+                            onClick={() => {
+                                if (window.confirm("Vuoi caricare questo salvataggio?")) {
+                                    DebugAPI.loadDebugState({saveName}, "loadSave");
+                                }
+                            }}
+                    > Carica
+                    </button>
+                </div>
+            }
+        );
+    }
+    else
+        return;
 }
 
 export default SavesOptions;

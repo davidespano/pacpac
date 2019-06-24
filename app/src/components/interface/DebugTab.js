@@ -5,7 +5,7 @@ import interface_utils from "./interface_utils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import Dropdown from "./Dropdown";
 import EditorState from "../../data/EditorState";
-import Immutable, {OrderedMap} from 'immutable'
+import Immutable from 'immutable'
 import DebugAPI from "../../utils/DebugAPI";
 
 let THREE = require('three');
@@ -13,6 +13,8 @@ let THREE = require('three');
 function DebugTab(props) {
 
     handleClickOutside(props);
+
+    DebugAPI.loadDebugState(null, "getAllSaves");
 
     return (
         <div className={'rightbar'}>

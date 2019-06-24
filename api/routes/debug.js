@@ -86,8 +86,9 @@ function putDebugState(req, res, next) {
  */
 function getDebugState(req, res, next){
     const gameID = req.params.gameID;
+    const saveName = req.body.saveName;
 
-    Debug.getDebugState(dbUtils.getSession(req), gameID)
+    Debug.getDebugState(dbUtils.getSession(req), gameID, saveName)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
