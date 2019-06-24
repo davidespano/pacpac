@@ -4,7 +4,8 @@ import Values from "../../interactives/rules/Values";
 import interface_utils from "./interface_utils";
 import scene_utils from "../../scene/scene_utils";
 import EditorState from "../../data/EditorState";
-import ActionTypes from "../../actions/ActionTypes"
+import ActionTypes from "../../actions/ActionTypes";
+import Actions from "../../actions/Actions"
 
 function Dropdown(properties){
     let props = properties.props,
@@ -62,9 +63,8 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-                        console.log("SONO IN DEBUG");
                         EditorState.debugRunState[obj.uuid.toString()].state = e.value;
-                        console.log(EditorState.debugRunState);
+                        Actions.updateObject(obj);
                     }
                     else
                         interface_utils.setPropertyFromValue(obj, property, e.value, props);
@@ -90,9 +90,8 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-                        console.log("SONO IN DEBUG");
                         EditorState.debugRunState[obj.uuid.toString()].state = e.value;
-                        console.log(EditorState.debugRunState);
+                        Actions.updateObject(obj);
                     }
                     else
                         interface_utils.setPropertyFromValue(obj, property, e.value, props);
