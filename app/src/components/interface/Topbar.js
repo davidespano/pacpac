@@ -14,6 +14,7 @@ import AudioMenu from "./AudioMenu";
 import AudioForm from "./AudioForm";
 import StoriesViewer from "./StoriesViewer";
 import Keypad from "../../interactives/Keypad";
+import InputSaveForm from "./InputSaveForm";
 
 
 let uuid = require('uuid');
@@ -42,7 +43,7 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
-                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-debug"
+                    <a className="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" role="tab" href="#nav-debug"
                        aria-controls="nav-debug" aria-selected="false"
                        onClick={() => {handleDebugMode(props)}} >Debug</a>
                 </div>
@@ -54,6 +55,7 @@ function TopBar(props){
                     <AudioMenu {...props}/>
                     <AudioForm {...props}/>
 					<StoriesViewer {...props}/>
+                    <InputSaveForm {...props}/>
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
                                 onClick={() => props.selectMediaToEdit(null)}
@@ -113,6 +115,17 @@ function TopBar(props){
                         </figure>
                     </div>
                 </div>
+                <div className="tab-pane fade show active flex-container" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
+                    <div className={"flex-container"}>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    alert("inserire salvataggio qui");
+                                }}>
+                            <img src={"icons/icons8-save-100.png"}/>
+                            <figcaption>Salva</figcaption>
+                        </figure>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -145,8 +158,7 @@ function handleDebugMode(props) {
     if(props.editor.mode !== ActionTypes.DEBUG_MODE_ON){
         props.updateCurrentScene(props.scenes.toArray()[0].uuid);
         props.switchToDebugMode();
-        document.getElementById("nav-tabContent").hidden = true;
-
+        document.getElementById("nav-tabContent").hidden = false;
     }
 }
 
