@@ -22,7 +22,6 @@ function createUpdateDebugState(session, debugState, gameID) {
 }
 
 function getDebugState(session, gameID, saveName) {
-    console.log(saveName);
     if (saveName !== undefined) {
         return session.run(
             'MATCH (state:Debug:DebugState:`' + gameID + '`{saveName: $saveName})-[:STORES_OBJECT]->(object:DebugObject) ' +
@@ -49,25 +48,36 @@ function getDebugState(session, gameID, saveName) {
             'MATCH (state:Debug:DebugState:`' + gameID + '`)-[:STORES_OBJECT]->(object:DebugObject) ' +
             'RETURN state.saveName AS saveName, state, collect(object) AS objects'
         ).then(result => {
-                const record = result.records[0];
-            if(record) {
-                const saveName = record.get('saveName');
-                const currentScene = record.get('state').properties.currentScene;
-                const objectsStates = record.get('objects').map(obj => obj.properties);
-
-                const debugState = new DebugState({
-                    saveName: saveName,
-                    currentScene: currentScene,
-                    objectStates: objectsStates,
-                })
-
-                if (debugState)
-                    return debugState;
-                else
-                    throw {message: 'state not found', status: 404};
+            if (!_.isEmpty(result.records)) {
+                return multipleSaves(result);
+            } else {
+                throw {message: "gameID not found", status: 404}
             }
-        })
+        });
     }
+}
+
+function multipleSaves(result) {
+    return result.records.map(record => buildSave(record));
+}
+
+function buildSave(record) {
+
+    if (record !== undefined) {
+        const saveName = record.get('saveName');
+        const currentScene = record.get('state').properties.currentScene;
+        const objectsStates = record.get('objects').map(obj => obj.properties);
+
+        const debugState = new DebugState({
+            saveName: saveName,
+            currentScene: currentScene,
+            objectStates: objectsStates,
+        })
+
+        if (debugState)
+            return debugState;
+    } else
+        return null;
 }
 
 module.exports = {

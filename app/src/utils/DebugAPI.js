@@ -2,6 +2,7 @@ import settings from './settings'
 import Immutable from 'immutable';
 import Actions from "../actions/Actions";
 import EditorState from "../data/EditorState";
+
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -17,7 +18,46 @@ function loadDebugState(saveName, flag) {
                 return console.error(err);
             }
 
-            if (response.body && response.body !== []) {
+            console.log(response.body);
+            if (flag === "loadSave") {
+                if (response.body && response.body !== []) {
+                    response.body.objectStates.map((rec) => {
+                        let s = Immutable.Record({
+                            uuid: rec.uuid,
+                            state: rec.state,
+                        });
+                    });
+
+                    let arr = response.body.objectStates.reduce(function (map, obj) {
+                        map[obj.uuid] = Object({state: obj.state});
+                        return map;
+                    }, {});
+
+                    Actions.updateCurrentScene(response.body.currentScene);
+                    EditorState.debugRunState = arr;
+                }
+            } else {
+                if (EditorState.debugSaves === undefined) {
+                    EditorState.debugSaves = new Immutable.OrderedMap({
+                        currentScene: {
+                            currentScene: new Immutable.Set
+                        }
+                    });
+                }
+                let oldSaves = null;
+                let newSaves = null;
+
+                response.body.forEach(el => {
+                        oldSaves = EditorState.debugSaves[el.currentScene];
+                        newSaves = new Immutable.Set(oldSaves).add(el.saveName);
+                        EditorState.debugSaves[el.currentScene] = newSaves;
+                    }
+                );
+
+            }
+
+
+            /*if (response.body[0] && response.body[0] !== []) {
                 response.body.objectStates.map((rec) => {
                     let s = Immutable.Record({
                         uuid: rec.uuid,
@@ -45,14 +85,14 @@ function loadDebugState(saveName, flag) {
                     EditorState.debugSaves[response.body.currentScene] = newSaves;
                 }
 
-            }
+            }*/
 
         });
 }
 
 function saveDebugState(saveName, sceneUuid, objects) {
 
-    let map = objects.map((v,k) => Object({uuid:k,...v})).toArray();
+    let map = objects.map((v, k) => Object({uuid: k, ...v})).toArray();
 
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
         .set('Accept', 'application/json')
@@ -63,12 +103,13 @@ function saveDebugState(saveName, sceneUuid, objects) {
             objectStates: map,
         })
         .end(function (err, response) {
-        if (err) {
-            return console.error(err);
-        }});
+            if (err) {
+                return console.error(err);
+            }
+        });
 }
 
 export default {
-    loadDebugState : loadDebugState,
-    saveDebugState : saveDebugState
+    loadDebugState: loadDebugState,
+    saveDebugState: saveDebugState
 }
