@@ -15,7 +15,7 @@ class Curved extends Component
         let material = this.props.onDebugMode ? "opacity:0.3;visible:true;side:double" : "opacity:0; visible:false; side:double";
         return(
             <Entity material={material} geometry={"primitive: polyline; vertices: " + this.props.vertices}
-                    id={"curv" + this.props.object_uuid} selectable={'object_uuid:' + this.props.object_uuid}
+                    id={"curv" + this.props.object_uuid} selectable={'object_uuid:' + this.props.object_uuid + '; visible: ' + this.props.visible}
                     position={this.props.position} scale={scale}/>
         );
     }

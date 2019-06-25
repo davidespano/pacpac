@@ -17,7 +17,7 @@ function InputLoadForm(props){
                         </div>
                         <div className="modal-body modalOptions">
                             <div className="form-group">
-                                <label htmlFor="exampleInputEmail1">Seleziona caricamento</label>
+                                <label id="sceneId" htmlFor="exampleInputEmail1">Seleziona caricamento</label>
                                 <div>
                                     {listSceneSaves(props, props.sceneUuid)}
                                 </div>
@@ -47,7 +47,7 @@ function listSceneSaves(props, sceneUuid) {
                     <button className={"btn select-file-btn new-rule-btn"}
                             onClick={() => {
                                 if (window.confirm("Vuoi caricare questo salvataggio?")) {
-                                    DebugAPI.loadDebugState({saveName}, "loadSave");
+                                    DebugAPI.loadDebugState({saveName});
                                 }
                             }}
                     > {saveName}

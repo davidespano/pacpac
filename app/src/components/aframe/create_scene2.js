@@ -118,7 +118,7 @@ export default class VRScene extends React.Component {
                 }
             });
         });
-        console.log(runState)
+
         return runState;
     }
 
@@ -172,7 +172,7 @@ export default class VRScene extends React.Component {
                             pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
                             look-controls="false" wasd-controls="false">
                             <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
-                                    fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                                    fuse={false}   visible={!is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
                             <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
                                     fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
 
@@ -183,7 +183,6 @@ export default class VRScene extends React.Component {
 
     generateAssets2(){
         return this.currentLevel.map(sceneName => {
-            console.log(sceneName)
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
             this.state.runState[sceneName].background, this.state.runState)
         }).flat();

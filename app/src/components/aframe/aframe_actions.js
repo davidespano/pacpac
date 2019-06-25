@@ -161,6 +161,14 @@ function executeAction(VRScene, rule, action){
                 game_graph.scenes[actual_scene].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
             VRScene.setState({runState: runState, graph: game_graph});
             break;
+        case RuleActionTypes.VISIBLE:
+            runState[current_object.uuid].visibility='VISIBLE';
+            VRScene.setState({runState: runState, graph: game_graph});
+            break;
+        case RuleActionTypes.INVISIBLE:
+            runState[current_object.uuid].visibility='INVISIBLE';
+            VRScene.setState({runState: runState, graph: game_graph});
+            break;
         default:
             console.log('not yet implemented');
             console.log(action);

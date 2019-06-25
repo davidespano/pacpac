@@ -21,19 +21,31 @@ function createUpdateDebugState(session, debugState, gameID) {
         .then(() => debugState);
 }
 
+function getAllSaves(session, gameID) {
+    return session.run(
+        'MATCH (state:Debug:DebugState:`' + gameID + '`)-[:STORES_OBJECT]->(object:DebugObject) ' +
+        'RETURN state.saveName AS saveName, state, collect(object) AS objects'
+    ).then(result => {
+        if (!_.isEmpty(result.records)) {
+            return multipleSaves(result);
+        } else {
+            throw {message: "gameID not found", status: 404}
+        }
+    });
+}
+
 function getDebugState(session, gameID, saveName) {
     if (saveName !== undefined) {
         return session.run(
-            'MATCH (state:Debug:DebugState:`' + gameID + '`{saveName: $saveName})-[:STORES_OBJECT]->(object:DebugObject) ' +
-            'RETURN saveName, state, collect(object) AS objects', {saveName: saveName}
+            'MATCH (state:Debug:DebugState:`' + gameID + '`)-[:STORES_OBJECT]->(object:DebugObject) ' +
+            'WHERE state.saveName="'+ saveName +'" ' +
+            'RETURN state, collect(object) AS objects', {}
         ).then(result => {
             const record = result.records[0];
-            const saveName = record.get('saveName').properties.saveName;
             const currentScene = record.get('state').properties.currentScene;
             const objectsStates = record.get('objects').map(obj => obj.properties);
 
             const debugState = new DebugState({
-                saveName: saveName,
                 currentScene: currentScene,
                 objectStates: objectsStates,
             })
@@ -43,17 +55,6 @@ function getDebugState(session, gameID, saveName) {
             else
                 throw {message: 'state not found', status: 404};
         })
-    } else {
-        return session.run(
-            'MATCH (state:Debug:DebugState:`' + gameID + '`)-[:STORES_OBJECT]->(object:DebugObject) ' +
-            'RETURN state.saveName AS saveName, state, collect(object) AS objects'
-        ).then(result => {
-            if (!_.isEmpty(result.records)) {
-                return multipleSaves(result);
-            } else {
-                throw {message: "gameID not found", status: 404}
-            }
-        });
     }
 }
 
@@ -83,4 +84,5 @@ function buildSave(record) {
 module.exports = {
     createUpdateDebugState: createUpdateDebugState,
     getDebugState: getDebugState,
+    getAllSaves: getAllSaves,
 }
