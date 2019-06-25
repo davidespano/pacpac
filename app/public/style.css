@@ -1683,4 +1683,28 @@ h6 {
     position: relative;
 }
 
+.saves-list {
+    width: auto;
+    font-size: 13px;
+    padding: 4%;
+    margin-top: 3%;
+    margin-left: -13%;
+    margin-right: -13%;
+    text-align: center;
+    cursor: pointer;
+}
+
+.saves-list:hover {
+    color: #EF562D;
+}
+
+.load-button {
+    visibility: hidden;
+    float: right;
+    margin-right: -42%;
+    height: 20px;
+    width: 57px;
+    font-size: 12px;
+}
+
 /********* END debug css ************/

@@ -268,8 +268,6 @@ function valueUuidToString(valueUuid){
 
 }
 
-
-//TODO [debug] add to origin master
 function setClassStyle(classHighlight, style) {
     //console.log("CLASS " + classHighlight + "STYLE " + style);
     [...document.querySelectorAll(classHighlight)].forEach(function (item) {
@@ -277,7 +275,6 @@ function setClassStyle(classHighlight, style) {
     })
 }
 
-//TODO [debug] add to origin master
 function setIdStyle(classHighlight, idHighlight, style) {
     setClassStyle(".".concat(classHighlight), style.substring(0, style.indexOf(" ")).concat(" ;"));
     let el = document.getElementById(classHighlight+idHighlight);
@@ -285,7 +282,6 @@ function setIdStyle(classHighlight, idHighlight, style) {
         el.style = style;
 }
 
-//TODO [debug] add to origin master
 function highlightRule(props, obj) {
     let scene = props.scenes.get(props.currentScene);
     setClassStyle(".eudRule", "background: ");

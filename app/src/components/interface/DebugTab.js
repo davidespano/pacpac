@@ -365,9 +365,11 @@ function handleClickOutside(props) {
 
         // This is a click outside.
         interface_utils.setClassStyle(".player-obj, .obj-name", "color: ");
-        if (classTarget !== "select-file-btn btn" && classTarget !== "a-canvas a-grab-cursor" && classTarget !== "action-buttons btn-img") {
+        if (classTarget !== "select-file-btn btn" && classTarget !== "a-canvas a-grab-cursor" && classTarget !== "action-buttons btn-img" && classTarget !== "saves-list") {
             interface_utils.setClassStyle(".eudRule", "background: ");
             interface_utils.setClassStyle(".btnNext", "visibility: hidden");
+            interface_utils.setClassStyle(".saves-list", "margin-right: -10%");
+            interface_utils.setClassStyle(".load-button", "visibility: hidden");
         }
 
     });
