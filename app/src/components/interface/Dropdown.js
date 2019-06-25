@@ -1,11 +1,12 @@
 import React from 'react';
 import Select from "react-select";
 import Values from "../../interactives/rules/Values";
-import interface_utils from "./interface_utils";
 import scene_utils from "../../scene/scene_utils";
 import EditorState from "../../data/EditorState";
 import ActionTypes from "../../actions/ActionTypes";
 import Actions from "../../actions/Actions"
+import toString from "../../interactives/rules/toString";
+import interface_utils from "./interface_utils";
 
 function Dropdown(properties){
     let props = properties.props,
@@ -33,8 +34,8 @@ function generateOptions(props, component, property){
         case 'scene-type':
             return [
                 [
-                    { value: Values.THREE_DIM, label: interface_utils.valueUuidToString(Values.THREE_DIM)},
-                    { value: Values.TWO_DIM, label: interface_utils.valueUuidToString(Values.TWO_DIM)},
+                    { value: Values.THREE_DIM, label: toString.valueUuidToString(Values.THREE_DIM)},
+                    { value: Values.TWO_DIM, label: toString.valueUuidToString(Values.TWO_DIM)},
                 ],
                 (e) => {
                     let scene = props.scenes.get(props.currentScene);
@@ -45,8 +46,8 @@ function generateOptions(props, component, property){
         case 'visibility':
             return [
                 [
-                    { value: Values.VISIBLE, label: interface_utils.valueUuidToString(Values.VISIBLE)},
-                    { value: Values.INVISIBLE, label: interface_utils.valueUuidToString(Values.INVISIBLE)},
+                    { value: Values.VISIBLE, label: toString.valueUuidToString(Values.VISIBLE)},
+                    { value: Values.INVISIBLE, label: toString.valueUuidToString(Values.INVISIBLE)},
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
@@ -57,8 +58,8 @@ function generateOptions(props, component, property){
         case 'on-off':
             return [
                 [
-                    { value: Values.ON, label: interface_utils.valueUuidToString(Values.ON)},
-                    { value: Values.OFF, label: interface_utils.valueUuidToString(Values.OFF)},
+                    { value: Values.ON, label: toString.valueUuidToString(Values.ON)},
+                    { value: Values.OFF, label: toString.valueUuidToString(Values.OFF)},
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
@@ -84,8 +85,8 @@ function generateOptions(props, component, property){
         case 'collected-not':
             return [
                 [
-                    { value: Values.COLLECTED, label: interface_utils.valueUuidToString(Values.COLLECTED)},
-                    { value: Values.NOT_COLLECTED, label: interface_utils.valueUuidToString(Values.NOT_COLLECTED)},
+                    { value: Values.COLLECTED, label: toString.valueUuidToString(Values.COLLECTED)},
+                    { value: Values.NOT_COLLECTED, label: toString.valueUuidToString(Values.NOT_COLLECTED)},
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
@@ -147,7 +148,7 @@ function getDefaultValue(props, defaultValue, component){
             case 'music':
                 label = props.audios.get(defaultValue).name; break;
             default:
-                label = interface_utils.valueUuidToString(defaultValue);
+                label = toString.valueUuidToString(defaultValue);
             }
     }
 

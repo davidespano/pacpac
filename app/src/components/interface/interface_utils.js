@@ -234,40 +234,6 @@ function keypadProperties(length, name){
     return property;
 }
 
-
-/**
- * returns string according to the given value
- * @param valueUuid
- * @returns {string}
- */
-function valueUuidToString(valueUuid){
-    switch(valueUuid){
-        case Values.VISIBLE:
-            return 'visibile';
-        case Values.INVISIBLE:
-            return 'invisibile';
-        case Values.ON:
-            return 'acceso';
-        case Values.OFF:
-            return 'spento';
-        case Values.LOCKED:
-            return 'chiuso';
-        case Values.UNLOCKED:
-            return 'aperto';
-        case Values.COLLECTED:
-            return 'raccolto';
-        case Values.NOT_COLLECTED:
-            return 'non raccolto';
-        case Values.THREE_DIM:
-            return '3D';
-        case Values.TWO_DIM:
-            return '2D';
-        default:
-            return 'stato sconosciuto';
-    }
-
-}
-
 function setClassStyle(classHighlight, style) {
     //console.log("CLASS " + classHighlight + "STYLE " + style);
     [...document.querySelectorAll(classHighlight)].forEach(function (item) {
@@ -322,7 +288,6 @@ export default {
     checkSelection: checkSelection,
     handleFileUpdate: handleFileUpdate,
     resetFields: resetFields,
-    valueUuidToString: valueUuidToString,
     audioSelection: audioSelection,
     changeKeypadSize: changeKeypadSize,
     setClassStyle: setClassStyle,
