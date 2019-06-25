@@ -36,8 +36,7 @@ export default class VRScene extends React.Component {
         };
         console.log(props)
         console.log(this.props.scenes.toArray()[0])
-        //if(document.querySelector('link[href*="bootstrap"]'))
-            document.querySelector('link[href*="bootstrap"]').remove();
+        document.querySelector('link[href*="bootstrap"]').remove();
     }
 
     componentDidMount() {
@@ -114,9 +113,12 @@ export default class VRScene extends React.Component {
             runState[scene.uuid] = {background: scene.img};
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
-                runState[obj.uuid] = {state: obj.properties.state}
+                runState[obj.uuid] = {state: obj.properties.state,
+                                      visible: obj.visible
+                }
             });
         });
+        console.log(runState)
         return runState;
     }
 
