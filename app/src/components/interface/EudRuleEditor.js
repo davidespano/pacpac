@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import RuleActionTypes from "../../interactives/rules/RuleActionTypes"
+import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObject from "../../interactives/InteractiveObject"
 import Immutable from "immutable";
@@ -990,12 +990,12 @@ function getCompletions(props) {
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
             if (props.verb.action) {
-                let objType = RulesActionMap.get(props.verb.action).obj_type;
+                let objType = RuleActionMap.get(props.verb.action).obj_type;
                 allObjects = allObjects.filter(x => objType.includes(x.type));
             }
             return allObjects;
         case "operation":
-            return props.subject ? RulesActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RulesActionMap;
+            return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
         case "operator":
             return OperatorsMap;
         case 'value':
@@ -1020,7 +1020,7 @@ function filterValues(subject, verb) {
 
 function eventTypeToString(eventType) {
     switch (eventType) {
-        case  RuleActionTypes.CLICK:
+        case RuleActionTypes.CLICK:
             return "clicca";
         case RuleActionTypes.COLLECT_KEY:
             return "raccoglie";
@@ -1034,8 +1034,6 @@ function eventTypeToString(eventType) {
             return 'accende';
         case RuleActionTypes.OFF:
             return 'spegne';
-        case RuleActionTypes.FLIP_SWITCH:
-            return 'preme';
         case RuleActionTypes.CHANGE_STATE:
             return 'cambia stato a';
         case RuleActionTypes.CHANGE_VISIBILITY:
@@ -1288,7 +1286,7 @@ const OperatorsMap = Immutable.Map([
 
 ]);
 
-const RulesActionMap = Immutable.Map([
+const RuleActionMap = Immutable.Map([
     [
         RuleActionTypes.CLICK,
         {
@@ -1355,16 +1353,6 @@ const RulesActionMap = Immutable.Map([
         }
     ],
     [
-        RuleActionTypes.FLIP_SWITCH,
-        {
-            type: "operation",
-            subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: [InteractiveObjectsTypes.SWITCH],
-            name: eventTypeToString(RuleActionTypes.FLIP_SWITCH),
-            uuid: RuleActionTypes.FLIP_SWITCH
-        }
-    ],
-    [
         RuleActionTypes.CHANGE_BACKGROUND,
         {
             type: "operation",
@@ -1404,3 +1392,4 @@ const RulesActionMap = Immutable.Map([
         },
     ],
 ]);
+
