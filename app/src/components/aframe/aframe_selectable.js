@@ -11,12 +11,12 @@ const eventBus = require('./eventBus');
 AFRAME.registerComponent('selectable', {
     schema: {
         object_uuid:{type: 'string'},
-        visible: {type: 'boolean', default: true}
+        visible: {type: 'string', default: 'VISIBLE'}
     },
 
     init: function () {
         let elem = this.el;
-        if(this.data.visible){
+        if(this.data.visible === 'VISIBLE'){
             elem.addEventListener('mouseenter', setMouseEnter);
             elem.addEventListener('mouseleave', setMouseLeave);
             elem.addEventListener('click', setClick);
@@ -26,10 +26,14 @@ AFRAME.registerComponent('selectable', {
 
     update: function (data) {
         let elem = this.el;
-        if(this.data.visible){
+        if(this.data.visible === 'VISIBLE'){
             elem.addEventListener('mouseenter', setMouseEnter);
             elem.addEventListener('mouseleave', setMouseLeave);
             elem.addEventListener('click', setClick);
+        } else {
+            elem.removeEventListener('mouseenter', setMouseEnter);
+            elem.removeEventListener('mouseleave', setMouseLeave);
+            elem.removeEventListener('click', setClick);
         }
         if(this.data.object_uuid!==""){
             elem['object_uuid'] = this.data.object_uuid;

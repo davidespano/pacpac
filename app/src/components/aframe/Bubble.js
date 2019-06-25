@@ -110,7 +110,7 @@ export default class Bubble extends Component
                 //TODO [debug] add to origin master
                 return(
                     <Curved key={"keyC"+ curve.uuid} onDebugMode={this.props.onDebugMode} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
-                            is3Dscene={is3Dscene} vertices={curve.vertices}/>
+                            is3Dscene={is3Dscene} vertices={curve.vertices} visible={this.props.runState[curve.uuid].visible}/>
                 );
             }
 
