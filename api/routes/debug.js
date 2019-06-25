@@ -86,9 +86,18 @@ function putDebugState(req, res, next) {
  */
 function getDebugState(req, res, next){
     const gameID = req.params.gameID;
-    const saveName = req.body.saveName;
+    const saveName = req.params.saveName;
 
     Debug.getDebugState(dbUtils.getSession(req), gameID, saveName)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
+
+function getAllSaves(req, res, next) {
+    const gameID = req.params.gameID;
+
+    Debug.getAllSaves(dbUtils.getSession(req), gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
@@ -96,4 +105,5 @@ function getDebugState(req, res, next){
 module.exports = {
     putDebugState: putDebugState,
     getDebugState: getDebugState,
+    getAllSaves: getAllSaves,
 };

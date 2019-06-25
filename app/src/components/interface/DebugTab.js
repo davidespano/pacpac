@@ -14,7 +14,7 @@ function DebugTab(props) {
 
     handleClickOutside(props);
 
-    DebugAPI.loadDebugState(null, "getAllSaves");
+    DebugAPI.getAllSaves();
 
     return (
         <div className={'rightbar'}>

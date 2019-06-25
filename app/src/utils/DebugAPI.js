@@ -9,15 +9,13 @@ const request = require('superagent');
 
 const {apiBaseURL} = settings;
 
-function loadDebugState(saveName, flag) {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
+function loadDebugState(saveName) {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`)
         .set('Accept', 'application/json')
-        .send(saveName)
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
             }
-            if (flag === "loadSave") {
                 if (response.body && response.body !== []) {
                     response.body.objectStates.map((rec) => {
                         let s = Immutable.Record({
@@ -34,57 +32,6 @@ function loadDebugState(saveName, flag) {
                     Actions.updateCurrentScene(response.body.currentScene);
                     EditorState.debugRunState = arr;
                 }
-            } else {
-                if (EditorState.debugSaves === undefined) {
-                    EditorState.debugSaves = new Immutable.OrderedMap({
-                            currentScene: new Immutable.Set
-
-                    });
-                }
-                let oldSaves = null;
-                let newSaves = null;
-
-                if (response.body && response.body !== []) {
-                    response.body.forEach(el => {
-                            oldSaves = EditorState.debugSaves[el.currentScene];
-                            newSaves = new Immutable.Set(oldSaves).add(el.saveName);
-                            EditorState.debugSaves[el.currentScene] = newSaves;
-                        }
-                    );
-                }
-
-            }
-
-
-            /*if (response.body[0] && response.body[0] !== []) {
-                response.body.objectStates.map((rec) => {
-                    let s = Immutable.Record({
-                        uuid: rec.uuid,
-                        state: rec.state,
-                    });
-                });
-
-                let arr = response.body.objectStates.reduce(function (map, obj) {
-                    map[obj.uuid] = Object({state: obj.state});
-                    return map;
-                }, {});
-
-                if(flag === "loadSave") {
-                    Actions.updateCurrentScene(response.body.currentScene);
-                    EditorState.debugRunState = arr;
-                } else if (flag === "getAllSaves") {
-                    if(EditorState.debugSaves === undefined) {
-                        EditorState.debugSaves = new Immutable.OrderedMap({ currentScene : {
-                            currentScene: new Immutable.Set
-                        }});
-                    }
-                    console.log(EditorState.debugSaves);
-                    let oldSaves = EditorState.debugSaves[response.body.currentScene];
-                    let newSaves = new Immutable.Set(oldSaves).add(response.body.saveName);
-                    EditorState.debugSaves[response.body.currentScene] = newSaves;
-                }
-
-            }*/
 
         });
 }
@@ -108,7 +55,37 @@ function saveDebugState(saveName, sceneUuid, objects) {
         });
 }
 
+function getAllSaves() {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
+        .set('Accept', 'application/json')
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+                if (EditorState.debugSaves === undefined) {
+                    EditorState.debugSaves = new Immutable.OrderedMap({
+                        currentScene: new Immutable.Set
+
+                    });
+                }
+                let oldSaves = null;
+                let newSaves = null;
+
+                if (response.body && response.body !== []) {
+                    response.body.forEach(el => {
+                            oldSaves = EditorState.debugSaves[el.currentScene];
+                            newSaves = new Immutable.Set(oldSaves).add(el.saveName);
+                            EditorState.debugSaves[el.currentScene] = newSaves;
+                        }
+                    );
+                }
+
+
+        });
+}
+
 export default {
     loadDebugState: loadDebugState,
-    saveDebugState: saveDebugState
+    saveDebugState: saveDebugState,
+    getAllSaves: getAllSaves,
 }
