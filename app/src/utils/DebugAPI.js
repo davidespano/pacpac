@@ -44,12 +44,15 @@ function loadDebugState(saveName, flag) {
                 let oldSaves = null;
                 let newSaves = null;
 
-                response.body.forEach(el => {
-                        oldSaves = EditorState.debugSaves[el.currentScene];
-                        newSaves = new Immutable.Set(oldSaves).add(el.saveName);
-                        EditorState.debugSaves[el.currentScene] = newSaves;
-                    }
-                );
+                if (response.body && response.body !== []) {
+                    response.body.forEach(el => {
+                            oldSaves = EditorState.debugSaves[el.currentScene];
+                            newSaves = new Immutable.Set(oldSaves).add(el.saveName);
+                            EditorState.debugSaves[el.currentScene] = newSaves;
+                        }
+                    );
+                }
+
             }
 
 
