@@ -36,27 +36,26 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-        console.log(child.name);
-
-
-        return (
-            <div>
-                <div key={child.name} className={'node_element'}>
-                    <h6>Salvataggi: {child.name}</h6>
-                    <img
-                        src={src}
-                        className={'list-saves-img'}
-                        alt={child.name}
-                        title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
-                        style={s}
-                    />
-                    <div>
-                        {listSceneSaves(props, child.uuid)}
+        if(EditorState.debugSaves[child.uuid] !== undefined) {
+            return (
+                <div>
+                    <div key={child.name} className={'node_element'}>
+                        <h6>Salvataggi: {child.name}</h6>
+                        <img
+                            src={src}
+                            className={'list-saves-img'}
+                            alt={child.name}
+                            title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
+                            style={s}
+                        />
+                        <div>
+                            {listSceneSaves(props, child.uuid)}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-    );
+            );
+        }
     }));
 }
 
@@ -82,7 +81,7 @@ function listSceneSaves(props, sceneUuid) {
 
                     <button id={"load-button" + saveName} className={"select-file-btn btn load-button"} onClick={() => {
                         if (window.confirm("Vuoi caricare questo salvataggio?")) {
-                            DebugAPI.loadDebugState({saveName});
+                            DebugAPI.loadDebugState(saveName);
                         }
                     }}>
                         Carica
