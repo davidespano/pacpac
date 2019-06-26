@@ -36,7 +36,7 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-        if(EditorState.debugSaves[child.uuid] !== undefined) {
+        if(EditorState.debugSaves !== undefined && EditorState.debugSaves[child.uuid] !== undefined) {
             return (
                 <div>
                     <div key={child.name} className={'node_element'}>
