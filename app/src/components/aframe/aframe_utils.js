@@ -107,10 +107,9 @@ function generateCurrentAsset(obj, runState){
         case InteractiveObjectsTypes.SWITCH:
             let i;
             if(runState.length === 0){
-                i = (obj.properties.state === "OFF")?0:1;
+                i = (obj.properties.state !== "OFF")?0:1;
             } else {
-                console.log(runState)
-                i = (runState[obj.uuid].state === "OFF")?0:1;
+                i = (runState[obj.uuid].state !== "OFF")?0:1;
             }
 
             if(obj.media["media"+i] !== null){

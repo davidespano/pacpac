@@ -8,6 +8,7 @@ import Values from '../../interactives/rules/Values';
 const THREE = require('three');
 const {mediaURL} = settings;
 const soundsHub = require('./soundsHub');
+const AFRAME = require('aframe');
 
 function executeAction(VRScene, rule, action){
     let state = VRScene.state;
@@ -25,7 +26,6 @@ function executeAction(VRScene, rule, action){
 
         }
     });
-
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -39,8 +39,9 @@ function executeAction(VRScene, rule, action){
                     objectVideo_transition.play();
                     duration_transition = (objectVideo_transition.duration * 1000);
                 }
-            }
+            }console.log('sono una transizione')
             setTimeout(function () {
+
                 if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
                     (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
                 // se le due scene sono dello stesso tipo le gestisco allo stesso modo
@@ -52,14 +53,16 @@ function executeAction(VRScene, rule, action){
             },duration_transition);
 
             break;
-        case RuleActionTypes.FLIP_SWITCH:
+        case RuleActionTypes.CHANGE_STATE:
             let duration_switch = 0;
             let switchVideo = document.getElementById('media_'+current_object.uuid);
-
+            console.log(switchVideo)
             if(switchVideo != null) {
                 cursor.setAttribute('material', 'visible: false');
                 cursor.setAttribute('raycaster', 'far: 0.1');
-                if(store_utils.getFileType(current_object.img) === 'video') switchVideo.play();
+
+                let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1
+                if(store_utils.getFileType(videoType) === 'video') switchVideo.play();
                 duration_switch = (switchVideo.duration * 1000);
             }
             setTimeout(function () {
@@ -67,11 +70,7 @@ function executeAction(VRScene, rule, action){
                 cursor.setAttribute('material', 'visible: true');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                 cursor.setAttribute('color', 'black');
-                if(runState[current_object.uuid].state === "OFF")
-                    runState[current_object.uuid].state = "ON";
-                else
-                    runState[current_object.uuid].state = "OFF";
-
+                runState[current_object.uuid].state = action.obj_uuid;
                 VRScene.setState({runState: runState});
             },duration_switch);
 
@@ -161,12 +160,12 @@ function executeAction(VRScene, rule, action){
                 game_graph.scenes[actual_scene].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
             VRScene.setState({runState: runState, graph: game_graph});
             break;
-        case RuleActionTypes.VISIBLE:
-            runState[current_object.uuid].visibility='VISIBLE';
-            VRScene.setState({runState: runState, graph: game_graph});
-            break;
-        case RuleActionTypes.INVISIBLE:
-            runState[current_object.uuid].visibility='INVISIBLE';
+        case RuleActionTypes.CHANGE_VISIBILITY:
+            let obj = document.querySelector('#curv' + action.subj_uuid)
+            console.log(obj)
+            obj.setAttribute('selectable', {visible: action.obj_uuid})
+            //console.log(action.obj_uuid)
+            runState[action.subj_uuid].visibility=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         default:

@@ -158,8 +158,7 @@ export default class VRScene extends React.Component {
         }
         else
             this.currentLevel = [];
-
-        let assets = this.generateAssets2();
+        let assets = this.generateAssets();
         let is3dScene = this.state.activeScene.type===Values.THREE_DIM;
         return (
                 <Scene stats background="color: black" >
@@ -172,7 +171,7 @@ export default class VRScene extends React.Component {
                             pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
                             look-controls="false" wasd-controls="false">
                             <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
-                                    fuse={false}   visible={!is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                                    fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
                             <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
                                     fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
 
@@ -181,7 +180,7 @@ export default class VRScene extends React.Component {
         )
     }
 
-    generateAssets2(){
+    generateAssets(){
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
             this.state.runState[sceneName].background, this.state.runState)

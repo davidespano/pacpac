@@ -21,16 +21,21 @@ AFRAME.registerComponent('selectable', {
             elem.addEventListener('mouseleave', setMouseLeave);
             elem.addEventListener('click', setClick);
         }
-
     },
 
     update: function (data) {
         let elem = this.el;
+
+
         if(this.data.visible === 'VISIBLE'){
+            //console.log('ciao')
+            //console.log(this.data.visible)
+            //console.log(this.data.object_uuid)
             elem.addEventListener('mouseenter', setMouseEnter);
             elem.addEventListener('mouseleave', setMouseLeave);
             elem.addEventListener('click', setClick);
         } else {
+            //console.log('ciao')
             elem.removeEventListener('mouseenter', setMouseEnter);
             elem.removeEventListener('mouseleave', setMouseLeave);
             elem.removeEventListener('click', setClick);
@@ -41,6 +46,13 @@ AFRAME.registerComponent('selectable', {
         }else {
             elem.removeAttribute('data-raycastable');
         }
+    },
+
+    remove: function () {
+        let elem = this.el;
+        elem.removeEventListener('mouseenter', setMouseEnter);
+        elem.removeEventListener('mouseleave', setMouseLeave);
+        elem.removeEventListener('click', setClick);
     }
 });
 

@@ -15,8 +15,6 @@ const RuleActionTypes = {
     STOP_AUDIO: 'STOP_AUDIO',
     TRANSITION : 'TRANSITION',
     UNLOCK_LOCK: 'UNLOCK_LOCK',
-    VISIBLE: 'VISIBLE',
-    INVISIBLE: 'INVISIBLE'
 };
 
 export default RuleActionTypes;

@@ -101,7 +101,6 @@ export default class Bubble extends Component
 
 
         const curves = Object.values(scene.objects).flat().map(curve => {
-            console.log(curve)
             if(this.props.editMode){
                 return(
                     <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid} is3Dscene={is3Dscene}/>
