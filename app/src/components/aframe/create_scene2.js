@@ -34,8 +34,8 @@ export default class VRScene extends React.Component {
             camera: {},
             resonanceAudioScene: {}
         };
-        console.log(props)
-        console.log(this.props.scenes.toArray()[0])
+        //console.log(props)
+        //console.log(this.props.scenes.toArray()[0])
         document.querySelector('link[href*="bootstrap"]').remove();
     }
 

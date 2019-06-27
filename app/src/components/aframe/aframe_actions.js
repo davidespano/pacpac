@@ -162,10 +162,9 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.CHANGE_VISIBILITY:
             let obj = document.querySelector('#curv' + action.subj_uuid)
-            console.log(obj)
+
             obj.setAttribute('selectable', {visible: action.obj_uuid})
-            //console.log(action.obj_uuid)
-            runState[action.subj_uuid].visibility=action.obj_uuid;
+            runState[action.subj_uuid].visible=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         default:
