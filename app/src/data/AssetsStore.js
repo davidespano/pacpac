@@ -35,6 +35,7 @@ class AssetsStore extends ReduceStore {
                         state = state.set(asset.uuid, asset);
                     })
                 }
+                console.log(state)
                 return state;
             case ActionTypes.RESET:
                 return Immutable.Map();

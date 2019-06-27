@@ -8,6 +8,7 @@ import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 import AudioAPI from "../utils/AudioAPI";
 import StoryAPI from '../utils/StoryAPI';
 import Values from "../interactives/rules/Values";
+import ObjectsStore from "../data/ObjectsStore";
 
 const Actions = {
 
@@ -325,6 +326,7 @@ const Actions = {
             scene: scene,
             order: order,
             objectsToScene: ObjectToSceneStore.getState(),
+            objects: ObjectsStore.getState(),
         });
     },
 
@@ -336,6 +338,7 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
             uuid: uuid,
+            objects: ObjectsStore.getState(),
             objectsToScene: ObjectToSceneStore.getState(),
             scene: ScenesStore.getState().get(uuid),
         });

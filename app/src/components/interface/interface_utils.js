@@ -1,6 +1,11 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import scene_utils from "../../scene/scene_utils";
 import Values from "../../interactives/rules/Values";
+import CentralSceneStore from "../../data/CentralSceneStore";
+import ScenesStore from "../../data/ScenesStore";
+import AssetsStore from "../../data/AssetsStore";
+
+
 /**
  * Updates object property with the given value, returns new object
  * @param object
@@ -73,17 +78,18 @@ function setPropertyFromId(object, property, id, props){
  * Generates approximative 2d centroid for the interaction area starting from the given vertices.
  * @param vertices is a string that contains all of the vertices values
  * @param scene_type
+ * @param props
  * @param radius of the sphere
- * @returns [longitude, latitude]
+ * @returns [float, float]
  * This function returns latitude and longitude because they are fixed values that can be easily stored in
  * CentroidsStore. x and y must be calculated later, since the size of central image is variable.
  */
-function calculateCentroid(vertices, scene_type = Values.THREE_DIM, radius = 9.5) {
+function calculateCentroid(vertices, scene_type = Values.THREE_DIM, props, radius = 9.5) {
 
     vertices = vertices.split(',').join(" "); //replace commas with whitespaces
     let coordinates = vertices.split(" ").map(x => parseFloat(x));
     let medianPoint = [0.0, 0.0, 0.0];
-    let x,y;
+    let x = 0, y = 0;
 
     for (let i = 0; i < coordinates.length; i += 3) {
         medianPoint[0] += coordinates[i];
@@ -116,6 +122,13 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, radius = 9.5
         x = (180 - lon) * 100 / 360;
         y = (180 - lat) * 100 / 360;
     } else {
+        if(CentralSceneStore.getState() != null){
+            let scene = ScenesStore.getState().get(CentralSceneStore.getState());
+            let asset = AssetsStore.getState().get(scene.img)
+            console.log(asset)
+            x = (asset.width /2 + x) * 100 / asset.width;
+            y = (asset.height /2 + y) * 100 / asset.height;
+        }
         /*
         if(document.getElementById('central-scene')){
             let width = document.getElementById('central-scene').offsetWidth;
@@ -124,6 +137,8 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, radius = 9.5
         }
         */
     }
+
+    console.log(x, y)
 
     return [x, y];
 }
