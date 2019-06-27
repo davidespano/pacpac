@@ -131,7 +131,10 @@ export default class DebugVRScene extends React.Component {
             runState[scene.uuid] = {background: scene.img};
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
-                runState[obj.uuid] = {state: obj.properties.state}
+                runState[obj.uuid] = {
+                    state: obj.properties.state,
+                    visible: obj.visible
+                }
             });
         });
         return runState;
@@ -149,24 +152,21 @@ export default class DebugVRScene extends React.Component {
 
     }
 
-    cameraChangeMode(is3Dscene) {
+    cameraChangeMode(is3Dscene){
         let camera = document.getElementById('camera');
-        let cursor = document.getElementById('cursor');
-        let rayCastOrigin = is3Dscene ? 'cursor' : 'mouse';
-        //TODO il controlli per il cambio camera vanno nella transizione
-        //TODO verificare questo controllo, forse è fatto un po' a cazzo
-        if (camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene) {
+        let cursorMouse = document.getElementById('cursorMouse');
+        let cursorEnity = document.getElementById('cursor');
+        if(is3Dscene){
             camera.setAttribute("pac-look-controls", "planarScene: " + !is3Dscene);
             camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + is3Dscene);
-            cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
+            cursorMouse.setAttribute('raycaster', 'enabled: false');
+            cursorEnity.setAttribute('raycaster', 'enabled: true');
             document.querySelector('canvas').requestPointerLock();
-            this.forceUpdate()
         } else {
             camera.setAttribute("pac-look-controls", "planarScene: " + is3Dscene);
             camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + !is3Dscene);
-            cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
-            document.querySelector('canvas').requestPointerLock()
-            this.forceUpdate()
+            cursorMouse.setAttribute('raycaster', 'enabled: true');
+            cursorEnity.setAttribute('raycaster', 'enabled: false');
         }
 
     }
@@ -184,47 +184,26 @@ export default class DebugVRScene extends React.Component {
 
         let assets = this.generateAssets2();
         let is3dScene = this.props.scenes.get(this.props.currentScene).type === Values.THREE_DIM;
-        let rayCastOrigin = is3dScene ? 'cursor' : 'mouse';
 
-        if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-            return (
-                <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
-                    <a-assets>
-                        {assets}
-                    </a-assets>
-                    {this.generateBubbles()}
+        return (
+            <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
+                <a-assets>
+                    {assets}
+                </a-assets>
+                {this.generateBubbles()}
 
-                    <Entity primitive="a-camera" key="keycamera" id="camera"
-                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
-                            look-controls="false" wasd-controls="false">
-                        <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
-                                    fuse={false} visible={is3dScene} raycaster="objects: [data-raycastable];"/>
-                        </Entity>
+                <Entity primitive="a-camera" key="keycamera" id="camera"
+                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
+                        look-controls="false" wasd-controls="false">
+                    <Entity mouse-cursor>
+                        <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
+                                fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                        <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
+                                fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
                     </Entity>
-                </a-scene>
-            )
-        } else {
-            return (
-                <Scene stats background="color: black">
-                    <a-assets>
-                        {assets}
-                    </a-assets>
-                    {this.generateBubbles()}
-
-                    <Entity primitive="a-camera" key="keycamera" id="camera"
-                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
-                            look-controls="false" wasd-controls="false">
-                        <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
-                                    fuse={false} visible={is3dScene} raycaster="objects: [data-raycastable];"/>
-                        </Entity>
-
-
-                    </Entity>
-                </Scene>
-            )
-        }
+                </Entity>
+            </a-scene>
+        )
 
     }
 
