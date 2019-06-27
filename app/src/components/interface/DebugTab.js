@@ -14,8 +14,6 @@ function DebugTab(props) {
 
     handleClickOutside(props);
 
-    DebugAPI.getAllSaves();
-
     return (
         <div className={'rightbar'}>
             <div id={'rbContainer'}>

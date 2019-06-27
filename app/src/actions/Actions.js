@@ -57,6 +57,13 @@ const Actions = {
         })
     },
 
+    debugSaves(response){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DEBUG_SAVES,
+            response: response,
+        })
+    },
+
     loginModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.LOGIN_MODE_ON

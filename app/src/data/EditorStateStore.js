@@ -2,6 +2,7 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import EditorState from "./EditorState";
+import Immutable from "immutable";
 
 class EditorStateStore extends ReduceStore {
 
@@ -55,6 +56,24 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.PLAY_MODE_ON);
             case ActionTypes.DEBUG_MODE_ON:
                 return state.set('mode', ActionTypes.DEBUG_MODE_ON);
+            case ActionTypes.DEBUG_SAVES:
+                let oldSaves = null;
+                let newSaves = null;
+                let c = 0; //counter
+
+                action.response.body.forEach(el => {
+                        oldSaves = EditorState.debugSaves[el.currentScene];
+
+                        if(oldSaves !== null) {
+                            newSaves = new Immutable.Set(oldSaves).add(el.saveName);
+
+                            //state = state.set(el.currentScene, newSaves)
+                            EditorState.debugSaves[el.currentScene] = newSaves;
+                        }
+                        console.log(c++);
+                    }
+                );
+                return state.set('debugSaves', action.response);
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
                 state = state.set('selectedSceneSpatialAudio', action.scene.uuid);

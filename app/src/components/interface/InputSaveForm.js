@@ -60,7 +60,7 @@ function saveForm(props) {
 
         console.log(EditorState.debugFromScene + " " + props.currentScene);
         DebugAPI.saveDebugState(name, EditorState.debugFromScene === undefined ? props.currentScene : EditorState.debugFromScene, objStateMap);
-        DebugAPI.getAllSaves();
+        //DebugAPI.getAllSaves();
     } else {
         alert("Salvataggio già presente");
     }

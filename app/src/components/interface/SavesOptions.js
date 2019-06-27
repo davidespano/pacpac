@@ -12,6 +12,8 @@ const {mediaURL} = settings;
 function SavesOptions(props) {
     let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
 
+    DebugAPI.getAllSaves();
+
     return (
         <div>
             {listSaves(props, path)}
