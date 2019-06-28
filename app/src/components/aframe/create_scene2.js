@@ -233,7 +233,7 @@ export default class VRScene extends React.Component {
         //console.log(this.state.activeScene)
         //TODO add src from buble media
         //audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
-        audioElement.src = audios.url;
+        //audioElement.src = audios.url;
         audioElement.crossOrigin = 'anonymous';
         audioElement.load();
         audioElement.loop = true;
