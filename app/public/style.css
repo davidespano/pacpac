@@ -419,14 +419,20 @@ div.rules{
 }
 
 /* Geometry Scene */
+#UI{
+    margin-right:auto;
+    margin-left:auto;
+}
+
 #keyMap{
-    position: absolute;
+    position: sticky;
+    margin-left: auto;
+    margin-right: auto;
     background-color: rgba(0,0,0,0.6);
     top: 1rem;
-    right: 1rem;
     z-index: 99999;
-    height: 15rem;
-    width: 13rem;
+    height: 6rem;
+    width: 49rem;
     border-radius: 20px;
 }
 
@@ -438,7 +444,7 @@ div.rules{
 }
 
 .keyElements ul{
-
+    display: inline-block;
     left: 1rem;
     color: white;
     text-align: left;

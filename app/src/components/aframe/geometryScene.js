@@ -162,6 +162,7 @@ export default class GeometryScene extends React.Component{
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C')
             {
+                document.getElementById("startedit").style.color = 'white'
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
@@ -183,6 +184,7 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'e' || keyName === 'E')
             {
+                document.getElementById("startedit").style.color = 'red'
                 scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                 let lines = scene.querySelectorAll(".line");
                 lines.forEach(line => {
@@ -217,6 +219,14 @@ export default class GeometryScene extends React.Component{
                 InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
                     this.props.interactiveObjects.get(this.props.currentObject));
                 this.props.switchToEditMode();
+            }
+
+            if(keyName === 'h' || keyName === 'H')
+            {
+                if(document.getElementById("keyMap").style.display !== 'none')
+                    document.getElementById("keyMap").style.display = 'none'
+                else
+                    document.getElementById("keyMap").style.display = 'block'
             }
         });
     }
@@ -270,14 +280,15 @@ export default class GeometryScene extends React.Component{
 
         return(
             <div id="mainscene" tabIndex="0">
-                <div id="UI">
-                    <div id="keyMap">
+                <div id="UI" >
+                    <div id="keyMap" >
                         <h1>Keys</h1>
                         <li class="keyElements">
-                            <ul>E: Start Edit</ul>
+                            <ul id="startedit">E: Start Edit</ul>
                             <ul>C: Create Geometry</ul>
                             <ul>U: Undo</ul>
                             <ul>Q: Go Back</ul>
+                            <ul>H: Hide/Show</ul>
                         </li>
 
                     </div>

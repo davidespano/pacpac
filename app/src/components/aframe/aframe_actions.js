@@ -1,10 +1,10 @@
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import settings from "../../utils/settings";
-import './aframe_shader'
 import {Howl} from 'howler';
 import store_utils from '../../data/stores_utils'
 import AudioManager from './AudioManager'
 import Values from '../../interactives/rules/Values';
+import './aframe_shader'
 const THREE = require('three');
 const {mediaURL} = settings;
 const soundsHub = require('./soundsHub');
@@ -70,7 +70,7 @@ function executeAction(VRScene, rule, action){
                 cursor.setAttribute('material', 'visible: true');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                 cursor.setAttribute('color', 'black');
-                runState[current_object.uuid].state = action.obj_uuid;
+                runState[action.subj_uuid].state = action.obj_uuid;
                 VRScene.setState({runState: runState});
             },duration_switch);
 

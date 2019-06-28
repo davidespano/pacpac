@@ -6,7 +6,7 @@ import {Howl} from "howler";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
 import Values from '../../interactives/rules/Values'
-
+import './aframe_shader'
 const THREE = require('three');
 const {mediaURL} = settings;
 
