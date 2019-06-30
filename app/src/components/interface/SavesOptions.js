@@ -12,8 +12,6 @@ const {mediaURL} = settings;
 function SavesOptions(props) {
     let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
 
-    DebugAPI.getAllSaves();
-
     return (
         <div>
             {listSaves(props, path)}
@@ -40,7 +38,6 @@ function listSaves(props, path) {
 
         if(EditorState.debugSaves !== undefined && EditorState.debugSaves[child.uuid] !== undefined) {
             return (
-                <div>
                     <div key={child.name} className={'node_element'}>
                         <h6>Salvataggi: {child.name}</h6>
                         <img
@@ -54,8 +51,6 @@ function listSaves(props, path) {
                             {listSceneSaves(props, child.uuid)}
                         </div>
                     </div>
-                </div>
-
             );
         }
     }));
@@ -66,7 +61,7 @@ function listSceneSaves(props, sceneUuid) {
         let savesList = EditorState.debugSaves[sceneUuid].toArray();
         return savesList.map(saveName => {
             return (
-                <div id={"saves-list" + saveName} className={"saves-list"} onClick={() => {
+                <div id={"saves-list" + saveName} key={saveName} className={"saves-list"} onClick={() => {
                     let load = document.getElementById("load-button" + saveName);
                     let list = document.getElementById("saves-list" + saveName);
                     

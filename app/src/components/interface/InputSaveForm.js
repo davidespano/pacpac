@@ -57,14 +57,10 @@ function saveForm(props) {
         let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
             .map(i => [i, EditorState.debugRunState[i.toString()]]))
             .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
-
-        console.log(EditorState.debugFromScene + " " + props.currentScene);
         DebugAPI.saveDebugState(name, EditorState.debugFromScene === undefined ? props.currentScene : EditorState.debugFromScene, objStateMap);
-        //DebugAPI.getAllSaves();
     } else {
         alert("Salvataggio già presente");
     }
-
 
 }
 

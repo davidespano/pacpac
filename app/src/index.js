@@ -7,6 +7,7 @@ import MediaAPI from "./utils/MediaAPI";
 import Actions from "./actions/Actions";
 import StoryAPI from "./utils/StoryAPI";
 import AudioAPI from "./utils/AudioAPI";
+import DebugAPI from "./utils/DebugAPI";
 
 //import '../public/style.css';
 //import './aframe.js';
@@ -23,6 +24,7 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
         MediaAPI.getAllAssets();
         AudioAPI.getAllAudios();
 		StoryAPI.getAllCollections();
+		DebugAPI.getAllSaves();
     }
 }).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));

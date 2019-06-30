@@ -279,14 +279,14 @@ function generateSpecificProperties(object, props) {
         case InteractiveObjectsTypes.SWITCH:
             return (
                 <div className={"options-grid"}>
-                    <label className={'options-labels'}>Stato iniziale:</label>
+                    <label className={'options-labels'}>Stato:</label>
                     <Dropdown props={props} component={'on-off'} defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
         case InteractiveObjectsTypes.KEY:
             return (
                 <div className={"options-grid"}>
-                    <label className={'options-labels'}>Stato iniziale:</label>
+                    <label className={'options-labels'}>Stato:</label>
                     <Dropdown props={props} component={'collected-not'} defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
