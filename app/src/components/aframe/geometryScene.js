@@ -61,13 +61,12 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         this.state = {
-            scenes: props.scenes.get(props.objectToScene.get(props.currentObject)),
-
+            scenes: props.scenes.get(props.currentScene)
         };
         console.log(props.objectToScene.get(props.currentObject));
         console.log(props.currentObject);
         console.log(this.state.scenes)
-
+        console.log(props)
     }
 
     handleSceneChange()
@@ -248,19 +247,22 @@ export default class GeometryScene extends React.Component{
             this.currentLevel = [];
         }
 
-
+        console.log(this.state.scenes)
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
-        let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
-        //TODO verificiare shader delle curved, problema non trasparenza
-        for(let key in objects){
-            if(objects.hasOwnProperty(key)){
-                objects[key].forEach((uuid) => {
-                    curvedImages.push(this.props.interactiveObjects.get(uuid).get('vertices'));
-                })
+        if(this.props.currentObject !== null){
+            let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
+            //TODO verificiare shader delle curved, problema non trasparenza
+            for(let key in objects){
+                if(objects.hasOwnProperty(key)){
+                    objects[key].forEach((uuid) => {
+                        //curvedImages.push(this.props.interactiveObjects.get(uuid).get('vertices'));
+                    })
+                }
             }
         }
+
         let assets = this.generateAssets();
         let skie = this.generateBubbles();
 

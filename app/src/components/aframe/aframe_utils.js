@@ -21,25 +21,36 @@ function generateAsset(scene, srcBackground, runState = []){
             />)
         }
         currAssets.push(sceneBackground);
-        let objAsset;
+        let objAssetMedia;
+        let objAssetAudio;
         //second, push the media of the interactive objs
         Object.values(scene.objects).flat().forEach(obj => {
             Object.keys(obj.media).map(k => {
                 if(obj.media[k] !== null){
                     if(stores_utils.getFileType(obj.media[k]) === 'video'){
-                        objAsset = (
+                        objAssetMedia = (
                             <video key={k+"_" + obj.uuid} crossOrigin={"anonymous"} id={k+"_" + obj.uuid} loop={true}  preload="auto"
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
                                    playsInline={true} autoPlay muted={true}
                             />)
                     } else {
-                        objAsset = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossOrigin="Anonymous"
+                        objAssetMedia = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossOrigin="Anonymous"
                                          src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
                         />)
                     }
-                    currAssets.push(objAsset)
+                    currAssets.push(objAssetMedia)
                 }
             });
+            //TODO non so cosa c'è salvato dentro audiom se uuid o cosa
+            /*Object.keys(obj.audio).map(k => {
+                if(obj.audio[k] !== null){
+                    objAssetAudio = (<audio id={k+"_" + "audio" + obj.audio[k].uuid} key={k+"_" + "audio" + obj.audio[k].uuid}
+                                            crossOrigin={"anonymous"}
+                                            src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
+                           preload="auto" onLoad={"this.generateAudio()"}/>)
+                    currAssets.push(objAssetAudio)
+                }
+            });*/
 
             let v = generateCurrentAsset(obj, runState);
             if(v!==null) currAssets.push(v);
@@ -72,9 +83,10 @@ function generateAsset(scene, srcBackground, runState = []){
             })
 
         });
+        console.log(scene.audios)
         /*scene.audio.forEach( audio => {
             currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
+                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + audio.file}
                                    preload="auto" onLoad={"this.generateAudio()"}/>)
         })*/
         /*currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
