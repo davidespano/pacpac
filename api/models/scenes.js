@@ -33,25 +33,36 @@ function buildScene(record) {
         scene.rules = rules.map(r => new Rule(r));
     }catch (error){}
     try {
-        const transitions = record.get('transitions');
-        scene.transitions = transitions.map(t => new Interactiveobject(t));
-    }catch (error){}
-    try {
-        const switches = record.get('switches');
-        scene.switches = switches.map(t => new Interactiveobject(t));
-    }catch (error){}
-    try {
-        const collectable_keys = record.get('collectable_keys');
-        scene.collectable_keys = collectable_keys.map(t => new Interactiveobject(t));
-    }catch (error){}
-    try {
-        const locks = record.get('locks');
-        scene.locks = locks.map(t => new Interactiveobject(t));
-    }catch (error){}
-    try {
         const audios = record.get('audios');
         scene.audios = audios.map(t => new Audio(t));
     }catch (error){}
+
+    try{
+        const objects = record.get('objects');
+        console.log(objects);
+        scene.transitions = [];
+        scene.switches = [];
+        scene.collectable_keys = [];
+        scene.locks = [];
+
+        objects.forEach((o) => {
+            const obj = new Interactiveobject(o);
+            console.log(obj);
+
+
+            switch(obj.type){
+                case "TRANSITION":
+                    scene.transitions.push(obj); break;
+                case "SWITCH":
+                    scene.switches.push(obj); break;
+                case "KEY":
+                    scene.collectable_keys.push(obj); break;
+                case "LOCK":
+                    scene.locks.push(obj); break;
+            }
+        })
+    }catch(error){console.error(error)}
+
     return scene;
 }
 
@@ -81,21 +92,15 @@ function getByName(session, name, gameID){
         'MATCH (scene:Scene:`' + gameID + '` {name:$name}) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
         'WITH scene, tag ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition) ' +
-        'WITH scene, tag, COLLECT(transition) as transitions ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(switch:InteractiveObject:Switch) ' +
-        'WITH scene, tag, transitions, COLLECT(switch) as switches ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(key:InteractiveObject:Key) ' +
-        'WITH scene, tag, transitions, switches, COLLECT(key) as collectable_keys ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(lock:InteractiveObject:Lock) ' +
-        'WITH scene, tag, transitions, switches, collectable_keys, COLLECT(lock) as locks ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(object:InteractiveObject) ' +
+        'WITH scene, tag, COLLECT(object) as objects ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) ' +
-        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule ' +
+        'WITH scene, tag, objects, rule ' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
-        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, collect(action) as acts ' +
+        'WITH scene, tag, objects, rule, collect(action) as acts ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_AUDIO]->(audio:Audio) ' +
-        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, acts, collect(audio) as audios ' +
-        'RETURN scene, tag, transitions, switches, collectable_keys, locks, audios, collect(rule { .*,  actions :acts}) as rules',
+        'WITH scene, tag, objects, rule, acts, collect(audio) as audios ' +
+        'RETURN scene, tag, objects, audios, collect(rule { .*,  actions :acts}) as rules',
         {'name': name})
         .then(result => {
             const scene = singleScene(result);
@@ -113,21 +118,15 @@ function getAllDetailed(session, gameID) {
         'MATCH (scene:Scene:`' + gameID + '` ) ' +
         'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
         'WITH scene, tag ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(transition:InteractiveObject:Transition) ' +
-        'WITH scene, tag, COLLECT(transition) as transitions ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(switch:InteractiveObject:Switch) ' +
-        'WITH scene, tag, transitions, COLLECT(switch) as switches ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(key:InteractiveObject:Key) ' +
-        'WITH scene, tag, transitions, switches, COLLECT(key) as collectable_keys ' +
-        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(lock:InteractiveObject:Lock) ' +
-        'WITH scene, tag, transitions, switches, collectable_keys, COLLECT(lock) as locks ' +
+        'OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(object:InteractiveObject) ' +
+        'WITH scene, tag, COLLECT(object) as objects ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) ' +
-        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule ' +
+        'WITH scene, tag, objects, rule ' +
         'OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action) ' +
-        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, collect(action) as acts ' +
+        'WITH scene, tag, objects, rule, collect(action) as acts ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_AUDIO]->(audio:Audio) ' +
-        'WITH scene, tag, transitions, switches, collectable_keys, locks, rule, acts, collect(audio) as audios ' +
-        'RETURN scene, tag, transitions, switches, collectable_keys, locks, audios, collect(rule { .*,  actions :acts}) as rules',)
+        'WITH scene, tag, objects, rule, acts, collect(audio) as audios ' +
+        'RETURN scene, tag, objects, audios, collect(rule { .*,  actions :acts}) as rules',)
         .then(result => {
                 if (!_.isEmpty(result.records)) {
                     return multipleScenes(result);
