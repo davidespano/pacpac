@@ -292,57 +292,21 @@ async function getAllDetailedScenes(gameGraph) {
         const adj = [];
         // generates transitions
         const transitions = s.transitions.map(transition => {
-           return ({ //Transition, but not the immutable one
-               uuid: transition.uuid,
-               name: transition.name,
-               type: transition.type,
-               media: JSON.parse(transition.media),
-               mask: transition.mask,
-               vertices: transition.vertices,
-               properties: JSON.parse(transition.properties),
-               visible: transition.visible,
-           });
+           return (getProperties(transition));
         });
 
         const switches = s.switches.map(sw => {
-            return ({ //Switch, but not the Immutable one
-                uuid: sw.uuid,
-                name: sw.name,
-                type: sw.type,
-                media: JSON.parse(sw.media),
-                mask: sw.mask,
-                vertices : sw.vertices,
-                properties: JSON.parse(sw.properties),
-                visible: sw.visible,
-            });
+            return (getProperties(sw));
         });
 
         // generates keys
         const keys = s.collectable_keys.map((key) => {
-            return ({ //key, not the immutable
-                uuid: key.uuid,
-                name: key.name,
-                type: key.type,
-                media: JSON.parse(key.media),
-                mask: key.mask,
-                vertices: key.vertices,
-                properties: JSON.parse(key.properties),
-                visible: key.visible,
-            });
+            return (getProperties(key));
         });
 
         // generates locks
         const locks = s.locks.map((lock) => {
-            return ({ //lock, not the immutable
-                uuid: lock.uuid,
-                name: lock.name,
-                type: lock.type,
-                media: JSON.parse(lock.media),
-                mask: lock.mask,
-                vertices: lock.vertices,
-                properties: JSON.parse(lock.properties),
-                visible: lock.visible,
-            });
+            return (getProperties(lock));
         });
 
         // generates keypads
@@ -471,6 +435,7 @@ function getProperties(obj){
         media: JSON.parse(obj.media),
         mask: obj.mask,
         vertices: obj.vertices,
+        audio: JSON.parse(obj.audio),
         properties: JSON.parse(obj.properties),
         visible: obj.visible,
     };
