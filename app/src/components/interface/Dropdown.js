@@ -146,7 +146,8 @@ function getDefaultValue(props, defaultValue, component){
                 label = defaultValue; break;
             case 'audios':
             case 'music':
-                label = props.audios.get(defaultValue).name; break;
+                if(props.audios.has(defaultValue))
+                    label = props.audios.get(defaultValue).name; break;
             default:
                 label = toString.valueUuidToString(defaultValue);
             }

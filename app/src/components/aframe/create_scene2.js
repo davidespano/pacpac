@@ -41,11 +41,9 @@ export default class VRScene extends React.Component {
     }
 
     componentDidMount() {
-        let audioContext = new AudioContext();
+
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        this.generateRoom(audioContext);
-        this.generateAudio(audioContext);
         this.interval = setInterval(() => this.tick(), 200);
     }
 
@@ -55,18 +53,24 @@ export default class VRScene extends React.Component {
     }
 
     async loadEverything() {
-
+        let audioContext = new AudioContext();
+        let audios = [];
+        await AudioAPI.getAudios(audios);
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
+        let music = audios[scene.music]
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
+            audios: music
         });
         this.createRuleListeners();
+        this.generateRoom(audioContext);
+        this.generateAudio(audioContext);
         document.querySelector('#camera').removeAttribute('look-controls');
         document.querySelector('#camera').removeAttribute('wasd-controls');
     }
@@ -227,13 +231,7 @@ export default class VRScene extends React.Component {
     generateAudio(audioContext){
 
         let audioElement = document.createElement('audio');
-        let music = this.state.activeScene.music;
-        //let audios = AudioAPI.getAllAudios()
-        //console.log(audios)
-        //console.log(this.state.activeScene)
-        //TODO add src from buble media
-        //audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
-        //audioElement.src = audios.url;
+        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.audios.file;
         audioElement.crossOrigin = 'anonymous';
         audioElement.load();
         audioElement.loop = true;

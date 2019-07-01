@@ -58,6 +58,14 @@ function getAllAudios() {
         });
 }
 
+async function getAudios(audios) {
+    const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/audios/`)
+        .set('Accept', 'application/json');
+    const raw_audios = response.body;
+    raw_audios.forEach(a => {
+        audios[a.uuid] = a;
+    })
+}
 function deleteAudio(uuid){
     return request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/audios/${uuid}`)
         .set('Accept', 'application/json')
@@ -75,5 +83,6 @@ export default{
     createUpdateSpatialAudio: createUpdateSpatialAudio,
     createUpdateGlobalAudio: createUpdateGlobalAudio,
     getAllAudios: getAllAudios,
+    getAudios: getAudios,
     deleteAudio: deleteAudio,
 }
