@@ -13,10 +13,12 @@ import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
 import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
-import aframe_utils from "./aframe_utils"
-import AudioAPI from "../../utils/AudioAPI"
+import aframe_utils from "./aframe_utils";
+import AudioAPI from "../../utils/AudioAPI";
+import AudioManager from './AudioManager'
 import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
+const soundsHub = require('./soundsHub');
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -60,13 +62,13 @@ export default class VRScene extends React.Component {
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
-        let music = audios[scene.music]
+        //let music = audios[scene.music]
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
-            audios: music
+            audios: audios
         });
         this.createRuleListeners();
         this.generateRoom(audioContext);
@@ -188,7 +190,7 @@ export default class VRScene extends React.Component {
     generateAssets(){
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-            this.state.runState[sceneName].background, this.state.runState)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios)
         }).flat();
     }
 
@@ -230,16 +232,23 @@ export default class VRScene extends React.Component {
 
     generateAudio(audioContext){
 
-        let audioElement = document.createElement('audio');
-        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.audios.file;
-        audioElement.crossOrigin = 'anonymous';
-        audioElement.load();
-        audioElement.loop = true;
-        let audioElementSource = audioContext.createMediaElementSource(audioElement);
-        let source = this.state.resonanceAudioScene.createSource();
-        audioElementSource.connect(source.input);
-        source.setPosition(0, 0, 0);
-        audioElement.play();
+        let music = this.state.audios[this.state.activeScene.music]
+        soundsHub[music.uuid] = AudioManager.generateAudio(music)
+        soundsHub[music.uuid].play()
+        //TODO decidere se inserire anche l'audio di sottofondo del video
+        /*if(this.state.audios !== undefined){
+            let audioElement = document.createElement('audio');
+            audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.audios[this.state.activeScene.music].file;
+            audioElement.crossOrigin = 'anonymous';
+            audioElement.load();
+            audioElement.loop = true;
+            let audioElementSource = audioContext.createMediaElementSource(audioElement);
+            let source = this.state.resonanceAudioScene.createSource();
+            audioElementSource.connect(source.input);
+            source.setPosition(0, 0, 0);
+            audioElement.play();
+        }*/
+
 
     }
 

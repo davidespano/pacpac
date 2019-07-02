@@ -39,7 +39,10 @@ function executeAction(VRScene, rule, action){
                     objectVideo_transition.play();
                     duration_transition = (objectVideo_transition.duration * 1000);
                 }
-            }console.log('sono una transizione')
+            }
+            let audioTransition = current_object.audio.audio0;
+            if(soundsHub['audio0_' + audioTransition])
+                soundsHub['audio0_' + audioTransition].play();
             setTimeout(function () {
 
                 if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
@@ -56,15 +59,22 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.CHANGE_STATE:
             let duration_switch = 0;
             let switchVideo = document.getElementById('media_'+current_object.uuid);
-            console.log(switchVideo)
+
             if(switchVideo != null) {
                 cursor.setAttribute('material', 'visible: false');
                 cursor.setAttribute('raycaster', 'far: 0.1');
 
                 let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1
+
                 if(store_utils.getFileType(videoType) === 'video') switchVideo.play();
                 duration_switch = (switchVideo.duration * 1000);
             }
+
+            let audio = current_object.properties.state === 'ON'?current_object.audio.audio0:current_object.audio.audio1
+            let idAudio = current_object.properties.state === 'ON'?'audio0_':'audio1_';
+            if(soundsHub[idAudio + audio])
+                soundsHub[idAudio + audio].play();
+
             setTimeout(function () {
                 cursor.setAttribute('raycaster', 'far: 10000');
                 cursor.setAttribute('material', 'visible: true');
@@ -147,6 +157,9 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.COLLECT_KEY:
             runState[current_object.uuid].state='COLLECTED';
+            let audioKey = current_object.audio.audio0;
+            if(soundsHub['audio0_' + audioKey])
+                soundsHub['audio0_' + audioKey].play();
             game_graph.scenes[actual_scene].objects.collectable_keys =
                 game_graph.scenes[actual_scene].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
             if(current_object.media0 !== null){
@@ -156,6 +169,9 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.UNLOCK_LOCK:
             runState[current_object.uuid].state='UNLOCKED';
+            let audioLock = current_object.audio.audio0;
+            if(soundsHub['audio0_' + audioLock])
+                soundsHub['audio0_' + audioLock].play();
             game_graph.scenes[actual_scene].objects.locks =
                 game_graph.scenes[actual_scene].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
             VRScene.setState({runState: runState, graph: game_graph});

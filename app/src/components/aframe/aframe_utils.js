@@ -2,10 +2,11 @@ import stores_utils from "../../data/stores_utils";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import settings from "../../utils/settings";
 import React from 'react';
-
+import AudioManager from './AudioManager'
+const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
 //TODO trasformarlo in un componente React ... forse ...
-function generateAsset(scene, srcBackground, runState = []){
+function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene'){
         let currAssets = [];
         let sceneBackground;
         //first, push the background media.
@@ -41,16 +42,24 @@ function generateAsset(scene, srcBackground, runState = []){
                     currAssets.push(objAssetMedia)
                 }
             });
-            //TODO non so cosa c'è salvato dentro audiom se uuid o cosa
+
+            //TODO controllare che il file in caricamento non sia lo stesso
             /*Object.keys(obj.audio).map(k => {
                 if(obj.audio[k] !== null){
-                    objAssetAudio = (<audio id={k+"_" + "audio" + obj.audio[k].uuid} key={k+"_" + "audio" + obj.audio[k].uuid}
+                    objAssetAudio = (<audio id={k+"_" + audios[obj.audio[k]].uuid} key={k+"_" + audios[obj.audio[k]].uuid}
                                             crossOrigin={"anonymous"}
-                                            src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
-                           preload="auto" onLoad={"this.generateAudio()"}/>)
+                                            src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + audios[obj.audio[k]].file}
+                           preload="auto" />)
                     currAssets.push(objAssetAudio)
                 }
             });*/
+            if(mode === 'scene'){
+                Object.keys(obj.audio).map(k => {
+                    if(obj.audio[k] !== null){
+                        soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]])
+                    }
+                });
+            }
 
             let v = generateCurrentAsset(obj, runState);
             if(v!==null) currAssets.push(v);
@@ -83,15 +92,14 @@ function generateAsset(scene, srcBackground, runState = []){
             })
 
         });
-        console.log(scene.audios)
-        /*scene.audio.forEach( audio => {
-            currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
+        /*scene.audios.forEach( audio => {
+            currAssets.push(<audio id={"audios_"+ audio.uuid} key={"audios_"+ audio.uuid} crossOrigin={"anonymous"}
                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + audio.file}
-                                   preload="auto" onLoad={"this.generateAudio()"}/>)
-        })*/
-        /*currAssets.push(<audio id="track" key={'track_'+this.state.activeScene.uuid} crossOrigin={"anonymous"}
-                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + 'four_channel_output.mp4'}
-                               preload="auto" onLoad={"this.generateAudio()"}/>)*/
+                                   preload="auto"/>)
+        });*/
+    scene.audios.forEach( audio => {
+        soundsHub["audios_"+ audio.uuid] = AudioManager.generateAudio(audio)
+    });
         //third, push the media present in the actions
         //TODO do it! maybe not necessary
         scene.rules.forEach(()=>{});

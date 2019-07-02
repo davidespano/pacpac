@@ -315,7 +315,8 @@ export default class GeometryScene extends React.Component{
     generateAssets(){
         return this.currentLevel.map(sceneName =>{
             console.log(sceneName)
-            return aframe_utils.generateAsset(this.state.completeScene.scenes[sceneName], this.state.completeScene.scenes[sceneName].img)
+            return aframe_utils.generateAsset(this.state.completeScene.scenes[sceneName],
+                this.state.completeScene.scenes[sceneName].img, [], [],  'geometry')
         })
     }
 

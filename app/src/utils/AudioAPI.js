@@ -66,6 +66,7 @@ async function getAudios(audios) {
         audios[a.uuid] = a;
     })
 }
+
 function deleteAudio(uuid){
     return request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/audios/${uuid}`)
         .set('Accept', 'application/json')
