@@ -9,6 +9,7 @@ const {mediaURL} = settings;
 function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene'){
         let currAssets = [];
         let sceneBackground;
+
         //first, push the background media.
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
@@ -23,7 +24,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         }
         currAssets.push(sceneBackground);
         let objAssetMedia;
-        let objAssetAudio;
+
         //second, push the media of the interactive objs
         Object.values(scene.objects).flat().forEach(obj => {
             Object.keys(obj.media).map(k => {
@@ -43,20 +44,12 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                 }
             });
 
-            //TODO controllare che il file in caricamento non sia lo stesso
-            /*Object.keys(obj.audio).map(k => {
-                if(obj.audio[k] !== null){
-                    objAssetAudio = (<audio id={k+"_" + audios[obj.audio[k]].uuid} key={k+"_" + audios[obj.audio[k]].uuid}
-                                            crossOrigin={"anonymous"}
-                                            src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + audios[obj.audio[k]].file}
-                           preload="auto" />)
-                    currAssets.push(objAssetAudio)
-                }
-            });*/
+            //Creaizone traccia audio dei singoli oggetti, solo nella modalità gioco
             if(mode === 'scene'){
                 Object.keys(obj.audio).map(k => {
                     if(obj.audio[k] !== null){
-                        soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]])
+                        let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj)
+                        soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], audioPosition)
                     }
                 });
             }
@@ -73,6 +66,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                 )
             }
         });
+
         scene.rules.forEach( rule => {
             rule.actions.forEach(action => {
                 if(action.action === 'CHANGE_BACKGROUND'){
@@ -92,14 +86,11 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
             })
 
         });
-        /*scene.audios.forEach( audio => {
-            currAssets.push(<audio id={"audios_"+ audio.uuid} key={"audios_"+ audio.uuid} crossOrigin={"anonymous"}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + audio.file}
-                                   preload="auto"/>)
-        });*/
-    scene.audios.forEach( audio => {
-        soundsHub["audios_"+ audio.uuid] = AudioManager.generateAudio(audio)
-    });
+
+        //Creaizone traccia audio globali
+        scene.audios.forEach( audio => {
+            soundsHub["audios_"+ audio.uuid] = AudioManager.generateAudio(audio)
+        });
         //third, push the media present in the actions
         //TODO do it! maybe not necessary
         scene.rules.forEach(()=>{});
@@ -178,6 +169,20 @@ function generateCurrentAsset(obj, runState){
     }
 }
 
+//Calculation audio position from object
+function calculateAudioPosition (audio, obj){
+    let vertices = obj.vertices.split(/[ ,]/).map(function(item) {
+        return parseFloat(item, 10);
+    });
+
+    let baricenter = [0, 0, 0];
+    let nPoints = vertices.length / 3;
+    vertices.forEach(v =>{
+       baricenter[vertices.indexOf(v)%3] += v/nPoints;
+    });
+
+    return baricenter;
+}
 export default {
     generateAsset: generateAsset
 }

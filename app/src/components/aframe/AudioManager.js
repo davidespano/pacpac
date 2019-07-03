@@ -2,10 +2,10 @@ import {ResonanceAudio} from "resonance-audio";
 import settings from "../../utils/settings";
 const {mediaURL} = settings;
 
-function generateAudio(audio) {
+function generateAudio(audio, position=null) {
     let audioContext = new AudioContext();
     //TODO verificare che i parametri passati come array funzionino
-    let audioPosition = audio.position!=null?audio.position:[0,0,0];
+    let audioPosition = position===null?audio.position:position;
     let resonance = generateRoom(audioContext);
     //let audio = {};
     //audio=document.getElementById(srcId);

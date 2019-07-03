@@ -52,6 +52,7 @@ function getAllAudios() {
                         isSpatial: audio.isSpatial,
                         scene: audio.scene,
                         loop: audio.loop,
+                        position: audio.position
                     });
                     Actions.receiveAudio(a);
             })

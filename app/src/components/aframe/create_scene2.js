@@ -233,9 +233,8 @@ export default class VRScene extends React.Component {
     generateAudio(audioContext){
 
         let music = this.state.audios[this.state.activeScene.music]
-        soundsHub[music.uuid] = AudioManager.generateAudio(music)
+        soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0])
         soundsHub[music.uuid].play()
-        //TODO decidere se inserire anche l'audio di sottofondo del video
         /*if(this.state.audios !== undefined){
             let audioElement = document.createElement('audio');
             audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.audios[this.state.activeScene.music].file;

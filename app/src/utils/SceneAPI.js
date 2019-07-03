@@ -349,6 +349,7 @@ async function getAllDetailedScenes(gameGraph) {
                 isSpatial: audio.isSpatial,
                 scene: audio.scene,
                 loop: audio.loop,
+                position: audio.position,
             })
         });
 
