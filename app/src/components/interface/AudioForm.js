@@ -19,7 +19,7 @@ function AudioForm(props){
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
                             <h5 className="modal-title" id="audio-form-modal-label">{title(props.editor)}</h5>
-                            <button type="button" className="close" data-dismiss="modal"
+                            <button id="audio-form-close-button" type="button" className="close" data-dismiss="modal"
                                     aria-label="Close" onClick={() => {
                                         interface_utils.resetFields('audio-form-box');
                                     }}>
@@ -113,7 +113,12 @@ function spatialOption(props){
                           property={'scene'}
                           defaultValue={selectedScene ? selectedScene : props.currentScene}
                           disabled={!spatial}/>
-                <button className={'btn position-btn'} disabled={!spatial}>
+                <button className={'btn position-btn'} disabled={!spatial}
+                        onClick={() => {
+                            //document.getElementById('audio-form-close-button').click();
+                            //document.getElementById('audio-menu-close-button').click();
+                            props.switchToGeometryMode()
+                        }}>
                     <img className={"action-buttons"} src={"icons/icons8-white-image-50.png"}/>
                     Posiziona
                 </button>

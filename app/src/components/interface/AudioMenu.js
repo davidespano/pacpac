@@ -10,7 +10,7 @@ function AudioMenu(props){
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
                             <h5 className="modal-title" id="manage-audio-modal-label">Gestione audio</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close"
+                            <button id="audio-menu-close-button" type="button" className="close" data-dismiss="modal" aria-label="Close"
                                     onClick={() => props.selectAudioToEdit(null)}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -43,6 +43,7 @@ function AudioMenu(props){
                                         className={'btn audio-btn btn-secondary'}
                                         data-toggle="modal"
                                         data-target="#audio-form-modal"
+                                        data-backdrop="false"
                                         onClick={() => props.selectAudioToEdit(null)}
                                 >
                                     Nuovo oggetto audio
@@ -51,6 +52,7 @@ function AudioMenu(props){
                                         className={'btn audio-btn btn-secondary'}
                                         data-toggle="modal"
                                         data-target="#audio-form-modal"
+                                        data-backdrop="false"
                                         disabled={props.editor.selectedAudioToEdit == null}
                                 >
                                     <img className={"action-buttons btn-img"} src={"icons/icons8-white-pencil-50.png"}/>

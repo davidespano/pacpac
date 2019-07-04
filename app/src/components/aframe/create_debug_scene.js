@@ -13,7 +13,7 @@ import settings from "../../utils/settings";
 import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
-import aframe_utils from "./aframe_utils"
+import aframe_utils from "./aframe_assets"
 import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
 import EditorState from "../../data/EditorState";

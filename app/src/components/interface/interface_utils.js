@@ -62,6 +62,11 @@ function setPropertyFromValue(object, property, value, props){
     }
 }
 
+function updateAudioVertices(audio, vertices, props) {
+    audio=audio.set('vertices', vertices)
+    props.updateAudio(audio)
+}
+
 /**
  * Updates object property retrieving new value from the given field
  * @param object to update
@@ -308,4 +313,5 @@ export default {
     setClassStyle: setClassStyle,
     setIdStyle: setIdStyle,
     highlightRule: highlightRule,
+    updateAudioVertices: updateAudioVertices
 }

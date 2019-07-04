@@ -67,7 +67,7 @@ function TopBar(props){
                             <img src={"icons/icons8-tags-100.png"}/>
                             <figcaption>Gestisci etichette</figcaption>
                         </figure>
-                        <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal" data-backdrop="false">
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
                         </figure>

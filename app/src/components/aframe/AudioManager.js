@@ -4,20 +4,20 @@ const {mediaURL} = settings;
 
 function generateAudio(audio, position=null) {
     let audioContext = new AudioContext();
-    //TODO verificare che i parametri passati come array funzionino
     let audioPosition = position===null?audio.position:position;
     let resonance = generateRoom(audioContext);
-    //let audio = {};
-    //audio=document.getElementById(srcId);
     let audioElement = document.createElement('audio');
+
     audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + audio.file;
     audioElement.crossOrigin = 'anonymous';
     audioElement.load();
     audioElement.loop = audio.loop;
+
     let audioElementSource = audioContext.createMediaElementSource(audioElement);
     let source = resonance.createSource();
     audioElementSource.connect(source.input);
     source.setPosition(audioPosition);
+
     return audioElement;
 }
 
@@ -47,6 +47,7 @@ function generateRoom (audioContext) {
 
     return resonanceAudioScene;
 }
+
 export default {
     generateAudio : generateAudio,
 }

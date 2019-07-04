@@ -136,24 +136,11 @@ function executeAction(VRScene, rule, action){
             if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
             break;
         case RuleActionTypes.PLAY_AUDIO:
-            //TODO definire la sorgente audio dalla scena, forse gli udio è meglio generarli in create_Scene2, prenderli da qui
-            let sound = AudioManager.generateAudio();
-            /*let media_audio = `${mediaURL}${window.localStorage.getItem("gameID")}/` + media;
-            let sound = new Howl({
-                src: [media_audio],
-                onplayerror: function() {
-                    sound.once('unlock', function() {
-                        sound.play();
-                    });
-                }
-                //loop: action.loop,
-            });*/
-            soundsHub[media] = sound;
-            sound.play();
+            soundsHub["audios_"+ media].play();
             break;
         case RuleActionTypes.STOP_AUDIO:
-            if(soundsHub[media])
-                soundsHub[media].stop();
+            if(soundsHub["audios_"+ media])
+                soundsHub["audios_"+ media].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
             runState[current_object.uuid].state='COLLECTED';

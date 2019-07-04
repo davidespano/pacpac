@@ -13,7 +13,7 @@ import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
 import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
-import aframe_utils from "./aframe_utils";
+import aframe_utils from "./aframe_assets";
 import AudioAPI from "../../utils/AudioAPI";
 import AudioManager from './AudioManager'
 import Values from '../../interactives/rules/Values';
