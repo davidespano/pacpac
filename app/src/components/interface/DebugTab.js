@@ -216,6 +216,7 @@ function listCurrentSceneObjs(scene, props) {
                     <div className={"rightbar-sections"} key={obj_uuid}>
                         <img className={"icon-obj-left"} alt={obj.name} src={getImage(obj.type)}/>
                         <span className={"obj-name"} id={"obj-name" + obj.uuid} onClick={() => {
+                            lookObject("curv" + obj.uuid);
                             interface_utils.setIdStyle("obj-name", obj.uuid, "color: rgba(239, 86, 55, 1)");
                             interface_utils.setIdStyle("player-obj", obj.uuid, "color: rgba(239, 86, 55, 1)");
                             interface_utils.highlightRule(props, obj);
@@ -280,14 +281,16 @@ function generateSpecificProperties(object, props) {
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato:</label>
-                    <Dropdown props={props} component={'on-off'} defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
+                    <Dropdown props={props} component={'on-off'}
+                              defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
         case InteractiveObjectsTypes.KEY:
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato:</label>
-                    <Dropdown props={props} component={'collected-not'} defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
+                    <Dropdown props={props} component={'collected-not'}
+                              defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
         case InteractiveObjectsTypes.LOCK:

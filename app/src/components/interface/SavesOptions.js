@@ -12,6 +12,9 @@ const {mediaURL} = settings;
 function SavesOptions(props) {
     let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
 
+    //TODO la funzione va in loop anche se è presente in index.js
+    DebugAPI.getAllSaves();
+
     return (
         <div>
             {listSaves(props, path)}
