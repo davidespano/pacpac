@@ -18,6 +18,7 @@ function executeAction(VRScene, rule, action){
     let current_object = {};
     let game_graph = VRScene.state.graph;
     let sceneName = action.subj_uuid;
+    //TODO cambiare nome media non è il media
     let media = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
     Object.values(state.activeScene.objects).flat().forEach(o =>{
@@ -44,6 +45,13 @@ function executeAction(VRScene, rule, action){
             if(soundsHub['audio0_' + audioTransition])
                 soundsHub['audio0_' + audioTransition].play();
             setTimeout(function () {
+                if(soundsHub[VRScene.state.activeScene.music] &&
+                  (soundsHub[VRScene.state.activeScene.music].file !== soundsHub[state.graph.scenes[media].music].file)){
+                    console.log('sto entrando qui ')
+                    console.log(soundsHub[VRScene.state.activeScene.music])
+                    soundsHub[VRScene.state.activeScene.music].pause()
+                    soundsHub[VRScene.state.activeScene.music].currentTime = 0;
+                }
 
                 if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
                     (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
@@ -211,7 +219,7 @@ function transition(actualScene, targetScene, duration){
     if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
-function transition2D(actualScene, targetScene, duration, VRScene){
+function transition2D(actualScene, targetScene, duration){
     let camera = document.getElementById('camera');
     let cursor = document.getElementById('cursor');
     let actualSky = document.querySelector('#' + actualScene.name);

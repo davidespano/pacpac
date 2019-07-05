@@ -11,8 +11,11 @@ import aframe_assets from "./aframe_assets";
 import SceneAPI from "../../utils/SceneAPI";
 import Values from "../../interactives/rules/Values";
 
-export function givePoints(props)
-{
+/**
+ * Give the points from the pointsaver component and update the object vertices
+ * @param props
+ */
+export function givePoints(props) {
     let cursor = document.querySelector('a-cursor');
     let puntisalvati = cursor.components.pointsaver.points;
 
@@ -20,8 +23,8 @@ export function givePoints(props)
         punto.toArray().join(" ")
     );
     //console.log(puntisalvati.join())
-    console.log(props)
-    if(cursor.components.pointsaver.isCurved)
+    console.log(cursor.components.pointsaver.attrValue.isCurved)
+    if(cursor.components.pointsaver.attrValue.isCurved)
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
     else
         interface_utils.updateAudioVertices(props.audios.get(props.editor.selectedAudioToEdit), puntisalvati.join(), props)
@@ -61,6 +64,8 @@ export default class GeometryScene extends React.Component{
                 scale = "1 1 1";
             }
         }
+
+        // If thare are more the two points draw a line among them
         if (lengthLine >= 2) {
             let tmp = document.createElement('a-entity');
             tmp.setAttribute('scale', scale);
@@ -70,7 +75,7 @@ export default class GeometryScene extends React.Component{
             scene.appendChild(tmp);
         }
 
-        //SetState per aggiornare lo stato
+        //SetState in order to update the scene
         let sceneState;
         if(this.props.currentObject){
             sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
@@ -109,7 +114,6 @@ export default class GeometryScene extends React.Component{
                 }
             }
             if(isCurved){
-                console.log('dio merda')
                 tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
                 a_point[(length-1)].x *= moltiplier;
                 tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
@@ -250,15 +254,14 @@ export default class GeometryScene extends React.Component{
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
-        let currenteObjectUuid;
-
+        let isCurved = this.props.currentObject!==null;
         /*if(this.props.currentObject){
             currenteObjectUuid = this.props.objectToScene.get(this.props.currentObject);
         } else {
             currenteObjectUuid = this.props.audios.get(this.props.editor.selectedAudioToEdit).scene;
         }*/
 
-        if(this.props.currentObject !== null){
+        if(isCurved){
             let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
             //let objects = this.props.scenes.get(currenteObjectUuid).get('objects');
 
@@ -274,7 +277,7 @@ export default class GeometryScene extends React.Component{
 
         let assets = this.generateAssets();
         let skie = this.generateBubbles();
-        let objectType = this.props.editor.selectedAudioToEdit===null;
+
         console.log(this.props.editor.selectedAudioToEdit)
         return(
             <div id="mainscene" tabIndex="0">
@@ -300,7 +303,7 @@ export default class GeometryScene extends React.Component{
                             pac-look-controls={"pointerLockEnabled: " + is3dScene + ";planarScene:" + !is3dScene +";"}
                             look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin} pointsaver={'isCurved:' + objectType}  visible={is3dScene}/>
+                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin} pointsaver={'isCurved:' + isCurved}  visible={is3dScene}/>
                         </Entity>
                     </Entity>
                 </Scene>

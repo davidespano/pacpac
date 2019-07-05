@@ -200,7 +200,7 @@ export default class VRScene extends React.Component {
             return (
                 <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
-                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)} audios={this.state.audios}
                 />
             );
         });
@@ -231,23 +231,9 @@ export default class VRScene extends React.Component {
     }
 
     generateAudio(audioContext){
-
-        let music = this.state.audios[this.state.activeScene.music]
-        soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0])
-        soundsHub[music.uuid].play()
-        /*if(this.state.audios !== undefined){
-            let audioElement = document.createElement('audio');
-            audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.audios[this.state.activeScene.music].file;
-            audioElement.crossOrigin = 'anonymous';
-            audioElement.load();
-            audioElement.loop = true;
-            let audioElementSource = audioContext.createMediaElementSource(audioElement);
-            let source = this.state.resonanceAudioScene.createSource();
-            audioElementSource.connect(source.input);
-            source.setPosition(0, 0, 0);
-            audioElement.play();
-        }*/
-
+        //let music = this.state.audios[this.state.activeScene.music]
+        //soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0])
+        //soundsHub[music.uuid].play()
 
     }
 

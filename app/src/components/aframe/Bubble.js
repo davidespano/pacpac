@@ -7,6 +7,8 @@ import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
 import Values from '../../interactives/rules/Values'
 import './aframe_shader'
+import AudioManager from './AudioManager'
+const soundsHub = require('./soundsHub');
 const THREE = require('three');
 const {mediaURL} = settings;
 
@@ -97,7 +99,6 @@ export default class Bubble extends Component
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
         let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9"
-        let cursor = document.getElementById('cursor');
 
 
         const curves = Object.values(scene.objects).flat().map(curve => {
@@ -117,11 +118,17 @@ export default class Bubble extends Component
         let material = "depthTest: true; ";
         let active = 'active: false;';
         let radius = 9.9;
+
         if (this.props.isActive) {
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
-            //this.props.cameraChangeMode(is3Dscene)
+            if(this.props.scene.music !== undefined && !this.props.editMode){
+                let music = this.props.audios[this.props.scene.music]
+                if(soundsHub[music.uuid] === undefined)
+                    soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
+                soundsHub[music.uuid].play()
+            }
         }
         else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
