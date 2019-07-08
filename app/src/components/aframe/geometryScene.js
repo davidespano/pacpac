@@ -23,7 +23,6 @@ export function givePoints(props) {
         punto.toArray().join(" ")
     );
     //console.log(puntisalvati.join())
-    console.log(isCurved)
     if(isCurved ){
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
     } else {
@@ -40,10 +39,10 @@ export default class GeometryScene extends React.Component{
         this.state = {
             scenes: props.scenes.get(props.currentScene)
         };
-        console.log(props.objectToScene.get(props.currentObject));
-        console.log(props.currentObject);
-        console.log(this.state.scenes)
-        console.log(props.editor.selectedAudioToEdit)
+        //console.log(props.objectToScene.get(props.currentObject));
+        //console.log(props.currentObject);
+        //console.log(this.state.scenes)
+        //console.log(props.editor.selectedAudioToEdit)
     }
 
     handleSceneChange()
@@ -159,8 +158,12 @@ export default class GeometryScene extends React.Component{
         this.createScene();
 
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
-        let scene;
+        //let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+        //console.log(scene)
+        //this.createAudios(scene)
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
+            let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+            this.createAudios(scene)
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C') {
                 document.getElementById("startedit").style.color = 'white'
@@ -173,7 +176,7 @@ export default class GeometryScene extends React.Component{
                     cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange());
                     cursor.components.pointsaver.points = [];
-                    let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+                    //let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let points = scene.querySelectorAll(".points");
 
                     if(this.props.currentObject){
@@ -186,16 +189,13 @@ export default class GeometryScene extends React.Component{
                         lastChild.setAttribute('material', 'color: red; shader: flat');
                     }
 
-                    if(!this.props.currentObject){
-
-                    }
                     this.handleSceneChange();
                 }
             }
 
             if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
-                scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+                //scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                 let lines = scene.querySelectorAll(".line");
                 lines.forEach(line => {
                     scene.removeChild(line);
@@ -216,7 +216,7 @@ export default class GeometryScene extends React.Component{
                 if(pointsaver != null && pointsaver.points.length !== 0){
                     let points = pointsaver.points;
                     let lastID = points.length - 1;
-                    let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+                    //let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let lastChild = scene.querySelector('#point' + lastID.toString());
                     points.splice(-1);
                     scene.removeChild(lastChild);
@@ -283,8 +283,8 @@ export default class GeometryScene extends React.Component{
 
         let assets = this.generateAssets();
         let skie = this.generateBubbles();
-
-        console.log(this.props.editor.selectedAudioToEdit)
+        //let audios = this.props.audios.get(this.props.editor.selectedAudioToEdit);
+        //this.createAudios(skie);
         return(
             <div id="mainscene" tabIndex="0">
                 <div id="UI" >
@@ -332,6 +332,18 @@ export default class GeometryScene extends React.Component{
                 />
             );
         });
+    }
+
+    createAudios(scene){
+        this.state.scenes.audios.forEach(a => {
+            let audio = document.createElement('a-entity');
+            audio.setAttribute('id', 'audio' + a.uuid);
+            audio.setAttribute('position',  a.vertices);
+            audio.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
+            audio.setAttribute('material', 'color: red; shader: flat');
+            scene.appendChild(audio);
+        })
+        this.setState({scenes: this.state.scenes})
     }
 
 }

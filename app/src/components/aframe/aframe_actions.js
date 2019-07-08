@@ -15,6 +15,7 @@ function executeAction(VRScene, rule, action){
     let runState = VRScene.state.runState;
     let actual_scene = VRScene.state.activeScene.name;
     let actual_sceneimg = VRScene.state.activeScene.img;
+    let actual_scene_Uuid = VRScene.state.activeScene.uuid;
     let current_object = {};
     let game_graph = VRScene.state.graph;
     let sceneName = action.subj_uuid;
@@ -27,6 +28,7 @@ function executeAction(VRScene, rule, action){
 
         }
     });
+    console.log(action)
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -45,7 +47,7 @@ function executeAction(VRScene, rule, action){
             if(soundsHub['audio0_' + audioTransition])
                 soundsHub['audio0_' + audioTransition].play();
             setTimeout(function () {
-                if(soundsHub[VRScene.state.activeScene.music] &&
+                if(soundsHub[VRScene.state.activeScene.music] && soundsHub[state.graph.scenes[media].music] &&
                   (soundsHub[VRScene.state.activeScene.music].file !== soundsHub[state.graph.scenes[media].music].file)){
                     console.log('sto entrando qui ')
                     console.log(soundsHub[VRScene.state.activeScene.music])
@@ -65,33 +67,18 @@ function executeAction(VRScene, rule, action){
 
             break;
         case RuleActionTypes.CHANGE_STATE:
-            let duration_switch = 0;
-            let switchVideo = document.getElementById('media_'+current_object.uuid);
-
-            if(switchVideo != null) {
-                cursor.setAttribute('material', 'visible: false');
-                cursor.setAttribute('raycaster', 'far: 0.1');
-
-                let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1
-
-                if(store_utils.getFileType(videoType) === 'video') switchVideo.play();
-                duration_switch = (switchVideo.duration * 1000);
+            switch (action.obj_uuid){
+                case 'ON':
+                case 'OFF':
+                    changeStateSwitch(VRScene, runState, current_object, cursor, action);
+                    break;
+                case 'COLLECTED':
+                    changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.subj_uuid);
+                    break;
+                case 'UNLOCKED':
+                    changeStateObject(VRScene, runState, game_graph, 'UNLOCKED', current_object, action.subj_uuid);
+                    break;
             }
-
-            let audio = current_object.properties.state === 'ON'?current_object.audio.audio0:current_object.audio.audio1
-            let idAudio = current_object.properties.state === 'ON'?'audio0_':'audio1_';
-            if(soundsHub[idAudio + audio])
-                soundsHub[idAudio + audio].play();
-
-            setTimeout(function () {
-                cursor.setAttribute('raycaster', 'far: 10000');
-                cursor.setAttribute('material', 'visible: true');
-                cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
-                cursor.setAttribute('color', 'black');
-                runState[action.subj_uuid].state = action.obj_uuid;
-                VRScene.setState({runState: runState});
-            },duration_switch);
-
             break;
         case RuleActionTypes.ON:
             if(runState[current_object.uuid].state === "OFF"){
@@ -151,30 +138,32 @@ function executeAction(VRScene, rule, action){
                 soundsHub["audios_"+ media].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
-            runState[current_object.uuid].state='COLLECTED';
+            changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.obj_uuid);
+            /*runState[action.obj_uuid].state='COLLECTED';
             let audioKey = current_object.audio.audio0;
             if(soundsHub['audio0_' + audioKey])
                 soundsHub['audio0_' + audioKey].play();
-            game_graph.scenes[actual_scene].objects.collectable_keys =
-                game_graph.scenes[actual_scene].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
+            game_graph.scenes[actual_scene_Uuid].objects.collectable_keys =
+                game_graph.scenes[actual_scene_Uuid].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
             if(current_object.media0 !== null){
                 document.getElementById(actual_scene).needShaderUpdate = true;
             }
-            VRScene.setState({runState: runState, graph: game_graph});
+            VRScene.setState({runState: runState, graph: game_graph});*/
             break;
         case RuleActionTypes.UNLOCK_LOCK:
-            runState[current_object.uuid].state='UNLOCKED';
+            changeStateObject(VRScene, runState, game_graph, 'UNLOCKED', current_object, action.obj_uuid);
+            /*runState[action.obj_uuid].state='UNLOCKED';
             let audioLock = current_object.audio.audio0;
             if(soundsHub['audio0_' + audioLock])
                 soundsHub['audio0_' + audioLock].play();
-            game_graph.scenes[actual_scene].objects.locks =
-                game_graph.scenes[actual_scene].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
-            VRScene.setState({runState: runState, graph: game_graph});
+            game_graph.scenes[actual_scene_Uuid].objects.locks =
+                game_graph.scenes[actual_scene_Uuid].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
+            VRScene.setState({runState: runState, graph: game_graph});*/
             break;
         case RuleActionTypes.CHANGE_VISIBILITY:
             let obj = document.querySelector('#curv' + action.subj_uuid)
-
-            obj.setAttribute('selectable', {visible: action.obj_uuid})
+            if(obj)
+                obj.setAttribute('selectable', {visible: action.obj_uuid})
             runState[action.subj_uuid].visible=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
             break;
@@ -293,5 +282,46 @@ function lookObject(idObject){
     //document.exitPointerLock()
 }
 
+function changeStateObject(VRScene, runState, game_graph, state, current_object, action_uuid){
+    runState[action_uuid].state=state;
+    let audioKey = current_object.audio.audio0;
+    if(soundsHub['audio0_' + audioKey])
+        soundsHub['audio0_' + audioKey].play();
+    game_graph.scenes[VRScene.state.activeScene.uuid].objects.collectable_keys =
+        game_graph.scenes[VRScene.state.activeScene.uuid].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
+    if(current_object.media0 !== null){
+        document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+    }
+    VRScene.setState({runState: runState, graph: game_graph});
+}
+
+function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
+    let duration_switch = 0;
+    let switchVideo = document.getElementById('media_'+current_object.uuid);
+
+    if(switchVideo != null) {
+        cursor.setAttribute('material', 'visible: false');
+        cursor.setAttribute('raycaster', 'far: 0.1');
+
+        let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1
+
+        if(store_utils.getFileType(videoType) === 'video') switchVideo.play();
+        duration_switch = (switchVideo.duration * 1000);
+    }
+
+    let audio = current_object.properties.state === 'ON'?current_object.audio.audio0:current_object.audio.audio1
+    let idAudio = current_object.properties.state === 'ON'?'audio0_':'audio1_';
+    if(soundsHub[idAudio + audio])
+        soundsHub[idAudio + audio].play();
+
+    setTimeout(function () {
+        cursor.setAttribute('raycaster', 'far: 10000');
+        cursor.setAttribute('material', 'visible: true');
+        cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+        cursor.setAttribute('color', 'black');
+        runState[action.subj_uuid].state = action.obj_uuid;
+        VRScene.setState({runState: runState});
+    },duration_switch);
+}
 export {executeAction,
 lookObject}

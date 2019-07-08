@@ -224,6 +224,7 @@ export default class DebugVRScene extends React.Component {
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
                         runState={this.state.runState}
                         editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+
                 />
             );
         });

@@ -123,11 +123,15 @@ export default class Bubble extends Component
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
+            //TODO aggiungere modifiche audio
             if(this.props.scene.music !== undefined && !this.props.editMode){
-                let music = this.props.audios[this.props.scene.music]
-                if(soundsHub[music.uuid] === undefined)
-                    soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
-                soundsHub[music.uuid].play()
+                if(this.props.audios){
+                    let music = this.props.audios[this.props.scene.music]
+                    if(soundsHub[music.uuid] === undefined)
+                        soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
+                    soundsHub[music.uuid].play()
+                }
+
             }
         }
         else material += "opacity: 0; visible: false";
