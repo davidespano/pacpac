@@ -18,16 +18,18 @@ import Values from "../../interactives/rules/Values";
 export function givePoints(props) {
     let cursor = document.querySelector('a-cursor');
     let puntisalvati = cursor.components.pointsaver.points;
-
+    let isCurved = cursor.components.pointsaver.attrValue.isCurved === 'true';
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
     //console.log(puntisalvati.join())
-    console.log(cursor.components.pointsaver.attrValue.isCurved)
-    if(cursor.components.pointsaver.attrValue.isCurved)
+    console.log(isCurved)
+    if(isCurved ){
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
-    else
+    } else {
         interface_utils.updateAudioVertices(props.audios.get(props.editor.selectedAudioToEdit), puntisalvati.join(), props)
+    }
+
 }
 
 export default class GeometryScene extends React.Component{
@@ -160,8 +162,7 @@ export default class GeometryScene extends React.Component{
         let scene;
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             const keyName = event.key;
-            if(keyName === 'c' || keyName === 'C')
-            {
+            if(keyName === 'c' || keyName === 'C') {
                 document.getElementById("startedit").style.color = 'white'
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 if(pointsaver != null && pointsaver.points.length !== 0) {
@@ -175,15 +176,24 @@ export default class GeometryScene extends React.Component{
                     let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let points = scene.querySelectorAll(".points");
 
-                    points.forEach(point => {
-                        scene.removeChild(point);
-                    });
+                    if(this.props.currentObject){
+                        points.forEach(point => {
+                            scene.removeChild(point);
+                        });
+                    } else {
+                        let lastChild = scene.querySelector('#point0');
+                        lastChild.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
+                        lastChild.setAttribute('material', 'color: red; shader: flat');
+                    }
+
+                    if(!this.props.currentObject){
+
+                    }
                     this.handleSceneChange();
                 }
             }
 
-            if(keyName === 'e' || keyName === 'E')
-            {
+            if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
                 scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                 let lines = scene.querySelectorAll(".line");
@@ -200,8 +210,7 @@ export default class GeometryScene extends React.Component{
                 cursor.addEventListener('click', this.handleFeedbackChange);
             }
 
-            if(keyName === 'u' || keyName === 'U')
-            {
+            if(keyName === 'u' || keyName === 'U') {
                 //TODO rimuovere le linee non solo i punti
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 if(pointsaver != null && pointsaver.points.length !== 0){
@@ -214,16 +223,14 @@ export default class GeometryScene extends React.Component{
                 }
             }
 
-            if(keyName === 'q' || keyName === 'Q')
-            {
+            if(keyName === 'q' || keyName === 'Q') {
                 if(this.props.currentObject !== null)
                     InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
                     this.props.interactiveObjects.get(this.props.currentObject));
                 this.props.switchToEditMode();
             }
 
-            if(keyName === 'h' || keyName === 'H')
-            {
+            if(keyName === 'h' || keyName === 'H') {
                 if(document.getElementById("keyMap").style.display !== 'none')
                     document.getElementById("keyMap").style.display = 'none';
                 else
@@ -241,8 +248,7 @@ export default class GeometryScene extends React.Component{
         })
     }
 
-    render()
-    {
+    render() {
 
         if (this.state.completeScene !== undefined ) {
             this.currentLevel = [this.state.scenes.uuid]
