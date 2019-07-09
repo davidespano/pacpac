@@ -163,7 +163,7 @@ export default class GeometryScene extends React.Component{
         //this.createAudios(scene)
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
-            this.createAudios(scene)
+
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C') {
                 document.getElementById("startedit").style.color = 'white'
@@ -243,6 +243,8 @@ export default class GeometryScene extends React.Component{
         let scene = {};
         await SceneAPI.getAllDetailedScenes(scene);
         let audioToEdit = this.props.editor.selectedAudioToEdit ? this.props.audios.get(this.props.editor.selectedAudioToEdit) : null;
+        console.log(scene['scenes'][this.props.currentScene])
+        this.createAudios(scene['scenes'][this.props.currentScene])
         this.setState({completeScene: scene,
                        audio: audioToEdit
         })
@@ -318,6 +320,7 @@ export default class GeometryScene extends React.Component{
     }
 
     generateAssets(){
+        console.log()
         return this.currentLevel.map(sceneName =>{
             return aframe_assets.generateAsset(this.state.completeScene.scenes[sceneName],
                                                this.state.completeScene.scenes[sceneName].img, [], [],  'geometry')
@@ -335,14 +338,18 @@ export default class GeometryScene extends React.Component{
     }
 
     createAudios(scene){
-        this.state.scenes.audios.forEach(a => {
+        console.log(this.state.scenes)
+        let mainscene = document.querySelector('a-scene')
+        scene.audios.forEach(a => {
             let audio = document.createElement('a-entity');
             audio.setAttribute('id', 'audio' + a.uuid);
             audio.setAttribute('position',  a.vertices);
             audio.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
             audio.setAttribute('material', 'color: red; shader: flat');
-            scene.appendChild(audio);
-        })
+            if(a.vertices !== undefined)
+                mainscene.appendChild(audio);
+            console.log(a)
+        });
         this.setState({scenes: this.state.scenes})
     }
 

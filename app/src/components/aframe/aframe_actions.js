@@ -282,6 +282,15 @@ function lookObject(idObject){
     //document.exitPointerLock()
 }
 
+/**
+ * Function for play the audio and update the state of a object
+ * @param VRScene
+ * @param runState
+ * @param game_graph
+ * @param state
+ * @param current_object
+ * @param action_uuid
+ */
 function changeStateObject(VRScene, runState, game_graph, state, current_object, action_uuid){
     runState[action_uuid].state=state;
     let audioKey = current_object.audio.audio0;

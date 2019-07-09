@@ -4,7 +4,7 @@ const {mediaURL} = settings;
 
 function generateAudio(audio, position=null) {
     let audioContext = new AudioContext();
-    let audioPosition = position===null?audio.position:position;
+    let audioPosition = position===null?audio.vertices:position;
     let resonance = generateRoom(audioContext);
     let audioElement = document.createElement('audio');
 
