@@ -95,11 +95,11 @@ export default class Bubble extends Component
         //generate the interactive areas
         let scene = this.props.scene;
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
-        let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
+        //let primitive = this.props.assetsDimention.type === 'video'?"a-videosphere":"a-sky";
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
-        let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9"
-
+        let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9";
+        let sceneRender;
 
         const curves = Object.values(scene.objects).flat().map(curve => {
             if(this.props.editMode){
@@ -147,18 +147,18 @@ export default class Bubble extends Component
                 </Entity>)
         } else {
             //TODO aggiungere il controllo del ridimensionamento della canvas
-            let canvasWidth = document.documentElement.clientWidth / 100;
-            let canvasHight = canvasWidth /1.77;
-
+            //TODO trovare una formula per il calcolo della dimensione del piano
+            //let canvasWidth = document.documentElement.clientWidth / 100;
+            //let canvasHight = canvasWidth /1.77;
+            let canvasWidth = this.props.assetsDimention.width / 100;
+            let canvasHeight = this.props.assetsDimention.height / 100;
+            console.log(this.props.assetsDimention)
             if(this.props.isActive){
-                //cursor.addAttribute('mouse-cursor', 'true');
-                //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
-                //camera.setAttribute("pac-look-controls", "planarScene: true");
+
             }
-            //camera.setAttribute("pac-look-controls", "planarScene: true");
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
-                    id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
+                    id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}
                     material={material} play_video={active} position={positionPlane} >
                 {curves}
                 </Entity>)

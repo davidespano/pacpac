@@ -38,6 +38,7 @@ export default class VRScene extends React.Component {
             resonanceAudioScene: {}
         };
         //console.log(props)
+        //console.log(props.assets.get(this.state.activeScene.img))
         //console.log(this.props.scenes.toArray())
         document.querySelector('link[href*="bootstrap"]').remove();
     }
@@ -201,6 +202,7 @@ export default class VRScene extends React.Component {
                 <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
                         editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)} audios={this.state.audios}
+                        assetsDimention={this.props.assets.get(this.state.activeScene.img)}
                 />
             );
         });
@@ -237,6 +239,7 @@ export default class VRScene extends React.Component {
 
     }
 
+    //TODO verificare che funzioni ancora la rotazione
     updateAngles() {
         let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld
         this.state.resonanceAudioScene.setListenerFromMatrix(cameraMatrix4)

@@ -18,6 +18,7 @@ import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
 import EditorState from "../../data/EditorState";
 import ActionTypes from "../../actions/ActionTypes";
+import AudioAPI from "../../utils/AudioAPI";
 
 const THREE = require('three');
 const eventBus = require('./eventBus');
@@ -52,16 +53,16 @@ export default class DebugVRScene extends React.Component {
         };
 
         //if(document.querySelector('link[href*="bootstrap"]'))
-        //document.querySelector('link[href*="bootstrap"]').remove();
+        document.querySelector('link[href*="bootstrap"]').remove();
     }
 
     componentDidMount() {
         let audioContext = new AudioContext();
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        this.generateRoom(audioContext);
-        this.generateAudio(audioContext);
-        //this.interval = setInterval(() => this.tick(), 200);
+        //this.generateRoom(audioContext);
+        //this.generateAudio(audioContext);
+        this.interval = setInterval(() => this.tick(), 200);
     }
 
     tick() {
@@ -70,18 +71,24 @@ export default class DebugVRScene extends React.Component {
     }
 
     async loadEverything() {
+        let audioContext = new AudioContext();
+        let audios = [];
+        await AudioAPI.getAudios(audios);
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.props.currentScene];
         let runState = this.createGameState(gameGraph);
+        console.log(audios)
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
+            audios: audios
         });
         this.createRuleListeners();
-
+        this.generateRoom(audioContext);
+        this.generateAudio(audioContext);
         EditorState.debugRunState = runState;
 
         document.querySelector('#camera').removeAttribute('look-controls');
@@ -185,6 +192,7 @@ export default class DebugVRScene extends React.Component {
         let assets = this.generateAssets2();
         let is3dScene = this.props.scenes.get(this.props.currentScene).type === Values.THREE_DIM;
 
+        //TODO verificare vr-mode crea problemi in play
         return (
             <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
                 <a-assets>
@@ -210,7 +218,7 @@ export default class DebugVRScene extends React.Component {
     generateAssets2() {
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-                this.state.runState[sceneName].background, this.state.runState)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios)
         }).flat();
     }
 
@@ -222,8 +230,9 @@ export default class DebugVRScene extends React.Component {
                 <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.currentObject !== null}
                         key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
-                        runState={this.state.runState}
-                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+                        runState={this.state.runState} editMode={false} audios={this.state.audios}
+                        cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+                        assetsDimention={this.props.assets.get(this.state.activeScene.img)}
 
                 />
             );
@@ -256,16 +265,16 @@ export default class DebugVRScene extends React.Component {
 
     generateAudio(audioContext) {
 
-        let audioElement = document.createElement('audio');
+        //let audioElement = document.createElement('audio');
 
         //TODO add src from buble media
-        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.props.scenes.get(this.props.currentScene).img;
+        /*audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.props.scenes.get(this.props.currentScene).img;
         audioElement.crossOrigin = 'anonymous';
         audioElement.load();
         audioElement.loop = true;
         let audioElementSource = audioContext.createMediaElementSource(audioElement);
         let source = this.state.resonanceAudioScene.createSource();
-        audioElementSource.connect(source.input);
+        audioElementSource.connect(source.input);*/
     }
 
     updateAngles() {

@@ -4,6 +4,7 @@ import LeftBar from "../components/interface/Leftbar";
 import RightBar from "../components/interface/Rightbar";
 import DebugTab from "../components/interface/DebugTab";
 import VRScene from "../components/aframe/create_scene2";
+//import VRScene from "../components/aframe/create_debug_scene";
 import DebugVRScene from "../components/aframe/create_debug_scene";
 import '../components/look-controls_us';
 import CentralScene from "../components/interface/CentralScene";

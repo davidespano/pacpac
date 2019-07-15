@@ -93,7 +93,6 @@ export default class GeometryScene extends React.Component{
             let point_saver = document.querySelector('#cursor').components.pointsaver;
             let a_point = point_saver.points;
             let isCurved = point_saver.attrValue.isCurved === 'true';
-            console.log(point_saver)
             //Punti
             let length = a_point.length;
             let idPoint = "point" + (length - 1).toString();
@@ -136,7 +135,6 @@ export default class GeometryScene extends React.Component{
             } else {
                 let lastChild = scene.querySelector('#point0');
                 if(lastChild) {
-                    console.log(lastChild)
                     scene.removeChild(lastChild);
                 }
 
@@ -158,9 +156,6 @@ export default class GeometryScene extends React.Component{
         this.createScene();
 
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
-        //let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
-        //console.log(scene)
-        //this.createAudios(scene)
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
 
@@ -243,7 +238,6 @@ export default class GeometryScene extends React.Component{
         let scene = {};
         await SceneAPI.getAllDetailedScenes(scene);
         let audioToEdit = this.props.editor.selectedAudioToEdit ? this.props.audios.get(this.props.editor.selectedAudioToEdit) : null;
-        console.log(scene['scenes'][this.props.currentScene])
         this.createAudios(scene['scenes'][this.props.currentScene])
         this.setState({completeScene: scene,
                        audio: audioToEdit
@@ -320,7 +314,6 @@ export default class GeometryScene extends React.Component{
     }
 
     generateAssets(){
-        console.log()
         return this.currentLevel.map(sceneName =>{
             return aframe_assets.generateAsset(this.state.completeScene.scenes[sceneName],
                                                this.state.completeScene.scenes[sceneName].img, [], [],  'geometry')
@@ -338,17 +331,16 @@ export default class GeometryScene extends React.Component{
     }
 
     createAudios(scene){
-        console.log(this.state.scenes)
         let mainscene = document.querySelector('a-scene')
         scene.audios.forEach(a => {
-            let audio = document.createElement('a-entity');
-            audio.setAttribute('id', 'audio' + a.uuid);
-            audio.setAttribute('position',  a.vertices);
-            audio.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
-            audio.setAttribute('material', 'color: red; shader: flat');
-            if(a.vertices !== undefined)
+            if(a.vertices !== undefined) {
+                let audio = document.createElement('a-entity');
+                audio.setAttribute('id', 'audio' + a.uuid);
+                audio.setAttribute('position', a.vertices);
+                audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
+                audio.setAttribute('material', 'color: red; shader: flat');
                 mainscene.appendChild(audio);
-            console.log(a)
+            }
         });
         this.setState({scenes: this.state.scenes})
     }
