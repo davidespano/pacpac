@@ -98,6 +98,7 @@ export default class GeometryScene extends React.Component{
             let idPoint = "point" + (length - 1).toString();
             let tmp = document.createElement('a-entity');
             let scene, scale, moltiplier;
+
             if(document.querySelector('a-sky')){
                 scene = document.querySelector('a-sky');
                 scale = "-1 1 1";
@@ -113,6 +114,7 @@ export default class GeometryScene extends React.Component{
                     moltiplier = 1;
                 }
             }
+            console.log(this.parentNode)
             if(isCurved){
                 tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
                 a_point[(length-1)].x *= moltiplier;
@@ -123,6 +125,7 @@ export default class GeometryScene extends React.Component{
                 tmp.setAttribute('class', 'points');
                 scene.appendChild(tmp);
 
+                // se sono presenti più di due punti allora disegno le linee
                 let lengthLine = a_point.length;
                 if (lengthLine >= 2) {
                     let tmp = document.createElement('a-entity');
@@ -158,7 +161,6 @@ export default class GeometryScene extends React.Component{
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
-
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C') {
                 document.getElementById("startedit").style.color = 'white'
@@ -171,7 +173,6 @@ export default class GeometryScene extends React.Component{
                     cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange());
                     cursor.components.pointsaver.points = [];
-                    //let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let points = scene.querySelectorAll(".points");
 
                     if(this.props.currentObject){
@@ -179,6 +180,7 @@ export default class GeometryScene extends React.Component{
                             scene.removeChild(point);
                         });
                     } else {
+                        //TODO salvo il nuovo punto ma non rimuovo il vecchio
                         let lastChild = scene.querySelector('#point0');
                         lastChild.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
                         lastChild.setAttribute('material', 'color: red; shader: flat');
@@ -190,18 +192,29 @@ export default class GeometryScene extends React.Component{
 
             if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
-                //scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+                //TODO rimuovere la vecchia curved cercando con uuid
                 let lines = scene.querySelectorAll(".line");
                 lines.forEach(line => {
                     scene.removeChild(line);
                 });
+
+                // Rimuovo i punti di eventuali geometrie o posizionamento di audio precedenti
                 let removeSphere = scene.querySelectorAll(".points");
                 removeSphere.forEach(point => {
                     scene.removeChild(point);
                 });
+
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
+                if(cursor.components.pointsaver.attrValue.isCurved === 'true'){
+                    if(document.getElementById("curve_"+cursor.components.pointsaver.attrValue.uuid))
+                        scene.removeChild(document.getElementById("curve_"+cursor.components.pointsaver.attrValue.uuid));
+                } else {
+                    if(document.getElementById("audio"+cursor.components.pointsaver.attrValue.uuid))
+                        document.querySelector('a-scene').removeChild(document.getElementById("audio"+cursor.components.pointsaver.attrValue.uuid));
+                }
                 cursor.components.pointsaver.points = [];
+                console.log(cursor.components.pointsaver.attrValue.uuid)
                 cursor.addEventListener('click', this.handleFeedbackChange);
             }
 
@@ -257,12 +270,12 @@ export default class GeometryScene extends React.Component{
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
         let isCurved = this.props.currentObject!==null;
-        /*if(this.props.currentObject){
-            currenteObjectUuid = this.props.objectToScene.get(this.props.currentObject);
+        let currenteObjectUuid;
+        if(this.props.currentObject){
+            currenteObjectUuid = this.props.currentObject;
         } else {
-            currenteObjectUuid = this.props.audios.get(this.props.editor.selectedAudioToEdit).scene;
-        }*/
-
+            currenteObjectUuid = this.props.audios.get(this.props.editor.selectedAudioToEdit).uuid;
+        }
         if(isCurved){
             let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
             //let objects = this.props.scenes.get(currenteObjectUuid).get('objects');
@@ -276,7 +289,6 @@ export default class GeometryScene extends React.Component{
                 }
             }
         }
-
         let assets = this.generateAssets();
         let skie = this.generateBubbles();
         //let audios = this.props.audios.get(this.props.editor.selectedAudioToEdit);
@@ -305,7 +317,9 @@ export default class GeometryScene extends React.Component{
                             pac-look-controls={"pointerLockEnabled: " + is3dScene + ";planarScene:" + !is3dScene +";"}
                             look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin} pointsaver={'isCurved:' + isCurved}  visible={is3dScene}/>
+                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
+                                    pointsaver={'isCurved:' + isCurved + '; uuid: ' + currenteObjectUuid}
+                                    visible={is3dScene}/>
                         </Entity>
                     </Entity>
                 </Scene>

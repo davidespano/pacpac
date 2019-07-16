@@ -47,7 +47,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
             //Creaizone traccia audio dei singoli oggetti, solo nella modalità gioco
             if(mode === 'scene'){
                 Object.keys(obj.audio).map(k => {
-                    //TODO a volte se esiste l'audio non è presente nella lista degli audio, verificare 
+                    //TODO a volte se esiste l'audio non è presente nella lista degli audio, verificare
                     if(obj.audio[k] !== null && audios[obj.audio[k]] !== undefined){
                         console.log(obj.audio[k])
                         let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj)

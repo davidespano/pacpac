@@ -4,11 +4,12 @@ AFRAME.registerComponent('pointsaver',
 {
     schema:{
         points:{type: 'array', default: []},
-        isCurved:{type: 'boolean', default: true}
+        isCurved:{type: 'boolean', default: true},
+        uuid:{type: 'string', default: ''}
     },
 
     init: function () {
-        console.log(this.data.isCurved)
+
         if(this.data.isCurved){
             this.el.addEventListener('click', pointSaverCurved);
         } else {
