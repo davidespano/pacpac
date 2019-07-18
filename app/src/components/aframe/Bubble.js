@@ -2,7 +2,6 @@ import React,{Component} from "react";
 import {Entity} from 'aframe-react';
 import {Curved, CurvedGeometry} from './aframe_curved';
 import settings from "../../utils/settings";
-import {Howl} from "howler";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
 import Values from '../../interactives/rules/Values'
