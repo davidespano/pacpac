@@ -24,11 +24,8 @@ export function givePoints(props) {
     );
     //console.log(puntisalvati.join())
     if(isCurved ){
-        //console.log(document.getElementById('curve_'+ props.currentObject).getAttribute('geometry'))
-        //console.log(puntisalvati.join())
         document.getElementById("curve_"+props.currentObject).setAttribute('geometry', 'vertices: ' + puntisalvati.join())
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
-        //console.log(document.getElementById('curve_'+ props.currentObject).getAttribute('geometry'))
     } else {
         interface_utils.updateAudioVertices(props.audios.get(props.editor.selectedAudioToEdit), puntisalvati.join(), props)
     }
@@ -80,20 +77,15 @@ export default class GeometryScene extends React.Component{
         }
 
         //SetState in order to update the scene
-        let sceneState;
+        /*let sceneState;
         if(this.props.currentObject){
-            /*a_point = a_point.map(punto =>
-                punto.toArray().join(" ")
-            );*/
             sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
-            //this.getObjectsFromUuid(sceneState, this.props.currentObject, a_point.join());
         } else {
             sceneState = this.props.scenes.get(this.state.audio.scene);
         }
         this.setState({
             scenes: sceneState,
-            //completeScene: this.state.completeScene
-        })
+        })*/
     }
 
     handleFeedbackChange() {
@@ -106,7 +98,7 @@ export default class GeometryScene extends React.Component{
             let idPoint = "point" + (length - 1).toString();
             let tmp = document.createElement('a-entity');
             let scene, scale, moltiplier;
-
+            console.log('ci sto entrando ancora')
             if(document.querySelector('a-sky')){
                 scene = document.querySelector('a-sky');
                 scale = "-1 1 1";
@@ -178,11 +170,18 @@ export default class GeometryScene extends React.Component{
                     givePoints(this.props);
                     this.handleSceneChange();
                     cursor.setAttribute('color', 'black');
+                    console.log(cursor)
                     cursor.removeEventListener('click', function pointSaver(evt) {});
-                    cursor.removeEventListener('click', this.handleFeedbackChange());
+                    cursor.removeEventListener('click', this.handleFeedbackChange(), true);
                     cursor.components.pointsaver.points = [];
+                    console.log(cursor)
                     let points = scene.querySelectorAll(".points");
+                    let sceneState;
                     if(this.props.currentObject){
+                        a_point = a_point.map(punto =>
+                            punto.toArray().join(" ")
+                        );
+                        this.getObjectsFromUuid(this.props.currentObject, a_point.join());
                         points.forEach(point => {
                             scene.removeChild(point);
                         });
@@ -190,28 +189,15 @@ export default class GeometryScene extends React.Component{
                         let lastChild = scene.querySelector('#point0');
                         lastChild.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
                         lastChild.setAttribute('material', 'color: red; shader: flat');
+                        lastChild.setAttribute('material', 'opacity: 0.5; shader: flat');
                     }
-                    let sceneState;
 
-                    if(this.props.currentObject){
-                        a_point = a_point.map(punto =>
-                            punto.toArray().join(" ")
-                        );
-                        sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
-                        this.getObjectsFromUuid(sceneState, this.props.currentObject, a_point.join());
-                    } else {
-                    }
-                    this.setState({
-                        scenes: sceneState,
-                        completeScene: this.state.completeScene
-                    });
                     this.handleSceneChange();
                 }
             }
 
             if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
-                //TODO rimuovere la vecchia curved cercando con uuid
                 let lines = scene.querySelectorAll(".line");
                 lines.forEach(line => {
                     scene.removeChild(line);
@@ -222,17 +208,15 @@ export default class GeometryScene extends React.Component{
                 removeSphere.forEach(point => {
                     scene.removeChild(point);
                 });
-                console.log(this.state.completeScene)
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
                 if(cursor.components.pointsaver.attrValue.isCurved === 'true'){
-                    if(document.getElementById("curve_"+cursor.components.pointsaver.attrValue.uuid))
-                        console.log(document.getElementById('curve_'+ cursor.components.pointsaver.attrValue.uuid).getAttribute('geometry'))
+                    if(document.getElementById("curve_"+this.props.currentObject))
                         //scene.removeChild(document.getElementById("curve_"+cursor.components.pointsaver.attrValue.uuid));
-                        document.getElementById("curve_"+cursor.components.pointsaver.attrValue.uuid).setAttribute('geometry', 'vertices: null')
+                        document.getElementById("curve_"+this.props.currentObject).setAttribute('geometry', 'vertices: null')
                 } else {
-                    if(document.getElementById("audio"+cursor.components.pointsaver.attrValue.uuid))
-                        document.querySelector('a-scene').removeChild(document.getElementById("audio"+cursor.components.pointsaver.attrValue.uuid));
+                    if(document.getElementById("audio"+this.props.editor.selectedAudioToEdit))
+                        document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.selectedAudioToEdit));
                 }
                 cursor.components.pointsaver.points = [];
                 cursor.addEventListener('click', this.handleFeedbackChange);
@@ -355,10 +339,12 @@ export default class GeometryScene extends React.Component{
     }
 
     generateBubbles(){
+        let curvedToEdit = this.props.currentObject?this.props.currentObject:'';
+        console.log(curvedToEdit)
         return this.currentLevel.map(sceneName =>{
             return (
                 <Bubble key={"key" + sceneName} scene={this.state.completeScene} isActive={true}
-                        handler={() => this.handleSceneChange()} editMode={true}
+                        handler={() => this.handleSceneChange()} editMode={true} curvedToEdit={curvedToEdit}
                 />
             );
         });
@@ -373,28 +359,25 @@ export default class GeometryScene extends React.Component{
                 audio.setAttribute('id', 'audio' + a.uuid);
                 audio.setAttribute('position', a.vertices);
                 audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
-                audio.setAttribute('material', 'color: red; shader: flat');
+                if(this.props.editor.selectedAudioToEdit === a.uuid)
+                    audio.setAttribute('material', 'color: red; shader: flat');
+                audio.setAttribute('material', 'opacity: 0.7; shader: flat');
                 mainscene.appendChild(audio);
             }
         });
         this.setState({scenes: this.state.scenes})
     }
 
-    getObjectsFromUuid(scene, uuid, vertices){
+    getObjectsFromUuid(uuid, vertices){
         let currentScene = this.state.completeScene;
 
         for (let [key, value] of Object.entries(currentScene.objects)) {
             value.forEach(function(o, index) {
                 if(o.uuid === uuid){
-                    console.log(currentScene.objects[key][index].vertices)
-                    console.log(vertices)
                     currentScene.objects[key][index].vertices=vertices;
-                    console.log(currentScene.objects[key][index].vertices)
                 }
             })
         }
-
-        console.log(currentScene.objects)
         this.setState({
             completeScene: currentScene
         })

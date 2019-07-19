@@ -30,9 +30,10 @@ class CurvedGeometry extends Component
 
     render() {
         let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
+        console.log(this.props.color)
         return(
             <Entity id={'curve_' + this.props.id} geometry={"primitive: polyline; vertices: " + this.props.vertices}
-                    scale={scale} material="side: double; opacity: 0.50" position={this.props.position}/>
+                    scale={scale} material={"side: double; opacity: 0.50; color: " + this.props.color} position={this.props.position}/>
         )
     }
 }
