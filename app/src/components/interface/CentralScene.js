@@ -73,7 +73,7 @@ function getCoordinates(event){
  */
 function generateObjectsIcons(props){
 
-    console.log(props.centroids)
+    //console.log(props.centroids)
 
     let scene = props.scenes.get(props.currentScene);
     let allObjects = scene_utils.allObjects(scene);
