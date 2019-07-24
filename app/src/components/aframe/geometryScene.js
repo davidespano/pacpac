@@ -36,8 +36,14 @@ export default class GeometryScene extends React.Component{
     constructor(props)
     {
         super(props);
+        let scene;
+        console.log(props.editor.selectedSceneSpatialAudio)
+        if(props.editor.selectedSceneSpatialAudio)
+            scene = props.editor.selectedSceneSpatialAudio;
+        else
+            scene = props.currentScene;
         this.state = {
-            scenes: props.scenes.get(props.currentScene)
+            scenes: props.scenes.get(scene)
         };
         //console.log(props.objectToScene.get(props.currentObject));
         //console.log(props.currentObject);
@@ -255,8 +261,14 @@ export default class GeometryScene extends React.Component{
         let scene = {};
         await SceneAPI.getAllDetailedScenes(scene);
         let audioToEdit = this.props.editor.selectedAudioToEdit ? this.props.audios.get(this.props.editor.selectedAudioToEdit) : null;
-        this.createAudios(scene['scenes'][this.props.currentScene])
-        this.setState({completeScene: scene['scenes'][this.props.currentScene],
+        let currentScene;
+        if(this.props.editor.selectedSceneSpatialAudio)
+            currentScene = this.props.editor.selectedSceneSpatialAudio;
+        else
+            currentScene = this.props.currentScene;
+        this.createAudios(scene['scenes'][currentScene]);
+
+        this.setState({completeScene: scene['scenes'][currentScene],
                        audio: audioToEdit
         })
     }
