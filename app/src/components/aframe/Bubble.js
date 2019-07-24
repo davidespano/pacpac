@@ -157,7 +157,7 @@ export default class Bubble extends Component
             if(this.props.isActive){
                 positionPlane = "0, 1.6, -6.44";
             } else {
-                let transizioneMomentanea = 'left';
+                let transizioneMomentanea = 'nulla';
                 switch (transizioneMomentanea) {
                     case 'right':
                         positionPlane = canvasWidth + ', 1.6, -6.44';
@@ -171,11 +171,11 @@ export default class Bubble extends Component
                     case 'bottom':
                         positionPlane = '0, ' + (-canvasHeight) + ', -6.44';
                         break;
-
+                    default:
+                        positionPlane = "0, 1.6, -6.44";
+                        break;
                 }
             }
-            console.log('posizione piano')
-            console.log(positionPlane)
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}
