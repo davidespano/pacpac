@@ -25,6 +25,7 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
         AudioAPI.getAllAudios();
 		StoryAPI.getAllCollections();
 		DebugAPI.getAllSaves();
+		//If modified edit gameSelection in components/interface/GameList.js
     }
 }).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));

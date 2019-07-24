@@ -4,6 +4,8 @@ import MediaAPI from "../../utils/MediaAPI";
 import InputGameForm from "./InputGameForm";
 import GameAPI from "../../utils/GameAPI";
 import StoryAPI from "../../utils/StoryAPI";
+import AudioAPI from "../../utils/AudioAPI";
+import DebugAPI from "../../utils/DebugAPI";
 
 
 function GameList(props) {
@@ -62,7 +64,8 @@ function gameSelection(gameUuid,props){
     SceneAPI.getAllScenesAndTags();
     MediaAPI.getAllAssets();
 	StoryAPI.getAllCollections();
-
+    AudioAPI.getAllAudios();
+    DebugAPI.getAllSaves();
 }
 
 export default GameList;
