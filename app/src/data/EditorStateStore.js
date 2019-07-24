@@ -100,7 +100,7 @@ class EditorStateStore extends ReduceStore {
                 state = state.set('isAudioSpatial', action.isSpatial);
                 state = state.set('selectedAudioFile', action.file);
                 state = state.set('loopChecked', action.check);
-                state = state.set('selectedSceneSpatialAudio', action.scene);
+                state = action.scene ? state.set('selectedSceneSpatialAudio', action.scene) : state;
                 return state;
             case ActionTypes.SELECT_SCENE_SPATIAL_AUDIO:
                 return state.set('selectedSceneSpatialAudio', action.selection);
@@ -113,10 +113,12 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
             case ActionTypes.UPDATE_CURRENT_SCENE:
+                console.log('UPDATE')
+                console.log(action.scene);
                 return state.set('selectedSceneSpatialAudio', action.scene.uuid).set('sceneNameRightbar', action.scene.name);
             case ActionTypes.UPDATE_CURRENT_OBJECT:
                 let o = action.obj ? action.obj.name : null;
-                return state.set('objectNameRightbar', o);
+                return state.set('objectNameRightbar');
             case ActionTypes.UPDATE_OBJECT_NAME_RIGHTBAR:
                 console.log(action.name);
                 return state.set('objectNameRightbar', action.name);

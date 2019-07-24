@@ -90,7 +90,6 @@ function spatialOption(props, audioToEdit){
     let spatial = props.editor.isAudioSpatial;
     let selectedScene = props.editor.selectedSceneSpatialAudio;
 
-
     return(
         <div id={'audio-form-scene'} className={'audio-form-box-section'}>
             <div className={'box-titles'}>Opzioni</div>
@@ -153,6 +152,7 @@ function saveNewAudio(props){
         loop = document.getElementById('loop-checkbox').value == 'on' ? true : false,
         scene = props.editor.selectedSceneSpatialAudio;
 
+    console.log(props.editor.selectedSceneSpatialAudio);
     props.addNewAudio(Audio({
         uuid: uuid.v4(),
         name: name,
@@ -170,6 +170,9 @@ function editAudio(props, audioToEdit){
         isSpatial = props.editor.isAudioSpatial,
         loop = props.editor.loopChecked,
         scene = props.editor.selectedSceneSpatialAudio;
+
+    console.log(props.editor.selectedSceneSpatialAudio);
+
 
     file = file === 'Nessun file selezionato' ? null : file;
 
