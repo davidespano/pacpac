@@ -28,7 +28,6 @@ function executeAction(VRScene, rule, action){
 
         }
     });
-    console.log(action)
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -186,17 +185,37 @@ function transition(actualScene, targetScene, duration){
     //TODO a volte non trova la scena, verificare perché
     let targetSky = document.querySelector('#' + targetScene.name);
     let targetSceneVideo = document.getElementById(targetScene.img);
-    let cursor = document.querySelector('#cursor');
     let disappear = new CustomEvent(actualSky.id + "dis");
     let appear = new CustomEvent(targetSky.id + "app");
-
+    let actualMove = new CustomEvent(actualSky.id + "actual");
+    let targetMove = new CustomEvent(targetSky.id + "target");
+    let sceneMovement = true;
+    let is3dScene = actualScene.type===Values.THREE_DIM;
+    let positionTarget = targetSky.object3D.position.x + ', ' +
+                         targetSky.object3D.position.y + ', ' +
+                         targetSky.object3D.position.z;
+    let positionActual = -targetSky.object3D.position.x + ', ' +
+                          targetSky.object3D.position.y + ', ' +
+                          targetSky.object3D.position.z;
+    console.log('transizione')
+    console.log(positionTarget)
+    console.log(positionActual)
     if(targetScene.type === Values.TWO_DIM) targetSky.setAttribute('position', '0 1.6 -6.44');
 
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
     targetSky.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 0; to: 1; startEvents: ' + targetSky.id + "app");
-
+    //TODO impostare uno dei valori da editor a nessuno o una direzione, differenziare anceh se
+    // sono scene 3D o 2D, nel 3D non vogliamo questo effetto, credo
+    if(sceneMovement && !is3dScene){
+        actualSky.setAttribute('animation__moving', 'property: position; dur: '+ duration +
+            '; easing: linear; from: 0 1.6 -6.44; ' +
+            'to: '+ positionActual +'; startEvents: ' + actualSky.id + "actual")
+        targetSky.setAttribute('animation__moving', 'property: position; dur: '+ duration +
+            '; easing: linear; from: '+ positionTarget +'; ' +
+            'to: 0 1.6 -6.44; startEvents: ' + targetSky.id + "target")
+    }
     actualSky.setAttribute('material', 'depthTest: false');
     targetSky.setAttribute('material', 'depthTest: false');
 
@@ -205,9 +224,20 @@ function transition(actualScene, targetScene, duration){
     actualSky.dispatchEvent(disappear);
     targetSky.dispatchEvent(appear);
 
+    if(sceneMovement&& !is3dScene){
+        console.log('ci sto entrando qui')
+        actualSky.dispatchEvent(actualMove);
+        targetSky.dispatchEvent(targetMove);
+    }
     if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
+/**
+ * Function called only in transioto between diferent type of scene, 3D -> 2D or 2D -> 3D
+ * @param actualScene
+ * @param targetScene
+ * @param duration
+ */
 function transition2D(actualScene, targetScene, duration){
     let camera = document.getElementById('camera');
     let cursor = document.getElementById('cursor');
@@ -220,8 +250,6 @@ function transition2D(actualScene, targetScene, duration){
     let disappear = new CustomEvent(actualSky.id + "dis");
     let appear = new CustomEvent(targetSky.id + "app");
     let movement = new CustomEvent(sceneMovement.id + "move");
-
-    let rayCastOrigin = is3dScene?'cursor':'mouse';
 
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
@@ -251,9 +279,6 @@ function transition2D(actualScene, targetScene, duration){
         lookObject(targetSky.id);
         targetSky.dispatchEvent(appear);
         sceneMovement.dispatchEvent(movement);
-        //camera.setAttribute("pac-look-controls", "planarScene: " + !is3dScene);
-        //camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + is3dScene);
-        //cursor.setAttribute('cursor', 'rayOrigin: ' + rayCastOrigin);
         if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
     },duration);
 

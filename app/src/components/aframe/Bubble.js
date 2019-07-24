@@ -97,7 +97,8 @@ export default class Bubble extends Component
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         //let primitive = this.props.assetsDimention.type === 'video'?"a-videosphere":"a-sky";
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
-        let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9";
+        //let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9";
+        let positionPlane;
         let sceneRender;
 
         const curves = Object.values(scene.objects).flat().map(curve => {
@@ -149,14 +150,32 @@ export default class Bubble extends Component
         } else {
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
-            //let canvasWidth = document.documentElement.clientWidth / 100;
-            //let canvasHight = canvasWidth /1.77;
-            let canvasWidth = this.props.assetsDimention.width / 100;
-            let canvasHeight = this.props.assetsDimention.height / 100;
-            console.log(this.props.assetsDimention)
+            let canvasWidth = document.documentElement.clientWidth / 100;
+            let canvasHeight = canvasWidth /1.77;
+            //let canvasWidth = this.props.assetsDimention.width / 100;
+            //let canvasHeight = this.props.assetsDimention.height / 100;
             if(this.props.isActive){
+                positionPlane = "0, 1.6, -6.44";
+            } else {
+                let transizioneMomentanea = 'left';
+                switch (transizioneMomentanea) {
+                    case 'right':
+                        positionPlane = canvasWidth + ', 1.6, -6.44';
+                        break;
+                    case 'left':
+                        positionPlane = -canvasWidth + ', 1.6, -6.44';
+                        break;
+                    case 'top':
+                        positionPlane = '0, ' + canvasHeight + ', -6.44';
+                        break;
+                    case 'bottom':
+                        positionPlane = '0, ' + (-canvasHeight) + ', -6.44';
+                        break;
 
+                }
             }
+            console.log('posizione piano')
+            console.log(positionPlane)
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}

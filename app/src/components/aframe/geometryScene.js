@@ -24,7 +24,6 @@ export function givePoints(props) {
     );
     //console.log(puntisalvati.join())
     if(isCurved ){
-        document.getElementById("curve_"+props.currentObject).setAttribute('geometry', 'vertices: ' + puntisalvati.join())
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
     } else {
         interface_utils.updateAudioVertices(props.audios.get(props.editor.selectedAudioToEdit), puntisalvati.join(), props)
@@ -77,7 +76,7 @@ export default class GeometryScene extends React.Component{
         }
 
         //SetState in order to update the scene
-        /*let sceneState;
+        let sceneState;
         if(this.props.currentObject){
             sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
         } else {
@@ -85,7 +84,7 @@ export default class GeometryScene extends React.Component{
         }
         this.setState({
             scenes: sceneState,
-        })*/
+        })
     }
 
     handleFeedbackChange() {
@@ -176,7 +175,6 @@ export default class GeometryScene extends React.Component{
                     cursor.components.pointsaver.points = [];
                     console.log(cursor)
                     let points = scene.querySelectorAll(".points");
-                    let sceneState;
                     if(this.props.currentObject){
                         a_point = a_point.map(punto =>
                             punto.toArray().join(" ")
@@ -212,11 +210,13 @@ export default class GeometryScene extends React.Component{
                 cursor.setAttribute('color', 'green');
                 if(cursor.components.pointsaver.attrValue.isCurved === 'true'){
                     if(document.getElementById("curve_"+this.props.currentObject))
-                        //scene.removeChild(document.getElementById("curve_"+cursor.components.pointsaver.attrValue.uuid));
                         document.getElementById("curve_"+this.props.currentObject).setAttribute('geometry', 'vertices: null')
                 } else {
-                    if(document.getElementById("audio"+this.props.editor.selectedAudioToEdit))
+                    console.log(this.props.editor.selectedAudioToEdit)
+                    if(document.getElementById("audio"+this.props.editor.selectedAudioToEdit)){
                         document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.selectedAudioToEdit));
+                    }
+
                 }
                 cursor.components.pointsaver.points = [];
                 cursor.addEventListener('click', this.handleFeedbackChange);
@@ -340,11 +340,12 @@ export default class GeometryScene extends React.Component{
 
     generateBubbles(){
         let curvedToEdit = this.props.currentObject?this.props.currentObject:'';
-        console.log(curvedToEdit)
         return this.currentLevel.map(sceneName =>{
             return (
                 <Bubble key={"key" + sceneName} scene={this.state.completeScene} isActive={true}
                         handler={() => this.handleSceneChange()} editMode={true} curvedToEdit={curvedToEdit}
+                        assetsDimention={this.props.assets.get(this.state.scenes.img)}
+
                 />
             );
         });
