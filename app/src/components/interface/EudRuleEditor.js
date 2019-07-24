@@ -35,6 +35,7 @@ export default class EudRuleEditor extends Component {
                                 interactiveObjects={this.props.interactiveObjects}
                                 scenes={this.props.scenes}
                                 assets={this.props.assets}
+                                audios={this.props.audios}
                                 currentScene={this.props.currentScene}
                                 rules={this.props.rules}
                                 rule={rule}
@@ -181,6 +182,7 @@ class EudRule extends Component {
                         interactiveObjects={this.props.interactiveObjects}
                         assets={this.props.assets}
                         scenes={this.props.scenes}
+                        audios={this.props.audios}
                         rule={rule}
                         rules={this.props.rules}
                         ruleEditorCallback={this.props.ruleEditorCallback}
@@ -307,6 +309,7 @@ class EudRule extends Component {
                             interactiveObjects={this.props.interactiveObjects}
                             scenes={this.props.scenes}
                             assets={this.props.assets}
+                            audios={this.props.audios}
                             rules={this.props.rules}
                             rule={rule}
                             action={action}
@@ -341,6 +344,7 @@ class EudRule extends Component {
                     interactiveObjects={this.props.interactiveObjects}
                     scenes={this.props.scenes}
                     assets={this.props.assets}
+                    audios={this.props.audios}
                     rules={this.props.rules}
                     rule={rule}
                     action={rule.event}
@@ -404,6 +408,7 @@ class EudCondition extends Component {
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"subject"}
             />;
 
@@ -426,6 +431,7 @@ class EudCondition extends Component {
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"operator"}
 
             />;
@@ -449,6 +455,7 @@ class EudCondition extends Component {
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"value"}
             />;
 
@@ -484,6 +491,11 @@ class EudCondition extends Component {
         if (this.props.assets.has(uuid)) {
             return this.props.assets(uuid);
         }
+
+        if (this.props.audios.has(uuid)){
+            return this.props.audios.get(uuid);
+        }
+
 
         return this.props.interactiveObjects.get(uuid);
     }
@@ -577,6 +589,7 @@ class EudAction extends Component {
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"subject"}
             />;
 
@@ -598,6 +611,7 @@ class EudAction extends Component {
             updateRule={(rule, role) => this.updateRule(rule, role)}
             scenes={this.props.scenes}
             assets={this.props.assets}
+            audios={this.props.audios}
             role={"operation"}
         />;
 
@@ -620,6 +634,7 @@ class EudAction extends Component {
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"object"}
             />;
 
@@ -660,13 +675,16 @@ class EudAction extends Component {
             return ValuesMap.get(uuid);
         }
 
+        if (this.props.audios.has(uuid)){
+            return this.props.audios.get(uuid);
+        }
+
         return this.props.interactiveObjects.get(uuid);
     }
 
     updateRule(ruleUpdate, role) {
 
         let rule = this.props.rule;
-        // TODO [davide] inefficiente, utilizzare i metodi di immutable
         let index = -1;
         let action;
         let event = false;
@@ -804,6 +822,7 @@ class EudRulePart extends Component {
                 rulePartType={this.props.rulePartType}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
             />;
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
@@ -897,6 +916,7 @@ class EudAutoComplete extends Component {
             scenes: this.props.scenes,
             rulePartType: this.props.rulePartType,
             assets: this.props.assets,
+            audios: this.props.audios,
         });
         let li = items.valueSeq()
             .filter(i => {
@@ -971,7 +991,6 @@ class EudAutoCompleteItem extends Component {
  * @returns {the list of possible completions}
  */
 function getCompletions(props) {
-    // TODO [davide] stub implemenation
 
     switch (props.role) {
         case "subject":
@@ -986,13 +1005,14 @@ function getCompletions(props) {
 
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
-            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets);
+            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
             if (props.verb.action) {
                 let objType = RuleActionMap.get(props.verb.action).obj_type;
                 allObjects = allObjects.filter(x => objType.includes(x.type));
             }
+
             return allObjects;
         case "operation":
             return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
@@ -1001,7 +1021,6 @@ function getCompletions(props) {
         case 'value':
             return props.subject ? ValuesMap.filter(x =>
                 x.subj_type.includes(props.subject.type)) : ValuesMap;
-
     }
 
 }

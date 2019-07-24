@@ -110,6 +110,27 @@ const RuleActionMap = Immutable.Map([
             uuid: RuleActionTypes.CHANGE_VISIBILITY,
         },
     ],
+    [
+        RuleActionTypes.PLAY_AUDIO,
+        {
+            type: "operation",
+            subj_type: [Values.THREE_DIM, Values.TWO_DIM],
+            obj_type: ['audio'],
+            name: toString.eventTypeToString(RuleActionTypes.PLAY_AUDIO),
+            uuid: RuleActionTypes.PLAY_AUDIO,
+        },
+    ],
+    [
+        RuleActionTypes.STOP_AUDIO,
+        {
+            type: "operation",
+            subj_type: [Values.THREE_DIM, Values.TWO_DIM],
+            obj_type: ['audio'],
+            name: toString.eventTypeToString(RuleActionTypes.STOP_AUDIO),
+            uuid: RuleActionTypes.STOP_AUDIO,
+        },
+    ],
+
 ]);
 
 

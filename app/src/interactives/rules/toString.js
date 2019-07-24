@@ -23,6 +23,10 @@ function eventTypeToString(eventType) {
             return 'cambia stato a';
         case RuleActionTypes.CHANGE_VISIBILITY:
             return 'diventa';
+        case RuleActionTypes.PLAY_AUDIO:
+            return 'riproduce';
+        case RuleActionTypes.STOP_AUDIO:
+            return 'interrompe';
         default:
             return "";
     }
@@ -77,6 +81,9 @@ function objectTypeToString(objectType) {
             break;
         case 'file':
             type = 'il file';
+            break;
+        case "audio":
+            type = "l\'audio";
             break;
         default:
             type = "l'oggetto sconosciuto";
