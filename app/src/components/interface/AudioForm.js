@@ -85,9 +85,11 @@ function generalOptions(props, audioToEdit){
     );
 }
 
-function spatialOption(props){
+function spatialOption(props, audioToEdit){
+
     let spatial = props.editor.isAudioSpatial;
     let selectedScene = props.editor.selectedSceneSpatialAudio;
+
 
     return(
         <div id={'audio-form-scene'} className={'audio-form-box-section'}>

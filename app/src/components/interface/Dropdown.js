@@ -15,7 +15,7 @@ function Dropdown(properties){
     let defaultValue = getDefaultValue(props, properties.defaultValue, component);
     let [options, onChange, style] = generateOptions(props, component, property);
 
-
+    console.log(options)
 
     return(
         <Select
@@ -101,7 +101,7 @@ function generateOptions(props, component, property){
             ];
         case 'assets':
             return [
-                [...props.assets.values()].map( a => {
+                [{uuid: null, name: 'nessuno'},...props.assets.values()].map( a => {
                     return {value: a.uuid, label: a.name}
                 }),
                 (e) => {
@@ -112,7 +112,7 @@ function generateOptions(props, component, property){
             ];
         case 'audios':
             return [
-                [...props.audios.values()].map( a => {
+                [{uuid:null, name:'nessuno'},...props.audios.values()].map( a => {
                     return {value: a.uuid, label: a.name}
                 }),
                 (e) => {
@@ -123,7 +123,7 @@ function generateOptions(props, component, property){
             ];
         case 'music':
             return [
-                [...props.audios.values()].map( a => {
+                [{uuid:null, name:'nessuna'},...props.audios.values()].map( a => {
                     return {value: a.uuid, label: a.name}
                 }),
                 (e) => {
@@ -162,8 +162,9 @@ function getDefaultValue(props, defaultValue, component){
 
 const customStyle = {
     option: (provided, state) => ({
-        color: state.isSelected ? '#EF562D' : 'black',
+        color: state.value === null ? 'darkgrey': state.isSelected ? '#EF562D' : 'black',
         '&:hover': { backgroundColor: '#FFD8AC'},
+        borderBottom: state.value === null ? 'dotted 1px darkgrey' : 'none',
     }),
     control: (provided, state) => ({
         ...provided,
@@ -182,8 +183,9 @@ const customStyle = {
 
 const audioMediaOptionsStyle = {
     option: (provided, state) => ({
-        color: state.isSelected ? '#EF562D' : 'black',
+        color: state.value === null ? 'darkgrey': state.isSelected ? '#EF562D' : 'black',
         '&:hover': { backgroundColor: '#FFD8AC'},
+        borderBottom: state.value === null ? 'dotted 1px darkgrey' : 'none',
     }),
     control: (provided, state) => ({
         ...provided,

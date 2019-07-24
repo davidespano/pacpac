@@ -100,6 +100,7 @@ class EditorStateStore extends ReduceStore {
                 state = state.set('isAudioSpatial', action.isSpatial);
                 state = state.set('selectedAudioFile', action.file);
                 state = state.set('loopChecked', action.check);
+                state = state.set('selectedSceneSpatialAudio', action.scene);
                 return state;
             case ActionTypes.SELECT_SCENE_SPATIAL_AUDIO:
                 return state.set('selectedSceneSpatialAudio', action.selection);
