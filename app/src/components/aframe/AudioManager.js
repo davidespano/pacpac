@@ -2,10 +2,11 @@ import {ResonanceAudio} from "resonance-audio";
 import settings from "../../utils/settings";
 const {mediaURL} = settings;
 
-function generateAudio(audio, position=null) {
-    let audioContext = new AudioContext();
+function generateAudio(audio, resonance, audioContext, position=null) {
+    //let audioContext = new AudioContext();
     let audioPosition = position===null?audio.vertices:position;
-    let resonance = generateRoom(audioContext);
+    //let resonance = generateRoom(audioContext);
+    //let resonance = resonanceAudioScene;
     let audioElement = document.createElement('audio');
 
     audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + audio.file;

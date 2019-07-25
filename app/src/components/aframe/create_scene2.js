@@ -35,7 +35,8 @@ export default class VRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]",
             camera: {},
-            resonanceAudioScene: {}
+            resonanceAudioScene: {},
+            audioContext: {}
         };
         //console.log(props)
         //console.log(props.assets.get(this.state.activeScene.img))
@@ -57,23 +58,52 @@ export default class VRScene extends React.Component {
 
     async loadEverything() {
         let audioContext = new AudioContext();
+
+        //let music = audios[scene.music]
+        let isInterior = false;
+        let material = isInterior ? 'grass' : 'transparent';
+
+        let resonanceAudioScene = new ResonanceAudio(audioContext);
+
+        resonanceAudioScene.output.connect(audioContext.destination);
+        let roomDimensions = {
+            width: 4,
+            height: 4,
+            depth: 4,
+        };
+
+        let roomMaterials = {
+            // Room wall materials
+            left: material,
+            right: material,
+            front: material,
+            back: material,
+            down: material,
+            up: material,
+        };
+
+        this.setState({
+            scenes: this.props.scenes.toArray(),
+            audioContext: audioContext,
+            resonanceAudioScene: resonanceAudioScene
+        });
         let audios = [];
         await AudioAPI.getAudios(audios);
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
-        //let music = audios[scene.music]
+        resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
         this.setState({
-            scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
-            audios: audios
+            audios: audios,
+
         });
+
         this.createRuleListeners();
-        this.generateRoom(audioContext);
-        this.generateAudio(audioContext);
+        //this.generateRoom(this.state.audioContext);
         document.querySelector('#camera').removeAttribute('look-controls');
         document.querySelector('#camera').removeAttribute('wasd-controls');
     }
@@ -191,30 +221,35 @@ export default class VRScene extends React.Component {
     generateAssets(){
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-                this.state.runState[sceneName].background, this.state.runState, this.state.audios)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios, this.state.resonanceAudioScene)
         }).flat();
     }
 
     generateBubbles(){
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
+            console.log(this.state.resonanceAudioScene)
             return (
                 <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
                         editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)} audios={this.state.audios}
                         assetsDimention={this.props.assets.get(this.state.activeScene.img)}
+                        resonanceAudioScene={this.state.resonanceAudioScene}
+                        audioContext={this.state.audioContext}
                 />
             );
         });
     }
 
-    generateRoom(audioContext){
+    generateRoom(){
         //TODO inserire scelta interno esterno
+        console.log('entra cazzooooo')
         let isInterior = false;
         let material = isInterior ? 'grass' : 'transparent';
 
-        this.state.resonanceAudioScene = new ResonanceAudio(audioContext);
-        this.state.resonanceAudioScene.output.connect(audioContext.destination);
+        let resonanceAudioScene = new ResonanceAudio(this.state.audioContext);
+
+        resonanceAudioScene.output.connect(this.state.audioContext.destination);
         let roomDimensions = {
             width: 4,
             height: 4,
@@ -229,7 +264,12 @@ export default class VRScene extends React.Component {
             down: material,
             up: material,
         };
-        this.state.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+
+        resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+        console.log(resonanceAudioScene)
+        this.setState({
+            resonanceAudioScene: resonanceAudioScene
+        });
     }
 
     generateAudio(audioContext){

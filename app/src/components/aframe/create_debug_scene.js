@@ -49,7 +49,8 @@ export default class DebugVRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]",
             camera: {},
-            resonanceAudioScene: {}
+            resonanceAudioScene: {},
+            audioContex: {}
         };
 
         //if(document.querySelector('link[href*="bootstrap"]'))
@@ -84,11 +85,12 @@ export default class DebugVRScene extends React.Component {
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
-            audios: audios
+            audios: audios,
+            audioContext: audioContext
         });
         this.createRuleListeners();
-        this.generateRoom(audioContext);
-        this.generateAudio(audioContext);
+        this.generateRoom();
+        //this.generateAudio(audioContext);
         EditorState.debugRunState = runState;
 
         document.querySelector('#camera').removeAttribute('look-controls');
@@ -218,7 +220,8 @@ export default class DebugVRScene extends React.Component {
     generateAssets2() {
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-                this.state.runState[sceneName].background, this.state.runState, this.state.audios)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios,
+                this.state.audioContex)
         }).flat();
     }
 
@@ -233,19 +236,21 @@ export default class DebugVRScene extends React.Component {
                         runState={this.state.runState} editMode={false} audios={this.state.audios}
                         cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                         assetsDimention={this.props.assets.get(this.state.activeScene.img)}
+                        audioContex={this.state.audioContex}
 
                 />
             );
         });
     }
 
-    generateRoom(audioContext) {
+    generateRoom() {
         //TODO inserire scelta interno esterno
         let isInterior = false;
         let material = isInterior ? 'grass' : 'transparent';
 
-        this.state.resonanceAudioScene = new ResonanceAudio(audioContext);
-        this.state.resonanceAudioScene.output.connect(audioContext.destination);
+        let resonanceAudioScene = new ResonanceAudio(this.state.audioContext);
+
+        resonanceAudioScene.output.connect(this.state.audioContext.destination);
         let roomDimensions = {
             width: 4,
             height: 4,
@@ -260,7 +265,11 @@ export default class DebugVRScene extends React.Component {
             down: material,
             up: material,
         };
-        this.state.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+
+        resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+        this.setState({
+            resonanceAudioScene: resonanceAudioScene
+        });
     }
 
     generateAudio(audioContext) {

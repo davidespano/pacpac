@@ -121,16 +121,18 @@ export default class Bubble extends Component
         let active = 'active: false;';
         let radius = 9.9;
 
+        console.log(this.props.resonanceAudioScene)
+        console.log(this.props.audioContext)
         if (this.props.isActive) {
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
             //TODO aggiungere modifiche audio
-            if(this.props.scene.music !== undefined && !this.props.editMode){
+            if(this.props.scene.music !== undefined && !this.props.editMode && this.props.resonanceAudioScene!=={} && this.props.audioContext !== undefined){
                 if(this.props.audios){
                     let music = this.props.audios[this.props.scene.music]
                     if(soundsHub[music.uuid] === undefined)
-                        soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
+                        soundsHub[music.uuid] = AudioManager.generateAudio(music, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
                     soundsHub[music.uuid].play()
                 }
 

@@ -105,7 +105,6 @@ export default class GeometryScene extends React.Component{
             let idPoint = "point" + (length - 1).toString();
             let tmp = document.createElement('a-entity');
             let scene, scale, moltiplier;
-            console.log('ci sto entrando ancora')
             if(document.querySelector('a-sky')){
                 scene = document.querySelector('a-sky');
                 scale = "-1 1 1";
@@ -289,6 +288,7 @@ export default class GeometryScene extends React.Component{
         let curvedImages = [];
         let isCurved = this.props.currentObject!==null;
         let currenteObjectUuid;
+        console.log(this.props.editor.selectedAudioToEdit)
         if(this.props.currentObject){
             currenteObjectUuid = this.props.currentObject;
         } else {
@@ -317,11 +317,11 @@ export default class GeometryScene extends React.Component{
                     <div id="keyMap" >
                         <h1>Keys</h1>
                         <li class="keyElements">
-                            <ul id="startedit">E: Start Edit</ul>
-                            <ul>C: Create Geometry</ul>
-                            <ul>U: Undo</ul>
-                            <ul>Q: Go Back</ul>
-                            <ul>H: Hide/Show</ul>
+                            <ul id="startedit">E: Inizia a disegnare</ul>
+                            <ul>C: Conferma</ul>
+                            <ul>U: Elimina ultimo punto</ul>
+                            <ul>Q: Torna all'editor</ul>
+                            <ul>H: Mostra/Nascondi</ul>
                         </li>
 
                     </div>
