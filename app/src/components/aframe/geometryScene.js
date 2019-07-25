@@ -42,6 +42,8 @@ export default class GeometryScene extends React.Component{
             scene = props.editor.selectedSceneSpatialAudio;
         else
             scene = props.currentScene;
+
+        console.log(scene)
         this.state = {
             scenes: props.scenes.get(scene)
         };
