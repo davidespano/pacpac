@@ -121,8 +121,6 @@ export default class Bubble extends Component
         let active = 'active: false;';
         let radius = 9.9;
 
-        console.log(this.props.resonanceAudioScene)
-        console.log(this.props.audioContext)
         if (this.props.isActive) {
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
