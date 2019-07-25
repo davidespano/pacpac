@@ -109,6 +109,8 @@ function spatialOption(props, audioToEdit){
                     <label htmlFor={'spatial-radio'} className={'label-audio-form'}>Non spaziale</label>
                 </div>
                 <div> </div>
+                <div> Posizione corrente: {getVertices(audioToEdit)}</div>
+                <div> </div>
                 <Dropdown props={props}
                           component={'scenes'}
                           property={'scene'}
@@ -116,8 +118,7 @@ function spatialOption(props, audioToEdit){
                           disabled={!spatial}/>
                 <button className={'btn position-btn'} disabled={!spatial}
                         onClick={() => {
-                            //document.getElementById('audio-form-close-button').click();
-                            //document.getElementById('audio-menu-close-button').click();
+                            audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
                             props.switchToGeometryMode()
                         }}>
                     <img className={"action-buttons"} src={"icons/icons8-white-image-50.png"}/>
@@ -152,16 +153,18 @@ function saveNewAudio(props){
         loop = document.getElementById('loop-checkbox').value == 'on' ? true : false,
         scene = props.editor.selectedSceneSpatialAudio;
 
-    console.log(props.editor.selectedSceneSpatialAudio);
+    let id = uuid.v4();
+
     props.addNewAudio(Audio({
-        uuid: uuid.v4(),
+        uuid: id,
         name: name,
         file: file,
         isSpatial: isSpatial,
         scene: isSpatial ? scene : null,
         loop: loop,
-    }))
+    }));
 
+    props.selectAudioToEdit(id);
 }
 
 function editAudio(props, audioToEdit){
@@ -170,8 +173,6 @@ function editAudio(props, audioToEdit){
         isSpatial = props.editor.isAudioSpatial,
         loop = props.editor.loopChecked,
         scene = props.editor.selectedSceneSpatialAudio;
-
-    console.log(props.editor.selectedSceneSpatialAudio);
 
 
     file = file === 'Nessun file selezionato' ? null : file;
@@ -196,6 +197,15 @@ function editAudio(props, audioToEdit){
         scene = props.scenes.get(scene);
         scene = scene_utils.addAudioToScene(scene, audioToEdit.uuid);
         props.updateScene(scene);
+    }
+}
+
+function getVertices(audioToEdit){
+    if(!audioToEdit || !audioToEdit.vertices ){
+        return 'x = 0, y = 0, z = 0';
+    } else {
+        let coordinates = audioToEdit.vertices.split(" ").map(x => parseFloat(x).toFixed(2));
+        return 'x = ' + coordinates[0] + ', y = ' + coordinates[1] + ', z = ' + coordinates[2];
     }
 }
 

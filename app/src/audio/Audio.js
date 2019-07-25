@@ -8,6 +8,7 @@ const Audio = Immutable.Record({
     scene: null,
     loop: false,
     vertices: null,
+    type: 'audio',
 });
 
 export default Audio;
