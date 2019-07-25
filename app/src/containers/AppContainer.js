@@ -73,6 +73,7 @@ function getState() {
         
         //editor
 
+        audioPositioning: Actions.audioPositioning,
         changeAudioFormStatus: Actions.changeAudioFormStatus,
         changeAudioSpatialOptionStatus: Actions.changeAudioSpatialOptionStatus,
         dropdownScenesOrder: Actions.dropdownScenesOrder,

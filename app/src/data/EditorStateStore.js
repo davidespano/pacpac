@@ -18,6 +18,8 @@ class EditorStateStore extends ReduceStore {
         switch (action.type) {
             case ActionTypes.ADD_NEW_OBJECT:
                 return state.set('rightbarSelection', 'objects').set('objectNameRightbar', action.obj.name);
+            case ActionTypes.AUDIO_POSITIONING:
+                return state.set('audioPositioning', action.status);
             case ActionTypes.AUDIO_SPATIAL_OPTION:
                 return state.set('isAudioSpatial', action.status);
             case ActionTypes.AUDIO_FORM_STATUS:

@@ -5,13 +5,15 @@ let uuid = require('uuid');
 function AudioMenu(props){
     return(
         <div id={"manage-audio"}>
-            <div className="modal fade" id="manage-audio-modal" tabIndex="-1" role="dialog" aria-labelledby="manage-audio-modal-label" aria-hidden="true">
+            <div className={"modal fade " + show(props)} id="manage-audio-modal" tabIndex="-1" role="dialog" aria-labelledby="manage-audio-modal-label" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
                             <h5 className="modal-title" id="manage-audio-modal-label">Gestione audio</h5>
                             <button id="audio-menu-close-button" type="button" className="close" data-dismiss="modal" aria-label="Close"
-                                    onClick={() => props.selectAudioToEdit(null)}>
+                                    onClick={() => {
+                                        props.selectAudioToEdit(null);
+                                    }}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -73,7 +75,9 @@ function AudioMenu(props){
                         </div>
                         <div className="modal-footer" id={'modal-footer-media'}>
                             <button type="button" className="btn btn-secondary buttonConferm"
-                                    data-dismiss="modal" onClick={() => props.selectAudioToEdit(null)}
+                                    data-dismiss="modal" onClick={() => {
+                                        props.selectAudioToEdit(null);
+                                    }}
                             >Ok</button>
                         </div>
                     </div>
@@ -86,6 +90,10 @@ function AudioMenu(props){
 
 function checkSelection(props, uuid){
     return props.editor.selectedAudioToEdit === uuid ? 'selected-audio' : '';
+}
+
+function show(props){
+    return props.editor.audioPositioning ? "show" : "";
 }
 
 export default AudioMenu;

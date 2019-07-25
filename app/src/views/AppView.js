@@ -30,7 +30,6 @@ function AppView(props) {
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>
                     <TopBar {...props} />
-                    <MediaEditingform {...props}/>
                     <FileForm {...props}/>
                     <div className={'grid-container'}>
                         <LeftBar {...props} />

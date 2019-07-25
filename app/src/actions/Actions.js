@@ -52,6 +52,13 @@ const Actions = {
         })
     },
 
+    audioPositioning(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.AUDIO_POSITIONING,
+            status: status,
+        })
+    },
+
     debugModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.DEBUG_MODE_ON

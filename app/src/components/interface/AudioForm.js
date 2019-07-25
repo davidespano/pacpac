@@ -14,7 +14,7 @@ function AudioForm(props){
 
     return(
         <div id={"audio-form"}>
-            <div className="modal fade" id="audio-form-modal" tabIndex="-1" role="dialog" aria-labelledby="audio-form-modal-label" aria-hidden="true">
+            <div className={"modal fade " + show(props)} id="audio-form-modal" tabIndex="-1" role="dialog" aria-labelledby="audio-form-modal-label" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
@@ -38,6 +38,7 @@ function AudioForm(props){
                                     data-dismiss="modal"
                                     onClick={() => {
                                         audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
+                                        props.audioPositioning(false);
                                         interface_utils.resetFields('audio-form-box');
                                     }}
                                     disabled={checkIfDisabled(props, audioToEdit)}
@@ -87,7 +88,8 @@ function generalOptions(props, audioToEdit){
 
 function spatialOption(props, audioToEdit){
 
-    let spatial = props.editor.isAudioSpatial;
+    let spatial = props.editor.isAudioSpatial
+    let disabled = !(props.editor.selectedAudioFile && props.editor.newAudioNameTyped && spatial);
     let selectedScene = props.editor.selectedSceneSpatialAudio;
 
     return(
@@ -116,10 +118,11 @@ function spatialOption(props, audioToEdit){
                           property={'scene'}
                           defaultValue={selectedScene ? selectedScene : props.currentScene}
                           disabled={!spatial}/>
-                <button className={'btn position-btn'} disabled={!spatial}
+                <button className={'btn position-btn'} disabled={disabled}
                         onClick={() => {
                             audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
-                            props.switchToGeometryMode()
+                            props.audioPositioning(true);
+                            props.switchToGeometryMode();
                         }}>
                     <img className={"action-buttons"} src={"icons/icons8-white-image-50.png"}/>
                     Posiziona
@@ -215,6 +218,10 @@ function selectedFile(props){
 
 function title(editor){
     return editor.selectedAudioToEdit ? 'Modifica audio' : 'Nuovo audio';
+}
+
+function show(props){
+    return props.editor.audioPositioning ? "show" : "";
 }
 
 export default AudioForm;
