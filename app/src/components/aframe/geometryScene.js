@@ -37,8 +37,8 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         let scene;
-        console.log(props.editor.selectedSceneSpatialAudio)
-        if(props.editor.selectedSceneSpatialAudio)
+        console.log(props.editor.selectedSceneSpatialAudio && this.props.editor.selectedAudioToEdit)
+        if(props.editor.selectedSceneSpatialAudio && this.props.editor.selectedAudioToEdit)
             scene = props.editor.selectedSceneSpatialAudio;
         else
             scene = props.currentScene;
@@ -162,7 +162,6 @@ export default class GeometryScene extends React.Component{
 
     componentDidMount() {
         this.createScene();
-
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
@@ -215,6 +214,7 @@ export default class GeometryScene extends React.Component{
                 });
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
+                console.log(this.props.editor.selectedAudioToEdit)
                 if(cursor.components.pointsaver.attrValue.isCurved === 'true'){
                     if(document.getElementById("curve_"+this.props.currentObject))
                         document.getElementById("curve_"+this.props.currentObject).setAttribute('geometry', 'vertices: null')

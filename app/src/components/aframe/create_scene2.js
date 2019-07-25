@@ -228,7 +228,6 @@ export default class VRScene extends React.Component {
     generateBubbles(){
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
-            console.log(this.state.resonanceAudioScene)
             return (
                 <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}

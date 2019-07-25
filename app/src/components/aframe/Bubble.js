@@ -126,15 +126,29 @@ export default class Bubble extends Component
             active = 'active: true; video: ' + scene.img;
             radius = 10;
             //TODO aggiungere modifiche audio
-            if(this.props.scene.music !== undefined && !this.props.editMode && this.props.resonanceAudioScene!=={} && this.props.audioContext !== undefined){
-                if(this.props.audios){
+            if(!this.props.editMode && this.props.resonanceAudioScene!=={} && this.props.audioContext !== undefined){
+                if(this.props.scene.music !== undefined && this.props.audios){
                     let music = this.props.audios[this.props.scene.music]
                     if(soundsHub[music.uuid] === undefined)
                         soundsHub[music.uuid] = AudioManager.generateAudio(music, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
                     soundsHub[music.uuid].play()
+
+
+                }
+                let checkBox = true;
+                if(checkBox){
+                    if(soundsHub[this.props.scene.uuid] === undefined){
+                        let audioVideo = {}
+                        audioVideo.file = this.props.scene.img;
+                        audioVideo.loop = true;
+                        soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
+                        soundsHub[this.props.scene.uuid].play()
+                    }
                 }
 
             }
+
+
         }
         else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
@@ -310,5 +324,6 @@ export default class Bubble extends Component
         (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());
         (this.masksTextures?this.masksTextures:[]).forEach(t => t.dispose());
     }
+
 }
 
