@@ -78,6 +78,7 @@ class EditorStateStore extends ReduceStore {
                 state = state.set('rightbarSelection', 'scene');
                 state = state.set('selectedSceneSpatialAudio', action.scene.uuid);
                 state = state.set('sceneNameRightbar', action.scene.name);
+                state = state.set('soundActiveRightbarChecked', action.scene.isAudioOn);
                 return state;
             case ActionTypes.RECEIVE_USER:
                 return state.set('user', action.user);
@@ -108,13 +109,16 @@ class EditorStateStore extends ReduceStore {
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SORT_SCENES:
                 return state.set('scenesOrder', action.order);
+            case ActionTypes.SOUND_ACTIVE_FORM_CHECK:
+                return state.set('soundActiveFormChecked', action.check);
+            case ActionTypes.SOUND_ACTIVE_RIGHTBAR_CHECK:
+                return state.set('soundActiveRightbarChecked', action.check);
             case ActionTypes.SET_MENTION_TYPE:
                 return state.set('mentionType', action.mentionType);
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
             case ActionTypes.UPDATE_CURRENT_SCENE:
-                console.log('UPDATE')
-                console.log(action.scene);
+                state = state.set('soundActiveRightbarChecked', action.scene.isAudioOn);
                 return state.set('selectedSceneSpatialAudio', action.scene.uuid).set('sceneNameRightbar', action.scene.name);
             case ActionTypes.UPDATE_CURRENT_OBJECT:
                 let o = action.obj ? action.obj.name : null;

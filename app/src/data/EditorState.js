@@ -6,6 +6,7 @@ const EditorState = Immutable.Record({
 
     actionId: null,
     audioFilter: '',
+    audioPositioning: false,
     chooseTagNewScene: false,
     chooseTagRightbar: false,
     completionInput: null,
@@ -36,6 +37,8 @@ const EditorState = Immutable.Record({
     selectedMediaToEdit: null,
     selectedSceneSpatialAudio: null,
     selectedTagNewScene: 'default',
+    soundActiveFormChecked: false,
+    soundActiveRightbarChecked: false,
     tagFilter: '',
     user: null,
 });

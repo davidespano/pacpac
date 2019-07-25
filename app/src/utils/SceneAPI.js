@@ -139,6 +139,7 @@ function getByName(name, order = null) {
                 img : response.body.img,
                 type : response.body.type,
                 index : response.body.index,
+                isAudioOn : response.body.isAudioOn,
                 tag : tag,
                 music: response.body.music,
                 objects : {

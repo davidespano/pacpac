@@ -19,6 +19,7 @@ const Scene = Immutable.Record({
     name : "",
     img : "",
     index : 0,
+    isAudioOn : false,
     type : Values.THREE_DIM,
     tag : 'default',
     music : null,

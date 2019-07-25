@@ -14,6 +14,9 @@ function SceneOptions(props){
         component : 'rightbar',
     };
 
+    let checked = props.editor.soundActiveRightbarChecked;
+
+
     if(props.currentScene){
         let scene = props.scenes.get(props.currentScene);
         return(
@@ -75,6 +78,16 @@ function SceneOptions(props){
                         <p className={'file-selected-name propertyForm ellipsis-no-inline'}>{scene.img}</p>
                     </div>
                     <FileSelectionBtn {...properties} />
+                    <div className={'rightbar-checkbox'}>
+                        <input type={'checkbox'} className={'checkbox-audio-form'}
+                               id={'sound-active-rightbar-checkbox'} checked={checked}
+                               onChange={() => {
+                                   props.soundActiveRightbarCheck(!checked);
+                                   scene_utils.setProperty(scene, 'isAudioOn',!checked, props);
+                               }}
+                        />
+                        <label htmlFor={'sound-active-rightbar-checkbox'}>Riproduci l'audio del file</label>
+                    </div>
                 </div>
                 <label className={'rightbar-titles'}>Audio spaziali</label>
                 {spatialAudioList(props, scene)}

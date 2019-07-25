@@ -162,6 +162,20 @@ const Actions = {
         })
     },
 
+    soundActiveFormCheck(check){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SOUND_ACTIVE_FORM_CHECK,
+            check: check,
+        })
+    },
+
+    soundActiveRightbarCheck(check){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SOUND_ACTIVE_RIGHTBAR_CHECK,
+            check: check,
+        })
+    },
+
     fileManagerModeOn(){
        AppDispatcher.dispatch({
             type: ActionTypes.FILE_MANAGER_MODE_ON
