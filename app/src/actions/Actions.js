@@ -717,7 +717,8 @@ const Actions = {
             type: ActionTypes.UPDATE_AUDIO,
             audio: audio,
         });
-
+        console.log('sono un audio speciale?')
+        console.log(audio.isSpatial)
         if(audio.isSpatial)
             AudioAPI.createUpdateSpatialAudio(audio.scene, audio);
         else

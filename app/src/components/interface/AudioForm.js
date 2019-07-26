@@ -180,6 +180,8 @@ function editAudio(props, audioToEdit){
 
 
     file = file === 'Nessun file selezionato' ? null : file;
+    console.log(isSpatial)
+    console.log(scene)
 
     props.updateAudio(Audio({
         uuid: audioToEdit.uuid,
@@ -202,6 +204,7 @@ function editAudio(props, audioToEdit){
         scene = props.scenes.get(scene);
         scene = scene_utils.addAudioToScene(scene, audioToEdit.uuid);
         props.updateScene(scene);
+
     }
 }
 
