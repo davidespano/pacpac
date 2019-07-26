@@ -361,6 +361,7 @@ async function getAllDetailedScenes(gameGraph) {
             img : s.img,
             type : s.type,
             index : s.index,
+            isAudioOn : s.isAudioOn,
             tag : s.tag,
             music : s.music,
             objects : {

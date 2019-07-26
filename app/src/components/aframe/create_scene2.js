@@ -19,6 +19,7 @@ import AudioManager from './AudioManager'
 import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
 const soundsHub = require('./soundsHub');
+const resonance = require('./Audio/Resonance');
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -64,7 +65,8 @@ export default class VRScene extends React.Component {
         let material = isInterior ? 'grass' : 'transparent';
 
         let resonanceAudioScene = new ResonanceAudio(audioContext);
-
+        console.log(resonanceAudioScene._context)
+        console.log(audioContext)
         resonanceAudioScene.output.connect(audioContext.destination);
         let roomDimensions = {
             width: 4,
@@ -94,6 +96,7 @@ export default class VRScene extends React.Component {
         let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
         resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+        console.log(resonance.default._context)
         this.setState({
             graph: gameGraph,
             activeScene: scene,
@@ -235,6 +238,7 @@ export default class VRScene extends React.Component {
                         assetsDimention={this.props.assets.get(this.state.activeScene.img)}
                         resonanceAudioScene={this.state.resonanceAudioScene}
                         audioContext={this.state.audioContext}
+                        isAudioOn={this.state.activeScene.isAudioOn}
                 />
             );
         });

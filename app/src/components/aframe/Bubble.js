@@ -135,14 +135,15 @@ export default class Bubble extends Component
 
 
                 }
-                let checkBox = true;
-                if(checkBox){
+                if(this.props.isAudioOn){
                     if(soundsHub[this.props.scene.uuid] === undefined){
-                        let audioVideo = {}
-                        audioVideo.file = this.props.scene.img;
-                        audioVideo.loop = true;
-                        soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
-                        soundsHub[this.props.scene.uuid].play()
+                        if(stores_utils.getFileType(scene.img) === 'video'){
+                            let audioVideo = {}
+                            audioVideo.file = this.props.scene.img;
+                            audioVideo.loop = true;
+                            soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
+                            soundsHub[this.props.scene.uuid].play()
+                        }
                     }
                 }
 
