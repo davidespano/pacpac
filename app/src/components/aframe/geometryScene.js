@@ -290,9 +290,7 @@ export default class GeometryScene extends React.Component{
         let curvedImages = [];
         let isCurved = !this.props.editor.audioPositioning;
         let currenteObjectUuid;
-        console.log(this.props.currentObject)
-        console.log(this.props.editor.audioPositioning)
-        console.log(this.props.editor.selectedAudioToEdit)
+
         if(!this.props.editor.audioPositioning){
             currenteObjectUuid = this.props.currentObject;
         } else {
