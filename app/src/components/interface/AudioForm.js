@@ -90,7 +90,12 @@ function generalOptions(props, audioToEdit){
 function spatialOption(props, audioToEdit){
 
     let spatial = props.editor.isAudioSpatial;
-    let disabled = !(props.editor.selectedAudioFile && props.editor.newAudioNameTyped && spatial);
+    let disabled = !spatial;
+
+    if(!audioToEdit){
+        disabled = !(props.editor.selectedAudioFile && props.editor.newAudioNameTyped && spatial);
+    }
+
     let selectedScene = props.editor.selectedSceneSpatialAudio;
 
     return(
