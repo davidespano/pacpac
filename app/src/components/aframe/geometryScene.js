@@ -22,8 +22,9 @@ export function givePoints(props) {
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
+    console.log(isCurved)
     //console.log(puntisalvati.join())
-    if(isCurved ){
+    if(isCurved){
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
     } else {
         interface_utils.updateAudioVertices(props.audios.get(props.editor.selectedAudioToEdit), puntisalvati.join(), props)
@@ -37,13 +38,11 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         let scene;
-        console.log(props.editor.selectedSceneSpatialAudio && this.props.editor.selectedAudioToEdit)
-        if(props.editor.selectedSceneSpatialAudio && this.props.editor.selectedAudioToEdit)
+        if(props.editor.audioPositioning && props.editor.selectedSceneSpatialAudio)
             scene = props.editor.selectedSceneSpatialAudio;
         else
             scene = props.currentScene;
 
-        console.log(scene)
         this.state = {
             scenes: props.scenes.get(scene)
         };
@@ -85,11 +84,12 @@ export default class GeometryScene extends React.Component{
 
         //SetState in order to update the scene
         let sceneState;
-        if(this.props.currentObject){
-            sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
-        } else {
+        if(this.props.editor.audioPositioning){
             sceneState = this.props.scenes.get(this.state.audio.scene);
+        } else {
+            sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
         }
+
         this.setState({
             scenes: sceneState,
         })
@@ -181,7 +181,7 @@ export default class GeometryScene extends React.Component{
                     cursor.components.pointsaver.points = [];
                     console.log(cursor)
                     let points = scene.querySelectorAll(".points");
-                    if(this.props.currentObject){
+                    if(!this.props.editor.audioPositioning){
                         a_point = a_point.map(punto =>
                             punto.toArray().join(" ")
                         );
@@ -245,8 +245,10 @@ export default class GeometryScene extends React.Component{
             if(keyName === 'q' || keyName === 'Q') {
                 if(this.props.currentObject !== null)
                     InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
-                    this.props.interactiveObjects.get(this.props.currentObject));
+                        this.props.interactiveObjects.get(this.props.currentObject));
                 this.props.switchToEditMode();
+
+
             }
 
             if(keyName === 'h' || keyName === 'H') {
@@ -286,19 +288,18 @@ export default class GeometryScene extends React.Component{
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
-        let isCurved = this.props.currentObject!==null;
+        let isCurved = !this.props.editor.audioPositioning;
         let currenteObjectUuid;
         console.log(this.props.currentObject)
-        console.log(this.props)
+        console.log(this.props.editor.audioPositioning)
         console.log(this.props.editor.selectedAudioToEdit)
-        if(this.props.currentObject){
+        if(!this.props.editor.audioPositioning){
             currenteObjectUuid = this.props.currentObject;
         } else {
             currenteObjectUuid = this.props.audios.get(this.props.editor.selectedAudioToEdit).uuid;
         }
         if(isCurved){
             let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
-            //let objects = this.props.scenes.get(currenteObjectUuid).get('objects');
 
             //TODO verificiare shader delle curved, problema non trasparenza
             for(let key in objects){
@@ -355,7 +356,7 @@ export default class GeometryScene extends React.Component{
     }
 
     generateBubbles(){
-        let curvedToEdit = this.props.currentObject?this.props.currentObject:'';
+        let curvedToEdit = this.props.editor.audioPositioning?'':this.props.currentObject;
         return this.currentLevel.map(sceneName =>{
             return (
                 <Bubble key={"key" + sceneName} scene={this.state.completeScene} isActive={true}
@@ -371,7 +372,9 @@ export default class GeometryScene extends React.Component{
         // Inserisco gli oggetti audio nella scena
         let mainscene = document.querySelector('a-scene')
         scene.audios.forEach(a => {
+            console.log(a)
             if(a.vertices !== undefined) {
+                console.log(a)
                 let audio = document.createElement('a-entity');
                 audio.setAttribute('id', 'audio' + a.uuid);
                 audio.setAttribute('position', a.vertices);
