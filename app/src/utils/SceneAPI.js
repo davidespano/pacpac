@@ -94,7 +94,6 @@ function getByName(name, order = null) {
                 rules_uuids.push(rule.uuid); // save uuid
 
                 let event;
-
                 try{
                     event = JSON.parse(rule.event)
                     // new Rule
@@ -124,6 +123,7 @@ function getByName(name, order = null) {
                    isSpatial: audio.isSpatial,
                    scene: audio.scene,
                    loop: audio.loop,
+                   vertices: audio.vertices,
                });
                Actions.receiveAudio(a);
             });

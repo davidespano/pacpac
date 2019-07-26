@@ -38,7 +38,7 @@ function AudioForm(props){
                             <button type="button" className="btn btn-secondary buttonConferm"
                                     data-dismiss="modal"
                                     onClick={() => {
-                                        audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
+                                        if(!audioToEdit) saveNewAudio(props);
                                         props.audioPositioning(false);
                                         interface_utils.resetFields('audio-form-box');
                                     }}
@@ -168,7 +168,7 @@ function saveNewAudio(props){
         loop: loop,
     }));
 
-    props.selectAudioToEdit(id);
+    props.selectAudioToEdit(id, file, isSpatial, loop, scene);
 }
 
 function editAudio(props, audioToEdit){
@@ -183,7 +183,7 @@ function editAudio(props, audioToEdit){
     console.log(isSpatial)
     console.log(scene)
 
-    props.updateAudio(Audio({
+    let newAudio = Audio({
         uuid: audioToEdit.uuid,
         name: name,
         file: file,
@@ -191,7 +191,11 @@ function editAudio(props, audioToEdit){
         scene: isSpatial ? scene : null,
         loop: loop,
         vertices: audioToEdit.vertices,
-    }));
+    });
+    console.log(newAudio)
+
+
+    props.updateAudio(newAudio);
 
     //from spatial to non spatial
     if(!isSpatial && audioToEdit.isSpatial){
@@ -209,6 +213,7 @@ function editAudio(props, audioToEdit){
 }
 
 function getVertices(audioToEdit){
+    console.log(audioToEdit)
     if(!audioToEdit || !audioToEdit.vertices ){
         return 'x = 0, y = 0, z = 0';
     } else {

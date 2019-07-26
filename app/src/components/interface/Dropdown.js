@@ -15,8 +15,6 @@ function Dropdown(properties){
     let defaultValue = getDefaultValue(props, properties.defaultValue, component);
     let [options, onChange, style] = generateOptions(props, component, property);
 
-    console.log(defaultValue);
-
     return(
         <Select
             options={options}
