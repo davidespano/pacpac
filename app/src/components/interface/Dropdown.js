@@ -15,6 +15,8 @@ function Dropdown(properties){
     let defaultValue = getDefaultValue(props, properties.defaultValue, component);
     let [options, onChange, style] = generateOptions(props, component, property);
 
+    console.log(defaultValue);
+
     return(
         <Select
             options={options}
@@ -126,7 +128,22 @@ function generateOptions(props, component, property){
                 }),
                 (e) => {
                     let scene = props.scenes.get(props.currentScene);
-                    scene_utils.setProperty(scene, property, e.value, props)
+                    scene_utils.setProperty(scene, property, e.value, props);
+                },
+                customStyle,
+            ];
+        case 'direction':
+            return [
+                [
+                    { value: Values.NO_DIR, label: toString.valueUuidToString(Values.NO_DIR) },
+                    { value: Values.UP, label: toString.valueUuidToString(Values.UP)},
+                    { value: Values.DOWN, label: toString.valueUuidToString(Values.DOWN)},
+                    { value: Values.RIGHT, label: toString.valueUuidToString(Values.RIGHT)},
+                    { value: Values.LEFT, label: toString.valueUuidToString(Values.LEFT)},
+                ],
+                (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 },
                 customStyle,
             ];

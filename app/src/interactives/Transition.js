@@ -1,5 +1,6 @@
 import InteractiveObject from "./InteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
+import Values from "./rules/Values";
 
 /**
  * @param defaultValues for generic and specific properties
@@ -10,6 +11,7 @@ const Transition = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.TRANSITION,
     properties : {
         duration : 2000,
+        direction: Values.NO_DIR,
     },
     media : {
         media0: null,

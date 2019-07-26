@@ -23,6 +23,13 @@ const Values = {
     THREE_DIM : '3D',
     TWO_DIM : '2D',
 
+    //directions
+    NO_DIR:  'NO_DIR',
+    UP : 'UP',
+    DOWN : 'DOWN',
+    LEFT : 'LEFT',
+    RIGHT : 'RIGHT',
+
 };
 
 export default Values;

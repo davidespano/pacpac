@@ -21,6 +21,7 @@ function AudioForm(props){
                             <h5 className="modal-title" id="audio-form-modal-label">{title(props.editor)}</h5>
                             <button id="audio-form-close-button" type="button" className="close" data-dismiss="modal"
                                     aria-label="Close" onClick={() => {
+                                        props.audioPositioning(false);
                                         interface_utils.resetFields('audio-form-box');
                                     }}>
                                 <span aria-hidden="true">&times;</span>
@@ -88,7 +89,7 @@ function generalOptions(props, audioToEdit){
 
 function spatialOption(props, audioToEdit){
 
-    let spatial = props.editor.isAudioSpatial
+    let spatial = props.editor.isAudioSpatial;
     let disabled = !(props.editor.selectedAudioFile && props.editor.newAudioNameTyped && spatial);
     let selectedScene = props.editor.selectedSceneSpatialAudio;
 
@@ -187,6 +188,7 @@ function editAudio(props, audioToEdit){
         isSpatial: isSpatial,
         scene: isSpatial ? scene : null,
         loop: loop,
+        vertices: audioToEdit.vertices,
     }));
 
     //from spatial to non spatial

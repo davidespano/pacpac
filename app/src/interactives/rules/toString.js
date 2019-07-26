@@ -146,6 +146,16 @@ function valueUuidToString(valueUuid){
             return '3D';
         case Values.TWO_DIM:
             return '2D';
+        case Values.NO_DIR:
+            return 'nessuna direzione';
+        case Values.UP:
+            return 'su';
+        case Values.DOWN:
+            return 'giù';
+        case Values.LEFT:
+            return 'sinistra';
+        case Values.RIGHT:
+            return 'destra';
         default:
             return 'stato sconosciuto';
     }
