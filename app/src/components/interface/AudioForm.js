@@ -38,7 +38,7 @@ function AudioForm(props){
                             <button type="button" className="btn btn-secondary buttonConferm"
                                     data-dismiss="modal"
                                     onClick={() => {
-                                        if(!audioToEdit) saveNewAudio(props);
+                                        audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
                                         props.audioPositioning(false);
                                         interface_utils.resetFields('audio-form-box');
                                     }}
@@ -126,7 +126,7 @@ function spatialOption(props, audioToEdit){
                           disabled={!spatial}/>
                 <button className={'btn position-btn'} disabled={disabled}
                         onClick={() => {
-                            audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
+                            if(!audioToEdit) saveNewAudio(props);
                             props.audioPositioning(true);
                             props.switchToGeometryMode();
                         }}>
