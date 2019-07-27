@@ -95,7 +95,7 @@ function generateProperties(props){
                        }
                    }}
             />
-            <label className={'rightbar-titles'}>Appartenenza</label>
+            <label className={'rightbar-titles'}>Scena di appartenenza</label>
             <div className={'rightbar-grid'}>
                 <input className={'propertyForm objectName'}
                        value={objectScene.name}

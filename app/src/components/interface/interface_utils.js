@@ -64,7 +64,7 @@ function setPropertyFromValue(object, property, value, props){
 
 function updateAudioVertices(audio, vertices, props) {
     audio=audio.set('vertices', vertices)
-    props.updateAudio(audio)
+    props.selectAudioToEdit(audio);
 }
 
 /**
@@ -206,6 +206,9 @@ function handleFileUpdate(props){
             let scene = props.scenes.get(props.currentScene);
             scene_utils.setProperty(scene, 'img', props.editor.selectedFile, props);
             break;
+        case 'audio-form':
+            let newAudio = props.editor.audioToEdit.set('file', props.editor.selectedAudioFile);
+            props.selectAudioToEdit(newAudio);
     }
 }
 
@@ -224,8 +227,11 @@ function resetFields(id){
  * @param audio
  */
 function audioSelection(props, audio){
-    props.editor.selectedAudioToEdit === audio.uuid ? props.selectAudioToEdit(null) :
-    props.selectAudioToEdit(audio.uuid, audio.file, audio.isSpatial, audio.loop, audio.scene);
+    if(props.editor.audioToEdit === null || props.editor.audioToEdit.uuid !== audio.uuid){
+        props.selectAudioToEdit(audio);
+    } else {
+        props.selectAudioToEdit(null);
+    }
 }
 
 

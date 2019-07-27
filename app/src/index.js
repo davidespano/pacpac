@@ -8,6 +8,8 @@ import Actions from "./actions/Actions";
 import StoryAPI from "./utils/StoryAPI";
 import AudioAPI from "./utils/AudioAPI";
 import DebugAPI from "./utils/DebugAPI";
+import Audio from "./audio/Audio";
+import EditorStateStore from "./data/EditorStateStore";
 
 //import '../public/style.css';
 //import './aframe.js';
@@ -30,5 +32,3 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
 }).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
 });
-
-

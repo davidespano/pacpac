@@ -25,6 +25,11 @@ function AppView(props) {
         component: 'assets',
     };
 
+    props.scenes.forEach(s => {
+        console.log(s.name)
+        console.log(s.audios)
+    })
+
     switch (props.editor.mode) {
         case 'EDIT_MODE_ON':
             return (

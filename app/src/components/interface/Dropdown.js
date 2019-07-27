@@ -76,7 +76,8 @@ function generateOptions(props, component, property){
                     return {value: scene.uuid, label: scene.name}
                 }),
                 (e) => {
-                    props.selectSceneSpatialAudio(e.value);
+                    let newAudio = props.editor.audioToEdit.set('scene', e.value);
+                    props.selectAudioToEdit(newAudio);
                 },
                 customStyle,
             ];

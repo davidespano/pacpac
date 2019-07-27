@@ -46,7 +46,10 @@ function AudioMenu(props){
                                         data-toggle="modal"
                                         data-target="#audio-form-modal"
                                         data-backdrop="false"
-                                        onClick={() => props.selectAudioToEdit(null)}
+                                        onClick={() => {
+                                            props.selectAudioToEdit(null);
+                                            props.isItNew(true);
+                                        }}
                                 >
                                     Nuovo oggetto audio
                                 </button>
@@ -55,17 +58,19 @@ function AudioMenu(props){
                                         data-toggle="modal"
                                         data-target="#audio-form-modal"
                                         data-backdrop="false"
-                                        disabled={props.editor.selectedAudioToEdit == null}
+                                        disabled={props.editor.audioToEdit == null}
+                                        onClick={() => {
+                                            props.isItNew(false);
+                                        }}
                                 >
                                     <img className={"action-buttons btn-img"} src={"icons/icons8-white-pencil-50.png"}/>
                                     Modifica oggetto
                                 </button>
                                 <button id={'remove-audio-btn'}
                                         className={'btn audio-btn btn-secondary'}
-                                        disabled={props.editor.selectedAudioToEdit == null}
+                                        disabled={props.editor.audioToEdit == null}
                                         onClick={() => {
-                                            let audio = props.audios.get(props.editor.selectedAudioToEdit);
-                                            props.removeAudio(audio);
+                                            props.removeAudio(props.editor.audioToEdit);
                                         }}
                                 >
                                     <img className={"action-buttons btn-img"} src={"icons/icons8-white-waste-50.png"}/>
@@ -89,7 +94,7 @@ function AudioMenu(props){
 
 
 function checkSelection(props, uuid){
-    return props.editor.selectedAudioToEdit === uuid ? 'selected-audio' : '';
+    return (props.editor.audioToEdit && props.editor.audioToEdit.uuid === uuid) ? 'selected-audio' : '';
 }
 
 function show(props){

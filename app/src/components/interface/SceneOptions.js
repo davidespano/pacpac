@@ -149,7 +149,10 @@ function spatialAudioList(props, scene){
                     className={"action-buttons-container"}
                     data-toggle="modal"
                     data-target="#audio-form-modal"
-                    disabled={props.editor.selectedAudioToEdit == null}
+                    disabled={props.editor.audioToEdit == null}
+                    onClick={() => {
+                        props.isItNew(false);
+                    }}
                 >
                     <img className={"action-buttons"} src={"icons/icons8-pencil-50.png"} alt={'Modifica'}/>
                 </button>
@@ -157,10 +160,9 @@ function spatialAudioList(props, scene){
                     title={"Cancella audio"}
                     className={"action-buttons-container"}
                     onClick={() => {
-                        let audio = props.audios.get(props.editor.selectedAudioToEdit);
-                        props.removeAudio(audio);
+                        props.removeAudio(props.editor.audioToEdit);
                     }}
-                    disabled={props.editor.selectedAudioToEdit == null}
+                    disabled={props.editor.audioToEdit == null}
                 >
                     <img className={"action-buttons"} src={"icons/icons8-waste-50.png"} alt={'Modifica'}/>
                 </button>
@@ -173,7 +175,10 @@ function spatialAudioList(props, scene){
 }
 
 function checkSelection(props, uuid){
-    return props.editor.selectedAudioToEdit === uuid ? 'selected-audio' : '';
+    if(props.editor.audioToEdit && props.editor.audioToEdit.uuid === uuid){
+        return 'selected-audio';
+    }
+    return '';
 }
 
 

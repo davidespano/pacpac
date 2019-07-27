@@ -144,14 +144,10 @@ const Actions = {
         })
     },
 
-    selectAudioToEdit(selection, file = null, isSpatial = false, check = false, scene = null){
+    selectAudioToEdit(audio){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_AUDIO_TO_EDIT,
-            selection: selection,
-            file: file,
-            isSpatial: isSpatial,
-            check: check,
-            scene: scene,
+            audio: audio,
         })
     },
 
@@ -211,6 +207,13 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_AUDIO_FILTER,
             filter: filter,
+        })
+    },
+
+    isItNew(bool){
+        AppDispatcher.dispatch({
+            type: ActionTypes.IS_IT_NEW,
+            bool: bool,
         })
     },
 
@@ -717,8 +720,6 @@ const Actions = {
             type: ActionTypes.UPDATE_AUDIO,
             audio: audio,
         });
-        console.log('sono un audio speciale?')
-        console.log(audio.isSpatial)
         if(audio.isSpatial)
             AudioAPI.createUpdateSpatialAudio(audio.scene, audio);
         else

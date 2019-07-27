@@ -10,7 +10,11 @@ let uuid = require('uuid');
 
 function AudioForm(props){
 
-    let audioToEdit = props.editor.selectedAudioToEdit ? props.audios.get(props.editor.selectedAudioToEdit) : null;
+    let audioToEdit = props.editor.audioToEdit ?
+        props.editor.audioToEdit :
+        Audio({
+            uuid: uuid.v4(),
+        });
 
     return(
         <div id={"audio-form"}>
@@ -18,9 +22,10 @@ function AudioForm(props){
                 <div className="modal-dialog" role="document">
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
-                            <h5 className="modal-title" id="audio-form-modal-label">{title(props.editor)}</h5>
+                            <h5 className="modal-title" id="audio-form-modal-label">{title(props.editor.isItNew)}</h5>
                             <button id="audio-form-close-button" type="button" className="close" data-dismiss="modal"
                                     aria-label="Close" onClick={() => {
+                                        props.selectAudioToEdit(null);
                                         props.audioPositioning(false);
                                         interface_utils.resetFields('audio-form-box');
                                     }}>
@@ -38,7 +43,7 @@ function AudioForm(props){
                             <button type="button" className="btn btn-secondary buttonConferm"
                                     data-dismiss="modal"
                                     onClick={() => {
-                                        audioToEdit ? editAudio(props, audioToEdit) : saveNewAudio(props);
+                                        saveAudio(props, audioToEdit);
                                         props.audioPositioning(false);
                                         interface_utils.resetFields('audio-form-box');
                                     }}
@@ -53,7 +58,7 @@ function AudioForm(props){
 }
 
 function checkIfDisabled(props, audioToEdit) {
-    return audioToEdit ? false : !(props.editor.selectedAudioFile && props.editor.newAudioNameTyped);
+    return !(audioToEdit.file && audioToEdit.name);
 }
 
 function generalOptions(props, audioToEdit){
@@ -61,24 +66,24 @@ function generalOptions(props, audioToEdit){
         props : props,
         component : 'audio-form',
     };
-    let name = audioToEdit ? audioToEdit.name : null;
 
     return(
         <div id={'audio-form-general'} className={'audio-form-box-section'}>
             <div className={'box-titles'}>Generali</div>
             <div className={'box-grid'}>
                 <input id={'input-name-audio'} className={'input-audio-form'}
-                       type={'text'} placeholder={'Nome'} defaultValue={name}
+                       type={'text'} placeholder={'Nome'} defaultValue={audioToEdit.name}
                        onChange={() => {
                            let name = document.getElementById("input-name-audio").value;
-                           props.newAudioNameTyped(name != "");
+                           let newAudio = audioToEdit.set('name', name);
+                           props.selectAudioToEdit(newAudio);
                        }}/>
                 <div> </div>
                 <div id={'select-file-audio'}>
                     <p id={'file-selected-name'}
                        className={'input-new-audio-file ellipsis-no-inline'}
                     >
-                        {selectedFile(props)}
+                        {selectedFile(audioToEdit)}
                     </p>
                 </div>
                 <FileSelectionBtn {...properties} />
@@ -89,14 +94,8 @@ function generalOptions(props, audioToEdit){
 
 function spatialOption(props, audioToEdit){
 
-    let spatial = props.editor.isAudioSpatial;
-    let disabled = !spatial;
-
-    if(!audioToEdit){
-        disabled = !(props.editor.selectedAudioFile && props.editor.newAudioNameTyped && spatial);
-    }
-
-    let selectedScene = props.editor.selectedSceneSpatialAudio;
+    let spatial = audioToEdit.isSpatial;
+    let disabled = !(audioToEdit.file && audioToEdit.name && spatial && audioToEdit.scene);
 
     return(
         <div id={'audio-form-scene'} className={'audio-form-box-section'}>
@@ -104,13 +103,19 @@ function spatialOption(props, audioToEdit){
             <div className={'box-grid'}>
                 <div>
                     <input type={'radio'} name={'isSpatial'} id={'spatial-radio'} className={'radio-audio-form'}
-                           onClick={()=> props.changeAudioSpatialOptionStatus(true)}
+                           onClick={()=> {
+                               let newAudio = audioToEdit.set('isSpatial', true);
+                               props.selectAudioToEdit(newAudio);
+                           }}
                            checked={spatial}
                            onChange={()=>{}}
                     />
                     <label htmlFor={'spatial-radio'} className={'label-audio-form'}>Spaziale</label>
                     <input type={'radio'} name={'isSpatial'} id={'global-radio'} className={'radio-audio-form'}
-                           onClick={()=> props.changeAudioSpatialOptionStatus(false)}
+                           onClick={()=> {
+                               let newAudio = audioToEdit.set('isSpatial', false);
+                               props.selectAudioToEdit(newAudio);
+                           }}
                            checked={!spatial}
                            onChange={()=>{}}
                     />
@@ -122,11 +127,11 @@ function spatialOption(props, audioToEdit){
                 <Dropdown props={props}
                           component={'scenes'}
                           property={'scene'}
-                          defaultValue={selectedScene ? selectedScene : props.currentScene}
+                          defaultValue={audioToEdit.scene}
                           disabled={!spatial}/>
                 <button className={'btn position-btn'} disabled={disabled}
                         onClick={() => {
-                            if(!audioToEdit) saveNewAudio(props);
+                            saveAudio(props, audioToEdit);
                             props.audioPositioning(true);
                             props.switchToGeometryMode();
                         }}>
@@ -139,100 +144,86 @@ function spatialOption(props, audioToEdit){
 }
 
 
-function playOption(props){
-    let checked = props.editor.loopChecked;
+function playOption(props, audioToEdit){
+    let checked = audioToEdit.checked;
     return(
         <div id={'audio-form-play'} className={'audio-form-box-section'}>
             <div className={'box-titles'}>Riproduzione</div>
             <input type={'checkbox'} className={'checkbox-audio-form'}
                    id={'loop-checkbox'} checked={checked}
-                   onChange={() => props.loopCheck(!checked)}
+                   onChange={() => {
+                       let newAudio = audioToEdit.set('loop', !checked);
+                       props.selectAudioToEdit(newAudio);
+                   }}
             />
             <label htmlFor={'loop-checkbox'} className={'label-audio-form'}>Loop</label>
         </div>
     );
 }
 
+function saveAudio(props, audioToEdit){
 
+    if(!audioToEdit.isSpatial)
+        audioToEdit = audioToEdit.set('scene', null);
 
-function saveNewAudio(props){
-    let name = document.getElementById('input-name-audio').value,
-        file = props.editor.selectedAudioFile,
-        isSpatial = props.editor.isAudioSpatial,
-        loop = document.getElementById('loop-checkbox').value == 'on' ? true : false,
-        scene = props.editor.selectedSceneSpatialAudio;
+    if(!props.audios.has(audioToEdit.uuid)){ // nuovo audio
+        props.addNewAudio(audioToEdit);
+    } else {
 
-    let id = uuid.v4();
+        let original = props.audios.get(audioToEdit.uuid);
+        let scene = null;
+        props.updateAudio(audioToEdit);
 
-    props.addNewAudio(Audio({
-        uuid: id,
-        name: name,
-        file: file,
-        isSpatial: isSpatial,
-        scene: isSpatial ? scene : null,
-        loop: loop,
-    }));
+        //from spatial to non spatial
+        if(original.isSpatial && !audioToEdit.isSpatial){
+            scene = props.scenes.get(audioToEdit.scene);
+            scene = scene_utils.removeAudioFromScene(scene, audioToEdit.uuid);
+            props.updateScene(scene);
+        }
+        //from non spatial to spatial
+        if(!original.isSpatial && audioToEdit.isSpatial){
+            scene = props.scenes.get(audioToEdit.scene);
+            scene = scene_utils.addAudioToScene(scene, audioToEdit.uuid);
+            props.updateScene(scene);
+        }
 
-    props.selectAudioToEdit(id, file, isSpatial, loop, scene);
-}
+        //from one scene to another
+        if(original.isSpatial && audioToEdit.isSpatial && original.scene !== audioToEdit.scene){
+            let originalScene = props.scenes.get(original.scene);
+            let newScene = props.scenes.get(audioToEdit.scene);
+            originalScene = scene_utils.removeAudioFromScene(originalScene, original.uuid);
+            newScene = scene_utils.addAudioToScene(newScene, audioToEdit.uuid);
+            props.updateScene(originalScene);
+            props.updateScene(newScene);
+        }
 
-function editAudio(props, audioToEdit){
-    let name = document.getElementById('input-name-audio').value,
-        file = props.editor.selectedAudioFile,
-        isSpatial = props.editor.isAudioSpatial,
-        loop = props.editor.loopChecked,
-        scene = props.editor.selectedSceneSpatialAudio;
-
-
-    file = file === 'Nessun file selezionato' ? null : file;
-    console.log(isSpatial)
-    console.log(scene)
-
-    let newAudio = Audio({
-        uuid: audioToEdit.uuid,
-        name: name,
-        file: file,
-        isSpatial: isSpatial,
-        scene: isSpatial ? scene : null,
-        loop: loop,
-        vertices: audioToEdit.vertices,
-    });
-    console.log(newAudio)
-
-
-    props.updateAudio(newAudio);
-
-    //from spatial to non spatial
-    if(!isSpatial && audioToEdit.isSpatial){
-        scene = props.scenes.get(audioToEdit.scene);
-        scene = scene_utils.removeAudioFromScene(scene, audioToEdit.uuid);
-        props.updateScene(scene);
+        props.selectAudioToEdit(null);
+        props.isItNew(false);
     }
-    //from non spatial to spatial
-    if(isSpatial && !audioToEdit.isSpatial){
-        scene = props.scenes.get(scene);
-        scene = scene_utils.addAudioToScene(scene, audioToEdit.uuid);
-        props.updateScene(scene);
 
-    }
+
+
+
 }
 
 function getVertices(audioToEdit){
-    console.log(audioToEdit)
-    if(!audioToEdit || !audioToEdit.vertices ){
-        return 'x = 0, y = 0, z = 0';
-    } else {
+    if(audioToEdit.isSpatial && audioToEdit.vertices){
         let coordinates = audioToEdit.vertices.split(" ").map(x => parseFloat(x).toFixed(2));
         return 'x = ' + coordinates[0] + ', y = ' + coordinates[1] + ', z = ' + coordinates[2];
+    } else {
+        return 'x = 0, y = 0, z = 0';
     }
 }
 
-function selectedFile(props){
-    return props.editor.selectedAudioFile ? props.editor.selectedAudioFile : 'Nessun file selezionato';
+function selectedFile(audioToEdit){
+    if(!audioToEdit || !audioToEdit.file){
+        return 'Nessun file selezionato';
+    }
+    return audioToEdit.file;
 }
 
-function title(editor){
-    return editor.selectedAudioToEdit ? 'Modifica audio' : 'Nuovo audio';
+function title(isItNew){
+    return isItNew ? 'Nuovo audio' : 'Modifica audio';
 }
 
 function show(props){

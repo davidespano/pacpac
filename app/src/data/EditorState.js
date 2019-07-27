@@ -6,7 +6,6 @@ const EditorState = Immutable.Record({
 
     actionId: null,
     audioFilter: '',
-    audioPositioning: false,
     chooseTagNewScene: false,
     chooseTagRightbar: false,
     completionInput: null,
@@ -14,12 +13,9 @@ const EditorState = Immutable.Record({
     debugRunState: null,
     debugSaves: null,
     isEditAudioOn: false,
-    isAudioSpatial: false,
     leftbarSelection: 'scenes',
-    loopChecked: false,
     mentionType: null,
     mode: ActionTypes.LOGIN_MODE_ON,
-    newAudioNameTyped: false,
     newSceneNameTyped: false,
     objectId: null,
     objectNameRightbar: null,
@@ -31,16 +27,30 @@ const EditorState = Immutable.Record({
     scenesOrder: Orders.CHRONOLOGICAL,
     scenesNameFilter: '',
     sceneNameRightbar: null,
-    selectedAudioToEdit: null,
-    selectedAudioFile: null,
     selectedFile: null,
     selectedMediaToEdit: null,
-    selectedSceneSpatialAudio: null,
     selectedTagNewScene: 'default',
     soundActiveFormChecked: false,
     soundActiveRightbarChecked: false,
     tagFilter: '',
     user: null,
+
+
+    //audio form
+
+    audioPositioning: false,
+    audioToEdit: null,
+    isItNew: false,
+    selectedAudioFile: null,
+
+    //audioVertices: null,
+    //isAudioSpatial: false,
+    //loopChecked: false,
+    //newAudioNameTyped: false,
+    //selectedSceneSpatialAudio: null,
+
+
+
 });
 
 export default EditorState;

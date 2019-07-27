@@ -1722,4 +1722,6 @@ h6 {
     padding-top: 5px;
 }
 
+.modal-backdrop {background: none;}
+
 /********* END debug css ************/
