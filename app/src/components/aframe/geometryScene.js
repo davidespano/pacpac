@@ -22,7 +22,7 @@ export function givePoints(props) {
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
-    console.log(isCurved)
+    console.log(props)
     //console.log(puntisalvati.join())
     if(isCurved){
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
@@ -86,7 +86,7 @@ export default class GeometryScene extends React.Component{
         //SetState in order to update the scene
         let sceneState;
         if(this.props.editor.audioPositioning){
-            sceneState = this.props.editor.audioToEdit.scene;
+            sceneState = this.props.scenes.get(this.props.editor.audioToEdit.scene);
         } else {
             sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
         }
@@ -171,6 +171,7 @@ export default class GeometryScene extends React.Component{
                 document.getElementById("startedit").style.color = 'white'
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 let a_point = pointsaver.points;
+                console.log(a_point)
                 if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
@@ -369,20 +370,28 @@ export default class GeometryScene extends React.Component{
     createAudios(scene){
         // Inserisco gli oggetti audio nella scena
         let mainscene = document.querySelector('a-scene')
-        scene.audios.forEach(a => {
-            console.log(a)
-            if(a.vertices !== undefined) {
-                console.log(a)
+        this.props.audios.forEach(a => {
+            if(this.props.editor.audioToEdit && this.props.editor.audioToEdit.scene === a.scene){
                 let audio = document.createElement('a-entity');
-                audio.setAttribute('id', 'audio' + a.uuid);
-                audio.setAttribute('position', a.vertices);
-                audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
-                if(this.props.editor.audioToEdit.uuid === a.uuid)
+                if(this.props.editor.audioToEdit.uuid !== a.uuid) {
+                    //console.log(a)
+                    audio.setAttribute('id', 'audio' + a.uuid);
+                    audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
+                    audio.setAttribute('position', a.vertices);
+                    audio.setAttribute('material', 'opacity: 0.7; shader: flat');
+                } else {
+                    audio.setAttribute('id', 'audio' + this.props.editor.audioToEdit.uuid);
+                    audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
+                    audio.setAttribute('position', this.props.editor.audioToEdit.vertices);
+                    audio.setAttribute('material', 'opacity: 0.7; shader: flat');
                     audio.setAttribute('material', 'color: red; shader: flat');
-                audio.setAttribute('material', 'opacity: 0.7; shader: flat');
+                }
+                console.log(this.props.audios.get(this.props.editor.audioToEdit.uuid))
                 mainscene.appendChild(audio);
             }
         });
+
+
         this.setState({scenes: this.state.scenes})
     }
 

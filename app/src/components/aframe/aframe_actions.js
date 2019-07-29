@@ -32,6 +32,7 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
             let duration = current_object.properties.duration ? current_object.properties.duration : 0;
+            let direction = current_object.properties.direction ? current_object.properties.direction : 'nothing'
             let objectVideo_transition = 0;
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
@@ -59,7 +60,7 @@ function executeAction(VRScene, rule, action){
                 // se le due scene sono dello stesso tipo le gestisco allo stesso modo
                 if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[media].type === Values.THREE_DIM ||
                    VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[media].type === Values.TWO_DIM)
-                    transition(state.activeScene, state.graph.scenes[media], duration);
+                    transition(state.activeScene, state.graph.scenes[media], duration, direction);
                 else
                     transition2D(state.activeScene, state.graph.scenes[media], duration, VRScene)
             },duration_transition);
@@ -178,7 +179,7 @@ function executeAction(VRScene, rule, action){
  * @param targetScene
  * @param duration
  */
-function transition(actualScene, targetScene, duration){
+function transition(actualScene, targetScene, duration, direction){
     let actualSky = document.querySelector('#' + actualScene.name);
     let actualSceneVideo = document.getElementById(actualScene.img);
     if(store_utils.getFileType(actualScene.img) === 'video') actualSceneVideo.pause();
@@ -191,16 +192,37 @@ function transition(actualScene, targetScene, duration){
     let targetMove = new CustomEvent(targetSky.id + "target");
     let sceneMovement = true;
     let is3dScene = actualScene.type===Values.THREE_DIM;
-    let positionTarget = targetSky.object3D.position.x + ', ' +
-                         targetSky.object3D.position.y + ', ' +
-                         targetSky.object3D.position.z;
-    let positionActual = -targetSky.object3D.position.x + ', ' +
-                          targetSky.object3D.position.y + ', ' +
-                          targetSky.object3D.position.z;
+    let positionTarget;
+    let positionActual;
+    let canvasWidth = document.documentElement.clientWidth / 100;
+    let canvasHeight = canvasWidth /1.77;
+    switch (direction) {
+        case 'RIGHT':
+            positionTarget = canvasWidth + ', 1.6, -6.44';
+            positionActual = -canvasWidth + ', 1.6, -6.44';
+            break;
+        case 'LEFT':
+            positionTarget = -canvasWidth + ', 1.6, -6.44';
+            positionActual =canvasWidth + ', 1.6, -6.44';
+            break;
+        case 'UP':
+            positionTarget = '0, ' + (canvasHeight + 1.6) + ', -6.44';
+            positionActual = '0, ' + (-canvasHeight + 1.6) + ', -6.44';
+            break;
+        case 'DOWN':
+            positionTarget = '0, ' + (-canvasHeight + 1.6) + ', -6.44';
+            positionActual = '0, ' + (canvasHeight + 1.6) + ', -6.44';
+            break;
+        default:
+            positionTarget = "0, 1.6, -6.44";
+            positionActual = "0, 1.6, -6.44";
+            break;
+    }
     console.log('transizione')
     console.log(positionTarget)
     console.log(positionActual)
-    if(targetScene.type === Values.TWO_DIM) targetSky.setAttribute('position', '0 1.6 -6.44');
+    console.log(direction)
+    if(targetScene.type === Values.TWO_DIM) targetSky.setAttribute('position', positionTarget);
 
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
@@ -225,7 +247,6 @@ function transition(actualScene, targetScene, duration){
     targetSky.dispatchEvent(appear);
 
     if(sceneMovement&& !is3dScene){
-        console.log('ci sto entrando qui')
         actualSky.dispatchEvent(actualMove);
         targetSky.dispatchEvent(targetMove);
     }
