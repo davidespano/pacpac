@@ -27,7 +27,7 @@ export function givePoints(props) {
     if(isCurved){
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
     } else {
-        interface_utils.updateAudioVertices(props.audios.get(props.editor.selectedAudioToEdit), puntisalvati.join(), props)
+        interface_utils.updateAudioVertices(props.editor.audioToEdit, puntisalvati.join(), props)
     }
 
 }
@@ -38,10 +38,9 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         let scene;
-        console.log(props.editor.selectedSceneSpatialAudio)
-        console.log(props.editor.audioPositioning)
-        if(props.editor.audioPositioning && props.editor.selectedSceneSpatialAudio)
-            scene = props.editor.selectedSceneSpatialAudio;
+        console.log(props.editor)
+        if(props.editor.audioPositioning)
+            scene = props.editor.audioToEdit.scene;
         else
             scene = props.currentScene;
 
@@ -87,7 +86,7 @@ export default class GeometryScene extends React.Component{
         //SetState in order to update the scene
         let sceneState;
         if(this.props.editor.audioPositioning){
-            sceneState = this.props.scenes.get(this.state.audio.scene);
+            sceneState = this.props.editor.audioToEdit.scene;
         } else {
             sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
         }
@@ -181,7 +180,6 @@ export default class GeometryScene extends React.Component{
                     cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange(), true);
                     cursor.components.pointsaver.points = [];
-                    console.log(cursor)
                     let points = scene.querySelectorAll(".points");
                     if(!this.props.editor.audioPositioning){
                         a_point = a_point.map(punto =>
@@ -216,14 +214,13 @@ export default class GeometryScene extends React.Component{
                 });
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
-                console.log(this.props.editor.selectedAudioToEdit)
+                //console.log(this.props.editor.selectedAudioToEdit)
                 if(cursor.components.pointsaver.attrValue.isCurved === 'true'){
                     if(document.getElementById("curve_"+this.props.currentObject))
                         document.getElementById("curve_"+this.props.currentObject).setAttribute('geometry', 'vertices: null')
                 } else {
-                    console.log(this.props.editor.selectedAudioToEdit)
-                    if(document.getElementById("audio"+this.props.editor.selectedAudioToEdit)){
-                        document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.selectedAudioToEdit));
+                    if(document.getElementById("audio"+this.props.editor.audioToEdit.uuid)){
+                        document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.audioToEdit.uuid));
                     }
 
                 }
@@ -265,10 +262,11 @@ export default class GeometryScene extends React.Component{
     async createScene(){
         let scene = {};
         await SceneAPI.getAllDetailedScenes(scene);
-        let audioToEdit = this.props.editor.selectedAudioToEdit ? this.props.audios.get(this.props.editor.selectedAudioToEdit) : null;
+
+        let audioToEdit = this.props.editor.audioPositioning ? this.props.editor.audioToEdit : null;
         let currentScene;
-        if(this.props.editor.selectedSceneSpatialAudio)
-            currentScene = this.props.editor.selectedSceneSpatialAudio;
+        if(this.props.editor.audioPositioning)
+            currentScene = this.props.editor.audioToEdit.scene;
         else
             currentScene = this.props.currentScene;
         this.createAudios(scene['scenes'][currentScene]);
@@ -293,10 +291,10 @@ export default class GeometryScene extends React.Component{
         let isCurved = !this.props.editor.audioPositioning;
         let currenteObjectUuid;
 
-        if(!this.props.editor.audioPositioning){
+        if(isCurved){
             currenteObjectUuid = this.props.currentObject;
         } else {
-            currenteObjectUuid = this.props.audios.get(this.props.editor.selectedAudioToEdit).uuid;
+            currenteObjectUuid = this.props.editor.audioToEdit.uuid;
         }
         if(isCurved){
             let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
@@ -379,7 +377,7 @@ export default class GeometryScene extends React.Component{
                 audio.setAttribute('id', 'audio' + a.uuid);
                 audio.setAttribute('position', a.vertices);
                 audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
-                if(this.props.editor.selectedAudioToEdit === a.uuid)
+                if(this.props.editor.audioToEdit.uuid === a.uuid)
                     audio.setAttribute('material', 'color: red; shader: flat');
                 audio.setAttribute('material', 'opacity: 0.7; shader: flat');
                 mainscene.appendChild(audio);
