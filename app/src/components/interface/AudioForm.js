@@ -131,7 +131,6 @@ function spatialOption(props, audioToEdit){
                           disabled={!spatial}/>
                 <button className={'btn position-btn'} disabled={disabled}
                         onClick={() => {
-                            saveAudio(props, audioToEdit);
                             props.audioPositioning(true);
                             props.switchToGeometryMode();
                         }}>
