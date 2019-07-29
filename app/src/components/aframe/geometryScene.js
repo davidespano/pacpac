@@ -38,6 +38,8 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         let scene;
+        console.log(props.editor.selectedSceneSpatialAudio)
+        console.log(props.editor.audioPositioning)
         if(props.editor.audioPositioning && props.editor.selectedSceneSpatialAudio)
             scene = props.editor.selectedSceneSpatialAudio;
         else
