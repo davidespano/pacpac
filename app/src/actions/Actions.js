@@ -8,6 +8,7 @@ import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 import AudioAPI from "../utils/AudioAPI";
 import StoryAPI from '../utils/StoryAPI';
 import Values from "../interactives/rules/Values";
+import ObjectsStore from "../data/ObjectsStore";
 
 const Actions = {
 
@@ -51,16 +52,36 @@ const Actions = {
         })
     },
 
-    //TODO [debug] add to origin master
+    audioPositioning(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.AUDIO_POSITIONING,
+            status: status,
+        })
+    },
+
     debugModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.DEBUG_MODE_ON
         })
     },
 
+    debugSaves(response){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DEBUG_SAVES,
+            response: response,
+        })
+    },
+
     loginModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.LOGIN_MODE_ON
+        })
+    },
+
+    leftbarSelection(selection){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LEFTBAR_SELECTION,
+            selection: selection,
         })
     },
 
@@ -123,13 +144,10 @@ const Actions = {
         })
     },
 
-    selectAudioToEdit(selection, file = null, isSpatial = false, check = false){
+    selectAudioToEdit(audio){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_AUDIO_TO_EDIT,
-            selection: selection,
-            file: file,
-            isSpatial: isSpatial,
-            check: check,
+            audio: audio,
         })
     },
 
@@ -144,6 +162,20 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_TAG_NEW_SCENE,
             tag: tag,
+        })
+    },
+
+    soundActiveFormCheck(check){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SOUND_ACTIVE_FORM_CHECK,
+            check: check,
+        })
+    },
+
+    soundActiveRightbarCheck(check){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SOUND_ACTIVE_RIGHTBAR_CHECK,
+            check: check,
         })
     },
 
@@ -175,6 +207,13 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_AUDIO_FILTER,
             filter: filter,
+        })
+    },
+
+    isItNew(bool){
+        AppDispatcher.dispatch({
+            type: ActionTypes.IS_IT_NEW,
+            bool: bool,
         })
     },
 
@@ -312,6 +351,7 @@ const Actions = {
             scene: scene,
             order: order,
             objectsToScene: ObjectToSceneStore.getState(),
+            objects: ObjectsStore.getState(),
         });
     },
 
@@ -323,6 +363,7 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_SCENE,
             uuid: uuid,
+            objects: ObjectsStore.getState(),
             objectsToScene: ObjectToSceneStore.getState(),
             scene: ScenesStore.getState().get(uuid),
         });
@@ -679,7 +720,6 @@ const Actions = {
             type: ActionTypes.UPDATE_AUDIO,
             audio: audio,
         });
-
         if(audio.isSpatial)
             AudioAPI.createUpdateSpatialAudio(audio.scene, audio);
         else

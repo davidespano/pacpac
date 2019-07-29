@@ -87,7 +87,7 @@ function checkIfDisabled(props){
 
 function checkFormAndCreateScene(props){
 
-    let name = document.getElementById("scene_name").value.trim(),
+    let name = document.getElementById("scene_name").value.trim().replace(' ', '_'),
         media = props.editor.selectedFile,
         index = props.scenes._map.last() + 1,
         tag = props.editor.selectedTagNewScene;

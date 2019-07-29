@@ -1,8 +1,12 @@
 import React from 'react';
 import Select from "react-select";
 import Values from "../../interactives/rules/Values";
-import interface_utils from "./interface_utils";
 import scene_utils from "../../scene/scene_utils";
+import EditorState from "../../data/EditorState";
+import ActionTypes from "../../actions/ActionTypes";
+import Actions from "../../actions/Actions"
+import toString from "../../interactives/rules/toString";
+import interface_utils from "./interface_utils";
 
 function Dropdown(properties){
     let props = properties.props,
@@ -10,8 +14,6 @@ function Dropdown(properties){
         property = properties.property;
     let defaultValue = getDefaultValue(props, properties.defaultValue, component);
     let [options, onChange, style] = generateOptions(props, component, property);
-
-
 
     return(
         <Select
@@ -30,8 +32,8 @@ function generateOptions(props, component, property){
         case 'scene-type':
             return [
                 [
-                    { value: Values.THREE_DIM, label: interface_utils.valueUuidToString(Values.THREE_DIM)},
-                    { value: Values.TWO_DIM, label: interface_utils.valueUuidToString(Values.TWO_DIM)},
+                    { value: Values.THREE_DIM, label: toString.valueUuidToString(Values.THREE_DIM)},
+                    { value: Values.TWO_DIM, label: toString.valueUuidToString(Values.TWO_DIM)},
                 ],
                 (e) => {
                     let scene = props.scenes.get(props.currentScene);
@@ -42,8 +44,8 @@ function generateOptions(props, component, property){
         case 'visibility':
             return [
                 [
-                    { value: Values.VISIBLE, label: interface_utils.valueUuidToString(Values.VISIBLE)},
-                    { value: Values.INVISIBLE, label: interface_utils.valueUuidToString(Values.INVISIBLE)},
+                    { value: Values.VISIBLE, label: toString.valueUuidToString(Values.VISIBLE)},
+                    { value: Values.INVISIBLE, label: toString.valueUuidToString(Values.INVISIBLE)},
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
@@ -54,12 +56,17 @@ function generateOptions(props, component, property){
         case 'on-off':
             return [
                 [
-                    { value: Values.ON, label: interface_utils.valueUuidToString(Values.ON)},
-                    { value: Values.OFF, label: interface_utils.valueUuidToString(Values.OFF)},
+                    { value: Values.ON, label: toString.valueUuidToString(Values.ON)},
+                    { value: Values.OFF, label: toString.valueUuidToString(Values.OFF)},
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        Actions.updateObject(obj);
+                    }
+                    else
+                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 },
                 customStyle,
             ];
@@ -69,25 +76,31 @@ function generateOptions(props, component, property){
                     return {value: scene.uuid, label: scene.name}
                 }),
                 (e) => {
-                    props.selectSceneSpatialAudio(e.value);
+                    let newAudio = props.editor.audioToEdit.set('scene', e.value);
+                    props.selectAudioToEdit(newAudio);
                 },
                 customStyle,
             ];
         case 'collected-not':
             return [
                 [
-                    { value: Values.COLLECTED, label: interface_utils.valueUuidToString(Values.COLLECTED)},
-                    { value: Values.NOT_COLLECTED, label: interface_utils.valueUuidToString(Values.NOT_COLLECTED)},
+                    { value: Values.COLLECTED, label: toString.valueUuidToString(Values.COLLECTED)},
+                    { value: Values.NOT_COLLECTED, label: toString.valueUuidToString(Values.NOT_COLLECTED)},
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        Actions.updateObject(obj);
+                    }
+                    else
+                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 },
                 customStyle,
             ];
         case 'assets':
             return [
-                [...props.assets.values()].map( a => {
+                [{uuid: null, name: 'nessuno'},...props.assets.values()].map( a => {
                     return {value: a.uuid, label: a.name}
                 }),
                 (e) => {
@@ -98,7 +111,7 @@ function generateOptions(props, component, property){
             ];
         case 'audios':
             return [
-                [...props.audios.values()].map( a => {
+                [{uuid:null, name:'nessuno'},...props.audios.values()].map( a => {
                     return {value: a.uuid, label: a.name}
                 }),
                 (e) => {
@@ -109,12 +122,27 @@ function generateOptions(props, component, property){
             ];
         case 'music':
             return [
-                [...props.audios.values()].map( a => {
+                [{uuid:null, name:'nessuna'},...props.audios.values()].map( a => {
                     return {value: a.uuid, label: a.name}
                 }),
                 (e) => {
                     let scene = props.scenes.get(props.currentScene);
-                    scene_utils.setProperty(scene, property, e.value, props)
+                    scene_utils.setProperty(scene, property, e.value, props);
+                },
+                customStyle,
+            ];
+        case 'direction':
+            return [
+                [
+                    { value: Values.NO_DIR, label: toString.valueUuidToString(Values.NO_DIR) },
+                    { value: Values.UP, label: toString.valueUuidToString(Values.UP)},
+                    { value: Values.DOWN, label: toString.valueUuidToString(Values.DOWN)},
+                    { value: Values.RIGHT, label: toString.valueUuidToString(Values.RIGHT)},
+                    { value: Values.LEFT, label: toString.valueUuidToString(Values.LEFT)},
+                ],
+                (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 },
                 customStyle,
             ];
@@ -131,9 +159,11 @@ function getDefaultValue(props, defaultValue, component){
             case 'assets':
                 label = defaultValue; break;
             case 'audios':
-                label = props.audios.get(defaultValue).name; break;
+            case 'music':
+                if(props.audios.has(defaultValue))
+                    label = props.audios.get(defaultValue).name; break;
             default:
-                label = interface_utils.valueUuidToString(defaultValue);
+                label = toString.valueUuidToString(defaultValue);
             }
     }
 
@@ -146,8 +176,9 @@ function getDefaultValue(props, defaultValue, component){
 
 const customStyle = {
     option: (provided, state) => ({
-        color: state.isSelected ? '#EF562D' : 'black',
+        color: state.value === null ? 'darkgrey': state.isSelected ? '#EF562D' : 'black',
         '&:hover': { backgroundColor: '#FFD8AC'},
+        borderBottom: state.value === null ? 'dotted 1px darkgrey' : 'none',
     }),
     control: (provided, state) => ({
         ...provided,
@@ -166,8 +197,9 @@ const customStyle = {
 
 const audioMediaOptionsStyle = {
     option: (provided, state) => ({
-        color: state.isSelected ? '#EF562D' : 'black',
+        color: state.value === null ? 'darkgrey': state.isSelected ? '#EF562D' : 'black',
         '&:hover': { backgroundColor: '#FFD8AC'},
+        borderBottom: state.value === null ? 'dotted 1px darkgrey' : 'none',
     }),
     control: (provided, state) => ({
         ...provided,

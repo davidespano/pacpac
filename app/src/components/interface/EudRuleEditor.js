@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import RuleActionTypes from "../../interactives/rules/RuleActionTypes"
+import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObject from "../../interactives/InteractiveObject"
 import Immutable from "immutable";
@@ -7,12 +7,12 @@ import Action from "../../interactives/rules/Action"
 import ActionTypes from "../../actions/ActionTypes"
 import Rule from "../../interactives/rules/Rule";
 import rules_utils from "../../interactives/rules/rules_utils";
-import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import {Operators, SuperOperators} from "../../interactives/rules/Operators";
 import Values from "../../interactives/rules/Values";
 import Condition from "../../interactives/rules/Condition";
 import SuperCondition from "../../interactives/rules/SuperCondition";
-import interface_utils from "./interface_utils";
+import toString from "../../interactives/rules/toString";
+import { RuleActionMap, ValuesMap, OperatorsMap } from "../../interactives/rules/maps";
 
 let uuid = require('uuid');
 
@@ -35,6 +35,7 @@ export default class EudRuleEditor extends Component {
                                 interactiveObjects={this.props.interactiveObjects}
                                 scenes={this.props.scenes}
                                 assets={this.props.assets}
+                                audios={this.props.audios}
                                 currentScene={this.props.currentScene}
                                 rules={this.props.rules}
                                 rule={rule}
@@ -181,6 +182,7 @@ class EudRule extends Component {
                         interactiveObjects={this.props.interactiveObjects}
                         assets={this.props.assets}
                         scenes={this.props.scenes}
+                        audios={this.props.audios}
                         rule={rule}
                         rules={this.props.rules}
                         ruleEditorCallback={this.props.ruleEditorCallback}
@@ -215,8 +217,8 @@ class EudRule extends Component {
                             this.props.ruleEditorCallback.eudUpdateRule(rule);
                         }}
                 >
-                    <option value={SuperOperators.AND}>{superOperatorsToString(SuperOperators.AND)}</option>
-                    <option value={SuperOperators.OR}>{superOperatorsToString(SuperOperators.OR)}</option>
+                    <option value={SuperOperators.AND}>{toString.superOperatorsToString(SuperOperators.AND)}</option>
+                    <option value={SuperOperators.OR}>{toString.superOperatorsToString(SuperOperators.OR)}</option>
                 </select>
             </span>
         );
@@ -307,6 +309,7 @@ class EudRule extends Component {
                             interactiveObjects={this.props.interactiveObjects}
                             scenes={this.props.scenes}
                             assets={this.props.assets}
+                            audios={this.props.audios}
                             rules={this.props.rules}
                             rule={rule}
                             action={action}
@@ -341,6 +344,7 @@ class EudRule extends Component {
                     interactiveObjects={this.props.interactiveObjects}
                     scenes={this.props.scenes}
                     assets={this.props.assets}
+                    audios={this.props.audios}
                     rules={this.props.rules}
                     rule={rule}
                     action={rule.event}
@@ -397,13 +401,14 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={subject == null ? "" : objectTypeToString(subject.type) + subject.name}
+                originalText={subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"subject"}
             />;
 
@@ -419,13 +424,14 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={operatorUuidToString(this.props.condition.operator)}
+                originalText={toString.operatorUuidToString(this.props.condition.operator)}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={operatorCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"operator"}
 
             />;
@@ -442,13 +448,14 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={value == null ? "" : interface_utils.valueUuidToString(value.uuid)}
+                originalText={value == null ? "" : toString.valueUuidToString(value.uuid)}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={valueCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"value"}
             />;
 
@@ -484,6 +491,11 @@ class EudCondition extends Component {
         if (this.props.assets.has(uuid)) {
             return this.props.assets(uuid);
         }
+
+        if (this.props.audios.has(uuid)){
+            return this.props.audios.get(uuid);
+        }
+
 
         return this.props.interactiveObjects.get(uuid);
     }
@@ -570,13 +582,14 @@ class EudAction extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.action}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={subject == null ? "" : objectTypeToString(subject.type) + subject.name}
+                originalText={subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"subject"}
             />;
 
@@ -591,13 +604,14 @@ class EudAction extends Component {
             complement={this.props.rule.object_uuid}
             verb={this.props.action}
             ruleEditorCallback={this.props.ruleEditorCallback}
-            originalText={eventTypeToString(this.props.action.get('action'))}
+            originalText={toString.eventTypeToString(this.props.action.get('action'))}
             inputText={this.props.editor.get('completionInput')}
             showCompletion={operationCompletion}
             changeText={(text, role) => this.changeText(text, role)}
             updateRule={(rule, role) => this.updateRule(rule, role)}
             scenes={this.props.scenes}
             assets={this.props.assets}
+            audios={this.props.audios}
             role={"operation"}
         />;
 
@@ -613,13 +627,14 @@ class EudAction extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.action}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={object == null ? "" : objectTypeToString(object.type) + object.name}
+                originalText={object == null ? "" : toString.objectTypeToString(object.type) + object.name}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={objectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
                 updateRule={(rule, role) => this.updateRule(rule, role)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
                 role={"object"}
             />;
 
@@ -660,13 +675,16 @@ class EudAction extends Component {
             return ValuesMap.get(uuid);
         }
 
+        if (this.props.audios.has(uuid)){
+            return this.props.audios.get(uuid);
+        }
+
         return this.props.interactiveObjects.get(uuid);
     }
 
     updateRule(ruleUpdate, role) {
 
         let rule = this.props.rule;
-        // TODO [davide] inefficiente, utilizzare i metodi di immutable
         let index = -1;
         let action;
         let event = false;
@@ -804,6 +822,7 @@ class EudRulePart extends Component {
                 rulePartType={this.props.rulePartType}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
+                audios={this.props.audios}
             />;
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
@@ -897,10 +916,11 @@ class EudAutoComplete extends Component {
             scenes: this.props.scenes,
             rulePartType: this.props.rulePartType,
             assets: this.props.assets,
+            audios: this.props.audios,
         });
         let li = items.valueSeq()
             .filter(i => {
-                let key = objectTypeToString(i.type) + i.name;
+                let key = toString.objectTypeToString(i.type) + i.name;
                 let n = (this.props.input ? this.props.input : "").split(" ");
                 const word = n[n.length - 1];
                 return key.includes(word);
@@ -939,7 +959,7 @@ class EudAutoCompleteItem extends Component {
 
     render() {
 
-        let text = objectTypeToString(this.props.item.type) + this.props.item.name;
+        let text = toString.objectTypeToString(this.props.item.type) + this.props.item.name;
 
         return <li
             key={this.props.item.name}
@@ -971,11 +991,10 @@ class EudAutoCompleteItem extends Component {
  * @returns {the list of possible completions}
  */
 function getCompletions(props) {
-    // TODO [davide] stub implemenation
 
     switch (props.role) {
         case "subject":
-            let subjects = props.interactiveObjects.filter(x => x.type !== InteractiveObjectsTypes.TRANSITION).set(
+            let subjects = props.interactiveObjects.set(
                 InteractiveObjectsTypes.PLAYER,
                 InteractiveObject({
                     type: InteractiveObjectsTypes.PLAYER,
@@ -986,22 +1005,22 @@ function getCompletions(props) {
 
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
-            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets);
+            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
             if (props.verb.action) {
-                let objType = RulesActionMap.get(props.verb.action).obj_type;
+                let objType = RuleActionMap.get(props.verb.action).obj_type;
                 allObjects = allObjects.filter(x => objType.includes(x.type));
             }
+
             return allObjects;
         case "operation":
-            return props.subject ? RulesActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RulesActionMap;
+            return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
         case "operator":
             return OperatorsMap;
         case 'value':
             return props.subject ? ValuesMap.filter(x =>
                 x.subj_type.includes(props.subject.type)) : ValuesMap;
-
     }
 
 }
@@ -1016,391 +1035,3 @@ function filterValues(subject, verb) {
     }
     return v;
 }
-
-
-function eventTypeToString(eventType) {
-    switch (eventType) {
-        case  RuleActionTypes.CLICK:
-            return "clicca";
-        case RuleActionTypes.COLLECT_KEY:
-            return "raccoglie";
-        case RuleActionTypes.UNLOCK_LOCK:
-            return "sblocca";
-        case RuleActionTypes.TRANSITION:
-            return "si sposta verso";
-        case RuleActionTypes.CHANGE_BACKGROUND:
-            return 'cambia sfondo con';
-        case RuleActionTypes.ON:
-            return 'accende';
-        case RuleActionTypes.OFF:
-            return 'spegne';
-        case RuleActionTypes.FLIP_SWITCH:
-            return 'preme';
-        case RuleActionTypes.CHANGE_STATE:
-            return 'cambia stato a';
-        case RuleActionTypes.CHANGE_VISIBILITY:
-            return 'diventa';
-        default:
-            return "";
-    }
-}
-
-function operatorUuidToString(operatorUuid) {
-    switch (operatorUuid) {
-        case Operators.EQUAL:
-            return "è";
-        case Operators.NOT_EQUAL:
-            return "non è";
-        case Operators.LESS_THAN:
-            return "è minore di";
-        case Operators.LESS_EQUAL:
-            return "è minore o uguale di";
-        case Operators.GREATER_THAN:
-            return "è maggiore di";
-        case Operators.GREATER_EQUAL:
-            return "è maggiore o uguale di";
-        default:
-            return "operatore sconosciuto";
-    }
-}
-
-
-function superOperatorsToString(superoperatorUuid) {
-    switch (superoperatorUuid) {
-        case SuperOperators.AND:
-            return 'e';
-        case SuperOperators.OR:
-            return 'o';
-        default:
-            return '?';
-    }
-}
-
-function objectTypeToString(objectType) {
-    let type = "";
-    switch (objectType) {
-        case InteractiveObjectsTypes.BUTTON:
-            type = "il pulsante";
-            break;
-        case InteractiveObjectsTypes.COUNTER:
-            type = "il contatore";
-            break;
-        case InteractiveObjectsTypes.CUMULABLE:
-            type = "l'oggetto";
-            break;
-        case InteractiveObjectsTypes.LOCK:
-            type = "la serratura";
-            break;
-        case InteractiveObjectsTypes.SELECTOR:
-            type = "il selettore";
-            break;
-        case InteractiveObjectsTypes.SWITCH:
-            type = "l'interruttore";
-            break;
-        case InteractiveObjectsTypes.TIMER:
-            type = "il timer";
-            break;
-        case InteractiveObjectsTypes.KEY:
-            type = "la chiave";
-            break;
-        case InteractiveObjectsTypes.TRANSITION:
-            type = "la transizione";
-            break;
-        case InteractiveObjectsTypes.PLAYER:
-            type = "il giocatore";
-            break;
-        case Values.THREE_DIM:
-        case Values.TWO_DIM:
-            type = "la scena";
-            break;
-        case "operation":
-        case "operator":
-        case "value":
-            return type;
-        case 'video':
-            type = 'il video';
-            break;
-        case 'img':
-            type = "l'immagine";
-            break;
-        case 'file':
-            type = 'il file';
-            break;
-        default:
-            type = "l'oggetto sconosciuto";
-            break;
-    }
-    return type + " ";
-}
-
-
-const ValuesMap = Immutable.Map([
-    [
-        Values.VISIBLE,
-        {
-            type: 'value',
-            subj_type: [
-                InteractiveObjectsTypes.TRANSITION,
-                InteractiveObjectsTypes.SWITCH,
-                InteractiveObjectsTypes.LOCK,
-                InteractiveObjectsTypes.KEY
-            ],
-            verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
-            name: interface_utils.valueUuidToString(Values.VISIBLE),
-            uuid: Values.VISIBLE,
-        },
-
-    ],
-    [
-        Values.INVISIBLE,
-        {
-            type: 'value',
-            subj_type: [
-                InteractiveObjectsTypes.TRANSITION,
-                InteractiveObjectsTypes.SWITCH,
-                InteractiveObjectsTypes.LOCK,
-                InteractiveObjectsTypes.KEY],
-            verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
-            name: interface_utils.valueUuidToString(Values.INVISIBLE),
-            uuid: Values.INVISIBLE,
-        },
-
-    ],
-    [
-        Values.ON,
-        {
-            type: 'value',
-            subj_type: [InteractiveObjectsTypes.SWITCH],
-            verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: interface_utils.valueUuidToString(Values.ON),
-            uuid: Values.ON,
-        },
-
-    ],
-    [
-        Values.OFF,
-        {
-            type: 'value',
-            subj_type: [InteractiveObjectsTypes.SWITCH],
-            verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: interface_utils.valueUuidToString(Values.OFF),
-            uuid: Values.OFF,
-        },
-
-    ],
-    [
-        Values.LOCKED,
-        {
-            type: 'value',
-            subj_type: [InteractiveObjectsTypes.LOCK],
-            verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: interface_utils.valueUuidToString(Values.LOCKED),
-            uuid: Values.LOCKED,
-        },
-
-    ],
-    [
-        Values.UNLOCKED,
-        {
-            type: 'value',
-            subj_type: [InteractiveObjectsTypes.LOCK],
-            verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: interface_utils.valueUuidToString(Values.UNLOCKED),
-            uuid: Values.UNLOCKED,
-        },
-
-    ],
-    [
-        Values.COLLECTED,
-        {
-            type: 'value',
-            subj_type: [InteractiveObjectsTypes.KEY],
-            verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: interface_utils.valueUuidToString(Values.COLLECTED),
-            uuid: Values.COLLECTED,
-        },
-
-    ],
-    [
-        Values.NOT_COLLECTED,
-        {
-            type: 'value',
-            subj_type: [InteractiveObjectsTypes.KEY],
-            verb_type: [RuleActionTypes.CHANGE_STATE],
-            name: interface_utils.valueUuidToString(Values.NOT_COLLECTED),
-            uuid: Values.NOT_COLLECTED,
-        },
-
-    ],
-]);
-
-const OperatorsMap = Immutable.Map([
-    [
-        Operators.EQUAL,
-        {
-            type: "operator",
-            name: operatorUuidToString(Operators.EQUAL),
-            uuid: Operators.EQUAL,
-        },
-    ],
-    [
-        Operators.NOT_EQUAL,
-        {
-            type: "operator",
-            name: operatorUuidToString(Operators.NOT_EQUAL),
-            uuid: Operators.NOT_EQUAL,
-        },
-    ],
-    /*
-    [
-        Operators.LESS_EQUAL,
-        {
-            type: "operator",
-            name: operatorUuidToString(Operators.LESS_EQUAL),
-            uuid: Operators.LESS_EQUAL,
-        },
-    ],
-    [
-        Operators.LESS_THAN,
-        {
-            type: "operator",
-            name: operatorUuidToString(Operators.LESS_THAN),
-            uuid: Operators.LESS_THAN,
-        },
-    ],
-    [
-        Operators.GREATER_EQUAL,
-        {
-            type: "operator",
-            name: operatorUuidToString(Operators.GREATER_EQUAL),
-            uuid: Operators.GREATER_EQUAL,
-        },
-    ],
-    [
-        Operators.GREATER_THAN,
-        {
-            type: "operator",
-            name: operatorUuidToString(Operators.GREATER_THAN),
-            uuid: Operators.GREATER_THAN,
-        },
-    ],
-    */
-
-]);
-
-const RulesActionMap = Immutable.Map([
-    [
-        RuleActionTypes.CLICK,
-        {
-            type: "operation",
-            subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: [
-                InteractiveObjectsTypes.SWITCH,
-                InteractiveObjectsTypes.KEY,
-                InteractiveObjectsTypes.LOCK,
-                InteractiveObjectsTypes.TRANSITION,
-            ],
-            name: eventTypeToString(RuleActionTypes.CLICK),
-            uuid: RuleActionTypes.CLICK
-        },
-    ],
-    [
-        RuleActionTypes.COLLECT_KEY,
-        {
-            type: "operation",
-            subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: [InteractiveObjectsTypes.KEY],
-            name: eventTypeToString(RuleActionTypes.COLLECT_KEY),
-            uuid: RuleActionTypes.COLLECT_KEY
-        }
-    ],
-    [
-        RuleActionTypes.UNLOCK_LOCK,
-        {
-            type: "operation",
-            subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: [InteractiveObjectsTypes.LOCK],
-            name: eventTypeToString(RuleActionTypes.UNLOCK_LOCK),
-            uuid: RuleActionTypes.UNLOCK_LOCK
-        }
-    ],
-    [
-        RuleActionTypes.TRANSITION,
-        {
-            type: "operation",
-            subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: [Values.THREE_DIM, Values.TWO_DIM],
-            name: eventTypeToString(RuleActionTypes.TRANSITION),
-            uuid: RuleActionTypes.TRANSITION
-        }
-    ],
-    [
-        RuleActionTypes.ON,
-        {
-            type: "operation",
-            subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: [InteractiveObjectsTypes.SWITCH],
-            name: eventTypeToString(RuleActionTypes.ON),
-            uuid: RuleActionTypes.ON
-        }
-    ],
-    [
-        RuleActionTypes.OFF,
-        {
-            type: "operation",
-            subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: [InteractiveObjectsTypes.SWITCH],
-            name: eventTypeToString(RuleActionTypes.OFF),
-            uuid: RuleActionTypes.OFF
-        }
-    ],
-    [
-        RuleActionTypes.FLIP_SWITCH,
-        {
-            type: "operation",
-            subj_type: [InteractiveObjectsTypes.PLAYER],
-            obj_type: [InteractiveObjectsTypes.SWITCH],
-            name: eventTypeToString(RuleActionTypes.FLIP_SWITCH),
-            uuid: RuleActionTypes.FLIP_SWITCH
-        }
-    ],
-    [
-        RuleActionTypes.CHANGE_BACKGROUND,
-        {
-            type: "operation",
-            subj_type: [Values.THREE_DIM, Values.TWO_DIM],
-            obj_type: ['video'],
-            name: eventTypeToString(RuleActionTypes.CHANGE_BACKGROUND),
-            uuid: RuleActionTypes.CHANGE_BACKGROUND
-        },
-    ],
-    [
-        RuleActionTypes.CHANGE_STATE,
-        {
-            type: "operation",
-            subj_type: [
-                InteractiveObjectsTypes.SWITCH,
-                InteractiveObjectsTypes.KEY,
-                InteractiveObjectsTypes.LOCK,
-            ],
-            obj_type: ['value'],
-            name: eventTypeToString(RuleActionTypes.CHANGE_STATE),
-            uuid: RuleActionTypes.CHANGE_STATE,
-        },
-    ],
-    [
-        RuleActionTypes.CHANGE_VISIBILITY,
-        {
-            type: "operation",
-            subj_type: [
-                InteractiveObjectsTypes.SWITCH,
-                InteractiveObjectsTypes.KEY,
-                InteractiveObjectsTypes.LOCK,
-                InteractiveObjectsTypes.TRANSITION,
-            ],
-            obj_type: ['value'],
-            name: eventTypeToString(RuleActionTypes.CHANGE_VISIBILITY),
-            uuid: RuleActionTypes.CHANGE_VISIBILITY,
-        },
-    ],
-]);

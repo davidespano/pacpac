@@ -7,52 +7,29 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import interface_utils from "../interface/interface_utils";
 import Bubble from './Bubble';
-import aframe_utils from "./aframe_utils";
+import aframe_assets from "./aframe_assets";
 import SceneAPI from "../../utils/SceneAPI";
 import Values from "../../interactives/rules/Values";
 
-/*function Curved(props)
-{
-    return(
-        <Entity geometry={"primitive: polyline; vertices: " + props.vertices} scale= "-1 1 1" material="side: double; opacity: 0.50"/>
-    );
-}
-
-class Bubble extends React.Component
-{
-    constructor(props)
-    {
-        super(props);
-    }
-
-    render()
-    {
-
-        const curves = this.props.curves.map(vertices =>
-        {
-            return(
-                <Curved vertices={vertices}/>
-            );
-        });
-
-        return(
-            <Entity _ref={elem => this.nv = elem} primitive="a-sky" id={this.props.name} src={'#' + this.props.name} radius="9.5">
-                {curves}
-            </Entity>
-        );
-    }
-}*/
-
-export function givePoints(props)
-{
+/**
+ * Give the points from the pointsaver component and update the object vertices
+ * @param props
+ */
+export function givePoints(props) {
     let cursor = document.querySelector('a-cursor');
     let puntisalvati = cursor.components.pointsaver.points;
-
+    let isCurved = cursor.components.pointsaver.attrValue.isCurved === 'true';
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
+    console.log(props)
     //console.log(puntisalvati.join())
-    interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
+    if(isCurved){
+        interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
+    } else {
+        interface_utils.updateAudioVertices(props.editor.audioToEdit, puntisalvati.join(), props)
+    }
+
 }
 
 export default class GeometryScene extends React.Component{
@@ -60,14 +37,20 @@ export default class GeometryScene extends React.Component{
     constructor(props)
     {
         super(props);
+        let scene;
+        console.log(props.editor)
+        if(props.editor.audioPositioning)
+            scene = props.editor.audioToEdit.scene;
+        else
+            scene = props.currentScene;
+
         this.state = {
-            scenes: props.scenes.get(props.objectToScene.get(props.currentObject)),
-
+            scenes: props.scenes.get(scene)
         };
-        console.log(props.objectToScene.get(props.currentObject));
-        console.log(props.currentObject);
-        console.log(this.state.scenes)
-
+        //console.log(props.objectToScene.get(props.currentObject));
+        //console.log(props.currentObject);
+        //console.log(this.state.scenes)
+        //console.log(props.editor.selectedAudioToEdit)
     }
 
     handleSceneChange()
@@ -90,6 +73,7 @@ export default class GeometryScene extends React.Component{
                 scale = "1 1 1";
             }
         }
+        // If thare are more the two points draw a line among them
         if (lengthLine >= 2) {
             let tmp = document.createElement('a-entity');
             tmp.setAttribute('scale', scale);
@@ -98,16 +82,25 @@ export default class GeometryScene extends React.Component{
             tmp.setAttribute('class', 'line');
             scene.appendChild(tmp);
         }
-        //document.querySelector('a-sky').setAttribute('scene', this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)))
+
+        //SetState in order to update the scene
+        let sceneState;
+        if(this.props.editor.audioPositioning){
+            sceneState = this.props.scenes.get(this.props.editor.audioToEdit.scene);
+        } else {
+            sceneState = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject));
+        }
+
         this.setState({
-            scenes: this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
+            scenes: sceneState,
         })
     }
 
     handleFeedbackChange() {
         if(document.querySelector('a-cursor').components.pointsaver != null) {
-            let a_point = document.querySelector('#cursor').components.pointsaver.points;
-
+            let point_saver = document.querySelector('#cursor').components.pointsaver;
+            let a_point = point_saver.points;
+            let isCurved = point_saver.attrValue.isCurved === 'true';
             //Punti
             let length = a_point.length;
             let idPoint = "point" + (length - 1).toString();
@@ -128,95 +121,141 @@ export default class GeometryScene extends React.Component{
                     moltiplier = 1;
                 }
             }
-            tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
-            a_point[(length-1)].x *= moltiplier;
-            tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
-            a_point[(length-1)].x *= moltiplier;
-            tmp.setAttribute('id', idPoint);
-            tmp.setAttribute('material', 'color: green; shader: flat');
-            tmp.setAttribute('class', 'points');
-            scene.appendChild(tmp);
+            if(isCurved){
+                tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
+                a_point[(length-1)].x *= moltiplier;
+                tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
+                a_point[(length-1)].x *= moltiplier;
+                tmp.setAttribute('id', idPoint);
+                tmp.setAttribute('material', 'color: green; shader: flat');
+                tmp.setAttribute('class', 'points');
+                scene.appendChild(tmp);
 
+                // se sono presenti più di due punti allora disegno le linee
+                let lengthLine = a_point.length;
+                if (lengthLine >= 2) {
+                    let tmp = document.createElement('a-entity');
+                    tmp.setAttribute('scale', scale);
+                    tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
+                    tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
+                    tmp.setAttribute('class', 'line');
+                    scene.appendChild(tmp);
+                }
+            } else {
+                let lastChild = scene.querySelector('#point0');
+                if(lastChild) {
+                    scene.removeChild(lastChild);
+                }
 
-            //Linee, purtroppo è poco intuitivo. Provandolo sembra bellino
-
-            let lengthLine = a_point.length;
-            if (lengthLine >= 2) {
-                let tmp = document.createElement('a-entity');
-                tmp.setAttribute('scale', scale);
-                tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
-                tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
-                tmp.setAttribute('class', 'line');
+                tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
+                a_point[(length-1)].x *= moltiplier;
+                tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
+                a_point[(length-1)].x *= moltiplier;
+                tmp.setAttribute('id', idPoint);
+                tmp.setAttribute('material', 'color: green; shader: flat');
+                tmp.setAttribute('class', 'points');
                 scene.appendChild(tmp);
             }
+
 
         }
     }
 
     componentDidMount() {
         this.createScene();
-
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
-        let scene;
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
+            let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
             const keyName = event.key;
-            if(keyName === 'c' || keyName === 'C')
-            {
+            if(keyName === 'c' || keyName === 'C') {
+                document.getElementById("startedit").style.color = 'white'
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
+                let a_point = pointsaver.points;
+                console.log(a_point)
                 if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
                     this.handleSceneChange();
                     cursor.setAttribute('color', 'black');
+                    console.log(cursor)
                     cursor.removeEventListener('click', function pointSaver(evt) {});
-                    cursor.removeEventListener('click', this.handleFeedbackChange());
+                    cursor.removeEventListener('click', this.handleFeedbackChange(), true);
                     cursor.components.pointsaver.points = [];
-                    let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let points = scene.querySelectorAll(".points");
+                    if(!this.props.editor.audioPositioning){
+                        a_point = a_point.map(punto =>
+                            punto.toArray().join(" ")
+                        );
+                        this.getObjectsFromUuid(this.props.currentObject, a_point.join());
+                        points.forEach(point => {
+                            scene.removeChild(point);
+                        });
+                    } else {
+                        let lastChild = scene.querySelector('#point0');
+                        lastChild.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
+                        lastChild.setAttribute('material', 'color: red; shader: flat');
+                        lastChild.setAttribute('material', 'opacity: 0.5; shader: flat');
+                    }
 
-                    points.forEach(point => {
-                        scene.removeChild(point);
-                    });
                     this.handleSceneChange();
                 }
             }
 
-            if(keyName === 'e' || keyName === 'E')
-            {
-                scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+            if(keyName === 'e' || keyName === 'E') {
+                document.getElementById("startedit").style.color = 'red';
                 let lines = scene.querySelectorAll(".line");
                 lines.forEach(line => {
                     scene.removeChild(line);
                 });
+
+                // Rimuovo i punti di eventuali geometrie o posizionamento di audio precedenti
                 let removeSphere = scene.querySelectorAll(".points");
                 removeSphere.forEach(point => {
                     scene.removeChild(point);
                 });
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
+                //console.log(this.props.editor.selectedAudioToEdit)
+                if(cursor.components.pointsaver.attrValue.isCurved === 'true'){
+                    if(document.getElementById("curve_"+this.props.currentObject))
+                        document.getElementById("curve_"+this.props.currentObject).setAttribute('geometry', 'vertices: null')
+                } else {
+                    if(document.getElementById("audio"+this.props.editor.audioToEdit.uuid)){
+                        document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.audioToEdit.uuid));
+                    }
+
+                }
                 cursor.components.pointsaver.points = [];
                 cursor.addEventListener('click', this.handleFeedbackChange);
             }
 
-            if(keyName === 'u' || keyName === 'U')
-            {
+            if(keyName === 'u' || keyName === 'U') {
                 //TODO rimuovere le linee non solo i punti
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 if(pointsaver != null && pointsaver.points.length !== 0){
                     let points = pointsaver.points;
                     let lastID = points.length - 1;
-                    let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+                    //let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let lastChild = scene.querySelector('#point' + lastID.toString());
                     points.splice(-1);
                     scene.removeChild(lastChild);
                 }
             }
 
-            if(keyName === 'q' || keyName === 'Q')
-            {
-                InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
-                    this.props.interactiveObjects.get(this.props.currentObject));
+            if(keyName === 'q' || keyName === 'Q') {
+                if(this.props.currentObject !== null)
+                    InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
+                        this.props.interactiveObjects.get(this.props.currentObject));
                 this.props.switchToEditMode();
+
+
+            }
+
+            if(keyName === 'h' || keyName === 'H') {
+                if(document.getElementById("keyMap").style.display !== 'none')
+                    document.getElementById("keyMap").style.display = 'none';
+                else
+                    document.getElementById("keyMap").style.display = 'block';
             }
         });
     }
@@ -224,12 +263,21 @@ export default class GeometryScene extends React.Component{
     async createScene(){
         let scene = {};
         await SceneAPI.getAllDetailedScenes(scene);
-        this.setState({completeScene: scene})
 
+        let audioToEdit = this.props.editor.audioPositioning ? this.props.editor.audioToEdit : null;
+        let currentScene;
+        if(this.props.editor.audioPositioning)
+            currentScene = this.props.editor.audioToEdit.scene;
+        else
+            currentScene = this.props.currentScene;
+        this.createAudios(scene['scenes'][currentScene]);
+
+        this.setState({completeScene: scene['scenes'][currentScene],
+                       audio: audioToEdit
+        })
     }
 
-    render()
-    {
+    render() {
 
         if (this.state.completeScene !== undefined ) {
             this.currentLevel = [this.state.scenes.uuid]
@@ -238,46 +286,44 @@ export default class GeometryScene extends React.Component{
             this.currentLevel = [];
         }
 
-
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
-        let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
-        //TODO verificiare shader delle curved, problema non trasparenza
-        for(let key in objects){
-            if(objects.hasOwnProperty(key)){
-                objects[key].forEach((uuid) => {
-                    curvedImages.push(this.props.interactiveObjects.get(uuid).get('vertices'));
-                })
+        let isCurved = !this.props.editor.audioPositioning;
+        let currenteObjectUuid;
+
+        if(isCurved){
+            currenteObjectUuid = this.props.currentObject;
+        } else {
+            currenteObjectUuid = this.props.editor.audioToEdit.uuid;
+        }
+        if(isCurved){
+            let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
+
+            //TODO verificiare shader delle curved, problema non trasparenza
+            for(let key in objects){
+                if(objects.hasOwnProperty(key)){
+                    objects[key].forEach((uuid) => {
+                        curvedImages.push(this.props.interactiveObjects.get(uuid).get('vertices'));
+                    })
+                }
             }
         }
         let assets = this.generateAssets();
         let skie = this.generateBubbles();
-
-
-
-        /*if(stores_utils.getFileType(sky.img) === 'video'){
-            backGround = (
-                <video key={"key" + sky.name} crossorigin={"anonymous"} id={sky.img} loop={"true"}  preload="auto"
-                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + sky.img}
-                       playsInline={true} autoPlay muted={true}
-                />)
-        } else {
-            backGround = (<img id={sky.img} key={"key" + sky.name} crossorigin="Anonymous"
-                                    src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + sky.img}
-            />)
-        }*/
-
+        //let audios = this.props.audios.get(this.props.editor.selectedAudioToEdit);
+        //this.createAudios(skie);
         return(
             <div id="mainscene" tabIndex="0">
-                <div id="UI">
-                    <div id="keyMap">
+                <div id="UI" >
+                    <div id="keyMap" >
                         <h1>Keys</h1>
                         <li class="keyElements">
-                            <ul>E: Start Edit</ul>
-                            <ul>C: Create Geometry</ul>
-                            <ul>U: Undo</ul>
-                            <ul>Q: Go Back</ul>
+                            <ul id="startedit">E: Inizia a disegnare</ul>
+                            <ul>C: Conferma</ul>
+                            <ul>U: Elimina ultimo punto</ul>
+                            <ul>Q: Torna all'editor</ul>
+                            <ul>H: Mostra/Nascondi</ul>
                         </li>
 
                     </div>
@@ -291,7 +337,9 @@ export default class GeometryScene extends React.Component{
                             pac-look-controls={"pointerLockEnabled: " + is3dScene + ";planarScene:" + !is3dScene +";"}
                             look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
-                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin} pointsaver  visible={is3dScene}/>
+                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
+                                    pointsaver={'isCurved:' + isCurved + '; uuid: ' + currenteObjectUuid}
+                                    visible={is3dScene}/>
                         </Entity>
                     </Entity>
                 </Scene>
@@ -301,22 +349,67 @@ export default class GeometryScene extends React.Component{
 
     generateAssets(){
         return this.currentLevel.map(sceneName =>{
-            console.log(sceneName)
-            return aframe_utils.generateAsset(this.state.completeScene.scenes[sceneName], this.state.completeScene.scenes[sceneName].img)
+            return aframe_assets.generateAsset(this.state.completeScene,
+                                               this.state.completeScene.img, [], [],  'geometry')
         })
     }
 
     generateBubbles(){
+        let curvedToEdit = this.props.editor.audioPositioning?'':this.props.currentObject;
         return this.currentLevel.map(sceneName =>{
             return (
-                <Bubble key={"key" + sceneName} scene={this.state.completeScene.scenes[this.state.scenes.uuid]} isActive={true}
-                        handler={() => this.handleSceneChange() } editMode={true}
+                <Bubble key={"key" + sceneName} scene={this.state.completeScene} isActive={true}
+                        handler={() => this.handleSceneChange()} editMode={true} curvedToEdit={curvedToEdit}
+                        assetsDimention={this.props.assets.get(this.state.scenes.img)}
+
                 />
             );
         });
     }
 
+    createAudios(scene){
+        // Inserisco gli oggetti audio nella scena
+        let mainscene = document.querySelector('a-scene')
+        this.props.audios.forEach(a => {
+            if(this.props.editor.audioToEdit && this.props.editor.audioToEdit.scene === a.scene){
+                let audio = document.createElement('a-entity');
+                if(this.props.editor.audioToEdit.uuid !== a.uuid) {
+                    //console.log(a)
+                    audio.setAttribute('id', 'audio' + a.uuid);
+                    audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
+                    audio.setAttribute('position', a.vertices);
+                    audio.setAttribute('material', 'opacity: 0.7; shader: flat');
+                } else {
+                    audio.setAttribute('id', 'audio' + this.props.editor.audioToEdit.uuid);
+                    audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
+                    audio.setAttribute('position', this.props.editor.audioToEdit.vertices);
+                    audio.setAttribute('material', 'opacity: 0.7; shader: flat');
+                    audio.setAttribute('material', 'color: red; shader: flat');
+                }
+                console.log(this.props.audios.get(this.props.editor.audioToEdit.uuid))
+                mainscene.appendChild(audio);
+            }
+        });
+
+
+        this.setState({scenes: this.state.scenes})
+    }
+
+    getObjectsFromUuid(uuid, vertices){
+        let currentScene = this.state.completeScene;
+
+        for (let [key, value] of Object.entries(currentScene.objects)) {
+            value.forEach(function(o, index) {
+                if(o.uuid === uuid){
+                    currentScene.objects[key][index].vertices=vertices;
+                }
+            })
+        }
+        this.setState({
+            completeScene: currentScene
+        })
+    }
+
 }
-//Aggiungere due text, button, qualcosa che indichi all'utente come utilizzare salvataggio e edit.
-//Meglio non usare le linee, usa semplicemente i punti che indicano come fare
+
 

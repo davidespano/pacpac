@@ -5,6 +5,7 @@ import interface_utils from "./interface_utils";
 import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
 import Dropdown from "./Dropdown";
 import EditorState from "../../data/EditorState";
+import Immutable from 'immutable'
 import DebugAPI from "../../utils/DebugAPI";
 
 let THREE = require('three');
@@ -18,12 +19,6 @@ function DebugTab(props) {
             <div id={'rbContainer'}>
                 {view(props)}
             </div>
-            <button className={"btn select-file-btn new-rule-btn"}
-                    onClick={() => {
-                        DebugAPI.saveDebugState(props.scenes.get(props.currentScene).name);
-                    }}>
-                Salva
-            </button>
         </div>
     );
 }
@@ -221,6 +216,9 @@ function listCurrentSceneObjs(scene, props) {
                     <div className={"rightbar-sections"} key={obj_uuid}>
                         <img className={"icon-obj-left"} alt={obj.name} src={getImage(obj.type)}/>
                         <span className={"obj-name"} id={"obj-name" + obj.uuid} onClick={() => {
+                            let geometry = document.getElementById("curv" + obj.uuid);
+                            if (geometry)
+                                lookObject("curv" + obj.uuid);
                             interface_utils.setIdStyle("obj-name", obj.uuid, "color: rgba(239, 86, 55, 1)");
                             interface_utils.setIdStyle("player-obj", obj.uuid, "color: rgba(239, 86, 55, 1)");
                             interface_utils.highlightRule(props, obj);
@@ -277,33 +275,24 @@ function generateSpecificProperties(object, props) {
     switch (object.type) {
         case InteractiveObjectsTypes.TRANSITION:
             return (
-                <div className={"options-grid"}>
-                    <label className={'options-labels'}>Durata:</label>
-                    <div className={'flex'}>
-                        <div id={"transitionDuration"}
-                             className={"propertyForm-right"}
-                             contentEditable={true}
-                             onBlur={() => interface_utils.setPropertyFromId(object, 'duration', "transitionDuration", props)}
-                             onInput={() => interface_utils.onlyNumbers("transitionDuration")}
-                        >
-                            {object.properties.duration}
-                        </div>
-                        <span className={'measure-units'}>ms</span>
-                    </div>
+                <div>
+                    Non ci sono proprietà da modificare
                 </div>
             );
         case InteractiveObjectsTypes.SWITCH:
             return (
                 <div className={"options-grid"}>
-                    <label className={'options-labels'}>Stato iniziale:</label>
-                    <Dropdown props={props} component={'on-off'} defaultValue={object.properties.state}/>
+                    <label className={'options-labels'}>Stato:</label>
+                    <Dropdown props={props} component={'on-off'}
+                              defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
         case InteractiveObjectsTypes.KEY:
             return (
                 <div className={"options-grid"}>
-                    <label className={'options-labels'}>Stato iniziale:</label>
-                    <Dropdown props={props} component={'collected-not'} defaultValue={object.properties.state}/>
+                    <label className={'options-labels'}>Stato:</label>
+                    <Dropdown props={props} component={'collected-not'}
+                              defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
         case InteractiveObjectsTypes.LOCK:
@@ -379,9 +368,11 @@ function handleClickOutside(props) {
 
         // This is a click outside.
         interface_utils.setClassStyle(".player-obj, .obj-name", "color: ");
-        if (classTarget !== "select-file-btn btn" && classTarget !== "a-canvas a-grab-cursor" && classTarget !== "action-buttons btn-img") {
+        if (classTarget !== "select-file-btn btn" && classTarget !== "a-canvas a-grab-cursor" && classTarget !== "action-buttons btn-img" && classTarget !== "saves-list") {
             interface_utils.setClassStyle(".eudRule", "background: ");
             interface_utils.setClassStyle(".btnNext", "visibility: hidden");
+            interface_utils.setClassStyle(".saves-list", "margin-right: -10%");
+            interface_utils.setClassStyle(".load-button", "visibility: hidden");
         }
 
     });

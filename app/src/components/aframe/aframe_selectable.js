@@ -11,24 +11,36 @@ const eventBus = require('./eventBus');
 AFRAME.registerComponent('selectable', {
     schema: {
         object_uuid:{type: 'string'},
+        visible: {type: 'string', default: 'VISIBLE'}
     },
 
     init: function () {
         let elem = this.el;
-        elem.addEventListener('mouseenter', setMouseEnter);
-        elem.addEventListener('mouseleave', setMouseLeave);
-        elem.addEventListener('click', setClick);
+        if(this.data.visible === 'VISIBLE'){
+            elem.addEventListener('mouseenter', setMouseEnter);
+            elem.addEventListener('mouseleave', setMouseLeave);
+            elem.addEventListener('click', setClick);
+        }
     },
 
-    update: function (data) {
+    update: function () {
         let elem = this.el;
+        if(this.data.visible === 'VISIBLE'){
+            elem.addEventListener('mouseenter', setMouseEnter);
+            elem.addEventListener('mouseleave', setMouseLeave);
+            elem.addEventListener('click', setClick);
+        } else {
+            elem.removeEventListener('mouseenter', setMouseEnter);
+            elem.removeEventListener('mouseleave', setMouseLeave);
+            elem.removeEventListener('click', setClick);
+        }
         if(this.data.object_uuid!==""){
             elem['object_uuid'] = this.data.object_uuid;
             elem.setAttribute('data-raycastable', true);
         }else {
             elem.removeAttribute('data-raycastable');
         }
-    }
+    },
 });
 
 function setMouseEnter() {

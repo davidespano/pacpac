@@ -48,64 +48,28 @@ function getByName(name, order = null) {
             // generates transitions and saves them to the objects store
             response.body.transitions.map((transition) => {
                 transitions_uuids.push(transition.uuid); // save uuid
-                let t = Transition({
-                    uuid: transition.uuid,
-                    name: transition.name,
-                    type: transition.type,
-                    media: JSON.parse(transition.media),
-                    mask: transition.mask,
-                    audio: JSON.parse(transition.audio),
-                    vertices: transition.vertices,
-                    properties: JSON.parse(transition.properties),
-                });
+                let t = Transition(getProperties(transition));
                 Actions.receiveObject(t, scene_type);
             });
 
             // generates switches and saves them to the objects store
             response.body.switches.map((sw) => {
                 switches_uuids.push(sw.uuid); //save uuid
-                let s = Switch({
-                    uuid: sw.uuid,
-                    name: sw.name,
-                    type: sw.type,
-                    media: JSON.parse(sw.media),
-                    mask: sw.mask,
-                    audio: JSON.parse(sw.audio),
-                    vertices: sw.vertices,
-                    properties: JSON.parse(sw.properties),
-                });
+                let s = Switch(getProperties(sw));
                 Actions.receiveObject(s, scene_type);
             });
 
             // generates key and saves them to the objects store
             response.body.collectable_keys.map((key) => {
                 collectable_keys_uuids.push(key.uuid); //save uuid
-                let k = Key({
-                    uuid: key.uuid,
-                    name: key.name,
-                    type: key.type,
-                    media: JSON.parse(key.media),
-                    mask: key.mask,
-                    audio: JSON.parse(key.audio),
-                    vertices: key.vertices,
-                    properties: JSON.parse(key.properties),
-                });
+                let k = Key(getProperties(key));
                 Actions.receiveObject(k, scene_type);
             });
 
             // generates lock and saves them to the objects store
             response.body.locks.map((lock) => {
                 locks_uuids.push(lock.uuid); //save uuid
-                let l = Lock({
-                    uuid: lock.uuid,
-                    name: lock.name,
-                    type: lock.type,
-                    media: JSON.parse(lock.media),
-                    mask: lock.mask,
-                    audio: JSON.parse(lock.audio),
-                    vertices: lock.vertices,
-                    properties: JSON.parse(lock.properties),
-                });
+                let l = Lock(getProperties(lock));
                 Actions.receiveObject(l, scene_type);
             });
 
@@ -130,7 +94,6 @@ function getByName(name, order = null) {
                 rules_uuids.push(rule.uuid); // save uuid
 
                 let event;
-
                 try{
                     event = JSON.parse(rule.event)
                     // new Rule
@@ -160,6 +123,7 @@ function getByName(name, order = null) {
                    isSpatial: audio.isSpatial,
                    scene: audio.scene,
                    loop: audio.loop,
+                   vertices: audio.vertices,
                });
                Actions.receiveAudio(a);
             });
@@ -175,6 +139,7 @@ function getByName(name, order = null) {
                 img : response.body.img,
                 type : response.body.type,
                 index : response.body.index,
+                isAudioOn : response.body.isAudioOn,
                 tag : tag,
                 music: response.body.music,
                 objects : {
@@ -328,57 +293,21 @@ async function getAllDetailedScenes(gameGraph) {
         const adj = [];
         // generates transitions
         const transitions = s.transitions.map(transition => {
-           return ({ //Transition, but not the immutable one
-               uuid: transition.uuid,
-               name: transition.name,
-               type: transition.type,
-               media: JSON.parse(transition.media),
-               mask: transition.mask,
-               vertices: transition.vertices,
-               properties: JSON.parse(transition.properties),
-               visible: transition.visible,
-           });
+           return (getProperties(transition));
         });
 
         const switches = s.switches.map(sw => {
-            return ({ //Switch, but not the Immutable one
-                uuid: sw.uuid,
-                name: sw.name,
-                type: sw.type,
-                media: JSON.parse(sw.media),
-                mask: sw.mask,
-                vertices : sw.vertices,
-                properties: JSON.parse(sw.properties),
-                visible: sw.visible,
-            });
+            return (getProperties(sw));
         });
 
         // generates keys
         const keys = s.collectable_keys.map((key) => {
-            return ({ //key, not the immutable
-                uuid: key.uuid,
-                name: key.name,
-                type: key.type,
-                media: JSON.parse(key.media),
-                mask: key.mask,
-                vertices: key.vertices,
-                properties: JSON.parse(key.properties),
-                visible: key.visible,
-            });
+            return (getProperties(key));
         });
 
         // generates locks
         const locks = s.locks.map((lock) => {
-            return ({ //lock, not the immutable
-                uuid: lock.uuid,
-                name: lock.name,
-                type: lock.type,
-                media: JSON.parse(lock.media),
-                mask: lock.mask,
-                vertices: lock.vertices,
-                properties: JSON.parse(lock.properties),
-                visible: lock.visible,
-            });
+            return (getProperties(lock));
         });
 
         // generates keypads
@@ -411,9 +340,9 @@ async function getAllDetailedScenes(gameGraph) {
                 actions: rule.actions,
             });
         });
-/*
+
         // generate audios
-        const audios = s.audio.map( audio => {
+        const audios = s.audios.map( audio => {
             return ({
                 uuid: audio.uuid,
                 name: audio.name,
@@ -421,9 +350,10 @@ async function getAllDetailedScenes(gameGraph) {
                 isSpatial: audio.isSpatial,
                 scene: audio.scene,
                 loop: audio.loop,
+                vertices: audio.vertices,
             })
-        });*/
-
+        });
+        console.log(audios)
         // new Scene
         const newScene = ({ //Scene, not immutable
             uuid: s.uuid,
@@ -431,6 +361,7 @@ async function getAllDetailedScenes(gameGraph) {
             img : s.img,
             type : s.type,
             index : s.index,
+            isAudioOn : s.isAudioOn,
             tag : s.tag,
             music : s.music,
             objects : {
@@ -441,7 +372,7 @@ async function getAllDetailedScenes(gameGraph) {
                 //keypads: keypads,
             },
             rules : rules,
-            //audios : audios,
+            audios : audios,
         });
 
         gameGraph['scenes'][newScene.uuid] = newScene;
@@ -497,6 +428,20 @@ function conditionParser(c){
     } else {
         return new Condition(c.uuid, c.obj_uuid, c.state, c.operator);
     }
+}
+
+function getProperties(obj){
+    return {
+        uuid: obj.uuid,
+        name: obj.name,
+        type: obj.type,
+        media: JSON.parse(obj.media),
+        mask: obj.mask,
+        vertices: obj.vertices,
+        audio: JSON.parse(obj.audio),
+        properties: JSON.parse(obj.properties),
+        visible: obj.visible,
+    };
 }
 
 export default {

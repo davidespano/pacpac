@@ -14,6 +14,7 @@ import AudioMenu from "./AudioMenu";
 import AudioForm from "./AudioForm";
 import StoriesViewer from "./StoriesViewer";
 import Keypad from "../../interactives/Keypad";
+import InputSaveForm from "./InputSaveForm";
 
 
 let uuid = require('uuid');
@@ -42,7 +43,7 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play</a>
-                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-debug"
+                    <a className="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" role="tab" href="#nav-debug"
                        aria-controls="nav-debug" aria-selected="false"
                        onClick={() => {handleDebugMode(props)}} >Debug</a>
                 </div>
@@ -54,6 +55,7 @@ function TopBar(props){
                     <AudioMenu {...props}/>
                     <AudioForm {...props}/>
 					<StoriesViewer {...props}/>
+
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#add-scene-modal"
                                 onClick={() => props.selectMediaToEdit(null)}
@@ -65,7 +67,7 @@ function TopBar(props){
                             <img src={"icons/icons8-tags-100.png"}/>
                             <figcaption>Gestisci etichette</figcaption>
                         </figure>
-                        <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal">
+                        <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal" data-backdrop="false">
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
                         </figure>
@@ -113,6 +115,17 @@ function TopBar(props){
                         </figure>
                     </div>
                 </div>
+                <div className="tab-pane fade show active flex-container" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
+                    <div className={"flex-container"}>
+                        <figure className={'nav-figures'}
+                                data-toggle="modal" data-target="#save-modal">
+
+                            <img src={"icons/icons8-save-100.png"}/>
+                            <figcaption>Salva</figcaption>
+                        </figure>
+                        <InputSaveForm {...props}/>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -140,13 +153,11 @@ function handleAssetsMode(props){
     }
 }
 
-//TODO [debug] add to origin master
 function handleDebugMode(props) {
     if(props.editor.mode !== ActionTypes.DEBUG_MODE_ON){
         props.updateCurrentScene(props.scenes.toArray()[0].uuid);
         props.switchToDebugMode();
-        document.getElementById("nav-tabContent").hidden = true;
-
+        document.getElementById("nav-tabContent").hidden = false;
     }
 }
 

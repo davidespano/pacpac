@@ -25,6 +25,7 @@ function saveObject(scene, object) {
                 mask: object.mask,
                 audio: JSON.stringify(object.audio),
                 vertices: object.vertices,
+                visible: object.visible,
                 properties: JSON.stringify(object.properties),
             })
         .end(function (err, response) {

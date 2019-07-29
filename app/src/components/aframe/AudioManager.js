@@ -1,19 +1,22 @@
 import {ResonanceAudio} from "resonance-audio";
+import settings from "../../utils/settings";
+const {mediaURL} = settings;
 
-function generateAudio(srcId, position) {
-    let audioContext = new AudioContext();
-    //TODO verificare che i parametri passati come array funzionino
-    let audioPosition = position!=null?position:[0,0,0];
-    let audio = {};
-    setTimeout(() => {
-        audio=document.getElementById(srcId);
-        let audioElementSource = audioContext.createMediaElementSource(audio);
-        let source = this.state.resonanceAudioScene.createSource();
-        audioElementSource.connect(source.input);
-        source.setPosition(audioPosition);
-        audio.play();
-    },50)
-    return audio;
+function generateAudio(audio, resonance, audioContext, position=null) {
+    let audioPosition = position===null?audio.vertices:position;
+    let audioElement = document.createElement('audio');
+
+    audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + audio.file;
+    audioElement.crossOrigin = 'anonymous';
+    audioElement.load();
+    audioElement.loop = audio.loop;
+
+    let audioElementSource = audioContext.createMediaElementSource(audioElement);
+    let source = resonance.createSource();
+    audioElementSource.connect(source.input);
+    source.setPosition(audioPosition);
+
+    return audioElement;
 }
 
 export default {

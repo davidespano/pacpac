@@ -1,43 +1,93 @@
-import Actions from '../actions/Actions'
 import settings from './settings'
-import Scene from "../scene/Scene";
-import Transition from "../interactives/Transition";
-import Rule from "../interactives/rules/Rule";
-import RuleActionTypes from "../interactives/rules/RuleActionTypes";
-import Switch from "../interactives/Switch";
-import Key from "../interactives/Key";
-import Lock from "../interactives/Lock"
-import Orders from "../data/Orders";
-import Action from "../interactives/rules/Action";
 import Immutable from 'immutable';
-import stores_utils from "../data/stores_utils";
-import SuperCondition from "../interactives/rules/SuperCondition";
-import Condition from "../interactives/rules/Condition";
-import Audio from "../audio/Audio";
+import Actions from "../actions/Actions";
+import EditorState from "../data/EditorState";
+
 let uuid = require('uuid');
 
 const request = require('superagent');
 
 const {apiBaseURL} = settings;
 
-function loadDebugState(sceneID) {
-    request.get()
+function loadDebugState(saveName) {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`)
+        .set('Accept', 'application/json')
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+                if (response.body && response.body !== []) {
+                    response.body.objectStates.map((rec) => {
+                        let s = Immutable.Record({
+                            uuid: rec.uuid,
+                            state: rec.state,
+                        });
+                    });
 
+                    let arr = response.body.objectStates.reduce(function (map, obj) {
+                        map[obj.uuid] = Object({state: obj.state});
+                        return map;
+                    }, {});
+
+                    Actions.updateCurrentScene(response.body.currentScene);
+                    EditorState.debugRunState = arr;
+                }
+
+        });
 }
 
-function saveDebugState(name) {
-    let id = uuid.v4();
-    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/createDebugState`)
+function saveDebugState(saveName, sceneUuid, objects) {
+
+    let map = objects.map((v, k) => Object({uuid: k, ...v})).toArray();
+
+    request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .send({uuid: id, name: name})
+        .send({
+            saveName: saveName,
+            currentScene: sceneUuid,
+            objectStates: map,
+        })
         .end(function (err, response) {
-        if (err) {
-            return console.error(err);
-        }});
+            if (err) {
+                return console.error(err);
+            }
+        });
+}
+
+function getAllSaves() {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
+        .set('Accept', 'application/json')
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+                if (EditorState.debugSaves === undefined) {
+                    EditorState.debugSaves = new Immutable.OrderedMap({
+                        currentScene: new Immutable.Set
+
+                    });
+                }
+                let oldSaves = null;
+                let newSaves = null;
+
+                if (response.body && response.body !== []) {
+                    /*response.body.forEach(el => {
+                            oldSaves = EditorState.debugSaves[el.currentScene];
+                            newSaves = new Immutable.Set(oldSaves).add(el.saveName);
+                            //state = state.set(el.currentScene, newSaves)
+                            EditorState.debugSaves[el.currentScene] = newSaves;
+                        }
+                    );*/
+                    Actions.debugSaves(response);
+                }
+
+
+        });
 }
 
 export default {
-    loadDebugState : loadDebugState,
-    saveDebugState : saveDebugState
+    loadDebugState: loadDebugState,
+    saveDebugState: saveDebugState,
+    getAllSaves: getAllSaves,
 }

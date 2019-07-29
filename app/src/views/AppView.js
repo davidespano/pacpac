@@ -4,6 +4,7 @@ import LeftBar from "../components/interface/Leftbar";
 import RightBar from "../components/interface/Rightbar";
 import DebugTab from "../components/interface/DebugTab";
 import VRScene from "../components/aframe/create_scene2";
+//import VRScene from "../components/aframe/create_debug_scene";
 import DebugVRScene from "../components/aframe/create_debug_scene";
 import '../components/look-controls_us';
 import CentralScene from "../components/interface/CentralScene";
@@ -23,13 +24,12 @@ function AppView(props) {
         props: props,
         component: 'assets',
     };
-
+    
     switch (props.editor.mode) {
         case 'EDIT_MODE_ON':
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>
                     <TopBar {...props} />
-                    <MediaEditingform {...props}/>
                     <FileForm {...props}/>
                     <div className={'grid-container'}>
                         <LeftBar {...props} />
@@ -65,7 +65,6 @@ function AppView(props) {
             return (
                 <Login {...props}/>
             );
-        //TODO [debug] add to origin master
         case 'DEBUG_MODE_ON':
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>

@@ -1,12 +1,13 @@
 import React,{Component} from "react";
 import {Entity} from 'aframe-react';
-import {Curved, CurvedGeometry} from './aframe_entities';
+import {Curved, CurvedGeometry} from './aframe_curved';
 import settings from "../../utils/settings";
-import {Howl} from "howler";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
 import Values from '../../interactives/rules/Values'
-
+import './aframe_shader'
+import AudioManager from './AudioManager'
+const soundsHub = require('./soundsHub');
 const THREE = require('three');
 const {mediaURL} = settings;
 
@@ -15,6 +16,7 @@ export default class Bubble extends Component
 {
     constructor(props){
         super(props)
+        //console.log(props)
     }
 
     componentDidMount()
@@ -92,23 +94,25 @@ export default class Bubble extends Component
         //generate the interactive areas
         let scene = this.props.scene;
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
-        let sceneRender;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
+        //let primitive = this.props.assetsDimention.type === 'video'?"a-videosphere":"a-sky";
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
-        let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9"
-        let cursor = document.getElementById('cursor');
-
+        //let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9";
+        let positionPlane;
+        let sceneRender;
 
         const curves = Object.values(scene.objects).flat().map(curve => {
+            let color = this.props.curvedToEdit===curve.uuid?'red':'white';
             if(this.props.editMode){
                 return(
-                    <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid} is3Dscene={is3Dscene}/>
+                    <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid}
+                                    is3Dscene={is3Dscene} color={color}/>
                 );
             } else {
                 //TODO [debug] add to origin master
                 return(
                     <Curved key={"keyC"+ curve.uuid} onDebugMode={this.props.onDebugMode} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
-                            is3Dscene={is3Dscene} vertices={curve.vertices}/>
+                            is3Dscene={is3Dscene} vertices={curve.vertices} visible={this.props.runState[curve.uuid].visible}/>
                 );
             }
 
@@ -116,11 +120,36 @@ export default class Bubble extends Component
         let material = "depthTest: true; ";
         let active = 'active: false;';
         let radius = 9.9;
+
         if (this.props.isActive) {
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
-            //this.props.cameraChangeMode(is3Dscene)
+            //TODO aggiungere modifiche audio
+            if(!this.props.editMode && this.props.resonanceAudioScene!=={} && this.props.audioContext !== undefined){
+                if(this.props.scene.music !== undefined && this.props.audios){
+                    let music = this.props.audios[this.props.scene.music]
+                    if(soundsHub[music.uuid] === undefined)
+                        soundsHub[music.uuid] = AudioManager.generateAudio(music, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
+                    soundsHub[music.uuid].play()
+
+
+                }
+                if(this.props.isAudioOn){
+                    if(soundsHub[this.props.scene.uuid] === undefined){
+                        if(stores_utils.getFileType(scene.img) === 'video'){
+                            let audioVideo = {}
+                            audioVideo.file = this.props.scene.img;
+                            audioVideo.loop = true;
+                            soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
+                            soundsHub[this.props.scene.uuid].play()
+                        }
+                    }
+                }
+
+            }
+
+
         }
         else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
@@ -135,18 +164,36 @@ export default class Bubble extends Component
                 </Entity>)
         } else {
             //TODO aggiungere il controllo del ridimensionamento della canvas
+            //TODO trovare una formula per il calcolo della dimensione del piano
             let canvasWidth = document.documentElement.clientWidth / 100;
-            let canvasHight = canvasWidth /1.77;
-
+            let canvasHeight = canvasWidth /1.77;
+            //let canvasWidth = this.props.assetsDimention.width / 100;
+            //let canvasHeight = this.props.assetsDimention.height / 100;
             if(this.props.isActive){
-                //cursor.addAttribute('mouse-cursor', 'true');
-                //camera.setAttribute("pac-look-controls", "pointerLockEnabled: false");
-                //camera.setAttribute("pac-look-controls", "planarScene: true");
+                positionPlane = "0, 1.6, -6.44";
+            } else {
+                let transizioneMomentanea = 'nulla';
+                switch (transizioneMomentanea) {
+                    case 'right':
+                        positionPlane = canvasWidth + ', 1.6, -6.44';
+                        break;
+                    case 'left':
+                        positionPlane = -canvasWidth + ', 1.6, -6.44';
+                        break;
+                    case 'top':
+                        positionPlane = '0, ' + canvasHeight + ', -6.44';
+                        break;
+                    case 'bottom':
+                        positionPlane = '0, ' + (-canvasHeight) + ', -6.44';
+                        break;
+                    default:
+                        positionPlane = "0, 1.6, -6.44";
+                        break;
+                }
             }
-            //camera.setAttribute("pac-look-controls", "planarScene: true");
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
-                    id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHight.toString()} width={canvasWidth.toString()}
+                    id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}
                     material={material} play_video={active} position={positionPlane} >
                 {curves}
                 </Entity>)
@@ -278,5 +325,6 @@ export default class Bubble extends Component
         (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());
         (this.masksTextures?this.masksTextures:[]).forEach(t => t.dispose());
     }
+
 }
 

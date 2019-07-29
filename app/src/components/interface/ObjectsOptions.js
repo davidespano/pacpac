@@ -4,6 +4,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import Actions from "../../actions/Actions";
 import Dropdown from "./Dropdown";
+import Values from "../../interactives/rules/Values";
 
 function ObjectOptions(props){
     if(props.currentObject){
@@ -94,7 +95,7 @@ function generateProperties(props){
                        }
                    }}
             />
-            <label className={'rightbar-titles'}>Appartenenza</label>
+            <label className={'rightbar-titles'}>Scena di appartenenza</label>
             <div className={'rightbar-grid'}>
                 <input className={'propertyForm objectName'}
                        value={objectScene.name}
@@ -120,7 +121,7 @@ function generateProperties(props){
                     property={'visible'}
                     defaultValue={currentObject.visible}/>
             </div>
-            {generateSpecificProperties(currentObject, props)}
+            {generateSpecificProperties(currentObject, objectScene, props)}
             <div className={'options-grid'}>
                 <label className={'options-labels'}>Geometria:</label>
                 <button
@@ -171,10 +172,24 @@ function generateProperties(props){
 /**
  * Generate options according to the object type
  * @param object
+ * @param objectScene scene the obj belongs to
  * @param props
  * @returns {*}
  */
-function generateSpecificProperties(object, props){
+function generateSpecificProperties(object, objectScene, props){
+    let sceneType = objectScene.type;
+    let direction = null;
+    if(sceneType === Values.TWO_DIM){
+        direction = <React.Fragment>
+            <label className={'options-labels'}>Direzione:</label>
+            <Dropdown
+                props={props}
+                component={'direction'}
+                property={'direction'}
+                defaultValue={object.properties.direction}/>
+        </React.Fragment>;
+    }
+
     switch(object.type){
         case InteractiveObjectsTypes.TRANSITION:
             return (
@@ -191,6 +206,7 @@ function generateSpecificProperties(object, props){
                         </div>
                         <span className={'measure-units'}>ms</span>
                     </div>
+                    {direction}
                 </div>
             );
         case InteractiveObjectsTypes.SWITCH:

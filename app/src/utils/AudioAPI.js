@@ -52,10 +52,20 @@ function getAllAudios() {
                         isSpatial: audio.isSpatial,
                         scene: audio.scene,
                         loop: audio.loop,
+                        vertices: audio.vertices,
                     });
                     Actions.receiveAudio(a);
             })
         });
+}
+
+async function getAudios(audios) {
+    const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/audios/`)
+        .set('Accept', 'application/json');
+    const raw_audios = response.body;
+    raw_audios.forEach(a => {
+        audios[a.uuid] = a;
+    })
 }
 
 function deleteAudio(uuid){
@@ -75,5 +85,6 @@ export default{
     createUpdateSpatialAudio: createUpdateSpatialAudio,
     createUpdateGlobalAudio: createUpdateGlobalAudio,
     getAllAudios: getAllAudios,
+    getAudios: getAudios,
     deleteAudio: deleteAudio,
 }

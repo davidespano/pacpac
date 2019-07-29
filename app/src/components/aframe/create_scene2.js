@@ -13,9 +13,13 @@ import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
 import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
-import aframe_utils from "./aframe_utils"
+import aframe_utils from "./aframe_assets";
+import AudioAPI from "../../utils/AudioAPI";
+import AudioManager from './AudioManager'
 import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
+const soundsHub = require('./soundsHub');
+const resonance = require('./Audio/Resonance');
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
@@ -32,20 +36,19 @@ export default class VRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]",
             camera: {},
-            resonanceAudioScene: {}
+            resonanceAudioScene: {},
+            audioContext: {}
         };
-        console.log(props)
-        console.log(this.props.scenes.toArray()[0])
-        //if(document.querySelector('link[href*="bootstrap"]'))
-            document.querySelector('link[href*="bootstrap"]').remove();
+        //console.log(props)
+        //console.log(props.assets.get(this.state.activeScene.img))
+        //console.log(this.props.scenes.toArray())
+        document.querySelector('link[href*="bootstrap"]').remove();
     }
 
     componentDidMount() {
-        let audioContext = new AudioContext();
+
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        this.generateRoom(audioContext);
-        this.generateAudio(audioContext);
         this.interval = setInterval(() => this.tick(), 200);
     }
 
@@ -55,18 +58,55 @@ export default class VRScene extends React.Component {
     }
 
     async loadEverything() {
+        let audioContext = new AudioContext();
 
+        //let music = audios[scene.music]
+        let isInterior = false;
+        let material = isInterior ? 'grass' : 'transparent';
+
+        let resonanceAudioScene = new ResonanceAudio(audioContext);
+        console.log(resonanceAudioScene._context)
+        console.log(audioContext)
+        resonanceAudioScene.output.connect(audioContext.destination);
+        let roomDimensions = {
+            width: 4,
+            height: 4,
+            depth: 4,
+        };
+
+        let roomMaterials = {
+            // Room wall materials
+            left: material,
+            right: material,
+            front: material,
+            back: material,
+            down: material,
+            up: material,
+        };
+
+        this.setState({
+            scenes: this.props.scenes.toArray(),
+            audioContext: audioContext,
+            resonanceAudioScene: resonanceAudioScene
+        });
+        let audios = [];
+        await AudioAPI.getAudios(audios);
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
+        resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+        console.log(resonance.default._context)
         this.setState({
-            scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
+            audios: audios,
+
         });
+
         this.createRuleListeners();
+        //this.generateRoom(this.state.audioContext);
         document.querySelector('#camera').removeAttribute('look-controls');
         document.querySelector('#camera').removeAttribute('wasd-controls');
     }
@@ -114,9 +154,12 @@ export default class VRScene extends React.Component {
             runState[scene.uuid] = {background: scene.img};
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
-                runState[obj.uuid] = {state: obj.properties.state}
+                runState[obj.uuid] = {state: obj.properties.state,
+                                      visible: obj.visible
+                }
             });
         });
+
         return runState;
     }
 
@@ -156,8 +199,7 @@ export default class VRScene extends React.Component {
         }
         else
             this.currentLevel = [];
-
-        let assets = this.generateAssets2();
+        let assets = this.generateAssets();
         let is3dScene = this.state.activeScene.type===Values.THREE_DIM;
         return (
                 <Scene stats background="color: black" >
@@ -170,7 +212,7 @@ export default class VRScene extends React.Component {
                             pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
                             look-controls="false" wasd-controls="false">
                             <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
-                                    fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                                    fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
                             <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
                                     fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
 
@@ -179,11 +221,10 @@ export default class VRScene extends React.Component {
         )
     }
 
-    generateAssets2(){
+    generateAssets(){
         return this.currentLevel.map(sceneName => {
-            console.log(sceneName)
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-            this.state.runState[sceneName].background, this.state.runState)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios, this.state.resonanceAudioScene)
         }).flat();
     }
 
@@ -193,19 +234,25 @@ export default class VRScene extends React.Component {
             return (
                 <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
-                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)} audios={this.state.audios}
+                        assetsDimention={this.props.assets.get(this.state.activeScene.img)}
+                        resonanceAudioScene={this.state.resonanceAudioScene}
+                        audioContext={this.state.audioContext}
+                        isAudioOn={this.state.activeScene.isAudioOn}
                 />
             );
         });
     }
 
-    generateRoom(audioContext){
+    generateRoom(){
         //TODO inserire scelta interno esterno
+        console.log('entra cazzooooo')
         let isInterior = false;
         let material = isInterior ? 'grass' : 'transparent';
 
-        this.state.resonanceAudioScene = new ResonanceAudio(audioContext);
-        this.state.resonanceAudioScene.output.connect(audioContext.destination);
+        let resonanceAudioScene = new ResonanceAudio(this.state.audioContext);
+
+        resonanceAudioScene.output.connect(this.state.audioContext.destination);
         let roomDimensions = {
             width: 4,
             height: 4,
@@ -220,30 +267,22 @@ export default class VRScene extends React.Component {
             down: material,
             up: material,
         };
-        this.state.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+
+        resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+        console.log(resonanceAudioScene)
+        this.setState({
+            resonanceAudioScene: resonanceAudioScene
+        });
     }
 
     generateAudio(audioContext){
-
-        let audioElement = document.createElement('audio');
-
-        //setTimeout(() => {
-            //let audio=document.getElementById('track');
-            //TODO add src from buble media
-            audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.state.activeScene.img;
-            audioElement.crossOrigin = 'anonymous';
-            audioElement.load();
-            audioElement.loop = true;
-            let audioElementSource = audioContext.createMediaElementSource(audioElement);
-            let source = this.state.resonanceAudioScene.createSource();
-            audioElementSource.connect(source.input);
-            //source.setPosition(0, 0, 0);
-            //audioElement.play();
-        //},50)
-
+        //let music = this.state.audios[this.state.activeScene.music]
+        //soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0])
+        //soundsHub[music.uuid].play()
 
     }
 
+    //TODO verificare che funzioni ancora la rotazione
     updateAngles() {
         let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld
         this.state.resonanceAudioScene.setListenerFromMatrix(cameraMatrix4)

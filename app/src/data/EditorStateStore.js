@@ -2,6 +2,7 @@ import {ReduceStore} from 'flux/utils';
 import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import EditorState from "./EditorState";
+import Immutable from "immutable";
 
 class EditorStateStore extends ReduceStore {
 
@@ -17,6 +18,8 @@ class EditorStateStore extends ReduceStore {
         switch (action.type) {
             case ActionTypes.ADD_NEW_OBJECT:
                 return state.set('rightbarSelection', 'objects').set('objectNameRightbar', action.obj.name);
+            case ActionTypes.AUDIO_POSITIONING:
+                return state.set('audioPositioning', action.status);
             case ActionTypes.AUDIO_SPATIAL_OPTION:
                 return state.set('isAudioSpatial', action.status);
             case ActionTypes.AUDIO_FORM_STATUS:
@@ -39,6 +42,10 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.GAME_SELECTION_MODE_ON);
             case ActionTypes.GEOMETRY_MODE_ON:
                 return state.set('mode', ActionTypes.GEOMETRY_MODE_ON);
+            case ActionTypes.IS_IT_NEW:
+                return state.set('isItNew', action.bool);
+            case ActionTypes.LEFTBAR_SELECTION:
+                return state.set('leftbarSelection', action.selection);
             case ActionTypes.LOGIN_MODE_ON:
                 return state.set('mode', ActionTypes.LOGIN_MODE_ON);
             case ActionTypes.LOOP_CHECK:
@@ -51,18 +58,35 @@ class EditorStateStore extends ReduceStore {
                 return state.set('mode', ActionTypes.FILE_MANAGER_MODE_ON);
             case ActionTypes.PLAY_MODE_ON:
                 return state.set('mode', ActionTypes.PLAY_MODE_ON);
-            //TODO [debug] add to origin master
             case ActionTypes.DEBUG_MODE_ON:
                 return state.set('mode', ActionTypes.DEBUG_MODE_ON);
+            case ActionTypes.DEBUG_SAVES:
+                let oldSaves = null;
+                let newSaves = null;
+                let c = 0; //counter
+
+                action.response.body.forEach(el => {
+                        oldSaves = EditorState.debugSaves[el.currentScene];
+
+                        if(oldSaves !== null) {
+                            newSaves = new Immutable.Set(oldSaves).add(el.saveName);
+
+                            //state = state.set(el.currentScene, newSaves)
+                            EditorState.debugSaves[el.currentScene] = newSaves;
+                        }
+                        console.log(c++);
+                    }
+                );
+                return state.set('debugSaves', action.response);
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
-                state = state.set('selectedSceneSpatialAudio', action.scene.uuid);
                 state = state.set('sceneNameRightbar', action.scene.name);
+                state = state.set('soundActiveRightbarChecked', action.scene.isAudioOn);
                 return state;
             case ActionTypes.RECEIVE_USER:
                 return state.set('user', action.user);
             case ActionTypes.REMOVE_SCENE:
-                return state.set('rightbarSelection', 'scene').set('selectedSceneSpatialAudio', null);
+                return state.set('rightbarSelection', 'scene');
             case ActionTypes.REMOVE_OBJECT:
                 return state.set('objectNameRightbar', null);
             case ActionTypes.RIGHTBAR_SELECTION:
@@ -76,28 +100,27 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.SELECT_MEDIA_TO_EDIT:
                 return state.set('selectedMediaToEdit', action.selection);
             case ActionTypes.SELECT_AUDIO_TO_EDIT:
-                state = state.set('selectedAudioToEdit', action.selection);
-                state = state.set('isAudioSpatial', action.isSpatial);
-                state = state.set('selectedAudioFile', action.file);
-                state = state.set('loopChecked', action.check);
+                state = state.set('audioToEdit', action.audio);
                 return state;
-            case ActionTypes.SELECT_SCENE_SPATIAL_AUDIO:
-                return state.set('selectedSceneSpatialAudio', action.selection);
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SORT_SCENES:
                 return state.set('scenesOrder', action.order);
+            case ActionTypes.SOUND_ACTIVE_FORM_CHECK:
+                return state.set('soundActiveFormChecked', action.check);
+            case ActionTypes.SOUND_ACTIVE_RIGHTBAR_CHECK:
+                return state.set('soundActiveRightbarChecked', action.check);
             case ActionTypes.SET_MENTION_TYPE:
                 return state.set('mentionType', action.mentionType);
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
             case ActionTypes.UPDATE_CURRENT_SCENE:
-                return state.set('selectedSceneSpatialAudio', action.scene.uuid).set('sceneNameRightbar', action.scene.name);
+                state = state.set('soundActiveRightbarChecked', action.scene.isAudioOn);
+                return state.set('sceneNameRightbar', action.scene.name);
             case ActionTypes.UPDATE_CURRENT_OBJECT:
-                let o = action.obj ? action.obj.name : null;
-                return state.set('objectNameRightbar', o);
+                let name = action.obj ? action.obj.name : null;
+                return state.set('objectNameRightbar', name);
             case ActionTypes.UPDATE_OBJECT_NAME_RIGHTBAR:
-                console.log(action.name);
                 return state.set('objectNameRightbar', action.name);
             case ActionTypes.UPDATE_OBJECTS_NAME_FILTER:
                 return state.set('objectsNameFilter', action.filter);

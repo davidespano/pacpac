@@ -73,11 +73,15 @@ function getState() {
         
         //editor
 
+        audioPositioning: Actions.audioPositioning,
         changeAudioFormStatus: Actions.changeAudioFormStatus,
         changeAudioSpatialOptionStatus: Actions.changeAudioSpatialOptionStatus,
         dropdownScenesOrder: Actions.dropdownScenesOrder,
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
+        debugSaves: Actions.debugSaves,
+        isItNew: Actions.isItNew,
+        leftbarSelection: Actions.leftbarSelection,
         loopCheck: Actions.loopCheck,
         newAudioNameTyped: Actions.newAudioNameTyped,
         newSceneNameTyped: Actions.newSceneNameTyped,
@@ -88,9 +92,11 @@ function getState() {
         selectAudioToEdit: Actions.selectAudioToEdit,
         selectSceneSpatialAudio: Actions.selectSceneSpatialAudio,
         selectTagNewScene: Actions.selectTagNewScene,
+        soundActiveFormCheck: Actions.soundActiveFormCheck,
+        soundActiveRightbarCheck: Actions.soundActiveRightbarCheck,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
-        switchToDebugMode: Actions.debugModeOn, //TODO [debug] add to origin master
+        switchToDebugMode: Actions.debugModeOn,
         switchToEditMode: Actions.editModeOn,
         switchToLoginMode: Actions.loginModeOn,
         switchToFileManager: Actions.fileManagerModeOn,

@@ -5,13 +5,15 @@ let uuid = require('uuid');
 function AudioMenu(props){
     return(
         <div id={"manage-audio"}>
-            <div className="modal fade" id="manage-audio-modal" tabIndex="-1" role="dialog" aria-labelledby="manage-audio-modal-label" aria-hidden="true">
+            <div className={"modal fade " + show(props)} id="manage-audio-modal" tabIndex="-1" role="dialog" aria-labelledby="manage-audio-modal-label" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content" id={'modal-content-audio'}>
                         <div className="modal-header">
                             <h5 className="modal-title" id="manage-audio-modal-label">Gestione audio</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close"
-                                    onClick={() => props.selectAudioToEdit(null)}>
+                            <button id="audio-menu-close-button" type="button" className="close" data-dismiss="modal" aria-label="Close"
+                                    onClick={() => {
+                                        props.selectAudioToEdit(null);
+                                    }}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -43,7 +45,11 @@ function AudioMenu(props){
                                         className={'btn audio-btn btn-secondary'}
                                         data-toggle="modal"
                                         data-target="#audio-form-modal"
-                                        onClick={() => props.selectAudioToEdit(null)}
+                                        data-backdrop="false"
+                                        onClick={() => {
+                                            props.selectAudioToEdit(null);
+                                            props.isItNew(true);
+                                        }}
                                 >
                                     Nuovo oggetto audio
                                 </button>
@@ -51,17 +57,20 @@ function AudioMenu(props){
                                         className={'btn audio-btn btn-secondary'}
                                         data-toggle="modal"
                                         data-target="#audio-form-modal"
-                                        disabled={props.editor.selectedAudioToEdit == null}
+                                        data-backdrop="false"
+                                        disabled={props.editor.audioToEdit == null}
+                                        onClick={() => {
+                                            props.isItNew(false);
+                                        }}
                                 >
                                     <img className={"action-buttons btn-img"} src={"icons/icons8-white-pencil-50.png"}/>
                                     Modifica oggetto
                                 </button>
                                 <button id={'remove-audio-btn'}
                                         className={'btn audio-btn btn-secondary'}
-                                        disabled={props.editor.selectedAudioToEdit == null}
+                                        disabled={props.editor.audioToEdit == null}
                                         onClick={() => {
-                                            let audio = props.audios.get(props.editor.selectedAudioToEdit);
-                                            props.removeAudio(audio);
+                                            props.removeAudio(props.editor.audioToEdit);
                                         }}
                                 >
                                     <img className={"action-buttons btn-img"} src={"icons/icons8-white-waste-50.png"}/>
@@ -71,7 +80,9 @@ function AudioMenu(props){
                         </div>
                         <div className="modal-footer" id={'modal-footer-media'}>
                             <button type="button" className="btn btn-secondary buttonConferm"
-                                    data-dismiss="modal" onClick={() => props.selectAudioToEdit(null)}
+                                    data-dismiss="modal" onClick={() => {
+                                        props.selectAudioToEdit(null);
+                                    }}
                             >Ok</button>
                         </div>
                     </div>
@@ -83,7 +94,11 @@ function AudioMenu(props){
 
 
 function checkSelection(props, uuid){
-    return props.editor.selectedAudioToEdit === uuid ? 'selected-audio' : '';
+    return (props.editor.audioToEdit && props.editor.audioToEdit.uuid === uuid) ? 'selected-audio' : '';
+}
+
+function show(props){
+    return props.editor.audioPositioning ? "show" : "";
 }
 
 export default AudioMenu;

@@ -1,32 +1,88 @@
 const _ = require('lodash');
-const Debug = require('../models/neo4j/debug');
+const DebugState = require('../models/neo4j/debugState');
 
-function createDebugState(session, uuid, name, gameID) {
-    console.log(name);
+function createUpdateDebugState(session, debugState, gameID) {
+    let state = new DebugState(debugState);
+    let objectStates = state.objectStates;
+    let saveName = state.saveName;
+
+    delete state.saveName;
+    delete state.objectStates;
+
     return session.run(
-        'MATCH (scene:Debug:`' + gameID + '` {name: $name}) ' +
-        'RETURN scene', {name: name})
-        .then(result => {
-            if (!_.isEmpty(result.records)) {
-                throw {message: "Debug scene already exists", status: 422};
-            }
-            else {
-                return session.run(
-                    'MERGE (scene:Debug:`' + gameID + '`{name: $name}) ' +
-                    'SET scene={uuid:$uuid, name: $name} ' +
-                    'RETURN scene', {uuid: uuid, name: name})
-            }
+        'MERGE (state:Debug:DebugState:`' + gameID + '` {saveName: $saveName}) ' +
+        'SET state += $state ' +
+        'WITH state ' +
+        'UNWIND $objectStates as object ' +
+        'MERGE (o:Debug:DebugObject {uuid: object.uuid, saveName: $saveName}) ' +
+        'SET o += object ' +
+        'MERGE (state)-[:STORES_OBJECT]->(o) ' +
+        'RETURN state', {saveName: saveName, state: state, objectStates: objectStates})
+        .then(() => debugState);
+}
+
+function getAllSaves(session, gameID) {
+    return session.run(
+        'MATCH (state:Debug:DebugState:`' + gameID + '`)-[:STORES_OBJECT]->(object:DebugObject) ' +
+        'RETURN state.saveName AS saveName, state, collect(object) AS objects'
+    ).then(result => {
+        if (!_.isEmpty(result.records)) {
+            return multipleSaves(result);
+        } else {
+            throw {message: "gameID not found", status: 404}
+        }
+    });
+}
+
+function getDebugState(session, gameID, saveName) {
+    if (saveName !== undefined) {
+        return session.run(
+            'MATCH (state:Debug:DebugState:`' + gameID + '`)-[:STORES_OBJECT]->(object:DebugObject) ' +
+            'WHERE state.saveName="'+ saveName +'" ' +
+            'RETURN state, collect(object) AS objects', {}
+        ).then(result => {
+            const record = result.records[0];
+            const currentScene = record.get('state').properties.currentScene;
+            const objectsStates = record.get('objects').map(obj => obj.properties);
+
+            const debugState = new DebugState({
+                currentScene: currentScene,
+                objectStates: objectsStates,
+            })
+
+            if (debugState)
+                return debugState;
+            else
+                throw {message: 'state not found', status: 404};
         })
-        .then(result => {
-            if (result.records[0]) {
-                console.log("New Debug Node ok");
-            }
-            else {
-                console.log("Something went wrong");
-            }
-        });
+    }
+}
+
+function multipleSaves(result) {
+    return result.records.map(record => buildSave(record));
+}
+
+function buildSave(record) {
+
+    if (record !== undefined) {
+        const saveName = record.get('saveName');
+        const currentScene = record.get('state').properties.currentScene;
+        const objectsStates = record.get('objects').map(obj => obj.properties);
+
+        const debugState = new DebugState({
+            saveName: saveName,
+            currentScene: currentScene,
+            objectStates: objectsStates,
+        })
+
+        if (debugState)
+            return debugState;
+    } else
+        return null;
 }
 
 module.exports = {
-    createDebugState : createDebugState
+    createUpdateDebugState: createUpdateDebugState,
+    getDebugState: getDebugState,
+    getAllSaves: getAllSaves,
 }

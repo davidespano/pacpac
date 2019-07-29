@@ -7,6 +7,9 @@ import MediaAPI from "./utils/MediaAPI";
 import Actions from "./actions/Actions";
 import StoryAPI from "./utils/StoryAPI";
 import AudioAPI from "./utils/AudioAPI";
+import DebugAPI from "./utils/DebugAPI";
+import Audio from "./audio/Audio";
+import EditorStateStore from "./data/EditorStateStore";
 
 //import '../public/style.css';
 //import './aframe.js';
@@ -23,9 +26,9 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
         MediaAPI.getAllAssets();
         AudioAPI.getAllAudios();
 		StoryAPI.getAllCollections();
+		DebugAPI.getAllSaves();
+		//If modified edit gameSelection in components/interface/GameList.js
     }
 }).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
 });
-
-

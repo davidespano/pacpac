@@ -1,3 +1,7 @@
+import Values from "./Values";
+import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
+import Immutable from "immutable";
+
 const RuleActionTypes = {
 
     CHANGE_BACKGROUND: 'CHANGE_BACKGROUND',
@@ -5,7 +9,6 @@ const RuleActionTypes = {
     CHANGE_VISIBILITY : 'CHANGE_VISIBILITY',
     COLLECT_KEY: 'COLLECT_KEY',
     CLICK: 'CLICK',
-    FLIP_SWITCH: 'FLIP_SWITCH',
     OFF : 'OFF',
     ON : 'ON',
     PLAY_AUDIO: 'PLAY_AUDIO',
