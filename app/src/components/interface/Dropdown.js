@@ -131,6 +131,17 @@ function generateOptions(props, component, property){
                 },
                 customStyle,
             ];
+        case 'sfx':
+            return [
+                [{uuid:null, name:'nessuno'},...props.audios.values()].map( a => {
+                    return {value: a.uuid, label: a.name}
+                }),
+                (e) => {
+                    let scene = props.scenes.get(props.currentScene);
+                    scene_utils.setProperty(scene, property, e.value, props);
+                },
+                customStyle,
+            ];
         case 'direction':
             return [
                 [
@@ -160,6 +171,7 @@ function getDefaultValue(props, defaultValue, component){
                 label = defaultValue; break;
             case 'audios':
             case 'music':
+            case 'sfx':
                 if(props.audios.has(defaultValue))
                     label = props.audios.get(defaultValue).name; break;
             default:

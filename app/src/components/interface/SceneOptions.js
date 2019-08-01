@@ -96,7 +96,14 @@ function SceneOptions(props){
                     props={props}
                     component={'music'}
                     property={'music'}
-                    defaultValue={scene.music} mediaToEdit={'music'}
+                    defaultValue={scene.music}
+                />
+                <label className={'rightbar-titles'}>Effetti sonori d'ambiente</label>
+                <Dropdown
+                    props={props}
+                    component={'sfx'}
+                    property={'sfx'}
+                    defaultValue={scene.sfx}
                 />
             </div>
         );

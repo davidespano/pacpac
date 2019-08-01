@@ -142,6 +142,7 @@ function getByName(name, order = null) {
                 isAudioOn : response.body.isAudioOn,
                 tag : tag,
                 music: response.body.music,
+                sfx: response.body.sfx,
                 objects : {
                     transitions : transitions_uuids,
                     switches : switches_uuids,
@@ -364,6 +365,7 @@ async function getAllDetailedScenes(gameGraph) {
             isAudioOn : s.isAudioOn,
             tag : s.tag,
             music : s.music,
+            sfx: s.sfx,
             objects : {
                 transitions : transitions,
                 switches : switches,
