@@ -78,7 +78,7 @@ function generalOptions(props, audioToEdit){
                            let newAudio = audioToEdit.set('name', name);
                            props.selectAudioToEdit(newAudio);
                        }}/>
-                <div> </div>
+                <div></div>
                 <div id={'select-file-audio'}>
                     <p id={'file-selected-name'}
                        className={'input-new-audio-file ellipsis-no-inline'}
@@ -147,6 +147,24 @@ function playOption(props, audioToEdit){
     let checked = audioToEdit.checked;
     return(
         <div id={'audio-form-play'} className={'audio-form-box-section'}>
+            <div className={'box-titles'}>Volume</div>
+            <div className={'box-grid'}>
+                <input type="range"
+                       min="0" max="100"
+                       className={'slider'}
+                       value={audioToEdit.volume}
+                       id={'input-volume-audio'}
+                       onChange={() => {
+                           let vol = document.getElementById("input-volume-audio").value;
+                           let newAudio = audioToEdit.set('volume', vol);
+                           props.selectAudioToEdit(newAudio);
+                       }}
+                />
+                <div>
+                    {audioToEdit.volume}
+                    <img src={'icons/icons8-audio-100.png'} className={'action-buttons'} alt={'immagine volume audio'}/>
+                </div>
+            </div>
             <div className={'box-titles'}>Riproduzione</div>
             <input type={'checkbox'} className={'checkbox-audio-form'}
                    id={'loop-checkbox'} checked={checked}
