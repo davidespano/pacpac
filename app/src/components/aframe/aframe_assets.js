@@ -51,7 +51,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                     if(obj.audio[k] !== null && audios[obj.audio[k]] !== undefined){
                         console.log(obj.audio[k])
                         let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj)
-                        soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], resonanceAudioScene, audioContext, audioPosition)
+                        soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], audioPosition)
                     }
                 });
             }
@@ -92,7 +92,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         //Creaizone traccia audio globali
         if(mode === 'scene') {
             scene.audios.forEach(audio => {
-                soundsHub["audios_" + audio.uuid] = AudioManager.generateAudio(audio, resonanceAudioScene, audioContext)
+                soundsHub["audios_" + audio.uuid] = AudioManager.generateAudio(audio)
             });
         }
         //third, push the media present in the actions

@@ -125,11 +125,11 @@ export default class Bubble extends Component
             active = 'active: true; video: ' + scene.img;
             radius = 10;
             //TODO aggiungere modifiche audio
-            if(!this.props.editMode && this.props.resonanceAudioScene!=={} && this.props.audioContext !== undefined){
+            if(!this.props.editMode && !this.props.debugMode){
                 if(this.props.scene.music !== undefined && this.props.audios){
                     let music = this.props.audios[this.props.scene.music]
                     if(soundsHub[music.uuid] === undefined)
-                        soundsHub[music.uuid] = AudioManager.generateAudio(music, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
+                        soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
                     soundsHub[music.uuid].play()
                 }
                 if(this.props.isAudioOn){
@@ -138,7 +138,7 @@ export default class Bubble extends Component
                             let audioVideo = {}
                             audioVideo.file = this.props.scene.img;
                             audioVideo.loop = true;
-                            soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
+                            soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
                             soundsHub[this.props.scene.uuid].play()
                         }
                     }

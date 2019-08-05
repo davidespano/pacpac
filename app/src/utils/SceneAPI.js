@@ -356,7 +356,6 @@ async function getAllDetailedScenes(gameGraph) {
                 vertices: audio.vertices,
             })
         });
-        console.log(audios)
         // new Scene
         const newScene = ({ //Scene, not immutable
             uuid: s.uuid,
