@@ -115,7 +115,6 @@ export default class Bubble extends Component
                             is3Dscene={is3Dscene} vertices={curve.vertices} visible={this.props.runState[curve.uuid].visible}/>
                 );
             }
-
         });
         let material = "depthTest: true; ";
         let active = 'active: false;';
@@ -132,8 +131,6 @@ export default class Bubble extends Component
                     if(soundsHub[music.uuid] === undefined)
                         soundsHub[music.uuid] = AudioManager.generateAudio(music, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
                     soundsHub[music.uuid].play()
-
-
                 }
                 if(this.props.isAudioOn){
                     if(soundsHub[this.props.scene.uuid] === undefined){
@@ -148,13 +145,11 @@ export default class Bubble extends Component
                 }
 
             }
-
-
         }
+
         else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
         if(is3Dscene){
-            //camera.setAttribute("pac-look-controls", "planarScene: false");
 
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
@@ -169,7 +164,8 @@ export default class Bubble extends Component
             let canvasHeight = canvasWidth /1.77;
             //let canvasWidth = this.props.assetsDimention.width / 100;
             //let canvasHeight = this.props.assetsDimention.height / 100;
-            if(this.props.isActive){
+            positionPlane = "0, 1.6, -6.44";
+            /*if(this.props.isActive){
                 positionPlane = "0, 1.6, -6.44";
             } else {
                 let transizioneMomentanea = 'nulla';
@@ -190,7 +186,7 @@ export default class Bubble extends Component
                         positionPlane = "0, 1.6, -6.44";
                         break;
                 }
-            }
+            }*/
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}
@@ -320,6 +316,7 @@ export default class Bubble extends Component
         if(sky)
             sky.setAttribute('material', "shader:flat;");
     }
+
     componentWillUnmount(){
         delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img];
         (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());

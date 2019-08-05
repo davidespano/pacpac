@@ -96,7 +96,6 @@ export default class VRScene extends React.Component {
         let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
         resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
-        console.log(resonance.default._context)
         this.setState({
             graph: gameGraph,
             activeScene: scene,

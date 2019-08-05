@@ -58,10 +58,10 @@ export default class DebugVRScene extends React.Component {
     }
 
     componentDidMount() {
-        let audioContext = new AudioContext();
+        //let audioContext = new AudioContext();
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        this.generateRoom(audioContext);
+        //this.generateRoom(audioContext);
         //this.generateAudio(audioContext);
         this.interval = setInterval(() => this.tick(), 200);
     }
@@ -73,24 +73,50 @@ export default class DebugVRScene extends React.Component {
 
     async loadEverything() {
         let audioContext = new AudioContext();
+
+        //let music = audios[scene.music]
+        let isInterior = false;
+        let material = isInterior ? 'grass' : 'transparent';
+
+        let resonanceAudioScene = new ResonanceAudio(audioContext);
+        resonanceAudioScene.output.connect(audioContext.destination);
+        let roomDimensions = {
+            width: 4,
+            height: 4,
+            depth: 4,
+        };
+
+        let roomMaterials = {
+            // Room wall materials
+            left: material,
+            right: material,
+            front: material,
+            back: material,
+            down: material,
+            up: material,
+        };
+
+        this.setState({
+            scenes: this.props.scenes.toArray(),
+            audioContext: audioContext,
+            resonanceAudioScene: resonanceAudioScene
+        });
         let audios = [];
         await AudioAPI.getAudios(audios);
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
-        let scene = gameGraph['scenes'][this.props.currentScene];
+        let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
-        console.log(audios)
+        resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
         this.setState({
-            scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
             audios: audios,
-            audioContext: audioContext
+
         });
+
         this.createRuleListeners();
-        this.generateRoom();
-        //this.generateAudio(audioContext);
         EditorState.debugRunState = runState;
 
         document.querySelector('#camera').removeAttribute('look-controls');
