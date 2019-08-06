@@ -196,23 +196,22 @@ export default class DebugVRScene extends React.Component {
 
         //TODO verificare vr-mode crea problemi in play
         return (
-            <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
+            <Scene embedded background="color: black" >
                 <a-assets>
                     {assets}
                 </a-assets>
                 {this.generateBubbles()}
 
                 <Entity primitive="a-camera" key="keycamera" id="camera"
-                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
+                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
                         look-controls="false" wasd-controls="false">
-                    <Entity mouse-cursor>
-                        <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
-                                fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
-                        <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
-                                fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
-                    </Entity>
+                    <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
+                            fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                    <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
+                            fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
+
                 </Entity>
-            </a-scene>
+            </Scene>
         )
 
     }
@@ -220,8 +219,7 @@ export default class DebugVRScene extends React.Component {
     generateAssets2() {
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-                this.state.runState[sceneName].background, this.state.runState, this.state.audios,
-                this.state.audioContex)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios)
         }).flat();
     }
 
@@ -230,14 +228,17 @@ export default class DebugVRScene extends React.Component {
         return this.currentLevel.map(sceneName => {
             let scene = this.state.graph.scenes[sceneName];
             return (
-                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.currentObject !== null}
-                        key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
+                <Bubble currentScene={this.props.currentScene}
+                        onDebugMode={this.props.currentObject !== null}
+                        key={"key" + scene.name}
+                        scene={scene}
+                        isActive={scene.uuid === this.props.currentScene}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
-                        runState={this.state.runState} editMode={false} audios={this.state.audios}
+                        runState={this.state.runState}
+                        editMode={false}
+                        audios={this.state.audios}
                         cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                         assetsDimention={this.props.assets.get(this.state.scenes.img)}
-                        audioContex={this.state.audioContex}
-                        resonanceAudioScene={this.state.resonanceAudioScene}
                         isAudioOn={this.state.scenes.isAudioOn}
                         debugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
 

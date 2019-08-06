@@ -6,7 +6,7 @@ import AudioManager from './AudioManager'
 const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
 //TODO trasformarlo in un componente React ... forse ...
-function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene', resonanceAudioScene, audioContext){
+function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene'){
         let currAssets = [];
         let sceneBackground;
 

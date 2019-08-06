@@ -193,7 +193,7 @@ export default class VRScene extends React.Component {
     generateAssets(){
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-                this.state.runState[sceneName].background, this.state.runState, this.state.audios, this.state.resonanceAudioScene)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios)
         }).flat();
     }
 
@@ -201,9 +201,14 @@ export default class VRScene extends React.Component {
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
             return (
-                <Bubble key={"key" + scene.name} scene={scene} isActive={scene.name === this.state.activeScene.name}
-                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)} runState={this.state.runState}
-                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)} audios={this.state.audios}
+                <Bubble key={"key" + scene.name}
+                        scene={scene}
+                        isActive={scene.name === this.state.activeScene.name}
+                        handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
+                        runState={this.state.runState}
+                        editMode={false}
+                        cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+                        audios={this.state.audios}
                         assetsDimention={this.props.assets.get(this.state.activeScene.img)}
                         isAudioOn={this.state.activeScene.isAudioOn}
                         debugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
