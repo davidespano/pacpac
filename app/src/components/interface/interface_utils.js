@@ -130,30 +130,11 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, props, radiu
         y = (180 - lat) * 100 / 360;
     } else {
         // scene bidimensioali
-        if(CentralSceneStore.getState() != null){
-            let scene = ScenesStore.getState().get(CentralSceneStore.getState());
-            let asset = AssetsStore.getState().get(scene.img);
-
-            let dimX = 8.5;
-            let dimY = 6;
-
-
-            console.log(asset)
-            console.log(medianPoint)
-
-            //x = medianPoint[0] + dim/2;
-            //y = medianPoint[1] + dim/2;
-
-
-
-            //x = medianPoint[0] * (asset.width)/7.5;
-            //y = medianPoint[1] * (asset.height)/7.5;
-            x = (dimX + medianPoint[0]) * 100 / (dimX+8);
-            y = (dimY - medianPoint[1]) * 100 / (dimY+3);
-        }
+        let dimX = 8.5;
+        let dimY = 6;
+        x = (dimX + medianPoint[0]) * 100 / (dimX+8);
+        y = (dimY - medianPoint[1]) * 100 / (dimY+3);
     }
-
-    console.log(x, y)
 
     return [x, y];
 }
