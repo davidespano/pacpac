@@ -96,6 +96,8 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, props, radiu
     let medianPoint = [0.0, 0.0, 0.0];
     let x = 0, y = 0;
 
+    console.log(coordinates)
+
     for (let i = 0; i < coordinates.length; i += 3) {
         medianPoint[0] += coordinates[i];
         medianPoint[1] += coordinates[i + 1];
@@ -127,20 +129,28 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, props, radiu
         x = (180 - lon) * 100 / 360;
         y = (180 - lat) * 100 / 360;
     } else {
+        // scene bidimensioali
         if(CentralSceneStore.getState() != null){
             let scene = ScenesStore.getState().get(CentralSceneStore.getState());
-            let asset = AssetsStore.getState().get(scene.img)
+            let asset = AssetsStore.getState().get(scene.img);
+
+            let dimX = 8.5;
+            let dimY = 6;
+
+
             console.log(asset)
-            x = (asset.width /2 + x) * 100 / asset.width;
-            y = (asset.height /2 + y) * 100 / asset.height;
+            console.log(medianPoint)
+
+            //x = medianPoint[0] + dim/2;
+            //y = medianPoint[1] + dim/2;
+
+
+
+            //x = medianPoint[0] * (asset.width)/7.5;
+            //y = medianPoint[1] * (asset.height)/7.5;
+            x = (dimX + medianPoint[0]) * 100 / (dimX+8);
+            y = (dimY - medianPoint[1]) * 100 / (dimY+3);
         }
-        /*
-        if(document.getElementById('central-scene')){
-            let width = document.getElementById('central-scene').offsetWidth;
-            let height = document.getElementById('central-scene').offsetHeight;
-            console.log(width, height);
-        }
-        */
     }
 
     console.log(x, y)
