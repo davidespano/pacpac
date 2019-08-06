@@ -59,8 +59,8 @@ export default class DebugVRScene extends React.Component {
         let audioContext = new AudioContext();
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        this.generateRoom(audioContext);
-        this.generateAudio(audioContext);
+        //this.generateRoom(audioContext);
+        //this.generateAudio(audioContext);
         //this.interval = setInterval(() => this.tick(), 200);
     }
 
