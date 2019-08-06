@@ -18,11 +18,9 @@ import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
 import EditorState from "../../data/EditorState";
 import ActionTypes from "../../actions/ActionTypes";
-import AudioAPI from "../../utils/AudioAPI";
 
 const THREE = require('three');
 const eventBus = require('./eventBus');
-const resonance = require('./Audio/Resonance');
 const {mediaURL} = settings;
 
 export default class DebugVRScene extends React.Component {
@@ -50,19 +48,20 @@ export default class DebugVRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]",
             camera: {},
+            resonanceAudioScene: {}
         };
 
         //if(document.querySelector('link[href*="bootstrap"]'))
-        document.querySelector('link[href*="bootstrap"]').remove();
+        //document.querySelector('link[href*="bootstrap"]').remove();
     }
 
     componentDidMount() {
+        let audioContext = new AudioContext();
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
-        //TODO non è necessario
-        if (this.props.editor.mode !== ActionTypes.DEBUG_MODE_ON) {
-            this.interval = setInterval(() => this.tick(), 100);
-        }
+        this.generateRoom(audioContext);
+        this.generateAudio(audioContext);
+        //this.interval = setInterval(() => this.tick(), 200);
     }
 
     tick() {
@@ -71,25 +70,18 @@ export default class DebugVRScene extends React.Component {
     }
 
     async loadEverything() {
-
-        this.setState({
-            scenes: this.props.scenes.toArray(),
-        });
-        let audios = [];
-        await AudioAPI.getAudios(audios);
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.props.currentScene];
         let runState = this.createGameState(gameGraph);
         this.setState({
+            scenes: this.props.scenes.toArray(),
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
-            audios: audios,
-
         });
-
         this.createRuleListeners();
+
         EditorState.debugRunState = runState;
 
         document.querySelector('#camera').removeAttribute('look-controls');
@@ -191,27 +183,26 @@ export default class DebugVRScene extends React.Component {
         //let assets = this.generateAssets()
 
         let assets = this.generateAssets2();
-        let is3dScene = this.state.scenes.type === Values.THREE_DIM;
-        //let is3dScene = this.props.scenes.get(this.props.currentScene).type === Values.THREE_DIM;
+        let is3dScene = this.props.scenes.get(this.props.currentScene).type === Values.THREE_DIM;
 
-        //TODO verificare vr-mode crea problemi in play
         return (
-            <Scene embedded background="color: black" >
+            <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
                 <a-assets>
                     {assets}
                 </a-assets>
                 {this.generateBubbles()}
 
                 <Entity primitive="a-camera" key="keycamera" id="camera"
-                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
+                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
                         look-controls="false" wasd-controls="false">
-                    <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
-                            fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
-                    <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
-                            fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
-
+                    <Entity mouse-cursor>
+                        <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
+                                fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                        <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
+                                fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
+                    </Entity>
                 </Entity>
-            </Scene>
+            </a-scene>
         )
 
     }
@@ -228,33 +219,23 @@ export default class DebugVRScene extends React.Component {
         return this.currentLevel.map(sceneName => {
             let scene = this.state.graph.scenes[sceneName];
             return (
-                <Bubble currentScene={this.props.currentScene}
-                        onDebugMode={this.props.currentObject !== null}
-                        key={"key" + scene.name}
-                        scene={scene}
-                        isActive={scene.uuid === this.props.currentScene}
+                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.currentObject !== null}
+                        key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
                         runState={this.state.runState}
-                        editMode={false}
-                        audios={this.state.audios}
-                        cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
-                        assetsDimention={this.props.assets.get(this.state.scenes.img)}
-                        isAudioOn={this.state.scenes.isAudioOn}
-                        debugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
-
+                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                 />
             );
         });
     }
 
-    generateRoom() {
+    generateRoom(audioContext) {
         //TODO inserire scelta interno esterno
         let isInterior = false;
         let material = isInterior ? 'grass' : 'transparent';
 
-        let resonanceAudioScene = new ResonanceAudio(this.state.audioContext);
-
-        resonanceAudioScene.output.connect(this.state.audioContext.destination);
+        this.state.resonanceAudioScene = new ResonanceAudio(audioContext);
+        this.state.resonanceAudioScene.output.connect(audioContext.destination);
         let roomDimensions = {
             width: 4,
             height: 4,
@@ -269,29 +250,26 @@ export default class DebugVRScene extends React.Component {
             down: material,
             up: material,
         };
-
-        resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
-        this.setState({
-            resonanceAudioScene: resonanceAudioScene
-        });
+        this.state.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
     }
 
     generateAudio(audioContext) {
 
-        //let audioElement = document.createElement('audio');
+        let audioElement = document.createElement('audio');
 
         //TODO add src from buble media
-        /*audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.props.scenes.get(this.props.currentScene).img;
+        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.props.scenes.get(this.props.currentScene).img;
         audioElement.crossOrigin = 'anonymous';
         audioElement.load();
         audioElement.loop = true;
         let audioElementSource = audioContext.createMediaElementSource(audioElement);
         let source = this.state.resonanceAudioScene.createSource();
-        audioElementSource.connect(source.input);*/
+        audioElementSource.connect(source.input);
     }
 
     updateAngles() {
         let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld
-        resonance.default.setListenerFromMatrix(cameraMatrix4)    }
+        this.state.resonanceAudioScene.setListenerFromMatrix(cameraMatrix4)
+    }
 
 }
