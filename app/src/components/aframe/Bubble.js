@@ -115,7 +115,6 @@ export default class Bubble extends Component
                             is3Dscene={is3Dscene} vertices={curve.vertices} visible={this.props.runState[curve.uuid].visible}/>
                 );
             }
-
         });
         let material = "depthTest: true; ";
         let active = 'active: false;';
@@ -126,35 +125,40 @@ export default class Bubble extends Component
             active = 'active: true; video: ' + scene.img;
             radius = 10;
             //TODO aggiungere modifiche audio
-            if(!this.props.editMode && this.props.resonanceAudioScene!=={} && this.props.audioContext !== undefined){
+            if(!this.props.editMode && !this.props.debugMode){
+                //Carico musica sottofondo
                 if(this.props.scene.music !== undefined && this.props.audios){
                     let music = this.props.audios[this.props.scene.music]
                     if(soundsHub[music.uuid] === undefined)
-                        soundsHub[music.uuid] = AudioManager.generateAudio(music, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
+                        soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
                     soundsHub[music.uuid].play()
-
-
                 }
+                //carico suoni ambientali
+                if(this.props.scene.sfx !== undefined && this.props.audios){
+                    let sfx = this.props.audios[this.props.scene.sfx]
+                    if(soundsHub[sfx.uuid] === undefined)
+                        soundsHub[sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0]);
+                    soundsHub[sfx.uuid].play()
+                }
+                //Carico audio incorporato nel video
                 if(this.props.isAudioOn){
                     if(soundsHub[this.props.scene.uuid] === undefined){
                         if(stores_utils.getFileType(scene.img) === 'video'){
                             let audioVideo = {}
                             audioVideo.file = this.props.scene.img;
                             audioVideo.loop = true;
-                            soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, this.props.resonanceAudioScene, this.props.audioContext, [0,0,0]);
+                            soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
                             soundsHub[this.props.scene.uuid].play()
                         }
                     }
                 }
 
             }
-
-
         }
+
         else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
         if(is3Dscene){
-            //camera.setAttribute("pac-look-controls", "planarScene: false");
 
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
@@ -169,7 +173,8 @@ export default class Bubble extends Component
             let canvasHeight = canvasWidth /1.77;
             //let canvasWidth = this.props.assetsDimention.width / 100;
             //let canvasHeight = this.props.assetsDimention.height / 100;
-            if(this.props.isActive){
+            positionPlane = "0, 1.6, -6.44";
+            /*if(this.props.isActive){
                 positionPlane = "0, 1.6, -6.44";
             } else {
                 let transizioneMomentanea = 'nulla';
@@ -190,7 +195,7 @@ export default class Bubble extends Component
                         positionPlane = "0, 1.6, -6.44";
                         break;
                 }
-            }
+            }*/
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}
@@ -320,6 +325,7 @@ export default class Bubble extends Component
         if(sky)
             sky.setAttribute('material', "shader:flat;");
     }
+
     componentWillUnmount(){
         delete document.querySelector('a-scene').systems.material.textureCache[this.props.scene.img];
         (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());

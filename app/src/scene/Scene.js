@@ -23,6 +23,7 @@ const Scene = Immutable.Record({
     type : Values.THREE_DIM,
     tag : 'default',
     music : null,
+    sfx: null,
     objects : {
         // uuid lists
         transitions: [],

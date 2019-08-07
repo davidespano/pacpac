@@ -6,7 +6,7 @@ import AudioManager from './AudioManager'
 const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
 //TODO trasformarlo in un componente React ... forse ...
-function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene', resonanceAudioScene, audioContext){
+function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene'){
         let currAssets = [];
         let sceneBackground;
 
@@ -48,10 +48,10 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
             if(mode === 'scene'){
                 Object.keys(obj.audio).map(k => {
                     //TODO a volte se esiste l'audio non è presente nella lista degli audio, verificare
-                    if(obj.audio[k] !== null && audios[obj.audio[k]] !== undefined){
+                    if(obj.audio[k] !== null  && audios[obj.audio[k]] !== undefined){
                         console.log(obj.audio[k])
                         let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj)
-                        soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], resonanceAudioScene, audioContext, audioPosition)
+                        soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], audioPosition)
                     }
                 });
             }
@@ -92,7 +92,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         //Creaizone traccia audio globali
         if(mode === 'scene') {
             scene.audios.forEach(audio => {
-                soundsHub["audios_" + audio.uuid] = AudioManager.generateAudio(audio, resonanceAudioScene, audioContext)
+                soundsHub["audios_" + audio.uuid] = AudioManager.generateAudio(audio)
             });
         }
         //third, push the media present in the actions

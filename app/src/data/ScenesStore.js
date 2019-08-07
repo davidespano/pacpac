@@ -35,6 +35,7 @@ class ScenesStore extends ReduceStore {
                             isAudioOn: scene.isAudioOn,
                             type : scene.type,
                             music : scene.music,
+                            sfx: scene.sfx,
                             tag : tag,
                             rules: [],
                             audios : [],

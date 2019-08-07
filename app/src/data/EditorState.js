@@ -43,14 +43,6 @@ const EditorState = Immutable.Record({
     isItNew: false,
     selectedAudioFile: null,
 
-    //audioVertices: null,
-    //isAudioSpatial: false,
-    //loopChecked: false,
-    //newAudioNameTyped: false,
-    //selectedSceneSpatialAudio: null,
-
-
-
 });
 
 export default EditorState;

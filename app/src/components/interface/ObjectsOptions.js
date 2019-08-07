@@ -178,20 +178,20 @@ function generateProperties(props){
  */
 function generateSpecificProperties(object, objectScene, props){
     let sceneType = objectScene.type;
-    let direction = null;
-    if(sceneType === Values.TWO_DIM){
-        direction = <React.Fragment>
-            <label className={'options-labels'}>Direzione:</label>
-            <Dropdown
-                props={props}
-                component={'direction'}
-                property={'direction'}
-                defaultValue={object.properties.direction}/>
-        </React.Fragment>;
-    }
 
     switch(object.type){
         case InteractiveObjectsTypes.TRANSITION:
+            let direction = null;
+            if(sceneType === Values.TWO_DIM){
+                direction = <React.Fragment>
+                    <label className={'options-labels'}>Direzione:</label>
+                    <Dropdown
+                        props={props}
+                        component={'direction'}
+                        property={'direction'}
+                        defaultValue={object.properties.direction}/>
+                </React.Fragment>;
+            }
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Durata:</label>

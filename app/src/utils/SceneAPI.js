@@ -120,6 +120,7 @@ function getByName(name, order = null) {
                    uuid: audio.uuid,
                    name: audio.name,
                    file: audio.file,
+                   volume: audio.volume,
                    isSpatial: audio.isSpatial,
                    scene: audio.scene,
                    loop: audio.loop,
@@ -142,6 +143,7 @@ function getByName(name, order = null) {
                 isAudioOn : response.body.isAudioOn,
                 tag : tag,
                 music: response.body.music,
+                sfx: response.body.sfx,
                 objects : {
                     transitions : transitions_uuids,
                     switches : switches_uuids,
@@ -347,13 +349,13 @@ async function getAllDetailedScenes(gameGraph) {
                 uuid: audio.uuid,
                 name: audio.name,
                 file: audio.file,
+                volume: audio.volume,
                 isSpatial: audio.isSpatial,
                 scene: audio.scene,
                 loop: audio.loop,
                 vertices: audio.vertices,
             })
         });
-        console.log(audios)
         // new Scene
         const newScene = ({ //Scene, not immutable
             uuid: s.uuid,
@@ -364,6 +366,7 @@ async function getAllDetailedScenes(gameGraph) {
             isAudioOn : s.isAudioOn,
             tag : s.tag,
             music : s.music,
+            sfx: s.sfx,
             objects : {
                 transitions : transitions,
                 switches : switches,
