@@ -48,7 +48,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
             if(mode === 'scene'){
                 Object.keys(obj.audio).map(k => {
                     //TODO a volte se esiste l'audio non è presente nella lista degli audio, verificare
-                    if(obj.audio[k] !== null && audios !== undefined && audios[obj.audio[k]] !== undefined){
+                    if(obj.audio[k] !== null  && audios[obj.audio[k]] !== undefined){
                         console.log(obj.audio[k])
                         let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj)
                         soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], audioPosition)

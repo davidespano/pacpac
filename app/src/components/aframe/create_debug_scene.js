@@ -18,6 +18,7 @@ import Values from '../../interactives/rules/Values';
 import 'aframe-mouse-cursor-component';
 import EditorState from "../../data/EditorState";
 import ActionTypes from "../../actions/ActionTypes";
+import AudioAPI from "../../utils/AudioAPI";
 
 const THREE = require('three');
 const eventBus = require('./eventBus');
@@ -48,7 +49,6 @@ export default class DebugVRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]",
             camera: {},
-            resonanceAudioScene: {}
         };
 
         //if(document.querySelector('link[href*="bootstrap"]'))
@@ -70,6 +70,8 @@ export default class DebugVRScene extends React.Component {
     }
 
     async loadEverything() {
+        let audios = [];
+        await AudioAPI.getAudios(audios);
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.props.currentScene];
@@ -79,6 +81,7 @@ export default class DebugVRScene extends React.Component {
             graph: gameGraph,
             activeScene: scene,
             runState: runState,
+            audios: audios
         });
         this.createRuleListeners();
 
@@ -218,8 +221,11 @@ export default class DebugVRScene extends React.Component {
     generateBubbles() {
         return this.currentLevel.map(sceneName => {
             let scene = this.state.graph.scenes[sceneName];
+            //this.props.currentObject !== null
+            console.log(this.props.currentObject)
+            console.log(this.props.currentScene)
             return (
-                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.currentObject !== null}
+                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
                         key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
                         runState={this.state.runState}
@@ -227,44 +233,6 @@ export default class DebugVRScene extends React.Component {
                 />
             );
         });
-    }
-
-    generateRoom(audioContext) {
-        //TODO inserire scelta interno esterno
-        let isInterior = false;
-        let material = isInterior ? 'grass' : 'transparent';
-
-        this.state.resonanceAudioScene = new ResonanceAudio(audioContext);
-        this.state.resonanceAudioScene.output.connect(audioContext.destination);
-        let roomDimensions = {
-            width: 4,
-            height: 4,
-            depth: 4,
-        };
-        let roomMaterials = {
-            // Room wall materials
-            left: material,
-            right: material,
-            front: material,
-            back: material,
-            down: material,
-            up: material,
-        };
-        this.state.resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
-    }
-
-    generateAudio(audioContext) {
-
-        let audioElement = document.createElement('audio');
-
-        //TODO add src from buble media
-        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + this.props.scenes.get(this.props.currentScene).img;
-        audioElement.crossOrigin = 'anonymous';
-        audioElement.load();
-        audioElement.loop = true;
-        let audioElementSource = audioContext.createMediaElementSource(audioElement);
-        let source = this.state.resonanceAudioScene.createSource();
-        audioElementSource.connect(source.input);
     }
 
     updateAngles() {

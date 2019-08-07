@@ -12,12 +12,11 @@ function generateAudio(audio, position=null) {
     audioElement.load();
     audioElement.loop = audio.loop;
 
-    //let audioElementSource = audioContext.createMediaElementSource(audioElement);
-    //let source = resonance.createSource();
     let audioElementSource = resonanceee.default._context.createMediaElementSource(audioElement);
     let source = resonanceee.default.createSource();
     audioElementSource.connect(source.input);
     source.setPosition(audioPosition);
+    source.setGain(audio.volume/100)
 
     return audioElement;
 }
