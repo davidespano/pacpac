@@ -23,6 +23,7 @@ function Dropdown(properties){
             className={'react-select react-select-' + component}
             styles={style}
             isDisabled={ properties.disabled ? properties.disabled : false}
+            menuPlacement={'auto'}
         />
     );
 }

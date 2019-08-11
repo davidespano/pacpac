@@ -143,7 +143,6 @@ div.rules{
 }
 
 .scene{
-    display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
@@ -1405,7 +1404,7 @@ input.eudObjectString[type=text] {
 }
 
 .rule-editor h2 {
-    font-size: 14pt;
+    font-size: 1.1em;
     font-weight: bold;
 }
 
@@ -1737,8 +1736,8 @@ h6 {
     transition: opacity .2s;
 }
 
-.rightbar-footer {
-    height: 300px;
+.rightbar-footer{
+    height: 100px;
 }
 
 
