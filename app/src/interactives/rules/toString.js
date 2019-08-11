@@ -25,8 +25,12 @@ function eventTypeToString(eventType) {
             return 'diventa';
         case RuleActionTypes.PLAY_AUDIO:
             return 'riproduce';
+        case RuleActionTypes.PLAY_AUDIO_LOOP:
+            return 'riproduce in loop';
         case RuleActionTypes.STOP_AUDIO:
             return 'interrompe';
+        case RuleActionTypes.LOOK_AT:
+            return 'osserva';
         default:
             return "";
     }

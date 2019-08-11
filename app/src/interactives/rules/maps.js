@@ -121,6 +121,16 @@ const RuleActionMap = Immutable.Map([
         },
     ],
     [
+        RuleActionTypes.PLAY_AUDIO_LOOP,
+        {
+            type: "operation",
+            subj_type: [Values.THREE_DIM, Values.TWO_DIM],
+            obj_type: ['audio'],
+            name: toString.eventTypeToString(RuleActionTypes.PLAY_AUDIO_LOOP),
+            uuid: RuleActionTypes.PLAY_AUDIO_LOOP,
+        },
+    ],
+    [
         RuleActionTypes.STOP_AUDIO,
         {
             type: "operation",
@@ -128,6 +138,16 @@ const RuleActionMap = Immutable.Map([
             obj_type: ['audio'],
             name: toString.eventTypeToString(RuleActionTypes.STOP_AUDIO),
             uuid: RuleActionTypes.STOP_AUDIO,
+        },
+    ],
+    [
+        RuleActionTypes.LOOK_AT,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [InteractiveObjectsTypes.POINT_OF_INTEREST],
+            name: toString.eventTypeToString(RuleActionTypes.LOOK_AT),
+            uuid: RuleActionTypes.LOOK_AT
         },
     ],
 

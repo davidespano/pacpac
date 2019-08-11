@@ -7,6 +7,7 @@ const InteractiveObjectsTypes = {
     KEYPAD : 'KEYPAD',
     LOCK : 'LOCK',
     PLAYER : 'PLAYER',
+    POINT_OF_INTEREST: 'POINT_OF_INTEREST',
     SELECTOR : 'SELECTOR',
     SWITCH : 'SWITCH',
     TIMER : 'TIMER',
