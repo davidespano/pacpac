@@ -555,6 +555,10 @@ div.rules{
     max-width: 50px;
 }
 
+figcaption {
+    padding-top: 5px;
+}
+
 .node_element{
     position: relative;
 }
@@ -660,7 +664,7 @@ div.rules{
 .nav-tab-rightbar {
     width: 100%;
     text-align: center;
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: bold;
     cursor: pointer;
 }

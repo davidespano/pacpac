@@ -246,6 +246,8 @@ function generateSpecificProperties(object, objectScene, props){
                     </select>*/}
                 </div>
             );
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return null;
         case InteractiveObjectsTypes.KEYPAD:
             return(
                 <div className={"options-grid"}>
@@ -406,6 +408,8 @@ function objectTypeToString(objectType) {
             return "Oggetto";
         case InteractiveObjectsTypes.LOCK:
             return "Serratura";
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return "Punto di interesse"
         case InteractiveObjectsTypes.SELECTOR:
             return "Selettore";
         case InteractiveObjectsTypes.SWITCH:
@@ -431,6 +435,8 @@ function findImg(object) {
             return "icons/icons8-key-100.png";
         case InteractiveObjectsTypes.TRANSITION:
             return "icons/icons8-one-way-transition-100.png";
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return "icons/icons8-point-96.png";
         default:
             return "icons/icons8-plus-math-filled-100.png";
     }

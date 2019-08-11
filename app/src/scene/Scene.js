@@ -32,6 +32,7 @@ const Scene = Immutable.Record({
         collectable_keys: [],
         locks: [],
         keypads: [],
+        points: [],
     },
     rules : [], // uuid list
     audios : [], // uuid list

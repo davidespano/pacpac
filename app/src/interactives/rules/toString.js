@@ -30,7 +30,7 @@ function eventTypeToString(eventType) {
         case RuleActionTypes.STOP_AUDIO:
             return 'interrompe';
         case RuleActionTypes.LOOK_AT:
-            return 'osserva';
+            return 'guarda';
         default:
             return "";
     }
@@ -50,6 +50,9 @@ function objectTypeToString(objectType) {
             break;
         case InteractiveObjectsTypes.LOCK:
             type = "la serratura";
+            break;
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            type = "il punto";
             break;
         case InteractiveObjectsTypes.SELECTOR:
             type = "il selettore";

@@ -110,8 +110,6 @@ function SceneOptions(props){
 function getVideoOptions(currentScene, sceneOptions, props){
     let type = stores_utils.getFileType(currentScene.img);
 
-    console.log('AUDIO:' + sceneOptions.isAudioOn + ' VIDEO:' + sceneOptions.isVideoInALoop);
-
     if(type === 'video'){
         let isAudioOn = sceneOptions.isAudioOn;
         let isVideoInALoop = sceneOptions.isVideoInALoop;

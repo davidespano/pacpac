@@ -90,9 +90,17 @@ function generateDefaultRule(object){
                 })]),
             });
             break;
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            r = Rule({
+                uuid: uuid.v4(),
+                event: Action({}),
+                actions: Immutable.List(),
+            });
+            break;
         case InteractiveObjectsTypes.KEYPAD:
             r = Rule({
                 uuid: uuid.v4(),
+                event: Action({}),
                 actions: Immutable.List(),
             });
             break;

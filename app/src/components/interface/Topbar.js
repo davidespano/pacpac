@@ -15,6 +15,7 @@ import AudioForm from "./AudioForm";
 import StoriesViewer from "./StoriesViewer";
 import Keypad from "../../interactives/Keypad";
 import InputSaveForm from "./InputSaveForm";
+import PointOfInterest from "../../interactives/PointOfInterest";
 
 
 let uuid = require('uuid');
@@ -87,34 +88,41 @@ function TopBar(props){
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.TRANSITION);
                                 }}>
-                            <img src={"icons/icons8-add-one-way-transition-100.png"}/>
+                            <img src={"icons/icons8-one-way-transition-100.png"}/>
                             <figcaption>Transizione</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.SWITCH);
                                 }}>
-                            <img src={"icons/icons8-add-toggle-on-filled-100.png"}/>
+                            <img src={"icons/icons8-toggle-on-filled-100.png"}/>
                             <figcaption>Interruttore</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
-                            onClick={() => {
-                                createObject(props, InteractiveObjectsTypes.KEY);
-                             }}>
-                            <img src={"icons/icons8-key-2-100.png"}/>
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.KEY);
+                                }}>
+                            <img src={"icons/icons8-key-100.png"}/>
                             <figcaption>Chiave</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.LOCK);
                                 }}>
-                            <img src={"icons/icons8-add-lock-100.png"}/>
+                            <img src={"icons/icons8-lock-100.png"}/>
                             <figcaption>Lucchetto</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.POINT_OF_INTEREST);
+                                }}>
+                            <img src={"icons/icons8-point-96.png"}/>
+                            <figcaption>Punto di interesse</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 style={{opacity: 0.3, cursor: 'auto'}}
                         >
-                            <img src={"icons/icons8-add-keypad-50.png"}/>
+                            <img src={"icons/icons8-keypad-50.png"}/>
                             <figcaption>Tastierino</figcaption>
                         </figure>
                     </div>
@@ -214,6 +222,13 @@ function createObject(props, type){
                 obj = Lock ({
                     uuid : uuid.v4(),
                     name : name,
+                });
+                break;
+            case InteractiveObjectsTypes.POINT_OF_INTEREST:
+                name = scene.name + '_pi' + (scene.objects.points.length + 1);
+                obj = PointOfInterest({
+                    uuid: uuid.v4(),
+                    name: name,
                 });
                 break;
             case InteractiveObjectsTypes.KEYPAD:
