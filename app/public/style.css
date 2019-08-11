@@ -518,7 +518,7 @@ div.rules{
 
 .nav-item {
     height: 50px;
-    font-size: 1.2em !important;
+    font-size: 1em !important;
     font-weight: bold;
 }
 
@@ -1099,7 +1099,7 @@ li > span {
     left: 0;
 }
 
-.hide-tags {
+.hide-tags, .hide {
     display: none;
 }
 

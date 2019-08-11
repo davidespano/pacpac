@@ -88,14 +88,12 @@ function list(props, path) {
                     alt={child.name}
                     title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                     onClick={() => {
-                        if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON)
                             props.updateCurrentScene(child.uuid);
                     }}
                     style={s}
                 />
                 <div className={'list-labels'}
                      onClick={() => {
-                         if (props.editor.mode !== ActionTypes.DEBUG_MODE_ON)
                              props.updateCurrentScene(child.uuid);
                      }}
                 >

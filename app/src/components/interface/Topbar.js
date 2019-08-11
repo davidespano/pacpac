@@ -40,12 +40,15 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
                        aria-controls="nav-story-editor" aria-selected="false"
                        onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
-                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
-                       aria-controls="nav-play" aria-selected="false"
-                       onClick={() => {props.switchToPlayMode()}} >Play</a>
                     <a className="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" role="tab" href="#nav-debug"
                        aria-controls="nav-debug" aria-selected="false"
                        onClick={() => {handleDebugMode(props)}} >Debug</a>
+                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
+                       aria-controls="nav-play" aria-selected="false"
+                       onClick={() => {props.switchToPlayMode()}} >Play <img src={'icons/icons8-play-50.png'}
+                                                                             alt={'avvia gioco'}
+                                                                             className={'action-buttons'}/>
+                    </a>
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">
@@ -77,7 +80,8 @@ function TopBar(props){
                         </figure>
                     </div>
                 </div>
-                <div className="tab-pane fade" id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
+                <div className={"tab-pane fade " + displayNavbar(props.editor)}
+                     id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
                                 onClick={() => {
@@ -115,7 +119,8 @@ function TopBar(props){
                         </figure>
                     </div>
                 </div>
-                <div className="tab-pane fade show active flex-container" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
+                <div className={"tab-pane fade flex-container " + displayDebug(props.editor)}
+                     id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
                                 data-toggle="modal" data-target="#save-modal">
@@ -129,6 +134,14 @@ function TopBar(props){
             </div>
         </div>
     );
+}
+
+function displayDebug(editor){
+    return editor.mode === ActionTypes.DEBUG_MODE_ON ? 'active' : 'hide';
+}
+
+function displayNavbar(editor){
+    return editor.mode !== ActionTypes.DEBUG_MODE_ON ? 'active' : 'hide';
 }
 
 /*
