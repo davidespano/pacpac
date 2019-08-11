@@ -21,6 +21,7 @@ function RightBar(props){
     return(
         <div className={'rightbar'}>
         	{view(props)}
+        	<div className={'rightbar-footer'}> </div>
         </div>
     );
 }

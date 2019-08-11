@@ -1737,5 +1737,9 @@ h6 {
     transition: opacity .2s;
 }
 
+.rightbar-footer {
+    height: 300px;
+}
+
 
 /********* END debug css ************/
