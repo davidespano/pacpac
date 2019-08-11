@@ -26,15 +26,16 @@ const EditorState = Immutable.Record({
     role: null,
     scenesOrder: Orders.CHRONOLOGICAL,
     scenesNameFilter: '',
-    sceneNameRightbar: null,
     selectedFile: null,
     selectedMediaToEdit: null,
     selectedTagNewScene: 'default',
     soundActiveFormChecked: false,
-    soundActiveRightbarChecked: false,
     tagFilter: '',
     user: null,
 
+    //scene options
+
+    sceneOptions: null,
 
     //audio form
 

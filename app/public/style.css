@@ -270,12 +270,12 @@ div.rules{
 }
 
 .rightbar > a, .leftbar > a{
-    font-size: 20px;
+    font-size: 1em;
 
 }
 
 .rightbar > div, .leftbar > div{
-    font-size: 15px;
+    font-size: 0.85em;
 }
 
 

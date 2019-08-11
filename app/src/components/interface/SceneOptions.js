@@ -14,11 +14,10 @@ function SceneOptions(props){
         component : 'rightbar',
     };
 
-    let checked = props.editor.soundActiveRightbarChecked;
-
-
     if(props.currentScene){
-        let scene = props.scenes.get(props.currentScene);
+        let currentScene = props.scenes.get(props.currentScene);
+        let sceneOptions = props.editor.sceneOptions;
+
         return(
             <div className={'currentOptions'}>
                 <div>
@@ -27,7 +26,7 @@ function SceneOptions(props){
                             title={"Elimina la scena corrente"}
                             className={"action-buttons-container"}
                             onClick={() => {
-                                checkAndRemoveScene(props, scene);
+                                checkAndRemoveScene(props, currentScene);
                             }}
                         >
                             <img className={"action-buttons scene-buttons-img"} src={"icons/icons8-waste-50.png"}/>
@@ -38,18 +37,16 @@ function SceneOptions(props){
                 <div className={'rightbar-grid'}>
                     <input id={"sceneName"}
                            className={"propertyForm rightbar-box"}
-                           value={props.editor.sceneNameRightbar}
+                           value={sceneOptions.name}
                            maxLength={50}
-                           minLength={1}
                            onChange={(e) => {
                                let value = e.target.value;
-                               if(value !== ''){
-                                   props.updateSceneNameRightbar(value);
-                               }
+                               sceneOptions = sceneOptions.set('name', value);
+                               props.updateSceneOptions(sceneOptions);
                            }}
                            onBlur={() => {
-                               if(scene.name !== props.editor.sceneNameRightbar){
-                                   scene_utils.setProperty(scene, 'name', props.editor.sceneNameRightbar, props);
+                               if(sceneOptions.name !== currentScene.name && sceneOptions.name !== ''){
+                                   scene_utils.setProperty(currentScene, 'name', sceneOptions.name, props);
                                }
                            }}
                     />
@@ -57,7 +54,7 @@ function SceneOptions(props){
                         <Dropdown props={props}
                                   component={'scene-type'}
                                   property={'type'}
-                                  defaultValue={scene.type}/>
+                                  defaultValue={sceneOptions.type}/>
                     </div>
                 </div>
                 <label className={'rightbar-titles'}>Etichetta</label>
@@ -75,35 +72,26 @@ function SceneOptions(props){
                 <label htmlFor={'select-file-scene'} className={'rightbar-titles'}>File</label>
                 <div className={'rightbar-grid'}>
                     <div id={'select-file-scene'}>
-                        <p className={'file-selected-name propertyForm ellipsis-no-inline'}>{scene.img}</p>
+                        <p className={'file-selected-name propertyForm ellipsis-no-inline'}>{sceneOptions.img}</p>
                     </div>
                     <FileSelectionBtn {...properties} />
-                    <div className={'rightbar-checkbox'}>
-                        <input type={'checkbox'} className={'checkbox-audio-form'}
-                               id={'sound-active-rightbar-checkbox'} checked={checked}
-                               onChange={() => {
-                                   props.soundActiveRightbarCheck(!checked);
-                                   scene_utils.setProperty(scene, 'isAudioOn',!checked, props);
-                               }}
-                        />
-                        <label htmlFor={'sound-active-rightbar-checkbox'}>Riproduci l'audio del file</label>
-                    </div>
+                    {getVideoOptions(currentScene, sceneOptions, props)}
                 </div>
                 <label className={'rightbar-titles'}>Audio spaziali</label>
-                {spatialAudioList(props, scene)}
+                {spatialAudioList(props, currentScene)}
                 <label className={'rightbar-titles'}>Musica di sottofondo</label>
                 <Dropdown
                     props={props}
                     component={'music'}
                     property={'music'}
-                    defaultValue={scene.music}
+                    defaultValue={currentScene.music}
                 />
                 <label className={'rightbar-titles'}>Effetti sonori d'ambiente</label>
                 <Dropdown
                     props={props}
                     component={'sfx'}
                     property={'sfx'}
-                    defaultValue={scene.sfx}
+                    defaultValue={currentScene.sfx}
                 />
             </div>
         );
@@ -114,6 +102,46 @@ function SceneOptions(props){
     }
 }
 
+/**
+ * If the scene file is a video, returns video options
+ * @param currentScene
+ * @param sceneOptions
+ */
+function getVideoOptions(currentScene, sceneOptions, props){
+    let type = stores_utils.getFileType(currentScene.img);
+
+    console.log('AUDIO:' + sceneOptions.isAudioOn + ' VIDEO:' + sceneOptions.isVideoInALoop);
+
+    if(type === 'video'){
+        let isAudioOn = sceneOptions.isAudioOn;
+        let isVideoInALoop = sceneOptions.isVideoInALoop;
+        return <React.Fragment>
+            <div className={'rightbar-checkbox'}>
+                <input type={'checkbox'} className={'checkbox-audio-form'}
+                       id={'sound-active-rightbar-checkbox'} checked={isAudioOn}
+                       onChange={() => {
+                           sceneOptions = sceneOptions.set('isAudioOn', !isAudioOn);
+                           props.updateSceneOptions(sceneOptions);
+                           scene_utils.setProperty(currentScene, 'isAudioOn',!isAudioOn, props);
+                       }}
+                />
+                <label htmlFor={'sound-active-rightbar-checkbox'}>Riproduci l'audio</label>
+                <div> </div>
+                <input type={'checkbox'} className={'checkbox-audio-form'}
+                       id={'video-loop-rightbar-checkbox'} checked={isVideoInALoop}
+                       onChange={() => {
+                           sceneOptions = sceneOptions.set('isVideoInALoop', !isVideoInALoop);
+                           props.updateSceneOptions(sceneOptions);
+                           scene_utils.setProperty(currentScene, 'isVideoInALoop',!isVideoInALoop, props);
+                       }}
+                />
+                <label htmlFor={'video-loop-rightbar-checkbox'}>Riproduci in loop</label>
+            </div>
+        </React.Fragment>
+    }
+
+    return null;
+}
 
 /**
  * Generates spatial audio list

@@ -33,6 +33,7 @@ class ScenesStore extends ReduceStore {
                             img : scene.img,
                             index : scene.index,
                             isAudioOn: scene.isAudioOn,
+                            isVideoInALoop: scene.isVideoInALoop,
                             type : scene.type,
                             music : scene.music,
                             sfx: scene.sfx,

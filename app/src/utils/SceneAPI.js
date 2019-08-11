@@ -141,6 +141,7 @@ function getByName(name, order = null) {
                 type : response.body.type,
                 index : response.body.index,
                 isAudioOn : response.body.isAudioOn,
+                isVideoInALoop: response.body.isVideoInALoop,
                 tag : tag,
                 music: response.body.music,
                 sfx: response.body.sfx,
@@ -208,6 +209,7 @@ function createScene(name, img, index, type, tag, order) {
  * @param scene
  */
 function updateScene(scene, tag) {
+    console.log(tag)
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -364,6 +366,7 @@ async function getAllDetailedScenes(gameGraph) {
             type : s.type,
             index : s.index,
             isAudioOn : s.isAudioOn,
+            isVideoInALoop: s.isVideoInALoop,
             tag : s.tag,
             music : s.music,
             sfx: s.sfx,
