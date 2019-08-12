@@ -328,9 +328,9 @@ async function getAllDetailedScenes(gameGraph) {
         });
 
         // generates points
-        const points = s.points.map((point) => {
+        /*const points = s.points.map((point) => {
             return (getProperties(point));
-        });
+        });*/
 
 
 
@@ -395,7 +395,7 @@ async function getAllDetailedScenes(gameGraph) {
                 switches : switches,
                 collectable_keys: keys,
                 locks : locks,
-                points: points,
+                //points: points,
                 //keypads: keypads,
             },
             rules : rules,

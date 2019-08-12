@@ -9,11 +9,12 @@ const {mediaURL} = settings;
 function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene'){
         let currAssets = [];
         let sceneBackground;
-
+        //TODO verificare, se non impostato risulta undefined
+        let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
         //first, push the background media.
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
-                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={true}  preload="auto"
+                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={loop}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + srcBackground}
                        playsInline={true} autoPlay muted={true}
                 />)

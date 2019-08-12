@@ -16,6 +16,7 @@ function generateAudio(audio, position=null) {
     let source = resonanceee.default.createSource();
     audioElementSource.connect(source.input);
     source.setPosition(audioPosition);
+    console.log(audio.volume)
     source.setGain(audio.volume/100)
 
     return audioElement;
