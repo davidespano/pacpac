@@ -61,7 +61,8 @@ export default class Bubble extends Component
                 });
             })
         }else{
-            if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
+            //if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
+            this.setShader();
         }
 
         // Check forzare l'aggiornamento della camera nella nuova scena se passo da 2D a 3D o viceverse
@@ -136,17 +137,21 @@ export default class Bubble extends Component
                 //carico suoni ambientali
                 if(this.props.scene.sfx !== undefined && this.props.audios){
                     let sfx = this.props.audios[this.props.scene.sfx]
-                    if(soundsHub[sfx.uuid] === undefined)
+                    if(soundsHub[sfx.uuid] === undefined){
+                        sfx.volume = 50;
                         soundsHub[sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0]);
+                    }
+
                     soundsHub[sfx.uuid].play()
                 }
                 //Carico audio incorporato nel video
                 if(this.props.isAudioOn){
                     if(soundsHub[this.props.scene.uuid] === undefined){
                         if(stores_utils.getFileType(scene.img) === 'video'){
-                            let audioVideo = {}
+                            let audioVideo = {};
+                            let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
                             audioVideo.file = this.props.scene.img;
-                            audioVideo.loop = true;
+                            audioVideo.loop = loop;
                             soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
                             soundsHub[this.props.scene.uuid].play()
                         }
@@ -318,12 +323,15 @@ export default class Bubble extends Component
     }
 
     resetShader(sky){
+
         //TODO [debug] add to origin master
         if(sky && sky.getAttribute('material').shader !== 'multi-video'){
             return;
         }
-        if(sky)
+        if(sky){
             sky.setAttribute('material', "shader:flat;");
+        }
+
     }
 
     componentWillUnmount(){

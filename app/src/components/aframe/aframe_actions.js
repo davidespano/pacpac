@@ -25,9 +25,9 @@ function executeAction(VRScene, rule, action){
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
-
         }
     });
+
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -139,6 +139,7 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.COLLECT_KEY:
             changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.obj_uuid);
+            console.log('raccolgo')
             /*runState[action.obj_uuid].state='COLLECTED';
             let audioKey = current_object.audio.audio0;
             if(soundsHub['audio0_' + audioKey])
@@ -161,11 +162,22 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});*/
             break;
         case RuleActionTypes.CHANGE_VISIBILITY:
-            let obj = document.querySelector('#curv' + action.subj_uuid)
+            let obj = document.querySelector('#curv' + action.subj_uuid);
+            let mediaObj = document.querySelector('#media_' + action.subj_uuid);
             if(obj)
-                obj.setAttribute('selectable', {visible: action.obj_uuid})
+                obj.setAttribute('selectable', {visible: action.obj_uuid});
+            console.log(mediaObj)
             runState[action.subj_uuid].visible=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
+            break;
+        case RuleActionTypes.PLAY_AUDIO_LOOP:
+            //TODO perché play_audio?
+            let actualVideoLoop = document.getElementById(actual_sceneimg);
+            if(actualVideoLoop.nodeName === 'VIDEO') actualVideoLoop.setAttribute('loop', 'true');
+            break;
+        case RuleActionTypes.LOOK_AT:
+            //TODO capire se si può cambiare punto di vista piano
+            lookObject(action.subj_uuid);
             break;
         default:
             console.log('not yet implemented');
@@ -338,6 +350,7 @@ function lookObject(idObject){
  * @param action_uuid
  */
 function changeStateObject(VRScene, runState, game_graph, state, current_object, action_uuid){
+    //console.log(current_object)
     runState[action_uuid].state=state;
     let audioKey = current_object.audio.audio0;
     if(soundsHub['audio0_' + audioKey])
