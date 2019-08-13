@@ -328,7 +328,7 @@ async function getAllDetailedScenes(gameGraph) {
         });
 
         // generates points
-        /*const points = s.points.map((point) => {
+        const points = !s.points? [] : s.points.map((point) => {
             return (getProperties(point));
         });*/
 

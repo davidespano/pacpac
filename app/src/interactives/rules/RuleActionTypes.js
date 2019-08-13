@@ -12,9 +12,9 @@ const RuleActionTypes = {
     LOOK_AT: 'LOOK_AT',
     OFF : 'OFF',
     ON : 'ON',
-    PLAY_AUDIO: 'PLAY_AUDIO',
-    PLAY_AUDIO_LOOP: 'PLAY_AUDIO_LOOP',
-    STOP_AUDIO: 'STOP_AUDIO',
+    PLAY: 'PLAY',
+    PLAY_LOOP: 'PLAY_LOOP',
+    STOP: 'STOP',
     TRANSITION : 'TRANSITION',
     UNLOCK_LOCK: 'UNLOCK_LOCK',
 };

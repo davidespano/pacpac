@@ -23,11 +23,11 @@ function eventTypeToString(eventType) {
             return 'cambia stato a';
         case RuleActionTypes.CHANGE_VISIBILITY:
             return 'diventa';
-        case RuleActionTypes.PLAY_AUDIO:
+        case RuleActionTypes.PLAY:
             return 'riproduce';
-        case RuleActionTypes.PLAY_AUDIO_LOOP:
+        case RuleActionTypes.PLAY_LOOP:
             return 'riproduce in loop';
-        case RuleActionTypes.STOP_AUDIO:
+        case RuleActionTypes.STOP:
             return 'interrompe';
         case RuleActionTypes.LOOK_AT:
             return 'guarda';
