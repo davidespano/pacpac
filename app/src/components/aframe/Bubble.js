@@ -223,7 +223,7 @@ export default class Bubble extends Component
             }
             //TODO [debug] add to origin master
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
-                if (this.props.isActive ) document.getElementById(scene.img).play();
+                if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
                 return;
             }
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;

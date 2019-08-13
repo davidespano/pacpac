@@ -131,7 +131,28 @@ function executeAction(VRScene, rule, action){
             if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
             break;
         case RuleActionTypes.PLAY_AUDIO:
-            soundsHub["audios_"+ media].play();
+            //verifico se è un video
+            if(document.querySelector('media_' + media) !== null){
+                let actualVideoLoop = document.querySelector('media_' + media);
+                if(actualVideoLoop.nodeName === 'VIDEO') actualVideoLoop.setAttribute('loop', 'false');
+            } else {
+                if(soundsHub["audios_"+ media]){
+                    soundsHub["audios_"+ media].loop = false;
+                    soundsHub["audios_"+ media].play();
+                }
+            }
+
+            break;
+        case RuleActionTypes.PLAY_AUDIO_LOOP:
+            if(document.querySelector('media_' + media) !== null){
+                let actualVideoLoop = document.querySelector('media_' + media);
+                if(actualVideoLoop.nodeName === 'VIDEO') actualVideoLoop.setAttribute('loop', 'true');
+            } else {
+                if(soundsHub["audios_"+ media]){
+                    soundsHub["audios_"+ media].loop = true;
+                    soundsHub["audios_"+ media].play();
+                }
+            }
             break;
         case RuleActionTypes.STOP_AUDIO:
             if(soundsHub["audios_"+ media])
@@ -139,27 +160,9 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.COLLECT_KEY:
             changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.obj_uuid);
-            console.log('raccolgo')
-            /*runState[action.obj_uuid].state='COLLECTED';
-            let audioKey = current_object.audio.audio0;
-            if(soundsHub['audio0_' + audioKey])
-                soundsHub['audio0_' + audioKey].play();
-            game_graph.scenes[actual_scene_Uuid].objects.collectable_keys =
-                game_graph.scenes[actual_scene_Uuid].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
-            if(current_object.media0 !== null){
-                document.getElementById(actual_scene).needShaderUpdate = true;
-            }
-            VRScene.setState({runState: runState, graph: game_graph});*/
             break;
         case RuleActionTypes.UNLOCK_LOCK:
             changeStateObject(VRScene, runState, game_graph, 'UNLOCKED', current_object, action.obj_uuid);
-            /*runState[action.obj_uuid].state='UNLOCKED';
-            let audioLock = current_object.audio.audio0;
-            if(soundsHub['audio0_' + audioLock])
-                soundsHub['audio0_' + audioLock].play();
-            game_graph.scenes[actual_scene_Uuid].objects.locks =
-                game_graph.scenes[actual_scene_Uuid].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
-            VRScene.setState({runState: runState, graph: game_graph});*/
             break;
         case RuleActionTypes.CHANGE_VISIBILITY:
             let obj = document.querySelector('#curv' + action.subj_uuid);
@@ -169,11 +172,6 @@ function executeAction(VRScene, rule, action){
             console.log(mediaObj)
             runState[action.subj_uuid].visible=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
-            break;
-        case RuleActionTypes.PLAY_AUDIO_LOOP:
-            //TODO perché play_audio?
-            let actualVideoLoop = document.getElementById(actual_sceneimg);
-            if(actualVideoLoop.nodeName === 'VIDEO') actualVideoLoop.setAttribute('loop', 'true');
             break;
         case RuleActionTypes.LOOK_AT:
             //TODO capire se si può cambiare punto di vista piano
@@ -230,10 +228,6 @@ function transition(actualScene, targetScene, duration, direction){
             positionActual = "0, 1.6, -6.44";
             break;
     }
-    console.log('transizione')
-    console.log(positionTarget)
-    console.log(positionActual)
-    console.log(direction)
     if(targetScene.type === Values.TWO_DIM) targetSky.setAttribute('position', positionTarget);
 
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
@@ -350,7 +344,6 @@ function lookObject(idObject){
  * @param action_uuid
  */
 function changeStateObject(VRScene, runState, game_graph, state, current_object, action_uuid){
-    //console.log(current_object)
     runState[action_uuid].state=state;
     let audioKey = current_object.audio.audio0;
     if(soundsHub['audio0_' + audioKey])
