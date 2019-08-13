@@ -109,8 +109,8 @@ div.rules{
 
 .topbar{
     box-sizing: border-box;
-    height: 20vh !important;
     min-height: 120px;
+    max-height: 160px;
 }
 
 .grid-container > div {
@@ -171,9 +171,7 @@ div.rules{
 
 .list-img, .list-video {
     width: 100%;
-    max-width: 150px;
-    max-height: 75px;
-    position: relative;
+    height: 100%;
 }
 
 .list-img:hover, .nav-figures:hover {
@@ -379,16 +377,19 @@ div.rules{
 }
 
 .node_element{
+    position: relative;
     display: inline-block;
     margin-bottom: 10px;
     width: 80%;
 }
-
+/*
 .node_element > label{
     display: inline-block;
     font-size: 25px;
     font-family: Arial, sans-serif;
 }
+*/
+
 
 .btn{
     color: #FFFFFF;
@@ -560,11 +561,8 @@ figcaption {
     padding-top: 5px;
 }
 
-.node_element{
-    position: relative;
-}
 
-.list-img, .list-video {
+.list-img {
     opacity: 1;
     transition: .1s ease;
     backface-visibility: hidden;
@@ -573,17 +571,14 @@ figcaption {
 .list-labels {
     opacity: 0;
     position: absolute;
-    max-width: 150px;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100%;
     text-align: center;
 }
 
 .list-labels {
     transition: .5s ease;
-    top: 6%;
-    left: 50%;
-    width: 100%;
 }
 
 .node_element:hover .list-img {
