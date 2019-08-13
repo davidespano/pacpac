@@ -21,6 +21,7 @@ function executeAction(VRScene, rule, action){
     let sceneName = action.subj_uuid;
     //TODO cambiare nome media non è il media
     let media = action.obj_uuid;
+    console.log(media)
     let cursor = document.querySelector('#cursor');
     Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
@@ -127,35 +128,51 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.CHANGE_BACKGROUND:
             runState[sceneName].background = media;
             VRScene.setState({runState: runState, game_graph: game_graph});
-            let targetSceneVideo = document.getElementById(actual_sceneimg);
+            if(soundsHub["audios_"+ actual_scene_Uuid]){
+                soundsHub["audios_"+ actual_scene_Uuid].pause();
+                let audioVideo = {};
+                audioVideo.file = media;
+                audioVideo.loop = soundsHub["audios_"+ actual_scene_Uuid].loop;
+                audioVideo.volume = 80;
+                soundsHub["audios_"+ actual_scene_Uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
+                soundsHub["audios_"+ actual_scene_Uuid].play()
+            }
+            let targetSceneVideo = document.getElementById(media);
             if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
             break;
-        case RuleActionTypes.PLAY_AUDIO:
+        case RuleActionTypes.PLAY:
             //verifico se è un video
-            if(document.querySelector('media_' + media) !== null){
-                let actualVideoLoop = document.querySelector('media_' + media);
-                if(actualVideoLoop.nodeName === 'VIDEO') actualVideoLoop.setAttribute('loop', 'false');
+            if(soundsHub["audios_"+ media]){
+                soundsHub["audios_"+ media].loop = false;
+                soundsHub["audios_"+ media].play();
             } else {
-                if(soundsHub["audios_"+ media]){
-                    soundsHub["audios_"+ media].loop = false;
-                    soundsHub["audios_"+ media].play();
-                }
-            }
-
-            break;
-        case RuleActionTypes.PLAY_AUDIO_LOOP:
-            if(document.querySelector('media_' + media) !== null){
-                let actualVideoLoop = document.querySelector('media_' + media);
-                if(actualVideoLoop.nodeName === 'VIDEO') actualVideoLoop.setAttribute('loop', 'true');
-            } else {
-                if(soundsHub["audios_"+ media]){
-                    soundsHub["audios_"+ media].loop = true;
-                    soundsHub["audios_"+ media].play();
+                if(document.getElementById(actual_sceneimg) !== null){
+                    let actualVideoLoop = document.getElementById(actual_sceneimg);
+                    if(actualVideoLoop.nodeName === 'VIDEO') {
+                        actualVideoLoop.loop = false;
+                        //document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true
+                    }
+                    //VRScene.setState({runState: runState, game_graph: game_graph});
                 }
             }
             break;
-        case RuleActionTypes.STOP_AUDIO:
-            if(soundsHub["audios_"+ media])
+        case RuleActionTypes.PLAY_LOOP:
+            //TODO rivedere questi controlli fanno un po' schifo
+            if(soundsHub["audios_"+ media]){
+                soundsHub["audios_"+ media].loop = false;
+                soundsHub["audios_"+ media].play();
+            } else {
+                if(document.getElementById(actual_sceneimg) !== null){
+                    let actualVideoLoop = document.getElementById(actual_sceneimg);
+                    if(actualVideoLoop.nodeName === 'VIDEO') {
+                        actualVideoLoop.loop = true;
+                    }
+                }
+            }
+            break;
+        case RuleActionTypes.STOP:
+            //TODO stoppare un video forse non ha senso, poi vediamo
+            if(soundsHub["audios_"+ media] && document.querySelector('media_' + media) === null)
                 soundsHub["audios_"+ media].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:

@@ -130,30 +130,31 @@ export default class Bubble extends Component
                 //Carico musica sottofondo
                 if(this.props.scene.music !== undefined && this.props.audios){
                     let music = this.props.audios[this.props.scene.music]
-                    if(soundsHub[music.uuid] === undefined)
-                        soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
-                    soundsHub[music.uuid].play()
+                    if(soundsHub["audios_"+ music.uuid] === undefined)
+                        soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
+                    soundsHub["audios_"+ music.uuid].play()
                 }
                 //carico suoni ambientali
                 if(this.props.scene.sfx !== undefined && this.props.audios){
                     let sfx = this.props.audios[this.props.scene.sfx]
-                    if(soundsHub[sfx.uuid] === undefined){
-                        sfx.volume = 50;
-                        soundsHub[sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0]);
+                    if(soundsHub["audios_"+ sfx.uuid] === undefined){
+                        //sfx.volume = 50;
+                        soundsHub["audios_"+ sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0]);
                     }
 
-                    soundsHub[sfx.uuid].play()
+                    soundsHub["audios_"+ sfx.uuid].play()
                 }
                 //Carico audio incorporato nel video
                 if(this.props.isAudioOn){
-                    if(soundsHub[this.props.scene.uuid] === undefined){
+                    if(soundsHub["audios_"+ this.props.scene.uuid] === undefined){
                         if(stores_utils.getFileType(scene.img) === 'video'){
                             let audioVideo = {};
                             let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
                             audioVideo.file = this.props.scene.img;
                             audioVideo.loop = loop;
-                            soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
-                            soundsHub[this.props.scene.uuid].play()
+                            audioVideo.volume = 50;
+                            soundsHub["audios_"+ this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
+                            soundsHub["audios_"+ this.props.scene.uuid].play()
                         }
                     }
                 }
