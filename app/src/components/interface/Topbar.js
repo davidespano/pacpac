@@ -81,7 +81,7 @@ function TopBar(props){
                         </figure>
                     </div>
                 </div>
-                <div className={"tab-pane fade " + displayNavbar(props.editor)}
+                <div className={"tab-pane fade"}
                      id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
@@ -127,7 +127,7 @@ function TopBar(props){
                         </figure>
                     </div>
                 </div>
-                <div className={"tab-pane fade flex-container " + displayDebug(props.editor)}
+                <div className={"tab-pane fade"}
                      id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
