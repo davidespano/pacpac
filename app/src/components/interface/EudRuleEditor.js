@@ -51,11 +51,13 @@ export default class EudRuleEditor extends Component {
             if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
+                        <div className={'eudBar'}>
+                            <h2>Regole della scena</h2>
+                        </div>
                         <div className={"rule-editor"}
                              onClick={() => {
                                  this.onOutsideClick();
                              }}>
-                            <h2>Regole della scena</h2>
                             {rulesRendering}
                         </div>
                     </div>
@@ -63,21 +65,22 @@ export default class EudRuleEditor extends Component {
             } else {
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
-                        <div className={"rule-editor"}
-                             onClick={() => {
-                                 this.onOutsideClick();
-                             }}>
+                        <div className={"eudBar"}>
                             <h2>Regole della scena</h2>
-                            {rulesRendering}
-                            <div className={'rules-footer'}></div>
-                        </div>
-                        <div className={"eudFloating"}>
                             <button className={"btn select-file-btn new-rule-btn"}
                                     onClick={() => {
                                         this.onNewRuleClick();
                                     }}>
+                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
                                 Nuova Regola
                             </button>
+                        </div>
+                        <div className={"rule-editor"}
+                             onClick={() => {
+                                 this.onOutsideClick();
+                             }}>
+                            {rulesRendering}
+                            <div className={'rules-footer'}></div>
                         </div>
                     </div>
                 </div>;
