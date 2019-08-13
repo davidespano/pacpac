@@ -1317,13 +1317,18 @@ input.eudObjectString[type=text] {
     background-color: white;
     text-align: center;
     position: relative;
-    height: 15%;
+    height: 8%;
+    min-height: 20px;
+    border-bottom: 1px solid darkgrey;
 }
 
 .eudBar > h2{
     font-size: 1em;
     font-weight: bold;
-    height: 100%;
+    position: absolute;
+    width: 100%;
+    top: 2px;
+    height: 80%;
     margin: 0 !important;
 }
 
@@ -1332,6 +1337,8 @@ input.eudObjectString[type=text] {
     position: absolute;
     top: 0;
     right: 5px;
+    min-height: 20px;
+    max-height: 100%;
 }
 
 
