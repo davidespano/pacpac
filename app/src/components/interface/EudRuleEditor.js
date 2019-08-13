@@ -312,6 +312,7 @@ class EudRule extends Component {
                             audios={this.props.audios}
                             rules={this.props.rules}
                             rule={rule}
+                            rulePartType={'action'}
                             action={action}
                             ruleEditorCallback={this.props.ruleEditorCallback}
                         />
@@ -347,6 +348,7 @@ class EudRule extends Component {
                     audios={this.props.audios}
                     rules={this.props.rules}
                     rule={rule}
+                    rulePartType={'event'}
                     action={rule.event}
                     ruleEditorCallback={this.props.ruleEditorCallback}
                 /><br/>
@@ -577,7 +579,7 @@ class EudAction extends Component {
                 interactiveObjects={this.props.interactiveObjects}
                 rules={this.props.rules}
                 rule={this.props.rule}
-                rulePartType={'action'}
+                rulePartType={this.props.rulePartType}
                 subject={subject}
                 complement={this.props.rule.object_uuid}
                 verb={this.props.action}
@@ -599,7 +601,7 @@ class EudAction extends Component {
             interactiveObjects={this.props.interactiveObjects}
             rules={this.props.rules}
             rule={this.props.rule}
-            rulePartType={'action'}
+            rulePartType={this.props.rulePartType}
             subject={subject}
             complement={this.props.rule.object_uuid}
             verb={this.props.action}
@@ -622,7 +624,7 @@ class EudAction extends Component {
                 interactiveObjects={this.props.interactiveObjects}
                 rules={this.props.rules}
                 rule={this.props.rule}
-                rulePartType={'action'}
+                rulePartType={this.props.rulePartType}
                 subject={subject}
                 complement={this.props.rule.object_uuid}
                 verb={this.props.action}
@@ -994,6 +996,16 @@ function getCompletions(props) {
 
     switch (props.role) {
         case "subject":
+            if(props.rulePartType === 'event'){
+                return Immutable.Map().set(
+                    InteractiveObjectsTypes.PLAYER,
+                    InteractiveObject({
+                        type: InteractiveObjectsTypes.PLAYER,
+                        uuid: InteractiveObjectsTypes.PLAYER,
+                        name: ""
+                    })
+                );
+            }
             let subjects = props.interactiveObjects.set(
                 InteractiveObjectsTypes.PLAYER,
                 InteractiveObject({
@@ -1015,6 +1027,11 @@ function getCompletions(props) {
 
             return allObjects;
         case "operation":
+            console.log(props.rulePartType)
+            if(props.rulePartType === 'event'){
+                console.log('evento')
+                return RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK);
+            }
             return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
         case "operator":
             return OperatorsMap;
