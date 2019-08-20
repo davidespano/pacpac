@@ -21,6 +21,9 @@ import PointOfInterest from "../../interactives/PointOfInterest";
 let uuid = require('uuid');
 
 function TopBar(props){
+
+    let isDebugActive = props.scenes.size > 0;
+
     return (
         <div className={'topbar'}>
             <nav>
@@ -41,9 +44,13 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
                        aria-controls="nav-story-editor" aria-selected="false"
                        onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
-                    <a className="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" role="tab" href="#nav-debug"
-                       aria-controls="nav-debug" aria-selected="false"
-                       onClick={() => {handleDebugMode(props)}} >Debug</a>
+                    <a className={"nav-item nav-link " + debugCheck(isDebugActive)} id="nav-debug-tab" data-toggle="tab"
+                       role="tab" href={'#' + debugLink(isDebugActive)} aria-controls={debugLink(isDebugActive)} aria-selected="false"
+                       onClick={() => {
+                           if(isDebugActive){
+                               handleDebugMode(props);
+                           }
+                       }} >Debug</a>
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
                        onClick={() => {props.switchToPlayMode()}} >Play <img src={'icons/icons8-play-50.png'}
@@ -144,14 +151,6 @@ function TopBar(props){
     );
 }
 
-function displayDebug(editor){
-    return editor.mode === ActionTypes.DEBUG_MODE_ON ? 'active' : 'hide';
-}
-
-function displayNavbar(editor){
-    return editor.mode !== ActionTypes.DEBUG_MODE_ON ? 'active' : 'hide';
-}
-
 /*
 <figure className={'nav-figures'} style={{opacity: 0.3, cursor: 'auto'}}>
                             <img src={"icons/icons8-audio-100.png"}/>
@@ -176,7 +175,9 @@ function handleAssetsMode(props){
 
 function handleDebugMode(props) {
     if(props.editor.mode !== ActionTypes.DEBUG_MODE_ON){
-        props.updateCurrentScene(props.scenes.toArray()[0].uuid);
+        if(props.scenes.size > 0){
+            props.updateCurrentScene(props.scenes.toArray()[0].uuid);
+        }
         props.switchToDebugMode();
         document.getElementById("nav-tabContent").hidden = false;
     }
@@ -268,5 +269,14 @@ function handleSwitchToStoryEditorMode(props){
 		document.getElementById("nav-tabContent").hidden = true;
     }
 }
+
+function debugCheck(isDebugActive){
+    return isDebugActive ? '' : 'debug-disabled';
+}
+
+function debugLink(isDebugActive){
+    return isDebugActive ? 'nav-debug' : '';
+}
+
 
 export default TopBar;

@@ -460,6 +460,13 @@ div.rules{
     cursor: pointer;
 }
 
+.debug-disabled, .debug-disabled.active{
+    opacity: 0.5;
+    cursor: auto;
+    background-color: #EF562D !important;
+    color: white !important;
+}
+
 .nav-link{
     background-color: #EF562D;
     color: #FFFFFF;
