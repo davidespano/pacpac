@@ -96,8 +96,6 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, props, radiu
     let medianPoint = [0.0, 0.0, 0.0];
     let x = 0, y = 0;
 
-    console.log(coordinates)
-
     for (let i = 0; i < coordinates.length; i += 3) {
         medianPoint[0] += coordinates[i];
         medianPoint[1] += coordinates[i + 1];

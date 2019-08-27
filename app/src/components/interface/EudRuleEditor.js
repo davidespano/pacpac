@@ -13,6 +13,8 @@ import Condition from "../../interactives/rules/Condition";
 import SuperCondition from "../../interactives/rules/SuperCondition";
 import toString from "../../interactives/rules/toString";
 import { RuleActionMap, ValuesMap, OperatorsMap } from "../../interactives/rules/maps";
+import CentralSceneStore from "../../data/CentralSceneStore";
+import scene_utils from "../../scene/scene_utils";
 
 let uuid = require('uuid');
 
@@ -1020,6 +1022,11 @@ function getCompletions(props) {
 
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
+            // the CLICK action is restricted to current scene objects only, might move to switch case later
+            if(props.verb.action === RuleActionTypes.CLICK){
+                return sceneObjectsOnly(props);
+            }
+            
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
@@ -1054,4 +1061,13 @@ function filterValues(subject, verb) {
         }
     }
     return v;
+}
+
+/**
+ * returns a map containing only the objects belonging to the current scene
+ * @param props
+ */
+function sceneObjectsOnly(props){
+    let sceneObjects = scene_utils.allObjects(props.scenes.get(CentralSceneStore.getState()));
+    return props.interactiveObjects.filter(x => sceneObjects.includes(x.uuid));
 }
