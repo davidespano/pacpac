@@ -11,7 +11,8 @@ const eventBus = require('./eventBus');
 AFRAME.registerComponent('selectable', {
     schema: {
         object_uuid:{type: 'string'},
-        visible: {type: 'string', default: 'VISIBLE'}
+        visible: {type: 'string', default: 'VISIBLE'},
+        object_type: {type: 'string'}
     },
 
     init: function () {
@@ -25,6 +26,7 @@ AFRAME.registerComponent('selectable', {
 
     update: function () {
         let elem = this.el;
+        console.log(this.data.object_type)
         if(this.data.visible === 'VISIBLE'){
             elem.addEventListener('mouseenter', setMouseEnter);
             elem.addEventListener('mouseleave', setMouseLeave);
@@ -47,6 +49,8 @@ function setMouseEnter() {
     let cursor = document.querySelector('#cursor');
     cursor.setAttribute('color', 'green');
     cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:2 2 2;');
+
+    //cursor.setAttribute('animation__circlelarge', 'property: radiusInner; dur:200; from:0,1; to:0;');
 }
 
 function setMouseLeave() {

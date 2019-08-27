@@ -105,17 +105,16 @@ export default class Bubble extends Component
         const curves = Object.values(scene.objects).flat().map(curve => {
             let color = this.props.curvedToEdit===curve.uuid?'red':'white';
             if(this.props.editMode){
-                console.log(curve)
                 let pointOfinterest = curve.type === 'POINT_OF_INTEREST'
                 return(
                     <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid}
-                                    is3Dscene={is3Dscene} color={color} type={pointOfinterest}/>
+                                    is3Dscene={is3Dscene} color={color} type={pointOfinterest} />
                 );
             } else {
                 //TODO [debug] add to origin master
                 return(
                     <Curved key={"keyC"+ curve.uuid} onDebugMode={this.props.onDebugMode} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
-                            is3Dscene={is3Dscene} vertices={curve.vertices} visible={this.props.runState[curve.uuid].visible}/>
+                            is3Dscene={is3Dscene} vertices={curve.vertices} visible={this.props.runState[curve.uuid].visible} type={curve.type}/>
                 );
             }
         });
