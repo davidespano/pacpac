@@ -1,8 +1,8 @@
 import React from 'react';
 import SceneAPI from "../../utils/SceneAPI";
-import TagDropdown from "./TagDropdown";
 import FileSelectionBtn from "./FileSelectionBtn";
 import Values from "../../interactives/rules/Values";
+import Dropdown from "./Dropdown";
 
 function InputSceneForm(props){
 
@@ -46,7 +46,10 @@ function InputSceneForm(props){
                             </div>
                             <div className={'box-titles'}>Etichetta</div>
                             <div className={'box-grid scene-grid'}>
-                                <TagDropdown {...properties}/>
+                                <Dropdown props={props}
+                                          component={'tags-new-scene'}
+                                          property={'tag'}
+                                          defaultValue={props.editor.selectedTagNewScene}/>
                                 <button
                                     title={"Tag manager"}
                                     className={"select-file-btn btn"}

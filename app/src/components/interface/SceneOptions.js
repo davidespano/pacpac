@@ -4,7 +4,6 @@ import stores_utils from "../../data/stores_utils";
 import interface_utils from "./interface_utils";
 import Orders from "../../data/Orders";
 import FileSelectionBtn from "./FileSelectionBtn";
-import TagDropdown from "./TagDropdown";
 import Dropdown from "./Dropdown";
 
 function SceneOptions(props){
@@ -59,7 +58,10 @@ function SceneOptions(props){
                 </div>
                 <label className={'rightbar-titles'}>Etichetta</label>
                 <div className={'rightbar-grid'}>
-                    <TagDropdown {...properties}/>
+                    <Dropdown props={props}
+                              component={'tags-edit-scene'}
+                              property={'tag'}
+                              defaultValue={currentScene.tag}/>
                     <button
                         title={"Gestisci etichette"}
                         className={"select-file-btn btn"}
