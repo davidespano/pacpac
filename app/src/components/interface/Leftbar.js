@@ -86,7 +86,7 @@ function list(props, path) {
                     src={src}
                     className={'list-img'}
                     alt={child.name}
-                    title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
+                    title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
                     onClick={() => {
                             props.updateCurrentScene(child.uuid);
                     }}
