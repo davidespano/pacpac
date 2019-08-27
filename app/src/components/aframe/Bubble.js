@@ -105,9 +105,11 @@ export default class Bubble extends Component
         const curves = Object.values(scene.objects).flat().map(curve => {
             let color = this.props.curvedToEdit===curve.uuid?'red':'white';
             if(this.props.editMode){
+                console.log(curve)
+                let pointOfinterest = curve.type === 'POINT_OF_INTEREST'
                 return(
                     <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid}
-                                    is3Dscene={is3Dscene} color={color}/>
+                                    is3Dscene={is3Dscene} color={color} type={pointOfinterest}/>
                 );
             } else {
                 //TODO [debug] add to origin master

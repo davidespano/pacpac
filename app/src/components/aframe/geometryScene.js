@@ -38,7 +38,8 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         let scene;
-        console.log(props.editor)
+        console.log(props)
+        //carico la scena corrente, o se è un audio la scena a cui appartiene
         if(props.editor.audioPositioning)
             scene = props.editor.audioToEdit.scene;
         else
@@ -289,7 +290,9 @@ export default class GeometryScene extends React.Component{
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
+        //TODO mi serve una variabile dall'edito per capire se è un punto di interesse, con un || dovrei risucire a gestirlo lo stesso
         let isCurved = !this.props.editor.audioPositioning;
+        let isPoint = false;
         let currenteObjectUuid;
 
         if(isCurved){
@@ -320,10 +323,10 @@ export default class GeometryScene extends React.Component{
                         <h1>Keys</h1>
                         <li class="keyElements">
                             <ul id="startedit">E: Inizia a disegnare</ul>
-                            <ul>C: Conferma</ul>
-                            <ul>U: Elimina ultimo punto</ul>
-                            <ul>Q: Torna all'editor</ul>
-                            <ul>H: Mostra/Nascondi</ul>
+                            <ul> C: Conferma </ul>
+                            <ul> U: Elimina ultimo punto </ul>
+                            <ul> Q: Torna all'editor </ul>
+                            <ul> H: Mostra/Nascondi </ul>
                         </li>
 
                     </div>
@@ -338,7 +341,7 @@ export default class GeometryScene extends React.Component{
                             look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
                             <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
-                                    pointsaver={'isCurved:' + isCurved + '; uuid: ' + currenteObjectUuid}
+                                    pointsaver={'isCurved:' + isCurved + '; ' + 'isPoint: ' + isPoint + '; uuid: ' + currenteObjectUuid}
                                     visible={is3dScene}/>
                         </Entity>
                     </Entity>
