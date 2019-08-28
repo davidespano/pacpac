@@ -3,6 +3,7 @@ import settings from '../../utils/settings';
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import scene_utils from "../../scene/scene_utils";
+import interface_utils from "./interface_utils";
 
 
 const {mediaURL} = settings;
@@ -88,7 +89,7 @@ function generateObjectsIcons(props){
             >
                 <img className={'icons-img'}
                      id={'icon-' + obj.uuid}
-                     src={getImage(obj.type)}
+                     src={interface_utils.getObjImg(obj.type)}
                      alt={obj.name}
                 />
                 <figcaption className={'icons-labels'}>{obj.name}</figcaption>
@@ -106,27 +107,6 @@ function generateObjectsIcons(props){
 function getPosition(centroids, obj){
     const coord = centroids.get(obj);
     return {left: coord[0] + '%', top: coord[1] + '%'};
-}
-
-/**
- * Returns link to img according to the object type
- * @param type
- * @returns {string}
- */
-function getImage(type){
-
-    switch (type) {
-        case InteractiveObjectsTypes.TRANSITION:
-            return "icons/icons8-one-way-transition-100.png";
-        case InteractiveObjectsTypes.SWITCH:
-            return "icons/icons8-toggle-on-filled-100.png";
-        case  InteractiveObjectsTypes.KEY:
-            return "icons/icons8-key-100.png";
-        case InteractiveObjectsTypes.LOCK:
-            return "icons/icons8-lock-100.png";
-        default:
-            return "?";
-    }
 }
 
 export default CentralScene;

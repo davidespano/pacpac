@@ -74,7 +74,7 @@ function generateProperties(props){
         <div className={'currentOptions'}>
             {objectButtons(props)}
             <div className={'figure-grid'}>
-                <img className={'rightbar-img'} src={findImg(currentObject)} alt={type} title={type}/>
+                <img className={'rightbar-img'} src={interface_utils.getObjImg(currentObject.type)} alt={type} title={type}/>
                 <p>{type}</p>
             </div>
             <label className={'rightbar-titles'}>Nome</label>
@@ -447,24 +447,6 @@ function objectTypeToString(objectType) {
         default:
             return "Sconosciuto";
     }
-}
-
-function findImg(object) {
-    switch (object.type) {
-        case InteractiveObjectsTypes.LOCK:
-            return "icons/icons8-lock-100.png";
-        case InteractiveObjectsTypes.SWITCH:
-            return "icons/icons8-toggle-on-filled-100.png";
-        case InteractiveObjectsTypes.KEY:
-            return "icons/icons8-key-100.png";
-        case InteractiveObjectsTypes.TRANSITION:
-            return "icons/icons8-one-way-transition-100.png";
-        case InteractiveObjectsTypes.POINT_OF_INTEREST:
-            return "icons/icons8-point-96.png";
-        default:
-            return "icons/icons8-plus-math-filled-100.png";
-    }
-
 }
 
 /*

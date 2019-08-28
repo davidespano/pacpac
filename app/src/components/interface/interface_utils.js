@@ -4,6 +4,7 @@ import Values from "../../interactives/rules/Values";
 import CentralSceneStore from "../../data/CentralSceneStore";
 import ScenesStore from "../../data/ScenesStore";
 import AssetsStore from "../../data/AssetsStore";
+import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 
 
 /**
@@ -292,6 +293,27 @@ function highlightRule(props, obj) {
         });
 }
 
+/**
+ * returns appropriate icon for an object given the type
+ * @param objType
+ * @returns {string}
+ */
+function getObjImg(objType) {
+    switch (objType) {
+        case InteractiveObjectsTypes.LOCK:
+            return "icons/icons8-lock-100.png";
+        case InteractiveObjectsTypes.SWITCH:
+            return "icons/icons8-toggle-on-filled-100.png";
+        case InteractiveObjectsTypes.KEY:
+            return "icons/icons8-key-100.png";
+        case InteractiveObjectsTypes.TRANSITION:
+            return "icons/icons8-one-way-transition-100.png";
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return "icons/icons8-point-96.png";
+        default:
+            return "icons/icons8-plus-math-filled-100.png";
+    }
+}
 
 
 export default {
@@ -308,5 +330,6 @@ export default {
     setClassStyle: setClassStyle,
     setIdStyle: setIdStyle,
     highlightRule: highlightRule,
-    updateAudioVertices: updateAudioVertices
+    updateAudioVertices: updateAudioVertices,
+    getObjImg: getObjImg,
 }
