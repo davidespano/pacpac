@@ -10,12 +10,8 @@ import Values from "./rules/Values";
 const PointOfInterest = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.POINT_OF_INTEREST,
     properties : {},
-    media : {
-        media0: null,
-    },
-    audio : {
-        audio0: null,
-    },
+    media : null,
+    audio : null,
     ...defaultValues
 });
 

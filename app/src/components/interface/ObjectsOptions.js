@@ -131,42 +131,66 @@ function generateProperties(props){
                     Modifica geometria
                 </button>
             </div>
-            <label className={'rightbar-titles'}>Media:</label>
-            <div className={'rightbar-audio-media-grid'}>
-                {Object.keys(currentObject.media).map( m => {
-                    return(
-                        <React.Fragment key={currentObject.uuid + '-' + m}>
-                            <p className={'rightbar-audio-media-grid-title'}>Media {optionToName(currentObject.type, m)}</p>
-                            <Dropdown props={props}
-                                      component={'assets'}
-                                      property={m}
-                                      defaultValue={currentObject.media[m]} />
-                        </React.Fragment>
-                    );
-                })}
-                <p className={'rightbar-audio-media-grid-title'}>Maschera</p>
-                <Dropdown props={props}
-                          component={'assets'}
-                          property={'mask'}
-                          defaultValue={currentObject.mask} />
-            </div>
-            <label className={'rightbar-titles'}>Audio:</label>
-            <div className={'rightbar-audio-media-grid'}>
-                {Object.keys(currentObject.audio).map( a => {
-                    return(
-                        <React.Fragment key={currentObject.uuid + '-' + a}>
-                            <p className={'rightbar-audio-media-grid-title'}>Audio {optionToName(currentObject.type, a)}</p>
-                            <Dropdown
-                                props={props}
-                                component={'audios'}
-                                property={a}
-                                defaultValue={currentObject.audio[a]} mediaToEdit={a}/>
-                        </React.Fragment>
-                    );
-                })}
-            </div>
+            {currentObject.media? mediaProperties(currentObject, props) : null}
+            {currentObject.audio? audioProperties(currentObject, props) : null}
         </div>
     );
+}
+
+/**
+ * returns media properties view
+ * @param currentObjects
+ * @param props
+ * @returns {*}
+ */
+function mediaProperties(currentObject, props){
+    return <React.Fragment>
+        <label className={'rightbar-titles'}>Media:</label>
+        <div className={'rightbar-audio-media-grid'}>
+            {Object.keys(currentObject.media).map( m => {
+                return(
+                    <React.Fragment key={currentObject.uuid + '-' + m}>
+                        <p className={'rightbar-audio-media-grid-title'}>Media {optionToName(currentObject.type, m)}</p>
+                        <Dropdown props={props}
+                                  component={'assets'}
+                                  property={m}
+                                  defaultValue={currentObject.media[m]} />
+                    </React.Fragment>
+                );
+            })}
+            <p className={'rightbar-audio-media-grid-title'}>Maschera</p>
+            <Dropdown props={props}
+                      component={'assets'}
+                      property={'mask'}
+                      defaultValue={currentObject.mask} />
+        </div>
+    </React.Fragment>
+}
+
+/**
+ * returns audio properties view
+ * @param currentObject
+ * @param props
+ * @returns {*}
+ */
+function audioProperties(currentObject, props){
+    return <React.Fragment>
+        <label className={'rightbar-titles'}>Audio:</label>
+        <div className={'rightbar-audio-media-grid'}>
+            {Object.keys(currentObject.audio).map( a => {
+                return(
+                    <React.Fragment key={currentObject.uuid + '-' + a}>
+                        <p className={'rightbar-audio-media-grid-title'}>Audio {optionToName(currentObject.type, a)}</p>
+                        <Dropdown
+                            props={props}
+                            component={'audios'}
+                            property={a}
+                            defaultValue={currentObject.audio[a]} mediaToEdit={a}/>
+                    </React.Fragment>
+                );
+            })}
+        </div>
+    </React.Fragment>
 }
 
 /**

@@ -116,6 +116,8 @@ function defineField(object){
             return 'collectable_keys';
         case InteractiveObjectsTypes.LOCK:
             return 'locks';
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return 'points';
         default:
             return null;
     }
