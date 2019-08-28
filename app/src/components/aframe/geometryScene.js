@@ -102,6 +102,7 @@ export default class GeometryScene extends React.Component{
             let point_saver = document.querySelector('#cursor').components.pointsaver;
             let a_point = point_saver.points;
             let isCurved = point_saver.attrValue.isCurved === 'true';
+            let isPoint = point_saver.attrValue.isPoint === 'true';
             //Punti
             let length = a_point.length;
             let idPoint = "point" + (length - 1).toString();
@@ -122,7 +123,7 @@ export default class GeometryScene extends React.Component{
                     moltiplier = 1;
                 }
             }
-            if(isCurved){
+            if(isCurved && !isPoint){
                 tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
                 a_point[(length-1)].x *= moltiplier;
                 tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
@@ -167,11 +168,13 @@ export default class GeometryScene extends React.Component{
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C') {
                 document.getElementById("startedit").style.color = 'white'
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 let a_point = pointsaver.points;
+                let isPoint = pointsaver.attrValue.isPoint === 'true';
                 console.log(a_point)
                 if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
@@ -183,7 +186,7 @@ export default class GeometryScene extends React.Component{
                     cursor.removeEventListener('click', this.handleFeedbackChange(), true);
                     cursor.components.pointsaver.points = [];
                     let points = scene.querySelectorAll(".points");
-                    if(!this.props.editor.audioPositioning){
+                    if(!this.props.editor.audioPositioning && !isPoint){
                         a_point = a_point.map(punto =>
                             punto.toArray().join(" ")
                         );
@@ -302,13 +305,9 @@ export default class GeometryScene extends React.Component{
         }
         if(isCurved){
             let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
-            console.log(this.props.currentObject)
-            Object.values(objects).flat().forEach(o => {
-                if(o.type === 'POINT_OF_INTEREST' && o.uuid === this.props.currentObject)
-                    isPoint = true;
+            if(this.props.interactiveObjects.get(this.props.currentObject).type === 'POINT_OF_INTEREST')
+                isPoint = true;
 
-                console.log(isPoint)
-            });
             //TODO verificiare shader delle curved, problema non trasparenza, questa cosa mi sa che non serve, verificare
             for(let key in objects){
                 if(objects.hasOwnProperty(key)){

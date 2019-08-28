@@ -17,6 +17,7 @@ AFRAME.registerComponent('pointsaver',
             this.el.addEventListener('click', pointSaverCurved);
         }
 
+
     },
     
     remove: function () {

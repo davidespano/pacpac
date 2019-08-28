@@ -33,7 +33,7 @@ AFRAME.registerComponent('selectable', {
     update: function () {
         let elem = this.el;
         console.log(this.data.object_type)
-        
+
         if(this.data.visible === 'VISIBLE'){
             if(this.data.object_type === 'TRANSITION'){
                 elem.addEventListener('mouseenter', setMouseEnterTransition);
