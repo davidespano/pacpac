@@ -303,9 +303,11 @@ export default class GeometryScene extends React.Component{
         if(isCurved){
             let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
             console.log(this.props.currentObject)
-            objects.forEach(o => {
+            Object.values(objects).flat().forEach(o => {
                 if(o.type === 'POINT_OF_INTEREST' && o.uuid === this.props.currentObject)
                     isPoint = true;
+
+                console.log(isPoint)
             });
             //TODO verificiare shader delle curved, problema non trasparenza, questa cosa mi sa che non serve, verificare
             for(let key in objects){
