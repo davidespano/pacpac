@@ -290,7 +290,7 @@ export default class GeometryScene extends React.Component{
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
-        //TODO mi serve una variabile dall'edito per capire se è un punto di interesse, con un || dovrei risucire a gestirlo lo stesso
+        //TODO mi serve una variabile dall'editor per capire se è un punto di interesse, con un || dovrei risucire a gestirlo lo stesso
         let isCurved = !this.props.editor.audioPositioning;
         let isPoint = false;
         let currenteObjectUuid;
@@ -302,8 +302,12 @@ export default class GeometryScene extends React.Component{
         }
         if(isCurved){
             let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
-
-            //TODO verificiare shader delle curved, problema non trasparenza
+            console.log(this.props.currentObject)
+            objects.forEach(o => {
+                if(o.type === 'POINT_OF_INTEREST' && o.uuid === this.props.currentObject)
+                    isPoint = true;
+            });
+            //TODO verificiare shader delle curved, problema non trasparenza, questa cosa mi sa che non serve, verificare
             for(let key in objects){
                 if(objects.hasOwnProperty(key)){
                     objects[key].forEach((uuid) => {
