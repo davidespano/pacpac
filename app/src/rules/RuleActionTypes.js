@@ -9,6 +9,8 @@ const RuleActionTypes = {
     CHANGE_VISIBILITY : 'CHANGE_VISIBILITY',
     COLLECT_KEY: 'COLLECT_KEY',
     CLICK: 'CLICK',
+    DECREASE: 'DECREASE',
+    INCREASE: 'INCREASE',
     LOOK_AT: 'LOOK_AT',
     OFF : 'OFF',
     ON : 'ON',

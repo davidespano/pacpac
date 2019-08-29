@@ -294,6 +294,10 @@ div.rules{
     text-overflow: ellipsis;
 }
 
+.propertyForm-right-number{
+    width: 30%;
+}
+
 .propertyForm {
     text-align: left;
 }

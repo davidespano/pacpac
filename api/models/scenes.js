@@ -25,7 +25,6 @@ function buildScene(record) {
         scene.tag = new Tag(record.get('tag'));
     }catch (error){
         scene.tag = null;
-        console.log(scene);
         console.log('this scene has no tag');
     }
     try{
@@ -39,12 +38,12 @@ function buildScene(record) {
 
     try{
         const objects = record.get('objects');
-        console.log(objects);
         scene.transitions = [];
         scene.switches = [];
         scene.collectable_keys = [];
         scene.locks = [];
         scene.points = [];
+        scene.counters = [];
 
         objects.forEach((o) => {
             const obj = new Interactiveobject(o);
@@ -60,6 +59,8 @@ function buildScene(record) {
                     scene.locks.push(obj); break;
                 case "POINT_OF_INTEREST":
                     scene.points.push(obj); break;
+                case "COUNTER":
+                    scene.counters.push(obj); break;
             }
         })
     }catch(error){console.error(error)}

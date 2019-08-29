@@ -31,6 +31,10 @@ function eventTypeToString(eventType) {
             return 'interrompe';
         case RuleActionTypes.LOOK_AT:
             return 'guarda';
+        case RuleActionTypes.INCREASE:
+            return "aumenta di";
+        case RuleActionTypes.DECREASE:
+            return "diminuisce di";
         default:
             return "";
     }

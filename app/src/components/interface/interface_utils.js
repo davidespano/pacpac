@@ -310,6 +310,8 @@ function getObjImg(objType) {
             return "icons/icons8-one-way-transition-100.png";
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
             return "icons/icons8-point-96.png";
+        case InteractiveObjectsTypes.COUNTER:
+            return "icons/icons8-counter-100.png";
         default:
             return "icons/icons8-plus-math-filled-100.png";
     }

@@ -150,7 +150,26 @@ const RuleActionMap = Immutable.Map([
             uuid: RuleActionTypes.LOOK_AT
         },
     ],
-
+    [
+        RuleActionTypes.INCREASE,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.INCREASE),
+            uuid: RuleActionTypes.INCREASE
+        },
+    ],
+    [
+        RuleActionTypes.DECREASE,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.DECREASE),
+            uuid: RuleActionTypes.DECREASE
+        },
+    ],
 ]);
 
 

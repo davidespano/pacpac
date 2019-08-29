@@ -16,6 +16,8 @@ import StoriesViewer from "./StoriesViewer";
 import Keypad from "../../interactives/Keypad";
 import InputSaveForm from "./InputSaveForm";
 import PointOfInterest from "../../interactives/PointOfInterest";
+import interface_utils from "./interface_utils";
+import Counter from "../../interactives/Counter";
 
 
 let uuid = require('uuid');
@@ -95,42 +97,43 @@ function TopBar(props){
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.TRANSITION);
                                 }}>
-                            <img src={"icons/icons8-one-way-transition-100.png"}/>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TRANSITION)}/>
                             <figcaption>Transizione</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.SWITCH);
                                 }}>
-                            <img src={"icons/icons8-toggle-on-filled-100.png"}/>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SWITCH)}/>
                             <figcaption>Interruttore</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.KEY);
                                 }}>
-                            <img src={"icons/icons8-key-100.png"}/>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEY)}/>
                             <figcaption>Chiave</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.LOCK);
                                 }}>
-                            <img src={"icons/icons8-lock-100.png"}/>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.LOCK)}/>
                             <figcaption>Lucchetto</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.POINT_OF_INTEREST);
                                 }}>
-                            <img src={"icons/icons8-point-96.png"}/>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.POINT_OF_INTEREST)}/>
                             <figcaption>Punto di interesse</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
-                                style={{opacity: 0.3, cursor: 'auto'}}
-                        >
-                            <img src={"icons/icons8-keypad-50.png"}/>
-                            <figcaption>Tastierino</figcaption>
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.COUNTER);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.COUNTER)}/>
+                            <figcaption>Contatore</figcaption>
                         </figure>
                     </div>
                 </div>
@@ -228,6 +231,13 @@ function createObject(props, type){
             case InteractiveObjectsTypes.POINT_OF_INTEREST:
                 name = scene.name + '_pi' + (scene.objects.points.length + 1);
                 obj = PointOfInterest({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.COUNTER:
+                name = scene.name + '_cn' + (scene.objects.points.length + 1);
+                obj = Counter({
                     uuid: uuid.v4(),
                     name: name,
                 });

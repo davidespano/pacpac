@@ -58,7 +58,6 @@ function checkFilters(props, filter){
 }
 
 
-
 /**
  * Generates options of currently selected object
  * @param props
@@ -69,6 +68,10 @@ function generateProperties(props){
     let currentObject = props.interactiveObjects.get(props.currentObject);
     let objectScene = props.scenes.get(props.objectToScene.get(currentObject.uuid));
     let type = objectTypeToString(currentObject.type);
+
+    console.log(currentObject)
+    console.log(type)
+
 
     return(
         <div className={'currentOptions'}>
@@ -256,22 +259,32 @@ function generateSpecificProperties(object, objectScene, props){
                 </div>
             );
         case InteractiveObjectsTypes.LOCK:
-            return (
-                <div>
-                    {/* <select id={'keyDefaultState'}
-                            defaultValue={object.properties.key_uuid}
-                            onChange={() => {
-                                let e = document.getElementById('keyDefaultState');
-                                let value = e.options[e.selectedIndex].value;
-                                interface_utils.setPropertyFromValue(object, 'key_uuid', value, props);
-                            }}
-                    >
-                        {generateKeyList(props, object)}
-                    </select>*/}
-                </div>
-            );
+            return null;
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
             return null;
+        case InteractiveObjectsTypes.COUNTER:
+            return (
+                <div className={"options-grid"}>
+                    <label className={'options-labels'}>Valore iniziale:</label>
+                    <div id={"counterValue"}
+                         className={"propertyForm-right propertyForm-right-number"}
+                         contentEditable={true}
+                         onBlur={()=> interface_utils.setPropertyFromId(object,'value',"counterValue", props)}
+                         onInput={() => interface_utils.onlyNumbers("counterValue")}
+                    >
+                        {object.properties.value}
+                    </div>
+                    <label className={'options-labels'}>Passo:</label>
+                    <div id={"counterStep"}
+                         className={"propertyForm-right propertyForm-right-number"}
+                         contentEditable={true}
+                         onBlur={()=> interface_utils.setPropertyFromId(object,'step',"counterStep", props)}
+                         onInput={() => interface_utils.onlyNumbers("counterStep")}
+                    >
+                        {object.properties.step}
+                    </div>
+                </div>
+            );
         case InteractiveObjectsTypes.KEYPAD:
             return(
                 <div className={"options-grid"}>
@@ -433,7 +446,7 @@ function objectTypeToString(objectType) {
         case InteractiveObjectsTypes.LOCK:
             return "Serratura";
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
-            return "Punto di interesse"
+            return "Punto di interesse";
         case InteractiveObjectsTypes.SELECTOR:
             return "Selettore";
         case InteractiveObjectsTypes.SWITCH:

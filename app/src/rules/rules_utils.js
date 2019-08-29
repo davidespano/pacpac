@@ -93,12 +93,23 @@ function generateDefaultRule(object){
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
             r = Rule({
                 uuid: uuid.v4(),
-                event: Action({}),
+                event: Action({uuid: uuid.v4()}),
                 actions : Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.LOOK_AT,
                     obj_uuid: object.uuid,
+                })]),
+            });
+            break;
+        case InteractiveObjectsTypes.COUNTER:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: object.uuid,
+                    action: RuleActionTypes.INCREASE,
                 })]),
             });
             break;

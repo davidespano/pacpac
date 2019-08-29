@@ -15,6 +15,7 @@ import SuperCondition from "../rules/SuperCondition";
 import Condition from "../rules/Condition";
 import Audio from "../audio/Audio";
 import PointOfInterest from "../interactives/PointOfInterest";
+import Counter from "../interactives/Counter";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -39,10 +40,10 @@ function getByName(name, order = null) {
             let switches_uuids = [];
             let collectable_keys_uuids = [];
             let locks_uuids = [];
-            let keypads_uuids = [];
             let rules_uuids = [];
             let audio_uuids = [];
             let points_uuids = [];
+            let counters_uuids = [];
 
             let scene_type = response.body.type;
 
@@ -81,6 +82,15 @@ function getByName(name, order = null) {
                     points_uuids.push(point.uuid); //save uuid
                     let p = PointOfInterest(getProperties(point));
                     Actions.receiveObject(p, scene_type);
+                });
+            }
+
+            // generates counters and saves them to the objects store
+            if(response.body.counters){
+                response.body.counters.map((counter) => {
+                    counters_uuids.push(counter.uuid); //save uuid
+                    let c = Counter(getProperties(counter));
+                    Actions.receiveObject(c, scene_type);
                 });
             }
 
@@ -162,7 +172,7 @@ function getByName(name, order = null) {
                     collectable_keys: collectable_keys_uuids,
                     locks: locks_uuids,
                     points: points_uuids,
-                    keypads: keypads_uuids,
+                    counters: counters_uuids,
                 },
                 rules : rules_uuids,
                 audios : audio_uuids,
@@ -208,8 +218,8 @@ function createScene(name, img, index, type, tag, order) {
                     switches: [],
                     collectable_keys: [],
                     locks: [],
-                    keypads: [],
                     points: [],
+                    counters: [],
                 }
             });
 
@@ -332,19 +342,10 @@ async function getAllDetailedScenes(gameGraph) {
             return (getProperties(point));
         });
 
-        // generates keypads
-        /*const keypads = s.keypads.map((keypad) => {
-            return ({ //keypad, not the immutable
-                uuid: keypad.uuid,
-                name: keypad.name,
-                type: keypad.type,
-                media: JSON.parse(keypad.media),
-                mask: keypad.mask,
-                vertices: keypad.vertices,
-                properties: JSON.parse(keypad.properties),
-                visible: keypad.visible,
-            });
-        });*/
+        // generates counters
+        const counters = !s.counters? [] : s.counters.map((counter) => {
+            return (getProperties(counter));
+        })
 
         // generates rules
         const rules = s.rules.map(rule => {
@@ -394,7 +395,7 @@ async function getAllDetailedScenes(gameGraph) {
                 collectable_keys: keys,
                 locks : locks,
                 points: points,
-                //keypads: keypads,
+                counters: counters,
             },
             rules : rules,
             audios : audios,

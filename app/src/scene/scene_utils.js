@@ -118,6 +118,8 @@ function defineField(object){
             return 'locks';
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
             return 'points';
+        case InteractiveObjectsTypes.COUNTER:
+            return "counters";
         default:
             return null;
     }
