@@ -7,6 +7,7 @@ import Dropdown from "./Dropdown";
 import EditorState from "../../data/EditorState";
 import Immutable from 'immutable'
 import DebugAPI from "../../utils/DebugAPI";
+import toString from "../../rules/toString";
 
 let THREE = require('three');
 
@@ -84,7 +85,7 @@ function objPropsView(props) {
                 </button>
             </div>
             <div className={'figure-grid'}>
-                <img className={'rightbar-img'} src={getImage(currentObject.type)} alt={currentObject.type}
+                <img className={'rightbar-img'} src={interface_utils.getObjImg(currentObject.type)} alt={currentObject.type}
                      title={currentObject.type}/>
                 <p>{objectTypeToString(currentObject.type)}</p>
             </div>
@@ -159,7 +160,9 @@ function listPlayerActions(scene, props) {
                         let role = props.rules.get(rule).uuid;
                         return (
                             <div className={"player-div"} key={role}>
-                                {getActionName(props.rules.get(rule).event.action)}
+                                <span className={"player-action"}>
+                                    {getActionName(props.rules.get(rule).event.action)}
+                                </span>;
                                 <span className={"player-obj"} id={"player-obj" + obj.uuid} onClick={() => {
                                     interface_utils.setIdStyle("obj-name", obj.uuid, "color: rgba(239, 86, 55, 1)");
                                     interface_utils.setIdStyle("player-obj", obj.uuid, "color: rgba(239, 86, 55, 1)");
@@ -214,7 +217,7 @@ function listCurrentSceneObjs(scene, props) {
             if (objName.includes(props.editor.objectsNameFilter)) {
                 return (
                     <div className={"rightbar-sections"} key={obj_uuid}>
-                        <img className={"icon-obj-left"} alt={obj.name} src={getImage(obj.type)}/>
+                        <img className={"icon-obj-left"} alt={obj.name} src={interface_utils.getObjImg(obj.type)}/>
                         <span className={"obj-name"} id={"obj-name" + obj.uuid} onClick={() => {
                             let geometry = document.getElementById("curv" + obj.uuid);
                             if (geometry)
@@ -274,6 +277,8 @@ function listOtherScenesObjs(props) {
 function generateSpecificProperties(object, props) {
     switch (object.type) {
         case InteractiveObjectsTypes.TRANSITION:
+        case InteractiveObjectsTypes.LOCK:
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
             return (
                 <div>
                     Non ci sono proprietà da modificare
@@ -295,39 +300,11 @@ function generateSpecificProperties(object, props) {
                               defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
                 </div>
             );
-        case InteractiveObjectsTypes.LOCK:
-            return (
-                <div>
-
-                </div>
-            );
         default:
             return (<div>Error!</div>);
 
     }
 }
-
-/**
- * Returns link to img according to the object type
- * @param type
- * @returns {string}
- */
-function getImage(type) {
-
-    switch (type) {
-        case InteractiveObjectsTypes.TRANSITION:
-            return "icons/icons8-one-way-transition-100.png";
-        case InteractiveObjectsTypes.SWITCH:
-            return "icons/icons8-toggle-on-filled-100.png";
-        case  InteractiveObjectsTypes.KEY:
-            return "icons/icons8-key-100.png";
-        case InteractiveObjectsTypes.LOCK:
-            return "icons/icons8-lock-100.png";
-        default:
-            return "?";
-    }
-}
-
 
 /**
  * ToString of an RuleActionType
@@ -337,13 +314,17 @@ function getImage(type) {
 function getActionName(action) {
     switch (action) {
         case RuleActionTypes.CLICK:
-            return <span className={"player-action"}>Clicca </span>;
-        case RuleActionTypes.FLIP_SWITCH:
-            return <span className={"player-action"}>Aziona </span>;
+            return "Clicca"
+        case RuleActionTypes.ON:
+            return "Accende";
+        case RuleActionTypes.OFF:
+            return "Spegne";
         case RuleActionTypes.COLLECT_KEY:
-            return <span className={"player-action"}>Raccoglie </span>;
+            return "Raccoglie";
+        case RuleActionTypes.LOOK_AT:
+            return "Osserva";
         default:
-            return <span className={"player-action"}>Interagisce </span>
+            return "Interagisce con";
     }
 
 }
@@ -399,6 +380,8 @@ function objectTypeToString(objectType) {
             return "Chiave";
         case InteractiveObjectsTypes.TRANSITION:
             return "Transizione";
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return "Punto di interesse"
         default:
             return "Sconosciuto";
     }
