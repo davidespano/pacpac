@@ -124,7 +124,8 @@ export default class VRScene extends React.Component {
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
                 runState[obj.uuid] = {state: obj.properties.state,
-                                      visible: obj.visible
+                                      visible: obj.visible,
+                                      step: obj.properties.step
                 }
             });
         });
