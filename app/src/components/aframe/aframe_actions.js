@@ -200,6 +200,12 @@ function executeAction(VRScene, rule, action){
             });
             lookObject('curv' + action.obj_uuid, pointOI.vertices);
             break;
+        case RuleActionTypes.DECREASE:
+            //TODO puoi diminuire contatori di altre scene? se si devo cercarlo tra tutti gli oggetti
+            runState[action.subj_uuid].state += current_object.properties.step;
+            VRScene.setState({runState: runState, graph: game_graph});
+            console.log(runState[action.subj_uuid].state)
+            break;
         default:
             console.log('not yet implemented');
             console.log(action);
