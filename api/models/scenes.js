@@ -1,3 +1,5 @@
+import InteractiveObjectsTypes from "../../app/src/interactives/InteractiveObjectsTypes";
+
 const _ = require('lodash');
 const Scene = require('../models/neo4j/scene');
 const Tag = require('../models/neo4j/tag');
@@ -44,21 +46,22 @@ function buildScene(record) {
         scene.switches = [];
         scene.collectable_keys = [];
         scene.locks = [];
+        scene.points = [];
 
         objects.forEach((o) => {
             const obj = new Interactiveobject(o);
-            console.log(obj);
-
 
             switch(obj.type){
-                case "TRANSITION":
+                case InteractiveObjectsTypes.TRANSITION:
                     scene.transitions.push(obj); break;
-                case "SWITCH":
+                case InteractiveObjectsTypes.SWITCH:
                     scene.switches.push(obj); break;
-                case "KEY":
+                case InteractiveObjectsTypes.KEY:
                     scene.collectable_keys.push(obj); break;
-                case "LOCK":
+                case InteractiveObjectsTypes.LOCK:
                     scene.locks.push(obj); break;
+                case InteractiveObjectsTypes.POINT_OF_INTEREST:
+                    scene.points.push(obj); break;
             }
         })
     }catch(error){console.error(error)}

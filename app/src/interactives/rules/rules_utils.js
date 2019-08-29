@@ -94,14 +94,14 @@ function generateDefaultRule(object){
             r = Rule({
                 uuid: uuid.v4(),
                 event: Action({}),
-                actions: Immutable.List(),
+                actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             break;
         case InteractiveObjectsTypes.KEYPAD:
             r = Rule({
                 uuid: uuid.v4(),
                 event: Action({}),
-                actions: Immutable.List(),
+                actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             break;
         default:
