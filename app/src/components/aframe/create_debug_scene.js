@@ -226,14 +226,16 @@ export default class DebugVRScene extends React.Component {
         return this.currentLevel.map(sceneName => {
             let scene = this.state.graph.scenes[sceneName];
             //this.props.currentObject !== null
-            console.log(this.props.currentObject)
-            console.log(this.props.currentScene)
             return (
-                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
-                        key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
+                <Bubble currentScene={this.props.currentScene}
+                        onDebugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
+                        key={"key" + scene.name}
+                        scene={scene}
+                        isActive={scene.uuid === this.props.currentScene}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
                         runState={this.state.runState}
-                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+                        editMode={false}
+                        cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                 />
             );
         });
