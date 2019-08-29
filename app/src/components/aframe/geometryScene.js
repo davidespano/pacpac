@@ -9,7 +9,7 @@ import interface_utils from "../interface/interface_utils";
 import Bubble from './Bubble';
 import aframe_assets from "./aframe_assets";
 import SceneAPI from "../../utils/SceneAPI";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 
 /**
  * Give the points from the pointsaver component and update the object vertices

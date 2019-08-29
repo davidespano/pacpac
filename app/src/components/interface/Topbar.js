@@ -2,7 +2,7 @@ import React from 'react';
 import InputSceneForm from './InputSceneForm';
 import Transition from "../../interactives/Transition";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import rules_utils from "../../interactives/rules/rules_utils";
+import rules_utils from "../../rules/rules_utils";
 import Switch from "../../interactives/Switch";
 import Key from "../../interactives/Key";
 import Lock from "../../interactives/Lock";

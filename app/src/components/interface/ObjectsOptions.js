@@ -4,7 +4,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import Actions from "../../actions/Actions";
 import Dropdown from "./Dropdown";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 
 function ObjectOptions(props){
     if(props.currentObject){

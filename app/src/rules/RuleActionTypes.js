@@ -1,5 +1,5 @@
 import Values from "./Values";
-import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import Immutable from "immutable";
 
 const RuleActionTypes = {

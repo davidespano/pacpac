@@ -7,7 +7,7 @@ import CentralSceneStore from "../data/CentralSceneStore";
 import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 import AudioAPI from "../utils/AudioAPI";
 import StoryAPI from '../utils/StoryAPI';
-import Values from "../interactives/rules/Values";
+import Values from "../rules/Values";
 import ObjectsStore from "../data/ObjectsStore";
 
 const Actions = {

@@ -4,7 +4,7 @@ import {Curved, CurvedGeometry} from './aframe_curved';
 import settings from "../../utils/settings";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
-import Values from '../../interactives/rules/Values'
+import Values from '../../rules/Values'
 import './aframe_shader'
 import AudioManager from './AudioManager'
 const soundsHub = require('./soundsHub');

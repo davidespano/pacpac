@@ -6,7 +6,7 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
 import SceneAPI from "../../utils/SceneAPI";
-import ConditionUtils from "../../interactives/rules/ConditionUtils";
+import ConditionUtils from "../../rules/ConditionUtils";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
 import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
@@ -16,7 +16,7 @@ import stores_utils from "../../data/stores_utils";
 import aframe_utils from "./aframe_assets";
 import AudioAPI from "../../utils/AudioAPI";
 import AudioManager from './AudioManager'
-import Values from '../../interactives/rules/Values';
+import Values from '../../rules/Values';
 import 'aframe-mouse-cursor-component';
 import ActionTypes from "../../actions/ActionTypes";
 const soundsHub = require('./soundsHub');

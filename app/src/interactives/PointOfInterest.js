@@ -1,6 +1,6 @@
 import InteractiveObject from "./InteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
-import Values from "./rules/Values";
+import Values from "../rules/Values";
 
 /**
  * @param defaultValues for generic and specific properties

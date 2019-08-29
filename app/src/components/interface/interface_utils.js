@@ -1,6 +1,6 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import scene_utils from "../../scene/scene_utils";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 import CentralSceneStore from "../../data/CentralSceneStore";
 import ScenesStore from "../../data/ScenesStore";
 import AssetsStore from "../../data/AssetsStore";

@@ -2,7 +2,7 @@ import React from 'react';
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import {lookObject} from "../aframe/aframe_actions";
 import interface_utils from "./interface_utils";
-import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+import RuleActionTypes from "../../rules/RuleActionTypes";
 import Dropdown from "./Dropdown";
 import EditorState from "../../data/EditorState";
 import Immutable from 'immutable'

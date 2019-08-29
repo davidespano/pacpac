@@ -1,6 +1,6 @@
 import RuleActionTypes from "./RuleActionTypes";
 import {Operators, SuperOperators} from "./Operators";
-import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import Values from "./Values";
 
 function eventTypeToString(eventType) {

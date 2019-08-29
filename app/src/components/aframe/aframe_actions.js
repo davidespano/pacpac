@@ -1,9 +1,9 @@
-import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+import RuleActionTypes from "../../rules/RuleActionTypes";
 import settings from "../../utils/settings";
 import {Howl} from 'howler';
 import store_utils from '../../data/stores_utils'
 import AudioManager from './AudioManager'
-import Values from '../../interactives/rules/Values';
+import Values from '../../rules/Values';
 import './aframe_shader'
 const THREE = require('three');
 const {mediaURL} = settings;

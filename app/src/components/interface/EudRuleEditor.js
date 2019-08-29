@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
-import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+import RuleActionTypes from "../../rules/RuleActionTypes";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObject from "../../interactives/InteractiveObject"
 import Immutable from "immutable";
-import Action from "../../interactives/rules/Action"
+import Action from "../../rules/Action"
 import ActionTypes from "../../actions/ActionTypes"
-import Rule from "../../interactives/rules/Rule";
-import rules_utils from "../../interactives/rules/rules_utils";
-import {Operators, SuperOperators} from "../../interactives/rules/Operators";
-import Values from "../../interactives/rules/Values";
-import Condition from "../../interactives/rules/Condition";
-import SuperCondition from "../../interactives/rules/SuperCondition";
-import toString from "../../interactives/rules/toString";
-import { RuleActionMap, ValuesMap, OperatorsMap } from "../../interactives/rules/maps";
+import Rule from "../../rules/Rule";
+import rules_utils from "../../rules/rules_utils";
+import {Operators, SuperOperators} from "../../rules/Operators";
+import Values from "../../rules/Values";
+import Condition from "../../rules/Condition";
+import SuperCondition from "../../rules/SuperCondition";
+import toString from "../../rules/toString";
+import { RuleActionMap, ValuesMap, OperatorsMap } from "../../rules/maps";
 import CentralSceneStore from "../../data/CentralSceneStore";
 import scene_utils from "../../scene/scene_utils";
 

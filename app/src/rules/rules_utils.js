@@ -1,4 +1,4 @@
-import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import Rule from "./Rule";
 import EventTypes from "./EventTypes";
 import RuleActionTypes from "./RuleActionTypes";
@@ -94,7 +94,12 @@ function generateDefaultRule(object){
             r = Rule({
                 uuid: uuid.v4(),
                 event: Action({}),
-                actions : Immutable.List([Action({uuid: uuid.v4()})]),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: RuleActionTypes.LOOK_AT,
+                    obj_uuid: object.uuid,
+                })]),
             });
             break;
         case InteractiveObjectsTypes.KEYPAD:

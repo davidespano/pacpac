@@ -6,7 +6,7 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
 import SceneAPI from "../../utils/SceneAPI";
-import ConditionUtils from "../../interactives/rules/ConditionUtils";
+import ConditionUtils from "../../rules/ConditionUtils";
 import interface_utils from "../interface/interface_utils"
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
@@ -14,7 +14,7 @@ import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
 import aframe_utils from "./aframe_assets"
-import Values from '../../interactives/rules/Values';
+import Values from '../../rules/Values';
 import 'aframe-mouse-cursor-component';
 import EditorState from "../../data/EditorState";
 import ActionTypes from "../../actions/ActionTypes";

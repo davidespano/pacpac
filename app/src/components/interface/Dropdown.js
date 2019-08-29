@@ -1,11 +1,11 @@
 import React from 'react';
 import Select from "react-select";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 import scene_utils from "../../scene/scene_utils";
 import EditorState from "../../data/EditorState";
 import ActionTypes from "../../actions/ActionTypes";
 import Actions from "../../actions/Actions"
-import toString from "../../interactives/rules/toString";
+import toString from "../../rules/toString";
 import interface_utils from "./interface_utils";
 
 function Dropdown(properties){

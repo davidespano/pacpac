@@ -1,7 +1,7 @@
 import React from 'react';
 import SceneAPI from "../../utils/SceneAPI";
 import FileSelectionBtn from "./FileSelectionBtn";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 import Dropdown from "./Dropdown";
 
 function InputSceneForm(props){

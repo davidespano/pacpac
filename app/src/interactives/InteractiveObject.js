@@ -1,5 +1,5 @@
 import Immutable from "immutable"
-import Values from "./rules/Values";
+import Values from "../rules/Values";
 
 /**
  * @type {*|Immutable.Record.Class}

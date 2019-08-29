@@ -1,5 +1,5 @@
 import Immutable from "immutable";
-import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import toString from "./toString";
 import RuleActionTypes from "./RuleActionTypes";
 import Values from "./Values";
