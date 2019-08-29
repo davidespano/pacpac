@@ -33,10 +33,16 @@ class CurvedGeometry extends Component
     render() {
         let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
         let geometry = this.props.type?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + this.props.vertices;
-        console.log(geometry)
+        let position = this.props.position;
+        if (this.props.type){
+            let points = this.props.vertices.split(' ').map(function(x){return parseFloat(x);});
+            position = -points[0].toString() + ', ' + points[1].toString() + ', ' + points[2].toString()
+        }
+
+        console.log(position)
         return(
             <Entity id={'curve_' + this.props.id} geometry={geometry}
-                    scale={scale} material={"side: double; opacity: 0.50; color: " + this.props.color} position={this.props.position}/>
+                    scale={scale} material={"side: double; opacity: 0.50; color: " + this.props.color} position={position}/>
         )
     }
 }

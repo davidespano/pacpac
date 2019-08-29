@@ -192,7 +192,13 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.LOOK_AT:
             //TODO capire se si può cambiare punto di vista piano
-            lookObject(action.subj_uuid);
+            let pointOI;
+            Object.values(state.activeScene.objects).flat().forEach(o =>{
+                if(o.uuid === action.obj_uuid){
+                    pointOI = o;
+                }
+            });
+            lookObject('curv' + action.obj_uuid, pointOI.vertices);
             break;
         default:
             console.log('not yet implemented');
@@ -328,7 +334,7 @@ function transition2D(actualScene, targetScene, duration){
 
 }
 
-function lookObject(idObject){
+function lookObject(idObject, pointOI = null){
     let obj = document.getElementById(idObject);
     obj.components.geometry.geometry.computeBoundingSphere();
     let center = obj.components.geometry.geometry.boundingSphere;
@@ -340,12 +346,20 @@ function lookObject(idObject){
     quaternion.setFromUnitVectors(v, l);
     let euler = new THREE.Euler();
     euler.setFromQuaternion(quaternion, 'YXZ', false);
-    camera.setAttribute("pac-look-controls", "planarScene: true" );
-    camera.setAttribute("pac-look-controls", "pointerLockEnabled: false" );
-    camera.components["pac-look-controls"].yawObject.rotation._y = euler._y
+    if(pointOI === null){
+        camera.setAttribute("pac-look-controls", "planarScene: true" );
+        camera.setAttribute("pac-look-controls", "pointerLockEnabled: false" );
+    } else {
+        let points = pointOI.split(' ').map(function(x){return parseFloat(x);});
+        let p = new THREE.Vector3( points[0], points[1], points[2] );
+        l = p.normalize();
+        quaternion.setFromUnitVectors(v, l);
+        euler.setFromQuaternion(quaternion, 'YXZ', false);
+    }
+    camera.components["pac-look-controls"].yawObject.rotation._y = euler._y;
     camera.components["pac-look-controls"].yawObject.rotation._x = 0;
     camera.components["pac-look-controls"].yawObject.rotation._z = 0;
-    camera.components["pac-look-controls"].pitchObject.rotation._x = euler._x
+    camera.components["pac-look-controls"].pitchObject.rotation._x = euler._x;
     camera.components["pac-look-controls"].pitchObject.rotation._z =  0;
     camera.components["pac-look-controls"].pitchObject.rotation._y =  0;
     //document.exitPointerLock()
