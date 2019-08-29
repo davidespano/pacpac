@@ -269,10 +269,10 @@ function generateSpecificProperties(object, objectScene, props){
                     <div id={"counterValue"}
                          className={"propertyForm-right propertyForm-right-number"}
                          contentEditable={true}
-                         onBlur={()=> interface_utils.setPropertyFromId(object,'value',"counterValue", props)}
+                         onBlur={()=> interface_utils.setPropertyFromId(object,'state',"counterValue", props)}
                          onInput={() => interface_utils.onlyNumbers("counterValue")}
                     >
-                        {object.properties.value}
+                        {object.properties.state}
                     </div>
                     <label className={'options-labels'}>Passo:</label>
                     <div id={"counterStep"}

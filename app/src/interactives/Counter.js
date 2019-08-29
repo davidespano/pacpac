@@ -9,7 +9,7 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 const Counter = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.COUNTER,
     properties : {
-        value: 0,
+        state: 0,
         step: 1,
     },
     media: null,
