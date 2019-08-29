@@ -61,7 +61,11 @@ function objPropsView(props) {
         objGeometry = document.getElementById("curv" + currentObject.uuid);
         if (objGeometry) {
             objGeometry.setAttribute('material', 'color', 'green');
-            lookObject("curv" + currentObject.uuid);
+            let pointOI = null;
+            if(currentObject.type === 'POINT_OF_INTEREST'){
+                pointOI = currentObject.vertices;
+            }
+            lookObject("curv" + currentObject.uuid, pointOI);
             interface_utils.highlightRule(props, currentObject);
         }
     }, 100);

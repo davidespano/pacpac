@@ -192,7 +192,7 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.LOOK_AT:
             //TODO capire se si può cambiare punto di vista piano
-            let pointOI;
+            let pointOI = null;
             Object.values(state.activeScene.objects).flat().forEach(o =>{
                 if(o.uuid === action.obj_uuid){
                     pointOI = o;
