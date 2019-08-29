@@ -38,7 +38,6 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         let scene;
-        console.log(props)
         //carico la scena corrente, o se è un audio la scena a cui appartiene
         if(props.editor.audioPositioning)
             scene = props.editor.audioToEdit.scene;

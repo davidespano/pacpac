@@ -104,6 +104,7 @@ export default class Bubble extends Component
 
         const curves = Object.values(scene.objects).flat().map(curve => {
             let color = this.props.curvedToEdit===curve.uuid?'red':'white';
+            console.log(curve)
             if(this.props.editMode){
                 let pointOfinterest = curve.type === 'POINT_OF_INTEREST'
                 return(
