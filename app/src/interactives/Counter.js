@@ -7,16 +7,13 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @constructor
  */
 const Counter = defaultValues => InteractiveObject({
-    type : InteractiveObjectsTypes.TRANSITION,
+    type : InteractiveObjectsTypes.COUNTER,
     properties : {
-        duration : 2000,
+        state: 0,
+        step: 1,
     },
-    media : {
-        media0: null,
-    },
-    audio : {
-        audio0: null,
-    },
+    media: null,
+    audio: null,
     ...defaultValues
 });
 

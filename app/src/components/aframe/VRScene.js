@@ -4,7 +4,7 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
 import SceneAPI from "../../utils/SceneAPI";
-import ConditionUtils from "../../interactives/rules/ConditionUtils";
+import ConditionUtils from "../../rules/ConditionUtils";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
 const eventBus = require('./eventBus');

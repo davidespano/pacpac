@@ -1,5 +1,5 @@
 import Immutable from "immutable";
-import Values from "../interactives/rules/Values";
+import Values from "../rules/Values";
 
 /**
  * @type {*|Immutable.Record.Class}
@@ -20,6 +20,7 @@ const Scene = Immutable.Record({
     img : "",
     index : 0,
     isAudioOn : false,
+    isVideoInALoop: true,
     type : Values.THREE_DIM,
     tag : 'default',
     music : null,
@@ -30,7 +31,8 @@ const Scene = Immutable.Record({
         switches: [],
         collectable_keys: [],
         locks: [],
-        keypads: [],
+        points: [],
+        counters: [],
     },
     rules : [], // uuid list
     audios : [], // uuid list

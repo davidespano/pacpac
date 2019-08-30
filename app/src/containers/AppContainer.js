@@ -93,7 +93,6 @@ function getState() {
         selectSceneSpatialAudio: Actions.selectSceneSpatialAudio,
         selectTagNewScene: Actions.selectTagNewScene,
         soundActiveFormCheck: Actions.soundActiveFormCheck,
-        soundActiveRightbarCheck: Actions.soundActiveRightbarCheck,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
         switchToDebugMode: Actions.debugModeOn,
@@ -105,7 +104,7 @@ function getState() {
         updateAudioFilter: Actions.updateAudioFilter,
         updateTagFilter: Actions.updateTagFilter,
         updateObjectNameRightbar: Actions.updateObjectNameRightbar,
-        updateSceneNameRightbar: Actions.updateSceneNameRightbar,
+        updateSceneOptions: Actions.updateSceneOptions,
 
 
         //scenes

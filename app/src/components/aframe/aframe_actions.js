@@ -1,9 +1,9 @@
-import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+import RuleActionTypes from "../../rules/RuleActionTypes";
 import settings from "../../utils/settings";
 import {Howl} from 'howler';
 import store_utils from '../../data/stores_utils'
 import AudioManager from './AudioManager'
-import Values from '../../interactives/rules/Values';
+import Values from '../../rules/Values';
 import './aframe_shader'
 const THREE = require('three');
 const {mediaURL} = settings;
@@ -16,18 +16,19 @@ function executeAction(VRScene, rule, action){
     let actual_scene = VRScene.state.activeScene.name;
     let actual_sceneimg = VRScene.state.activeScene.img;
     let actual_scene_Uuid = VRScene.state.activeScene.uuid;
-    let current_object = {};
     let game_graph = VRScene.state.graph;
+    let current_object = game_graph['objects'].get(rule.event.obj_uuid);
     let sceneName = action.subj_uuid;
     //TODO cambiare nome media non è il media
     let media = action.obj_uuid;
+    console.log(media)
     let cursor = document.querySelector('#cursor');
-    Object.values(state.activeScene.objects).flat().forEach(o =>{
+    /*Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
-
         }
-    });
+    });*/
+    console.log(game_graph)
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -127,45 +128,88 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.CHANGE_BACKGROUND:
             runState[sceneName].background = media;
             VRScene.setState({runState: runState, game_graph: game_graph});
-            let targetSceneVideo = document.getElementById(actual_sceneimg);
+            if(soundsHub["audios_"+ actual_scene_Uuid]){
+                soundsHub["audios_"+ actual_scene_Uuid].pause();
+                let audioVideo = {};
+                audioVideo.file = media;
+                audioVideo.loop = soundsHub["audios_"+ actual_scene_Uuid].loop;
+                audioVideo.volume = 80;
+                soundsHub["audios_"+ actual_scene_Uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
+                soundsHub["audios_"+ actual_scene_Uuid].play()
+            }
+            let targetSceneVideo = document.getElementById(media);
             if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
             break;
-        case RuleActionTypes.PLAY_AUDIO:
-            soundsHub["audios_"+ media].play();
+        case RuleActionTypes.PLAY:
+            //verifico se è un video
+            if(soundsHub["audios_"+ media]){
+                soundsHub["audios_"+ media].loop = false;
+                soundsHub["audios_"+ media].play();
+            } else {
+                if(document.getElementById(actual_sceneimg) !== null){
+                    let actualVideoLoop = document.getElementById(actual_sceneimg);
+                    if(actualVideoLoop.nodeName === 'VIDEO') {
+                        actualVideoLoop.loop = false;
+                        //document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true
+                    }
+                    //VRScene.setState({runState: runState, game_graph: game_graph});
+                }
+            }
             break;
-        case RuleActionTypes.STOP_AUDIO:
-            if(soundsHub["audios_"+ media])
+        case RuleActionTypes.PLAY_LOOP:
+            //TODO rivedere questi controlli fanno un po' schifo
+            if(soundsHub["audios_"+ media]){
+                soundsHub["audios_"+ media].loop = false;
+                soundsHub["audios_"+ media].play();
+            } else {
+                if(document.getElementById(actual_sceneimg) !== null){
+                    let actualVideoLoop = document.getElementById(actual_sceneimg);
+                    if(actualVideoLoop.nodeName === 'VIDEO') {
+                        actualVideoLoop.loop = true;
+                    }
+                }
+            }
+            break;
+        case RuleActionTypes.STOP:
+            //TODO stoppare un video forse non ha senso, poi vediamo
+            if(soundsHub["audios_"+ media] && document.querySelector('media_' + media) === null)
                 soundsHub["audios_"+ media].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
             changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.obj_uuid);
-            /*runState[action.obj_uuid].state='COLLECTED';
-            let audioKey = current_object.audio.audio0;
-            if(soundsHub['audio0_' + audioKey])
-                soundsHub['audio0_' + audioKey].play();
-            game_graph.scenes[actual_scene_Uuid].objects.collectable_keys =
-                game_graph.scenes[actual_scene_Uuid].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
-            if(current_object.media0 !== null){
-                document.getElementById(actual_scene).needShaderUpdate = true;
-            }
-            VRScene.setState({runState: runState, graph: game_graph});*/
             break;
         case RuleActionTypes.UNLOCK_LOCK:
             changeStateObject(VRScene, runState, game_graph, 'UNLOCKED', current_object, action.obj_uuid);
-            /*runState[action.obj_uuid].state='UNLOCKED';
-            let audioLock = current_object.audio.audio0;
-            if(soundsHub['audio0_' + audioLock])
-                soundsHub['audio0_' + audioLock].play();
-            game_graph.scenes[actual_scene_Uuid].objects.locks =
-                game_graph.scenes[actual_scene_Uuid].objects.locks.filter(obj =>  obj.uuid !== current_object.uuid);
-            VRScene.setState({runState: runState, graph: game_graph});*/
             break;
         case RuleActionTypes.CHANGE_VISIBILITY:
-            let obj = document.querySelector('#curv' + action.subj_uuid)
+            let obj = document.querySelector('#curv' + action.subj_uuid);
+            let mediaObj = document.querySelector('#media_' + action.subj_uuid);
             if(obj)
-                obj.setAttribute('selectable', {visible: action.obj_uuid})
+                obj.setAttribute('selectable', {visible: action.obj_uuid});
+            console.log(mediaObj)
             runState[action.subj_uuid].visible=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
+            break;
+        case RuleActionTypes.LOOK_AT:
+            //TODO capire se si può cambiare punto di vista piano
+            let pointOI = game_graph['objects'].get(action.obj_uuid);
+            console.log(VRScene.state.activeScene.type)
+            if(VRScene.state.activeScene.type === '3D')
+                setTimeout(function () {
+                    lookObject('curv' + action.obj_uuid, pointOI.vertices);
+                }, 1000)
+            break;
+        case RuleActionTypes.DECREASE:
+            if (runState[action.subj_uuid].state >= 0)
+                runState[action.subj_uuid].state -= game_graph['objects'].get(action.subj_uuid).properties.step;
+            VRScene.setState({runState: runState, graph: game_graph});
+            console.log(runState[action.subj_uuid])
+            break;
+        case RuleActionTypes.INCREASE:
+            console.log(game_graph['objects'].get(action.subj_uuid))
+            runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
+            VRScene.setState({runState: runState, graph: game_graph});
+            console.log(runState[action.subj_uuid])
             break;
         default:
             console.log('not yet implemented');
@@ -218,10 +262,6 @@ function transition(actualScene, targetScene, duration, direction){
             positionActual = "0, 1.6, -6.44";
             break;
     }
-    console.log('transizione')
-    console.log(positionTarget)
-    console.log(positionActual)
-    console.log(direction)
     if(targetScene.type === Values.TWO_DIM) targetSky.setAttribute('position', positionTarget);
 
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
@@ -305,7 +345,7 @@ function transition2D(actualScene, targetScene, duration){
 
 }
 
-function lookObject(idObject){
+function lookObject(idObject, pointOI = null){
     let obj = document.getElementById(idObject);
     obj.components.geometry.geometry.computeBoundingSphere();
     let center = obj.components.geometry.geometry.boundingSphere;
@@ -317,12 +357,20 @@ function lookObject(idObject){
     quaternion.setFromUnitVectors(v, l);
     let euler = new THREE.Euler();
     euler.setFromQuaternion(quaternion, 'YXZ', false);
-    camera.setAttribute("pac-look-controls", "planarScene: true" );
-    camera.setAttribute("pac-look-controls", "pointerLockEnabled: false" );
-    camera.components["pac-look-controls"].yawObject.rotation._y = euler._y
+    if(pointOI === null){
+        camera.setAttribute("pac-look-controls", "planarScene: true" );
+        camera.setAttribute("pac-look-controls", "pointerLockEnabled: false" );
+    } else {
+        let points = pointOI.split(' ').map(function(x){return parseFloat(x);});
+        let p = new THREE.Vector3( points[0], points[1], points[2] );
+        l = p.normalize();
+        quaternion.setFromUnitVectors(v, l);
+        euler.setFromQuaternion(quaternion, 'YXZ', false);
+    }
+    camera.components["pac-look-controls"].yawObject.rotation._y = euler._y;
     camera.components["pac-look-controls"].yawObject.rotation._x = 0;
     camera.components["pac-look-controls"].yawObject.rotation._z = 0;
-    camera.components["pac-look-controls"].pitchObject.rotation._x = euler._x
+    camera.components["pac-look-controls"].pitchObject.rotation._x = euler._x;
     camera.components["pac-look-controls"].pitchObject.rotation._z =  0;
     camera.components["pac-look-controls"].pitchObject.rotation._y =  0;
     //document.exitPointerLock()

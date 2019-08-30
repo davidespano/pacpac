@@ -27,17 +27,21 @@ function getUserDetail() {
     return request.get(`${apiBaseURL}/users/me`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .then(function(response){
+        .then(
+            function (response){ // success
             let rawUser = response.body;
             let user = User({
                 uuid: rawUser.id,
                 username: rawUser.username,
                 games: rawUser.games,
             });
-            //console.log(user)
             Actions.receiveUser(user);
             Actions.gameSelectionModeOn();
-        });
+            },
+            function (error) { // failure
+                console.log(error)
+            }
+        );
 }
 
 function isUserAuthenticated() {

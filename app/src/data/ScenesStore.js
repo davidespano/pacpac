@@ -33,6 +33,7 @@ class ScenesStore extends ReduceStore {
                             img : scene.img,
                             index : scene.index,
                             isAudioOn: scene.isAudioOn,
+                            isVideoInALoop: scene.isVideoInALoop,
                             type : scene.type,
                             music : scene.music,
                             sfx: scene.sfx,
@@ -44,7 +45,8 @@ class ScenesStore extends ReduceStore {
                                 switches: [],
                                 collectable_keys: [],
                                 locks: [],
-                                keypads: [],
+                                points: [],
+                                counters: [],
                             },
                         });
                         state = state.set(newScene.uuid, newScene).sort(stores_utils.chooseComparator(action.order));

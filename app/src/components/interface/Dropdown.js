@@ -1,11 +1,11 @@
 import React from 'react';
 import Select from "react-select";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 import scene_utils from "../../scene/scene_utils";
 import EditorState from "../../data/EditorState";
 import ActionTypes from "../../actions/ActionTypes";
 import Actions from "../../actions/Actions"
-import toString from "../../interactives/rules/toString";
+import toString from "../../rules/toString";
 import interface_utils from "./interface_utils";
 
 function Dropdown(properties){
@@ -23,6 +23,7 @@ function Dropdown(properties){
             className={'react-select react-select-' + component}
             styles={style}
             isDisabled={ properties.disabled ? properties.disabled : false}
+            menuPlacement={'auto'}
         />
     );
 }
@@ -157,6 +158,27 @@ function generateOptions(props, component, property){
                 },
                 customStyle,
             ];
+        case 'tags-edit-scene':
+            return [
+                [...props.tags.values()].map(tag => {
+                    return {value: tag.uuid, label: tag.name, color: tag.color}
+                }),
+                (e) => {
+                    let scene = props.scenes.get(props.currentScene);
+                    scene_utils.setProperty(scene, property, e.value, props);
+                },
+                tagStyle,
+            ];
+        case 'tags-new-scene':
+            return [
+                [...props.tags.values()].map(tag => {
+                    return {value: tag.uuid, label: tag.name, color: tag.color}
+                }),
+                (e) => {
+                    props.selectTagNewScene(e.value);
+                },
+                tagStyle,
+            ];
     }
 }
 
@@ -174,6 +196,14 @@ function getDefaultValue(props, defaultValue, component){
             case 'sfx':
                 if(props.audios.has(defaultValue))
                     label = props.audios.get(defaultValue).name; break;
+            case 'tags-edit-scene':
+            case 'tags-new-scene':
+                let tag = props.tags.get(defaultValue);
+                return {
+                    value: defaultValue,
+                    label: tag.name,
+                    color: tag.color,
+                };
             default:
                 label = toString.valueUuidToString(defaultValue);
             }
@@ -237,6 +267,53 @@ const audioMediaOptionsStyle = {
         height: '25px',
         minHeight: '25px',
     }),
+};
+
+
+const tagStyle = {
+    option: (provided, state) => ({
+        color: state.value === null ? 'darkgrey': state.isSelected ? '#EF562D' : 'black',
+        '&:hover': { backgroundColor: '#FFD8AC'},
+        borderBottom: state.value === null ? 'dotted 1px darkgrey' : 'none',
+        ...dot(state),
+    }),
+    input: (provided, state) => ({...provided, ...dot(state)}),
+    singleValue: (provided, state) => ({...provided, ...dot(state)}),
+    placeholder: (provided, state) => ({...provided, ...dot(state)}),
+    control: (provided, state) => ({
+        ...provided,
+        minHeight: '30px',
+        height: '30px',
+        '&:hover': { border: '1px solid darkgrey'},
+        border: '1px solid darkgrey',
+        borderRadius: 0,
+        boxShadow: 'none',
+    }),
+    menu: (provided, state) => ({
+        ...provided,
+        margin: 0,
+    }),
+};
+
+function dot(state){
+    let color = 'white';
+    if(state.data){
+        color = state.data.color;
+    }
+    return {
+        alignItems: 'center',
+        display: 'flex',
+
+        ':before': {
+            backgroundColor: color,
+            borderRadius: 10,
+            content: '" "',
+            display: 'block',
+            marginRight: 8,
+            height: 10,
+            width: 10,
+        },
+    }
 };
 
 export default Dropdown;

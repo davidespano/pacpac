@@ -4,7 +4,7 @@ import {Curved, CurvedGeometry} from './aframe_curved';
 import settings from "../../utils/settings";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
-import Values from '../../interactives/rules/Values'
+import Values from '../../rules/Values'
 import './aframe_shader'
 import AudioManager from './AudioManager'
 const soundsHub = require('./soundsHub');
@@ -55,13 +55,16 @@ export default class Bubble extends Component
     componentDidUpdate(){
         if(!this.props.isActive) {
             Object.values(this.props.scene.objects).flat().forEach(obj => {
-                Object.values(obj.media).forEach(media=>{
-                    if(media !== null)
-                        document.getElementById("media_" + obj.uuid).currentTime = 0;
-                });
+                if(obj.media) {
+                    Object.values(obj.media).forEach(media => {
+                        if (media !== null)
+                            document.getElementById("media_" + obj.uuid).currentTime = 0;
+                    });
+                }
             })
         }else{
-            if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
+            //if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
+            this.setShader();
         }
 
         // Check forzare l'aggiornamento della camera nella nuova scena se passo da 2D a 3D o viceverse
@@ -104,15 +107,27 @@ export default class Bubble extends Component
         const curves = Object.values(scene.objects).flat().map(curve => {
             let color = this.props.curvedToEdit===curve.uuid?'red':'white';
             if(this.props.editMode){
+                let pointOfinterest = curve.type === 'POINT_OF_INTEREST'
                 return(
-                    <CurvedGeometry key={"keyC"+ curve.uuid} position={positionCurved} vertices={curve.vertices} id={curve.uuid}
-                                    is3Dscene={is3Dscene} color={color}/>
+                    <CurvedGeometry key={"keyC"+ curve.uuid}
+                                    position={positionCurved}
+                                    vertices={curve.vertices}
+                                    id={curve.uuid}
+                                    is3Dscene={is3Dscene}
+                                    color={color}
+                                    type={pointOfinterest} />
                 );
             } else {
                 //TODO [debug] add to origin master
                 return(
-                    <Curved key={"keyC"+ curve.uuid} onDebugMode={this.props.onDebugMode} position={positionCurved} object_uuid={this.props.isActive?curve.uuid:""}
-                            is3Dscene={is3Dscene} vertices={curve.vertices} visible={this.props.runState[curve.uuid].visible}/>
+                    <Curved key={"keyC"+ curve.uuid}
+                            onDebugMode={this.props.onDebugMode}
+                            position={positionCurved}
+                            object_uuid={this.props.isActive?curve.uuid:""}
+                            is3Dscene={is3Dscene}
+                            vertices={curve.vertices}
+                            visible={this.props.runState[curve.uuid].visible}
+                            type={curve.type}/>
                 );
             }
         });
@@ -129,26 +144,31 @@ export default class Bubble extends Component
                 //Carico musica sottofondo
                 if(this.props.scene.music !== undefined && this.props.audios){
                     let music = this.props.audios[this.props.scene.music]
-                    if(soundsHub[music.uuid] === undefined)
-                        soundsHub[music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
-                    soundsHub[music.uuid].play()
+                    if(soundsHub["audios_"+ music.uuid] === undefined)
+                        soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0]);
+                    soundsHub["audios_"+ music.uuid].play()
                 }
                 //carico suoni ambientali
                 if(this.props.scene.sfx !== undefined && this.props.audios){
                     let sfx = this.props.audios[this.props.scene.sfx]
-                    if(soundsHub[sfx.uuid] === undefined)
-                        soundsHub[sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0]);
-                    soundsHub[sfx.uuid].play()
+                    if(soundsHub["audios_"+ sfx.uuid] === undefined){
+                        //sfx.volume = 50;
+                        soundsHub["audios_"+ sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0]);
+                    }
+
+                    soundsHub["audios_"+ sfx.uuid].play()
                 }
                 //Carico audio incorporato nel video
                 if(this.props.isAudioOn){
-                    if(soundsHub[this.props.scene.uuid] === undefined){
+                    if(soundsHub["audios_"+ this.props.scene.uuid] === undefined){
                         if(stores_utils.getFileType(scene.img) === 'video'){
-                            let audioVideo = {}
+                            let audioVideo = {};
+                            let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
                             audioVideo.file = this.props.scene.img;
-                            audioVideo.loop = true;
-                            soundsHub[this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
-                            soundsHub[this.props.scene.uuid].play()
+                            audioVideo.loop = loop;
+                            audioVideo.volume = 50;
+                            soundsHub["audios_"+ this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
+                            soundsHub["audios_"+ this.props.scene.uuid].play()
                         }
                     }
                 }
@@ -218,7 +238,7 @@ export default class Bubble extends Component
             }
             //TODO [debug] add to origin master
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
-                if (this.props.isActive ) document.getElementById(scene.img).play();
+                if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
                 return;
             }
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
@@ -318,12 +338,15 @@ export default class Bubble extends Component
     }
 
     resetShader(sky){
+
         //TODO [debug] add to origin master
         if(sky && sky.getAttribute('material').shader !== 'multi-video'){
             return;
         }
-        if(sky)
+        if(sky){
             sky.setAttribute('material', "shader:flat;");
+        }
+
     }
 
     componentWillUnmount(){

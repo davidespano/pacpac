@@ -1,9 +1,10 @@
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import scene_utils from "../../scene/scene_utils";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 import CentralSceneStore from "../../data/CentralSceneStore";
 import ScenesStore from "../../data/ScenesStore";
 import AssetsStore from "../../data/AssetsStore";
+import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 
 
 /**
@@ -95,8 +96,6 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, props, radiu
     let coordinates = vertices.split(" ").map(x => parseFloat(x));
     let medianPoint = [0.0, 0.0, 0.0];
     let x = 0, y = 0;
-
-    console.log(coordinates)
 
     for (let i = 0; i < coordinates.length; i += 3) {
         medianPoint[0] += coordinates[i];
@@ -294,6 +293,29 @@ function highlightRule(props, obj) {
         });
 }
 
+/**
+ * returns appropriate icon for an object given the type
+ * @param objType
+ * @returns {string}
+ */
+function getObjImg(objType) {
+    switch (objType) {
+        case InteractiveObjectsTypes.LOCK:
+            return "icons/icons8-lock-100.png";
+        case InteractiveObjectsTypes.SWITCH:
+            return "icons/icons8-toggle-on-filled-100.png";
+        case InteractiveObjectsTypes.KEY:
+            return "icons/icons8-key-100.png";
+        case InteractiveObjectsTypes.TRANSITION:
+            return "icons/icons8-one-way-transition-100.png";
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return "icons/icons8-point-96.png";
+        case InteractiveObjectsTypes.COUNTER:
+            return "icons/icons8-counter-100.png";
+        default:
+            return "icons/icons8-plus-math-filled-100.png";
+    }
+}
 
 
 export default {
@@ -310,5 +332,6 @@ export default {
     setClassStyle: setClassStyle,
     setIdStyle: setIdStyle,
     highlightRule: highlightRule,
-    updateAudioVertices: updateAudioVertices
+    updateAudioVertices: updateAudioVertices,
+    getObjImg: getObjImg,
 }

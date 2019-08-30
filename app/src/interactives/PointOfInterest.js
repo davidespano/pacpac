@@ -7,19 +7,12 @@ import Values from "../rules/Values";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const Transition = defaultValues => InteractiveObject({
-    type : InteractiveObjectsTypes.TRANSITION,
-    properties : {
-        duration : 2000,
-        direction: Values.NO_DIR,
-    },
-    media : {
-        media0: null,
-    },
-    audio : {
-        audio0: null,
-    },
+const PointOfInterest = defaultValues => InteractiveObject({
+    type : InteractiveObjectsTypes.POINT_OF_INTEREST,
+    properties : {},
+    media : null,
+    audio : null,
     ...defaultValues
 });
 
-export default Transition;
+export default PointOfInterest;

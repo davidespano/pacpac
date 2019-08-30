@@ -9,11 +9,12 @@ const {mediaURL} = settings;
 function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene'){
         let currAssets = [];
         let sceneBackground;
-
+        //TODO verificare, se non impostato risulta undefined
+        let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
         //first, push the background media.
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
-                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={true}  preload="auto"
+                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={loop}  preload="auto"
                        src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + srcBackground}
                        playsInline={true} autoPlay muted={true}
                 />)
@@ -27,33 +28,37 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
 
         //second, push the media of the interactive objs
         Object.values(scene.objects).flat().forEach(obj => {
-            Object.keys(obj.media).map(k => {
-                if(obj.media[k] !== null){
-                    if(stores_utils.getFileType(obj.media[k]) === 'video'){
-                        objAssetMedia = (
-                            <video key={k+"_" + obj.uuid} crossOrigin={"anonymous"} id={k+"_" + obj.uuid} loop={true}  preload="auto"
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
-                                   playsInline={true} autoPlay muted={true}
+            if(obj.media){
+                Object.keys(obj.media).map(k => {
+                    if(obj.media[k] !== null){
+                        if(stores_utils.getFileType(obj.media[k]) === 'video'){
+                            objAssetMedia = (
+                                <video key={k+"_" + obj.uuid} crossOrigin={"anonymous"} id={k+"_" + obj.uuid} loop={true}  preload="auto"
+                                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
+                                       playsInline={true} autoPlay muted={true}
+                                />)
+                        } else {
+                            objAssetMedia = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossOrigin="Anonymous"
+                                                  src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
                             />)
-                    } else {
-                        objAssetMedia = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
-                        />)
+                        }
+                        currAssets.push(objAssetMedia)
                     }
-                    currAssets.push(objAssetMedia)
-                }
-            });
+                });
+
+            }
 
             //Creaizone traccia audio dei singoli oggetti, solo nella modalità gioco
-            if(mode === 'scene'){
+            if(mode === 'scene' && obj.audio){
                 Object.keys(obj.audio).map(k => {
                     //TODO a volte se esiste l'audio non è presente nella lista degli audio, verificare
                     if(obj.audio[k] !== null  && audios[obj.audio[k]] !== undefined){
-                        console.log(obj.audio[k])
                         let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj)
                         soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], audioPosition)
                     }
                 });
+
+
             }
 
             let v = generateCurrentAsset(obj, runState);

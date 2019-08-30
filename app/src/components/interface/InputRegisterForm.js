@@ -52,10 +52,16 @@ function register(){
         return;
     }
 
-    AuthenticationAPI.register(username,password).catch((err) => {
-        alert("Utente già esistente")
-        console.log(err);
-    })
+    AuthenticationAPI.register(username,password).then(
+        function(response){}, //success
+        function(error){ //failure
+            if(error.toString().includes("Internal Server Error")){
+                alert('Connessione al server non riuscita');
+            } else {
+                alert('Utente già esistente');
+            }
+        }
+    );
 }
 
 export default InputRegisterForm;

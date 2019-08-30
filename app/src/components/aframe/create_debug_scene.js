@@ -6,7 +6,7 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
 import SceneAPI from "../../utils/SceneAPI";
-import ConditionUtils from "../../interactives/rules/ConditionUtils";
+import ConditionUtils from "../../rules/ConditionUtils";
 import interface_utils from "../interface/interface_utils"
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
@@ -14,7 +14,7 @@ import "../../data/stores_utils";
 import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
 import aframe_utils from "./aframe_assets"
-import Values from '../../interactives/rules/Values';
+import Values from '../../rules/Values';
 import 'aframe-mouse-cursor-component';
 import EditorState from "../../data/EditorState";
 import ActionTypes from "../../actions/ActionTypes";
@@ -31,16 +31,13 @@ export default class DebugVRScene extends React.Component {
 
         let scene = null;
 
-        if (props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-            if (this.props.currentScene === null) {
-                scene = this.props.scenes.toArray()[0];
-            } else {
-                scene = this.props.scenes.get(this.props.currentScene);
-            }
+        if(this.props.currentScene){
+            scene = this.props.scenes.get(this.props.currentScene);
         } else {
-            props.updateCurrentScene(props.scenes.toArray()[0].uuid);
+            if(this.props.scenes.size > 0){
+                scene = this.props.scenes.toArray()[0];
+            }
         }
-
 
         let gameGraph = {};
         this.state = {
@@ -185,28 +182,35 @@ export default class DebugVRScene extends React.Component {
         //Assets generati qui non dal nuovo componente
         //let assets = this.generateAssets()
 
-        let assets = this.generateAssets2();
-        let is3dScene = this.props.scenes.get(this.props.currentScene).type === Values.THREE_DIM;
+        if(this.state.activeScene) {
 
-        return (
-            <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
-                <a-assets>
-                    {assets}
-                </a-assets>
-                {this.generateBubbles()}
+            let assets = this.generateAssets2();
+            let is3dScene = this.props.scenes.get(this.props.currentScene).type === Values.THREE_DIM;
 
-                <Entity primitive="a-camera" key="keycamera" id="camera"
-                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
-                        look-controls="false" wasd-controls="false">
-                    <Entity mouse-cursor>
-                        <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
-                                fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
-                        <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
-                                fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
+            return (
+                <a-scene embedded vr-mode-ui="enabled : false" background="color: black">
+                    <a-assets>
+                        {assets}
+                    </a-assets>
+                    {this.generateBubbles()}
+
+                    <Entity primitive="a-camera" key="keycamera" id="camera"
+                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString() + ";planarScene:" + !is3dScene + ";"}
+                            look-controls="false" wasd-controls="false">
+                        <Entity mouse-cursor>
+                            <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse"}
+                                    fuse={false} visible={false}
+                                    raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity"}
+                                    fuse={false} visible={is3dScene}
+                                    raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
+                        </Entity>
                     </Entity>
-                </Entity>
-            </a-scene>
-        )
+                </a-scene>
+            )
+        } else {
+            return <a-scene background="color: white"></a-scene>
+        }
 
     }
 
@@ -222,14 +226,16 @@ export default class DebugVRScene extends React.Component {
         return this.currentLevel.map(sceneName => {
             let scene = this.state.graph.scenes[sceneName];
             //this.props.currentObject !== null
-            console.log(this.props.currentObject)
-            console.log(this.props.currentScene)
             return (
-                <Bubble currentScene={this.props.currentScene} onDebugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
-                        key={"key" + scene.name} scene={scene} isActive={scene.uuid === this.props.currentScene}
+                <Bubble currentScene={this.props.currentScene}
+                        onDebugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
+                        key={"key" + scene.name}
+                        scene={scene}
+                        isActive={scene.uuid === this.props.currentScene}
                         handler={(newActiveScene) => this.handleSceneChange(newActiveScene)}
                         runState={this.state.runState}
-                        editMode={false} cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
+                        editMode={false}
+                        cameraChangeMode={(is3D) => this.cameraChangeMode(is3D)}
                 />
             );
         });

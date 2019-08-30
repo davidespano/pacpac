@@ -4,7 +4,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import Actions from "../../actions/Actions";
 import Dropdown from "./Dropdown";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 
 function ObjectOptions(props){
     if(props.currentObject){
@@ -58,7 +58,6 @@ function checkFilters(props, filter){
 }
 
 
-
 /**
  * Generates options of currently selected object
  * @param props
@@ -70,11 +69,15 @@ function generateProperties(props){
     let objectScene = props.scenes.get(props.objectToScene.get(currentObject.uuid));
     let type = objectTypeToString(currentObject.type);
 
+    console.log(currentObject)
+    console.log(type)
+
+
     return(
         <div className={'currentOptions'}>
             {objectButtons(props)}
             <div className={'figure-grid'}>
-                <img className={'rightbar-img'} src={findImg(currentObject)} alt={type} title={type}/>
+                <img className={'rightbar-img'} src={interface_utils.getObjImg(currentObject.type)} alt={type} title={type}/>
                 <p>{type}</p>
             </div>
             <label className={'rightbar-titles'}>Nome</label>
@@ -131,42 +134,66 @@ function generateProperties(props){
                     Modifica geometria
                 </button>
             </div>
-            <label className={'rightbar-titles'}>Media:</label>
-            <div className={'rightbar-audio-media-grid'}>
-                {Object.keys(currentObject.media).map( m => {
-                    return(
-                        <React.Fragment key={currentObject.uuid + '-' + m}>
-                            <p className={'rightbar-audio-media-grid-title'}>Media {optionToName(currentObject.type, m)}</p>
-                            <Dropdown props={props}
-                                      component={'assets'}
-                                      property={m}
-                                      defaultValue={currentObject.media[m]} />
-                        </React.Fragment>
-                    );
-                })}
-                <p className={'rightbar-audio-media-grid-title'}>Maschera</p>
-                <Dropdown props={props}
-                          component={'assets'}
-                          property={'mask'}
-                          defaultValue={currentObject.mask} />
-            </div>
-            <label className={'rightbar-titles'}>Audio:</label>
-            <div className={'rightbar-audio-media-grid'}>
-                {Object.keys(currentObject.audio).map( a => {
-                    return(
-                        <React.Fragment key={currentObject.uuid + '-' + a}>
-                            <p className={'rightbar-audio-media-grid-title'}>Audio {optionToName(currentObject.type, a)}</p>
-                            <Dropdown
-                                props={props}
-                                component={'audios'}
-                                property={a}
-                                defaultValue={currentObject.audio[a]} mediaToEdit={a}/>
-                        </React.Fragment>
-                    );
-                })}
-            </div>
+            {currentObject.media? mediaProperties(currentObject, props) : null}
+            {currentObject.audio? audioProperties(currentObject, props) : null}
         </div>
     );
+}
+
+/**
+ * returns media properties view
+ * @param currentObjects
+ * @param props
+ * @returns {*}
+ */
+function mediaProperties(currentObject, props){
+    return <React.Fragment>
+        <label className={'rightbar-titles'}>Media:</label>
+        <div className={'rightbar-audio-media-grid'}>
+            {Object.keys(currentObject.media).map( m => {
+                return(
+                    <React.Fragment key={currentObject.uuid + '-' + m}>
+                        <p className={'rightbar-audio-media-grid-title'}>Media {optionToName(currentObject.type, m)}</p>
+                        <Dropdown props={props}
+                                  component={'assets'}
+                                  property={m}
+                                  defaultValue={currentObject.media[m]} />
+                    </React.Fragment>
+                );
+            })}
+            <p className={'rightbar-audio-media-grid-title'}>Maschera</p>
+            <Dropdown props={props}
+                      component={'assets'}
+                      property={'mask'}
+                      defaultValue={currentObject.mask} />
+        </div>
+    </React.Fragment>
+}
+
+/**
+ * returns audio properties view
+ * @param currentObject
+ * @param props
+ * @returns {*}
+ */
+function audioProperties(currentObject, props){
+    return <React.Fragment>
+        <label className={'rightbar-titles'}>Audio:</label>
+        <div className={'rightbar-audio-media-grid'}>
+            {Object.keys(currentObject.audio).map( a => {
+                return(
+                    <React.Fragment key={currentObject.uuid + '-' + a}>
+                        <p className={'rightbar-audio-media-grid-title'}>Audio {optionToName(currentObject.type, a)}</p>
+                        <Dropdown
+                            props={props}
+                            component={'audios'}
+                            property={a}
+                            defaultValue={currentObject.audio[a]} mediaToEdit={a}/>
+                    </React.Fragment>
+                );
+            })}
+        </div>
+    </React.Fragment>
 }
 
 /**
@@ -232,18 +259,30 @@ function generateSpecificProperties(object, objectScene, props){
                 </div>
             );
         case InteractiveObjectsTypes.LOCK:
+            return null;
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return null;
+        case InteractiveObjectsTypes.COUNTER:
             return (
-                <div>
-                    {/* <select id={'keyDefaultState'}
-                            defaultValue={object.properties.key_uuid}
-                            onChange={() => {
-                                let e = document.getElementById('keyDefaultState');
-                                let value = e.options[e.selectedIndex].value;
-                                interface_utils.setPropertyFromValue(object, 'key_uuid', value, props);
-                            }}
+                <div className={"options-grid"}>
+                    <label className={'options-labels'}>Valore iniziale:</label>
+                    <div id={"counterValue"}
+                         className={"propertyForm-right propertyForm-right-number"}
+                         contentEditable={true}
+                         onBlur={()=> interface_utils.setPropertyFromId(object,'state',"counterValue", props)}
+                         onInput={() => interface_utils.onlyNumbers("counterValue")}
                     >
-                        {generateKeyList(props, object)}
-                    </select>*/}
+                        {object.properties.state}
+                    </div>
+                    <label className={'options-labels'}>Passo:</label>
+                    <div id={"counterStep"}
+                         className={"propertyForm-right propertyForm-right-number"}
+                         contentEditable={true}
+                         onBlur={()=> interface_utils.setPropertyFromId(object,'step',"counterStep", props)}
+                         onInput={() => interface_utils.onlyNumbers("counterStep")}
+                    >
+                        {object.properties.step}
+                    </div>
                 </div>
             );
         case InteractiveObjectsTypes.KEYPAD:
@@ -406,6 +445,8 @@ function objectTypeToString(objectType) {
             return "Oggetto";
         case InteractiveObjectsTypes.LOCK:
             return "Serratura";
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            return "Punto di interesse";
         case InteractiveObjectsTypes.SELECTOR:
             return "Selettore";
         case InteractiveObjectsTypes.SWITCH:
@@ -419,22 +460,6 @@ function objectTypeToString(objectType) {
         default:
             return "Sconosciuto";
     }
-}
-
-function findImg(object) {
-    switch (object.type) {
-        case InteractiveObjectsTypes.LOCK:
-            return "icons/icons8-lock-100.png";
-        case InteractiveObjectsTypes.SWITCH:
-            return "icons/icons8-toggle-on-filled-100.png";
-        case InteractiveObjectsTypes.KEY:
-            return "icons/icons8-key-100.png";
-        case InteractiveObjectsTypes.TRANSITION:
-            return "icons/icons8-one-way-transition-100.png";
-        default:
-            return "icons/icons8-plus-math-filled-100.png";
-    }
-
 }
 
 /*

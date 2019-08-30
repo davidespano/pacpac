@@ -2,18 +2,20 @@ import Actions from '../actions/Actions'
 import settings from './settings'
 import Scene from "../scene/Scene";
 import Transition from "../interactives/Transition";
-import Rule from "../interactives/rules/Rule";
-import RuleActionTypes from "../interactives/rules/RuleActionTypes";
+import Rule from "../rules/Rule";
+import RuleActionTypes from "../rules/RuleActionTypes";
 import Switch from "../interactives/Switch";
 import Key from "../interactives/Key";
 import Lock from "../interactives/Lock"
 import Orders from "../data/Orders";
-import Action from "../interactives/rules/Action";
+import Action from "../rules/Action";
 import Immutable from 'immutable';
 import stores_utils from "../data/stores_utils";
-import SuperCondition from "../interactives/rules/SuperCondition";
-import Condition from "../interactives/rules/Condition";
+import SuperCondition from "../rules/SuperCondition";
+import Condition from "../rules/Condition";
 import Audio from "../audio/Audio";
+import PointOfInterest from "../interactives/PointOfInterest";
+import Counter from "../interactives/Counter";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -38,9 +40,10 @@ function getByName(name, order = null) {
             let switches_uuids = [];
             let collectable_keys_uuids = [];
             let locks_uuids = [];
-            let keypads_uuids = [];
             let rules_uuids = [];
             let audio_uuids = [];
+            let points_uuids = [];
+            let counters_uuids = [];
 
             let scene_type = response.body.type;
 
@@ -72,6 +75,24 @@ function getByName(name, order = null) {
                 let l = Lock(getProperties(lock));
                 Actions.receiveObject(l, scene_type);
             });
+
+            // generates points and saves them to the objects store
+            if(response.body.points){
+                response.body.points.map((point) => {
+                    points_uuids.push(point.uuid); //save uuid
+                    let p = PointOfInterest(getProperties(point));
+                    Actions.receiveObject(p, scene_type);
+                });
+            }
+
+            // generates counters and saves them to the objects store
+            if(response.body.counters){
+                response.body.counters.map((counter) => {
+                    counters_uuids.push(counter.uuid); //save uuid
+                    let c = Counter(getProperties(counter));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
 
             // generates rules and saves them to the rules store
             response.body.rules.map(rule => {
@@ -141,6 +162,7 @@ function getByName(name, order = null) {
                 type : response.body.type,
                 index : response.body.index,
                 isAudioOn : response.body.isAudioOn,
+                isVideoInALoop: response.body.isVideoInALoop,
                 tag : tag,
                 music: response.body.music,
                 sfx: response.body.sfx,
@@ -149,7 +171,8 @@ function getByName(name, order = null) {
                     switches : switches_uuids,
                     collectable_keys: collectable_keys_uuids,
                     locks: locks_uuids,
-                    keypads: keypads_uuids,
+                    points: points_uuids,
+                    counters: counters_uuids,
                 },
                 rules : rules_uuids,
                 audios : audio_uuids,
@@ -195,7 +218,8 @@ function createScene(name, img, index, type, tag, order) {
                     switches: [],
                     collectable_keys: [],
                     locks: [],
-                    keypads: [],
+                    points: [],
+                    counters: [],
                 }
             });
 
@@ -208,6 +232,7 @@ function createScene(name, img, index, type, tag, order) {
  * @param scene
  */
 function updateScene(scene, tag) {
+    console.log(tag)
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -290,41 +315,50 @@ async function getAllDetailedScenes(gameGraph) {
     const raw_scenes = response.body;
     gameGraph['scenes'] = {};
     gameGraph['neighbours'] = [];
+    gameGraph['objects']= new Map();
     raw_scenes.forEach(s => {
         // neighbours list
         const adj = [];
         // generates transitions
         const transitions = s.transitions.map(transition => {
-           return (getProperties(transition));
+            let t = getProperties(transition);
+            gameGraph['objects'].set(t.uuid, t);
+            return t;
         });
 
         const switches = s.switches.map(sw => {
-            return (getProperties(sw));
+            let s = getProperties(sw);
+            gameGraph['objects'].set(s.uuid, s);
+            return s;
         });
 
         // generates keys
         const keys = s.collectable_keys.map((key) => {
-            return (getProperties(key));
+            let k = getProperties(key);
+            gameGraph['objects'].set(k.uuid, k);
+            return k;
         });
 
         // generates locks
         const locks = s.locks.map((lock) => {
-            return (getProperties(lock));
+            let l = getProperties(lock);
+            gameGraph['objects'].set(l.uuid, l);
+            return l;
         });
 
-        // generates keypads
-        /*const keypads = s.keypads.map((keypad) => {
-            return ({ //keypad, not the immutable
-                uuid: keypad.uuid,
-                name: keypad.name,
-                type: keypad.type,
-                media: JSON.parse(keypad.media),
-                mask: keypad.mask,
-                vertices: keypad.vertices,
-                properties: JSON.parse(keypad.properties),
-                visible: keypad.visible,
-            });
-        });*/
+        // generates points
+        const points = !s.points? [] : s.points.map((point) => {
+            let pt = getProperties(point);
+            gameGraph['objects'].set(pt.uuid, pt);
+            return pt;
+        });
+
+        // generates counters
+        const counters = !s.counters? [] : s.counters.map((counter) => {
+            let c = getProperties(counter);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
 
         // generates rules
         const rules = s.rules.map(rule => {
@@ -364,6 +398,7 @@ async function getAllDetailedScenes(gameGraph) {
             type : s.type,
             index : s.index,
             isAudioOn : s.isAudioOn,
+            isVideoInALoop: s.isVideoInALoop,
             tag : s.tag,
             music : s.music,
             sfx: s.sfx,
@@ -372,7 +407,8 @@ async function getAllDetailedScenes(gameGraph) {
                 switches : switches,
                 collectable_keys: keys,
                 locks : locks,
-                //keypads: keypads,
+                points: points,
+                counters: counters,
             },
             rules : rules,
             audios : audios,

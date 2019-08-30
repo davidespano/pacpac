@@ -1,5 +1,5 @@
 import Immutable from "immutable";
-import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import toString from "./toString";
 import RuleActionTypes from "./RuleActionTypes";
 import Values from "./Values";
@@ -111,26 +111,65 @@ const RuleActionMap = Immutable.Map([
         },
     ],
     [
-        RuleActionTypes.PLAY_AUDIO,
+        RuleActionTypes.PLAY,
         {
             type: "operation",
             subj_type: [Values.THREE_DIM, Values.TWO_DIM],
-            obj_type: ['audio'],
-            name: toString.eventTypeToString(RuleActionTypes.PLAY_AUDIO),
-            uuid: RuleActionTypes.PLAY_AUDIO,
+            obj_type: ['audio', 'video'],
+            name: toString.eventTypeToString(RuleActionTypes.PLAY),
+            uuid: RuleActionTypes.PLAY,
         },
     ],
     [
-        RuleActionTypes.STOP_AUDIO,
+        RuleActionTypes.PLAY_LOOP,
         {
             type: "operation",
             subj_type: [Values.THREE_DIM, Values.TWO_DIM],
-            obj_type: ['audio'],
-            name: toString.eventTypeToString(RuleActionTypes.STOP_AUDIO),
-            uuid: RuleActionTypes.STOP_AUDIO,
+            obj_type: ['audio', 'video'],
+            name: toString.eventTypeToString(RuleActionTypes.PLAY_LOOP),
+            uuid: RuleActionTypes.PLAY_LOOP,
         },
     ],
-
+    [
+        RuleActionTypes.STOP,
+        {
+            type: "operation",
+            subj_type: [Values.THREE_DIM, Values.TWO_DIM],
+            obj_type: ['audio', 'video'],
+            name: toString.eventTypeToString(RuleActionTypes.STOP),
+            uuid: RuleActionTypes.STOP,
+        },
+    ],
+    [
+        RuleActionTypes.LOOK_AT,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [InteractiveObjectsTypes.POINT_OF_INTEREST],
+            name: toString.eventTypeToString(RuleActionTypes.LOOK_AT),
+            uuid: RuleActionTypes.LOOK_AT
+        },
+    ],
+    [
+        RuleActionTypes.INCREASE,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.INCREASE),
+            uuid: RuleActionTypes.INCREASE
+        },
+    ],
+    [
+        RuleActionTypes.DECREASE,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.DECREASE),
+            uuid: RuleActionTypes.DECREASE
+        },
+    ],
 ]);
 
 

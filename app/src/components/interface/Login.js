@@ -36,11 +36,16 @@ function Login(props){
 function submitUser(){
     let username = document.getElementById("InputUser").value;
     let password = document.getElementById("InputPassword").value;
-    AuthenticationAPI.login(username,password).then(function (response) {
+    AuthenticationAPI.login(username,password).then(
+        function (response) { //success
         AuthenticationAPI.getUserDetail().catch((error)=>{console.log(error)});
-    }).catch(function(err){
-        alert('Nome utente o password errati');
-        console.log(err);
+    },
+        function(error){ //failure
+        if(error.toString().includes("Internal Server Error")){
+            alert('Connessione al server non riuscita');
+        } else {
+            alert('Nome utente o password errati');
+        }
     });
 }
 

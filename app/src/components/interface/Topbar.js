@@ -2,7 +2,7 @@ import React from 'react';
 import InputSceneForm from './InputSceneForm';
 import Transition from "../../interactives/Transition";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
-import rules_utils from "../../interactives/rules/rules_utils";
+import rules_utils from "../../rules/rules_utils";
 import Switch from "../../interactives/Switch";
 import Key from "../../interactives/Key";
 import Lock from "../../interactives/Lock";
@@ -15,11 +15,17 @@ import AudioForm from "./AudioForm";
 import StoriesViewer from "./StoriesViewer";
 import Keypad from "../../interactives/Keypad";
 import InputSaveForm from "./InputSaveForm";
+import PointOfInterest from "../../interactives/PointOfInterest";
+import interface_utils from "./interface_utils";
+import Counter from "../../interactives/Counter";
 
 
 let uuid = require('uuid');
 
 function TopBar(props){
+
+    let isDebugActive = props.scenes.size > 0;
+
     return (
         <div className={'topbar'}>
             <nav>
@@ -40,12 +46,19 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
                        aria-controls="nav-story-editor" aria-selected="false"
                        onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
+                    <a className={"nav-item nav-link " + debugCheck(isDebugActive)} id="nav-debug-tab" data-toggle="tab"
+                       role="tab" href={'#' + debugLink(isDebugActive)} aria-controls={debugLink(isDebugActive)} aria-selected="false"
+                       onClick={() => {
+                           if(isDebugActive){
+                               handleDebugMode(props);
+                           }
+                       }} >Debug</a>
                     <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
                        aria-controls="nav-play" aria-selected="false"
-                       onClick={() => {props.switchToPlayMode()}} >Play</a>
-                    <a className="nav-item nav-link" id="nav-debug-tab" data-toggle="tab" role="tab" href="#nav-debug"
-                       aria-controls="nav-debug" aria-selected="false"
-                       onClick={() => {handleDebugMode(props)}} >Debug</a>
+                       onClick={() => {props.switchToPlayMode()}} >Play <img src={'icons/icons8-play-50.png'}
+                                                                             alt={'avvia gioco'}
+                                                                             className={'action-buttons'}/>
+                    </a>
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">
@@ -77,45 +90,55 @@ function TopBar(props){
                         </figure>
                     </div>
                 </div>
-                <div className="tab-pane fade" id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
+                <div className={"tab-pane fade"}
+                     id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.TRANSITION);
                                 }}>
-                            <img src={"icons/icons8-add-one-way-transition-100.png"}/>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TRANSITION)}/>
                             <figcaption>Transizione</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.SWITCH);
                                 }}>
-                            <img src={"icons/icons8-add-toggle-on-filled-100.png"}/>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SWITCH)}/>
                             <figcaption>Interruttore</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
-                            onClick={() => {
-                                createObject(props, InteractiveObjectsTypes.KEY);
-                             }}>
-                            <img src={"icons/icons8-key-2-100.png"}/>
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.KEY);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEY)}/>
                             <figcaption>Chiave</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.LOCK);
                                 }}>
-                            <img src={"icons/icons8-add-lock-100.png"}/>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.LOCK)}/>
                             <figcaption>Lucchetto</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
-                                style={{opacity: 0.3, cursor: 'auto'}}
-                        >
-                            <img src={"icons/icons8-add-keypad-50.png"}/>
-                            <figcaption>Tastierino</figcaption>
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.POINT_OF_INTEREST);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.POINT_OF_INTEREST)}/>
+                            <figcaption>Punto di interesse</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.COUNTER);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.COUNTER)}/>
+                            <figcaption>Contatore</figcaption>
                         </figure>
                     </div>
                 </div>
-                <div className="tab-pane fade show active flex-container" id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
+                <div className={"tab-pane fade"}
+                     id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
                                 data-toggle="modal" data-target="#save-modal">
@@ -155,7 +178,9 @@ function handleAssetsMode(props){
 
 function handleDebugMode(props) {
     if(props.editor.mode !== ActionTypes.DEBUG_MODE_ON){
-        props.updateCurrentScene(props.scenes.toArray()[0].uuid);
+        if(props.scenes.size > 0){
+            props.updateCurrentScene(props.scenes.toArray()[0].uuid);
+        }
         props.switchToDebugMode();
         document.getElementById("nav-tabContent").hidden = false;
     }
@@ -203,6 +228,20 @@ function createObject(props, type){
                     name : name,
                 });
                 break;
+            case InteractiveObjectsTypes.POINT_OF_INTEREST:
+                name = scene.name + '_pi' + (scene.objects.points.length + 1);
+                obj = PointOfInterest({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.COUNTER:
+                name = scene.name + '_cn' + (scene.objects.points.length + 1);
+                obj = Counter({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
             case InteractiveObjectsTypes.KEYPAD:
                 name = scene.name + '_kp' + (scene.objects.keypads.length + 1);
                 obj = Keypad ({
@@ -240,5 +279,14 @@ function handleSwitchToStoryEditorMode(props){
 		document.getElementById("nav-tabContent").hidden = true;
     }
 }
+
+function debugCheck(isDebugActive){
+    return isDebugActive ? '' : 'debug-disabled';
+}
+
+function debugLink(isDebugActive){
+    return isDebugActive ? 'nav-debug' : '';
+}
+
 
 export default TopBar;

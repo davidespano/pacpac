@@ -7,7 +7,7 @@ import CentralSceneStore from "../data/CentralSceneStore";
 import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 import AudioAPI from "../utils/AudioAPI";
 import StoryAPI from '../utils/StoryAPI';
-import Values from "../interactives/rules/Values";
+import Values from "../rules/Values";
 import ObjectsStore from "../data/ObjectsStore";
 
 const Actions = {
@@ -172,13 +172,6 @@ const Actions = {
         })
     },
 
-    soundActiveRightbarCheck(check){
-        AppDispatcher.dispatch({
-            type: ActionTypes.SOUND_ACTIVE_RIGHTBAR_CHECK,
-            check: check,
-        })
-    },
-
     fileManagerModeOn(){
        AppDispatcher.dispatch({
             type: ActionTypes.FILE_MANAGER_MODE_ON
@@ -255,10 +248,10 @@ const Actions = {
      * Dispatch update input status
      * @param name
      */
-    updateSceneNameRightbar(name){
+    updateSceneOptions(scene){
         AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_SCENE_NAME_RIGHTBAR,
-            name: name,
+            type: ActionTypes.UPDATE_SCENE_OPTIONS,
+            scene: scene,
         })
     },
 

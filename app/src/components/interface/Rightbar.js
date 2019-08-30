@@ -1,16 +1,5 @@
 import React from 'react';
-import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
-import Actions from "../../actions/Actions";
-import SceneAPI from "../../utils/SceneAPI";
-import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import interface_utils from "./interface_utils";
-import scene_utils from "../../scene/scene_utils";
-import TagDropdown from "./TagDropdown";
-import FileSelectionBtn from "./FileSelectionBtn";
-import Values from "../../interactives/rules/Values";
-import Dropdown from "./Dropdown";
-import stores_utils from "../../data/stores_utils";
-import Orders from "../../data/Orders";
 import SceneOptions from "./SceneOptions";
 import ObjectOptions from "./ObjectsOptions";
 

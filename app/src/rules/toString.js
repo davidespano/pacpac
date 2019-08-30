@@ -1,6 +1,6 @@
 import RuleActionTypes from "./RuleActionTypes";
 import {Operators, SuperOperators} from "./Operators";
-import InteractiveObjectsTypes from "../InteractiveObjectsTypes";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import Values from "./Values";
 
 function eventTypeToString(eventType) {
@@ -23,10 +23,18 @@ function eventTypeToString(eventType) {
             return 'cambia stato a';
         case RuleActionTypes.CHANGE_VISIBILITY:
             return 'diventa';
-        case RuleActionTypes.PLAY_AUDIO:
+        case RuleActionTypes.PLAY:
             return 'riproduce';
-        case RuleActionTypes.STOP_AUDIO:
+        case RuleActionTypes.PLAY_LOOP:
+            return 'riproduce in loop';
+        case RuleActionTypes.STOP:
             return 'interrompe';
+        case RuleActionTypes.LOOK_AT:
+            return 'guarda';
+        case RuleActionTypes.INCREASE:
+            return "aumenta di";
+        case RuleActionTypes.DECREASE:
+            return "diminuisce di";
         default:
             return "";
     }
@@ -46,6 +54,9 @@ function objectTypeToString(objectType) {
             break;
         case InteractiveObjectsTypes.LOCK:
             type = "la serratura";
+            break;
+        case InteractiveObjectsTypes.POINT_OF_INTEREST:
+            type = "il punto";
             break;
         case InteractiveObjectsTypes.SELECTOR:
             type = "il selettore";

@@ -9,7 +9,7 @@ import interface_utils from "../interface/interface_utils";
 import Bubble from './Bubble';
 import aframe_assets from "./aframe_assets";
 import SceneAPI from "../../utils/SceneAPI";
-import Values from "../../interactives/rules/Values";
+import Values from "../../rules/Values";
 
 /**
  * Give the points from the pointsaver component and update the object vertices
@@ -38,7 +38,7 @@ export default class GeometryScene extends React.Component{
     {
         super(props);
         let scene;
-        console.log(props.editor)
+        //carico la scena corrente, o se è un audio la scena a cui appartiene
         if(props.editor.audioPositioning)
             scene = props.editor.audioToEdit.scene;
         else
@@ -101,6 +101,7 @@ export default class GeometryScene extends React.Component{
             let point_saver = document.querySelector('#cursor').components.pointsaver;
             let a_point = point_saver.points;
             let isCurved = point_saver.attrValue.isCurved === 'true';
+            let isPoint = point_saver.attrValue.isPoint === 'true';
             //Punti
             let length = a_point.length;
             let idPoint = "point" + (length - 1).toString();
@@ -121,7 +122,7 @@ export default class GeometryScene extends React.Component{
                     moltiplier = 1;
                 }
             }
-            if(isCurved){
+            if(isCurved && !isPoint){
                 tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
                 a_point[(length-1)].x *= moltiplier;
                 tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
@@ -166,11 +167,13 @@ export default class GeometryScene extends React.Component{
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
+
             const keyName = event.key;
             if(keyName === 'c' || keyName === 'C') {
                 document.getElementById("startedit").style.color = 'white'
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 let a_point = pointsaver.points;
+                let isPoint = pointsaver.attrValue.isPoint === 'true';
                 console.log(a_point)
                 if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
@@ -182,7 +185,7 @@ export default class GeometryScene extends React.Component{
                     cursor.removeEventListener('click', this.handleFeedbackChange(), true);
                     cursor.components.pointsaver.points = [];
                     let points = scene.querySelectorAll(".points");
-                    if(!this.props.editor.audioPositioning){
+                    if(!this.props.editor.audioPositioning && !isPoint){
                         a_point = a_point.map(punto =>
                             punto.toArray().join(" ")
                         );
@@ -289,7 +292,9 @@ export default class GeometryScene extends React.Component{
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
         let rayCastOrigin = is3dScene?'cursor':'mouse';
         let curvedImages = [];
+        //TODO mi serve una variabile dall'editor per capire se è un punto di interesse, con un || dovrei risucire a gestirlo lo stesso
         let isCurved = !this.props.editor.audioPositioning;
+        let isPoint = false;
         let currenteObjectUuid;
 
         if(isCurved){
@@ -299,8 +304,10 @@ export default class GeometryScene extends React.Component{
         }
         if(isCurved){
             let objects = this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)).get('objects');
+            if(this.props.interactiveObjects.get(this.props.currentObject).type === 'POINT_OF_INTEREST')
+                isPoint = true;
 
-            //TODO verificiare shader delle curved, problema non trasparenza
+            //TODO verificiare shader delle curved, problema non trasparenza, questa cosa mi sa che non serve, verificare
             for(let key in objects){
                 if(objects.hasOwnProperty(key)){
                     objects[key].forEach((uuid) => {
@@ -320,10 +327,10 @@ export default class GeometryScene extends React.Component{
                         <h1>Keys</h1>
                         <li class="keyElements">
                             <ul id="startedit">E: Inizia a disegnare</ul>
-                            <ul>C: Conferma</ul>
-                            <ul>U: Elimina ultimo punto</ul>
-                            <ul>Q: Torna all'editor</ul>
-                            <ul>H: Mostra/Nascondi</ul>
+                            <ul> C: Conferma </ul>
+                            <ul> U: Elimina ultimo punto </ul>
+                            <ul> Q: Torna all'editor </ul>
+                            <ul> H: Mostra/Nascondi </ul>
                         </li>
 
                     </div>
@@ -338,7 +345,7 @@ export default class GeometryScene extends React.Component{
                             look-controls="false" wasd-controls="false">
                         <Entity mouse-cursor>
                             <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: " + rayCastOrigin}
-                                    pointsaver={'isCurved:' + isCurved + '; uuid: ' + currenteObjectUuid}
+                                    pointsaver={'isCurved:' + isCurved + '; ' + 'isPoint: ' + isPoint + '; uuid: ' + currenteObjectUuid}
                                     visible={is3dScene}/>
                         </Entity>
                     </Entity>

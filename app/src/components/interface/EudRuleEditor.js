@@ -1,18 +1,20 @@
 import React, {Component} from 'react';
-import RuleActionTypes from "../../interactives/rules/RuleActionTypes";
+import RuleActionTypes from "../../rules/RuleActionTypes";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObject from "../../interactives/InteractiveObject"
 import Immutable from "immutable";
-import Action from "../../interactives/rules/Action"
+import Action from "../../rules/Action"
 import ActionTypes from "../../actions/ActionTypes"
-import Rule from "../../interactives/rules/Rule";
-import rules_utils from "../../interactives/rules/rules_utils";
-import {Operators, SuperOperators} from "../../interactives/rules/Operators";
-import Values from "../../interactives/rules/Values";
-import Condition from "../../interactives/rules/Condition";
-import SuperCondition from "../../interactives/rules/SuperCondition";
-import toString from "../../interactives/rules/toString";
-import { RuleActionMap, ValuesMap, OperatorsMap } from "../../interactives/rules/maps";
+import Rule from "../../rules/Rule";
+import rules_utils from "../../rules/rules_utils";
+import {Operators, SuperOperators} from "../../rules/Operators";
+import Values from "../../rules/Values";
+import Condition from "../../rules/Condition";
+import SuperCondition from "../../rules/SuperCondition";
+import toString from "../../rules/toString";
+import { RuleActionMap, ValuesMap, OperatorsMap } from "../../rules/maps";
+import CentralSceneStore from "../../data/CentralSceneStore";
+import scene_utils from "../../scene/scene_utils";
 
 let uuid = require('uuid');
 
@@ -51,11 +53,13 @@ export default class EudRuleEditor extends Component {
             if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
+                        <div className={'eudBar'}>
+                            <h2>Regole della scena</h2>
+                        </div>
                         <div className={"rule-editor"}
                              onClick={() => {
                                  this.onOutsideClick();
                              }}>
-                            <h2>Regole della scena</h2>
                             {rulesRendering}
                         </div>
                     </div>
@@ -63,21 +67,22 @@ export default class EudRuleEditor extends Component {
             } else {
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
-                        <div className={"rule-editor"}
-                             onClick={() => {
-                                 this.onOutsideClick();
-                             }}>
+                        <div className={"eudBar"}>
                             <h2>Regole della scena</h2>
-                            {rulesRendering}
-                            <div className={'rules-footer'}></div>
-                        </div>
-                        <div className={"eudFloating"}>
                             <button className={"btn select-file-btn new-rule-btn"}
                                     onClick={() => {
                                         this.onNewRuleClick();
                                     }}>
+                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
                                 Nuova Regola
                             </button>
+                        </div>
+                        <div className={"rule-editor"}
+                             onClick={() => {
+                                 this.onOutsideClick();
+                             }}>
+                            {rulesRendering}
+                            <div className={'rules-footer'}></div>
                         </div>
                     </div>
                 </div>;
@@ -312,6 +317,7 @@ class EudRule extends Component {
                             audios={this.props.audios}
                             rules={this.props.rules}
                             rule={rule}
+                            rulePartType={'action'}
                             action={action}
                             ruleEditorCallback={this.props.ruleEditorCallback}
                         />
@@ -347,6 +353,7 @@ class EudRule extends Component {
                     audios={this.props.audios}
                     rules={this.props.rules}
                     rule={rule}
+                    rulePartType={'event'}
                     action={rule.event}
                     ruleEditorCallback={this.props.ruleEditorCallback}
                 /><br/>
@@ -577,7 +584,7 @@ class EudAction extends Component {
                 interactiveObjects={this.props.interactiveObjects}
                 rules={this.props.rules}
                 rule={this.props.rule}
-                rulePartType={'action'}
+                rulePartType={this.props.rulePartType}
                 subject={subject}
                 complement={this.props.rule.object_uuid}
                 verb={this.props.action}
@@ -599,7 +606,7 @@ class EudAction extends Component {
             interactiveObjects={this.props.interactiveObjects}
             rules={this.props.rules}
             rule={this.props.rule}
-            rulePartType={'action'}
+            rulePartType={this.props.rulePartType}
             subject={subject}
             complement={this.props.rule.object_uuid}
             verb={this.props.action}
@@ -622,7 +629,7 @@ class EudAction extends Component {
                 interactiveObjects={this.props.interactiveObjects}
                 rules={this.props.rules}
                 rule={this.props.rule}
-                rulePartType={'action'}
+                rulePartType={this.props.rulePartType}
                 subject={subject}
                 complement={this.props.rule.object_uuid}
                 verb={this.props.action}
@@ -994,6 +1001,16 @@ function getCompletions(props) {
 
     switch (props.role) {
         case "subject":
+            if(props.rulePartType === 'event'){
+                return Immutable.Map().set(
+                    InteractiveObjectsTypes.PLAYER,
+                    InteractiveObject({
+                        type: InteractiveObjectsTypes.PLAYER,
+                        uuid: InteractiveObjectsTypes.PLAYER,
+                        name: ""
+                    })
+                );
+            }
             let subjects = props.interactiveObjects.set(
                 InteractiveObjectsTypes.PLAYER,
                 InteractiveObject({
@@ -1005,6 +1022,11 @@ function getCompletions(props) {
 
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
         case "object":
+            // the CLICK action is restricted to current scene objects only, might move to switch case later
+            if(props.verb.action === RuleActionTypes.CLICK){
+                return sceneObjectsOnly(props);
+            }
+            
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
@@ -1015,6 +1037,11 @@ function getCompletions(props) {
 
             return allObjects;
         case "operation":
+            console.log(props.rulePartType)
+            if(props.rulePartType === 'event'){
+                console.log('evento')
+                return RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK);
+            }
             return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
         case "operator":
             return OperatorsMap;
@@ -1034,4 +1061,13 @@ function filterValues(subject, verb) {
         }
     }
     return v;
+}
+
+/**
+ * returns a map containing only the objects belonging to the current scene
+ * @param props
+ */
+function sceneObjectsOnly(props){
+    let sceneObjects = scene_utils.allObjects(props.scenes.get(CentralSceneStore.getState()));
+    return props.interactiveObjects.filter(x => sceneObjects.includes(x.uuid));
 }

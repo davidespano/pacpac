@@ -181,7 +181,6 @@ DerivedData/
 *.class
 
 # Log file
-*.log
 
 # BlueJ files
 *.ctxt
@@ -229,3 +228,4 @@ Temporary Items
 .apdisk
 
 *.mp4
+/3f585c1514024e9391954890a61d0a04/
