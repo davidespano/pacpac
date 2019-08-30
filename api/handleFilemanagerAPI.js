@@ -54,41 +54,37 @@ async function createThumbnails(session, files, dir, gameID){
         //relative path of the file
         let filePath = path.resolve(__dirname,file.path).replace(/(^.*?[\\/]public[\\/].*?[\\/])/,"");
         let fileAncestorsPath = filePath.replace(/(?:(.*)[\\/])*.*?$/,"$1");//ancestors without filename
-
         console.log("fileAncestorPAth mkdirp", fileAncestorsPath);
-        promises.push(new Promise((resolve,reject) => {
-            mkdirp(path.resolve(__dirname,file.path) + '/_thumbnails_/' + fileAncestorsPath, (err) => {
-                    resolve();
+            mkdirp(dir + '/_thumbnails_/' + fileAncestorsPath, (err) => {
                     if(err)
                         console.error(err);
-            });
-        }));
-
-        if (file.mimetype.includes("video"))
-            promise = (genVideoScreenshot(file, dir, fileAncestorsPath).catch(err => console.error(err)));
-        else
-            promise = new Promise((resolve,reject) => resolve(dir + '/' + filePath));
+            if (file.mimetype.includes("video"))
+                promise = (genVideoScreenshot(file, dir, fileAncestorsPath).catch(err => console.error(err)));
+            else
+                promise = new Promise((resolve,reject) => resolve(dir + '/' + filePath));
 
 
-        //take metadata with sharp and resize image
-        promise = promise.then((res) => {
-            const image = sharp(res);
-            return image.metadata().then((metadata) => {
-                //Create or update the media
-                let asset = new Asset({path:filePath,filename: file.filename, width: metadata.width, height: metadata.height});
-                return Media.createUpdateAsset(session, asset, gameID).then(()=>{
-                    //using a buffer to override the old image
-                    return image
-                        .resize(900)
-                        .toBuffer(function(err, buffer) {
-                            fs.writeFile(dir + '/_thumbnails_/' + fileAncestorsPath + "/" + path.parse(res).base, buffer, function(e) {
+            //take metadata with sharp and resize image
+            promise = promise.then((res) => {
+                const image = sharp(res);
+                return image.metadata().then((metadata) => {
+                    //Create or update the media
+                    let asset = new Asset({path:filePath,filename: file.filename, width: metadata.width, height: metadata.height});
+                    return Media.createUpdateAsset(session, asset, gameID).then(()=>{
+                        //using a buffer to override the old image
+                        return image
+                            .resize(900)
+                            .toBuffer(function(err, buffer) {
+                                fs.writeFile(dir + '/_thumbnails_/' + fileAncestorsPath + "/" + path.parse(res).base, buffer, function(e) {
 
+                                });
                             });
-                        });
-                });
-            })}).catch(err => console.error(err));
+                    });
+                })}).catch(err => console.error(err));
 
-        promises.push(promise);
+            promises.push(promise);
+        })
+
     });
     await Promise.all(promises);
 }

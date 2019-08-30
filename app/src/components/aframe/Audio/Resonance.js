@@ -6,7 +6,6 @@ let isInterior = false;
 let material = isInterior ? 'grass' : 'transparent';
 
 const resonance = new ResonanceAudio(audioContext);
-console.log(audioContext)
 resonance.output.connect(audioContext.destination);
 let roomDimensions = {
     width: 4,

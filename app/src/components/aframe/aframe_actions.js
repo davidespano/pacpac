@@ -16,19 +16,19 @@ function executeAction(VRScene, rule, action){
     let actual_scene = VRScene.state.activeScene.name;
     let actual_sceneimg = VRScene.state.activeScene.img;
     let actual_scene_Uuid = VRScene.state.activeScene.uuid;
-    let current_object = {};
     let game_graph = VRScene.state.graph;
+    let current_object = game_graph['objects'].get(rule.event.obj_uuid);
     let sceneName = action.subj_uuid;
     //TODO cambiare nome media non è il media
     let media = action.obj_uuid;
     console.log(media)
     let cursor = document.querySelector('#cursor');
-    Object.values(state.activeScene.objects).flat().forEach(o =>{
+    /*Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
         }
-    });
-    console.log(action.action)
+    });*/
+    console.log(game_graph)
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -192,24 +192,18 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.LOOK_AT:
             //TODO capire se si può cambiare punto di vista piano
-            let pointOI = null;
-            Object.values(state.activeScene.objects).flat().forEach(o =>{
-                if(o.uuid === action.obj_uuid){
-                    pointOI = o;
-                }
-            });
+            let pointOI = game_graph['objects'].get(action.obj_uuid);
             lookObject('curv' + action.obj_uuid, pointOI.vertices);
             break;
         case RuleActionTypes.DECREASE:
-            //TODO puoi diminuire contatori di altre scene? se si devo cercarlo tra tutti gli oggetti, poi sistemare l'uso di step in runstate
             if (runState[action.subj_uuid].state >= 0)
-                runState[action.subj_uuid].state -= runState[action.subj_uuid].step;
+                runState[action.subj_uuid].state -= game_graph['objects'].get(action.subj_uuid).properties.step;
             VRScene.setState({runState: runState, graph: game_graph});
             console.log(runState[action.subj_uuid])
             break;
         case RuleActionTypes.INCREASE:
-            //TODO puoi diminuire contatori di altre scene? se si devo cercarlo tra tutti gli oggetti, poi sistemare l'uso di step in runstate
-            runState[action.subj_uuid].state += runState[action.subj_uuid].step;
+            console.log(game_graph['objects'].get(action.subj_uuid))
+            runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
             VRScene.setState({runState: runState, graph: game_graph});
             console.log(runState[action.subj_uuid])
             break;
