@@ -193,7 +193,9 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.LOOK_AT:
             //TODO capire se si può cambiare punto di vista piano
             let pointOI = game_graph['objects'].get(action.obj_uuid);
-            lookObject('curv' + action.obj_uuid, pointOI.vertices);
+            setTimeout(function () {
+                lookObject('curv' + action.obj_uuid, pointOI.vertices);
+            }, 1000)
             break;
         case RuleActionTypes.DECREASE:
             if (runState[action.subj_uuid].state >= 0)

@@ -55,10 +55,12 @@ export default class Bubble extends Component
     componentDidUpdate(){
         if(!this.props.isActive) {
             Object.values(this.props.scene.objects).flat().forEach(obj => {
-                Object.values(obj.media).forEach(media=>{
-                    if(media !== null)
-                        document.getElementById("media_" + obj.uuid).currentTime = 0;
-                });
+                if(obj.media) {
+                    Object.values(obj.media).forEach(media => {
+                        if (media !== null)
+                            document.getElementById("media_" + obj.uuid).currentTime = 0;
+                    });
+                }
             })
         }else{
             //if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
