@@ -20,7 +20,7 @@ export function givePoints(props) {
     let puntisalvati = cursor.components.pointsaver.points;
     let isCurved = cursor.components.pointsaver.attrValue.isCurved === 'true';
     if(props.scenes.get(props.currentScene).type === '2D'){
-        //console.log(puntisalvati)
+        console.log(puntisalvati)
         let canvasWidth = document.documentElement.clientWidth / 100;
         let canvasHeight = canvasWidth /1.77;
         puntisalvati = puntisalvati.map(punto =>{

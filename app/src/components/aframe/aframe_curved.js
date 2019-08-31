@@ -11,7 +11,36 @@ class Curved extends Component
 
     render(){
         let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
-        let geometry = this.props.type === 'POINT_OF_INTEREST' ?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + this.props.vertices;
+        let vertices = this.props.vertices;
+
+        //conversione coordinate relative per la scena 2D, molto brutto sarebbe da riscrivere meglio, ma almeno funziona
+        if(!this.props.is3Dscene && this.props.vertices){
+            let points = this.props.vertices.split(/[, ]/).map(function(x){return parseFloat(x);});
+            let index = 0;
+            let canvasWidth = document.documentElement.clientWidth / 100;
+            let canvasHeight = canvasWidth /1.77;
+            vertices = points.map(v => {
+                let vp = v;
+                if(index % 3 === 0) vp = v * canvasWidth;
+                if(index % 3 === 1) vp = v * canvasHeight;
+                index += 1;
+                return vp;
+            });
+            index = 0;
+            vertices = vertices.map(v => {
+                let vp;
+                if(index % 3 === 2)
+                    vp = v.toString() + ',';
+                else
+                    vp = v.toString() + ' ';
+                index += 1;
+                return vp;
+            });
+            vertices = vertices.join('')
+            vertices = vertices.slice(0, -1);
+        }
+
+        let geometry = this.props.type === 'POINT_OF_INTEREST' ?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + vertices;
         let position = this.props.position;
         if (this.props.type === 'POINT_OF_INTEREST'){
             let points = this.props.vertices.split(' ').map(function(x){return parseFloat(x);});
@@ -40,7 +69,8 @@ class CurvedGeometry extends Component
     render() {
         let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
         let vertices = this.props.vertices;
-        if(!this.props.is3dScene && this.props.vertices){
+        //conversione coordinate relative per la scena 2D, molto brutto sarebbe da riscrivere meglio, ma almeno funziona
+        if(!this.props.is3Dscene && this.props.vertices){
             let points = this.props.vertices.split(/[, ]/).map(function(x){return parseFloat(x);});
             let index = 0;
             let canvasWidth = document.documentElement.clientWidth / 100;
@@ -52,7 +82,6 @@ class CurvedGeometry extends Component
                 index += 1;
                 return vp;
             });
-
             index = 0;
             vertices = vertices.map(v => {
                 let vp;
@@ -69,7 +98,6 @@ class CurvedGeometry extends Component
 
         let geometry = this.props.type?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + vertices;
         let position = this.props.position;
-        console.log(geometry)
         //punto di interesse
         if (this.props.type && this.props.vertices){
             let points = this.props.vertices.split(' ').map(function(x){return parseFloat(x);});
