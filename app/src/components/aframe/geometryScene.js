@@ -19,10 +19,22 @@ export function givePoints(props) {
     let cursor = document.querySelector('a-cursor');
     let puntisalvati = cursor.components.pointsaver.points;
     let isCurved = cursor.components.pointsaver.attrValue.isCurved === 'true';
+    if(props.scenes.get(props.currentScene).type === '2D'){
+        //console.log(puntisalvati)
+        let canvasWidth = document.documentElement.clientWidth / 100;
+        let canvasHeight = canvasWidth /1.77;
+        puntisalvati = puntisalvati.map(punto =>{
+            punto.x = punto.x / canvasWidth;
+            punto.y = punto.y / canvasHeight;
+            return punto;
+        })
+    }
+
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
-    console.log(props)
+
+    //console.log(props.scenes.get(props.currentScene))
     //console.log(puntisalvati.join())
     if(isCurved){
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
@@ -174,13 +186,11 @@ export default class GeometryScene extends React.Component{
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 let a_point = pointsaver.points;
                 let isPoint = pointsaver.attrValue.isPoint === 'true';
-                console.log(a_point)
                 if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
                     this.handleSceneChange();
                     cursor.setAttribute('color', 'black');
-                    console.log(cursor)
                     cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange(), true);
                     cursor.components.pointsaver.points = [];
