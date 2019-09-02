@@ -320,7 +320,7 @@ div.rules{
     border-color: darkgrey !important;
 }
 
-#transitionDuration {
+#transitionDuration, #point-of-interest-delay {
     padding: 5px;
     width: 50%;
 }

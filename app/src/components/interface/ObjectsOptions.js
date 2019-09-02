@@ -275,7 +275,6 @@ function generateSpecificProperties(object, objectScene, props){
                         </div>
                         <span className={'measure-units'}>ms</span>
                     </div>
-                    {direction}
                 </div>
             );
         case InteractiveObjectsTypes.COUNTER:
