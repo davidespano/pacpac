@@ -192,12 +192,13 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.LOOK_AT:
             //TODO capire se si può cambiare punto di vista piano
-            let pointOI = game_graph['objects'].get(action.obj_uuid);
-            console.log(VRScene.state.activeScene.type)
+
             if(VRScene.state.activeScene.type === '3D')
                 setTimeout(function () {
+                    let pointOI = game_graph['objects'].get(action.obj_uuid);
+                    console.log(pointOI)
                     lookObject('curv' + action.obj_uuid, pointOI.vertices);
-                }, 1000)
+                }, 2000)
             break;
         case RuleActionTypes.DECREASE:
             if (runState[action.subj_uuid].state >= 0)
@@ -284,13 +285,19 @@ function transition(actualScene, targetScene, duration, direction){
     targetSky.setAttribute('visible', 'true');
     targetSky.setAttribute('material', 'visible: true');
     actualSky.dispatchEvent(disappear);
-    targetSky.dispatchEvent(appear);
+    setTimeout(function () {targetSky.dispatchEvent(appear)}
+        , duration+400
+    );
+    //targetSky.dispatchEvent(appear);
 
     if(sceneMovement&& !is3dScene){
         actualSky.dispatchEvent(actualMove);
         targetSky.dispatchEvent(targetMove);
     }
-    if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
+    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();}
+        , duration+30
+    );
+    //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
 /**
@@ -347,16 +354,21 @@ function transition2D(actualScene, targetScene, duration){
 
 function lookObject(idObject, pointOI = null){
     let obj = document.getElementById(idObject);
-    obj.components.geometry.geometry.computeBoundingSphere();
-    let center = obj.components.geometry.geometry.boundingSphere;
-    let l = center.center.normalize();
+    let center;
+    let l;
     let camera = document.getElementById('camera');
     let cameraPosition = camera.getAttribute('position');
-    let v = new THREE.Vector3(cameraPosition.x, cameraPosition.y, -10).normalize()
-    let quaternion = new THREE.Quaternion();
-    quaternion.setFromUnitVectors(v, l);
     let euler = new THREE.Euler();
-    euler.setFromQuaternion(quaternion, 'YXZ', false);
+    let quaternion = new THREE.Quaternion();
+    let v = new THREE.Vector3(cameraPosition.x, cameraPosition.y, -10).normalize()
+    if(obj !== null){
+        obj.components.geometry.geometry.computeBoundingSphere();
+        center = obj.components.geometry.geometry.boundingSphere;
+        l = center.center.normalize();
+        quaternion.setFromUnitVectors(v, l);
+        euler.setFromQuaternion(quaternion, 'YXZ', false);
+    }
+
     if(pointOI === null){
         camera.setAttribute("pac-look-controls", "planarScene: true" );
         camera.setAttribute("pac-look-controls", "pointerLockEnabled: false" );

@@ -86,33 +86,36 @@ export default class VRScene extends React.Component {
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             let duration = 0;
             let state = me.state;
-            let current_object = {};
+            //let current_object = {};
             let objectVideo;
-            Object.values(state.activeScene.objects).flat().forEach(o => {
+            /*Object.values(state.activeScene.objects).flat().forEach(o => {
                 if (o.uuid === rule.event.obj_uuid) {
                     current_object = o;
                 }
-            });
+            });*/
+            //let current_object = this.state.graph['objects'].get(rule.event.obj_uuid);
+            console.log(rule.event)
             rule.actions.sort(stores_utils.actionComparator)
-            rule.actions.forEach(action => {
-                eventBus.on('click-' + rule.event.obj_uuid, function () {
-                    if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
-                        setTimeout(function () {
-                            executeAction(me, rule, action)
-                        }, duration);
-                        if(action.action === 'CHANGE_BACKGROUND'){
-                            objectVideo = document.getElementById(action.obj_uuid);
-                        } else {
-                            objectVideo = document.querySelector('#media_' + action.obj_uuid);
+            if(rule.event.action === 'CLICK'){
+                rule.actions.forEach(action => {
+                    eventBus.on('click-' + rule.event.obj_uuid, function () {
+                        if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                            setTimeout(function () {
+                                executeAction(me, rule, action)
+                            }, duration);
+                            if(action.action === 'CHANGE_BACKGROUND'){
+                                objectVideo = document.getElementById(action.obj_uuid);
+                            } else {
+                                objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                            }
+                            if (objectVideo) {
+                                duration = (objectVideo.duration * 1000);
+                            }
                         }
-                        if (objectVideo) {
-                            duration = (objectVideo.duration * 1000);
-                        }
-                    }
-
+                    })
                 })
+            }
 
-            })
         })
     }
 
