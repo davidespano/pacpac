@@ -30,6 +30,10 @@ const Values = {
     LEFT : 'LEFT',
     RIGHT : 'RIGHT',
 
+    //audio & video
+    STARTED: 'STARTED',
+    ENDED: 'ENDED',
+
 };
 
 export default Values;

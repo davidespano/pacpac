@@ -151,23 +151,43 @@ const RuleActionMap = Immutable.Map([
         },
     ],
     [
+        RuleActionTypes.INCREASE_STEP,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.INCREASE_STEP),
+            uuid: RuleActionTypes.INCREASE_STEP,
+        },
+    ],
+    [
         RuleActionTypes.INCREASE,
         {
             type: "operation",
             subj_type: [InteractiveObjectsTypes.COUNTER],
             obj_type: ['number'],
             name: toString.eventTypeToString(RuleActionTypes.INCREASE),
-            uuid: RuleActionTypes.INCREASE
+            uuid: RuleActionTypes.INCREASE,
         },
     ],
     [
-        RuleActionTypes.DECREASE,
+        RuleActionTypes.DECREASE_STEP,
         {
             type: "operation",
             subj_type: [InteractiveObjectsTypes.COUNTER],
             obj_type: ['number'],
-            name: toString.eventTypeToString(RuleActionTypes.DECREASE),
-            uuid: RuleActionTypes.DECREASE
+            name: toString.eventTypeToString(RuleActionTypes.DECREASE_STEP),
+            uuid: RuleActionTypes.DECREASE_STEP,
+        },
+    ],
+    [
+        RuleActionTypes.IS,
+        {
+            type: "operation",
+            subj_type: ['audio', 'video'],
+            obj_type: ['value'],
+            name: toString.eventTypeToString(RuleActionTypes.IS),
+            uuid: RuleActionTypes.IS,
         },
     ],
 ]);
@@ -322,6 +342,28 @@ const ValuesMap = Immutable.Map([
             verb_type: [RuleActionTypes.CHANGE_STATE],
             name: toString.valueUuidToString(Values.NOT_COLLECTED),
             uuid: Values.NOT_COLLECTED,
+        },
+
+    ],
+    [
+        Values.STARTED,
+        {
+            type: 'value',
+            subj_type: ['audio', 'video'],
+            verb_type: [RuleActionTypes.IS],
+            name: toString.valueUuidToString(Values.STARTED),
+            uuid: Values.STARTED,
+        },
+
+    ],
+    [
+        Values.ENDED,
+        {
+            type: 'value',
+            subj_type: ['audio', 'video'],
+            verb_type: [RuleActionTypes.IS],
+            name: toString.valueUuidToString(Values.ENDED),
+            uuid: Values.ENDED,
         },
 
     ],

@@ -12,8 +12,12 @@ const Counter = defaultValues => InteractiveObject({
         state: 0,
         step: 1,
     },
-    media: null,
-    audio: null,
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
+    },
     ...defaultValues
 });
 

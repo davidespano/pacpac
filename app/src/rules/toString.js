@@ -32,9 +32,13 @@ function eventTypeToString(eventType) {
         case RuleActionTypes.LOOK_AT:
             return 'guarda';
         case RuleActionTypes.INCREASE:
+            return "va a";
+        case RuleActionTypes.INCREASE_STEP:
             return "aumenta di";
-        case RuleActionTypes.DECREASE:
+        case RuleActionTypes.DECREASE_STEP:
             return "diminuisce di";
+        case RuleActionTypes.IS:
+            return 'è';
         default:
             return "";
     }
@@ -80,6 +84,7 @@ function objectTypeToString(objectType) {
         case Values.TWO_DIM:
             type = "la scena";
             break;
+        case "number":
         case "operation":
         case "operator":
         case "value":
@@ -167,6 +172,10 @@ function valueUuidToString(valueUuid){
             return 'sinistra';
         case Values.RIGHT:
             return 'destra';
+        case Values.STARTED:
+            return 'iniziato';
+        case Values.ENDED:
+            return 'finito';
         default:
             return 'stato sconosciuto';
     }
