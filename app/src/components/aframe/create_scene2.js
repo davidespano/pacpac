@@ -94,10 +94,11 @@ export default class VRScene extends React.Component {
                 }
             });*/
             //let current_object = this.state.graph['objects'].get(rule.event.obj_uuid);
-            console.log(rule.event)
+            //console.log(rule.event)
             rule.actions.sort(stores_utils.actionComparator)
-            if(rule.event.action === 'CLICK'){
-                rule.actions.forEach(action => {
+            switch (rule.event.action){
+                case 'CLICK':
+                    rule.actions.forEach(action => {
                     eventBus.on('click-' + rule.event.obj_uuid, function () {
                         if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                             setTimeout(function () {
@@ -110,11 +111,64 @@ export default class VRScene extends React.Component {
                             }
                             if (objectVideo) {
                                 duration = (objectVideo.duration * 1000);
+                                }
                             }
-                        }
-                    })
-                })
+                        })
+                    });
+                    break;
+                case 'IS':
+                    let media;
+                    //Controllo se il video è della scena o di un oggetto, bisognerebbe trovare un ID simile per tutti
+                    if(document.getElementById(rule.event.subj_uuid))
+                        media = document.getElementById(rule.event.subj_uuid)
+                    else
+                        if(document.getElementById(rule.event.subj_uuid))
+                            media =  media = document.getElementById(rule.event.subj_uuid);
+
+                    if(rule.event.obj_uuid === "ENDED" && media){
+                        media.onended = function() {
+                            rule.actions.forEach(action => {
+                                if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    setTimeout(function () {
+                                        executeAction(me, rule, action)
+                                    }, duration);
+                                    if(action.action === 'CHANGE_BACKGROUND'){
+                                        objectVideo = document.getElementById(action.obj_uuid);
+                                    } else {
+                                        objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                                    }
+                                    if (objectVideo) {
+                                        duration = (objectVideo.duration * 1000);
+                                    }
+                                }
+                            });
+                        };
+                    }
+
+                    if(rule.event.obj_uuid === "STARTED" && media){
+                        media.onplay = function() {
+                            rule.actions.forEach(action => {
+                                if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    setTimeout(function () {
+                                        executeAction(me, rule, action)
+                                    }, duration);
+                                    if(action.action === 'CHANGE_BACKGROUND'){
+                                        objectVideo = document.getElementById(action.obj_uuid);
+                                    } else {
+                                        objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                                    }
+                                    if (objectVideo) {
+                                        duration = (objectVideo.duration * 1000);
+                                    }
+                                }
+                            });
+                        };
+                    }
+
+                    break;
+
             }
+
 
         })
     }

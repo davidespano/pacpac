@@ -196,17 +196,23 @@ function executeAction(VRScene, rule, action){
             if(VRScene.state.activeScene.type === '3D')
                 setTimeout(function () {
                     let pointOI = game_graph['objects'].get(action.obj_uuid);
-                    console.log(pointOI)
                     lookObject('curv' + action.obj_uuid, pointOI.vertices);
                 }, 2000)
             break;
-        case RuleActionTypes.DECREASE:
+        case RuleActionTypes.DECREASE_STEP:
             if (runState[action.subj_uuid].state >= 0)
                 runState[action.subj_uuid].state -= game_graph['objects'].get(action.subj_uuid).properties.step;
             VRScene.setState({runState: runState, graph: game_graph});
             console.log(runState[action.subj_uuid])
             break;
+        case RuleActionTypes.INCREASE_STEP:
+            console.log(game_graph['objects'].get(action.subj_uuid))
+            runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
+            VRScene.setState({runState: runState, graph: game_graph});
+            console.log(runState[action.subj_uuid])
+            break;
         case RuleActionTypes.INCREASE:
+            //TODO manca il valore da assegnare
             console.log(game_graph['objects'].get(action.subj_uuid))
             runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
             VRScene.setState({runState: runState, graph: game_graph});
