@@ -119,6 +119,7 @@ export default class GeometryScene extends React.Component{
             let idPoint = "point" + (length - 1).toString();
             let tmp = document.createElement('a-entity');
             let scene, scale, moltiplier;
+
             if(document.querySelector('a-sky')){
                 scene = document.querySelector('a-sky');
                 scale = "-1 1 1";
@@ -217,6 +218,8 @@ export default class GeometryScene extends React.Component{
             if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
                 let lines = scene.querySelectorAll(".line");
+                let point_saver = document.querySelector('#cursor').components.pointsaver;
+                let isPoint = point_saver.attrValue.isPoint === 'true';
                 lines.forEach(line => {
                     scene.removeChild(line);
                 });
@@ -228,10 +231,11 @@ export default class GeometryScene extends React.Component{
                 });
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
-                //console.log(this.props.editor.selectedAudioToEdit)
                 if(cursor.components.pointsaver.attrValue.isCurved === 'true'){
-                    if(document.getElementById("curve_"+this.props.currentObject))
+                    if(document.getElementById("curve_"+this.props.currentObject) && !isPoint)
                         document.getElementById("curve_"+this.props.currentObject).setAttribute('geometry', 'vertices: null')
+                    else
+                        document.getElementById(this.state.scenes.name).removeChild(document.getElementById("curve_"+this.props.currentObject))
                 } else {
                     if(document.getElementById("audio"+this.props.editor.audioToEdit.uuid)){
                         document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.audioToEdit.uuid));
