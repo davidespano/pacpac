@@ -118,12 +118,15 @@ export default class VRScene extends React.Component {
                     break;
                 case 'IS':
                     let media;
-                    //Controllo se il video è della scena o di un oggetto, bisognerebbe trovare un ID simile per tutti
+                    //Controllo se il video è della scena o di un oggetto
+                    //TODO bisognerebbe trovare un ID simile per tutti
                     if(document.getElementById(rule.event.subj_uuid))
                         media = document.getElementById(rule.event.subj_uuid)
-                    else
-                        if(document.getElementById(rule.event.subj_uuid))
-                            media =  media = document.getElementById(rule.event.subj_uuid);
+                    if(document.getElementById(rule.event.uuid))
+                        media =  media = document.getElementById('media_' + rule.event.uuid);
+                    if(soundsHub["audios_"+ rule.event.subj_uuid] !== undefined){
+                        media = soundsHub["audios_"+ rule.event.subj_uuid];
+                    }
 
                     if(rule.event.obj_uuid === "ENDED" && media){
                         media.onended = function() {
