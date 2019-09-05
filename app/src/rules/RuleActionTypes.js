@@ -9,8 +9,10 @@ const RuleActionTypes = {
     CHANGE_VISIBILITY : 'CHANGE_VISIBILITY',
     COLLECT_KEY: 'COLLECT_KEY',
     CLICK: 'CLICK',
-    DECREASE: 'DECREASE',
+    DECREASE_STEP: 'DECREASE_STEP',
+    INCREASE_STEP: 'INCREASE_STEP',
     INCREASE: 'INCREASE',
+    IS: 'IS',
     LOOK_AT: 'LOOK_AT',
     OFF : 'OFF',
     ON : 'ON',
@@ -19,6 +21,7 @@ const RuleActionTypes = {
     STOP: 'STOP',
     TRANSITION : 'TRANSITION',
     UNLOCK_LOCK: 'UNLOCK_LOCK',
+
 };
 
 export default RuleActionTypes;

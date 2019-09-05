@@ -16,19 +16,19 @@ function executeAction(VRScene, rule, action){
     let actual_scene = VRScene.state.activeScene.name;
     let actual_sceneimg = VRScene.state.activeScene.img;
     let actual_scene_Uuid = VRScene.state.activeScene.uuid;
-    let current_object = {};
     let game_graph = VRScene.state.graph;
+    let current_object = game_graph['objects'].get(rule.event.obj_uuid);
     let sceneName = action.subj_uuid;
     //TODO cambiare nome media non è il media
     let media = action.obj_uuid;
     console.log(media)
     let cursor = document.querySelector('#cursor');
-    Object.values(state.activeScene.objects).flat().forEach(o =>{
+    /*Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
         }
-    });
-    console.log(action.action)
+    });*/
+    console.log(game_graph)
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -192,24 +192,31 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.LOOK_AT:
             //TODO capire se si può cambiare punto di vista piano
-            let pointOI = null;
-            Object.values(state.activeScene.objects).flat().forEach(o =>{
-                if(o.uuid === action.obj_uuid){
-                    pointOI = o;
-                }
-            });
-            lookObject('curv' + action.obj_uuid, pointOI.vertices);
+            console.log(game_graph['objects'].get(action.obj_uuid))
+            if(VRScene.state.activeScene.type === '3D'){
+                let delay = game_graph['objects'].get(action.obj_uuid).properties.delay;
+                setTimeout(function () {
+                    let pointOI = game_graph['objects'].get(action.obj_uuid);
+                    lookObject('curv' + action.obj_uuid, pointOI.vertices);
+                }, delay)
+            }
             break;
-        case RuleActionTypes.DECREASE:
-            //TODO puoi diminuire contatori di altre scene? se si devo cercarlo tra tutti gli oggetti, poi sistemare l'uso di step in runstate
+        case RuleActionTypes.DECREASE_STEP:
             if (runState[action.subj_uuid].state >= 0)
-                runState[action.subj_uuid].state -= runState[action.subj_uuid].step;
+                runState[action.subj_uuid].state -= game_graph['objects'].get(action.subj_uuid).properties.step;
+            VRScene.setState({runState: runState, graph: game_graph});
+            console.log(runState[action.subj_uuid])
+            break;
+        case RuleActionTypes.INCREASE_STEP:
+            console.log(game_graph['objects'].get(action.subj_uuid))
+            runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
             VRScene.setState({runState: runState, graph: game_graph});
             console.log(runState[action.subj_uuid])
             break;
         case RuleActionTypes.INCREASE:
-            //TODO puoi diminuire contatori di altre scene? se si devo cercarlo tra tutti gli oggetti, poi sistemare l'uso di step in runstate
-            runState[action.subj_uuid].state += runState[action.subj_uuid].step;
+            //TODO manca il valore da assegnare
+            console.log(game_graph['objects'].get(action.subj_uuid))
+            runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
             VRScene.setState({runState: runState, graph: game_graph});
             console.log(runState[action.subj_uuid])
             break;
@@ -286,13 +293,19 @@ function transition(actualScene, targetScene, duration, direction){
     targetSky.setAttribute('visible', 'true');
     targetSky.setAttribute('material', 'visible: true');
     actualSky.dispatchEvent(disappear);
-    targetSky.dispatchEvent(appear);
+    setTimeout(function () {targetSky.dispatchEvent(appear)}
+        , duration+400
+    );
+    //targetSky.dispatchEvent(appear);
 
     if(sceneMovement&& !is3dScene){
         actualSky.dispatchEvent(actualMove);
         targetSky.dispatchEvent(targetMove);
     }
-    if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
+    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();}
+        , duration+30
+    );
+    //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
 /**
@@ -349,16 +362,21 @@ function transition2D(actualScene, targetScene, duration){
 
 function lookObject(idObject, pointOI = null){
     let obj = document.getElementById(idObject);
-    obj.components.geometry.geometry.computeBoundingSphere();
-    let center = obj.components.geometry.geometry.boundingSphere;
-    let l = center.center.normalize();
+    let center;
+    let l;
     let camera = document.getElementById('camera');
     let cameraPosition = camera.getAttribute('position');
-    let v = new THREE.Vector3(cameraPosition.x, cameraPosition.y, -10).normalize()
-    let quaternion = new THREE.Quaternion();
-    quaternion.setFromUnitVectors(v, l);
     let euler = new THREE.Euler();
-    euler.setFromQuaternion(quaternion, 'YXZ', false);
+    let quaternion = new THREE.Quaternion();
+    let v = new THREE.Vector3(cameraPosition.x, cameraPosition.y, -10).normalize()
+    if(obj !== null){
+        obj.components.geometry.geometry.computeBoundingSphere();
+        center = obj.components.geometry.geometry.boundingSphere;
+        l = center.center.normalize();
+        quaternion.setFromUnitVectors(v, l);
+        euler.setFromQuaternion(quaternion, 'YXZ', false);
+    }
+
     if(pointOI === null){
         camera.setAttribute("pac-look-controls", "planarScene: true" );
         camera.setAttribute("pac-look-controls", "pointerLockEnabled: false" );

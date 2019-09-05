@@ -320,7 +320,7 @@ div.rules{
     border-color: darkgrey !important;
 }
 
-#transitionDuration {
+#transitionDuration, #point-of-interest-delay {
     padding: 5px;
     width: 50%;
 }
@@ -437,7 +437,7 @@ div.rules{
     top: 1rem;
     z-index: 99999;
     height: 6rem;
-    width: 62rem;
+    width: 52rem;
     border-radius: 20px;
 }
 
@@ -448,9 +448,9 @@ div.rules{
     font-size: 25px;
 }
 
-.keyElements ul{
+.keyElements li{
     display: inline-block;
-    left: 1rem;
+    margin-left: 1rem;
     color: white;
     text-align: left;
 }

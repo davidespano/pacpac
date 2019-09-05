@@ -593,7 +593,7 @@ class EudAction extends Component {
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
-                updateRule={(rule, role) => this.updateRule(rule, role)}
+                updateRule={(rule, role) => this.updateRule(rule, role, this.props.interactiveObjects)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
                 audios={this.props.audios}
@@ -615,7 +615,7 @@ class EudAction extends Component {
             inputText={this.props.editor.get('completionInput')}
             showCompletion={operationCompletion}
             changeText={(text, role) => this.changeText(text, role)}
-            updateRule={(rule, role) => this.updateRule(rule, role)}
+            updateRule={(rule, role) => this.updateRule(rule, role, this.props.interactiveObjects)}
             scenes={this.props.scenes}
             assets={this.props.assets}
             audios={this.props.audios}
@@ -638,7 +638,7 @@ class EudAction extends Component {
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={objectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
-                updateRule={(rule, role) => this.updateRule(rule, role)}
+                updateRule={(rule, role) => this.updateRule(rule, role, this.props.interactiveObjects)}
                 scenes={this.props.scenes}
                 assets={this.props.assets}
                 audios={this.props.audios}
@@ -689,7 +689,7 @@ class EudAction extends Component {
         return this.props.interactiveObjects.get(uuid);
     }
 
-    updateRule(ruleUpdate, role) {
+    updateRule(ruleUpdate, role, objects) {
 
         let rule = this.props.rule;
         let index = -1;
@@ -764,16 +764,35 @@ class EudAction extends Component {
                             index: action.index,
                         }));
                 } else {
-                    list = list.set(index,
-                        Action({
-                            uuid: action.uuid,
-                            action: ruleUpdate.item,
-                            subj_uuid: action.subj_uuid,
-                            obj_uuid: null,
-                            index: action.index,
-                        }));
+                    switch (ruleUpdate.item) {
+                        case RuleActionTypes.DECREASE_STEP:
+                        case RuleActionTypes.INCREASE_STEP:
+                            let val = null;
+                            if(action.subj_uuid){
+                                val = objects.get(action.subj_uuid).properties.step;
+                            }
+                            list = list.set(index,
+                                Action({
+                                    uuid: action.uuid,
+                                    action: ruleUpdate.item,
+                                    subj_uuid: action.subj_uuid,
+                                    obj_uuid: val,
+                                    index: action.index,
+                                })
+                            );
+                            break;
+                        default:
+                            list = list.set(index,
+                                Action({
+                                    uuid: action.uuid,
+                                    action: ruleUpdate.item,
+                                    subj_uuid: action.subj_uuid,
+                                    obj_uuid: null,
+                                    index: action.index,
+                                })
+                            );
+                    }
                 }
-
         }
         rule = rule.set('actions', list);
         this.props.ruleEditorCallback.eudUpdateRule(rule);
@@ -1000,9 +1019,9 @@ class EudAutoCompleteItem extends Component {
 function getCompletions(props) {
 
     switch (props.role) {
-        case "subject":
+        case "subject": // event subject: player, audios and videos
             if(props.rulePartType === 'event'){
-                return Immutable.Map().set(
+                return props.assets.filter(x => x.type === 'video').merge(props.audios).set(
                     InteractiveObjectsTypes.PLAYER,
                     InteractiveObject({
                         type: InteractiveObjectsTypes.PLAYER,
@@ -1037,10 +1056,13 @@ function getCompletions(props) {
 
             return allObjects;
         case "operation":
-            console.log(props.rulePartType)
             if(props.rulePartType === 'event'){
-                console.log('evento')
-                return RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK);
+                if(props.subject){
+                    return RuleActionMap.filter(x =>
+                        x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS).filter(x =>
+                        x.subj_type.includes(props.subject.type));
+                }
+                return RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
             }
             return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
         case "operator":

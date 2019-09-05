@@ -315,37 +315,50 @@ async function getAllDetailedScenes(gameGraph) {
     const raw_scenes = response.body;
     gameGraph['scenes'] = {};
     gameGraph['neighbours'] = [];
+    gameGraph['objects']= new Map();
     raw_scenes.forEach(s => {
         // neighbours list
         const adj = [];
         // generates transitions
         const transitions = s.transitions.map(transition => {
-           return (getProperties(transition));
+            let t = getProperties(transition);
+            gameGraph['objects'].set(t.uuid, t);
+            return t;
         });
 
         const switches = s.switches.map(sw => {
-            return (getProperties(sw));
+            let s = getProperties(sw);
+            gameGraph['objects'].set(s.uuid, s);
+            return s;
         });
 
         // generates keys
         const keys = s.collectable_keys.map((key) => {
-            return (getProperties(key));
+            let k = getProperties(key);
+            gameGraph['objects'].set(k.uuid, k);
+            return k;
         });
 
         // generates locks
         const locks = s.locks.map((lock) => {
-            return (getProperties(lock));
+            let l = getProperties(lock);
+            gameGraph['objects'].set(l.uuid, l);
+            return l;
         });
 
         // generates points
         const points = !s.points? [] : s.points.map((point) => {
-            return (getProperties(point));
+            let pt = getProperties(point);
+            gameGraph['objects'].set(pt.uuid, pt);
+            return pt;
         });
 
         // generates counters
         const counters = !s.counters? [] : s.counters.map((counter) => {
-            return (getProperties(counter));
-        })
+            let c = getProperties(counter);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
 
         // generates rules
         const rules = s.rules.map(rule => {

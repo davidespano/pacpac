@@ -55,10 +55,12 @@ export default class Bubble extends Component
     componentDidUpdate(){
         if(!this.props.isActive) {
             Object.values(this.props.scene.objects).flat().forEach(obj => {
-                Object.values(obj.media).forEach(media=>{
-                    if(media !== null)
-                        document.getElementById("media_" + obj.uuid).currentTime = 0;
-                });
+                if(obj.media) {
+                    Object.values(obj.media).forEach(media => {
+                        if (media !== null)
+                            document.getElementById("media_" + obj.uuid).currentTime = 0;
+                    });
+                }
             })
         }else{
             //if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
@@ -187,11 +189,15 @@ export default class Bubble extends Component
         } else {
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
+            let Width = this.props.assetsDimention.width / 100;
+            let Height = this.props.assetsDimention.height / 100;
+            let ration = Width/Height;
             let canvasWidth = document.documentElement.clientWidth / 100;
-            let canvasHeight = canvasWidth /1.77;
-            //let canvasWidth = this.props.assetsDimention.width / 100;
-            //let canvasHeight = this.props.assetsDimention.height / 100;
-            positionPlane = "0, 1.6, -6.44";
+            let canvasHeight = canvasWidth / ration;
+            //let canvasHeight = document.documentElement.clientHeight / 100;
+            //let canvasWidth = canvasHeight * ration;
+            console.log(document.documentElement.clientHeight)
+            positionPlane = "0, 1.6, -6.18";
             /*if(this.props.isActive){
                 positionPlane = "0, 1.6, -6.44";
             } else {
