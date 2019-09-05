@@ -262,7 +262,7 @@ function updateScene(req, res, next) {
 
 /**
  * @swagger
- * /api/v0/{gameID}/scenes-home:
+ * /api/v0/{gameID}/getHomeScene:
  *  get:
  *      tags:
  *      - scenes
@@ -334,7 +334,7 @@ function deleteScene(req, res, next) {
 
 /**
  * @swagger
- * /api/v0/{gameID}/scenes/{name}/setHome:
+ * /api/v0/{gameID}/scenes/{name}/setHomeScene:
  *  post:
  *      tags:
  *      - scenes
@@ -344,10 +344,10 @@ function deleteScene(req, res, next) {
  *          - application/json
  *      parameters:
  *        - in: path
- *          name: name
+ *          name: sceneID
  *          type: string
  *          required: true
- *          description: Name of the scene
+ *          description: the uuid of the scene
  *        - name: Authorization
  *          in: header
  *          type: string
@@ -364,10 +364,10 @@ function deleteScene(req, res, next) {
  *          404:
  *              description: Scene not found
  */
-function setHome(req, res, next) {
+function setHomeScene(req, res, next) {
     const name = req.params.name;
     const gameID = req.params.gameID;
-    Scenes.setHome(dbUtils.getSession(req), name, gameID)
+    Scenes.setHomeScene(dbUtils.getSession(req), name, gameID)
         .then(response => writeResponse(res, response))
         .catch(next);
 }
@@ -379,6 +379,6 @@ module.exports = {
     updateScene: updateScene,
     getHomeScene: getHomeScene,
     deleteScene: deleteScene,
-    setHome: setHome,
+    setHomeScene: setHomeScene,
     detailedList: detailedList
 };
