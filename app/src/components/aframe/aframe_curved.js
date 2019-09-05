@@ -16,29 +16,6 @@ class Curved extends Component
         //conversione coordinate relative per la scena 2D, molto brutto sarebbe da riscrivere meglio, ma almeno funziona
         if(!this.props.is3Dscene && this.props.vertices){
             vertices = convertRelativeCoordinates(this.props.vertices)
-            /*let points = this.props.vertices.split(/[, ]/).map(function(x){return parseFloat(x);});
-            let index = 0;
-            let canvasWidth = document.documentElement.clientWidth / 100;
-            let canvasHeight = canvasWidth /1.77;
-            vertices = points.map(v => {
-                let vp = v;
-                if(index % 3 === 0) vp = v * canvasWidth;
-                if(index % 3 === 1) vp = v * canvasHeight;
-                index += 1;
-                return vp;
-            });
-            index = 0;
-            vertices = vertices.map(v => {
-                let vp;
-                if(index % 3 === 2)
-                    vp = v.toString() + ',';
-                else
-                    vp = v.toString() + ' ';
-                index += 1;
-                return vp;
-            });
-            vertices = vertices.join('')
-            vertices = vertices.slice(0, -1);*/
         }
 
         let geometry = this.props.type === 'POINT_OF_INTEREST' ?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + vertices;
@@ -73,30 +50,6 @@ class CurvedGeometry extends Component
         //conversione coordinate relative per la scena 2D, molto brutto sarebbe da riscrivere meglio, ma almeno funziona
         if(!this.props.is3Dscene && this.props.vertices){
             vertices = convertRelativeCoordinates(this.props.vertices)
-            /*let points = this.props.vertices.split(/[, ]/).map(function(x){return parseFloat(x);});
-            let index = 0;
-            let canvasWidth = document.documentElement.clientWidth / 100;
-            let canvasHeight = canvasWidth /1.77;
-            vertices = points.map(v => {
-                let vp = v;
-                if(index % 3 === 0) vp = v * canvasWidth;
-                if(index % 3 === 1) vp = v * canvasHeight;
-                index += 1;
-                return vp;
-            });
-            index = 0;
-            vertices = vertices.map(v => {
-                let vp;
-                if(index % 3 === 2)
-                    vp = v.toString() + ',';
-                else
-                    vp = v.toString() + ' ';
-                index += 1;
-                return vp;
-            });
-            vertices = vertices.join('')
-            vertices = vertices.slice(0, -1);*/
-
         }
 
         let geometry = this.props.type?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + vertices;

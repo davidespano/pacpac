@@ -339,13 +339,13 @@ export default class GeometryScene extends React.Component{
                 <div id="UI" >
                     <div id="keyMap" >
                         <h1>Keys</h1>
-                        <li class="keyElements">
-                            <ul id="startedit">E: Inizia a disegnare</ul>
-                            <ul> C: Conferma </ul>
-                            <ul> U: Elimina ultimo punto </ul>
-                            <ul> Q: Torna all'editor </ul>
-                            <ul> H: Mostra/Nascondi </ul>
-                        </li>
+                        <ul class="keyElements">
+                            <li id="startedit">E: Inizia a disegnare</li>
+                            <li> C: Conferma </li>
+                            <li> U: Elimina ultimo punto </li>
+                            <li> Q: Torna all'editor </li>
+                            <li> H: Mostra/Nascondi </li>
+                        </ul>
 
                     </div>
                 </div>
