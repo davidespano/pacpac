@@ -85,7 +85,6 @@ export default class VRScene extends React.Component {
 
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             let duration = 0;
-            let state = me.state;
             //let current_object = {};
             let objectVideo;
             /*Object.values(state.activeScene.objects).flat().forEach(o => {
@@ -167,12 +166,8 @@ export default class VRScene extends React.Component {
                             });
                         };
                     }
-
                     break;
-
             }
-
-
         })
     }
 

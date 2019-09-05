@@ -72,7 +72,7 @@ class CurvedGeometry extends Component
         let vertices = this.props.vertices;
         //conversione coordinate relative per la scena 2D, molto brutto sarebbe da riscrivere meglio, ma almeno funziona
         if(!this.props.is3Dscene && this.props.vertices){
-            //vertices = convertRelativeCoordinates(this.props.vertices)
+            vertices = convertRelativeCoordinates(this.props.vertices)
             /*let points = this.props.vertices.split(/[, ]/).map(function(x){return parseFloat(x);});
             let index = 0;
             let canvasWidth = document.documentElement.clientWidth / 100;
