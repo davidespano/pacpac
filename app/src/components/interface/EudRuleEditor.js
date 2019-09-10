@@ -15,6 +15,7 @@ import toString from "../../rules/toString";
 import { RuleActionMap, ValuesMap, OperatorsMap } from "../../rules/maps";
 import CentralSceneStore from "../../data/CentralSceneStore";
 import scene_utils from "../../scene/scene_utils";
+import interface_utils from "./interface_utils";
 
 let uuid = require('uuid');
 
@@ -622,29 +623,57 @@ class EudAction extends Component {
             role={"operation"}
         />;
 
-        let objectCompletion = this.showCompletion(actionId, "object");
-        let object = this.getInteractiveObjectReference(this.props.action.obj_uuid);
-        let objectRendering =
-            <EudRulePart
-                interactiveObjects={this.props.interactiveObjects}
-                rules={this.props.rules}
-                rule={this.props.rule}
-                rulePartType={this.props.rulePartType}
-                subject={subject}
-                complement={this.props.rule.object_uuid}
-                verb={this.props.action}
-                ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={object == null ? "" : toString.objectTypeToString(object.type) + object.name}
-                inputText={this.props.editor.get('completionInput')}
-                showCompletion={objectCompletion}
-                changeText={(text, role) => this.changeText(text, role)}
-                updateRule={(rule, role) => this.updateRule(rule, role, this.props.interactiveObjects)}
-                scenes={this.props.scenes}
-                assets={this.props.assets}
-                audios={this.props.audios}
-                role={"object"}
-            />;
+        let object = null;
+        let objectRendering = null;
 
+        switch(this.props.action.action){
+            case RuleActionTypes.INCREASE_STEP:
+            case RuleActionTypes.DECREASE_STEP:
+                let subj = this.props.action.subj_uuid;
+                let step = 1;
+                if(subj && this.props.interactiveObjects.has(subj)){
+                    step = this.props.interactiveObjects.get(subj).properties.step;
+                }
+                objectRendering =
+                    <EudRuleStaticNumericPart
+                        interactiveObjects={this.props.interactiveObjects}
+                        rules={this.props.rules}
+                        rule={this.props.rule}
+                        rulePartType={this.props.rulePartType}
+                        subject={subject}
+                        complement={this.props.rule.object_uuid}
+                        verb={this.props.action}
+                        ruleEditorCallback={this.props.ruleEditorCallback}
+                        originalText={step}
+                        role={"object"}
+                    />;
+                break;
+            default:
+                object = this.getInteractiveObjectReference(this.props.action.obj_uuid);
+                let objectCompletion = this.showCompletion(actionId, "object");
+                objectRendering =
+                    <EudRulePart
+                        interactiveObjects={this.props.interactiveObjects}
+                        rules={this.props.rules}
+                        rule={this.props.rule}
+                        rulePartType={this.props.rulePartType}
+                        subject={subject}
+                        complement={this.props.rule.object_uuid}
+                        verb={this.props.action}
+                        ruleEditorCallback={this.props.ruleEditorCallback}
+                        originalText={object == null ? "" : toString.objectTypeToString(object.type) + object.name}
+                        inputText={this.props.editor.get('completionInput')}
+                        showCompletion={objectCompletion}
+                        changeText={(text, role) => this.changeText(text, role)}
+                        updateRule={(rule, role) => this.updateRule(rule, role, this.props.interactiveObjects)}
+                        scenes={this.props.scenes}
+                        assets={this.props.assets}
+                        audios={this.props.audios}
+                        role={"object"}
+                    />;
+
+
+        }
 
         return <span className={"eudAction"} key={this.props.action.uuid}>
                 {actionRendering}
@@ -806,6 +835,66 @@ class EudAction extends Component {
             actionId == this.props.action.uuid;
     }
 
+}
+
+class EudRuleStaticNumericPart extends Component {
+    /**
+     *
+     * @param props
+     *
+     *          interactiveObjects -> list of interactive objects in the game
+     *          rules -> the list of rules in the game
+     *          rule -> the current rule
+     *          subject -> the subject part in the current rule
+     *          actionType -> the action type in the current rule
+     *          part -> the rule part that includes the object
+     *          object -> the object part in the current rule
+     *          ruleEditorCallback -> callback functions for the rules store
+     *
+     */
+    constructor(props) {
+        super(props);
+
+    }
+
+
+    render(){
+        let text = this.props.originalText;
+        let buttonVisible = "eudHide";
+        let inputId = 'numeric-input-' + this.props.rule.uuid + '-' + this.props.role;
+        let css = "eudRulePart eudCompletionRoot eud" + this.props.role;
+        return <div className={css} key={this.props.rule.uuid + this.props.role}>
+                <span className={"eudInputBox"}><span>
+                <span className={"eudObjectString"}>
+                <span>{text == "" ? this.getPlaceholder() : text}</span>
+                <input type={"text"} id={inputId}
+                       className={"eudObjectString"} placeholder={this.getPlaceholder(this.props.role)}
+                       value={text}
+                       onInput={() => interface_utils.onlyNumbers(inputId)}
+                />
+                </span>
+                <button className={buttonVisible}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            this.onClear();
+                        }}><img className={"action-buttons"} src={"icons/icons8-x-128.png"}
+                                alt={"Cancella la regola"}/></button>
+                </span>
+                </span>
+        </div>;
+    };
+
+    getPlaceholder() {
+        return "[un valore]";
+    }
+
+    onChange(e) {
+        this.props.changeText(e.target.value, this.props.role);
+    }
+
+    onClear() {
+        this.props.changeText("", this.props.role);
+    }
 }
 
 
