@@ -23,6 +23,7 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
     else {
         Actions.editModeOn();
         SceneAPI.getAllScenesAndTags();
+        SceneAPI.getHomeScene();
         MediaAPI.getAllAssets();
         AudioAPI.getAllAudios();
 		StoryAPI.getAllCollections();

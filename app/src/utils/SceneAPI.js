@@ -290,17 +290,34 @@ function deleteScene(scene) {
 }
 
 /**
- * Sets specific scene as home (maybe)
- * @param scene
+ * Sets specific scene as home
+ * @param sceneId
  */
-function setHome(scene) {
-    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/setHome`)
+function setHomeScene(sceneId) {
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${sceneId}/setHomeScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function (err, response) {
             if (err) {
                 return console.error(err)
             }
+
+            Actions.setHomeScene(sceneId);
+        });
+}
+
+/**
+ * Sets specific scene as home
+ * @param scene
+ */
+function getHomeScene() {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/getHomeScene`)
+        .set('Accept', 'application/json')
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+            Actions.setHomeScene(response.body.uuid);
         });
 }
 
@@ -492,4 +509,6 @@ export default {
     getAllDetailedScenes: getAllDetailedScenes,
     saveTag: saveTag,
     removeTag: removeTag,
+    setHomeScene: setHomeScene,
+    getHomeScene: getHomeScene,
 };

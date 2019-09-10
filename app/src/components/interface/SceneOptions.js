@@ -5,6 +5,7 @@ import interface_utils from "./interface_utils";
 import Orders from "../../data/Orders";
 import FileSelectionBtn from "./FileSelectionBtn";
 import Dropdown from "./Dropdown";
+import SceneAPI from "../../utils/SceneAPI";
 
 function SceneOptions(props){
 
@@ -54,6 +55,15 @@ function SceneOptions(props){
                                   component={'scene-type'}
                                   property={'type'}
                                   defaultValue={sceneOptions.type}/>
+                    </div>
+                    <div className={'rightbar-checkbox'}>
+                        <input type={'checkbox'} className={'checkbox-audio-form'}
+                               id={'home-scene'} checked={props.editor.homeScene === props.currentScene}
+                               onChange={() => {
+                                   SceneAPI.setHomeScene(props.currentScene);
+                               }}
+                        />
+                        <label htmlFor={'home-scene'}>Scena iniziale</label>
                     </div>
                 </div>
                 <label className={'rightbar-titles'}>Etichetta</label>

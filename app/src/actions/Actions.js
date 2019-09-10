@@ -165,6 +165,13 @@ const Actions = {
         })
     },
 
+    setHomeScene(sceneId){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_HOME_SCENE,
+            scene: sceneId,
+        })
+    },
+
     soundActiveFormCheck(check){
         AppDispatcher.dispatch({
             type: ActionTypes.SOUND_ACTIVE_FORM_CHECK,

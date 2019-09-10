@@ -103,6 +103,8 @@ class EditorStateStore extends ReduceStore {
                 return state;
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
+            case ActionTypes.SET_HOME_SCENE:
+                return state.set('homeScene', action.scene);
             case ActionTypes.SORT_SCENES:
                 return state.set('scenesOrder', action.order);
             case ActionTypes.SOUND_ACTIVE_FORM_CHECK:
@@ -112,7 +114,6 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
             case ActionTypes.UPDATE_CURRENT_SCENE:
-                console.log(action.scene);
                 return state.set('sceneOptions', action.scene);
             case ActionTypes.UPDATE_CURRENT_OBJECT:
                 let name = action.obj ? action.obj.name : null;
