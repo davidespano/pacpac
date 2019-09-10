@@ -197,7 +197,7 @@ export default class Bubble extends Component
             //let canvasHeight = document.documentElement.clientHeight / 100;
             //let canvasWidth = canvasHeight * ration;
             console.log(document.documentElement.clientHeight)
-            positionPlane = "0, 1.6, -6.18";
+            positionPlane = "0, 1.6, -6.44";
             /*if(this.props.isActive){
                 positionPlane = "0, 1.6, -6.44";
             } else {
