@@ -114,16 +114,20 @@ function operatorUuidToString(operatorUuid) {
             return "è";
         case Operators.NOT_EQUAL:
             return "non è";
+        case Operators.EQUAL_NUM:
+            return "=";
+        case Operators.NOT_EQUAL_NUM:
+            return "≠";
         case Operators.LESS_THAN:
-            return "è minore di";
+            return "\<";
         case Operators.LESS_EQUAL:
-            return "è minore o uguale di";
+            return "\<=";
         case Operators.GREATER_THAN:
-            return "è maggiore di";
+            return "\>";
         case Operators.GREATER_EQUAL:
-            return "è maggiore o uguale di";
+            return "\>=";
         default:
-            return "operatore sconosciuto";
+            return "";
     }
 }
 
