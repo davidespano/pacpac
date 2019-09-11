@@ -31,6 +31,8 @@ export default class VRScene extends React.Component {
         super(props);
         let scene = this.props.scenes.toArray()[0];
         let gameGraph = {};
+
+
         this.state = {
             scenes: this.props.scenes.toArray(),
             graph: gameGraph,
@@ -68,6 +70,12 @@ export default class VRScene extends React.Component {
         await SceneAPI.getAllDetailedScenes(gameGraph);
         let scene = gameGraph['scenes'][this.state.activeScene.uuid];
         let runState = this.createGameState(gameGraph);
+        let home = await SceneAPI.getHome();
+
+        if(home !== ''){
+            scene = this.props.scenes.get(home);
+        }
+
         this.setState({
             graph: gameGraph,
             activeScene: scene,

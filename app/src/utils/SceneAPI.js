@@ -437,6 +437,13 @@ async function getAllDetailedScenes(gameGraph) {
     //console.log(gameGraph);
 }
 
+async function getHome() {
+    const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/getHomeScene`)
+        .set('Accept', 'application/json');
+    
+    return response.body.uuid
+}
+
 function saveTag(tag, gameID = null){
     let game;
     if(gameID){
@@ -511,4 +518,5 @@ export default {
     removeTag: removeTag,
     setHomeScene: setHomeScene,
     getHomeScene: getHomeScene,
+    getHome: getHome
 };

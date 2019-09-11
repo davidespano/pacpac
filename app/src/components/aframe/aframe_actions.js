@@ -21,14 +21,12 @@ function executeAction(VRScene, rule, action){
     let sceneName = action.subj_uuid;
     //TODO cambiare nome media non è il media
     let media = action.obj_uuid;
-    console.log(media)
     let cursor = document.querySelector('#cursor');
     /*Object.values(state.activeScene.objects).flat().forEach(o =>{
         if(o.uuid === rule.event.obj_uuid){
             current_object = o;
         }
     });*/
-    console.log(game_graph)
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
@@ -186,7 +184,6 @@ function executeAction(VRScene, rule, action){
             let mediaObj = document.querySelector('#media_' + action.subj_uuid);
             if(obj)
                 obj.setAttribute('selectable', {visible: action.obj_uuid});
-            console.log(mediaObj)
             runState[action.subj_uuid].visible=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
             break;

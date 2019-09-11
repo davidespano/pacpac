@@ -76,7 +76,6 @@ function setMouseLeaveTransition() {
 
 function setMouseEnter() {
     let cursor = document.querySelector('#cursor');
-    console.log(cursor.components)
     cursor.setAttribute('color', 'green');
     cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.01; to:0.001;');
 }
