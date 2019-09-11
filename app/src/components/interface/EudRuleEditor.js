@@ -1109,7 +1109,7 @@ class EudRuleNumericPart extends Component {
                 <span className={"eudObjectString"}>
                 <span>{text == "" ? "[un valore]" : text}</span>
                 <input type={"text"}
-                       className={"eudObjectString"} placeholder={"[un valore]"}
+                       className={"eudObjectString"} placeholder={"[digita un numero]"}
                        onChange={(e) => {
                            this.onChange(e)
                        }}
@@ -1248,13 +1248,14 @@ function getCompletions(props) {
                     })
                 );
             }
-            let subjects = props.interactiveObjects.set(
+            let subjects = props.interactiveObjects.filter(x =>
+                x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
                 InteractiveObjectsTypes.PLAYER,
                 InteractiveObject({
                     type: InteractiveObjectsTypes.PLAYER,
                     uuid: InteractiveObjectsTypes.PLAYER,
                     name: ""
-                }).filter(x => x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST)
+                })
             );
 
             return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
