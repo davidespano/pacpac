@@ -10,6 +10,8 @@ import AudioAPI from "./utils/AudioAPI";
 import DebugAPI from "./utils/DebugAPI";
 import Audio from "./audio/Audio";
 import EditorStateStore from "./data/EditorStateStore";
+import ScenesStore from "./data/ScenesStore";
+import interface_utils from "./components/interface/interface_utils";
 
 //import '../public/style.css';
 //import './aframe.js';
@@ -22,8 +24,8 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
         AuthenticationApi.getUserDetail();
     else {
         Actions.editModeOn();
-        SceneAPI.getAllScenesAndTags();
         SceneAPI.getHomeScene();
+        SceneAPI.getAllScenesAndTags();
         MediaAPI.getAllAssets();
         AudioAPI.getAllAudios();
 		StoryAPI.getAllCollections();

@@ -3,6 +3,8 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import EditorState from "./EditorState";
 import Immutable from "immutable";
+import SceneAPI from "../utils/SceneAPI";
+import ScenesStore from "./ScenesStore";
 
 class EditorStateStore extends ReduceStore {
 
@@ -74,13 +76,18 @@ class EditorStateStore extends ReduceStore {
                             //state = state.set(el.currentScene, newSaves)
                             EditorState.debugSaves[el.currentScene] = newSaves;
                         }
-                        console.log(c++);
                     }
                 );
                 return state.set('debugSaves', action.response);
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
                 state = state.set('sceneOptions', action.scene);
+
+                if(!state.get('homeScene')){
+                    state = state.set('homeScene', action.scene.uuid);
+                    SceneAPI.setHomeScene(action.scene.uuid, false);
+                }
+
                 return state;
             case ActionTypes.RECEIVE_USER:
                 return state.set('user', action.user);

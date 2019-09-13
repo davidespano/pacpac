@@ -16,6 +16,8 @@ import Condition from "../rules/Condition";
 import Audio from "../audio/Audio";
 import PointOfInterest from "../interactives/PointOfInterest";
 import Counter from "../interactives/Counter";
+import ScenesStore from "../data/ScenesStore";
+import EditorStateStore from "../data/EditorStateStore";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -291,8 +293,9 @@ function deleteScene(scene) {
 /**
  * Sets specific scene as home
  * @param sceneId
+ * @param updateStore true if we want to update the store as well
  */
-function setHomeScene(sceneId) {
+function setHomeScene(sceneId, updateStore=true) {
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${sceneId}/setHomeScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -301,20 +304,21 @@ function setHomeScene(sceneId) {
                 return console.error(err)
             }
 
-            Actions.setHomeScene(sceneId);
+            if(updateStore){
+                Actions.setHomeScene(sceneId);
+            }
         });
 }
 
 /**
- * Sets specific scene as home
- * @param scene
+ * Retrieves home Scene from db
  */
 function getHomeScene() {
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/getHomeScene`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
             if (err) {
-                return console.error(err)
+                Actions.setHomeScene(null);
             }
             Actions.setHomeScene(response.body.uuid);
         });
@@ -517,5 +521,5 @@ export default {
     removeTag: removeTag,
     setHomeScene: setHomeScene,
     getHomeScene: getHomeScene,
-    getHome: getHome
+    getHome: getHome,
 };

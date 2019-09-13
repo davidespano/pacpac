@@ -6,6 +6,7 @@ import Orders from "../../data/Orders";
 import FileSelectionBtn from "./FileSelectionBtn";
 import Dropdown from "./Dropdown";
 import SceneAPI from "../../utils/SceneAPI";
+import Actions from "../../actions/Actions";
 
 function SceneOptions(props){
 
@@ -226,11 +227,23 @@ function checkSelection(props, uuid){
     return '';
 }
 
-
+/**
+ * checks if author wants to remove the scene, if positive the scene is removed and homeScene and currentScene are
+ * updated accordingly
+ * @param props
+ * @param scene
+ */
 function checkAndRemoveScene(props, scene){
     let answer = window.confirm('Vuoi rimuovere la scena? Verranno rimossi tutti gli oggetti, regole e audio ad essa collegati.');
     if(answer){
         props.removeScene(scene);
+        let scenes = props.scenes.delete(scene.uuid);
+        let first = scenes.first(); // take the first of the remaining scenes, if valid set as currentScene
+        Actions.updateCurrentScene(first ? first.uuid : null);
+
+        if(props.editor.homeScene === scene.uuid){ // handle deleting homeScene
+            first ? SceneAPI.setHomeScene(first.uuid) : Actions.setHomeScene(null);
+        }
     }
 }
 
