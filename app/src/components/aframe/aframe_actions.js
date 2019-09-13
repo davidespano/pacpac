@@ -189,7 +189,6 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.LOOK_AT:
             //TODO capire se si può cambiare punto di vista piano
-            console.log(game_graph['objects'].get(action.obj_uuid))
             if(VRScene.state.activeScene.type === '3D'){
                 let delay = game_graph['objects'].get(action.obj_uuid).properties.delay;
                 setTimeout(function () {
@@ -212,10 +211,8 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.INCREASE:
             //TODO manca il valore da assegnare
-            console.log(game_graph['objects'].get(action.subj_uuid))
-            runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
+            runState[action.subj_uuid].state += parseInt(action.obj_uuid);
             VRScene.setState({runState: runState, graph: game_graph});
-            console.log(runState[action.subj_uuid])
             break;
         default:
             console.log('not yet implemented');
