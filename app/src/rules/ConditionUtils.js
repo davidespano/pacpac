@@ -15,6 +15,8 @@ function evalCondition(c, gameState) {
                 console.log(c.operator);
         }
     }else if(c instanceof Condition || c.hasOwnProperty("obj_uuid")){
+        if(c.obj_uuid == "" || c.obj_uuid == null || !c.operator || c.state == "") return true;
+
         const state = gameState[c.obj_uuid].state;
         switch (c.operator) {
             case Operators.EQUAL:
