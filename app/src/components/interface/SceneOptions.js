@@ -54,7 +54,7 @@ function SceneOptions(props){
                         <Dropdown props={props}
                                   component={'scene-type'}
                                   property={'type'}
-                                  defaultValue={sceneOptions.type}/>
+                                  defaultValue={currentScene.type}/>
                     </div>
                     <div className={'rightbar-checkbox'}>
                         <input type={'checkbox'} className={'checkbox-audio-form'}

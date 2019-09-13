@@ -232,7 +232,6 @@ function createScene(name, img, index, type, tag, order) {
  * @param scene
  */
 function updateScene(scene, tag) {
-    console.log(tag)
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
