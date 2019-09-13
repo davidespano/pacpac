@@ -117,7 +117,7 @@ function generateProperties(props){
             </div>
             <label className={'rightbar-titles'}>Opzioni</label>
             <div className={'options-grid'}>
-                <label className={'options-labels'}>Visibilità:</label>
+                <label className={'options-labels'}>Attivazione:</label>
                 <Dropdown
                     props={props}
                     component={'visibility'}

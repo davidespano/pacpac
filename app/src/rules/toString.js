@@ -147,9 +147,9 @@ function superOperatorsToString(superoperatorUuid) {
 function valueUuidToString(valueUuid){
     switch(valueUuid){
         case Values.VISIBLE:
-            return 'visibile';
+            return 'attivabile';
         case Values.INVISIBLE:
-            return 'invisibile';
+            return 'non attivabile';
         case Values.ON:
             return 'acceso';
         case Values.OFF:
@@ -159,9 +159,9 @@ function valueUuidToString(valueUuid){
         case Values.UNLOCKED:
             return 'aperto';
         case Values.COLLECTED:
-            return 'raccolto';
+            return 'raccolta';
         case Values.NOT_COLLECTED:
-            return 'non raccolto';
+            return 'non raccolta';
         case Values.THREE_DIM:
             return '3D';
         case Values.TWO_DIM:
