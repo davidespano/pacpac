@@ -66,8 +66,7 @@ class ScenesStore extends ReduceStore {
                 state = state.sort(stores_utils.chooseComparator(action.order));
                 return state;
             case ActionTypes.UPDATE_SCENE:
-                state = state.set(action.scene.uuid, action.scene);
-                return state;
+                return state.set(action.scene.uuid, action.scene).sort(stores_utils.chooseComparator(action.order));
             case ActionTypes.UPDATE_SCENE_NAME:
                 return state.set(action.scene.uuid, action.scene).sort(stores_utils.chooseComparator(action.order));
             case ActionTypes.REMOVE_TAG:

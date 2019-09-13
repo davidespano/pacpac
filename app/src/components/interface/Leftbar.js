@@ -138,6 +138,9 @@ function buttonsBar(props) {
                     <option value={Orders.REV_CHRONOLOGICAL}
                     >Dall'ultima alla prima
                     </option>
+                    <option value={Orders.BY_TAG}
+                    >Per etichetta
+                    </option>
                 </select>
                 <div id="scenes-order-menu"
                      className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>
