@@ -15,6 +15,7 @@ const express = require('express')
     , handleMediaAPI = require('./handleMediaAPI').handleMediaAPI
     , handleFilemanagerAPI = require('./handleFilemanagerAPI').handleFilemanagerAPI
     , fs = require('fs')
+    , mime = require('mime-types')
 	, storiesAPI = require('./storiesAPI').storiesAPI;
 const app = express()
     , api = express();
@@ -86,6 +87,7 @@ app.use('/media/*', function(req, res) {
     const stat = fs.statSync(fileName);
     const fileSize = stat.size;
     const range = req.headers.range;
+    const mimeType = mime.lookup(fileName);
     if (range) {
         const parts = range.replace(/bytes=/, "").split("-");
         const start = parseInt(parts[0], 10);
@@ -98,14 +100,14 @@ app.use('/media/*', function(req, res) {
             'Content-Range': `bytes ${start}-${end}/${fileSize}`,
             'Accept-Ranges': 'bytes',
             'Content-Length': chunksize,
-            'Content-Type': 'video/mp4',
+            'Content-Type': mimeType,
         };
         res.writeHead(206, head);
         file.pipe(res);
     } else {
         const head = {
             'Content-Length': fileSize,
-            'Content-Type': 'video/mp4',
+            'Content-Type': mimeType,
         };
         res.writeHead(200, head);
         fs.createReadStream(fileName).pipe(res);
