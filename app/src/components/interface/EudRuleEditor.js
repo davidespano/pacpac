@@ -16,6 +16,7 @@ import { RuleActionMap, ValuesMap, OperatorsMap } from "../../rules/maps";
 import CentralSceneStore from "../../data/CentralSceneStore";
 import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
+import eventBus from "../aframe/eventBus";
 
 let uuid = require('uuid');
 
@@ -34,6 +35,7 @@ export default class EudRuleEditor extends Component {
                     return (
                         <React.Fragment key={'fragment-' + rule}>
                             <EudRule
+                                VRScene={this.props.VRScene}
                                 editor={this.props.editor}
                                 interactiveObjects={this.props.interactiveObjects}
                                 scenes={this.props.scenes}
@@ -242,6 +244,8 @@ class EudRule extends Component {
     }
 
 
+
+
     render() {
         let rule = this.props.rules.get(this.props.rule);
         let buttonBar = this.state.isMouseInside ? "eudAction" : "eudAction eudHidden";
@@ -258,7 +262,9 @@ class EudRule extends Component {
                     <div className={"eudNext"}>
                         <button className={"select-file-btn btn btnNext"} id={"btnNext" + rule.uuid} title={"Avanti"}
                                 onClick={() => {
-                                    alert("Not yet implemented");
+                                    eventBus.emit('debug-step');
+                                    //alert("Not yet implemented");
+
                                 }}>
                             <img className={"action-buttons btn-img"} src={"icons/icons8-play-50.png"}
                                  alt={"Prossima regola"}/>
@@ -415,6 +421,7 @@ class EudCondition extends Component {
         let operatorCompletion = this.showCompletion(actionId, "operator");
         let operatorRendering =
             <EudRulePart
+                VRScene={this.props.VRScene}
                 interactiveObjects={this.props.interactiveObjects}
                 rules={this.props.rules}
                 rule={this.props.rule}
@@ -618,6 +625,7 @@ class EudAction extends Component {
         let subject = this.getInteractiveObjectReference(this.props.action.subj_uuid);
         let actionRendering =
             <EudRulePart
+                VRScene={this.props.VRScene}
                 interactiveObjects={this.props.interactiveObjects}
                 rules={this.props.rules}
                 rule={this.props.rule}
