@@ -24,7 +24,19 @@ let uuid = require('uuid');
 
 function TopBar(props){
 
-    let isDebugActive = props.scenes.size > 0;
+    let isDebugActive = props.scenes.size > 0
+
+    /**
+     <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
+     aria-controls="nav-story-editor" aria-selected="false"
+     onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
+
+     <figure className={'nav-figures'} data-toggle="modal" data-target="#view-story-modal">
+     <img src={"icons/icons8-stories-100.png"}/>
+     <figcaption>Visualizza storie</figcaption>
+     </figure>
+
+     */
 
     return (
         <div className={'topbar'}>
@@ -43,9 +55,6 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-assets" data-toggle="tab" role="tab" href="#nav-assets"
                        aria-controls="nav-assets" aria-selected="false"
                        onClick={() => handleAssetsMode(props)}>Assets</a>
-                    <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
-                       aria-controls="nav-story-editor" aria-selected="false"
-                       onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
                     <a className={"nav-item nav-link " + debugCheck(isDebugActive)} id="nav-debug-tab" data-toggle="tab"
                        role="tab" href={'#' + debugLink(isDebugActive)} aria-controls={debugLink(isDebugActive)} aria-selected="false"
                        onClick={() => {
@@ -83,10 +92,6 @@ function TopBar(props){
                         <figure className={'nav-figures'} data-toggle="modal" data-target="#manage-audio-modal" data-backdrop="false">
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
-                        </figure>
-                        <figure className={'nav-figures'} data-toggle="modal" data-target="#view-story-modal">
-                            <img src={"icons/icons8-stories-100.png"}/>
-                            <figcaption>Visualizza storie</figcaption>
                         </figure>
                     </div>
                 </div>
@@ -153,13 +158,6 @@ function TopBar(props){
         </div>
     );
 }
-
-/*
-<figure className={'nav-figures'} style={{opacity: 0.3, cursor: 'auto'}}>
-                            <img src={"icons/icons8-audio-100.png"}/>
-                            <figcaption>Gestisci audio</figcaption>
-                        </figure>
-*/
 
 function handleNavbarSelection(props){
    // let items = document.getElementsByClassName("nav-item");
