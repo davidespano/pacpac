@@ -136,7 +136,7 @@ function executeAction(VRScene, rule, action){
                 soundsHub["audios_"+ actual_scene_Uuid].play()
             }
             let targetSceneVideo = document.getElementById(media);
-            if(targetSceneVideo.nodeName === 'VIDEO') targetSceneVideo.play();
+            if(targetSceneVideo.nodeName === 'VIDEO') {targetSceneVideo.play();}
             break;
         case RuleActionTypes.PLAY:
             //verifico se è un video
