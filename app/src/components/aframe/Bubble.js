@@ -140,7 +140,7 @@ export default class Bubble extends Component
             active = 'active: true; video: ' + scene.img;
             radius = 10;
             //TODO aggiungere modifiche audio
-            if(!this.props.editMode && !this.props.debugMode){
+            if(!this.props.editMode){
                 //Carico musica sottofondo
                 if(this.props.scene.music !== undefined && this.props.audios){
                     let music = this.props.audios[this.props.scene.music]

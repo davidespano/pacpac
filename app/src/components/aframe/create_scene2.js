@@ -203,7 +203,12 @@ export default class VRScene extends React.Component {
                                     let actionExecution = actionCallback(action);
                                     if (me.props.debug) {
                                         setTimeout(function () {
-                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            let object;
+                                            if(me.props.interactiveObjects.get(rule.event.subj_uuid))
+                                                object = me.props.interactiveObjects.get(rule.event.subj_uuid);
+                                            else
+                                                object = this.state.audios[rule.event.subj_uuid]
+                                            interface_utils.highlightRule(me.props, object);
                                             eventBus.on('debug-step', actionExecution);
                                         }, duration);
                                     } else {
@@ -217,11 +222,18 @@ export default class VRScene extends React.Component {
                     if(rule.event.obj_uuid === "STARTED" && media){
                         media.onplay = function() {
                             rule.actions.forEach(action => {
+
                                 if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                                     let actionExecution = actionCallback(action);
                                     if (me.props.debug) {
                                         setTimeout(function () {
-                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            console.log('sto partendo')
+                                            let object;
+                                            if(me.props.interactiveObjects.get(rule.event.subj_uuid))
+                                                object = me.props.interactiveObjects.get(rule.event.subj_uuid);
+                                            else
+                                                object = me.state.audios[rule.event.subj_uuid]
+                                            interface_utils.highlightRule(me.props, object);
                                             eventBus.on('debug-step', actionExecution);
                                         }, duration);
                                     } else {
