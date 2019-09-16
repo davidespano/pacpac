@@ -15,10 +15,16 @@ function evalCondition(c, gameState) {
                 console.log(c.operator);
         }
     }else if(c instanceof Condition || c.hasOwnProperty("obj_uuid")){
+        if(c.obj_uuid == "" || c.obj_uuid == null || !c.operator || c.state == "") return true;
+
         const state = gameState[c.obj_uuid].state;
         switch (c.operator) {
-            case Operators.EQUAL: return state == c.state;
-            case Operators.NOT_EQUAL: return state != c.state;
+            case Operators.EQUAL:
+            case Operators.EQUAL_NUM:
+                return state == c.state;
+            case Operators.NOT_EQUAL:
+            case Operators.NOT_EQUAL_NUM:
+                return state != c.state;
             case Operators.LESS_THAN: return state < c.state;
             case Operators.LESS_EQUAL: return state <= c.state;
             case Operators.GREATER_THAN: return state > c.state;

@@ -131,8 +131,8 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, props, radiu
         // scene bidimensioali
         let dimX = 8.5;
         let dimY = 6;
-        x = (dimX + medianPoint[0]) * 100 / (dimX+8);
-        y = (dimY - medianPoint[1]) * 100 / (dimY+3);
+        x = (dimX + medianPoint[0] * 16.5) * 100 / (dimX+8);
+        y = (dimY - medianPoint[1] * 9) * 100 / (dimY+3);
     }
 
     return [x, y];
@@ -276,6 +276,7 @@ function highlightRule(props, obj) {
 
             props.rules.get(rule).actions._tail.array.forEach(function (sub) {
                 if (sub.subj_uuid === obj.uuid) {
+
                     setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .3)");
 
                     if(next !== null && props.currentObject === null)
@@ -283,9 +284,9 @@ function highlightRule(props, obj) {
                 }
             });
 
-            if (props.rules.get(rule).event.obj_uuid === obj.uuid) {
+            if (props.rules.get(rule).event.obj_uuid === obj.uuid || props.rules.get(rule).event.subj_uuid === obj.uuid) {
                 setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .3)");
-
+                console.log('e qui ci entro?')
                 if(next !== null && props.currentObject === null)
                     next.style = "visibility: visible";
             }

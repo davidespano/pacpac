@@ -151,23 +151,43 @@ const RuleActionMap = Immutable.Map([
         },
     ],
     [
+        RuleActionTypes.INCREASE_STEP,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.INCREASE_STEP),
+            uuid: RuleActionTypes.INCREASE_STEP,
+        },
+    ],
+    [
         RuleActionTypes.INCREASE,
         {
             type: "operation",
             subj_type: [InteractiveObjectsTypes.COUNTER],
             obj_type: ['number'],
             name: toString.eventTypeToString(RuleActionTypes.INCREASE),
-            uuid: RuleActionTypes.INCREASE
+            uuid: RuleActionTypes.INCREASE,
         },
     ],
     [
-        RuleActionTypes.DECREASE,
+        RuleActionTypes.DECREASE_STEP,
         {
             type: "operation",
             subj_type: [InteractiveObjectsTypes.COUNTER],
             obj_type: ['number'],
-            name: toString.eventTypeToString(RuleActionTypes.DECREASE),
-            uuid: RuleActionTypes.DECREASE
+            name: toString.eventTypeToString(RuleActionTypes.DECREASE_STEP),
+            uuid: RuleActionTypes.DECREASE_STEP,
+        },
+    ],
+    [
+        RuleActionTypes.IS,
+        {
+            type: "operation",
+            subj_type: ['audio', 'video'],
+            obj_type: ['value'],
+            name: toString.eventTypeToString(RuleActionTypes.IS),
+            uuid: RuleActionTypes.IS,
         },
     ],
 ]);
@@ -177,6 +197,14 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.EQUAL,
         {
+            subj_type: [
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.POINT_OF_INTEREST,
+                InteractiveObjectsTypes.COUNTER,
+            ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.EQUAL),
             uuid: Operators.EQUAL,
@@ -185,15 +213,41 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.NOT_EQUAL,
         {
+            subj_type: [
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.POINT_OF_INTEREST,
+                InteractiveObjectsTypes.COUNTER,
+            ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.NOT_EQUAL),
             uuid: Operators.NOT_EQUAL,
         },
     ],
-    /*
+    [
+        Operators.EQUAL_NUM,
+        {
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            type: "operator",
+            name: toString.operatorUuidToString(Operators.EQUAL_NUM),
+            uuid: Operators.EQUAL_NUM,
+        },
+    ],
+    [
+        Operators.NOT_EQUAL_NUM,
+        {
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            type: "operator",
+            name: toString.operatorUuidToString(Operators.NOT_EQUAL_NUM),
+            uuid: Operators.NOT_EQUAL_NUM,
+        },
+    ],
     [
         Operators.LESS_EQUAL,
         {
+            subj_type: [InteractiveObjectsTypes.COUNTER],
             type: "operator",
             name: toString.operatorUuidToString(Operators.LESS_EQUAL),
             uuid: Operators.LESS_EQUAL,
@@ -202,6 +256,7 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.LESS_THAN,
         {
+            subj_type: [InteractiveObjectsTypes.COUNTER],
             type: "operator",
             name: toString.operatorUuidToString(Operators.LESS_THAN),
             uuid: Operators.LESS_THAN,
@@ -210,6 +265,7 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.GREATER_EQUAL,
         {
+            subj_type: [InteractiveObjectsTypes.COUNTER],
             type: "operator",
             name: toString.operatorUuidToString(Operators.GREATER_EQUAL),
             uuid: Operators.GREATER_EQUAL,
@@ -218,12 +274,12 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.GREATER_THAN,
         {
+            subj_type: [InteractiveObjectsTypes.COUNTER],
             type: "operator",
             name: toString.operatorUuidToString(Operators.GREATER_THAN),
             uuid: Operators.GREATER_THAN,
         },
     ],
-    */
 
 ]);
 
@@ -236,7 +292,8 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.TRANSITION,
                 InteractiveObjectsTypes.SWITCH,
                 InteractiveObjectsTypes.LOCK,
-                InteractiveObjectsTypes.KEY
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.COUNTER,
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.VISIBLE),
@@ -252,7 +309,9 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.TRANSITION,
                 InteractiveObjectsTypes.SWITCH,
                 InteractiveObjectsTypes.LOCK,
-                InteractiveObjectsTypes.KEY],
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.COUNTER,
+            ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.INVISIBLE),
             uuid: Values.INVISIBLE,
@@ -322,6 +381,28 @@ const ValuesMap = Immutable.Map([
             verb_type: [RuleActionTypes.CHANGE_STATE],
             name: toString.valueUuidToString(Values.NOT_COLLECTED),
             uuid: Values.NOT_COLLECTED,
+        },
+
+    ],
+    [
+        Values.STARTED,
+        {
+            type: 'value',
+            subj_type: ['audio', 'video'],
+            verb_type: [RuleActionTypes.IS],
+            name: toString.valueUuidToString(Values.STARTED),
+            uuid: Values.STARTED,
+        },
+
+    ],
+    [
+        Values.ENDED,
+        {
+            type: 'value',
+            subj_type: ['audio', 'video'],
+            verb_type: [RuleActionTypes.IS],
+            name: toString.valueUuidToString(Values.ENDED),
+            uuid: Values.ENDED,
         },
 
     ],

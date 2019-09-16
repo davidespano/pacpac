@@ -140,7 +140,7 @@ export default class Bubble extends Component
             active = 'active: true; video: ' + scene.img;
             radius = 10;
             //TODO aggiungere modifiche audio
-            if(!this.props.editMode && !this.props.debugMode){
+            if(!this.props.editMode){
                 //Carico musica sottofondo
                 if(this.props.scene.music !== undefined && this.props.audios){
                     let music = this.props.audios[this.props.scene.music]
@@ -189,10 +189,14 @@ export default class Bubble extends Component
         } else {
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
+            let Width = this.props.assetsDimention.width / 100;
+            let Height = this.props.assetsDimention.height / 100;
+            let ration = Width/Height;
             let canvasWidth = document.documentElement.clientWidth / 100;
-            let canvasHeight = canvasWidth /1.77;
-            //let canvasWidth = this.props.assetsDimention.width / 100;
-            //let canvasHeight = this.props.assetsDimention.height / 100;
+            let canvasHeight = canvasWidth / ration;
+            //let canvasHeight = document.documentElement.clientHeight / 100;
+            //let canvasWidth = canvasHeight * ration;
+            console.log(document.documentElement.clientHeight)
             positionPlane = "0, 1.6, -6.44";
             /*if(this.props.isActive){
                 positionPlane = "0, 1.6, -6.44";

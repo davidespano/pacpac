@@ -2,7 +2,7 @@ import {Operators} from "./Operators";
 
 class Condition {
 
-    constructor(uuid = "", obj_uuid = "", state = "", operator = Operators.EQUAL){
+    constructor(uuid = "", obj_uuid = "", state = "", operator = null){
         this.uuid = uuid;
         this.obj_uuid = obj_uuid;
         this.operator = operator;

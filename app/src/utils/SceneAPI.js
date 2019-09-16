@@ -16,6 +16,8 @@ import Condition from "../rules/Condition";
 import Audio from "../audio/Audio";
 import PointOfInterest from "../interactives/PointOfInterest";
 import Counter from "../interactives/Counter";
+import ScenesStore from "../data/ScenesStore";
+import EditorStateStore from "../data/EditorStateStore";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -232,7 +234,6 @@ function createScene(name, img, index, type, tag, order) {
  * @param scene
  */
 function updateScene(scene, tag) {
-    console.log(tag)
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/updateScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -290,17 +291,36 @@ function deleteScene(scene) {
 }
 
 /**
- * Sets specific scene as home (maybe)
- * @param scene
+ * Sets specific scene as home
+ * @param sceneId
+ * @param updateStore true if we want to update the store as well
  */
-function setHome(scene) {
-    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${scene.img}/setHome`)
+function setHomeScene(sceneId, updateStore=true) {
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${sceneId}/setHomeScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .end(function (err, response) {
             if (err) {
                 return console.error(err)
             }
+
+            if(updateStore){
+                Actions.setHomeScene(sceneId);
+            }
+        });
+}
+
+/**
+ * Retrieves home Scene from db
+ */
+function getHomeScene() {
+    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/getHomeScene`)
+        .set('Accept', 'application/json')
+        .end(function (err, response) {
+            if (err) {
+                Actions.setHomeScene(null);
+            }
+            Actions.setHomeScene(response.body.uuid);
         });
 }
 
@@ -420,6 +440,13 @@ async function getAllDetailedScenes(gameGraph) {
     //console.log(gameGraph);
 }
 
+async function getHome() {
+    const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/getHomeScene`)
+        .set('Accept', 'application/json');
+    
+    return response.body.uuid
+}
+
 function saveTag(tag, gameID = null){
     let game;
     if(gameID){
@@ -492,4 +519,7 @@ export default {
     getAllDetailedScenes: getAllDetailedScenes,
     saveTag: saveTag,
     removeTag: removeTag,
+    setHomeScene: setHomeScene,
+    getHomeScene: getHomeScene,
+    getHome: getHome,
 };

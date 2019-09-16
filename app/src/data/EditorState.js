@@ -12,6 +12,7 @@ const EditorState = Immutable.Record({
     debugFromScene: null,
     debugRunState: null,
     debugSaves: null,
+    homeScene: null,
     isEditAudioOn: false,
     leftbarSelection: 'scenes',
     mentionType: null,

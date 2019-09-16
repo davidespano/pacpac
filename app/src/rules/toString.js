@@ -32,9 +32,13 @@ function eventTypeToString(eventType) {
         case RuleActionTypes.LOOK_AT:
             return 'guarda';
         case RuleActionTypes.INCREASE:
+            return "va a";
+        case RuleActionTypes.INCREASE_STEP:
             return "aumenta di";
-        case RuleActionTypes.DECREASE:
+        case RuleActionTypes.DECREASE_STEP:
             return "diminuisce di";
+        case RuleActionTypes.IS:
+            return 'è';
         default:
             return "";
     }
@@ -80,6 +84,7 @@ function objectTypeToString(objectType) {
         case Values.TWO_DIM:
             type = "la scena";
             break;
+        case "number":
         case "operation":
         case "operator":
         case "value":
@@ -109,16 +114,20 @@ function operatorUuidToString(operatorUuid) {
             return "è";
         case Operators.NOT_EQUAL:
             return "non è";
+        case Operators.EQUAL_NUM:
+            return "=";
+        case Operators.NOT_EQUAL_NUM:
+            return "≠";
         case Operators.LESS_THAN:
-            return "è minore di";
+            return "\<";
         case Operators.LESS_EQUAL:
-            return "è minore o uguale di";
+            return "\<=";
         case Operators.GREATER_THAN:
-            return "è maggiore di";
+            return "\>";
         case Operators.GREATER_EQUAL:
-            return "è maggiore o uguale di";
+            return "\>=";
         default:
-            return "operatore sconosciuto";
+            return "";
     }
 }
 
@@ -138,9 +147,9 @@ function superOperatorsToString(superoperatorUuid) {
 function valueUuidToString(valueUuid){
     switch(valueUuid){
         case Values.VISIBLE:
-            return 'visibile';
+            return 'attivabile';
         case Values.INVISIBLE:
-            return 'invisibile';
+            return 'non attivabile';
         case Values.ON:
             return 'acceso';
         case Values.OFF:
@@ -150,9 +159,9 @@ function valueUuidToString(valueUuid){
         case Values.UNLOCKED:
             return 'aperto';
         case Values.COLLECTED:
-            return 'raccolto';
+            return 'raccolta';
         case Values.NOT_COLLECTED:
-            return 'non raccolto';
+            return 'non raccolta';
         case Values.THREE_DIM:
             return '3D';
         case Values.TWO_DIM:
@@ -167,6 +176,10 @@ function valueUuidToString(valueUuid){
             return 'sinistra';
         case Values.RIGHT:
             return 'destra';
+        case Values.STARTED:
+            return 'iniziato';
+        case Values.ENDED:
+            return 'finito';
         default:
             return 'stato sconosciuto';
     }

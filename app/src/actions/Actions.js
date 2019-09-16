@@ -9,6 +9,7 @@ import AudioAPI from "../utils/AudioAPI";
 import StoryAPI from '../utils/StoryAPI';
 import Values from "../rules/Values";
 import ObjectsStore from "../data/ObjectsStore";
+import EditorStateStore from "../data/EditorStateStore";
 
 const Actions = {
 
@@ -162,6 +163,13 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_TAG_NEW_SCENE,
             tag: tag,
+        })
+    },
+
+    setHomeScene(sceneId){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_HOME_SCENE,
+            scene: sceneId,
         })
     },
 
@@ -365,11 +373,13 @@ const Actions = {
     /**
      * Dispatch generic scene update
      * @param scene
+     * @param order
      */
-    updateScene(scene){
+    updateScene(scene, order = EditorStateStore.getState().scenesOrder){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_SCENE,
             scene: scene,
+            order: order,
         });
         SceneAPI.updateScene(scene, scene.tag);
     },

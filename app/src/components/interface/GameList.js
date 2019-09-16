@@ -61,6 +61,7 @@ function gameSelection(gameUuid,props){
     window.localStorage.removeItem("gameID");
     window.localStorage.setItem("gameID", gameUuid);
     props.switchToEditMode();
+    SceneAPI.getHomeScene();
     SceneAPI.getAllScenesAndTags();
     MediaAPI.getAllAssets();
 	StoryAPI.getAllCollections();

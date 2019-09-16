@@ -1,4 +1,4 @@
-import 'aframe';
+/*import 'aframe';
 import './aframe_selectable'
 import './pac-look-controls'
 import './aframeUtils'
@@ -246,4 +246,4 @@ export default class DebugVRScene extends React.Component {
         this.state.resonanceAudioScene.setListenerFromMatrix(cameraMatrix4)
     }
 
-}
+}*/

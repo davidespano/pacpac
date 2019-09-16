@@ -146,15 +146,15 @@ function getAllDetailed(session, gameID) {
 //get the home scene
 function getHomeScene(session, gameID) {
     return session.run(
-        'MATCH (scene:Scene:Home:`' + gameID + '`) ' +
-        'OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) ' +
-        'RETURN scene,tag')
+        'MATCH (game:Game {gameID: $gameID}) ' +
+        'MATCH (scene:Scene {uuid: game.homeScene}) ' +
+        'RETURN scene', {gameID: gameID})
         .then(result => {
             if (!_.isEmpty(result.records)) {
                 return singleScene(result);
             }
             else {
-                throw {message: 'scene not found', status: 404};
+                throw {message: 'Game not found', status: 404};
             }
         });
 }
@@ -234,13 +234,12 @@ function deleteScene(session, name, gameID) {
 }
 
 //Set home scene
-function setHome(session, name, gameID){
+function setHomeScene(session, sceneID, gameID){
     return session.run(
-        'MATCH (scene:Scene:`' + gameID + '` {name: $name}) ' +
-        'OPTIONAL MATCH (home:Scene:Home:`' + gameID + '`)' +
-        'REMOVE home:Home ' +
-        'SET scene:Home ' +
-        'RETURN scene', {name: name})
+        'MATCH (game:Game {gameID: $gameID}) ' +
+        'MATCH (scene:Scene {uuid: $sceneID}) ' +
+        'SET game.homeScene = $sceneID ' +
+        'RETURN game, scene', {gameID: gameID, sceneID: sceneID})
         .then(result =>{
             if (_.isEmpty(result.records)) {
                 throw {message: 'scene not found', status: 404};
@@ -255,6 +254,6 @@ module.exports = {
     updateScene: updateScene,
     getHomeScene: getHomeScene,
     deleteScene: deleteScene,
-    setHome: setHome,
+    setHomeScene: setHomeScene,
     getAllDetailed: getAllDetailed
 };

@@ -19,10 +19,22 @@ export function givePoints(props) {
     let cursor = document.querySelector('a-cursor');
     let puntisalvati = cursor.components.pointsaver.points;
     let isCurved = cursor.components.pointsaver.attrValue.isCurved === 'true';
+    if(props.scenes.get(props.currentScene).type === '2D'){
+        console.log(puntisalvati)
+        let canvasWidth = document.documentElement.clientWidth / 100;
+        let canvasHeight = canvasWidth /1.77;
+        puntisalvati = puntisalvati.map(punto =>{
+            punto.x = punto.x / canvasWidth;
+            punto.y = punto.y / canvasHeight;
+            return punto;
+        })
+    }
+
     puntisalvati = puntisalvati.map(punto =>
         punto.toArray().join(" ")
     );
-    console.log(props)
+
+    //console.log(props.scenes.get(props.currentScene))
     //console.log(puntisalvati.join())
     if(isCurved){
         interface_utils.setPropertyFromValue(props.interactiveObjects.get(props.currentObject), 'vertices', puntisalvati.join(), props)
@@ -107,6 +119,7 @@ export default class GeometryScene extends React.Component{
             let idPoint = "point" + (length - 1).toString();
             let tmp = document.createElement('a-entity');
             let scene, scale, moltiplier;
+
             if(document.querySelector('a-sky')){
                 scene = document.querySelector('a-sky');
                 scale = "-1 1 1";
@@ -174,13 +187,11 @@ export default class GeometryScene extends React.Component{
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 let a_point = pointsaver.points;
                 let isPoint = pointsaver.attrValue.isPoint === 'true';
-                console.log(a_point)
                 if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
                     givePoints(this.props);
                     this.handleSceneChange();
                     cursor.setAttribute('color', 'black');
-                    console.log(cursor)
                     cursor.removeEventListener('click', function pointSaver(evt) {});
                     cursor.removeEventListener('click', this.handleFeedbackChange(), true);
                     cursor.components.pointsaver.points = [];
@@ -207,6 +218,8 @@ export default class GeometryScene extends React.Component{
             if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
                 let lines = scene.querySelectorAll(".line");
+                let point_saver = document.querySelector('#cursor').components.pointsaver;
+                let isPoint = point_saver.attrValue.isPoint === 'true';
                 lines.forEach(line => {
                     scene.removeChild(line);
                 });
@@ -218,10 +231,11 @@ export default class GeometryScene extends React.Component{
                 });
                 let cursor = document.querySelector('#cursor');
                 cursor.setAttribute('color', 'green');
-                //console.log(this.props.editor.selectedAudioToEdit)
                 if(cursor.components.pointsaver.attrValue.isCurved === 'true'){
-                    if(document.getElementById("curve_"+this.props.currentObject))
+                    if(document.getElementById("curve_"+this.props.currentObject) && !isPoint)
                         document.getElementById("curve_"+this.props.currentObject).setAttribute('geometry', 'vertices: null')
+                    else
+                        document.getElementById(this.state.scenes.name).removeChild(document.getElementById("curve_"+this.props.currentObject))
                 } else {
                     if(document.getElementById("audio"+this.props.editor.audioToEdit.uuid)){
                         document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.audioToEdit.uuid));
@@ -325,13 +339,13 @@ export default class GeometryScene extends React.Component{
                 <div id="UI" >
                     <div id="keyMap" >
                         <h1>Keys</h1>
-                        <li class="keyElements">
-                            <ul id="startedit">E: Inizia a disegnare</ul>
-                            <ul> C: Conferma </ul>
-                            <ul> U: Elimina ultimo punto </ul>
-                            <ul> Q: Torna all'editor </ul>
-                            <ul> H: Mostra/Nascondi </ul>
-                        </li>
+                        <ul class="keyElements">
+                            <li id="startedit">E: Inizia a disegnare</li>
+                            <li> C: Conferma </li>
+                            <li> U: Elimina ultimo punto </li>
+                            <li> Q: Torna all'editor </li>
+                            <li> H: Mostra/Nascondi </li>
+                        </ul>
 
                     </div>
                 </div>

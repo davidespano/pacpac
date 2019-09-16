@@ -66,6 +66,7 @@ function AppView(props) {
                 <Login {...props}/>
             );
         case 'DEBUG_MODE_ON':
+            let vrScene = <VRScene debug={true} {...props}/>;
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>
                     <TopBar {...props} />
@@ -73,9 +74,9 @@ function AppView(props) {
                         <LeftBar {...props} />
                         <DebugTab {...props} />
                         <div className={"scene"} id={"debug-scene"}>
-                            <DebugVRScene {...props}/>
+                            {vrScene}
                         </div>
-                        <EudRuleEditor {...props} />
+                        <EudRuleEditor {...props} VRScene={vrScene}/>
                     </div>
                 </div>
             );

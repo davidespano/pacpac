@@ -92,6 +92,7 @@ function getState() {
         selectAudioToEdit: Actions.selectAudioToEdit,
         selectSceneSpatialAudio: Actions.selectSceneSpatialAudio,
         selectTagNewScene: Actions.selectTagNewScene,
+        setHomeScene: Actions.setHomeScene,
         soundActiveFormCheck: Actions.soundActiveFormCheck,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,

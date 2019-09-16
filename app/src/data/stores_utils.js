@@ -15,6 +15,8 @@ function chooseComparator(type){
             return chronological;
         case Orders.REV_CHRONOLOGICAL:
             return rev_chronological;
+        case Orders.BY_TAG:
+            return tags;
         default:
             return () => 0;
     }
@@ -62,6 +64,18 @@ function chronological(a, b){
  */
 function rev_chronological(a, b){
     return -(chronological(a, b));
+}
+
+/**
+ * Comparator on scenes' tag
+ * @param a
+ * @param b
+ * @returns {number}
+ */
+function tags(a, b){
+    if(a.tag < b.tag) return -1;
+    if(a.tag > b.tag) return 1;
+    return 0;
 }
 
 /**

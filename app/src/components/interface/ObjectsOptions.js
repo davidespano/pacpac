@@ -117,7 +117,7 @@ function generateProperties(props){
             </div>
             <label className={'rightbar-titles'}>Opzioni</label>
             <div className={'options-grid'}>
-                <label className={'options-labels'}>Visibilità:</label>
+                <label className={'options-labels'}>Attivazione:</label>
                 <Dropdown
                     props={props}
                     component={'visibility'}
@@ -261,7 +261,22 @@ function generateSpecificProperties(object, objectScene, props){
         case InteractiveObjectsTypes.LOCK:
             return null;
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
-            return null;
+            return (
+                <div className={"options-grid"}>
+                    <label className={'options-labels'}>Delay:</label>
+                    <div className={'flex'}>
+                        <div id={"point-of-interest-delay"}
+                             className={"propertyForm-right"}
+                             contentEditable={true}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'delay',"point-of-interest-delay", props)}
+                             onInput={() => interface_utils.onlyNumbers("point-of-interest-delay")}
+                        >
+                            {object.properties.delay}
+                        </div>
+                        <span className={'measure-units'}>ms</span>
+                    </div>
+                </div>
+            );
         case InteractiveObjectsTypes.COUNTER:
             return (
                 <div className={"options-grid"}>
