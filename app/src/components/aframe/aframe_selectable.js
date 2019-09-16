@@ -70,8 +70,10 @@ function setMouseEnterTransition() {
 function setMouseLeaveTransition() {
     let cursor = document.querySelector('#cursor');
 
-    cursor.setAttribute('color', 'black');
-    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+    if(cursor) {
+        cursor.setAttribute('color', 'black');
+        cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+    }
 }
 
 function setMouseEnter() {
@@ -82,9 +84,12 @@ function setMouseEnter() {
 
 function setMouseLeave() {
     let cursor = document.querySelector('#cursor');
+    
+    if(cursor){
+        cursor.setAttribute('color', 'black');
+        cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
+    }
 
-    cursor.setAttribute('color', 'black');
-    cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
 }
 function setClick(event) {
     event.detail.cursorEl.components.raycaster.intersectedEls.forEach(obj => eventBus.emit('click-'+obj.object_uuid))
