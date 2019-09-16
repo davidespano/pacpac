@@ -124,6 +124,8 @@ export default class VRScene extends React.Component {
         document.querySelector('#camera').removeAttribute('wasd-controls');
     }
 
+
+
     createRuleListeners(){
         let me = this;
 
@@ -139,33 +141,43 @@ export default class VRScene extends React.Component {
             //let current_object = this.state.graph['objects'].get(rule.event.obj_uuid);
             //console.log(rule.event)
             rule.actions.sort(stores_utils.actionComparator)
+
+            let actionCallback = function(action){
+                // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
+                // senza passarli esplicitamente
+                let closure = function() {
+                    setTimeout(function () {
+                        executeAction(me, rule, action)
+                    }, duration);
+                    if (action.action === 'CHANGE_BACKGROUND') {
+                        objectVideo = document.getElementById(action.obj_uuid);
+                    } else {
+                        objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                    }
+                    if (objectVideo) {
+                        duration = (objectVideo.duration * 1000);
+                    }
+                };
+                return closure;
+            };
+
             switch (rule.event.action){
                 case 'CLICK':
                     rule.actions.forEach(action => {
-                    eventBus.on('click-' + rule.event.obj_uuid, function () {
-                        if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
-                            let actionExecution = function(){
-                                setTimeout(function () {
-                                    executeAction(me, rule, action)
-                                }, duration);
-                                if(action.action === 'CHANGE_BACKGROUND'){
-                                    objectVideo = document.getElementById(action.obj_uuid);
+                        eventBus.on('click-' + rule.event.obj_uuid, function () {
+                            if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                // questa chiamata, come quelle di seguito, permette al debugger di
+                                // evidenziare la regola eseguita e all'utente di premere esplicitamente il
+                                // pulsante avanti per continuare.
+                                let actionExecution = actionCallback(action);
+                                if (me.props.debug) {
+                                    setTimeout(function () {
+                                        interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                        eventBus.on('debug-step', actionExecution);
+                                    }, duration);
                                 } else {
-                                    objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                                    actionExecution();
                                 }
-                                if (objectVideo) {
-                                    duration = (objectVideo.duration * 1000);
-                                }
-                            };
-                            if(me.props.debug){
-                                setTimeout(function () {
-                                    interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
-                                    eventBus.on('debug-step', actionExecution);
-                                }, duration);
-                            }else{
-                                actionExecution();
-                            }
-
 
 
                             }
@@ -188,16 +200,14 @@ export default class VRScene extends React.Component {
                         media.onended = function() {
                             rule.actions.forEach(action => {
                                 if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
-                                    setTimeout(function () {
-                                        executeAction(me, rule, action)
-                                    }, duration);
-                                    if(action.action === 'CHANGE_BACKGROUND'){
-                                        objectVideo = document.getElementById(action.obj_uuid);
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
                                     } else {
-                                        objectVideo = document.querySelector('#media_' + action.obj_uuid);
-                                    }
-                                    if (objectVideo) {
-                                        duration = (objectVideo.duration * 1000);
+                                        actionExecution();
                                     }
                                 }
                             });
@@ -208,16 +218,14 @@ export default class VRScene extends React.Component {
                         media.onplay = function() {
                             rule.actions.forEach(action => {
                                 if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
-                                    setTimeout(function () {
-                                        executeAction(me, rule, action)
-                                    }, duration);
-                                    if(action.action === 'CHANGE_BACKGROUND'){
-                                        objectVideo = document.getElementById(action.obj_uuid);
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
                                     } else {
-                                        objectVideo = document.querySelector('#media_' + action.obj_uuid);
-                                    }
-                                    if (objectVideo) {
-                                        duration = (objectVideo.duration * 1000);
+                                        actionExecution();
                                     }
                                 }
                             });
