@@ -23,13 +23,13 @@ export function givePoints(props) {
 
         let canvasWidth = document.documentElement.clientWidth / 100;
         let canvasHeight = canvasWidth /1.77;
-        if(!props.editor.audioPositioning){
+        //if(!props.editor.audioPositioning){
             puntisalvati = puntisalvati.map(punto =>{
                 punto.x = punto.x / canvasWidth;
                 punto.y = punto.y / canvasHeight;
                 return punto;
             })
-        }
+        //}
     }
 
     puntisalvati = puntisalvati.map(punto =>
