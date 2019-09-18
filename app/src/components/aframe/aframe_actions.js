@@ -30,7 +30,7 @@ function executeAction(VRScene, rule, action){
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
-            let duration = current_object.properties.duration ? current_object.properties.duration : 0;
+            let duration = current_object.properties.duration ? parseInt(current_object.properties.duration) : 0;
             let direction = current_object.properties.direction ? current_object.properties.direction : 'nothing'
             let objectVideo_transition = 0;
             cursor.setAttribute('material', 'visible: false');
@@ -39,7 +39,7 @@ function executeAction(VRScene, rule, action){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
-                    duration_transition = (objectVideo_transition.duration * 1000);
+                    duration_transition = (parseInt(objectVideo_transition.duration) * 1000);
                 }
             }
             let audioTransition = current_object.audio.audio0;
@@ -48,8 +48,6 @@ function executeAction(VRScene, rule, action){
             setTimeout(function () {
                 if(soundsHub[VRScene.state.activeScene.music] && soundsHub[state.graph.scenes[media].music] &&
                   (soundsHub[VRScene.state.activeScene.music].file !== soundsHub[state.graph.scenes[media].music].file)){
-                    console.log('sto entrando qui ')
-                    console.log(soundsHub[VRScene.state.activeScene.music])
                     soundsHub[VRScene.state.activeScene.music].pause()
                     soundsHub[VRScene.state.activeScene.music].currentTime = 0;
                 }
@@ -204,10 +202,8 @@ function executeAction(VRScene, rule, action){
             console.log(runState[action.subj_uuid])
             break;
         case RuleActionTypes.INCREASE_STEP:
-            console.log(game_graph['objects'].get(action.subj_uuid))
             runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
             VRScene.setState({runState: runState, graph: game_graph});
-            console.log(runState[action.subj_uuid])
             break;
         case RuleActionTypes.INCREASE:
             //TODO manca il valore da assegnare
@@ -287,8 +283,8 @@ function transition(actualScene, targetScene, duration, direction){
     targetSky.setAttribute('visible', 'true');
     targetSky.setAttribute('material', 'visible: true');
     actualSky.dispatchEvent(disappear);
-    setTimeout(function () {targetSky.dispatchEvent(appear)}
-        , duration+400
+    setTimeout(function () {targetSky.dispatchEvent(appear);}
+        , parseInt(duration) + 400
     );
     //targetSky.dispatchEvent(appear);
 
@@ -297,7 +293,7 @@ function transition(actualScene, targetScene, duration, direction){
         targetSky.dispatchEvent(targetMove);
     }
     setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();}
-        , duration+30
+        , parseInt(duration) + 400
     );
     //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
@@ -320,6 +316,7 @@ function transition2D(actualScene, targetScene, duration){
     let disappear = new CustomEvent(actualSky.id + "dis");
     let appear = new CustomEvent(targetSky.id + "app");
     let movement = new CustomEvent(sceneMovement.id + "move");
+
 
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
@@ -422,8 +419,8 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
 
         let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1
 
-        if(store_utils.getFileType(videoType) === 'video') switchVideo.play();
-        duration_switch = (switchVideo.duration * 1000);
+        if(store_utils.getFileType(videoType) === 'video') {switchVideo.play();}
+        duration_switch = (parseInt(switchVideo.duration) * 1000);
     }
 
     let audio = current_object.properties.state === 'ON'?current_object.audio.audio0:current_object.audio.audio1

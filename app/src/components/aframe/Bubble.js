@@ -115,7 +115,9 @@ export default class Bubble extends Component
                                     id={curve.uuid}
                                     is3Dscene={is3Dscene}
                                     color={color}
-                                    type={pointOfinterest} />
+                                    type={pointOfinterest}
+                                    assetsDimention = {this.props.assetsDimention}
+                    />
                 );
             } else {
                 //TODO [debug] add to origin master
@@ -127,7 +129,8 @@ export default class Bubble extends Component
                             is3Dscene={is3Dscene}
                             vertices={curve.vertices}
                             visible={this.props.runState[curve.uuid].visible}
-                            type={curve.type}/>
+                            type={curve.type}
+                            assetsDimention = {this.props.assetsDimention}/>
                 );
             }
         });
@@ -168,7 +171,7 @@ export default class Bubble extends Component
                             audioVideo.loop = loop;
                             audioVideo.volume = 50;
                             soundsHub["audios_"+ this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
-                            soundsHub["audios_"+ this.props.scene.uuid].play()
+                            soundsHub["audios_"+ this.props.scene.uuid].play();
                         }
                     }
                 }
@@ -191,35 +194,23 @@ export default class Bubble extends Component
             //TODO trovare una formula per il calcolo della dimensione del piano
             let Width = this.props.assetsDimention.width / 100;
             let Height = this.props.assetsDimention.height / 100;
-            let ration = Width/Height;
-            let canvasWidth = document.documentElement.clientWidth / 100;
-            let canvasHeight = canvasWidth / ration;
+            let ratio = Width/Height;
+            let canvasWidth ;
+            let canvasHeight;
+
+            if(ratio > 1){
+                canvasWidth = document.documentElement.clientWidth / 100;
+                canvasHeight = canvasWidth / ratio;
+            } else {
+
+                canvasHeight = document.documentElement.clientHeight / 100;
+                canvasWidth = canvasHeight * ratio;
+
+            }
             //let canvasHeight = document.documentElement.clientHeight / 100;
             //let canvasWidth = canvasHeight * ration;
-            console.log(document.documentElement.clientHeight)
-            positionPlane = "0, 1.6, -6.44";
-            /*if(this.props.isActive){
-                positionPlane = "0, 1.6, -6.44";
-            } else {
-                let transizioneMomentanea = 'nulla';
-                switch (transizioneMomentanea) {
-                    case 'right':
-                        positionPlane = canvasWidth + ', 1.6, -6.44';
-                        break;
-                    case 'left':
-                        positionPlane = -canvasWidth + ', 1.6, -6.44';
-                        break;
-                    case 'top':
-                        positionPlane = '0, ' + canvasHeight + ', -6.44';
-                        break;
-                    case 'bottom':
-                        positionPlane = '0, ' + (-canvasHeight) + ', -6.44';
-                        break;
-                    default:
-                        positionPlane = "0, 1.6, -6.44";
-                        break;
-                }
-            }*/
+            positionPlane = "0, 1.6, -6";
+
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}

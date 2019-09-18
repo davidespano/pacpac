@@ -15,12 +15,12 @@ class Curved extends Component
 
         //conversione coordinate relative per la scena 2D, molto brutto sarebbe da riscrivere meglio, ma almeno funziona
         if(!this.props.is3Dscene && this.props.vertices){
-            vertices = convertRelativeCoordinates(this.props.vertices)
+            vertices = convertRelativeCoordinates(this.props.vertices, this.props.assetsDimention)
         }
 
         let geometry = this.props.type === 'POINT_OF_INTEREST' ?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + vertices;
         let position = this.props.position;
-        if (this.props.type === 'POINT_OF_INTEREST'){
+        if (this.props.type === 'POINT_OF_INTEREST' ){
             let points = this.props.vertices.split(' ').map(function(x){return parseFloat(x);});
             position = -points[0].toString() + ', ' + points[1].toString() + ', ' + points[2].toString()
         }
@@ -48,15 +48,15 @@ class CurvedGeometry extends Component
         let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
         let vertices = this.props.vertices;
         //conversione coordinate relative per la scena 2D, molto brutto sarebbe da riscrivere meglio, ma almeno funziona
-        if(!this.props.is3Dscene && this.props.vertices){
-            vertices = convertRelativeCoordinates(this.props.vertices)
+        if(/*!this.props.is3Dscene && */this.props.vertices){
+            vertices = convertRelativeCoordinates(this.props.vertices, this.props.assetsDimention)
         }
 
         let geometry = this.props.type?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + vertices;
         let position = this.props.position;
         //punto di interesse
         if (this.props.type && this.props.vertices){
-            let points = this.props.vertices.split(' ').map(function(x){return parseFloat(x);});
+            let points = vertices.split(' ').map(function(x){return parseFloat(x);});
             position = -points[0].toString() + ', ' + points[1].toString() + ', ' + points[2].toString()
         }
 
@@ -68,13 +68,29 @@ class CurvedGeometry extends Component
     }
 }
 
-export function convertRelativeCoordinates (verticesP) {
+export function convertRelativeCoordinates (verticesP,assetsDimention) {
     let vertices;
     let points = verticesP.split(/[, ]/).map(function(x){return parseFloat(x);});
     let index = 0;
-    let canvasWidth = document.documentElement.clientWidth / 100;
-    let canvasHeight = canvasWidth /1.77;
+    let Width = assetsDimention.width / 100;
+    let Height = assetsDimention.height / 100;
+    let ratio = Width/Height;
+    let canvasWidth ;
+    let canvasHeight;
+
+    if(ratio > 1){
+        canvasWidth = document.documentElement.clientWidth / 100;
+        canvasHeight = canvasWidth / ratio;
+    } else {
+
+        canvasHeight = document.documentElement.clientHeight / 100;
+        canvasWidth = canvasHeight * ratio;
+
+    }
+
+
     vertices = points.map(v => {
+
         let vp = v;
         if(index % 3 === 0) vp = v * canvasWidth;
         if(index % 3 === 1) vp = v * canvasHeight;
