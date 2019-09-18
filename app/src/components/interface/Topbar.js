@@ -18,25 +18,38 @@ import InputSaveForm from "./InputSaveForm";
 import PointOfInterest from "../../interactives/PointOfInterest";
 import interface_utils from "./interface_utils";
 import Counter from "../../interactives/Counter";
+import Values from "../../rules/Values";
 
 
 let uuid = require('uuid');
 
+// codice tab trama
+/**
+ <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
+ aria-controls="nav-story-editor" aria-selected="false"
+ onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
+
+ <figure className={'nav-figures'} data-toggle="modal" data-target="#view-story-modal">
+ <img src={"icons/icons8-stories-100.png"}/>
+ <figcaption>Visualizza storie</figcaption>
+ </figure>
+
+ */
+
 function TopBar(props){
 
-    let isDebugActive = props.scenes.size > 0
+    let isDebugActive = props.scenes.size > 0;
 
-    /**
-     <a className="nav-item nav-link" id="nav-objects-story-editor" data-toggle="tab" href="#nav-story-editor" role="tab"
-     aria-controls="nav-story-editor" aria-selected="false"
-     onClick={() => {handleSwitchToStoryEditorMode(props)}}>Trama</a>
-
-     <figure className={'nav-figures'} data-toggle="modal" data-target="#view-story-modal">
-     <img src={"icons/icons8-stories-100.png"}/>
-     <figcaption>Visualizza storie</figcaption>
-     </figure>
-
-     */
+    let interestPoint = null;
+    if(props.currentScene && props.scenes.get(props.currentScene).type === Values.THREE_DIM){
+        interestPoint = <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.POINT_OF_INTEREST);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.POINT_OF_INTEREST)}/>
+                            <figcaption>Punto di interesse</figcaption>
+                        </figure>
+    }
 
     return (
         <div className={'topbar'}>
@@ -126,13 +139,7 @@ function TopBar(props){
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.LOCK)}/>
                             <figcaption>Lucchetto</figcaption>
                         </figure>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.POINT_OF_INTEREST);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.POINT_OF_INTEREST)}/>
-                            <figcaption>Punto di interesse</figcaption>
-                        </figure>
+                        {interestPoint}
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.COUNTER);

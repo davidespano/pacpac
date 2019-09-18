@@ -10,7 +10,7 @@ import Values from "../rules/Values";
 const Transition = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.TRANSITION,
     properties : {
-        duration : 2000,
+        duration : 500,
         direction: Values.NO_DIR,
     },
     media : {

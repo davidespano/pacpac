@@ -20,14 +20,16 @@ export function givePoints(props) {
     let puntisalvati = cursor.components.pointsaver.points;
     let isCurved = cursor.components.pointsaver.attrValue.isCurved === 'true';
     if(props.scenes.get(props.currentScene).type === '2D'){
-        console.log(puntisalvati)
+
         let canvasWidth = document.documentElement.clientWidth / 100;
         let canvasHeight = canvasWidth /1.77;
-        puntisalvati = puntisalvati.map(punto =>{
-            punto.x = punto.x / canvasWidth;
-            punto.y = punto.y / canvasHeight;
-            return punto;
-        })
+        if(!props.editor.audioPositioning){
+            puntisalvati = puntisalvati.map(punto =>{
+                punto.x = punto.x / canvasWidth;
+                punto.y = punto.y / canvasHeight;
+                return punto;
+            })
+        }
     }
 
     puntisalvati = puntisalvati.map(punto =>
@@ -407,7 +409,6 @@ export default class GeometryScene extends React.Component{
                     audio.setAttribute('material', 'opacity: 0.7; shader: flat');
                     audio.setAttribute('material', 'color: red; shader: flat');
                 }
-                console.log(this.props.audios.get(this.props.editor.audioToEdit.uuid))
                 mainscene.appendChild(audio);
             }
         });

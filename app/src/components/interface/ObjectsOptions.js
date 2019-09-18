@@ -69,9 +69,6 @@ function generateProperties(props){
     let objectScene = props.scenes.get(props.objectToScene.get(currentObject.uuid));
     let type = objectTypeToString(currentObject.type);
 
-    console.log(currentObject)
-    console.log(type)
-
 
     return(
         <div className={'currentOptions'}>
@@ -130,6 +127,7 @@ function generateProperties(props){
                 <button
                     className={"btn select-file-btn rightbar-btn"}
                     onClick={() => props.switchToGeometryMode() }
+                    disabled={currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM}
                 >
                     Modifica geometria
                 </button>

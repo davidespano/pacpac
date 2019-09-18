@@ -3,7 +3,7 @@ import settings from "../../utils/settings";
 const {mediaURL} = settings;
 const resonanceee = require('./Audio/Resonance');
 
-function generateAudio(audio, position=null) {
+function generateAudio(audio, position=null, volume) {
     let audioPosition = position===null?audio.vertices:position;
     let audioElement = document.createElement('audio');
 
@@ -16,7 +16,10 @@ function generateAudio(audio, position=null) {
     let source = resonanceee.default.createSource();
     audioElementSource.connect(source.input);
     source.setPosition(audioPosition);
-    source.setGain(audio.volume/100)
+    console.log(volume)
+    if(volume == undefined)
+        volume=audio.volume
+    source.setGain(parseInt(volume)/100)
 
     return audioElement;
 }
