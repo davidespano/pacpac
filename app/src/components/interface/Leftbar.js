@@ -6,8 +6,7 @@ import Orders from "../../data/Orders";
 import ActionTypes from "../../actions/ActionTypes";
 import DebugAPI from "../../utils/DebugAPI";
 import SavesOptions from "./SavesOptions";
-
-
+const soundsHub = require('../aframe/soundsHub');
 const {mediaURL} = settings;
 
 function Leftbar(props) {
@@ -89,12 +88,16 @@ function list(props, path) {
                     title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
                     onClick={() => {
                             props.updateCurrentScene(child.uuid);
+                        Object.values(soundsHub).flat().forEach(a => {
+                            a.pause()
+                        })
                     }}
                     style={s}
                 />
                 <div className={'list-labels'}
                      onClick={() => {
                              props.updateCurrentScene(child.uuid);
+
                      }}
                 >
                     <div className={'label-text'}>
