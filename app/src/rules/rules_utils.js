@@ -7,6 +7,7 @@ import Action from "./Action";
 import Condition from "./Condition";
 import SuperCondition from "./SuperCondition";
 import Values from "./Values";
+import {Operators} from "./Operators";
 let uuid = require('uuid');
 
 /**
@@ -41,7 +42,7 @@ function generateDefaultRule(object){
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                condition : new Condition(uuid.v4(), object.uuid, Values.ON),
+                condition : new Condition(uuid.v4(), object.uuid, Values.ON, Operators.EQUAL),
                 actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             r2 = Rule({
@@ -52,7 +53,7 @@ function generateDefaultRule(object){
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                condition : new Condition(uuid.v4(), object.uuid, Values.OFF),
+                condition : new Condition(uuid.v4(), object.uuid, Values.OFF, Operators.EQUAL),
                 actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             return [r1, r2];
