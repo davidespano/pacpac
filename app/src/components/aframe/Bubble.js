@@ -157,6 +157,7 @@ export default class Bubble extends Component
                     //let volume = this.props.onDebugMode?0:music.volume;
                     //if(soundsHub["audios_"+ music.uuid] === undefined)
                       //  soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0], volume);
+                if(soundsHub["audios_"+ music.uuid])
                     soundsHub["audios_"+ music.uuid].play()
                 //}
                 //carico suoni ambientali
