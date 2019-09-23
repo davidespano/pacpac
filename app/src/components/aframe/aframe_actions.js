@@ -244,24 +244,24 @@ function transition(actualScene, targetScene, duration, direction){
     let canvasHeight = canvasWidth /1.77;
     switch (direction) {
         case 'RIGHT':
-            positionTarget = canvasWidth + ', 1.6, -6.44';
-            positionActual = -canvasWidth + ', 1.6, -6.44';
+            positionTarget = canvasWidth + ', 1.6, -6';
+            positionActual = -canvasWidth + ', 1.6, -6';
             break;
         case 'LEFT':
-            positionTarget = -canvasWidth + ', 1.6, -6.44';
-            positionActual =canvasWidth + ', 1.6, -6.44';
+            positionTarget = -canvasWidth + ', 1.6, -6';
+            positionActual =canvasWidth + ', 1.6, -6';
             break;
         case 'UP':
-            positionTarget = '0, ' + (canvasHeight + 1.6) + ', -6.44';
-            positionActual = '0, ' + (-canvasHeight + 1.6) + ', -6.44';
+            positionTarget = '0, ' + (canvasHeight + 1.6) + ', -6';
+            positionActual = '0, ' + (-canvasHeight + 1.6) + ', -6';
             break;
         case 'DOWN':
-            positionTarget = '0, ' + (-canvasHeight + 1.6) + ', -6.44';
-            positionActual = '0, ' + (canvasHeight + 1.6) + ', -6.44';
+            positionTarget = '0, ' + (-canvasHeight + 1.6) + ', -6';
+            positionActual = '0, ' + (canvasHeight + 1.6) + ', -6';
             break;
         default:
-            positionTarget = "0, 1.6, -6.44";
-            positionActual = "0, 1.6, -6.44";
+            positionTarget = "0, 1.6, -6";
+            positionActual = "0, 1.6, -6";
             break;
     }
     if(targetScene.type === Values.TWO_DIM) targetSky.setAttribute('position', positionTarget);
@@ -274,11 +274,11 @@ function transition(actualScene, targetScene, duration, direction){
     // sono scene 3D o 2D, nel 3D non vogliamo questo effetto, credo
     if(sceneMovement && !is3dScene){
         actualSky.setAttribute('animation__moving', 'property: position; dur: '+ duration +
-            '; easing: linear; from: 0 1.6 -6.44; ' +
+            '; easing: linear; from: 0 1.6 -6; ' +
             'to: '+ positionActual +'; startEvents: ' + actualSky.id + "actual")
         targetSky.setAttribute('animation__moving', 'property: position; dur: '+ duration +
             '; easing: linear; from: '+ positionTarget +'; ' +
-            'to: 0 1.6 -6.44; startEvents: ' + targetSky.id + "target")
+            'to: 0 1.6 -6; startEvents: ' + targetSky.id + "target")
     }
     actualSky.setAttribute('material', 'depthTest: false');
     targetSky.setAttribute('material', 'depthTest: false');
@@ -329,10 +329,10 @@ function transition2D(actualScene, targetScene, duration){
     if(is3dScene){
         sceneMovement.setAttribute('animation__moving', 'property: position; dur: '+ duration +
             '; easing: linear; from: 0 1.6 -9; ' +
-            'to: 0 1.6 -6.44; startEvents: ' + sceneMovement.id + "move")
+            'to: 0 1.6 -6; startEvents: ' + sceneMovement.id + "move")
     } else {
         sceneMovement.setAttribute('animation__moving', 'property: position; dur:' + duration +
-        '; easing: linear; from: 0 1.6 -6.44; ' +
+        '; easing: linear; from: 0 1.6 -6; ' +
             'to: 0 1.6 -9; startEvents: ' + sceneMovement.id + "move")
     }
     actualSky.setAttribute('material', 'depthTest: false');
@@ -415,12 +415,11 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
 function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     let duration_switch = 0;
     let switchVideo = document.getElementById('media_'+current_object.uuid);
-
     if(switchVideo != null) {
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
-
-        let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1
+        let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1;
+        document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
 
         if(store_utils.getFileType(videoType) === 'video') {switchVideo.play();}
         duration_switch = (parseInt(switchVideo.duration) * 1000);
@@ -438,7 +437,8 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         cursor.setAttribute('color', 'black');
         runState[action.subj_uuid].state = action.obj_uuid;
         VRScene.setState({runState: runState});
-    },duration_switch);
+    },duration_switch)
+
 }
 export {executeAction,
 lookObject}
