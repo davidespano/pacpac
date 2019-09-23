@@ -21,8 +21,25 @@ export function givePoints(props) {
     let isCurved = cursor.components.pointsaver.attrValue.isCurved === 'true';
     if(props.scenes.get(props.currentScene).type === '2D'){
 
-        let canvasWidth = document.documentElement.clientWidth / 100;
-        let canvasHeight = canvasWidth /1.77;
+        //let canvasWidth = document.documentElement.clientWidth / 100;
+        //let canvasHeight = canvasWidth /1.77;
+        console.log(props.scenes.get(props.currentScene).img)
+        console.log(props.assets.get(props.scenes.get(props.currentScene).img))
+        let Width = props.assets.get(props.scenes.get(props.currentScene).img).width / 100;
+        let Height = props.assets.get(props.scenes.get(props.currentScene).img).height / 100;
+        let ratio = Width/Height;
+        let canvasWidth;
+        let canvasHeight;
+
+        if(ratio > 1){
+            canvasWidth = document.documentElement.clientWidth / 100;
+            canvasHeight = canvasWidth / ratio;
+        } else {
+
+            canvasHeight = document.documentElement.clientHeight / 100;
+            canvasWidth = canvasHeight * ratio;
+
+        }
         //if(!props.editor.audioPositioning){
             puntisalvati = puntisalvati.map(punto =>{
                 punto.x = punto.x / canvasWidth;

@@ -99,7 +99,7 @@ export default class Bubble extends Component
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         //let primitive = this.props.assetsDimention.type === 'video'?"a-videosphere":"a-sky";
-        let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6.5";
+        let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6";
         //let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9";
         let positionPlane;
         let sceneRender;
@@ -197,6 +197,7 @@ export default class Bubble extends Component
         } else {
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
+            console.log(this.props)
             let Width = this.props.assetsDimention.width / 100;
             let Height = this.props.assetsDimention.height / 100;
             let ratio = Width/Height;
