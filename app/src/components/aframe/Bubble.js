@@ -137,22 +137,28 @@ export default class Bubble extends Component
         let material = "depthTest: true; ";
         let active = 'active: false;';
         let radius = 9.9;
-
+        if(this.props.scene.music !== undefined && this.props.audios){
+            let music = this.props.audios[this.props.scene.music]
+            let volume = this.props.onDebugMode?0:music.volume;
+            console.log(volume)
+            if(soundsHub["audios_"+ music.uuid] === undefined)
+                soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0], volume);
+        }
         if (this.props.isActive) {
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
             //TODO aggiungere modifiche audio
             if(!this.props.editMode){
+                let music = this.props.audios[this.props.scene.music]
                 //Carico musica sottofondo
-                if(this.props.scene.music !== undefined && this.props.audios){
-                    let music = this.props.audios[this.props.scene.music]
-                    let volume = this.props.onDebugMode?0:music.volume;
-                    console.log(volume)
-                    if(soundsHub["audios_"+ music.uuid] === undefined)
-                        soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0], volume);
+                //if(this.props.scene.music !== undefined && this.props.audios){
+                  //  let music = this.props.audios[this.props.scene.music]
+                    //let volume = this.props.onDebugMode?0:music.volume;
+                    //if(soundsHub["audios_"+ music.uuid] === undefined)
+                      //  soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0], volume);
                     soundsHub["audios_"+ music.uuid].play()
-                }
+                //}
                 //carico suoni ambientali
                 if(this.props.scene.sfx !== undefined && this.props.audios){
                     let sfx = this.props.audios[this.props.scene.sfx]

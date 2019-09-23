@@ -46,10 +46,12 @@ function executeAction(VRScene, rule, action){
             if(soundsHub['audio0_' + audioTransition])
                 soundsHub['audio0_' + audioTransition].play();
             setTimeout(function () {
-                if(soundsHub[VRScene.state.activeScene.music] && soundsHub[state.graph.scenes[media].music] &&
-                  (soundsHub[VRScene.state.activeScene.music].file !== soundsHub[state.graph.scenes[media].music].file)){
-                    soundsHub[VRScene.state.activeScene.music].pause()
-                    soundsHub[VRScene.state.activeScene.music].currentTime = 0;
+
+                if(soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[media].music] &&
+                  (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + state.graph.scenes[media].music])){
+                    console.log('ciao')
+                    soundsHub['audios_' + VRScene.state.activeScene.music].pause()
+                    soundsHub['audios_' + VRScene.state.activeScene.music].currentTime = 0;
                 }
 
                 if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
