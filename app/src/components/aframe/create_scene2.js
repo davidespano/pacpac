@@ -165,6 +165,7 @@ export default class VRScene extends React.Component {
                 case 'CLICK':
                     rule.actions.forEach(action => {
                         eventBus.on('click-' + rule.event.obj_uuid, function () {
+                            console.log(ConditionUtils.evalCondition(rule.condition, me.state.runState))
                             if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                                 // questa chiamata, come quelle di seguito, permette al debugger di
                                 // evidenziare la regola eseguita e all'utente di premere esplicitamente il

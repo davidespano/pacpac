@@ -23,8 +23,6 @@ export function givePoints(props) {
 
         //let canvasWidth = document.documentElement.clientWidth / 100;
         //let canvasHeight = canvasWidth /1.77;
-        console.log(props.scenes.get(props.currentScene).img)
-        console.log(props.assets.get(props.scenes.get(props.currentScene).img))
         let Width = props.assets.get(props.scenes.get(props.currentScene).img).width / 100;
         let Height = props.assets.get(props.scenes.get(props.currentScene).img).height / 100;
         let ratio = Width/Height;
