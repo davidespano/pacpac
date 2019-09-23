@@ -42,6 +42,7 @@ function view(props){
             <div className={'tab-content'}>
                 {content(props)}
             </div>
+            <div className={'rightbar-footer'}> </div>
         </div>
     );
 }
