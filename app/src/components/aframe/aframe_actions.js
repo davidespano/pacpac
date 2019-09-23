@@ -202,13 +202,11 @@ function executeAction(VRScene, rule, action){
             }
 
             VRScene.setState({runState: runState, graph: game_graph});
-            console.log(runState[action.subj_uuid])
             break;
         case RuleActionTypes.INCREASE_STEP:
             runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
             runState[action.subj_uuid].state += parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
             VRScene.setState({runState: runState, graph: game_graph});
-            console.log(runState[action.subj_uuid])
             break;
         case RuleActionTypes.INCREASE:
             //TODO manca il valore da assegnare
