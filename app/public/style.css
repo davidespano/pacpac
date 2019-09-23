@@ -1426,7 +1426,7 @@ input.eudObjectString[type=text] {
 }
 
 
-.rules-footer {
+.rules-footer, .rightbar-footer {
     height: 10em;
 }
 

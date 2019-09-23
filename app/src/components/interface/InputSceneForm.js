@@ -89,9 +89,13 @@ function checkIfDisabled(props){
 }
 
 function checkFormAndCreateScene(props){
+    let name = document.getElementById("scene_name").value;
+    name = name.trim().replace(' ', '_').replace('.', '_'); //remove spaces and dots
+    if(name.match(/^\d/)){
+        name = "num" + name;
+    }
 
-    let name = document.getElementById("scene_name").value.trim().replace(' ', '_').replace('.', '_'),
-        media = props.editor.selectedFile,
+    let media = props.editor.selectedFile,
         index = props.scenes._map.last() + 1,
         tag = props.editor.selectedTagNewScene;
     let e = document.getElementById("select-scene-type");
