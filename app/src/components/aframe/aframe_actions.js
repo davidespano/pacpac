@@ -196,18 +196,21 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.DECREASE_STEP:
-            if (runState[action.subj_uuid].state >= 0)
-                runState[action.subj_uuid].state -= game_graph['objects'].get(action.subj_uuid).properties.step;
+            if (runState[action.subj_uuid].state >= 0){
+                runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
+                runState[action.subj_uuid].state -= parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
+            }
+
             VRScene.setState({runState: runState, graph: game_graph});
-            console.log(runState[action.subj_uuid])
             break;
         case RuleActionTypes.INCREASE_STEP:
-            runState[action.subj_uuid].state += game_graph['objects'].get(action.subj_uuid).properties.step;
+            runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
+            runState[action.subj_uuid].state += parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.INCREASE:
             //TODO manca il valore da assegnare
-            runState[action.subj_uuid].state += parseInt(action.obj_uuid);
+            runState[action.subj_uuid].state = parseInt(action.obj_uuid);
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         default:
