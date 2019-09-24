@@ -71,6 +71,16 @@ export default class EudRuleEditor extends Component {
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
                         <div className={"eudBar"}>
+                            <figure className={'expand-btn'}
+                                    onClick={() => {
+                                        this.props.expandEditor(!this.props.editor.editorExpanded);
+                                    }}>
+                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                     src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
+                                         "icons/icons8-expand-arrow-filled-50.png"}
+                                     alt={'Espandi'}
+                                />
+                            </figure>
                             <h2>Regole della scena</h2>
                             <button className={"btn select-file-btn new-rule-btn"}
                                     onClick={() => {

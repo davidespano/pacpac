@@ -80,6 +80,7 @@ function getState() {
         dropdownTagsNewScene: Actions.dropdownTagsNewScene,
         dropdownTagsRightbar: Actions.dropdownTagsRightbar,
         debugSaves: Actions.debugSaves,
+        expandEditor: Actions.expandEditor,
         isItNew: Actions.isItNew,
         leftbarSelection: Actions.leftbarSelection,
         loopCheck: Actions.loopCheck,

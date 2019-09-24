@@ -27,14 +27,18 @@ function AppView(props) {
     
     switch (props.editor.mode) {
         case 'EDIT_MODE_ON':
+            let scene = null;
+            if(!props.editor.editorExpanded){
+                scene = <CentralScene {...props} />
+            }
             return (
                 <div onClick={(event) => closeDropdowns(event, props)}>
                     <TopBar {...props} />
                     <FileForm {...props}/>
-                    <div className={'grid-container'}>
+                    <div className={'grid-container ' + checkEditor(props)}>
                         <LeftBar {...props} />
                         <RightBar {...props} />
-                        <CentralScene {...props} />
+                        {scene}
                         <EudRuleEditor {...props} />
                     </div>
                 </div>
@@ -107,6 +111,10 @@ function closeDropdowns(event, props) {
     if (event.target.className && typeof event.target.className !== 'object') {
         props.dropdownTagsRightbar(!(props.editor.chooseTagRightbar) && event.target.className.includes('chosen-tag-rightbar'));
     }
+}
+
+function checkEditor(props){
+    return props.editor.editorExpanded ? 'expanded' : '';
 }
 
 export default AppView;

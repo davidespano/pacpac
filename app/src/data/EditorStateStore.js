@@ -30,6 +30,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('chooseTagNewScene', action.status);
             case ActionTypes.DROPDOWN_TAGS_RIGHTBAR:
                 return state.set('chooseTagRightbar', action.status);
+            case ActionTypes.EDITOR_EXPANDED:
+                return state.set('editorExpanded', action.status);
             case ActionTypes.EDIT_MODE_ON:
                 state = state.set('gameId', null);
                 return state.set('mode', ActionTypes.EDIT_MODE_ON);

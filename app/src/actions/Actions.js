@@ -123,6 +123,12 @@ const Actions = {
 
     },
 
+    expandEditor(status){
+        AppDispatcher.dispatch({
+            type: ActionTypes.EDITOR_EXPANDED,
+            status: status,
+        })
+    },
 
     selectAudioFile(selection){
         AppDispatcher.dispatch({

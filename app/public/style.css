@@ -50,14 +50,23 @@ div.rules{
     min-height: 100%;
 }
 
+.grid-container{
+    grid-template-areas:
+            'leftbar scene rightbar'
+            'leftbar rules rightbar';
+}
+
+.expanded{
+    grid-template-areas:
+            'leftbar rules rightbar'
+            'leftbar rules rightbar' !important;
+}
+
 
 @media screen and (min-width: 1400px) {
     .grid-container {
     display: grid;
         grid-template-columns: 15% auto 20%;
-        grid-template-areas:
-    'leftbar scene rightbar'
-    'leftbar rules rightbar';
         grid-template-rows: 55% 45%;
         grid-gap: 1px;
         padding: 1px;
@@ -81,9 +90,6 @@ div.rules{
     .grid-container {
         display: grid;
         grid-template-columns: 210px auto 280px;
-        grid-template-areas:
-                'leftbar scene rightbar'
-                'leftbar rules rightbar';
         grid-template-rows: 55% 45%;
         grid-gap: 1px;
         padding: 1px;
@@ -103,8 +109,13 @@ div.rules{
     max-height: 85vh;
 }
 
-.rules {
+.grid-container > .rules {
     max-height: 40vh;
+}
+
+.expanded > .rules{
+    height: 100%;
+    max-height:85vh !important;
 }
 
 .topbar{
@@ -141,6 +152,17 @@ div.rules{
 .rules{
     overflow-y: hidden;
     overflow-x: hidden;
+}
+
+.expand-btn{
+    position: absolute;
+    top: 0;
+    left: 5px;
+    z-index:20;
+}
+
+.expand-btn:hover{
+    cursor:pointer;
 }
 
 .scene{
@@ -1329,7 +1351,7 @@ input.eudObjectString[type=text] {
     background-color: white;
     text-align: center;
     position: relative;
-    height: 8%;
+    height: 5%;
     min-height: 20px;
     border-bottom: 1px solid darkgrey;
 }
