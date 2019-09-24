@@ -13,9 +13,12 @@ const fs = require('fs');
 
 /**
  * Retrieves all data from db and sends it to stores for assets generations
+ * @param gameId to load a specific game
  */
-function getAllAssets() {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/assets`)
+function getAllAssets(gameId = null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    request.get(`${apiBaseURL}/${id}/assets`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
             if (err) {

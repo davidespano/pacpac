@@ -28,9 +28,12 @@ const {apiBaseURL} = settings;
  * Retrieves scene data from db and generates a new Scene object
  * @param name of the scene
  * @param order actual order of the scenes in editor
+ * @param gameId to load a specific game
  */
-function getByName(name, order = null) {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/${name}`)
+function getByName(name, order = null, gameId=null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    request.get(`${apiBaseURL}/${id}/scenes/${name}`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
             if (err) {
@@ -247,9 +250,12 @@ function updateScene(scene, tag) {
 
 /**
  * Retrieves all data from db and sends it to stores for scenes generations
+ * @param gameId to load a specific game
  */
-function getAllScenesAndTags() {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/tags`)
+function getAllScenesAndTags(gameId = null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    request.get(`${apiBaseURL}/${id}/tags`)
         .set('Accept', 'application/json')
         .end(function (err, responseT) {
             if (err) {
@@ -327,10 +333,13 @@ function getHomeScene() {
 /**
  * Retrieves all data, builds Scenes and save them to gameGraph
  * @param gameGraph will contain game data, must be an object
+ * @param gameId to load a specific scene
  * @returns {Promise<void>}
  */
-async function getAllDetailedScenes(gameGraph) {
-    const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes-all`)
+async function getAllDetailedScenes(gameGraph, gameId = null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    const response = await request.get(`${apiBaseURL}/${id}/scenes-all`)
         .set('Accept', 'application/json');
     const raw_scenes = response.body;
     gameGraph['scenes'] = {};

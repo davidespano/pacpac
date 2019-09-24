@@ -47,9 +47,10 @@ const Actions = {
         })
     },
 
-    playModeOn(){
+    playModeOn(gameId = null){
         AppDispatcher.dispatch({
-            type: ActionTypes.PLAY_MODE_ON
+            type: ActionTypes.PLAY_MODE_ON,
+            gameId: gameId,
         })
     },
 

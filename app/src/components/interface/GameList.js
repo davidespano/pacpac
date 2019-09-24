@@ -6,6 +6,7 @@ import GameAPI from "../../utils/GameAPI";
 import StoryAPI from "../../utils/StoryAPI";
 import AudioAPI from "../../utils/AudioAPI";
 import DebugAPI from "../../utils/DebugAPI";
+import SetGameId from "./SetGameId";
 
 
 function GameList(props) {
@@ -13,6 +14,7 @@ function GameList(props) {
     return (
         <React.Fragment>
             <InputGameForm {...props} />
+            <SetGameId {...props}/>
             <div className="list-group login-home">
                 <h4 className={"loginlabel"}>I tuoi giochi</h4>
                 <div className={"gameList"}>
@@ -27,6 +29,9 @@ function GameList(props) {
                         window.localStorage.clear();
                         props.switchToLoginMode();
                     }}>Logout</a>
+                </div>
+                <div className={'form-group'}>
+                    <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
                 </div>
             </div>
         </React.Fragment>

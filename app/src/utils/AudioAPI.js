@@ -35,8 +35,10 @@ function createUpdateGlobalAudio(audio) {
         });
 }
 
-function getAllAudios() {
-    return request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/audios/`)
+function getAllAudios(gameId = null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    return request.get(`${apiBaseURL}/${id}/audios/`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
             if (err) {
@@ -59,8 +61,10 @@ function getAllAudios() {
         });
 }
 
-async function getAudios(audios) {
-    const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/audios/`)
+async function getAudios(audios, gameId = null){
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    const response = await request.get(`${apiBaseURL}/${id}/audios/`)
         .set('Accept', 'application/json');
     const raw_audios = response.body;
     raw_audios.forEach(a => {
