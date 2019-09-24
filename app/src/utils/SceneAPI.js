@@ -449,8 +449,10 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
     //console.log(gameGraph);
 }
 
-async function getHome() {
-    const response = await request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/getHomeScene`)
+async function getHome(gameId = null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    const response = await request.get(`${apiBaseURL}/${id}/getHomeScene`)
         .set('Accept', 'application/json');
     
     return response.body.uuid
