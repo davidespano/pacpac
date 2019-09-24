@@ -39,12 +39,16 @@ function SetGameId(props){
 function submitGame(){
     let gameId = document.getElementById('inputGame').value;
 
+    console.log(gameId);
+
     if(gameId.length === 32) {
-        SceneAPI.getHomeScene(null, gameId);
-        SceneAPI.getAllScenesAndTags(null, gameId);
-        MediaAPI.getAllAssets(null, gameId);
-        AudioAPI.getAllAudios(null, gameId);
-        Actions.playModeOn(gameId);
+        SceneAPI.getHomeScene(gameId);
+        SceneAPI.getAllScenesAndTags(gameId);
+        MediaAPI.getAllAssets(gameId);
+        AudioAPI.getAllAudios(gameId);
+        setTimeout(function(){
+            Actions.playModeOn(gameId)
+        }, 3000);
     } else {
         alert('Codice non valido!');
     }

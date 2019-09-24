@@ -43,19 +43,31 @@ function games(props){
         return(
             <div className={'game-item-wrapper'}>
                 <div id={g} className="game-item" onClick={evt=>gameSelection(g.gameID,props)}>{g.name}</div>
-                <button
-                    title={"Cancella " + g.name}
-                    id={g.name + '-remove-button'}
-                    className={"action-buttons-container remove-game-btn"}
-                    onClick={() => {
-                        let answer = window.confirm("Sei sicuro di voler cancellare il gioco " + g.name + '?');
-                        console.log(answer);
-                        if(answer)
-                            GameAPI.deleteGame(g.gameID);
-                    }}
-                >
-                    <img className={"action-buttons"} src={"icons/icons8-waste-50.png"}/>
-                </button>
+                <div className={'game-btns'}>
+                    <button
+                        title={"Visualizza il codice di " + g.name}
+                        id={g.name + '-code-button'}
+                        className={"action-buttons-container remove-game-btn"}
+                        onClick={() => {
+                            alert(g.gameID);
+                        }}
+                    >
+                        <img className={"action-buttons"} src={"icons/icons8-share-30.png"}/>
+                    </button>
+                    <button
+                        title={"Cancella " + g.name}
+                        id={g.name + '-remove-button'}
+                        className={"action-buttons-container remove-game-btn"}
+                        onClick={() => {
+                            let answer = window.confirm("Sei sicuro di voler cancellare il gioco " + g.name + '?');
+                            if(answer)
+                                GameAPI.deleteGame(g.gameID);
+                        }}
+                    >
+                        <img className={"action-buttons"} src={"icons/icons8-waste-50.png"}/>
+                    </button>
+                </div>
+
             </div>
         );
     });

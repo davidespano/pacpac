@@ -22,6 +22,7 @@ export default class VRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]"
         };
+        console.log(this.state.activeScene);
         document.querySelector('link[href*="bootstrap"]').remove();
     }
 

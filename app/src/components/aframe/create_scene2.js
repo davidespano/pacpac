@@ -66,7 +66,7 @@ export default class VRScene extends React.Component {
         //console.log(props)
         //console.log(props.assets.get(this.state.activeScene.img))
         //console.log(this.props.scenes.toArray())
-        if(!this.props.debug){
+        if(!this.props.debug && this.props.editor.gameId === null){
             document.querySelector('link[href*="bootstrap"]').remove();
         }
     }
@@ -315,7 +315,7 @@ export default class VRScene extends React.Component {
         }
         else
             this.currentLevel = [];
-        let assets = this.generateAssets();
+        let assets = this.generateAssets(this.props.editor.gameId);
         let is3dScene = this.props.scenes.get(sceneUuid).type ===Values.THREE_DIM;
         var embedded = this.props.debug;
         var vr_mode_ui = this.props.debug ? "enabled : false": false;
@@ -341,10 +341,10 @@ export default class VRScene extends React.Component {
         )
     }
 
-    generateAssets(){
+    generateAssets(gameId){
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-                this.state.runState[sceneName].background, this.state.runState, this.state.audios)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios, 'scene', gameId)
         }).flat();
     }
 

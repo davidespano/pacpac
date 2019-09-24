@@ -262,7 +262,7 @@ function getAllScenesAndTags(gameId = null) {
                 return console.error(err);
             }
             if (responseT.body && responseT.body !== [])
-                request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes`)
+                request.get(`${apiBaseURL}/${id}/scenes`)
                     .set('Accept', 'application/json')
                     .end(function (err, response) {
                         if (err) {
@@ -270,7 +270,7 @@ function getAllScenesAndTags(gameId = null) {
                         }
                         if (response.body && response.body !== []) {
                             const scenes_tags = {scenes: response.body, tags: responseT.body};
-                            Actions.loadAllScenes(scenes_tags, Orders.CHRONOLOGICAL);
+                            Actions.loadAllScenes(scenes_tags, Orders.CHRONOLOGICAL, gameId);
                         } else {
                             responseT.body.forEach( tag => {
                                 Actions.receiveTag(tag);
@@ -318,9 +318,12 @@ function setHomeScene(sceneId, updateStore=true) {
 
 /**
  * Retrieves home Scene from db
+ * @gameId load a specific game
  */
-function getHomeScene() {
-    request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/getHomeScene`)
+function getHomeScene(gameId = null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    request.get(`${apiBaseURL}/${id}/getHomeScene`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
             if (err) {

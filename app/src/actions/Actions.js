@@ -328,8 +328,9 @@ const Actions = {
      * order to get complete data
      * @param response
      * @param order of scenes
+     * @gameId to load a specific game
      */
-    loadAllScenes(response, order = null){
+    loadAllScenes(response, order = null, gameId = null){
         AppDispatcher.dispatch({
             type: ActionTypes.LOAD_ALL_SCENES,
             scenes: response.scenes,
@@ -337,7 +338,7 @@ const Actions = {
             tags: response.tags,
         });
         response.scenes.forEach(scene => {
-            SceneAPI.getByName(scene.name, order);
+            SceneAPI.getByName(scene.name, order, gameId);
         })
 
     },
