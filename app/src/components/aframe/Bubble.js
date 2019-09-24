@@ -232,6 +232,7 @@ export default class Bubble extends Component
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
             let sky = document.getElementById(scene.name);
+            let id = this.props.gameId ? this.props.gameId : `${window.localStorage.getItem("gameID")}`;
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             if (objs.length === 0){
                 this.resetShader(sky);
@@ -249,7 +250,7 @@ export default class Bubble extends Component
             if(stores_utils.getFileType(scene.img) === 'video'){
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));
             } else {
-                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` +scene.img);
+                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` +scene.img);
             }
             aux.minFilter = THREE.NearestFilter;
             video.push(aux);
@@ -261,11 +262,11 @@ export default class Bubble extends Component
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
                 } else {
-                    aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0);
+                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.media.media0);
                 }
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
-                aux = new THREE.TextureLoader().load(`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.mask);
+                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
                 dict.push(obj.uuid.replace(/-/g,'_'));

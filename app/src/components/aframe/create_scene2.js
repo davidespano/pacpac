@@ -366,6 +366,7 @@ export default class VRScene extends React.Component {
                         assetsDimention={this.props.assets.get(this.state.activeScene.img)}
                         isAudioOn={this.state.activeScene.isAudioOn}
                         onDebugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
+                        gameId={this.props.editor.gameId}
                 />
             );
         });
