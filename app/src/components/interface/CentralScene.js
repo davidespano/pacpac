@@ -4,6 +4,7 @@ import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
+import Values from "../../rules/Values";
 
 
 const {mediaURL} = settings;
@@ -12,6 +13,7 @@ function CentralScene(props){
     let regex = RegExp('.*\.mp4$');
     let currentScene = null;
     let path =`${mediaURL}${window.localStorage.getItem("gameID")}/`;
+    let sceneRendering = null;
 
     if(props.currentScene){
         currentScene = props.scenes.get(props.currentScene);
@@ -20,6 +22,9 @@ function CentralScene(props){
     if(currentScene !== null){
         let src = path + '_thumbnails_/' + currentScene.img + (regex.test(currentScene.img)? ".png" : "");
 
+        if(currentScene.type === Values.TWO_DIM){
+
+        }
         return(
             <div id={'central-scene'} className={'scene'}>
                 <img id={'central-img'}

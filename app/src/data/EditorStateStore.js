@@ -31,6 +31,7 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.DROPDOWN_TAGS_RIGHTBAR:
                 return state.set('chooseTagRightbar', action.status);
             case ActionTypes.EDIT_MODE_ON:
+                state = state.set('gameId', null);
                 return state.set('mode', ActionTypes.EDIT_MODE_ON);
             case ActionTypes.EUD_SAVE_ORIGINAL_OBJECT:
                 state = state.set('objectId', action.objectId);
@@ -59,6 +60,7 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.FILE_MANAGER_MODE_ON:
                 return state.set('mode', ActionTypes.FILE_MANAGER_MODE_ON);
             case ActionTypes.PLAY_MODE_ON:
+                state = state.set('gameId', action.gameId);
                 return state.set('mode', ActionTypes.PLAY_MODE_ON);
             case ActionTypes.DEBUG_MODE_ON:
                 return state.set('mode', ActionTypes.DEBUG_MODE_ON);

@@ -6,6 +6,7 @@ import GameAPI from "../../utils/GameAPI";
 import StoryAPI from "../../utils/StoryAPI";
 import AudioAPI from "../../utils/AudioAPI";
 import DebugAPI from "../../utils/DebugAPI";
+import SetGameId from "./SetGameId";
 
 
 function GameList(props) {
@@ -13,6 +14,7 @@ function GameList(props) {
     return (
         <React.Fragment>
             <InputGameForm {...props} />
+            <SetGameId {...props}/>
             <div className="list-group login-home">
                 <h4 className={"loginlabel"}>I tuoi giochi</h4>
                 <div className={"gameList"}>
@@ -28,6 +30,9 @@ function GameList(props) {
                         props.switchToLoginMode();
                     }}>Logout</a>
                 </div>
+                <div className={'form-group'}>
+                    <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
+                </div>
             </div>
         </React.Fragment>
     );
@@ -38,19 +43,31 @@ function games(props){
         return(
             <div className={'game-item-wrapper'}>
                 <div id={g} className="game-item" onClick={evt=>gameSelection(g.gameID,props)}>{g.name}</div>
-                <button
-                    title={"Cancella " + g.name}
-                    id={g.name + '-remove-button'}
-                    className={"action-buttons-container remove-game-btn"}
-                    onClick={() => {
-                        let answer = window.confirm("Sei sicuro di voler cancellare il gioco " + g.name + '?');
-                        console.log(answer);
-                        if(answer)
-                            GameAPI.deleteGame(g.gameID);
-                    }}
-                >
-                    <img className={"action-buttons"} src={"icons/icons8-waste-50.png"}/>
-                </button>
+                <div className={'game-btns'}>
+                    <button
+                        title={"Visualizza il codice di " + g.name}
+                        id={g.name + '-code-button'}
+                        className={"action-buttons-container remove-game-btn"}
+                        onClick={() => {
+                            alert(g.gameID);
+                        }}
+                    >
+                        <img className={"action-buttons"} src={"icons/icons8-share-30.png"}/>
+                    </button>
+                    <button
+                        title={"Cancella " + g.name}
+                        id={g.name + '-remove-button'}
+                        className={"action-buttons-container remove-game-btn"}
+                        onClick={() => {
+                            let answer = window.confirm("Sei sicuro di voler cancellare il gioco " + g.name + '?');
+                            if(answer)
+                                GameAPI.deleteGame(g.gameID);
+                        }}
+                    >
+                        <img className={"action-buttons"} src={"icons/icons8-waste-50.png"}/>
+                    </button>
+                </div>
+
             </div>
         );
     });

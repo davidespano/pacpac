@@ -45,6 +45,9 @@ const EditorState = Immutable.Record({
     isItNew: false,
     selectedAudioFile: null,
 
+    // load specific game
+    gameId: null,
+
 });
 
 export default EditorState;

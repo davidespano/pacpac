@@ -1,12 +1,14 @@
 import React from 'react';
 import AuthenticationAPI from "../../utils/AuthenticationAPI";
 import InputRegisterForm from "./InputRegisterForm";
+import SetGameId from "./SetGameId";
 
 
 function Login(props){
 
         return(
             <React.Fragment>
+                <SetGameId {...props}/>
                 <div className={'login-home'} onKeyDown={(event) => {
                     if(event.key === 'Enter'){
                         submitUser()
@@ -26,6 +28,9 @@ function Login(props){
                     </div>
                     <div className={'form-group'}>
                         <a id={'register-link'} data-toggle="modal" data-target="#register-modal">Registrati</a>
+                    </div>
+                    <div className={'form-group'}>
+                        <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
                     </div>
                 </div>
                 <InputRegisterForm/>

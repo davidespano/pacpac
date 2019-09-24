@@ -21,6 +21,7 @@ import 'aframe-mouse-cursor-component';
 import ActionTypes from "../../actions/ActionTypes";
 import EditorState from "../../data/EditorState";
 import interface_utils from "../interface/interface_utils";
+import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 const soundsHub = require('./soundsHub');
 const resonance = require('./Audio/Resonance');
 const THREE = require('three');
@@ -60,48 +61,63 @@ export default class VRScene extends React.Component {
             activeScene: scene,
             rulesAsString: "[]",
             camera: {},
+            stats: false,
         };
         //console.log(props)
         //console.log(props.assets.get(this.state.activeScene.img))
         //console.log(this.props.scenes.toArray())
-        if(!this.props.debug){
+        if(!this.props.debug && this.props.editor.gameId === null){
             document.querySelector('link[href*="bootstrap"]').remove();
         }
     }
 
     componentDidMount() {
 
+        document.querySelector('#mainscene2').addEventListener('keydown', (event) => {
+            const keyName = event.key;
+            //Torno all'editor
+            if(keyName === 'q' || keyName === 'Q') {
+                //this.props.switchToEditMode();
+            }
+            //Attivo/Disattivo statistiche
+            if(keyName === 's' || keyName === 'S') {
+                let stats = !this.state.stats;
+                this.setState({
+                    stats: stats,
+                });
+            }
+        });
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
+
         this.interval = setInterval(() => this.tick(), 100);
     }
 
     tick() {
+        //Aggiorno la rotazione della camera ogni n millisecondi
         let camera = document.querySelector('#camera');
         if(camera){
             camera.object3D.getWorldDirection(this.state.camera);
             this.updateAngles();
         }
-
     }
 
     async loadEverything() {
-
 
         this.setState({
             scenes: this.props.scenes.toArray(),
         });
         let audios = [];
-        await AudioAPI.getAudios(audios);
+        await AudioAPI.getAudios(audios, this.props.editor.gameId);
         let gameGraph = {};
-        await SceneAPI.getAllDetailedScenes(gameGraph);
+        await SceneAPI.getAllDetailedScenes(gameGraph, this.props.editor.gameId);
         let runState = this.createGameState(gameGraph);
 
         let scene = null;
         if(!this.props.debug){
             // scene init for playing the game
             scene = gameGraph['scenes'][this.state.activeScene.uuid];
-            let home = await SceneAPI.getHome();
+            let home = await SceneAPI.getHome(this.props.editor.gameId);
             if(home !== ''){
                 scene = this.props.scenes.get(home);
             }
@@ -110,7 +126,6 @@ export default class VRScene extends React.Component {
             scene = gameGraph['scenes'][this.props.currentScene];
             EditorState.debugRunState = runState;
         }
-
 
         this.setState({
             graph: gameGraph,
@@ -124,22 +139,12 @@ export default class VRScene extends React.Component {
         document.querySelector('#camera').removeAttribute('wasd-controls');
     }
 
-
-
     createRuleListeners(){
         let me = this;
 
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             let duration = 0;
-            //let current_object = {};
             let objectVideo;
-            /*Object.values(state.activeScene.objects).flat().forEach(o => {
-                if (o.uuid === rule.event.obj_uuid) {
-                    current_object = o;
-                }
-            });*/
-            //let current_object = this.state.graph['objects'].get(rule.event.obj_uuid);
-            //console.log(rule.event)
             rule.actions.sort(stores_utils.actionComparator)
 
             let actionCallback = function(action){
@@ -310,12 +315,13 @@ export default class VRScene extends React.Component {
         }
         else
             this.currentLevel = [];
-        let assets = this.generateAssets();
+        let assets = this.generateAssets(this.props.editor.gameId);
         let is3dScene = this.props.scenes.get(sceneUuid).type ===Values.THREE_DIM;
         var embedded = this.props.debug;
         var vr_mode_ui = this.props.debug ? "enabled : false": false;
         return (
-                <Scene stats={!this.props.debug} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
+            <div id="mainscene2" tabIndex="0">
+                <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
                     <a-assets>
                         {assets}
                     </a-assets>
@@ -331,13 +337,14 @@ export default class VRScene extends React.Component {
 
                     </Entity>
                 </Scene>
+            </div>
         )
     }
 
-    generateAssets(){
+    generateAssets(gameId){
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-                this.state.runState[sceneName].background, this.state.runState, this.state.audios)
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios, 'scene', gameId)
         }).flat();
     }
 
@@ -345,8 +352,7 @@ export default class VRScene extends React.Component {
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
             let currentScene = this.props.debug ? this.props.currentScene : false;
-            let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name
-
+            let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
             return (
                 <Bubble key={"key" + scene.name}
                         scene={scene}
@@ -360,6 +366,7 @@ export default class VRScene extends React.Component {
                         assetsDimention={this.props.assets.get(this.state.activeScene.img)}
                         isAudioOn={this.state.activeScene.isAudioOn}
                         onDebugMode={this.props.editor.mode === ActionTypes.DEBUG_MODE_ON}
+                        gameId={this.props.editor.gameId}
                 />
             );
         });

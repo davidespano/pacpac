@@ -6,7 +6,9 @@ import AudioManager from './AudioManager'
 const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
 //TODO trasformarlo in un componente React ... forse ...
-function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene'){
+function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene', gameId = null){
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
         let currAssets = [];
         let sceneBackground;
         //TODO verificare, se non impostato risulta undefined
@@ -15,12 +17,12 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
                 <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={loop}  preload="auto"
-                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + srcBackground}
+                       src={`${mediaURL}${id}/` + srcBackground}
                        playsInline={true} autoPlay muted={true}
                 />)
         } else {
             sceneBackground =(<img id={scene.img} key={"key" + scene.name} crossOrigin="Anonymous"
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + srcBackground}
+                                   src={`${mediaURL}${id}/` + srcBackground}
             />)
         }
         currAssets.push(sceneBackground);
@@ -34,12 +36,12 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                         if(stores_utils.getFileType(obj.media[k]) === 'video'){
                             objAssetMedia = (
                                 <video key={k+"_" + obj.uuid} crossOrigin={"anonymous"} id={k+"_" + obj.uuid} loop={true}  preload="auto"
-                                       src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
+                                       src={`${mediaURL}${id}/` + obj.media[k]}
                                        playsInline={true} autoPlay muted={true}
                                 />)
                         } else {
                             objAssetMedia = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossOrigin="Anonymous"
-                                                  src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media[k]}
+                                                  src={`${mediaURL}${id}/` + obj.media[k]}
                             />)
                         }
                         currAssets.push(objAssetMedia)
@@ -61,14 +63,14 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
 
             }
 
-            let v = generateCurrentAsset(obj, runState);
+            let v = generateCurrentAsset(obj, runState, id);
             if(v!==null) currAssets.push(v);
 
             if(obj.mask !== "" && obj.mask !== undefined&& obj.mask !== null){
                 currAssets.push(
                     <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossOrigin="Anonymous"
                                   preload="auto"
-                                  src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.mask}
+                                  src={`${mediaURL}${id}/` + obj.mask}
                     />
                 )
             }
@@ -80,13 +82,13 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                     if(stores_utils.getFileType(action.obj_uuid) === 'video'){
                         currAssets.push(
                             <video id={action.obj_uuid} key={"key" + action.obj_uuid}
-                                   src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
+                                   src={`${mediaURL}${id}/` + action.obj_uuid}
                                    preload="auto" loop={'true'} crossOrigin="anonymous" playsInline={true} muted={true}
                             />
                         )
                     } else {
                         currAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid} crossOrigin="Anonymous"
-                                             src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + action.obj_uuid}
+                                             src={`${mediaURL}${id}/` + action.obj_uuid}
                         />)
                     }
                 }
@@ -107,7 +109,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         return currAssets;
 }
 
-function generateCurrentAsset(obj, runState){
+function generateCurrentAsset(obj, runState, id){
     let currentAsset;
     switch (obj.type) {
         case InteractiveObjectsTypes.TRANSITION:
@@ -115,11 +117,11 @@ function generateCurrentAsset(obj, runState){
                 if(stores_utils.getFileType(obj.media.media0) === 'video'){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}
+                               src={`${mediaURL}${id}/` + obj.media.media0 + "#t=0.1"}
                                preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}/>)
                 } else {
                     currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}/>)
+                                         src={`${mediaURL}${id}/` + obj.media.media0 + "#t=0.1"}/>)
                 }
                 return(currentAsset)
             }
@@ -136,12 +138,12 @@ function generateCurrentAsset(obj, runState){
                 if(stores_utils.getFileType(obj.media.media0) === 'video'){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i] + "#t=0.1"}
+                               src={`${mediaURL}${id}/` + obj.media["media"+i] + "#t=0.1"}
                                preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}
                         />)
                 } else {
                     currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+i] + "#t=0.1"}/>)
+                                         src={`${mediaURL}${id}/` + obj.media["media"+i] + "#t=0.1"}/>)
                 }
                 return(currentAsset)
             }
@@ -149,12 +151,12 @@ function generateCurrentAsset(obj, runState){
                 if(stores_utils.getFileType(obj.media.media0) === 'video'){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}
+                               src={`${mediaURL}${id}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}
                                preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}
                         />)
                 } else {
                     currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}/>)
+                                         src={`${mediaURL}${id}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}/>)
                 }
                 return(currentAsset)
             }
@@ -164,11 +166,11 @@ function generateCurrentAsset(obj, runState){
                 if(stores_utils.getFileType(obj.media.media0) === 'video'){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
-                               src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}
+                               src={`${mediaURL}${id}/` + obj.media.media0 + "#t=0.1"}
                                preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}/>)
                 } else {
                     currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${window.localStorage.getItem("gameID")}/` + obj.media.media0 + "#t=0.1"}/>)
+                                         src={`${mediaURL}${id}/` + obj.media.media0 + "#t=0.1"}/>)
                 }
                 return(currentAsset)
             }
