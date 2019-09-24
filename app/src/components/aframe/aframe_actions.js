@@ -45,13 +45,30 @@ function executeAction(VRScene, rule, action){
             let audioTransition = current_object.audio.audio0;
             if(soundsHub['audio0_' + audioTransition])
                 soundsHub['audio0_' + audioTransition].play();
-            setTimeout(function () {
 
-                if(soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[media].music] &&
-                  (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + state.graph.scenes[media].music])){
-                    console.log('ciao')
+            setTimeout(function () {
+                //Cambio musica di sottofondo da una scena ad un'altra
+                if((soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[media].music]   &&
+                  (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + state.graph.scenes[media].music])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[media].music] === undefined)){
                     soundsHub['audios_' + VRScene.state.activeScene.music].pause()
                     soundsHub['audios_' + VRScene.state.activeScene.music].currentTime = 0;
+                }
+
+                //Cambio effetti di sottofondo da una scena ad un'altra
+                if((soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + state.graph.scenes[media].sfx]   &&
+                        (soundsHub['audios_' + VRScene.state.activeScene.sfx] !== soundsHub['audios_' + state.graph.scenes[media].sfx])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + state.graph.scenes[media].sfx] === undefined)){
+                    soundsHub['audios_' + VRScene.state.activeScene.sfx].pause()
+                    soundsHub['audios_' + VRScene.state.activeScene.sfx].currentTime = 0;
+                }
+
+                //Cambio audio scena
+                if((soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[media].uuid]   &&
+                        (soundsHub['audios_' + VRScene.state.activeScene.uuid] !== soundsHub['audios_' + state.graph.scenes[media].uuid])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[media].uuid] === undefined)){
+                    soundsHub['audios_' + VRScene.state.activeScene.uuid].pause()
+                    soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
                 }
 
                 if(objectVideo_transition !== 0 && objectVideo_transition !== null &&

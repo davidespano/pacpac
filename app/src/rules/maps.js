@@ -16,6 +16,7 @@ const RuleActionMap = Immutable.Map([
                 InteractiveObjectsTypes.KEY,
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.COUNTER,
             ],
             name: toString.eventTypeToString(RuleActionTypes.CLICK),
             uuid: RuleActionTypes.CLICK
