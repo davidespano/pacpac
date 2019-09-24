@@ -137,57 +137,53 @@ export default class Bubble extends Component
         let material = "depthTest: true; ";
         let active = 'active: false;';
         let radius = 9.9;
+        let music;
+        let sfx;
+        let audioVideo = {};
+        //creazione musica sottofondo
         if(this.props.scene.music !== undefined && this.props.audios){
-            let music = this.props.audios[this.props.scene.music]
+            music = this.props.audios[this.props.scene.music]
             let volume = this.props.onDebugMode?0:music.volume;
-            console.log(volume)
             if(soundsHub["audios_"+ music.uuid] === undefined)
                 soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0], volume);
+        }
+        //creazione effetti sottofondo
+        if(this.props.scene.sfx !== undefined && this.props.audios){
+            sfx = this.props.audios[this.props.scene.sfx]
+            let volume = this.props.onDebugMode?0:sfx.volume;
+            if(soundsHub["audios_"+ sfx.uuid] === undefined){
+                //sfx.volume = 50;
+                soundsHub["audios_"+ sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0], volume);
+            }
+        }
+        //Carico audio incorporato nel video
+        if(this.props.isAudioOn){
+            if(soundsHub["audios_"+ this.props.scene.uuid] === undefined){
+                if(stores_utils.getFileType(scene.img) === 'video'){
+                    let volume = this.props.onDebugMode?0:50;
+                    console.log(volume)
+                    let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
+                    audioVideo.file = this.props.scene.img;
+                    audioVideo.loop = loop;
+                    audioVideo.volume = volume;
+                    soundsHub["audios_"+ this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0], volume);
+                }
+            }
         }
         if (this.props.isActive) {
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
-            //TODO aggiungere modifiche audio
             if(!this.props.editMode){
-                let music = this.props.audios[this.props.scene.music]
-                //Carico musica sottofondo
-                //if(this.props.scene.music !== undefined && this.props.audios){
-                  //  let music = this.props.audios[this.props.scene.music]
-                    //let volume = this.props.onDebugMode?0:music.volume;
-                    //if(soundsHub["audios_"+ music.uuid] === undefined)
-                      //  soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0], volume);
-                if( music && soundsHub["audios_"+ music.uuid])
-                    soundsHub["audios_"+ music.uuid].play()
-                //}
-                //carico suoni ambientali
-                if(this.props.scene.sfx !== undefined && this.props.audios){
-                    let sfx = this.props.audios[this.props.scene.sfx]
-                    let volume = this.props.onDebugMode?0:sfx.volume;
-                    if(soundsHub["audios_"+ sfx.uuid] === undefined){
-                        //sfx.volume = 50;
-                        soundsHub["audios_"+ sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0], volume);
-                    }
-
-                    soundsHub["audios_"+ sfx.uuid].play()
-                }
-                //Carico audio incorporato nel video
-                if(this.props.isAudioOn){
-                    if(soundsHub["audios_"+ this.props.scene.uuid] === undefined){
-                        if(stores_utils.getFileType(scene.img) === 'video'){
-                            let audioVideo = {};
-                            let volume = this.props.onDebugMode?0:50;
-                            console.log(volume)
-                            let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
-                            audioVideo.file = this.props.scene.img;
-                            audioVideo.loop = loop;
-                            audioVideo.volume = volume;
-                            soundsHub["audios_"+ this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0], volume);
-                            soundsHub["audios_"+ this.props.scene.uuid].play();
-                        }
-                    }
-                }
-
+                //play musica sottofondo
+                if(music && soundsHub["audios_"+ music.uuid])
+                    soundsHub["audios_"+ music.uuid].play();
+                //play suoni ambientali
+                if(sfx && soundsHub["audios_"+ sfx.uuid])
+                    soundsHub["audios_"+ sfx.uuid].play();
+                //play audio incorporato nel video
+                if(audioVideo !== {} && soundsHub["audios_"+ this.props.scene.uuid])
+                    soundsHub["audios_"+ this.props.scene.uuid].play();
             }
         }
 
