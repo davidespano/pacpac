@@ -117,7 +117,7 @@ export default class VRScene extends React.Component {
         if(!this.props.debug){
             // scene init for playing the game
             scene = gameGraph['scenes'][this.state.activeScene.uuid];
-            let home = await SceneAPI.getHome();
+            let home = await SceneAPI.getHome(this.props.editor.gameId);
             if(home !== ''){
                 scene = this.props.scenes.get(home);
             }
