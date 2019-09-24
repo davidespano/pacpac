@@ -161,7 +161,6 @@ export default class Bubble extends Component
             if(soundsHub["audios_"+ this.props.scene.uuid] === undefined){
                 if(stores_utils.getFileType(scene.img) === 'video'){
                     let volume = this.props.onDebugMode?0:50;
-                    console.log(volume)
                     let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
                     audioVideo.file = this.props.scene.img;
                     audioVideo.loop = loop;
@@ -189,6 +188,7 @@ export default class Bubble extends Component
 
         else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
+
         if(is3Dscene){
 
             sceneRender = (
@@ -200,7 +200,7 @@ export default class Bubble extends Component
         } else {
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
-            console.log(this.props)
+
             let Width = this.props.assetsDimention.width / 100;
             let Height = this.props.assetsDimention.height / 100;
             let ratio = Width/Height;
@@ -216,10 +216,7 @@ export default class Bubble extends Component
                 canvasWidth = canvasHeight * ratio;
 
             }
-            //let canvasHeight = document.documentElement.clientHeight / 100;
-            //let canvasWidth = canvasHeight * ration;
             positionPlane = "0, 1.6, -6";
-
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                     id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}
@@ -242,14 +239,13 @@ export default class Bubble extends Component
             }
             //TODO [debug] add to origin master
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
-                console.log('1')
                 if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
                 return;
             }
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
             let video = [];
             let masks = [];
-            let aux; //= new THREE.VideoTexture(document.getElementById(scene.img)); //background video
+            let aux;
             if(stores_utils.getFileType(scene.img) === 'video'){
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));
             } else {
