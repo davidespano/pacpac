@@ -16,6 +16,9 @@ function AudioForm(props){
             uuid: uuid.v4(),
         });
 
+
+    console.log(audioToEdit);
+
     return(
         <div id={"audio-form"}>
             <div className={"modal fade " + show(props)} id="audio-form-modal" tabIndex="-1" role="dialog" aria-labelledby="audio-form-modal-label" aria-hidden="true">
@@ -65,6 +68,7 @@ function generalOptions(props, audioToEdit){
     let properties = {
         props : props,
         component : 'audio-form',
+        audioToEdit: audioToEdit,
     };
 
     return(
