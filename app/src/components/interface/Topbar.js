@@ -81,6 +81,9 @@ function TopBar(props){
                                                                              alt={'avvia gioco'}
                                                                              className={'action-buttons'}/>
                     </a>
+                    <div id={'topbar-game-title'} className={'navbar-brand'}>
+                        {props.editor.gameTitle}
+                    </div>
                 </div>
             </nav>
             <div className="tab-content" id="nav-tabContent">

@@ -142,7 +142,7 @@ div.rules{
     justify-content: left;
 }
 
-.navbar-toggler{
+.navbar-toggler {
     margin-left: 5px;
     margin-right: 5px;
     font-family: latoregular;
@@ -368,13 +368,18 @@ div.rules{
 
 .navbar-brand{
     font-size: 22px;
-    padding: 0;
     border: none;
     background: none;
     background-color: #FFFFFF;
     color: #EF562D !important;
     font-family: playregular;
     cursor: pointer;
+}
+
+#topbar-game-title{
+    position: absolute;
+    right: 10px;
+    z-index: -1;
 }
 
 .navbar-toggler{

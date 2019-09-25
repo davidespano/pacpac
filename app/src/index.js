@@ -23,6 +23,7 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
     if (gameUuid === null || (!gameIDs.includes(gameUuid)))
         AuthenticationApi.getUserDetail();
     else {
+        AuthenticationApi.getUserDetail(gameUuid);
         Actions.editModeOn();
         SceneAPI.getHomeScene();
         SceneAPI.getAllScenesAndTags();

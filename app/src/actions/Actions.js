@@ -180,6 +180,13 @@ const Actions = {
         })
     },
 
+    setGameTitle(title){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_GAME_TITLE,
+            title: title,
+        })
+    },
+
     soundActiveFormCheck(check){
         AppDispatcher.dispatch({
             type: ActionTypes.SOUND_ACTIVE_FORM_CHECK,

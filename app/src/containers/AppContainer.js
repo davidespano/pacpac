@@ -94,6 +94,7 @@ function getState() {
         selectSceneSpatialAudio: Actions.selectSceneSpatialAudio,
         selectTagNewScene: Actions.selectTagNewScene,
         setHomeScene: Actions.setHomeScene,
+        setGameTitle: Actions.setGameTitle,
         soundActiveFormCheck: Actions.soundActiveFormCheck,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToPlayMode: Actions.playModeOn,
