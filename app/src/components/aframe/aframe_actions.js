@@ -156,6 +156,7 @@ function executeAction(VRScene, rule, action){
             if(targetSceneVideo.nodeName === 'VIDEO') {targetSceneVideo.play();}
             break;
         case RuleActionTypes.PLAY:
+            console.log(soundsHub["audios_"+ media])
             //verifico se è un video
             if(soundsHub["audios_"+ media]){
                 soundsHub["audios_"+ media].loop = false;
