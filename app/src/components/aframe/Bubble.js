@@ -98,6 +98,7 @@ export default class Bubble extends Component
         let scene = this.props.scene;
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
+        //let primitive = "a-sky";
         //let primitive = this.props.assetsDimention.type === 'video'?"a-videosphere":"a-sky";
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6";
         //let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9";
@@ -188,7 +189,7 @@ export default class Bubble extends Component
 
         else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
-
+        //primitive = "a-sky";
         if(is3Dscene){
 
             sceneRender = (
@@ -217,8 +218,8 @@ export default class Bubble extends Component
                 canvasWidth = canvasHeight * ratio;
 
             }
-            console.log(canvasWidth)
-            console.log(canvasHeight)
+            console.log(document.documentElement.clientWidth)
+            console.log(document.documentElement.clientHeight)
             console.log(Width)
             console.log(Height)
             positionPlane = "0, 1.6, -6";

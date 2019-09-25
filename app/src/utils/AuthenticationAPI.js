@@ -23,7 +23,7 @@ function register(username, password) {
         .send({username: username, password:password});
 }
 
-function getUserDetail() {
+function getUserDetail(gameId = null) {
     return request.get(`${apiBaseURL}/users/me`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -35,8 +35,21 @@ function getUserDetail() {
                 username: rawUser.username,
                 games: rawUser.games,
             });
+
             Actions.receiveUser(user);
-            Actions.gameSelectionModeOn();
+
+            if(gameId){
+                let title = null;
+                rawUser.games.forEach(g => {
+                    if(g.gameID === gameId){
+                        title = g.name;
+                    }
+                });
+                Actions.setGameTitle(title);
+            } else {
+                Actions.gameSelectionModeOn();
+            }
+
             },
             function (error) { // failure
                 console.log(error)

@@ -42,7 +42,7 @@ function games(props){
     return props.editor.user.games.map((g,i)=>{
         return(
             <div className={'game-item-wrapper'}>
-                <div id={g} className="game-item" onClick={evt=>gameSelection(g.gameID,props)}>{g.name}</div>
+                <div id={g} className="game-item" onClick={evt=>gameSelection(g.gameID, g.name, props)}>{g.name}</div>
                 <div className={'game-btns'}>
                     <button
                         title={"Visualizza il codice di " + g.name}
@@ -73,11 +73,12 @@ function games(props){
     });
 }
 
-function gameSelection(gameUuid,props){
+function gameSelection(gameUuid, gameTitle ,props){
 
     window.localStorage.removeItem("gameID");
     window.localStorage.setItem("gameID", gameUuid);
     props.switchToEditMode();
+    props.setGameTitle(gameTitle);
     SceneAPI.getHomeScene();
     SceneAPI.getAllScenesAndTags();
     MediaAPI.getAllAssets();

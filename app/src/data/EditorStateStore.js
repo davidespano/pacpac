@@ -116,6 +116,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SET_HOME_SCENE:
                 return state.set('homeScene', action.scene);
+            case ActionTypes.SET_GAME_TITLE:
+                return state.set('gameTitle', action.title);
             case ActionTypes.SORT_SCENES:
                 return state.set('scenesOrder', action.order);
             case ActionTypes.SOUND_ACTIVE_FORM_CHECK:

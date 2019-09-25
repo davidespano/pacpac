@@ -48,6 +48,7 @@ const EditorState = Immutable.Record({
 
     // load specific game
     gameId: null,
+    gameTitle: null,
 
 });
 

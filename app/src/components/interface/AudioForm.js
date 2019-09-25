@@ -65,6 +65,7 @@ function generalOptions(props, audioToEdit){
     let properties = {
         props : props,
         component : 'audio-form',
+        audioToEdit: audioToEdit,
     };
 
     return(
@@ -105,6 +106,9 @@ function spatialOption(props, audioToEdit){
                     <input type={'radio'} name={'isSpatial'} id={'spatial-radio'} className={'radio-audio-form'}
                            onClick={()=> {
                                let newAudio = audioToEdit.set('isSpatial', true);
+                               if(!audioToEdit.scene){
+                                   newAudio = newAudio.set('scene', props.currentScene);
+                               }
                                props.selectAudioToEdit(newAudio);
                            }}
                            checked={spatial}

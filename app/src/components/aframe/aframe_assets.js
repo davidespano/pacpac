@@ -92,6 +92,9 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                         />)
                     }
                 }
+                if(action.action === 'PLAY_LOOP' || action.action === 'PLAY_LOOP'){
+                    console.log('ciao sono un adio un po sfortunato')
+                }
             })
 
         });
