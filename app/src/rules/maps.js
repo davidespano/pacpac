@@ -77,7 +77,7 @@ const RuleActionMap = Immutable.Map([
         {
             type: "operation",
             subj_type: [Values.THREE_DIM, Values.TWO_DIM],
-            obj_type: ['video', 'img'],
+            obj_type: ['video'],
             name: toString.eventTypeToString(RuleActionTypes.CHANGE_BACKGROUND),
             uuid: RuleActionTypes.CHANGE_BACKGROUND
         },
