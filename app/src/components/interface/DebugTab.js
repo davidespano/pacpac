@@ -8,7 +8,7 @@ import EditorState from "../../data/EditorState";
 import Immutable from 'immutable'
 import DebugAPI from "../../utils/DebugAPI";
 import toString from "../../rules/toString";
-
+import Values from '../../rules/Values';
 let THREE = require('three');
 
 function DebugTab(props) {
@@ -65,6 +65,7 @@ function objPropsView(props) {
             if(currentObject.type === 'POINT_OF_INTEREST'){
                 pointOI = currentObject.vertices;
             }
+            console.log(props)
             lookObject("curv" + currentObject.uuid, pointOI);
             interface_utils.highlightRule(props, currentObject);
         }
@@ -224,7 +225,8 @@ function listCurrentSceneObjs(scene, props) {
                         <img className={"icon-obj-left"} alt={obj.name} src={interface_utils.getObjImg(obj.type)}/>
                         <span className={"obj-name"} id={"obj-name" + obj.uuid} onClick={() => {
                             let geometry = document.getElementById("curv" + obj.uuid);
-                            if (geometry)
+                            console.log(props.scenes.get(props.currentScene)!== Values.TWO_DIM)
+                            if (geometry && props.scenes.get(props.currentScene).type !== Values.TWO_DIM)
                                 lookObject("curv" + obj.uuid);
                             interface_utils.setIdStyle("obj-name", obj.uuid, "color: rgba(239, 86, 55, 1)");
                             interface_utils.setIdStyle("player-obj", obj.uuid, "color: rgba(239, 86, 55, 1)");
