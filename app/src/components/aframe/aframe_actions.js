@@ -305,12 +305,19 @@ function transition(actualScene, targetScene, duration, direction){
     targetSky.setAttribute('visible', 'true');
     targetSky.setAttribute('material', 'visible: true');
     actualSky.dispatchEvent(disappear);
-    setTimeout(function () {targetSky.dispatchEvent(appear);}
-        , parseInt(duration) + 400
-    );
+
+    if(is3dScene){
+        setTimeout(function () {
+                targetSky.dispatchEvent(appear);}
+            , parseInt(duration) + 400
+        );
+    } else {
+        targetSky.dispatchEvent(appear);
+    }
+
     //targetSky.dispatchEvent(appear);
 
-    if(sceneMovement&& !is3dScene){
+    if(sceneMovement && !is3dScene){
         actualSky.dispatchEvent(actualMove);
         targetSky.dispatchEvent(targetMove);
     }

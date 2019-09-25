@@ -51,9 +51,7 @@ export default class VRScene extends React.Component {
                 scene = this.props.scenes.toArray()[0];
             }
         }
-
         let gameGraph = {};
-
 
         this.state = {
             scenes: this.props.scenes.toArray(),
@@ -73,7 +71,7 @@ export default class VRScene extends React.Component {
 
     componentDidMount() {
 
-        document.querySelector('#mainscene2').addEventListener('keydown', (event) => {
+        /*document.querySelector('#mainscene2').addEventListener('keydown', (event) => {
             const keyName = event.key;
             //Torno all'editor
             if(keyName === 'q' || keyName === 'Q') {
@@ -86,7 +84,7 @@ export default class VRScene extends React.Component {
                     stats: stats,
                 });
             }
-        });
+        });*/
         this.state.camera = new THREE.Vector3();
         this.loadEverything();
 
@@ -319,8 +317,10 @@ export default class VRScene extends React.Component {
         let is3dScene = this.props.scenes.get(sceneUuid).type ===Values.THREE_DIM;
         var embedded = this.props.debug;
         var vr_mode_ui = this.props.debug ? "enabled : false": false;
+        //<div id="mainscene2" tabIndex="0">
+        //</div>
         return (
-            <div id="mainscene2" tabIndex="0">
+
                 <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
                     <a-assets>
                         {assets}
@@ -337,7 +337,7 @@ export default class VRScene extends React.Component {
 
                     </Entity>
                 </Scene>
-            </div>
+
         )
     }
 

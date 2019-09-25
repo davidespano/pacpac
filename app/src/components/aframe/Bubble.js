@@ -204,18 +204,23 @@ export default class Bubble extends Component
             let Width = this.props.assetsDimention.width / 100;
             let Height = this.props.assetsDimention.height / 100;
             let ratio = Width/Height;
+            let ratio2 = document.documentElement.clientWidth / document.documentElement.clientHeight;
             let canvasWidth ;
             let canvasHeight;
 
-            if(ratio > 1){
+            if(ratio > 1 && ratio2 < 1){
                 canvasWidth = document.documentElement.clientWidth / 100;
-                canvasHeight = canvasWidth / ratio;
+                canvasHeight = canvasWidth / ratio ;
             } else {
 
                 canvasHeight = document.documentElement.clientHeight / 100;
                 canvasWidth = canvasHeight * ratio;
 
             }
+            console.log(canvasWidth)
+            console.log(canvasHeight)
+            console.log(Width)
+            console.log(Height)
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
