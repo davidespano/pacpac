@@ -141,8 +141,13 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
-            runState[sceneName].background = media;
-            VRScene.setState({runState: runState, game_graph: game_graph});
+
+            let targetSceneVideo = document.getElementById(media);
+
+            //let primitive = targetSceneVideo.nodeName === 'VIDEO'?"a-videosphere":"a-sky";
+            //let actualSky = document.querySelector('#' + actual_scene);
+            //console.log(primitive)
+            //actualSky.setAttribute('primitive', primitive)
             if(soundsHub["audios_"+ actual_scene_Uuid]){
                 soundsHub["audios_"+ actual_scene_Uuid].pause();
                 let audioVideo = {};
@@ -152,8 +157,10 @@ function executeAction(VRScene, rule, action){
                 soundsHub["audios_"+ actual_scene_Uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
                 soundsHub["audios_"+ actual_scene_Uuid].play()
             }
-            let targetSceneVideo = document.getElementById(media);
             if(targetSceneVideo.nodeName === 'VIDEO') {targetSceneVideo.play();}
+            //document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true
+            runState[sceneName].background = media;
+            VRScene.setState({runState: runState, game_graph: game_graph});
             break;
         case RuleActionTypes.PLAY:
             console.log(soundsHub["audios_"+ media])
