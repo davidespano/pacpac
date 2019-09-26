@@ -22,29 +22,33 @@ function executeAction(VRScene, rule, action){
     //TODO cambiare nome media non è il media
     let media = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
-    /*Object.values(state.activeScene.objects).flat().forEach(o =>{
-        if(o.uuid === rule.event.obj_uuid){
-            current_object = o;
-        }
-    });*/
+
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
-            let duration = current_object.properties.duration ? parseInt(current_object.properties.duration) : 0;
-            let direction = current_object.properties.direction ? current_object.properties.direction : 'nothing'
+            let duration = 0;
+            if(current_object && current_object.properties.duration)
+                duration =parseInt(current_object.properties.duration)
+            let direction = 'nothing';
+            if(current_object && current_object.properties.duration)
+                direction = current_object.properties.direction;
             let objectVideo_transition = 0;
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
-            if(current_object.type === 'TRANSITION'){
+            if(current_object && current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
                     duration_transition = (parseInt(objectVideo_transition.duration) * 1000);
                 }
             }
-            let audioTransition = current_object.audio.audio0;
-            if(soundsHub['audio0_' + audioTransition])
-                soundsHub['audio0_' + audioTransition].play();
+            let audioTransition;
+            if(current_object){
+                audioTransition = current_object.audio.audio0;
+                if(soundsHub['audio0_' + audioTransition])
+                    soundsHub['audio0_' + audioTransition].play();
+            }
+
 
             setTimeout(function () {
                 //Cambio musica di sottofondo da una scena ad un'altra
@@ -70,15 +74,19 @@ function executeAction(VRScene, rule, action){
                     soundsHub['audios_' + VRScene.state.activeScene.uuid].pause()
                     soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
                 }
-
-                if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
-                    (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
-                // se le due scene sono dello stesso tipo le gestisco allo stesso modo
-                if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[media].type === Values.THREE_DIM ||
-                   VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[media].type === Values.TWO_DIM)
+                if(current_object === undefined)
                     transition(state.activeScene, state.graph.scenes[media], duration, direction);
-                else
-                    transition2D(state.activeScene, state.graph.scenes[media], duration, VRScene)
+                else {
+                    if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
+                        (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
+                    // se le due scene sono dello stesso tipo le gestisco allo stesso modo
+                    if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[media].type === Values.THREE_DIM ||
+                        VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[media].type === Values.TWO_DIM)
+                        transition(state.activeScene, state.graph.scenes[media], duration, direction);
+                    else
+                        transition2D(state.activeScene, state.graph.scenes[media], duration, VRScene)
+                }
+
             },duration_transition);
 
             break;
@@ -141,7 +149,7 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
-            console.log('sono un azione')
+            console.log(media)
             let targetSceneVideo = document.getElementById(media);
 
             //let primitive = targetSceneVideo.nodeName === 'VIDEO'?"a-videosphere":"a-sky";
@@ -253,6 +261,7 @@ function executeAction(VRScene, rule, action){
  * @param duration
  */
 function transition(actualScene, targetScene, duration, direction){
+    console.log('sto transando')
     let actualSky = document.querySelector('#' + actualScene.name);
     let actualSceneVideo = document.getElementById(actualScene.img);
     if(store_utils.getFileType(actualScene.img) === 'video') actualSceneVideo.pause();
@@ -329,8 +338,8 @@ function transition(actualScene, targetScene, duration, direction){
         actualSky.dispatchEvent(actualMove);
         targetSky.dispatchEvent(targetMove);
     }
-    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();}
-        , parseInt(duration) + 400
+    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.currentTime = 0; targetSceneVideo.play(); console.log(targetSceneVideo)}
+        , parseInt(duration)
     );
     //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }

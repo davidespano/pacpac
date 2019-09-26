@@ -143,16 +143,14 @@ export default class VRScene extends React.Component {
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             let duration = 0;
             let objectVideo;
-            console.log(duration)
             rule.actions.sort(stores_utils.actionComparator);
 
             let actionCallback = function(action){
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
                 // senza passarli esplicitamente
                 let closure = function() {
-                    console.log(duration)
+                    console.log('sto entrando ora ad eseguie')
                     setTimeout(function () {
-                        console.log('sto eseguendo')
                         executeAction(me, rule, action)
                     }, duration);
                     if (action.action === 'CHANGE_BACKGROUND') {
@@ -221,7 +219,9 @@ export default class VRScene extends React.Component {
                                             eventBus.on('debug-step', actionExecution);
                                         }, duration);
                                     } else {
-                                        actionExecution();
+                                        setTimeout(function () {
+                                            actionExecution();
+                                        }, media.duration);
                                     }
                                 }
                             });
@@ -246,7 +246,9 @@ export default class VRScene extends React.Component {
                                             eventBus.on('debug-step', actionExecution);
                                         }, duration);
                                     } else {
-                                        actionExecution();
+                                        setTimeout(function () {
+                                            actionExecution();
+                                        }, media.duration);
                                     }
                                 }
                             });
