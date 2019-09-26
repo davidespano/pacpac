@@ -75,10 +75,11 @@ export function convertRelativeCoordinates (verticesP,assetsDimention) {
     let Width = assetsDimention.width / 100;
     let Height = assetsDimention.height / 100;
     let ratio = Width/Height;
+    let ratio2 = document.documentElement.clientWidth / document.documentElement.clientHeight;
     let canvasWidth ;
     let canvasHeight;
 
-    if(ratio > 1){
+    if(ratio > 1 && ratio2 < 1){
         canvasWidth = document.documentElement.clientWidth / 100;
         canvasHeight = canvasWidth / ratio;
     } else {
