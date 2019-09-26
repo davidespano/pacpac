@@ -153,6 +153,7 @@ export default class GeometryScene extends React.Component{
                 }
             }
             if(isCurved && !isPoint){
+                console.log(a_point)
                 tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
                 a_point[(length-1)].x *= moltiplier;
                 tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));

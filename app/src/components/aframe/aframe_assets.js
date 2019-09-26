@@ -124,7 +124,7 @@ function generateCurrentAsset(obj, runState, id){
                                preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}/>)
                 } else {
                     currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${id}/` + obj.media.media0 + "#t=0.1"}/>)
+                                         src={`${mediaURL}${id}/` + obj.media.media0}/>)
                 }
                 return(currentAsset)
             }
@@ -146,7 +146,7 @@ function generateCurrentAsset(obj, runState, id){
                         />)
                 } else {
                     currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${id}/` + obj.media["media"+i] + "#t=0.1"}/>)
+                                         src={`${mediaURL}${id}/` + obj.media["media"+i]}/>)
                 }
                 return(currentAsset)
             }
@@ -159,7 +159,7 @@ function generateCurrentAsset(obj, runState, id){
                         />)
                 } else {
                     currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${id}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}/>)
+                                         src={`${mediaURL}${id}/` + obj.media["media"+((i+1)%2)]}/>)
                 }
                 return(currentAsset)
             }
@@ -173,7 +173,7 @@ function generateCurrentAsset(obj, runState, id){
                                preload="auto" loop={false} crossOrigin="anonymous" muted={true} playsInline={true}/>)
                 } else {
                     currentAsset = (<img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
-                                         src={`${mediaURL}${id}/` + obj.media.media0 + "#t=0.1"}/>)
+                                         src={`${mediaURL}${id}/` + obj.media.media0}/>)
                 }
                 return(currentAsset)
             }
