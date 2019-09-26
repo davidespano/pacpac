@@ -141,7 +141,7 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
-
+            console.log('sono un azione')
             let targetSceneVideo = document.getElementById(media);
 
             //let primitive = targetSceneVideo.nodeName === 'VIDEO'?"a-videosphere":"a-sky";
@@ -449,11 +449,12 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
 function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     let duration_switch = 0;
     let switchVideo = document.getElementById('media_'+current_object.uuid);
+    console.log(switchVideo)
     if(switchVideo != null) {
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
         let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1;
-        document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+
 
         if(store_utils.getFileType(videoType) === 'video') {switchVideo.play();}
         duration_switch = (parseInt(switchVideo.duration) * 1000);
@@ -469,8 +470,10 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         cursor.setAttribute('material', 'visible: true');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('color', 'black');
+        document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
         runState[action.subj_uuid].state = action.obj_uuid;
         VRScene.setState({runState: runState});
+
     },duration_switch)
 
 }

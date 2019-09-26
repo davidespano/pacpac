@@ -143,13 +143,16 @@ export default class VRScene extends React.Component {
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             let duration = 0;
             let objectVideo;
-            rule.actions.sort(stores_utils.actionComparator)
+            console.log(duration)
+            rule.actions.sort(stores_utils.actionComparator);
 
             let actionCallback = function(action){
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
                 // senza passarli esplicitamente
                 let closure = function() {
+                    console.log(duration)
                     setTimeout(function () {
+                        console.log('sto eseguendo')
                         executeAction(me, rule, action)
                     }, duration);
                     if (action.action === 'CHANGE_BACKGROUND') {
@@ -163,8 +166,10 @@ export default class VRScene extends React.Component {
                 };
                 return closure;
             };
-
+            //console.log(rule.event)
+            //console.log(rule.actions)
             switch (rule.event.action){
+
                 case 'CLICK':
                     rule.actions.forEach(action => {
                         eventBus.on('click-' + rule.event.obj_uuid, function () {
@@ -180,6 +185,7 @@ export default class VRScene extends React.Component {
                                     }, duration);
                                 } else {
                                     actionExecution();
+
                                 }
 
 

@@ -218,10 +218,6 @@ export default class Bubble extends Component
                 canvasWidth = canvasHeight * ratio;
 
             }
-            console.log(document.documentElement.clientWidth)
-            console.log(document.documentElement.clientHeight)
-            console.log(Width)
-            console.log(Height)
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
@@ -239,7 +235,13 @@ export default class Bubble extends Component
             let scene = this.props.scene;
             let sky = document.getElementById(scene.name);
             let id = this.props.gameId ? this.props.gameId : `${window.localStorage.getItem("gameID")}`;
+            let video = [];
+            let masks = [];
+            let aux;
+            let dict = ['0'];
+
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
+            //Se non ho oggetti resetto lo shader, non serve il nostro
             if (objs.length === 0){
                 this.resetShader(sky);
                 return; //shader not necessary
@@ -250,17 +252,17 @@ export default class Bubble extends Component
                 return;
             }
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
-            let video = [];
-            let masks = [];
-            let aux;
+
             if(stores_utils.getFileType(scene.img) === 'video'){
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));
             } else {
                 aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` +scene.img);
+
+
             }
             aux.minFilter = THREE.NearestFilter;
             video.push(aux);
-            let dict = ['0'];
+
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
@@ -297,7 +299,7 @@ export default class Bubble extends Component
 
             if (skyMesh == null) return;
 
-            let i = 0;
+            let i;
             let declarations = "";
             for (i = 0; i < masks.length; i++) {
                 //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
@@ -317,7 +319,6 @@ export default class Bubble extends Component
                 mixFunction = `mix(${mixFunction},texture2D(video${dict[i]}, vUv),texture2D(mask${dict[i]}, vUv).y)`
             }
             mixFunction = `vec4(${mixFunction});`;
-
             //now set the fragment shader and other small things
             let fragShader =
                 `
@@ -336,8 +337,7 @@ export default class Bubble extends Component
                     }
             `;
             skyMesh.material.fragmentShader = fragShader;
-            setTimeout(()=>skyMesh.material.needsUpdate = true ,50);
-
+            setTimeout(()=>skyMesh.material.needsUpdate = true, 50);
 
             if (this.props.isActive && stores_utils.getFileType(this.props.scene.img) === 'video') document.getElementById(scene.img).play();
             this.videoTextures = video;
