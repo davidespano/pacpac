@@ -149,7 +149,6 @@ export default class VRScene extends React.Component {
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
                 // senza passarli esplicitamente
                 let closure = function() {
-                    console.log('sto entrando ora ad eseguie')
                     setTimeout(function () {
                         executeAction(me, rule, action)
                     }, duration);
@@ -164,7 +163,6 @@ export default class VRScene extends React.Component {
                 };
                 return closure;
             };
-            //console.log(rule.event)
             //console.log(rule.actions)
             switch (rule.event.action){
 
@@ -205,6 +203,7 @@ export default class VRScene extends React.Component {
 
                     if(rule.event.obj_uuid === "ENDED" && media){
                         media.onended = function() {
+                            console.log('sto partendo')
                             rule.actions.forEach(action => {
                                 if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                                     let actionExecution = actionCallback(action);
@@ -236,7 +235,6 @@ export default class VRScene extends React.Component {
                                     let actionExecution = actionCallback(action);
                                     if (me.props.debug) {
                                         setTimeout(function () {
-                                            console.log('sto partendo')
                                             let object;
                                             if(me.props.interactiveObjects.get(rule.event.subj_uuid))
                                                 object = me.props.interactiveObjects.get(rule.event.subj_uuid);
@@ -361,6 +359,7 @@ export default class VRScene extends React.Component {
             let scene = this.state.graph.scenes[sceneName];
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
+            this.createRuleListeners();
             return (
                 <Bubble key={"key" + scene.name}
                         scene={scene}

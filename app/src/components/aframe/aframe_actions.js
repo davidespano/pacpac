@@ -27,8 +27,14 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.TRANSITION:
             let duration_transition = 0;
             let duration = 0;
-            if(current_object && current_object.properties.duration)
-                duration =parseInt(current_object.properties.duration)
+            //Se devo cambiare lo sguardo aggiungo 400 ms
+            if(current_object) {
+                if(current_object.properties.duration && current_object.type === 'POINT_OF_INTEREST')
+                    duration = parseInt(current_object.properties.duration) + 400;
+                else
+                    duration = parseInt(current_object.properties.duration);
+            }
+
             let direction = 'nothing';
             if(current_object && current_object.properties.duration)
                 direction = current_object.properties.direction;
@@ -231,6 +237,8 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.DECREASE_STEP:
+            console.log('CIAOOOOOOO sono un contatore, il mio valore decrementato è: ')
+            console.log(runState[action.subj_uuid].state)
             if (runState[action.subj_uuid].state >= 0){
                 runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
                 runState[action.subj_uuid].state -= parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
@@ -241,6 +249,8 @@ function executeAction(VRScene, rule, action){
         case RuleActionTypes.INCREASE_STEP:
             runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
             runState[action.subj_uuid].state += parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
+            console.log('CIAOOOOOOO sono un contatore, il mio valore incrementato è: ')
+            console.log(runState[action.subj_uuid].state)
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.INCREASE:
@@ -261,7 +271,6 @@ function executeAction(VRScene, rule, action){
  * @param duration
  */
 function transition(actualScene, targetScene, duration, direction){
-    console.log('sto transando')
     let actualSky = document.querySelector('#' + actualScene.name);
     let actualSceneVideo = document.getElementById(actualScene.img);
     if(store_utils.getFileType(actualScene.img) === 'video') actualSceneVideo.pause();
@@ -326,7 +335,7 @@ function transition(actualScene, targetScene, duration, direction){
     if(is3dScene){
         setTimeout(function () {
                 targetSky.dispatchEvent(appear);}
-            , parseInt(duration) + 400
+            , parseInt(duration)
         );
     } else {
         targetSky.dispatchEvent(appear);
@@ -338,9 +347,13 @@ function transition(actualScene, targetScene, duration, direction){
         actualSky.dispatchEvent(actualMove);
         targetSky.dispatchEvent(targetMove);
     }
-    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video'){targetSceneVideo.currentTime = 0; targetSceneVideo.play(); console.log(targetSceneVideo)} }
+    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video'){
+        targetSceneVideo.currentTime = 0;
+        targetSceneVideo.play();
+        } }
         , parseInt(duration)
     );
+
     //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
