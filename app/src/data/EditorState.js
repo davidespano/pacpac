@@ -26,6 +26,7 @@ const EditorState = Immutable.Record({
     navbarSelection: 'scene',
     rightbarSelection: 'scene',
     role: null,
+    ruleCopy: null,
     scenesOrder: Orders.CHRONOLOGICAL,
     scenesNameFilter: '',
     selectedFile: null,

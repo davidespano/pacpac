@@ -26,6 +26,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('isAudioSpatial', action.status);
             case ActionTypes.AUDIO_FORM_STATUS:
                 return state.set('isEditAudioOn', action.status);
+            case ActionTypes.COPY_RULE:
+                return state.set('ruleCopy', action.rule);
             case ActionTypes.DROPDOWN_TAGS_NEW_SCENE:
                 return state.set('chooseTagNewScene', action.status);
             case ActionTypes.DROPDOWN_TAGS_RIGHTBAR:
