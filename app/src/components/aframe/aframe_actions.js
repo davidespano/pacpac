@@ -166,7 +166,7 @@ function executeAction(VRScene, rule, action){
                 soundsHub["audios_"+ actual_scene_Uuid].play()
             }
             if(targetSceneVideo.nodeName === 'VIDEO') {targetSceneVideo.play();}
-            document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true
+            document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
             runState[sceneName].background = media;
             VRScene.setState({runState: runState, game_graph: game_graph});
             break;
@@ -338,7 +338,7 @@ function transition(actualScene, targetScene, duration, direction){
         actualSky.dispatchEvent(actualMove);
         targetSky.dispatchEvent(targetMove);
     }
-    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.currentTime = 0; targetSceneVideo.play(); console.log(targetSceneVideo)}
+    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video'){targetSceneVideo.currentTime = 0; targetSceneVideo.play(); console.log(targetSceneVideo)} }
         , parseInt(duration)
     );
     //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();

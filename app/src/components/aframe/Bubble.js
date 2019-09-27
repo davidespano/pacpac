@@ -96,6 +96,8 @@ export default class Bubble extends Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
+        let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img;
+        console.log(this.props.runState)
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         //let primitive = "a-sky";
@@ -194,7 +196,7 @@ export default class Bubble extends Component
 
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
-                                   id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
+                                   id={this.props.scene.name} src={'#' + background} radius={radius}
                                    material={material} play_video={active}>
                 {curves}
                 </Entity>)
@@ -221,7 +223,7 @@ export default class Bubble extends Component
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
-                    id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}
+                    id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
                     material={material} play_video={active} position={positionPlane} >
                 {curves}
                 </Entity>)
@@ -239,6 +241,7 @@ export default class Bubble extends Component
             let masks = [];
             let aux;
             let dict = ['0'];
+            let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img;
 
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             //Se non ho oggetti resetto lo shader, non serve il nostro
@@ -256,21 +259,27 @@ export default class Bubble extends Component
             if(stores_utils.getFileType(scene.img) === 'video'){
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));
             } else {
-                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` +scene.img);
+                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + background);
 
 
             }
+            console.log(aux)
             aux.minFilter = THREE.NearestFilter;
             video.push(aux);
 
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
+                let media = obj.media.media0;
+                if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON")
+                    media = obj.media.media1;
+
+                console.log(obj)
                 if (asset === null) return;
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
                 } else {
-                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.media.media0);
+                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
                 }
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
