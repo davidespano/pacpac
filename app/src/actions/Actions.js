@@ -595,24 +595,12 @@ const Actions = {
      * @param rule
      */
     addNewRule(scene, rule){
-
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_RULE,
             scene: scene,
             rule: rule,
         });
         InteractiveObjectAPI.saveRule(scene, rule);
-    },
-
-    /**
-     * Copy rule inside store
-     * @param rule
-     */
-    copyRule(rule){
-        AppDispatcher.dispatch({
-            type: ActionTypes.COPY_RULE,
-            rule: rule,
-        });
     },
 
     /**

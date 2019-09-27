@@ -141,7 +141,6 @@ function getState() {
         //rules
 
         addNewRule: Actions.addNewRule,
-        copyRule: Actions.copyRule,
         removeRule: Actions.removeRule,
         setMentionType: Actions.setMentionType,
         updateRule: Actions.updateRule,
