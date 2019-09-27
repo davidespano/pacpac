@@ -268,18 +268,21 @@ export default class Bubble extends Component
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
                 let media;
-                if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON")
+                if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON"){
                     if(obj.media.media1)
                         media = obj.media.media1;
-                else
+                }
+                else{
                     if(obj.media.media0)
                         media = obj.media.media0;
+                }
+
 
                 if (asset === null) return;
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
                 } else {
-                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.media.media0);
+                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
                 }
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
