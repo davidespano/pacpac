@@ -84,8 +84,8 @@ function tags(a, b){
  * @returns {string}
  */
 function getFileType(fileName){
-    let reVideo = new RegExp('.mp4$');
-    let reImg = new RegExp('.png$|.jpeg$|.jpg$');
+    let reVideo = new RegExp('.mp4$|.MP4$');
+    let reImg = new RegExp('.png$|.PNG$|.jpeg$|.JPEG$|.jpg$|.JPG$');
 
     if(reVideo.test(fileName)) {
         return 'video';
