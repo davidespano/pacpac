@@ -195,7 +195,7 @@ export default class Bubble extends Component
 
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
-                                   id={this.props.scene.name} src={'#' + background} radius={radius}
+                                   id={this.props.scene.name} src={'#' + this.props.scene.img} radius={radius}
                                    material={material} play_video={active}>
                 {curves}
                 </Entity>)
@@ -222,7 +222,7 @@ export default class Bubble extends Component
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
-                    id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
+                    id={this.props.scene.name} src={'#' + this.props.scene.img} height={canvasHeight.toString()} width={canvasWidth.toString()}
                     material={material} play_video={active} position={positionPlane} >
                 {curves}
                 </Entity>)
@@ -240,7 +240,6 @@ export default class Bubble extends Component
             let masks = [];
             let aux;
             let dict = ['0'];
-            let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img;
 
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             //Se non ho oggetti resetto lo shader, non serve il nostro
@@ -258,7 +257,7 @@ export default class Bubble extends Component
             if(stores_utils.getFileType(scene.img) === 'video'){
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));
             } else {
-                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + background);
+                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` +scene.img);
 
 
             }
@@ -280,7 +279,7 @@ export default class Bubble extends Component
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
                 } else {
-                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
+                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.media.media0);
                 }
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
