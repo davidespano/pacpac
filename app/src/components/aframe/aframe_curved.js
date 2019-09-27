@@ -95,6 +95,7 @@ export function convertRelativeCoordinates (verticesP,assetsDimention) {
         let vp = v;
         if(index % 3 === 0) vp = v * canvasWidth;
         if(index % 3 === 1) vp = v * canvasHeight;
+        if(index % 3 === 2) vp = -5.9;
         index += 1;
         return vp;
     });
