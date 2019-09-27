@@ -48,9 +48,6 @@ export default class EudRuleEditor extends Component {
                                 removeRule={(rule) => {
                                     this.onRemoveRuleClick(rule)
                                 }}
-                                copyRule={(rule) => {
-                                    this.props.copyRule(rule)
-                                }}
                             />
                         </React.Fragment>
                     );
@@ -85,24 +82,13 @@ export default class EudRuleEditor extends Component {
                                 />
                             </figure>
                             <h2>Regole della scena</h2>
-                            <div id={'rule-editor-btns'}>
-                                <button
-                                    disabled={this.props.editor.ruleCopy===null}
+                            <button className={"btn select-file-btn new-rule-btn"}
                                     onClick={() => {
-                                        this.onCopyRuleClick(scene);
-                                    }}
-                                >
-                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                    Copia qui
-                                </button>
-                                <button className={"btn select-file-btn"}
-                                        onClick={() => {
-                                            this.onNewRuleClick();
-                                        }}>
-                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
-                                    Nuova Regola
-                                </button>
-                            </div>
+                                        this.onNewRuleClick();
+                                    }}>
+                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
+                                Nuova Regola
+                            </button>
                         </div>
                         <div className={"rule-editor"}
                              onClick={() => {
@@ -136,12 +122,6 @@ export default class EudRuleEditor extends Component {
         let scene = this.props.scenes.get(this.props.currentScene);
         let rule = this.props.rules.get(ruleId);
         this.props.removeRule(scene, rule);
-    }
-
-    onCopyRuleClick(scene){
-        let newId = uuid.v4();
-        let copiedRule = this.props.editor.ruleCopy.set('uuid', newId);
-        this.props.addNewRule(scene, copiedRule);
     }
 
 
@@ -327,16 +307,6 @@ class EudRule extends Component {
                             <img className={"action-buttons"} src={"icons/icons8-action-128.png"}
                                  alt={"Aggiungi un'azione"}/>
                             &nbsp;Aggiungi Azione
-                        </button>
-                        <button title={"Copia la regola"}
-                                key={'copy-rule-' + rule.uuid}
-                                onClick={() => {
-                                    this.props.copyRule(rule);
-                                }}
-                                className={"eudDelete action-buttons-container"}>
-                            <img className={"action-buttons"} src={"icons/icons8-copia-50.png"}
-                                 alt={"Copia la regola"}/>
-                            &nbsp;Copia Regola
                         </button>
                         <button title={"Cancella la regola"}
                                 key={'remove-rule-' + rule.uuid}

@@ -214,13 +214,6 @@ const Actions = {
         })
     },
 
-    newSceneCopyNameTyped(status){
-        AppDispatcher.dispatch({
-            type: ActionTypes.NEW_SCENE_COPY_NAME_TYPED,
-            status: status,
-        })
-    },
-
     /**
      * Dispatch new filter selection
      * @param filterType
@@ -556,14 +549,6 @@ const Actions = {
         })
     },
 
-    setObjectToScene(scene, obj){
-        AppDispatcher.dispatch({
-            type: ActionTypes.SET_OBJ_TO_SCENE,
-            scene:scene,
-            obj:obj,
-        })
-    },
-
     /**
      * Dispatch current object update (rightbar)
      * @param uuid
@@ -579,13 +564,11 @@ const Actions = {
     /**
      * Dispatch update of any object to the objects store
      * @param object
-     * @param sceneId
      */
-    updateObject(object, sceneId){
+    updateObject(object){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_OBJECT,
             obj: object,
-            sceneId: sceneId,
         })
     },
 
@@ -612,24 +595,12 @@ const Actions = {
      * @param rule
      */
     addNewRule(scene, rule){
-
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_RULE,
             scene: scene,
             rule: rule,
         });
         InteractiveObjectAPI.saveRule(scene, rule);
-    },
-
-    /**
-     * Copy rule inside store
-     * @param rule
-     */
-    copyRule(rule){
-        AppDispatcher.dispatch({
-            type: ActionTypes.COPY_RULE,
-            rule: rule,
-        });
     },
 
     /**

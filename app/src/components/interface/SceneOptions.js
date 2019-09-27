@@ -7,7 +7,6 @@ import FileSelectionBtn from "./FileSelectionBtn";
 import Dropdown from "./Dropdown";
 import SceneAPI from "../../utils/SceneAPI";
 import Actions from "../../actions/Actions";
-import SceneCopy from "./SceneCopy";
 
 function SceneOptions(props){
 
@@ -22,27 +21,17 @@ function SceneOptions(props){
 
         return(
             <div className={'currentOptions'}>
-                <SceneCopy {...props}/>
                 <div>
                     <div className={"buttonGroup buttonGroup-bar"}>
                         <button
-                        title={"Elimina la scena corrente"}
-                        className={"action-buttons-container"}
-                        onClick={() => {
-                            checkAndRemoveScene(props, currentScene);
-                        }}
-                    >
-                        <img className={"action-buttons scene-buttons-img"} src={"icons/icons8-waste-50.png"}/>
-                    </button>
-                    <button
-                        title={"Copia la scena corrente"}
-                        className={"action-buttons-container"}
-                        data-toggle="modal"
-                        data-target="#scene-copy-modal"
-                    >
-                        <img className={"action-buttons scene-buttons-img"} src={"icons/icons8-copia-50.png"}/>
-                        Copia
-                    </button>
+                            title={"Elimina la scena corrente"}
+                            className={"action-buttons-container"}
+                            onClick={() => {
+                                checkAndRemoveScene(props, currentScene);
+                            }}
+                        >
+                            <img className={"action-buttons scene-buttons-img"} src={"icons/icons8-waste-50.png"}/>
+                        </button>
                     </div>
                 </div>
                 <label className={'rightbar-titles'}>Nome e tipologia</label>

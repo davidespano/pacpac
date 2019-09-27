@@ -1371,29 +1371,13 @@ input.eudObjectString[type=text] {
     margin: 0 !important;
 }
 
-#rule-editor-btns > button{
+.new-rule-btn{
     font-size: 0.9em;
+    position: absolute;
+    top: 0;
+    right: 5px;
     min-height: 20px;
     max-height: 100%;
-    margin-left: 10px;
-}
-
-#rule-editor-btns > button:active:hover{
-    cursor:pointer;
-}
-
-#rule-editor-btns >button:disabled > img{
-    opacity: 0.5;
-}
-
-
-#rule-editor-btns{
-    position: absolute;
-    right: 0;
-    top: 0;
-    display:  flex;
-    min-height: 20px;
-    max-height: 5%;
 }
 
 
