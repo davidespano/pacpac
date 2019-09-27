@@ -36,6 +36,10 @@ class ObjectToSceneStore extends ReduceStore {
                 objects.forEach(obj => state = state.set(obj, action.scene.uuid));
 
                 return state;
+            case ActionTypes.SET_OBJ_TO_SCENE:
+                return state.set(action.obj, action.scene);
+            case ActionTypes.UPDATE_OBJECT:
+                return state.set(action.obj.uuid, action.sceneId);
             case ActionTypes.RESET:
                 return Immutable.Map();
             default:
