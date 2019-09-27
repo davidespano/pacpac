@@ -1548,7 +1548,7 @@ input.eudObjectString[type=text] {
 
 .game-item-wrapper{
     display: grid;
-    grid-template-columns: 90% auto;
+    grid-template-columns: 85% auto;
 }
 
 .game-item {
