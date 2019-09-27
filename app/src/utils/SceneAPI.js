@@ -197,8 +197,8 @@ function getByName(name, order = null, gameId=null) {
  * @param tag
  * @param order of scenes
  */
-function createScene(name, img, index, type, tag, order, sceneId=null) {
-    let id = sceneId? sceneId : uuid.v4();
+function createScene(name, img, index, type, tag, order) {
+    let id = uuid.v4();
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)

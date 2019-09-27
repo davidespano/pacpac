@@ -61,8 +61,6 @@ class EditorStateStore extends ReduceStore {
                 return state.set('newAudioNameTyped', action.status);
             case ActionTypes.NEW_SCENE_NAME_TYPED:
                 return state.set('newSceneNameTyped', action.status);
-            case ActionTypes.NEW_SCENE_COPY_NAME_TYPED:
-                return state.set('newSceneCopyNameTyped', action.status);
             case ActionTypes.FILE_MANAGER_MODE_ON:
                 return state.set('mode', ActionTypes.FILE_MANAGER_MODE_ON);
             case ActionTypes.PLAY_MODE_ON:

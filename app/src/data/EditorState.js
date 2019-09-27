@@ -19,7 +19,6 @@ const EditorState = Immutable.Record({
     mentionType: null,
     mode: ActionTypes.LOGIN_MODE_ON,
     newSceneNameTyped: false,
-    newSceneCopyNameTyped: false,
     objectId: null,
     objectNameRightbar: null,
     objectsNameFilter: '',
