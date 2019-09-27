@@ -16,9 +16,9 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         //first, push the background media.
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
-                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={loop}  preload="auto"
+                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={false}  preload="auto"
                        src={`${mediaURL}${id}/` + srcBackground}
-                       playsInline={true} autoPlay muted={true}
+                       playsInline={true}  muted={true}
                 />)
         } else {
             sceneBackground =(<img id={scene.img} key={"key" + scene.name} crossOrigin="Anonymous"
@@ -37,7 +37,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                             objAssetMedia = (
                                 <video key={k+"_" + obj.uuid} crossOrigin={"anonymous"} id={k+"_" + obj.uuid} loop={true}  preload="auto"
                                        src={`${mediaURL}${id}/` + obj.media[k]}
-                                       playsInline={true} autoPlay muted={true}
+                                       playsInline={true}  muted={true}
                                 />)
                         } else {
                             objAssetMedia = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossOrigin="Anonymous"

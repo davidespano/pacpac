@@ -105,6 +105,7 @@ AFRAME.registerComponent('play_video', {
     init: function () {
         let videoID = this.data.video;
         let active= this.data.active;
+
         if(active && (stores_utils.getFileType(videoID) === 'video')){
             setTimeout(function() {
                 let video = document.getElementById(videoID).play();

@@ -97,7 +97,6 @@ export default class Bubble extends Component
         //generate the interactive areas
         let scene = this.props.scene;
         let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img;
-        console.log(this.props.runState)
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
         //let primitive = "a-sky";
@@ -263,18 +262,20 @@ export default class Bubble extends Component
 
 
             }
-            console.log(aux)
             aux.minFilter = THREE.NearestFilter;
             video.push(aux);
 
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
-                let media = obj.media.media0;
+                let media;
                 if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON")
-                    media = obj.media.media1;
+                    if(obj.media.media1)
+                        media = obj.media.media1;
+                else
+                    if(obj.media.media0)
+                        media = obj.media.media0;
 
-                console.log(obj)
                 if (asset === null) return;
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
@@ -348,7 +349,7 @@ export default class Bubble extends Component
             skyMesh.material.fragmentShader = fragShader;
             setTimeout(()=>skyMesh.material.needsUpdate = true, 50);
 
-            if (this.props.isActive && stores_utils.getFileType(this.props.scene.img) === 'video') document.getElementById(scene.img).play();
+            if (this.props.isActive && stores_utils.getFileType(this.props.scene.img) === 'video') {document.getElementById(scene.img).play()};
             this.videoTextures = video;
             this.masksTextures = masks;
         }, 50);
