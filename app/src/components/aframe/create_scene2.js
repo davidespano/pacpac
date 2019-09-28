@@ -359,7 +359,7 @@ export default class VRScene extends React.Component {
             let scene = this.state.graph.scenes[sceneName];
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
-            this.createRuleListeners();
+            //this.createRuleListeners();
             return (
                 <Bubble key={"key" + scene.name}
                         scene={scene}

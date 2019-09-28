@@ -16,7 +16,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         //first, push the background media.
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
-                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={false}  preload="auto"
+                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={loop}  preload="auto"
                        src={`${mediaURL}${id}/` + srcBackground}
                        playsInline={true}  muted={true}
                 />)
