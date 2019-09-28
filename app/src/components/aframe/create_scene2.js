@@ -306,6 +306,7 @@ export default class VRScene extends React.Component {
     }
 
     render() {
+
         let sceneUuid = null;
         if(this.props.debug){
             sceneUuid = this.props.currentScene;

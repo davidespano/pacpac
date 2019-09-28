@@ -135,6 +135,9 @@ function calculateCentroid(vertices, scene_type = Values.THREE_DIM, props, radiu
         y = (dimY - medianPoint[1] * 9) * 100 / (dimY+3);
     }
 
+    if(x > 97) x = 97;
+    if(y > 85) y = 85;
+
     return [x, y];
 }
 

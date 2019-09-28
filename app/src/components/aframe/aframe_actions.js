@@ -77,7 +77,7 @@ function executeAction(VRScene, rule, action){
                 if((soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[media].uuid]   &&
                         (soundsHub['audios_' + VRScene.state.activeScene.uuid] !== soundsHub['audios_' + state.graph.scenes[media].uuid])) ||
                     (soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[media].uuid] === undefined)){
-                    soundsHub['audios_' + VRScene.state.activeScene.uuid].pause()
+                    soundsHub['audios_' + VRScene.state.activeScene.uuid].pause();
                     soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
                 }
                 if(current_object === undefined)
@@ -172,7 +172,7 @@ function executeAction(VRScene, rule, action){
                 soundsHub["audios_"+ actual_scene_Uuid].play()
             }
             if(targetSceneVideo.nodeName === 'VIDEO') {targetSceneVideo.play();}
-            document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true
+            document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
             runState[sceneName].background = media;
             VRScene.setState({runState: runState, game_graph: game_graph});
             break;
