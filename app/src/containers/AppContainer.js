@@ -136,6 +136,7 @@ function getState() {
         //rules
 
         addNewRule: Actions.addNewRule,
+        copyRule: Actions.copyRule,
         removeRule: Actions.removeRule,
         updateRule: Actions.updateRule,
         ruleEditorCallback: {

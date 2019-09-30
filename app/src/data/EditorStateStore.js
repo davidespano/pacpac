@@ -22,6 +22,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('rightbarSelection', 'objects').set('objectNameRightbar', action.obj.name);
             case ActionTypes.AUDIO_POSITIONING:
                 return state.set('audioPositioning', action.status);
+ 			case ActionTypes.COPY_RULE:
+                return state.set('ruleCopy', action.rule);
             case ActionTypes.EDITOR_EXPANDED:
                 return state.set('editorExpanded', action.status);
             case ActionTypes.EUD_SAVE_ORIGINAL_OBJECT:

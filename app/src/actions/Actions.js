@@ -60,8 +60,14 @@ const Actions = {
 
     debugModeOn(){
         AppDispatcher.dispatch({
-            type: ActionTypes.SET_INTERFACE_MODE,
-            mode: ActionTypes.DEBUG_MODE_ON,
+            type: ActionTypes.DEBUG_MODE_ON,
+        })
+    },
+
+    debugSaves(response){
+        AppDispatcher.dispatch({
+            type: ActionTypes.DEBUG_SAVES,
+            response: response,
         })
     },
 
@@ -602,6 +608,17 @@ const Actions = {
             rule: rule,
         });
         InteractiveObjectAPI.saveRule(scene, rule);
+    },
+
+    /**
+     * Copy rule inside store
+     * @param rule
+     */
+    copyRule(rule){
+        AppDispatcher.dispatch({
+            type: ActionTypes.COPY_RULE,
+            rule: rule,
+        });
     },
 
     /**

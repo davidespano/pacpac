@@ -75,6 +75,7 @@ const ActionTypes = {
     // RULES
 
     ADD_NEW_RULE : 'ADD_NEW_RULE',
+    COPY_RULE: 'COPY_RULE',
     RECEIVE_RULE : 'RECEIVE_RULE',
     REMOVE_RULE : 'REMOVE_RULE',
     UPDATE_RULE : 'UPDATE_RULE',
