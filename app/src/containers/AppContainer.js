@@ -71,32 +71,9 @@ function getState() {
 
         reset: Actions.reset,
         
-        //editor
+        //EDITOR
 
-        audioPositioning: Actions.audioPositioning,
-        changeAudioFormStatus: Actions.changeAudioFormStatus,
-        changeAudioSpatialOptionStatus: Actions.changeAudioSpatialOptionStatus,
-        dropdownScenesOrder: Actions.dropdownScenesOrder,
-        dropdownTagsNewScene: Actions.dropdownTagsNewScene,
-        dropdownTagsRightbar: Actions.dropdownTagsRightbar,
-        debugSaves: Actions.debugSaves,
-        expandEditor: Actions.expandEditor,
-        isItNew: Actions.isItNew,
-        leftbarSelection: Actions.leftbarSelection,
-        loopCheck: Actions.loopCheck,
-        newAudioNameTyped: Actions.newAudioNameTyped,
-        newSceneNameTyped: Actions.newSceneNameTyped,
-        rightbarSelection: Actions.rightbarSelection,
-        selectAudioFile: Actions.selectAudioFile,
-        selectFile: Actions.selectFile,
-        selectMediaToEdit: Actions.selectMediaToEdit,
-        selectAudioToEdit: Actions.selectAudioToEdit,
-        selectSceneSpatialAudio: Actions.selectSceneSpatialAudio,
-        selectTagNewScene: Actions.selectTagNewScene,
-        setHomeScene: Actions.setHomeScene,
-        setGameTitle: Actions.setGameTitle,
-        soundActiveFormCheck: Actions.soundActiveFormCheck,
-        switchToGameList: Actions.gameSelectionModeOn,
+        //Interface modes
         switchToPlayMode: Actions.playModeOn,
         switchToDebugMode: Actions.debugModeOn,
         switchToEditMode: Actions.editModeOn,
@@ -104,6 +81,24 @@ function getState() {
         switchToFileManager: Actions.fileManagerModeOn,
         switchToGeometryMode: Actions.geometryModeOn,
         switchToStoryEditorMode: Actions.storyEditorModeOn,
+        switchToGameList: Actions.gameSelectionModeOn,
+
+        audioPositioning: Actions.audioPositioning,
+        debugSaves: Actions.debugSaves,
+        expandEditor: Actions.expandEditor,
+        isItNew: Actions.isItNew,
+        leftbarSelection: Actions.leftbarSelection,
+        newAudioNameTyped: Actions.newAudioNameTyped,
+        newSceneNameTyped: Actions.newSceneNameTyped,
+        rightbarSelection: Actions.rightbarSelection,
+        selectAudioFile: Actions.selectAudioFile,
+        selectFile: Actions.selectFile,
+        selectMediaToEdit: Actions.selectMediaToEdit,
+        selectAudioToEdit: Actions.selectAudioToEdit,
+        selectTagNewScene: Actions.selectTagNewScene,
+        setHomeScene: Actions.setHomeScene,
+        setGameTitle: Actions.setGameTitle,
+
         updateAudioFilter: Actions.updateAudioFilter,
         updateTagFilter: Actions.updateTagFilter,
         updateObjectNameRightbar: Actions.updateObjectNameRightbar,
@@ -142,9 +137,7 @@ function getState() {
 
         addNewRule: Actions.addNewRule,
         removeRule: Actions.removeRule,
-        setMentionType: Actions.setMentionType,
         updateRule: Actions.updateRule,
-        updateSuggestion: Actions.updateSuggestion,
         ruleEditorCallback: {
             eudShowCompletions: Actions.eudShowCompletions,
             eudSaveOriginalObject: Actions.eudSaveOriginalObject,
@@ -156,13 +149,6 @@ function getState() {
         addNewAudio: Actions.addNewAudio,
         removeAudio: Actions.removeAudio,
         updateAudio: Actions.updateAudio,
-
-        //OTHER
-
-        onDrop: Actions.onDrop,
-        updateDatalist: Actions.updateDatalist,
-		
-		
 		
 		//STORY EDITOR
 		

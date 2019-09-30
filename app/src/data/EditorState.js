@@ -4,51 +4,41 @@ import Orders from "./Orders";
 
 const EditorState = Immutable.Record({
 
-    actionId: null,
-    audioFilter: '',
-    chooseTagNewScene: false,
-    chooseTagRightbar: false,
-    completionInput: null,
-    debugFromScene: null,
-    debugRunState: null,
-    debugSaves: null,
-    editorExpanded: false,
-    homeScene: null,
-    isEditAudioOn: false,
-    leftbarSelection: 'scenes',
-    mentionType: null,
-    mode: ActionTypes.LOGIN_MODE_ON,
-    newSceneNameTyped: false,
-    objectId: null,
-    objectNameRightbar: null,
-    objectsNameFilter: '',
-    objectsTypeFilter: 'scene',
-    navbarSelection: 'scene',
-    rightbarSelection: 'scene',
-    role: null,
-    scenesOrder: Orders.CHRONOLOGICAL,
-    scenesNameFilter: '',
-    selectedFile: null,
-    selectedMediaToEdit: null,
-    selectedTagNewScene: 'default',
-    soundActiveFormChecked: false,
-    tagFilter: '',
-    user: null,
-
-    //scene options
-
-    sceneOptions: null,
+    actionId: null,                     //EudRuleEditor
+    audioFilter: '',                    //AudioMenu, contains value typed in filter
+    completionInput: null,              //EudRuleEditor
+    debugFromScene: null,               //set scene the debug should start from
+    debugRunState: null,                //set run state for debugging the game
+    debugSaves: null,                   //DebugTab
+    editorExpanded: false,              //boolean to check if rules editor is expanded or not
+    gameId: null,                       //used to store the code of a specific game that the user wants to play
+    gameTitle: null,                    //title of the game we are editing
+    homeScene: null,                    //id of game's starting scene
+    isEditAudioOn: false,               //boolean to check if user is editing an existing audio or creating a new one
+    leftbarSelection: 'scenes',         //tab selected in leftbar (possible values: 'scenes' and 'saves')
+    mode: ActionTypes.LOGIN_MODE_ON,    //interface mode, determines which part of the interface is shown
+    newSceneNameTyped: false,           //boolean that determines if the name field in InputSceneForm is completed
+    objectId: null,                     //EudRuleEditor, saves original object
+    objectNameRightbar: null,           //content of field "name" in object options (rightbar). Saves intermediate value before updating object
+    objectsNameFilter: '',              //ObjectOptions, contains value typed in filter
+    objectsTypeFilter: 'scene',         //objects shown in rightbar (possible values: 'scene' and 'all)
+    rightbarSelection: 'scene',         //tab selected in rightbar (possible values: 'scene' and 'objects')
+    role: null,                         //EudRuleEditor, role of rule portion that the user is modifying
+    scenesOrder: Orders.CHRONOLOGICAL,  //order of scenes (all orders available in data/Orders)
+    scenesNameFilter: '',               //Leftbar, contains value typed in filter
+    sceneOptions: null,                 //saves data of current scene, it's used in SceneOptions to show and update data
+    selectedFile: null,                 //file currently selected in FileManager
+    selectedMediaToEdit: null,          //property that is set when user is selecting a file ('audio-form', 'scene', etc)
+    selectedTagNewScene: 'default',     //tag selected in InputSceneForm
+    tagFilter: '',                      //TagMenu, contains value typed in filter
+    user: null,                         //contains user data
 
     //audio form
 
-    audioPositioning: false,
-    audioToEdit: null,
-    isItNew: false,
-    selectedAudioFile: null,
-
-    // load specific game
-    gameId: null,
-    gameTitle: null,
+    audioPositioning: false,            //boolean that checks if it's allowed to set audio position in scene (a scene must be selected, and isSpatial has to be set to true)
+    audioToEdit: null,                  //when creating an audio, contains a new Audio object; when editing one, contains a copy of the Audio. It's used to store intermediate data while editing
+    isItNew: false,                     //true if we are creating a new audio, false otherwise
+    selectedAudioFile: null,            //file currently selected for the Audio object
 
 });
 

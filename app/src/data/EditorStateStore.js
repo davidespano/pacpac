@@ -22,19 +22,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('rightbarSelection', 'objects').set('objectNameRightbar', action.obj.name);
             case ActionTypes.AUDIO_POSITIONING:
                 return state.set('audioPositioning', action.status);
-            case ActionTypes.AUDIO_SPATIAL_OPTION:
-                return state.set('isAudioSpatial', action.status);
-            case ActionTypes.AUDIO_FORM_STATUS:
-                return state.set('isEditAudioOn', action.status);
-            case ActionTypes.DROPDOWN_TAGS_NEW_SCENE:
-                return state.set('chooseTagNewScene', action.status);
-            case ActionTypes.DROPDOWN_TAGS_RIGHTBAR:
-                return state.set('chooseTagRightbar', action.status);
             case ActionTypes.EDITOR_EXPANDED:
                 return state.set('editorExpanded', action.status);
-            case ActionTypes.EDIT_MODE_ON:
-                state = state.set('gameId', null);
-                return state.set('mode', ActionTypes.EDIT_MODE_ON);
             case ActionTypes.EUD_SAVE_ORIGINAL_OBJECT:
                 state = state.set('objectId', action.objectId);
                 return state;
@@ -43,29 +32,14 @@ class EditorStateStore extends ReduceStore {
                 state = state.set('role', action.role);
                 state = state.set('completionInput', action.completionText);
                 return state;
-            case ActionTypes.GAME_SELECTION_MODE_ON:
-                return state.set('mode', ActionTypes.GAME_SELECTION_MODE_ON);
-            case ActionTypes.GEOMETRY_MODE_ON:
-                return state.set('mode', ActionTypes.GEOMETRY_MODE_ON);
             case ActionTypes.IS_IT_NEW:
                 return state.set('isItNew', action.bool);
             case ActionTypes.LEFTBAR_SELECTION:
                 return state.set('leftbarSelection', action.selection);
-            case ActionTypes.LOGIN_MODE_ON:
-                return state.set('mode', ActionTypes.LOGIN_MODE_ON);
-            case ActionTypes.LOOP_CHECK:
-                return state.set('loopChecked', action.check);
             case ActionTypes.NEW_AUDIO_NAME_TYPED:
                 return state.set('newAudioNameTyped', action.status);
             case ActionTypes.NEW_SCENE_NAME_TYPED:
                 return state.set('newSceneNameTyped', action.status);
-            case ActionTypes.FILE_MANAGER_MODE_ON:
-                return state.set('mode', ActionTypes.FILE_MANAGER_MODE_ON);
-            case ActionTypes.PLAY_MODE_ON:
-                state = state.set('gameId', action.gameId);
-                return state.set('mode', ActionTypes.PLAY_MODE_ON);
-            case ActionTypes.DEBUG_MODE_ON:
-                return state.set('mode', ActionTypes.DEBUG_MODE_ON);
             case ActionTypes.DEBUG_SAVES:
                 let oldSaves = null;
                 let newSaves = null;
@@ -87,7 +61,7 @@ class EditorStateStore extends ReduceStore {
                 state = state.set('rightbarSelection', 'scene');
                 state = state.set('sceneOptions', action.scene);
 
-                if(!state.get('homeScene')){
+                if(!state.get('homeScene')){ //if there is no homeScene selected, select the first one
                     state = state.set('homeScene', action.scene.uuid);
                     SceneAPI.setHomeScene(action.scene.uuid, false);
                 }
@@ -101,8 +75,13 @@ class EditorStateStore extends ReduceStore {
                 return state.set('objectNameRightbar', null);
             case ActionTypes.RIGHTBAR_SELECTION:
                 return state.set('rightbarSelection', action.selection);
-			case ActionTypes.STORY_EDITOR_MODE_ON:
-                return state.set('mode', ActionTypes.STORY_EDITOR_MODE_ON);
+            case ActionTypes.SET_INTERFACE_MODE:
+                if(action.gameId){
+                    state = state.set('gameId', action.gameId);
+                } else {
+                    state = state.set('gameId', null);
+                }
+                return state.set('mode', action.mode);
             case ActionTypes.SELECT_AUDIO_FILE:
                 return state.set('selectedAudioFile', action.selection);
             case ActionTypes.SELECT_FILE:
@@ -110,8 +89,7 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.SELECT_MEDIA_TO_EDIT:
                 return state.set('selectedMediaToEdit', action.selection);
             case ActionTypes.SELECT_AUDIO_TO_EDIT:
-                state = state.set('audioToEdit', action.audio);
-                return state;
+                return state.set('audioToEdit', action.audio);;
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SET_HOME_SCENE:
@@ -120,10 +98,6 @@ class EditorStateStore extends ReduceStore {
                 return state.set('gameTitle', action.title);
             case ActionTypes.SORT_SCENES:
                 return state.set('scenesOrder', action.order);
-            case ActionTypes.SOUND_ACTIVE_FORM_CHECK:
-                return state.set('soundActiveFormChecked', action.check);
-            case ActionTypes.SET_MENTION_TYPE:
-                return state.set('mentionType', action.mentionType);
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
             case ActionTypes.UPDATE_CURRENT_SCENE:

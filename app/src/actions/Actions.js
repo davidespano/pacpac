@@ -14,7 +14,7 @@ import EditorStateStore from "../data/EditorStateStore";
 const Actions = {
 
     /**
-     * reset game data
+     * reset game data, it's triggered when the user exits from a game
      */
     reset(){
         AppDispatcher.dispatch({
@@ -25,32 +25,64 @@ const Actions = {
     //EDITOR
 
     /**
-     * This functions handle editor state variables (such as current mode and selected menus)
+     * This functions set interfaces mode, that is, what the interface should show
      **/
 
 
     editModeOn() {
         AppDispatcher.dispatch({
-            type: ActionTypes.EDIT_MODE_ON
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.EDIT_MODE_ON,
         })
     },
 
     gameSelectionModeOn(){
         AppDispatcher.dispatch({
-            type: ActionTypes.GAME_SELECTION_MODE_ON,
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.GAME_SELECTION_MODE_ON,
         })
     },
 
     geometryModeOn(){
         AppDispatcher.dispatch({
-            type: ActionTypes.GEOMETRY_MODE_ON
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.GEOMETRY_MODE_ON
         })
     },
 
     playModeOn(gameId = null){
         AppDispatcher.dispatch({
-            type: ActionTypes.PLAY_MODE_ON,
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.PLAY_MODE_ON,
             gameId: gameId,
+        })
+    },
+
+    debugModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.DEBUG_MODE_ON,
+        })
+    },
+
+    loginModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.LOGIN_MODE_ON,
+        })
+    },
+
+    storyEditorModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.STORY_EDITOR_MODE_ON,
+        })
+    },
+
+    fileManagerModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.FILE_MANAGER_MODE_ON
         })
     },
 
@@ -61,11 +93,7 @@ const Actions = {
         })
     },
 
-    debugModeOn(){
-        AppDispatcher.dispatch({
-            type: ActionTypes.DEBUG_MODE_ON
-        })
-    },
+
 
     debugSaves(response){
         AppDispatcher.dispatch({
@@ -74,12 +102,10 @@ const Actions = {
         })
     },
 
-    loginModeOn(){
-        AppDispatcher.dispatch({
-            type: ActionTypes.LOGIN_MODE_ON
-        })
-    },
-
+    /**
+     * select tab in leftbar
+     * @param selection 'scenes' or 'saves'
+     */
     leftbarSelection(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.LEFTBAR_SELECTION,
@@ -87,13 +113,10 @@ const Actions = {
         })
     },
 
-    loopCheck(check){
-        AppDispatcher.dispatch({
-            type: ActionTypes.LOOP_CHECK,
-            check: check,
-        })
-    },
-
+    /**
+     * select tab in rightbar
+     * @param selection 'scene' or 'objects'
+     */
     rightbarSelection(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.RIGHTBAR_SELECTION,
@@ -101,28 +124,10 @@ const Actions = {
         })
     },
 
-    dropdownScenesOrder(status){
-        AppDispatcher.dispatch({
-            type: ActionTypes.DROPDOWN_SCENES_ORDER,
-            status: status,
-        })
-    },
-
-    dropdownTagsNewScene(status){
-        AppDispatcher.dispatch({
-            type: ActionTypes.DROPDOWN_TAGS_NEW_SCENE,
-            status: status,
-        })
-    },
-
-    dropdownTagsRightbar(status){
-        AppDispatcher.dispatch({
-            type: ActionTypes.DROPDOWN_TAGS_RIGHTBAR,
-            status: status,
-        })
-
-    },
-
+    /**
+     * Triggered when expanding/reducing rules editor
+     * @param status true if expanding, false if reducing
+     */
     expandEditor(status){
         AppDispatcher.dispatch({
             type: ActionTypes.EDITOR_EXPANDED,
@@ -130,6 +135,10 @@ const Actions = {
         })
     },
 
+    /**
+     * updates a variable with the file selected from audio form
+     * @param selection is the file name (path included)
+     */
     selectAudioFile(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_AUDIO_FILE,
@@ -137,7 +146,10 @@ const Actions = {
         })
     },
 
-
+    /**
+     * updates a variable with the file selected
+     * @param selection is the file name (path included)
+     */
     selectFile(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_FILE,
@@ -145,6 +157,10 @@ const Actions = {
         })
     },
 
+    /**
+     * Updates the EditorStateStore with a string that indicates from which component the user is selecting a file
+     * @param selection could be 'audio-form', 'rightbar', etc
+     */
     selectMediaToEdit(selection){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_MEDIA_TO_EDIT,
@@ -152,6 +168,10 @@ const Actions = {
         })
     },
 
+    /**
+     * Saves intermediate data when creating/editing an Audio object
+     * @param audio new Audio object or copy of an existing one
+     */
     selectAudioToEdit(audio){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_AUDIO_TO_EDIT,
@@ -159,13 +179,10 @@ const Actions = {
         })
     },
 
-    selectSceneSpatialAudio(selection){
-        AppDispatcher.dispatch({
-            type: ActionTypes.SELECT_SCENE_SPATIAL_AUDIO,
-            selection: selection,
-        })
-    },
-
+    /**
+     * save the tag chosen when creating a new Scene
+     * @param tag
+     */
     selectTagNewScene(tag){
         AppDispatcher.dispatch({
             type: ActionTypes.SELECT_TAG_NEW_SCENE,
@@ -173,6 +190,10 @@ const Actions = {
         })
     },
 
+    /**
+     * stores the id of the game's starting scene
+     * @param sceneId
+     */
     setHomeScene(sceneId){
         AppDispatcher.dispatch({
             type: ActionTypes.SET_HOME_SCENE,
@@ -180,6 +201,10 @@ const Actions = {
         })
     },
 
+    /**
+     * stores the game title
+     * @param title
+     */
     setGameTitle(title){
         AppDispatcher.dispatch({
             type: ActionTypes.SET_GAME_TITLE,
@@ -187,19 +212,10 @@ const Actions = {
         })
     },
 
-    soundActiveFormCheck(check){
-        AppDispatcher.dispatch({
-            type: ActionTypes.SOUND_ACTIVE_FORM_CHECK,
-            check: check,
-        })
-    },
-
-    fileManagerModeOn(){
-       AppDispatcher.dispatch({
-            type: ActionTypes.FILE_MANAGER_MODE_ON
-       })
-    },
-
+    /**
+     * updates the editor with a boolean signaling if a name has been typed for a new audio
+     * @param status
+     */
     newAudioNameTyped(status){
         AppDispatcher.dispatch({
             type: ActionTypes.NEW_AUDIO_NAME_TYPED,
@@ -207,6 +223,10 @@ const Actions = {
         })
     },
 
+    /**
+     * updates the editor with a boolean signaling if a name has been typed for a new scene
+     * @param status
+     */
     newSceneNameTyped(status){
         AppDispatcher.dispatch({
             type: ActionTypes.NEW_SCENE_NAME_TYPED,
@@ -215,8 +235,8 @@ const Actions = {
     },
 
     /**
-     * Dispatch new filter selection
-     * @param filterType
+     * Dispatch new filter selection for audios
+     * @param filter
      */
     updateAudioFilter(filter){
         AppDispatcher.dispatch({
@@ -225,6 +245,10 @@ const Actions = {
         })
     },
 
+    /**
+     * Triggered when creating/editing a new audio
+     * @param bool true if creating, false if editing
+     */
     isItNew(bool){
         AppDispatcher.dispatch({
             type: ActionTypes.IS_IT_NEW,
@@ -233,8 +257,8 @@ const Actions = {
     },
 
     /**
-     * Dispatch new filter selection
-     * @param filterType
+     * Dispatch new filter selection for objects
+     * @param filterType 'scene' or 'all'
      */
     updateObjectTypeFilter(filterType){
         AppDispatcher.dispatch({
@@ -244,8 +268,8 @@ const Actions = {
     },
 
     /**
-     * Dispatch new filter selection
-     * @param filterType
+     * Dispatch new filter selection for objects' names
+     * @param filterType string
      */
     updateObjectNameFilter(filterType){
         AppDispatcher.dispatch({
@@ -255,8 +279,8 @@ const Actions = {
     },
 
     /**
-     * Dispatch new filter selection
-     * @param filterType
+     * Dispatch new filter selection for scene's name
+     * @param filterType string
      */
     updateSceneNameFilter(filterType){
         AppDispatcher.dispatch({
@@ -265,10 +289,9 @@ const Actions = {
         })
     },
 
-
     /**
-     * Dispatch update input status
-     * @param name
+     * Updates intermediate data used for editing scenes
+     * @param scene
      */
     updateSceneOptions(scene){
         AppDispatcher.dispatch({
@@ -278,7 +301,7 @@ const Actions = {
     },
 
     /**
-     * Dispatch update input status
+     * Updates intermediate value for object name
      * @param name
      */
     updateObjectNameRightbar(name){
@@ -289,8 +312,8 @@ const Actions = {
     },
 
     /**
-     * Dispatch new filter selection
-     * @param filterType
+     * Dispatch new filter selection for tags' names
+     * @param filter string
      */
     updateTagFilter(filter){
         AppDispatcher.dispatch({
@@ -298,28 +321,6 @@ const Actions = {
             filter: filter,
         })
     },
-
-    changeAudioFormStatus(status){
-        AppDispatcher.dispatch({
-            type: ActionTypes.AUDIO_FORM_STATUS,
-            status: status,
-        })
-    },
-
-	changeAudioSpatialOptionStatus(status){
-        AppDispatcher.dispatch({
-            type: ActionTypes.AUDIO_SPATIAL_OPTION,
-            status: status,
-        })
-    },
-	
-	//STORY EDITOR MODE
-    storyEditorModeOn(){
-        AppDispatcher.dispatch({
-            type: ActionTypes.STORY_EDITOR_MODE_ON
-        })
-    },		
-	
 
     //SCENES
 
@@ -400,7 +401,7 @@ const Actions = {
     },
 
     /**
-     * Dispatch scene name update (since the name is the scene key in ScenesStore map, it needs a specific update)
+     * Dispatch scene name update
      * @param scene
      * @param oldName
      * @param order of scenes
@@ -624,16 +625,8 @@ const Actions = {
             type: ActionTypes.REMOVE_RULE,
             scene: scene,
             rule: rule,
-        })
+        });
         InteractiveObjectAPI.removeRule(scene, rule);
-    },
-
-
-    setMentionType(mentionType){
-        AppDispatcher.dispatch({
-            type: ActionTypes.SET_MENTION_TYPE,
-            mentionType: mentionType,
-        })
     },
 
     /**
@@ -649,12 +642,6 @@ const Actions = {
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 
-    updateSuggestion(state){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_SUGGESTION,
-            state: state,
-        })
-    },
 
     // [davide] eud editor state
     eudShowCompletions(actionId, role, input){
@@ -746,6 +733,10 @@ const Actions = {
 
     //MEDIA
 
+    /**
+     * Load all assets (audios, videos and images) to stores
+     * @param list received from db
+     */
     loadAllAssets(list){
       AppDispatcher.dispatch({
           type: ActionTypes.LOAD_ALL_ASSETS,
@@ -753,27 +744,15 @@ const Actions = {
       })
     },
 
-    //OTHER
 
-    onDrop(picture){
-        AppDispatcher.dispatch({
-            type: ActionTypes.ON_PICTURE_DROP,
-            picture,
-        })
-    },
-
+    /**
+     * receives user data from db and dispatch them to stores
+     * @param user
+     */
     receiveUser(user){
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_USER,
             user: user,
-        })
-    },
-
-    updateDatalist(id,value){
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_DATALIST,
-            id: id,
-            value: value,
         })
     },
 
