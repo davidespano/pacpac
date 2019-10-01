@@ -44,6 +44,7 @@ function executeAction(VRScene, rule, action){
             if(current_object && current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
+                    console.log('sono un')
                     objectVideo_transition.play();
                     duration_transition = (parseInt(objectVideo_transition.duration) * 1000);
                 }
