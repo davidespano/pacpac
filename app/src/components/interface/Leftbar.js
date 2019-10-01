@@ -128,7 +128,9 @@ function buttonsBar(props) {
                             let e = document.getElementById('select-leftbar');
                             let order = e.options[e.selectedIndex].value;
                             props.sortScenes(order);
-                        }}>
+                        }}
+                        defaultValue={props.editor.scenesOrder}
+                >
                     <option value={Orders.ALPHABETICAL}
                     >Nome (A-Z)
                     </option>
@@ -146,29 +148,12 @@ function buttonsBar(props) {
                     </option>
                 </select>
                 <div id="scenes-order-menu"
-                     className={"dropdown-content " + checkSelection(props.editor.scenesOrderMenu)}>
+                     className={"dropdown-content"}>
 
                 </div>
             </div>
         </div>
     );
-}
-
-/*
-<button
-    title={"Ordina..."}
-    className={"action-buttons-container dropdown-btn"}
->
-    <img className={"action-buttons dropdown-btn"} src={"icons/icons8-sort-filled-50.png"}/>
-</button>
-*/
-
-function checkSelection(scenesOrderMenu) {
-    return scenesOrderMenu ? 'show' : '';
-}
-
-function checkCurrentOrder(scenesOrder, value) {
-    return scenesOrder === value ? 'order-selected' : '';
 }
 
 function borderStyle(color) {

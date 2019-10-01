@@ -65,7 +65,6 @@ function objPropsView(props) {
             if(currentObject.type === 'POINT_OF_INTEREST'){
                 pointOI = currentObject.vertices;
             }
-            console.log(props)
             lookObject("curv" + currentObject.uuid, pointOI);
             interface_utils.highlightRule(props, currentObject);
         }
@@ -82,7 +81,7 @@ function objPropsView(props) {
                         if (objGeometry)
                             objGeometry.setAttribute('material', 'color', 'white');
                         interface_utils.setClassStyle(".eudRule", "background: ");
-                        props.updateCurrentScene(EditorState.debugFromScene);
+                        //props.updateCurrentScene(props.editor.debugFromScene);
                         camera.setAttribute("pac-look-controls", "pointerLockEnabled: true");
                     }}>
                     <img className={"action-buttons"} src={"icons/icons8-go-back-50.png"}
@@ -241,7 +240,7 @@ function listCurrentSceneObjs(scene, props) {
                                 props.updateCurrentScene(scene.uuid);
                             }
 
-                            EditorState.debugFromScene = props.scenes.get(props.currentScene).uuid;
+                            //EditorState.debugFromScene = props.scenes.get(props.currentScene).uuid;
 
                             props.updateCurrentObject(obj);
                         }}>

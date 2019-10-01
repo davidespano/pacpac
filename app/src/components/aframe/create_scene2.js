@@ -168,25 +168,29 @@ export default class VRScene extends React.Component {
 
                 case 'CLICK':
                     rule.actions.forEach(action => {
-                        eventBus.on('click-' + rule.event.obj_uuid, function () {
-                            if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
-                                // questa chiamata, come quelle di seguito, permette al debugger di
-                                // evidenziare la regola eseguita e all'utente di premere esplicitamente il
-                                // pulsante avanti per continuare.
-                                let actionExecution = actionCallback(action);
-                                if (me.props.debug) {
-                                    setTimeout(function () {
-                                        interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
-                                        eventBus.on('debug-step', actionExecution);
-                                    }, duration);
-                                } else {
-                                    actionExecution();
+                        if(!eventBus._events['click-' + rule.event.obj_uuid]){
+                            eventBus.on('click-' + rule.event.obj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    // questa chiamata, come quelle di seguito, permette al debugger di
+                                    // evidenziare la regola eseguita e all'utente di premere esplicitamente il
+                                    // pulsante avanti per continuare.
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+
+                                    }
+
 
                                 }
+                            })
+                        }
 
 
-                            }
-                        })
                     });
                     break;
                 case 'IS':

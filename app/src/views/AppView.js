@@ -17,6 +17,7 @@ import GameList from "../components/interface/GameList";
 import EudRuleEditor from "../components/interface/EudRuleEditor";
 import activePlayAudio from "../components/aframe/aframeUtils"
 import StoryEditor from "../components/interface/StoryEditor";
+import ActionTypes from "../actions/ActionTypes";
 
 function AppView(props) {
 
@@ -26,13 +27,13 @@ function AppView(props) {
     };
     
     switch (props.editor.mode) {
-        case 'EDIT_MODE_ON':
+        case ActionTypes.EDIT_MODE_ON:
             let scene = null;
             if(!props.editor.editorExpanded){
                 scene = <CentralScene {...props} />
             }
             return (
-                <div onClick={(event) => closeDropdowns(event, props)}>
+                <div>
                     <TopBar {...props} />
                     <FileForm {...props}/>
                     <div className={'grid-container ' + checkEditor(props)}>
@@ -43,36 +44,36 @@ function AppView(props) {
                     </div>
                 </div>
             );
-        case 'FILE_MANAGER_MODE_ON':
+        case ActionTypes.FILE_MANAGER_MODE_ON:
             return (
                 <div>
                     <TopBar {...props}/>
                     <FileContainer {...propsAssets}/>
                 </div>
             );
-        case 'PLAY_MODE_ON':
+        case ActionTypes.PLAY_MODE_ON:
             return (
                 <div>
                     <VRScene {...props}/>
                 </div>
 
             );
-        case 'GAME_SELECTION_MODE_ON':
+        case ActionTypes.GAME_SELECTION_MODE_ON:
             return (<GameList {...props}/>);
-        case 'GEOMETRY_MODE_ON':
+        case ActionTypes.GEOMETRY_MODE_ON:
             return (
                 <div>
                     <GeometryScene {...props}/>
                 </div>
             );
-        case 'LOGIN_MODE_ON':
+        case ActionTypes.LOGIN_MODE_ON:
             return (
                 <Login {...props}/>
             );
-        case 'DEBUG_MODE_ON':
+        case ActionTypes.DEBUG_MODE_ON:
             let vrScene = <VRScene debug={true} {...props}/>;
             return (
-                <div onClick={(event) => closeDropdowns(event, props)}>
+                <div>
                     <TopBar {...props} />
                     <div className={'grid-container'}>
                         <LeftBar {...props} />
@@ -84,7 +85,7 @@ function AppView(props) {
                     </div>
                 </div>
             );
-        case 'STORY_EDITOR_MODE_ON':
+        case ActionTypes.STORY_EDITOR_MODE_ON:
             return (
                 <div>
                     <TopBar {...props} />
@@ -92,7 +93,6 @@ function AppView(props) {
 					<FileForm {...props}/>
                 </div>
             );
-
         default:
             return (
                 <div>SOMETHING WENT WRONG!</div>
@@ -102,17 +102,10 @@ function AppView(props) {
 }
 
 /**
- * This function closes dropdown menus when we click outside of buttons but I really don't know how it manages to work,
- * we assume it's magic
- * @param event
+ * Returns class 'expanded' if rule editor is open
  * @param props
+ * @returns {string}
  */
-function closeDropdowns(event, props) {
-    if (event.target.className && typeof event.target.className !== 'object') {
-        props.dropdownTagsRightbar(!(props.editor.chooseTagRightbar) && event.target.className.includes('chosen-tag-rightbar'));
-    }
-}
-
 function checkEditor(props){
     return props.editor.editorExpanded ? 'expanded' : '';
 }

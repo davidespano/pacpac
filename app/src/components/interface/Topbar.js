@@ -186,9 +186,9 @@ function handleAssetsMode(props){
 
 function handleDebugMode(props) {
     if(props.editor.mode !== ActionTypes.DEBUG_MODE_ON){
-        if(props.scenes.size > 0){
+        /*if(props.scenes.size > 0){
             props.updateCurrentScene(props.scenes.toArray()[0].uuid);
-        }
+        }*/
         props.switchToDebugMode();
         document.getElementById("nav-tabContent").hidden = false;
     }

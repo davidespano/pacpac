@@ -85,7 +85,7 @@ function SceneOptions(props){
                 <label htmlFor={'select-file-scene'} className={'rightbar-titles'}>File</label>
                 <div className={'rightbar-grid'}>
                     <div id={'select-file-scene'}>
-                        <p className={'file-selected-name propertyForm ellipsis-no-inline'}>{sceneOptions.img}</p>
+                        <p className={'file-selected-name propertyForm ellipsis-no-inline'}>{currentScene.img}</p>
                     </div>
                     <FileSelectionBtn {...properties} />
                     {getVideoOptions(currentScene, sceneOptions, props)}
