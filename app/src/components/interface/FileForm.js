@@ -9,8 +9,7 @@ function FileForm(props){
         component : 'modal',
     };
 
-    let disabled = props.editor.selectedMediaToEdit === 'audio-form' ?
-        !props.editor.selectedAudioFile : !props.editor.selectedFile;
+    let disabled = !props.editor.selectedFile;
 
     return(
         <div id={"manage-files"}>
@@ -33,7 +32,7 @@ function FileForm(props){
                                 disabled={disabled}
                                 onClick={()=> interface_utils.handleFileUpdate(props)}
                             >
-                                Open file
+                                Apri
                             </button>
                         </div>
                     </div>

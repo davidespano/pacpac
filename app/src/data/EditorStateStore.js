@@ -84,14 +84,12 @@ class EditorStateStore extends ReduceStore {
                     state = state.set('gameId', null);
                 }
                 return state.set('mode', action.mode);
-            case ActionTypes.SELECT_AUDIO_FILE:
-                return state.set('selectedAudioFile', action.selection);
             case ActionTypes.SELECT_FILE:
                 return state.set('selectedFile', action.selection);
             case ActionTypes.SELECT_MEDIA_TO_EDIT:
                 return state.set('selectedMediaToEdit', action.selection);
             case ActionTypes.SELECT_AUDIO_TO_EDIT:
-                return state.set('audioToEdit', action.audio);;
+                return state.set('audioToEdit', action.audio);
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SET_HOME_SCENE:

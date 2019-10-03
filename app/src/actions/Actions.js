@@ -64,13 +64,6 @@ const Actions = {
         })
     },
 
-    debugSaves(response){
-        AppDispatcher.dispatch({
-            type: ActionTypes.DEBUG_SAVES,
-            response: response,
-        })
-    },
-
     loginModeOn(){
         AppDispatcher.dispatch({
             type: ActionTypes.SET_INTERFACE_MODE,
@@ -138,17 +131,6 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.EDITOR_EXPANDED,
             status: status,
-        })
-    },
-
-    /**
-     * updates a variable with the file selected from audio form
-     * @param selection is the file name (path included)
-     */
-    selectAudioFile(selection){
-        AppDispatcher.dispatch({
-            type: ActionTypes.SELECT_AUDIO_FILE,
-            selection: selection,
         })
     },
 
