@@ -43,7 +43,7 @@ export default class VRScene extends React.Component {
         super(props);
 
         let scene = null;
-
+        //Se arrivo dal debug prendo la scena corrente, altrimenti prendo la prima scena dalla lista delle scene
         if(this.props.currentScene){
             scene = this.props.scenes.get(this.props.currentScene);
         } else {
@@ -71,6 +71,7 @@ export default class VRScene extends React.Component {
 
     componentDidMount() {
 
+        //Torno all'interfaccia premendo il tasto q, non funzionava bene, una volta tornati all'editor il css non veniva caricato, verificare perche'
         /*document.querySelector('#mainscene2').addEventListener('keydown', (event) => {
             const keyName = event.key;
             //Torno all'editor
@@ -86,11 +87,15 @@ export default class VRScene extends React.Component {
             }
         });*/
         this.state.camera = new THREE.Vector3();
+        //Lancio la funzione per caricare tutti i dati del gioco
         this.loadEverything();
 
         this.interval = setInterval(() => this.tick(), 100);
     }
 
+    /**
+     * Funzione che aggiorna la rotazione della camera, utile per gli audio spaziali
+     */
     tick() {
         //Aggiorno la rotazione della camera ogni n millisecondi
         let camera = document.querySelector('#camera');
@@ -100,15 +105,24 @@ export default class VRScene extends React.Component {
         }
     }
 
+    /**
+     * Funzione assincrona che richiede al database tutte le informazioni del gioco, compresi audio,
+     * tutte le scene e gli oggetti, regole in esse contenute
+     * @returns {Promise<void>}
+     */
     async loadEverything() {
 
         this.setState({
             scenes: this.props.scenes.toArray(),
         });
+
+        //Faccio due richieste, una per avere tutti gli audio del gioco, e il grafo
         let audios = [];
         await AudioAPI.getAudios(audios, this.props.editor.gameId);
         let gameGraph = {};
         await SceneAPI.getAllDetailedScenes(gameGraph, this.props.editor.gameId);
+
+        //Creo lo stato iniziale del gioco dal grafo
         let runState = this.createGameState(gameGraph);
 
         let scene = null;
@@ -131,12 +145,15 @@ export default class VRScene extends React.Component {
             runState: runState,
             audios: audios,
         });
-
+        //Lancio la funzione per generare tutti i listeners
         this.createRuleListeners();
         document.querySelector('#camera').removeAttribute('look-controls');
         document.querySelector('#camera').removeAttribute('wasd-controls');
     }
 
+    /**
+     * Funzione che crea tutti i listeners legati agli eventi delle regole
+     */
     createRuleListeners(){
         let me = this;
 
@@ -145,6 +162,7 @@ export default class VRScene extends React.Component {
             let objectVideo;
             rule.actions.sort(stores_utils.actionComparator);
 
+            //Funzione che si occupa di eseguire le azioni
             let actionCallback = function(action){
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
                 // senza passarli esplicitamente
@@ -152,6 +170,7 @@ export default class VRScene extends React.Component {
                     setTimeout(function () {
                         executeAction(me, rule, action)
                     }, duration);
+                    //Se e' coinvolto un cambio sfondo devo aspettare, in caso sia un video, che finisca, prima di avviare la prossima azione
                     if (action.action === 'CHANGE_BACKGROUND') {
                         objectVideo = document.getElementById(action.obj_uuid);
                     } else {
@@ -163,7 +182,6 @@ export default class VRScene extends React.Component {
                 };
                 return closure;
             };
-            //console.log(rule.actions)
             switch (rule.event.action){
 
                 case 'CLICK':
@@ -182,15 +200,10 @@ export default class VRScene extends React.Component {
                                         }, duration);
                                     } else {
                                         actionExecution();
-
                                     }
-
-
                                 }
                             })
                         }
-
-
                     });
                     break;
                 case 'IS':
@@ -205,10 +218,12 @@ export default class VRScene extends React.Component {
                         media = soundsHub["audios_"+ rule.event.subj_uuid];
                     }
 
+                    //Gestione evento fine video, controllo che l'evento sia di fine video, e che il media esiste
                     if(rule.event.obj_uuid === "ENDED" && media){
                         media.onended = function() {
-                            console.log('sto partendo')
                             rule.actions.forEach(action => {
+                                //Creo l'execution per ogni azione, la gestisco sia per in debugmode che in playmode
+                                //Verifico che la condizione sia rispettata
                                 if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                                     let actionExecution = actionCallback(action);
                                     if (me.props.debug) {
@@ -234,7 +249,8 @@ export default class VRScene extends React.Component {
                     if(rule.event.obj_uuid === "STARTED" && media){
                         media.onplay = function() {
                             rule.actions.forEach(action => {
-
+                                //Creo l'execution per ogni azione, la gestisco sia per in debugmode che in playmode
+                                //Verifico che la condizione sia rispettata
                                 if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
                                     let actionExecution = actionCallback(action);
                                     if (me.props.debug) {
@@ -261,7 +277,14 @@ export default class VRScene extends React.Component {
         })
     }
 
+    /**
+     * Funzione che Crea lo stato di gioco iniziaale, cicla tutte le scene e tutti gli oggetti all'interno di una scena
+     * @param gameGraph Graffo con tutte le informazioni del gioco, scene, oggetti
+     */
     createGameState(gameGraph){
+        //
+        //Salvo lo stato impostato dall'utente associato a uuid dell'oggetto, e lo sfondo per ogni scenea, questo
+        //Servira quando si effettua un cambio sfondo, si aggiorna dentro questa struttura
         let runState = {};
         Object.values(gameGraph.scenes).forEach(scene => {
             //create the state for the scene
@@ -278,6 +301,10 @@ export default class VRScene extends React.Component {
         return runState;
     }
 
+    /**
+     * Questa funzione si occupa di gestire il cambio bolla, aggiorna lo stato corrente della scena dopo una transizione
+     * @param newActiveScene uuid della nuova scena corrente
+     */
     handleSceneChange(newActiveScene) {
         this.setState({
             scenes: this.props.scenes.toArray(),
@@ -290,10 +317,15 @@ export default class VRScene extends React.Component {
         }
     }
 
+    /**
+     * Funzione che si occupa di gestire camera e cursore dopo il cambio da una scena 2D ad una 3D e viceversa
+     * @param is3Dscene parametro che mi dice la tipologia della scena 2D o 3D
+     */
     cameraChangeMode(is3Dscene){
         let camera = document.getElementById('camera');
         let cursorMouse = document.getElementById('cursorMouse');
         let cursorEnity = document.getElementById('cursor');
+        //Aggiorno le variabili planarScene, pointerLockEnabled all'interno del componente pac-look-controls editato da noi
         if(is3Dscene){
             camera.setAttribute("pac-look-controls", "planarScene: " + !is3Dscene);
             camera.setAttribute("pac-look-controls", "pointerLockEnabled:" + is3Dscene);
@@ -312,11 +344,15 @@ export default class VRScene extends React.Component {
     render() {
 
         let sceneUuid = null;
+        //Verifico se sono in debug mode e prendo la scena corrente di conseguenza
         if(this.props.debug){
             sceneUuid = this.props.currentScene;
         }else{
             sceneUuid = this.state.activeScene.uuid;
         }
+
+        //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
+        //filtro eliminando la scena corrente in modo che non venga caricata due volte
         if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[sceneUuid] !== undefined) {
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>
                 this.state.graph.neighbours[sceneUuid].includes(uuid)
@@ -324,12 +360,16 @@ export default class VRScene extends React.Component {
         }
         else
             this.currentLevel = [];
+        //Richiamo la funzione per la generazione degli assets
         let assets = this.generateAssets(this.props.editor.gameId);
-        let is3dScene = this.props.scenes.get(sceneUuid).type ===Values.THREE_DIM;
-        var embedded = this.props.debug;
-        var vr_mode_ui = this.props.debug ? "enabled : false": false;
+        let is3dScene = this.props.scenes.get(sceneUuid).type ===Values.THREE_DIM; //Variabile per sapere se la scena e' di tipo 2D o 3D
+        let embedded = this.props.debug; //Varibile per sapere se siamo in debug mode
+        let vr_mode_ui = this.props.debug ? "enabled : false": false;
         //<div id="mainscene2" tabIndex="0">
         //</div>
+        //All'interno della render vengono caricati due tipi di cursori, uno per le scene 2D e uno per le scene 3D, quando si passa da una
+        //all'altra si attivano e disattivano a seconda del tipo di scena
+        //Sempre dentro la render viene richiamata la funzione generateBubbles che si occupa di creare tutte le bolle nella scena corrente
         return (
 
                 <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
@@ -352,6 +392,11 @@ export default class VRScene extends React.Component {
         )
     }
 
+    /**
+     * Funzione che si occupa di creare tutti gli assets delle bolle attualmente presenti nella scena, prese da currentLevel generato in precedenza
+     * @param gameId codice gioco, serve per caricare tutti i dati partendo dal gioco piuttosto che dall'editor
+     * @returns {any[]}
+     */
     generateAssets(gameId){
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
@@ -359,12 +404,24 @@ export default class VRScene extends React.Component {
         }).flat();
     }
 
+    /**
+     * Funzione che si occupa di creare le bolla all'interno della scena, le bolla create saranno quelle presenti dentro
+     * currentLevel, verificando se la scena e' quella attiva oppure no.
+     * @returns {*[]}
+     */
     generateBubbles(){
+        //Restituisco il codice React relativo ad ogni bolla da caricare nella scena
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
+
+            //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'
+            //i media non sono tutti presenti nella scena
+            //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
             this.createRuleListeners();
+
+            //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (
                 <Bubble key={"key" + scene.name}
                         scene={scene}
@@ -384,13 +441,10 @@ export default class VRScene extends React.Component {
         });
     }
 
-    //TODO verificare che funzioni ancora la rotazione
     updateAngles() {
-        let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld
+        let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld;
         resonance.default.setListenerFromMatrix(cameraMatrix4)
-
     }
-
 }
 
 

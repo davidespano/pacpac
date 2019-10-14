@@ -1,54 +1,57 @@
 import RuleActionTypes from "../../rules/RuleActionTypes";
 import settings from "../../utils/settings";
-import {Howl} from 'howler';
 import store_utils from '../../data/stores_utils'
 import AudioManager from './AudioManager'
 import Values from '../../rules/Values';
 import './aframe_shader'
 const THREE = require('three');
-const {mediaURL} = settings;
 const soundsHub = require('./soundsHub');
-const AFRAME = require('aframe');
 
 function executeAction(VRScene, rule, action){
     let state = VRScene.state;
     let runState = VRScene.state.runState;
-    let actual_scene = VRScene.state.activeScene.name;
-    let actual_sceneimg = VRScene.state.activeScene.img;
+    let actual_scene_name = VRScene.state.activeScene.name;
+    let actual_scene_img = VRScene.state.activeScene.img;
     let actual_scene_Uuid = VRScene.state.activeScene.uuid;
     let game_graph = VRScene.state.graph;
     let current_object = game_graph['objects'].get(rule.event.obj_uuid);
     let sceneName = action.subj_uuid;
-    //TODO cambiare nome media non è il media
-    let media = action.obj_uuid;
+    let action_obj_uuid = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
-
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
+            /*
+            * Azione che si occupa di gestire la transizione, se la transizione ha un video associato avvia la transizione
+            * avvia la transizione solo dopo aver riprodotto il video
+            */
+            //TODO al momento e' possibile effettuare transizione anche senza un oggetto, decidere se eliminarlo o tenerlo
             let duration_transition = 0;
             let duration = 0;
-            //Se devo cambiare lo sguardo aggiungo 400 ms
+            //Se devo cambiare lo sguardo aggiungo 400 ms per dare il tempo alla camera di girare
             if(current_object) {
                 if(current_object.properties.duration && current_object.type === 'POINT_OF_INTEREST')
                     duration = parseInt(current_object.properties.duration) + 400;
                 else
                     duration = parseInt(current_object.properties.duration);
             }
-
+            //se la transizione ha solo il fade-in e fade-out la direzione resta nothing, altrimenti verrà cambiata con quella scelta dall'utente
             let direction = 'nothing';
             if(current_object && current_object.properties.duration)
                 direction = current_object.properties.direction;
             let objectVideo_transition = 0;
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
+
+            //Se la transizione ha un video associato lo riproduco e salvo la durata,
             if(current_object && current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
-                    console.log('sono un')
                     objectVideo_transition.play();
                     duration_transition = (parseInt(objectVideo_transition.duration) * 1000);
                 }
             }
+
+            //Se la transizione ha un audio associato lo eseguo
             let audioTransition;
             if(current_object){
                 audioTransition = current_object.audio.audio0;
@@ -58,47 +61,56 @@ function executeAction(VRScene, rule, action){
 
 
             setTimeout(function () {
+                //Set di controlli per la cotinuita' dei file audio, musica di sottofondo, effetti audio di sottofondo, audio integrato del video
                 //Cambio musica di sottofondo da una scena ad un'altra
-                if((soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[media].music]   &&
-                  (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + state.graph.scenes[media].music])) ||
-                    (soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[media].music] === undefined)){
+                if((soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music]   &&
+                  (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music] === undefined)){
                     soundsHub['audios_' + VRScene.state.activeScene.music].pause()
                     soundsHub['audios_' + VRScene.state.activeScene.music].currentTime = 0;
                 }
 
                 //Cambio effetti di sottofondo da una scena ad un'altra
-                if((soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + state.graph.scenes[media].sfx]   &&
-                        (soundsHub['audios_' + VRScene.state.activeScene.sfx] !== soundsHub['audios_' + state.graph.scenes[media].sfx])) ||
-                    (soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + state.graph.scenes[media].sfx] === undefined)){
+                if((soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].sfx]   &&
+                        (soundsHub['audios_' + VRScene.state.activeScene.sfx] !== soundsHub['audios_' + state.graph.scenes[action_obj_uuid].sfx])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].sfx] === undefined)){
                     soundsHub['audios_' + VRScene.state.activeScene.sfx].pause()
                     soundsHub['audios_' + VRScene.state.activeScene.sfx].currentTime = 0;
                 }
 
                 //Cambio audio scena
-                if((soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[media].uuid]   &&
-                        (soundsHub['audios_' + VRScene.state.activeScene.uuid] !== soundsHub['audios_' + state.graph.scenes[media].uuid])) ||
-                    (soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[media].uuid] === undefined)){
+                if((soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].uuid]   &&
+                        (soundsHub['audios_' + VRScene.state.activeScene.uuid] !== soundsHub['audios_' + state.graph.scenes[action_obj_uuid].uuid])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].uuid] === undefined)){
                     soundsHub['audios_' + VRScene.state.activeScene.uuid].pause();
                     soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
                 }
+
+                //TODO, questo controllo serve se la transizione non ha oggetto, decidere se eliminarlo
                 if(current_object === undefined)
-                    transition(state.activeScene, state.graph.scenes[media], duration, direction);
+                    transition(state.activeScene, state.graph.scenes[action_obj_uuid], duration, direction);
                 else {
                     if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
                         (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
                     // se le due scene sono dello stesso tipo le gestisco allo stesso modo
-                    if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[media].type === Values.THREE_DIM ||
-                        VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[media].type === Values.TWO_DIM)
-                        transition(state.activeScene, state.graph.scenes[media], duration, direction);
+                    if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[action_obj_uuid].type === Values.THREE_DIM ||
+                        VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[action_obj_uuid].type === Values.TWO_DIM)
+                        transition(state.activeScene, state.graph.scenes[action_obj_uuid], duration, direction);
                     else
-                        transition2D(state.activeScene, state.graph.scenes[media], duration, VRScene)
+                        transition2D(state.activeScene, state.graph.scenes[action_obj_uuid], duration, VRScene)
                 }
 
             },duration_transition);
 
             break;
         case RuleActionTypes.CHANGE_STATE:
+            /*
+            * Azione che si occupa di gestire il cambio di stato dei vari oggetti, vengono richiamate le funzioni
+            * corrispondenti a seconda dell'oggetto coinvolto, per chiavi e luchetti la funzione e' la stessa,
+            * lo switch ha una funzione sua
+            */
             switch (action.obj_uuid){
+                //Azione che cambia stato utilizzando la regola cambia stato
                 case 'ON':
                 case 'OFF':
                     changeStateSwitch(VRScene, runState, current_object, cursor, action);
@@ -112,16 +124,24 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.ON:
+            /*
+            * Azione che si occupe del cambio stato utilizzando la regola 'accendi'
+            */
+
+            //Verifico se lo stato e' spento, se no non faccio nulla
             if(runState[current_object.uuid].state === "OFF"){
                 let duration_switch = 0;
                 let switchVideo = document.getElementById('media_'+current_object.uuid);
 
+                //Controllo se l'interrutto ha un vedio associato, se si calcolo la durata del video, poi disattivo il mouse
                 if(switchVideo != null) {
                     cursor.setAttribute('material', 'visible: false');
                     cursor.setAttribute('raycaster', 'far: 0.1');
                     if(store_utils.getFileType(current_object.img) === 'video') switchVideo.play();
                     duration_switch = (switchVideo.duration * 1000);
                 }
+
+                //Riattivo il mouse e eseguo un cambio di stato e la salvo in runState, e aggiorno lo stato di VRScene
                 setTimeout(function () {
                     cursor.setAttribute('raycaster', 'far: 10000');
                     cursor.setAttribute('material', 'visible: true');
@@ -134,16 +154,22 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.OFF:
+            /*
+            * Azione che si occupe del cambio stato utilizzando la regola 'spegni'
+            */
             if(runState[current_object.uuid].state === "ON"){
                 let duration_switch = 0;
                 let switchVideo = document.getElementById('media_'+current_object.uuid);
 
+                //Controllo se l'interrutto ha un vedio associato, se si calcolo la durata del video, poi disattivo il mouse
                 if(switchVideo != null) {
                     cursor.setAttribute('material', 'visible: false');
                     cursor.setAttribute('raycaster', 'far: 0.1');
                     if(store_utils.getFileType(current_object.img) === 'video') switchVideo.play();
                     duration_switch = (switchVideo.duration * 1000);
                 }
+
+                //Riattivo il mouse e eseguo un cambio di stato e la salvo in runState, e aggiorno lo stato di VRScene
                 setTimeout(function () {
                     cursor.setAttribute('raycaster', 'far: 10000');
                     cursor.setAttribute('material', 'visible: true');
@@ -156,36 +182,44 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
-            console.log(media)
-            let targetSceneVideo = document.getElementById(media);
+            /*
+            * Azione che si occupa di effettuare un cambio sfondo della scena
+            */
+            let targetSceneVideo = document.getElementById(action_obj_uuid);
 
             //let primitive = targetSceneVideo.nodeName === 'VIDEO'?"a-videosphere":"a-sky";
             //let actualSky = document.querySelector('#' + actual_scene);
-            //console.log(primitive)
             //actualSky.setAttribute('primitive', primitive)
+            //TODO questo non ha molto senso
             if(soundsHub["audios_"+ actual_scene_Uuid]){
                 soundsHub["audios_"+ actual_scene_Uuid].pause();
                 let audioVideo = {};
-                audioVideo.file = media;
+                audioVideo.file = action_obj_uuid;
                 audioVideo.loop = soundsHub["audios_"+ actual_scene_Uuid].loop;
                 audioVideo.volume = 80;
                 soundsHub["audios_"+ actual_scene_Uuid] = AudioManager.generateAudio(audioVideo, [0,0,0]);
                 soundsHub["audios_"+ actual_scene_Uuid].play()
             }
+            //Se il nuovo sfondo e' un video lo mando in riproduzione
             if(targetSceneVideo.nodeName === 'VIDEO') {targetSceneVideo.play();}
+            //Segnalo allo shader che deve aggiornarsi e poi aggiorno lo stato di VRScene
             document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
-            runState[sceneName].background = media;
+            runState[sceneName].background = action_obj_uuid;
             VRScene.setState({runState: runState, game_graph: game_graph});
             break;
         case RuleActionTypes.PLAY:
-            console.log(soundsHub["audios_"+ media])
-            //verifico se è un video
-            if(soundsHub["audios_"+ media]){
-                soundsHub["audios_"+ media].loop = false;
-                soundsHub["audios_"+ media].play();
+            /*
+            * Azione che si occupa di riprodurre un video o audio, nel caso sia un video ha la sola funziona di cambiare lo
+            * stato interno della'attributo loop, se si tratta di un audio cambia lo stato di loop e riprodutce un audio
+            * */
+
+            //Controllo se si tratta di un video o un audio
+            if(soundsHub["audios_"+ action_obj_uuid]){
+                soundsHub["audios_"+ action_obj_uuid].loop = false;
+                soundsHub["audios_"+ action_obj_uuid].play();
             } else {
-                if(document.getElementById(actual_sceneimg) !== null){
-                    let actualVideoLoop = document.getElementById(actual_sceneimg);
+                if(document.getElementById(actual_scene_img) !== null){
+                    let actualVideoLoop = document.getElementById(actual_scene_img);
                     if(actualVideoLoop.nodeName === 'VIDEO') {
                         actualVideoLoop.loop = false;
                         //document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true
@@ -195,13 +229,18 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.PLAY_LOOP:
+
+            /*
+            * Azione che si occupa di riprodurre un video o audio, nel caso sia un video ha la sola funziona di cambiare lo
+            * stato interno della'attributo loop, se si tratta di un audio cambia lo stato di loop e riprodutce un audio
+            * */
             //TODO rivedere questi controlli fanno un po' schifo
-            if(soundsHub["audios_"+ media]){
-                soundsHub["audios_"+ media].loop = false;
-                soundsHub["audios_"+ media].play();
+            if(soundsHub["audios_"+ action_obj_uuid]){
+                soundsHub["audios_"+ action_obj_uuid].loop = false;
+                soundsHub["audios_"+ action_obj_uuid].play();
             } else {
-                if(document.getElementById(actual_sceneimg) !== null){
-                    let actualVideoLoop = document.getElementById(actual_sceneimg);
+                if(document.getElementById(actual_scene_img) !== null){
+                    let actualVideoLoop = document.getElementById(actual_scene_img);
                     if(actualVideoLoop.nodeName === 'VIDEO') {
                         actualVideoLoop.loop = true;
                     }
@@ -209,17 +248,29 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.STOP:
-            //TODO stoppare un video forse non ha senso, poi vediamo
-            if(soundsHub["audios_"+ media] && document.querySelector('media_' + media) === null)
-                soundsHub["audios_"+ media].stop();
+            /*
+            * Azione che si occupa di fermare la riproduzione di oggetti audio
+            */
+
+            if(soundsHub["audios_"+ action_obj_uuid] && document.querySelector('media_' + action_obj_uuid) === null)
+                soundsHub["audios_"+ action_obj_uuid].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
+            /*
+            * Azione che si occupa di raccogliere una chiave
+            */
             changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.obj_uuid);
             break;
         case RuleActionTypes.UNLOCK_LOCK:
+            /*
+            * Azione che si occupa di aprire un lucchetto
+            */
             changeStateObject(VRScene, runState, game_graph, 'UNLOCKED', current_object, action.obj_uuid);
             break;
         case RuleActionTypes.CHANGE_VISIBILITY:
+            /*
+            * Azione che si occupa di cambiare la visibilita', intesa come interagibilita' del cursore su un oggetto
+            */
             let obj = document.querySelector('#curv' + action.subj_uuid);
             let mediaObj = document.querySelector('#media_' + action.subj_uuid);
             if(obj)
@@ -228,7 +279,9 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.LOOK_AT:
-            //TODO capire se si può cambiare punto di vista piano
+            /*
+            * Azione che si occupa di girare la camera verso un punto ben preciso impostato dall'utente
+            */
             if(VRScene.state.activeScene.type === '3D'){
                 let delay = game_graph['objects'].get(action.obj_uuid).properties.delay;
                 setTimeout(function () {
@@ -238,8 +291,9 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.DECREASE_STEP:
-            console.log('CIAOOOOOOO sono un contatore, il mio valore decrementato è: ')
-            console.log(runState[action.subj_uuid].state)
+            /*
+            * Azione che si occupa di decrementare  il valore del contattore, di uno step
+            */
             if (runState[action.subj_uuid].state >= 0){
                 runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
                 runState[action.subj_uuid].state -= parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
@@ -248,6 +302,9 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.INCREASE_STEP:
+            /*
+            * Azione che si occupa di incrementare  il valore del contattore, di uno step
+            */
             runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
             runState[action.subj_uuid].state += parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
             console.log('CIAOOOOOOO sono un contatore, il mio valore incrementato è: ')
@@ -255,7 +312,8 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.INCREASE:
-            //TODO manca il valore da assegnare
+            /*
+            * Azione che si occupa di assegnare un valore scelto dall'untente, al contattore*/
             runState[action.subj_uuid].state = parseInt(action.obj_uuid);
             VRScene.setState({runState: runState, graph: game_graph});
             break;

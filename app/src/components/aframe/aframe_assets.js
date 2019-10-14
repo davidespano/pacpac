@@ -6,14 +6,25 @@ import AudioManager from './AudioManager'
 const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
 //TODO trasformarlo in un componente React ... forse ...
+/**
+ * Funzione che si occupa di creare tutti gli assets necessari per la bolla corrente, viene richiamata per ogni bolla
+ * @param scene scene con tutte le informazioni al suo interno
+ * @param srcBackground source relativa allo sfondo della scena
+ * @param runState stato attuale del gioco
+ * @param audios lista degli audio
+ * @param mode modalita' della scena
+ * @param gameId id del gioco
+ * @returns {Array}
+ */
 function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene', gameId = null){
     let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
 
-        let currAssets = [];
+        let currAssets = []; //Variabile che conterra' tutti assets
         let sceneBackground;
         //TODO verificare, se non impostato risulta undefined
+        //Se non è impostato il loop lo imposto a false
         let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
-        //first, push the background media.
+        //first, push the background media. And check if the media is a video or image
         if(stores_utils.getFileType(scene.img) === 'video'){
             sceneBackground = (
                 <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={loop}  preload="auto"
@@ -53,9 +64,8 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
             //Creaizone traccia audio dei singoli oggetti, solo nella modalità gioco
             if(mode === 'scene' && obj.audio){
                 Object.keys(obj.audio).map(k => {
-                    //TODO a volte se esiste l'audio non è presente nella lista degli audio, verificare
                     if(obj.audio[k] !== null  && audios[obj.audio[k]] !== undefined){
-                        let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj)
+                        let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj); //Funzione che converte la posizione da json a coordinate
                         soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], audioPosition)
                     }
                 });
@@ -63,9 +73,11 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
 
             }
 
+            //Genero l'asset dell'oggetto corrente, se esiste lo aggiungo alla lista degli assets
             let v = generateCurrentAsset(obj, runState, id);
             if(v!==null) currAssets.push(v);
 
+            //Se l'oggetto ha una maschera la aggiungo alla lista degli assets
             if(obj.mask !== "" && obj.mask !== undefined&& obj.mask !== null){
                 currAssets.push(
                     <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossOrigin="Anonymous"
@@ -112,6 +124,13 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         return currAssets;
 }
 
+/**
+ * Funziona che genera i tag HTML degli oggetti interattivi
+ * @param obj proprieta' dell'oggetto corrente
+ * @param runState stato corrente del gioco
+ * @param id id gioco
+ * @returns {*}
+ */
 function generateCurrentAsset(obj, runState, id){
     let currentAsset;
     switch (obj.type) {
