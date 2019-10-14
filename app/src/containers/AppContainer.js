@@ -91,7 +91,6 @@ function getState() {
         newAudioNameTyped: Actions.newAudioNameTyped,
         newSceneNameTyped: Actions.newSceneNameTyped,
         rightbarSelection: Actions.rightbarSelection,
-        selectAudioFile: Actions.selectAudioFile,
         selectFile: Actions.selectFile,
         selectMediaToEdit: Actions.selectMediaToEdit,
         selectAudioToEdit: Actions.selectAudioToEdit,

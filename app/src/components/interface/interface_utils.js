@@ -200,7 +200,7 @@ function handleFileUpdate(props){
             scene_utils.setProperty(scene, 'img', props.editor.selectedFile, props);
             break;
         case 'audio-form':
-            let newAudio = props.editor.audioToEdit.set('file', props.editor.selectedAudioFile);
+            let newAudio = props.editor.audioToEdit.set('file', props.editor.selectedFile);
             props.selectAudioToEdit(newAudio);
     }
 }

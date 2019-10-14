@@ -39,7 +39,6 @@ const EditorState = Immutable.Record({
     audioPositioning: false,            //boolean that checks if it's allowed to set audio position in scene (a scene must be selected, and isSpatial has to be set to true)
     audioToEdit: null,                  //when creating an audio, contains a new Audio object; when editing one, contains a copy of the Audio. It's used to store intermediate data while editing
     isItNew: false,                     //true if we are creating a new audio, false otherwise
-    selectedAudioFile: null,            //file currently selected for the Audio object
 
 });
 
