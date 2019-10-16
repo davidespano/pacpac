@@ -1,3 +1,6 @@
+/**
+ * Funzione che si occupa di generare un audio utilizzando Resonance audio
+ */
 import {ResonanceAudio} from "resonance-audio";
 import settings from "../../utils/settings";
 const {mediaURL} = settings;

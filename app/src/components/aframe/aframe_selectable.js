@@ -1,7 +1,8 @@
-//import 'aframe-animation-component';
-import {Howl, Howler} from "howler";
+/**
+ * Componente A-Frame che gestise l'interazione con la geometria degli oggetti, la cattura del clickl e le animazioni del cursor
+ */
+
 import settings from "../../utils/settings";
-import {ResonanceAudio} from "resonance-audio";
 import stores_utils from "../../data/stores_utils";
 
 const {mediaURL} = settings;
@@ -10,14 +11,16 @@ const eventBus = require('./eventBus');
 
 AFRAME.registerComponent('selectable', {
     schema: {
-        object_uuid:{type: 'string'},
-        visible: {type: 'string', default: 'VISIBLE'},
-        object_type: {type: 'string'}
+        object_uuid:{type: 'string'}, //Uuid oggetto
+        visible: {type: 'string', default: 'VISIBLE'}, //Interaggibilita' oggetto
+        object_type: {type: 'string'} //Tipo di oggetto
     },
 
     init: function () {
         let elem = this.el;
 
+        //Se interaggibile aggiungo i listener per le animazioni, in base al tipo saranno diverse, e il listener per il click
+        //che scatenera' l'evento
         if(this.data.visible === 'VISIBLE'){
             if(this.data.object_type === 'TRANSITION'){
                 elem.addEventListener('mouseenter', setMouseEnterTransition);
@@ -33,6 +36,7 @@ AFRAME.registerComponent('selectable', {
     update: function () {
         let elem = this.el;
 
+        //Se in fasi di gioco cambia l'interaggibilita' di un oggetto la aggiorno aggiungendo o rimuovendo i listeners
         if(this.data.visible === 'VISIBLE'){
             if(this.data.object_type === 'TRANSITION'){
                 elem.addEventListener('mouseenter', setMouseEnterTransition);
@@ -61,6 +65,9 @@ AFRAME.registerComponent('selectable', {
     },
 });
 
+/**
+ * Animazioni per l'ingresso e l'uscita del mouse dalla zone interattive degli oggetti
+ */
 function setMouseEnterTransition() {
     let cursor = document.querySelector('#cursor');
     cursor.setAttribute('color', 'green');
@@ -91,10 +98,18 @@ function setMouseLeave() {
     }
 
 }
+
+/**
+ * se il giocatore clicca in una delle geometrie viene lanciato l'evento legato a quella geometria
+ * @param event
+ */
 function setClick(event) {
     event.detail.cursorEl.components.raycaster.intersectedEls.forEach(obj => eventBus.emit('click-'+obj.object_uuid))
 }
 
+/**
+ * Funzione che premette ai video di essere riprodotti da mac, in origine non potevano essere avviati da soli
+ */
 AFRAME.registerComponent('play_video', {
 
     schema:{

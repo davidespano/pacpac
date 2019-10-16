@@ -1,3 +1,13 @@
+/**
+ * Bubble e' un componente React che ha la funzione di creare una bolla in base ai parametri che VRScene gli passa,
+ * gestisce le opzioni di visualizzazione di una bolla se essa e' un bolla corrente o una vicina, gestisce gli oggetti
+ * in essa contenuta, tenendo sempre in considerazione se e' attiva o no.
+ * Inoltre si occupa di gestire lo shader nel momento in cui gli oggetti hanno un media associato, quindi li fonde con
+ * il media di sfondo.
+ * Questo componente viene utlizziato sia da VRScene che sa GeometryScene, che in nella modalita' dubug
+ * Costruisce la bolla sia che sia di tipo 3D o 2D
+ */
+
 import React,{Component} from "react";
 import {Entity} from 'aframe-react';
 import {Curved, CurvedGeometry} from './aframe_curved';
@@ -25,12 +35,11 @@ export default class Bubble extends Component
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
         let cursor = document.querySelector('#cursor');
 
-        // Riattivo il cursore, e resetto evento animation complete
+        // Riattivo il cursore, e resetto evento animation complete, se non lo faccio l'evento animationComplete non verra' piu' lanciato
         this.nv.addEventListener("animationcomplete", function animationListener(evt){
             if(evt.detail.name === "animation__appear" /*&& is3Dscene*/)
             {
                 //Riattivo la lunghezza del raycast
-                let cursor = document.querySelector("#cursor");
                 cursor.setAttribute('raycaster', 'far: 10000');
                 cursor.setAttribute('material', 'visible: true');
                 cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
@@ -44,7 +53,11 @@ export default class Bubble extends Component
         if(!is3Dscene && this.props.isActive) {
             //cursor.setAttribute('material', 'visible: false');
         }
+
+        //Chiamo la funzione setShader che si occupera' della creazione della shader, nel caso in sui sia neccessario
         this.setShader();
+
+        //dobbiamo eliminare gli ultimi millisecondi dal video per evitare frame neri
         if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame();
     }
 
@@ -53,6 +66,8 @@ export default class Bubble extends Component
     }
 
     componentDidUpdate(){
+
+        //Riavolgo i video delle bolle adiacenti, se sono gia' stati avviati in precedenza non partono in automatico dall'inizio
         if(!this.props.isActive) {
             Object.values(this.props.scene.objects).flat().forEach(obj => {
                 if(obj.media) {
@@ -76,6 +91,9 @@ export default class Bubble extends Component
         this.setVideoFrame();
     }
 
+    /**
+     * Funzione che si occupa di eliminare gli ultimi millisecondi dal video decrementando il currentTime
+     */
     setVideoFrame(){
         if(!this.props.isActive) return;
         this.props.scene.objects.switches.forEach(s => {
@@ -96,20 +114,20 @@ export default class Bubble extends Component
     render() {
         //generate the interactive areas
         let scene = this.props.scene;
-        let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img;
+        let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img; //Prendo lo sfondo o dal runStato o o dalla scena corrente
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
-        let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky";
-        //let primitive = "a-sky";
+        let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky"; //Controllo se il media e' un video nel caso utilizzo 'a-videosphere' di A-Frame
         //let primitive = this.props.assetsDimention.type === 'video'?"a-videosphere":"a-sky";
-        let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6";
+        let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6"; //Se la scena e' di tipo 3D metto la bolla al centro, altrimento posiziono il piano in un punto fisso
         //let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9";
         let positionPlane;
         let sceneRender;
 
+        //Genero le zone interattive utilizzando i componenti Curved in base al tipo di scena che devo renderizzare
         const curves = Object.values(scene.objects).flat().map(curve => {
             let color = this.props.curvedToEdit===curve.uuid?'red':'white';
             if(this.props.editMode){
-                let pointOfinterest = curve.type === 'POINT_OF_INTEREST'
+                let pointOfinterest = curve.type === 'POINT_OF_INTEREST';
                 return(
                     <CurvedGeometry key={"keyC"+ curve.uuid}
                                     position={positionCurved}
@@ -171,6 +189,8 @@ export default class Bubble extends Component
                 }
             }
         }
+
+        //Se la scena e' quella attiva imposto i parametri neccessari in modo che sia visibile, se e' una bolla vicina larendo invisibile
         if (this.props.isActive) {
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
@@ -186,11 +206,10 @@ export default class Bubble extends Component
                 if(audioVideo !== {} && soundsHub["audios_"+ this.props.scene.uuid])
                     soundsHub["audios_"+ this.props.scene.uuid].play();
             }
-        }
-
-        else material += "opacity: 0; visible: false";
+        } else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
-        //primitive = "a-sky";
+
+        //Genero la bolla in base al tio 3D o 2D
         if(is3Dscene){
 
             sceneRender = (
@@ -247,27 +266,33 @@ export default class Bubble extends Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-            //TODO [debug] add to origin master
+
+            //Verifico se lo shader attuale e' multi-video (quello creato da noi), e se non ha bisogno di essere aggiornato, riproduco il video di sfondo, se e' un video
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
                 return;
             }
+
+            //Imposto la variabile per l'aggiornamento a false
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
 
+            //Creao il la texture in base al tipo di media dello sfondo
             if(stores_utils.getFileType(scene.img) === 'video'){
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));
             } else {
                 aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + background);
-
-
             }
             aux.minFilter = THREE.NearestFilter;
+            //Aggiungo alla lista di media lo sfondo, questa lista sara' utilizzata per fondoere i media in essa contenuiti
             video.push(aux);
 
+            //Scorro tutti gli oggetti, se hanno un media associato lo aggiungo alla lista video
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
                 let media;
+
+                //Controllo se l'oggetto corrente e' uno switch, in quel caso quale media devo prendere se da ON a OFF o viceversa
                 if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON"){
                     if(obj.media.media1)
                         media = obj.media.media1;
@@ -277,20 +302,27 @@ export default class Bubble extends Component
                         media = obj.media.media0;
                 }
 
+                //Se l'oggetto non ha un media passo al prossimo
                 if (asset === null) return;
+
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
                 } else {
                     aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
                 }
+
+                //Aggiungo il media alla lista video
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
+
+                //Carico la maschera associata al media dell'oggetto
                 aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
                 dict.push(obj.uuid.replace(/-/g,'_'));
             });
 
+            //Controllo se ci sono maschere o no, se non ci sono maschere resetto lo shader, perche' non neccessario
             if (masks.length === 0) {
                 this.resetShader(sky);
                 return; //shader not necessary
@@ -312,6 +344,8 @@ export default class Bubble extends Component
 
             let i;
             let declarations = "";
+
+            //Per ogni oggetto genero la sctringa che sara' utilizzata dall shader per fondere i media con le maschere
             for (i = 0; i < masks.length; i++) {
                 //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
                 skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
@@ -320,6 +354,7 @@ export default class Bubble extends Component
                            uniform sampler2D video${dict[i]};    uniform sampler2D mask${dict[i + 1]};`;
 
             }
+
             //the last video is not handled by the previous loop
             skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
             declarations += `   uniform sampler2D video${dict[i]};`;
@@ -330,6 +365,7 @@ export default class Bubble extends Component
                 mixFunction = `mix(${mixFunction},texture2D(video${dict[i]}, vUv),texture2D(mask${dict[i]}, vUv).y)`
             }
             mixFunction = `vec4(${mixFunction});`;
+
             //now set the fragment shader and other small things
             let fragShader =
                 `
@@ -356,6 +392,10 @@ export default class Bubble extends Component
         }, 50);
     }
 
+    /**
+     * Funzione che si occupa di impostare lo shader a quello flat, che è lo shader base
+     * @param sky
+     */
     resetShader(sky){
 
         //TODO [debug] add to origin master

@@ -88,6 +88,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
             }
         });
 
+        //Scorro tutte le regole e carico i media coinvolti nelle regole, come per esempio un cambio sfondo
         scene.rules.forEach( rule => {
             rule.actions.forEach(action => {
                 if(action.action === 'CHANGE_BACKGROUND'){
@@ -132,6 +133,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
  * @returns {*}
  */
 function generateCurrentAsset(obj, runState, id){
+    //TODO e' possibile che la creazione degli assets posso essere semplificata con una funzione, in alcuni casi il codice e' lo stesso
     let currentAsset;
     switch (obj.type) {
         case InteractiveObjectsTypes.TRANSITION:
@@ -150,12 +152,14 @@ function generateCurrentAsset(obj, runState, id){
             else return null;
         case InteractiveObjectsTypes.SWITCH:
             let i;
+            //Aseconda del momento dell'esecuzione, runstate potrebbe essere non popolato
             if(runState.length === 0){
                 i = (obj.properties.state !== "OFF")?0:1;
             } else {
                 i = (runState[obj.uuid].state !== "OFF")?0:1;
             }
 
+            //I media hanno come identificatore   media0 o media1, a seconda che sia ON o OFF, il controllo precedente mi dice quale devo caricare
             if(obj.media["media"+i] !== null){
                 if(stores_utils.getFileType(obj.media.media0) === 'video'){
                     currentAsset = (
@@ -204,6 +208,7 @@ function generateCurrentAsset(obj, runState, id){
 
 //Calculation audio position from object
 function calculateAudioPosition (audio, obj){
+    //Separo la stringa contenente le coordinate del file
     let vertices = obj.vertices.split(/[ ,]/).map(function(item) {
         return parseFloat(item, 10);
     });
