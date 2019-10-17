@@ -18,6 +18,7 @@ function executeAction(VRScene, rule, action){
     let sceneName = action.subj_uuid;
     let action_obj_uuid = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
+
     switch (action.action) {
         case RuleActionTypes.TRANSITION:
             /*
@@ -26,7 +27,9 @@ function executeAction(VRScene, rule, action){
             */
             //TODO al momento e' possibile effettuare transizione anche senza un oggetto, decidere se eliminarlo o tenerlo
             let duration_transition = 0;
-            let duration = 0;
+            let duration = current_object.properties.duration ? parseInt(current_object.properties.duration) : 0;
+            let direction = current_object.properties.direction ? current_object.properties.direction : 'nothing'
+            //let duration = 0;
             //Se devo cambiare lo sguardo aggiungo 400 ms per dare il tempo alla camera di girare
             if(current_object) {
                 if(current_object.properties.duration && current_object.type === 'POINT_OF_INTEREST')
@@ -35,7 +38,7 @@ function executeAction(VRScene, rule, action){
                     duration = parseInt(current_object.properties.duration);
             }
             //se la transizione ha solo il fade-in e fade-out la direzione resta nothing, altrimenti verrà cambiata con quella scelta dall'utente
-            let direction = 'nothing';
+            //let direction = 'nothing';
             if(current_object && current_object.properties.duration)
                 direction = current_object.properties.direction;
             let objectVideo_transition = 0;
@@ -43,7 +46,8 @@ function executeAction(VRScene, rule, action){
             cursor.setAttribute('raycaster', 'far: 0.1');
 
             //Se la transizione ha un video associato lo riproduco e salvo la durata,
-            if(current_object && current_object.type === 'TRANSITION'){
+            //if(current_object && current_object.type === 'TRANSITION'){
+            if(current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
@@ -52,13 +56,15 @@ function executeAction(VRScene, rule, action){
             }
 
             //Se la transizione ha un audio associato lo eseguo
-            let audioTransition;
+            let audioTransition = current_object.audio.audio0;
+            if(soundsHub['audio0_' + audioTransition])
+                soundsHub['audio0_' + audioTransition].play();
+            /*let audioTransition;
             if(current_object){
                 audioTransition = current_object.audio.audio0;
                 if(soundsHub['audio0_' + audioTransition])
                     soundsHub['audio0_' + audioTransition].play();
-            }
-
+            }*/
 
             setTimeout(function () {
                 //Set di controlli per la cotinuita' dei file audio, musica di sottofondo, effetti audio di sottofondo, audio integrato del video
@@ -87,18 +93,14 @@ function executeAction(VRScene, rule, action){
                 }
 
                 //TODO, questo controllo serve se la transizione non ha oggetto, decidere se eliminarlo
-                if(current_object === undefined)
+                if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
+                    (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
+                // se le due scene sono dello stesso tipo le gestisco allo stesso modo
+                if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[action_obj_uuid ].type === Values.THREE_DIM ||
+                    VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[action_obj_uuid ].type === Values.TWO_DIM)
                     transition(state.activeScene, state.graph.scenes[action_obj_uuid], duration, direction);
-                else {
-                    if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
-                        (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
-                    // se le due scene sono dello stesso tipo le gestisco allo stesso modo
-                    if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[action_obj_uuid].type === Values.THREE_DIM ||
-                        VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[action_obj_uuid].type === Values.TWO_DIM)
-                        transition(state.activeScene, state.graph.scenes[action_obj_uuid], duration, direction);
-                    else
-                        transition2D(state.activeScene, state.graph.scenes[action_obj_uuid], duration, VRScene)
-                }
+                else
+                    transition2D(state.activeScene, state.graph.scenes[action_obj_uuid ], duration, VRScene)
 
             },duration_transition);
 
@@ -307,8 +309,6 @@ function executeAction(VRScene, rule, action){
             */
             runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
             runState[action.subj_uuid].state += parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
-            console.log('CIAOOOOOOO sono un contatore, il mio valore incrementato è: ')
-            console.log(runState[action.subj_uuid].state)
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.INCREASE:
@@ -410,7 +410,7 @@ function transition(actualScene, targetScene, duration, direction){
         targetSceneVideo.currentTime = 0;
         targetSceneVideo.play();
         } }
-        , parseInt(duration)
+        , parseInt(duration) + 100
     );
 
     //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
