@@ -128,14 +128,17 @@ export default class VRScene extends React.Component {
         let scene = null;
         if(!this.props.debug){
             // scene init for playing the game
+            //[Vittoria] cerco la scena
             scene = gameGraph['scenes'][this.state.activeScene.uuid];
+            //[Vittoria]se per caso ho una scena di Home prendo quella
             let home = await SceneAPI.getHome(this.props.editor.gameId);
             if(home !== ''){
+                //[Vittoria]se non ho una scena di Home uso la scena presa su
                 scene = this.props.scenes.get(home);
             }
         }else{
             // scene init for debug purposes
-            scene = gameGraph['scenes'][this.props.currentScene];
+            scene = gameGraph['scenes'][this.props.currentScene]; //[Vittoria]prendo la scena su cui ho cliccato
             EditorState.debugRunState = runState;
         }
 
@@ -321,6 +324,8 @@ export default class VRScene extends React.Component {
      * Funzione che si occupa di gestire camera e cursore dopo il cambio da una scena 2D ad una 3D e viceversa
      * @param is3Dscene parametro che mi dice la tipologia della scena 2D o 3D
      */
+    //[Vittoria] nella scena 2D la camera deve rimanere fissa, nelle scene 3D si deve muovere, nel 3D il raycaster è legato al cursore,
+    // nel 2D alla "manina"
     cameraChangeMode(is3Dscene){
         let camera = document.getElementById('camera');
         let cursorMouse = document.getElementById('cursorMouse');
@@ -353,8 +358,8 @@ export default class VRScene extends React.Component {
 
         //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
-        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[sceneUuid] !== undefined) {
-            this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>
+        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
+            this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
                 this.state.graph.neighbours[sceneUuid].includes(uuid)
                 || uuid === sceneUuid);
         }
@@ -371,7 +376,7 @@ export default class VRScene extends React.Component {
         //all'altra si attivano e disattivano a seconda del tipo di scena
         //Sempre dentro la render viene richiamata la funzione generateBubbles che si occupa di creare tutte le bolle nella scena corrente
         return (
-
+                //[Vittoria] <Scene, <a-assets sono un componenti e tag di React A-frame
                 <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
                     <a-assets>
                         {assets}
@@ -398,6 +403,7 @@ export default class VRScene extends React.Component {
      * @returns {any[]}
      */
     generateAssets(gameId){
+        //[Vittoria] per ogni scena del current level richiama generateAssets
         return this.currentLevel.map(sceneName => {
             return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
                 this.state.runState[sceneName].background, this.state.runState, this.state.audios, 'scene', gameId)

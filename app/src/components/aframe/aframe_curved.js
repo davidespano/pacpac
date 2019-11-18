@@ -3,11 +3,15 @@
  * gestisce inoltre i tipi di scena 2D e 3D, e la visualizzazione nel caso di modalita' EditGeometry e DubugMode
  */
 
+//[Vittoria] ogni Bubble ha molte Curved e le curved sono i componenti su cui si può interagire
+//Ci sono curved e curved geometry, nella Curved abbiamo una componente selected che, quando il raycast si incrocia con
+// la geometria dell'oggetto se ne accorge e lancia un oggetto onClick
 import 'aframe';
 import React,{Component} from 'react';
 import {Entity} from 'aframe-react';
 import './aframe_selectable'
 
+//[Vittoria] le props di Curved le lancia Bubble
 class Curved extends Component
 {
     constructor(props){
@@ -15,12 +19,12 @@ class Curved extends Component
     }
 
     render(){
-        let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 "; //Se e' una scena 3D devo invertira uno degli assi in modo che si veda dall'interno
+        let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 "; //Se e' una scena 3D devo invertire uno degli assi in modo che si veda dall'interno
         let vertices = this.props.vertices;
 
         //conversione coordinate relative per la scena 2D
         if(!this.props.is3Dscene && this.props.vertices){
-            vertices = convertRelativeCoordinates(this.props.vertices, this.props.assetsDimention)
+            vertices = convertRelativeCoordinates(this.props.vertices, this.props.assetsDimention) //[Vittoria] ricalcola sulla base della canvas
         }
 
         //gestico la primitiva della geometria a seconda che sia una geometria o un punto )POINT_OF_INTEREST
@@ -37,12 +41,13 @@ class Curved extends Component
         let material = this.props.onDebugMode ? "opacity:0.3;visible:true;side:double" : "opacity:0; visible:false; side:double";
 
         return(
+            //[Vittoria] Entity di a-frame implementato con React
             <Entity material={material}
                     geometry={geometry}
                     id={"curv" + this.props.object_uuid}
                     selectable={'object_uuid:' + this.props.object_uuid + '; visible: ' + this.props.visible + '; object_type: ' + this.props.type}
                     position={position}
-                    scale={scale}/>
+                    scale={scale}/> //[Vittoria] quello che nella scena 3D inverte gli assi
         );
     }
 

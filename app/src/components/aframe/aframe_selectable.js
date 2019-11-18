@@ -15,6 +15,8 @@ AFRAME.registerComponent('selectable', {
         visible: {type: 'string', default: 'VISIBLE'}, //Interaggibilita' oggetto
         object_type: {type: 'string'} //Tipo di oggetto
     },
+//TODO 1 Vittoria: trovare un modo (anche passando un null a selectable) che una volta che siamo lì ci faccia capire che siamo in editMode
+// disabilitare selectable in editMode: nello schema si può aggiungere un attributo per l'editMode
 
     init: function () {
         let elem = this.el;
@@ -35,7 +37,7 @@ AFRAME.registerComponent('selectable', {
 
     update: function () {
         let elem = this.el;
-
+// TODO VITTORIA Se è in edit mode non fare tutto questo, in questo modo basterebbe un curved
         //Se in fasi di gioco cambia l'interaggibilita' di un oggetto la aggiorno aggiungendo o rimuovendo i listeners
         if(this.data.visible === 'VISIBLE'){
             if(this.data.object_type === 'TRANSITION'){
