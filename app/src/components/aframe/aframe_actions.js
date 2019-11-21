@@ -27,8 +27,8 @@ function executeAction(VRScene, rule, action){
             */
             //TODO al momento e' possibile effettuare transizione anche senza un oggetto, decidere se eliminarlo o tenerlo
             let duration_transition = 0;
-            let duration = current_object.properties.duration ? parseInt(current_object.properties.duration) : 0;
-            let direction = current_object.properties.direction ? current_object.properties.direction : 'nothing'
+            let duration = (current_object && current_object.properties.duration) ? parseInt(current_object.properties.duration) : 0;
+            let direction = (current_object && current_object.properties.direction) ? current_object.properties.direction : 'nothing'
             //let duration = 0;
             //Se devo cambiare lo sguardo aggiungo 400 ms per dare il tempo alla camera di girare
             if(current_object) {
@@ -47,7 +47,7 @@ function executeAction(VRScene, rule, action){
 
             //Se la transizione ha un video associato lo riproduco e salvo la durata,
             //if(current_object && current_object.type === 'TRANSITION'){
-            if(current_object.type === 'TRANSITION'){
+            if(current_object && current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
@@ -56,15 +56,15 @@ function executeAction(VRScene, rule, action){
             }
 
             //Se la transizione ha un audio associato lo eseguo
-            let audioTransition = current_object.audio.audio0;
+            /*let audioTransition = current_object.audio.audio0;
             if(soundsHub['audio0_' + audioTransition])
-                soundsHub['audio0_' + audioTransition].play();
-            /*let audioTransition;
+                soundsHub['audio0_' + audioTransition].play();*/
+            let audioTransition;
             if(current_object){
                 audioTransition = current_object.audio.audio0;
                 if(soundsHub['audio0_' + audioTransition])
                     soundsHub['audio0_' + audioTransition].play();
-            }*/
+            }
 
             setTimeout(function () {
                 //Set di controlli per la cotinuita' dei file audio, musica di sottofondo, effetti audio di sottofondo, audio integrato del video

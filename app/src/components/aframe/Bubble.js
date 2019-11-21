@@ -222,9 +222,10 @@ export default class Bubble extends Component
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
 
-            let Width = this.props.assetsDimention.width / 100;
-            let Height = this.props.assetsDimention.height / 100;
-            let ratio = Width/Height;
+            let Width = this.props.assetsDimention.width ;
+            let Height = this.props.assetsDimention.height ;
+            let ratio;
+            /*let ratio = Width/Height;
             let ratio2 = document.documentElement.clientWidth / document.documentElement.clientHeight;
             let canvasWidth ;
             let canvasHeight;
@@ -237,7 +238,44 @@ export default class Bubble extends Component
                 canvasHeight = document.documentElement.clientHeight / 100;
                 canvasWidth = canvasHeight * ratio;
 
+            }*/
+
+            let canvasWidth ;
+            let canvasHeight;
+
+            // numeri stabiliti empiricamente per la distanza e posizione corrente per la camera
+            let maxH = 10;
+            let maxW = 10;
+
+
+            if(Width > Height){
+                if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+                    canvasHeight = maxH;
+                    canvasWidth = (maxH / Height) * Width;
+                }else{
+                    canvasWidth = maxW;
+                    canvasHeight = (maxW / Width) * Height;
+                }
+
+
+            }else{
+                if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+                    canvasHeight = maxH;
+                    canvasWidth = (maxH / Height) * Width;
+                }else{
+                    canvasWidth = maxW;
+                    canvasHeight = (maxW / Width) * Height;
+                }
+
             }
+
+
+
+
+
+            console.log("Asset: " + this.props.assetsDimention.width + " " + this.props.assetsDimention.height);
+            console.log("Dimension:" + canvasWidth + " " + canvasHeight);
+
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
@@ -298,7 +336,7 @@ export default class Bubble extends Component
                         media = obj.media.media1;
                 }
                 else{
-                    if(obj.media.media0)
+                    if(obj.media && obj.media.media0)
                         media = obj.media.media0;
                 }
 
