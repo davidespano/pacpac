@@ -111,7 +111,7 @@ export default class VRScene extends React.Component {
      * @returns {Promise<void>}
      */
     async loadEverything() {
-
+        //[Vittoria] la setState aggiorna tutto lo stato del gioco, react li fa solo quando c'è un cambiamento di stato
         this.setState({
             scenes: this.props.scenes.toArray(),
         });
@@ -186,7 +186,8 @@ export default class VRScene extends React.Component {
                 return closure;
             };
             switch (rule.event.action){
-
+                // [Vittoria] qua sto aggiungendo un evento click con il suo uuid dell'oggetto,
+                //se volessi creare un evento del counter chiamerei il uuid del contatore
                 case 'CLICK':
                     rule.actions.forEach(action => {
                         if(!eventBus._events['click-' + rule.event.obj_uuid]){
@@ -366,6 +367,7 @@ export default class VRScene extends React.Component {
         else
             this.currentLevel = [];
         //Richiamo la funzione per la generazione degli assets
+        //[Vittoria] gli assets vengono caricati non tutti insieme all'inizio ma quello della scena corrente e dei vicini
         let assets = this.generateAssets(this.props.editor.gameId);
         let is3dScene = this.props.scenes.get(sceneUuid).type ===Values.THREE_DIM; //Variabile per sapere se la scena e' di tipo 2D o 3D
         let embedded = this.props.debug; //Varibile per sapere se siamo in debug mode

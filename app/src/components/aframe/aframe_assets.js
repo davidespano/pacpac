@@ -40,6 +40,9 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
         let objAssetMedia;
 
         //second, push the media of the interactive objs
+        //[Vittoria] K è media[0], media[1]...
+         //Quando ho uno switch ho due media: uno per lo spento (es. media[0]) e uno per l'acceso (es. media[1]) e quello che
+        // cambia è che media prende media[0] e media[1]
         Object.values(scene.objects).flat().forEach(obj => {
             if(obj.media){
                 Object.keys(obj.media).map(k => {
@@ -70,10 +73,9 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                     }
                 });
 
-
             }
 
-            //Genero l'asset dell'oggetto corrente, se esiste lo aggiungo alla lista degli assets
+            //Genero l'asset dell'oggetto corrente in base allo stato del gioco (runState), se esiste lo aggiungo alla lista degli assets
             let v = generateCurrentAsset(obj, runState, id);
             if(v!==null) currAssets.push(v);
 
@@ -105,21 +107,23 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
                         />)
                     }
                 }
-                if(action.action === 'PLAY_LOOP' || action.action === 'PLAY_LOOP'){
+               /* Non serve
+               if(action.action === 'PLAY_LOOP' || action.action === 'PLAY_LOOP'){
                     console.log('ciao sono un adio un po sfortunato')
-                }
+                }*/
             })
 
         });
 
-        //Creaizone traccia audio globali
+        //Creazione traccia audio globali
+        //[Vittoria] Tutti gli audio sono dentro soundsHub, le informazioni sono dentro l'oggetto Audio e qua viene fatta questa associazione
         if(mode === 'scene') {
             scene.audios.forEach(audio => {
                 soundsHub["audios_" + audio.uuid] = AudioManager.generateAudio(audio)
             });
         }
         //third, push the media present in the actions
-        //TODO do it! maybe not necessary
+        //TODO Controllare se funziona anche senza
         scene.rules.forEach(()=>{});
         //return the assets
         return currAssets;
@@ -132,6 +136,7 @@ function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scen
  * @param id id gioco
  * @returns {*}
  */
+//[Vittoria] a seconda dell'oggetto carica il media in modo diverso
 function generateCurrentAsset(obj, runState, id){
     //TODO e' possibile che la creazione degli assets posso essere semplificata con una funzione, in alcuni casi il codice e' lo stesso
     let currentAsset;
@@ -152,7 +157,7 @@ function generateCurrentAsset(obj, runState, id){
             else return null;
         case InteractiveObjectsTypes.SWITCH:
             let i;
-            //Aseconda del momento dell'esecuzione, runstate potrebbe essere non popolato
+            //A seconda del momento dell'esecuzione, runstate potrebbe essere non popolato
             if(runState.length === 0){
                 i = (obj.properties.state !== "OFF")?0:1;
             } else {

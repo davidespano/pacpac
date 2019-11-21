@@ -3,7 +3,7 @@
  * si e' reso neccessario creare una variabile globale
  * @type {internal}
  */
-
+// [Vittoria] è una lista di EventEmitter, ogni volta che c'è un evento viene aggiunto un elemento qui dentro
 const EventEmitter = require('events');
 const emitter = new EventEmitter();
 

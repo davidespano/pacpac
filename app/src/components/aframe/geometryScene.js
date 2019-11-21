@@ -26,7 +26,7 @@ import Values from "../../rules/Values";
  * questo viene fatto solo per la scene 2D, per le scene 3D non serve
  * @param props
  */
-//TODO provare ad calcolare le coordinate relative usato la dimensione dell'asset invece che della canvas
+
 export function givePoints(props) {
     let cursor = document.querySelector('a-cursor');
     let puntisalvati = cursor.components.pointsaver.points;
@@ -97,7 +97,7 @@ export default class GeometryScene extends React.Component{
     }
 
     /**
-     * Questa funzione si occupa di aggiornare la scena una volta che l'utente ha confermatom quindi premuto il tasto C
+     * Questa funzione si occupa di aggiornare la scena una volta che l'utente ha confermato quindi premuto il tasto C
      * aggiorna sia la scena che le proprieta' dell'oggetto
      */
     handleSceneChange()
@@ -106,7 +106,7 @@ export default class GeometryScene extends React.Component{
         let lengthLine = a_point.length;
         let scene;
         //TODO migliore questo controllo, ci sono casi in cui non funziona, capire come passare un parametro, cosi non serve il controllo
-
+        // se è possibile usare solo a-sky o videosphere ridurre questo controllo
         let scale;
         if(document.querySelector('a-sky')){
             scene = document.querySelector('a-sky');
@@ -132,6 +132,7 @@ export default class GeometryScene extends React.Component{
         }
 
         //SetState in order to update the scene
+        //[Vittoria] se sto modificando un audio e questo non è legato alla scena corrente, prendi l'altra scena
         let sceneState;
         if(this.props.editor.audioPositioning){
             sceneState = this.props.scenes.get(this.props.editor.audioToEdit.scene);
@@ -145,7 +146,7 @@ export default class GeometryScene extends React.Component{
     }
 
     /**
-     * Funzione che si occupa di aggiornare la scena dopo ogni inserimento dell'utente
+     * Funzione che si occupa di aggiornare la scena dopo ogni inserimento dei punti della geometria
      */
     handleFeedbackChange() {
         if(document.querySelector('a-cursor').components.pointsaver != null) {
@@ -237,6 +238,7 @@ export default class GeometryScene extends React.Component{
                 if(pointsaver != null && pointsaver.points.length !== 0) {
                     let cursor = document.querySelector('#cursor');
 
+                    //[Vittoria] prende i punti, trova la geometria e la salva nelle proprietà dell'oggetto
                     givePoints(this.props); //Aggiorno i punti dell'oggetto
                     this.handleSceneChange(); //Aggiorno la scena
                     //Aggiorno le proprieta' del cursor
@@ -251,12 +253,13 @@ export default class GeometryScene extends React.Component{
                         a_point = a_point.map(punto =>
                             punto.toArray().join(" ")
                         );
+                        // TODO [Vittoria] qua cerco ma posso tramite quello fatto prima assegnare a vertices a_point.join e verificare se funziona
                         this.getObjectsFromUuid(this.props.currentObject, a_point.join());
                         points.forEach(point => {
                             scene.removeChild(point);
                         });
                     } else {
-                        //Se e' solo un punto lo cerco e lo elimino
+                        //Se e' solo un punto lo cerco e lo disegno
                         let lastChild = scene.querySelector('#point0');
                         lastChild.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
                         lastChild.setAttribute('material', 'color: red; shader: flat');
@@ -267,7 +270,8 @@ export default class GeometryScene extends React.Component{
                     this.handleSceneChange();
                 }
             }
-
+            //[Vittoria] iniziamo a disegnare i punti, ripremendo E una volta che hai già disegnato, rimuove tutto quelo che è già stato
+            // disegnato per rigarlo
             if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
                 let lines = scene.querySelectorAll(".line");
@@ -300,7 +304,7 @@ export default class GeometryScene extends React.Component{
                         document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.audioToEdit.uuid));
                 }
                 cursor.components.pointsaver.points = [];
-                cursor.addEventListener('click', this.handleFeedbackChange);
+                cursor.addEventListener('click', this.handleFeedbackChange);   //[Vittoria] gestisce l'inserimento dei punti e aggiorna la scena
             }
 
             //Tasto U rimuovo l'ultimo punto inserito se ho sbagliato
@@ -326,7 +330,7 @@ export default class GeometryScene extends React.Component{
 
 
             }
-
+            //[Vittoria] nasconde e mostra il menù
             if(keyName === 'h' || keyName === 'H') {
                 if(document.getElementById("keyMap").style.display !== 'none')
                     document.getElementById("keyMap").style.display = 'none';
@@ -342,8 +346,9 @@ export default class GeometryScene extends React.Component{
      * @returns {Promise<void>}
      */
     async createScene(){
+        // TODO [Vittoria] aggiungere un parametro alla setState per salvare objects, in particolare scenes objects
         let scene = {};
-        await SceneAPI.getAllDetailedScenes(scene);
+        await SceneAPI.getAllDetailedScenes(scene); //[Vittoria] si prende tutti i dati della scena
 
         let audioToEdit = this.props.editor.audioPositioning ? this.props.editor.audioToEdit : null;
         let currentScene;
@@ -374,7 +379,7 @@ export default class GeometryScene extends React.Component{
         let isPoint = false;
         let currenteObjectUuid;
 
-        //Se devo creare una geometria classica prendo l'oggetto indicato da currentObject altrimento da audioPositioning
+        //Se devo creare una geometria classica prendo l'oggetto indicato da currentObject altrimenti da audioPositioning
         if(isCurved){
             currenteObjectUuid = this.props.currentObject;
         } else {
@@ -390,6 +395,7 @@ export default class GeometryScene extends React.Component{
             for(let key in objects){
                 if(objects.hasOwnProperty(key)){
                     objects[key].forEach((uuid) => {
+                        //[Vittoria] carico dentro curvedImages i vertici delle geometrie da caricare
                         curvedImages.push(this.props.interactiveObjects.get(uuid).get('vertices'));
                     })
                 }
@@ -476,6 +482,7 @@ export default class GeometryScene extends React.Component{
                 let audio = document.createElement('a-entity');
 
                 //TODO forse si puo' semplificare alcuni campi sono uguali
+                //[Vittoria] se l'audio corrente è rosso, altrimenti è grigio
                 //Inserisco i punti, se e' quello che devo modificare lo colore di rosso
                 if(this.props.editor.audioToEdit.uuid !== a.uuid) {
                     audio.setAttribute('id', 'audio' + a.uuid);
@@ -503,7 +510,7 @@ export default class GeometryScene extends React.Component{
      * @param vertices
      */
     getObjectsFromUuid(uuid, vertices){
-        let currentScene = this.state.completeScene;
+        let currentScene = this.state.completeScene; //[Vittoria] scena corrente completa di tutto, alla fine richiamo quella
 
         for (let [key, value] of Object.entries(currentScene.objects)) {
             value.forEach(function(o, index) {
