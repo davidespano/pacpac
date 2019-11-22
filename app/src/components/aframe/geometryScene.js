@@ -19,6 +19,7 @@ import Bubble from './Bubble';
 import aframe_assets from "./aframe_assets";
 import SceneAPI from "../../utils/SceneAPI";
 import Values from "../../rules/Values";
+import {calculate2DSceneImageBounds} from "./aframe_curved";
 
 /**
  * Dati i punti presi da pointSaver viene aggiornato l'oggetto corrente
@@ -36,38 +37,10 @@ export function givePoints(props) {
 
         let Width = props.assets.get(props.scenes.get(props.currentScene).img).width / 100;
         let Height = props.assets.get(props.scenes.get(props.currentScene).img).height / 100;
-        let ratio = Width/Height;
-        let ratio2 = document.documentElement.clientWidth / document.documentElement.clientHeight;
-        let canvasWidth ;
-        let canvasHeight;
+        let bounds = calculate2DSceneImageBounds(Width, Height);
+        let canvasWidth = bounds.w;
+        let canvasHeight = bounds.h;
 
-        // TODO questo codice è da fattorizzare in una sola funzione. Si trova anche in curved e nella bolla
-
-        // numeri stabiliti empiricamente per la distanza e posizione corrente per la camera
-        let maxH = 10;
-        let maxW = 10;
-
-
-        if(Width > Height){
-            if(document.documentElement.clientWidth > document.documentElement.clientHeight){
-                canvasHeight = maxH;
-                canvasWidth = (maxH / Height) * Width;
-            }else{
-                canvasWidth = maxW;
-                canvasHeight = (maxW / Width) * Height;
-            }
-
-
-        }else{
-            if(document.documentElement.clientWidth > document.documentElement.clientHeight){
-                canvasHeight = maxH;
-                canvasWidth = (maxH / Height) * Width;
-            }else{
-                canvasWidth = maxW;
-                canvasHeight = (maxW / Width) * Height;
-            }
-
-        }
         //if(!props.editor.audioPositioning){
             puntisalvati = puntisalvati.map(punto =>{
                 punto.x = punto.x / canvasWidth;
