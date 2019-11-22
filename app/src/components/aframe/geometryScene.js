@@ -38,16 +38,34 @@ export function givePoints(props) {
         let Height = props.assets.get(props.scenes.get(props.currentScene).img).height / 100;
         let ratio = Width/Height;
         let ratio2 = document.documentElement.clientWidth / document.documentElement.clientHeight;
-        let canvasWidth;
+        let canvasWidth ;
         let canvasHeight;
 
-        if(ratio > 1 && ratio2 < 1){
-            canvasWidth = document.documentElement.clientWidth / 100;
-            canvasHeight = canvasWidth / ratio;
-        } else {
+        // TODO questo codice è da fattorizzare in una sola funzione. Si trova anche in curved e nella bolla
 
-            canvasHeight = document.documentElement.clientHeight / 100;
-            canvasWidth = canvasHeight * ratio;
+        // numeri stabiliti empiricamente per la distanza e posizione corrente per la camera
+        let maxH = 10;
+        let maxW = 10;
+
+
+        if(Width > Height){
+            if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+                canvasHeight = maxH;
+                canvasWidth = (maxH / Height) * Width;
+            }else{
+                canvasWidth = maxW;
+                canvasHeight = (maxW / Width) * Height;
+            }
+
+
+        }else{
+            if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+                canvasHeight = maxH;
+                canvasWidth = (maxH / Height) * Width;
+            }else{
+                canvasWidth = maxW;
+                canvasHeight = (maxW / Width) * Height;
+            }
 
         }
         //if(!props.editor.audioPositioning){

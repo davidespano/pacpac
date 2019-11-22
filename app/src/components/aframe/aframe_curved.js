@@ -109,12 +109,42 @@ export function convertRelativeCoordinates (verticesP,assetsDimention) {
 
     //Confronto la proposrzione dell'assets e della canvas
     //TODO verificare questo passaggio
+    /*if(ratioAsset > 1 && ratioCanvas < 1){
     if(ratioAsset > 1 && ratioCanvas < 1){
         canvasWidth = document.documentElement.clientWidth / 100;
         canvasHeight = canvasWidth / ratioAsset;
     } else {
         canvasHeight = document.documentElement.clientHeight / 100;
         canvasWidth = canvasHeight * ratioAsset;
+    }*/
+
+    let canvasWidth ;
+    let canvasHeight;
+
+    // numeri stabiliti empiricamente per la distanza e posizione corrente per la camera
+    let maxH = 10;
+    let maxW = 10;
+
+
+    if(Width > Height){
+        if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+            canvasHeight = maxH;
+            canvasWidth = (maxH / Height) * Width;
+        }else{
+            canvasWidth = maxW;
+            canvasHeight = (maxW / Width) * Height;
+        }
+
+
+    }else{
+        if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+            canvasHeight = maxH;
+            canvasWidth = (maxH / Height) * Width;
+        }else{
+            canvasWidth = maxW;
+            canvasHeight = (maxW / Width) * Height;
+        }
+
     }
 
     //Moltiplico le coordinate per le proporzione della canvas precedentemente create, per quanto riguarda la z e' impostata poco davanti al piano

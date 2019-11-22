@@ -230,9 +230,10 @@ export default class Bubble extends Component
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
 
-            let Width = this.props.assetsDimention.width / 100;
-            let Height = this.props.assetsDimention.height / 100;
-            let ratio = Width/Height;
+            let Width = this.props.assetsDimention.width ;
+            let Height = this.props.assetsDimention.height ;
+            let ratio;
+            /*let ratio = Width/Height;
             let ratio2 = document.documentElement.clientWidth / document.documentElement.clientHeight;
             let canvasWidth ;
             let canvasHeight;
@@ -245,7 +246,44 @@ export default class Bubble extends Component
                 canvasHeight = document.documentElement.clientHeight / 100;
                 canvasWidth = canvasHeight * ratio;
 
+            }*/
+
+            let canvasWidth ;
+            let canvasHeight;
+
+            // numeri stabiliti empiricamente per la distanza e posizione corrente per la camera
+            let maxH = 10;
+            let maxW = 10;
+
+
+            if(Width > Height){
+                if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+                    canvasHeight = maxH;
+                    canvasWidth = (maxH / Height) * Width;
+                }else{
+                    canvasWidth = maxW;
+                    canvasHeight = (maxW / Width) * Height;
+                }
+
+
+            }else{
+                if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+                    canvasHeight = maxH;
+                    canvasWidth = (maxH / Height) * Width;
+                }else{
+                    canvasWidth = maxW;
+                    canvasHeight = (maxW / Width) * Height;
+                }
+
             }
+
+
+
+
+
+            console.log("Asset: " + this.props.assetsDimention.width + " " + this.props.assetsDimention.height);
+            console.log("Dimension:" + canvasWidth + " " + canvasHeight);
+
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
@@ -256,7 +294,7 @@ export default class Bubble extends Component
         }
         return(sceneRender);
     }
-    //[Vittoria] per ogni oggetto: prende lo sfondo, prende la maschera e fonde, per il secondo oggetto fa lo stesso ma lo fonde con il precedente
+
     setShader(){
         //console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
@@ -308,7 +346,7 @@ export default class Bubble extends Component
                         media = obj.media.media1;
                 }
                 else{
-                    if(obj.media.media0)  //[Vittoria] ha il media OFF -> ON
+                    if(obj.media && obj.media.media0)  //[Vittoria] ha il media OFF -> ON
                         media = obj.media.media0;
                 }
 
