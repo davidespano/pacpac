@@ -102,50 +102,10 @@ export function convertRelativeCoordinates (verticesP,assetsDimention) {
     let index = 0;
     let Width = assetsDimention.width / 100;
     let Height = assetsDimention.height / 100;
-    let ratioAsset = Width/Height; //Proposrzione dell'asset corrente
-    let ratioCanvas = document.documentElement.clientWidth / document.documentElement.clientHeight; //Proporzione della canvas
-    let canvasWidth ;
-    let canvasHeight;
+    let bounds = calculate2DSceneImageBounds(Width, Height);
+    let canvasWidth = bounds.w;
+    let canvasHeight = bounds.h;
 
-    //Confronto la proposrzione dell'assets e della canvas
-    //TODO verificare questo passaggio
-    /*if(ratioAsset > 1 && ratioCanvas < 1){
-    if(ratioAsset > 1 && ratioCanvas < 1){
-        canvasWidth = document.documentElement.clientWidth / 100;
-        canvasHeight = canvasWidth / ratioAsset;
-    } else {
-        canvasHeight = document.documentElement.clientHeight / 100;
-        canvasWidth = canvasHeight * ratioAsset;
-    }
-
-    let canvasWidth ;
-    let canvasHeight;*/
-
-    // numeri stabiliti empiricamente per la distanza e posizione corrente per la camera
-    let maxH = 10;
-    let maxW = 10;
-
-
-    if(Width > Height){
-        if(document.documentElement.clientWidth > document.documentElement.clientHeight){
-            canvasHeight = maxH;
-            canvasWidth = (maxH / Height) * Width;
-        }else{
-            canvasWidth = maxW;
-            canvasHeight = (maxW / Width) * Height;
-        }
-
-
-    }else{
-        if(document.documentElement.clientWidth > document.documentElement.clientHeight){
-            canvasHeight = maxH;
-            canvasWidth = (maxH / Height) * Width;
-        }else{
-            canvasWidth = maxW;
-            canvasHeight = (maxW / Width) * Height;
-        }
-
-    }
 
     //Moltiplico le coordinate per le proporzione della canvas precedentemente create, per quanto riguarda la z e' impostata poco davanti al piano
     vertices = points.map(v => {
@@ -172,4 +132,19 @@ export function convertRelativeCoordinates (verticesP,assetsDimention) {
     vertices = vertices.slice(0, -1);
     return vertices;
 }
+
+export function calculate2DSceneImageBounds(sourceWidth, sourceHeight){
+    // [davide] altezza del piano che contiene l'immagine nel sistema di riferimento aframe.
+    // valore stabilito in modo empirico
+    let destHeight = 10;
+    let destWidth = (destHeight/document.documentElement.clientHeight) * document.documentElement.clientWidth;
+    let scaleX = destWidth / sourceWidth;
+    let scaleY = destHeight / sourceHeight;
+    let scale = scaleX > scaleY ? scaleY : scaleX;
+    sourceWidth *= scale;
+    sourceHeight *= scale;
+
+    return {w: sourceWidth, h: sourceHeight};
+}
+
 export {Curved, CurvedGeometry}

@@ -10,7 +10,7 @@
 
 import React,{Component} from "react";
 import {Entity} from 'aframe-react';
-import {Curved, CurvedGeometry} from './aframe_curved';
+import {Curved, CurvedGeometry, calculate2DSceneImageBounds} from './aframe_curved';
 import settings from "../../utils/settings";
 import '../../data/stores_utils'
 import stores_utils from "../../data/stores_utils";
@@ -232,53 +232,10 @@ export default class Bubble extends Component
 
             let Width = this.props.assetsDimention.width ;
             let Height = this.props.assetsDimention.height ;
-            let ratio;
-            /*let ratio = Width/Height;
-            let ratio2 = document.documentElement.clientWidth / document.documentElement.clientHeight;
-            let canvasWidth ;
-            let canvasHeight;
 
-            if(ratio > 1 && ratio2 < 1){
-                canvasWidth = document.documentElement.clientWidth / 100;
-                canvasHeight = canvasWidth / ratio ;
-            } else {
-
-                canvasHeight = document.documentElement.clientHeight / 100;
-                canvasWidth = canvasHeight * ratio;
-
-            }*/
-
-            let canvasWidth ;
-            let canvasHeight;
-
-            // numeri stabiliti empiricamente per la distanza e posizione corrente per la camera
-            let maxH = 10;
-            let maxW = 10;
-
-
-            if(Width > Height){
-                if(document.documentElement.clientWidth > document.documentElement.clientHeight){
-                    canvasHeight = maxH;
-                    canvasWidth = (maxH / Height) * Width;
-                }else{
-                    canvasWidth = maxW;
-                    canvasHeight = (maxW / Width) * Height;
-                }
-
-
-            }else{
-                if(document.documentElement.clientWidth > document.documentElement.clientHeight){
-                    canvasHeight = maxH;
-                    canvasWidth = (maxH / Height) * Width;
-                }else{
-                    canvasWidth = maxW;
-                    canvasHeight = (maxW / Width) * Height;
-                }
-
-            }
-
-
-
+            let bounds = calculate2DSceneImageBounds(Width, Height);
+            let canvasWidth = bounds.w;
+            let canvasHeight = bounds.h;
 
 
             console.log("Asset: " + this.props.assetsDimention.width + " " + this.props.assetsDimention.height);
@@ -294,7 +251,7 @@ export default class Bubble extends Component
         }
         return(sceneRender);
     }
-
+    //[Vittoria] per ogni oggetto: prende lo sfondo, prende la maschera e fonde, per il secondo oggetto fa lo stesso ma lo fonde con il precedente
     setShader(){
         //console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
