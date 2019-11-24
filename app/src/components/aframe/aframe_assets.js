@@ -6,7 +6,7 @@ import AudioManager from './AudioManager'
 const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
 /**
- * Funzione che si occupa di creare tutti gli assets necessari per la bolla corrente, viene richiamata per ogni bolla
+ * Classe che si occupa di creare tutti gli assets necessari per la bolla corrente, viene richiamata per ogni bolla
  * @param scene scene con tutte le informazioni al suo interno
  * @param srcBackground source relativa allo sfondo della scena
  * @param runState stato attuale del gioco

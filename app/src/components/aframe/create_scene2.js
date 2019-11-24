@@ -419,7 +419,8 @@ export default class VRScene extends React.Component {
                 />
             );
 
-            /*return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
+            /* Decommentare nel caso in cui il componente Asset dia problemi
+                return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
                 this.state.runState[sceneName].background, this.state.runState, this.state.audios, 'scene', gameId)*/
         }).flat();
     }

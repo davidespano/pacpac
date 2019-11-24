@@ -448,7 +448,8 @@ export default class GeometryScene extends React.Component{
                     mode = {'geometry'}
                 />
             );
-            /*return aframe_assets.generateAsset
+            /* Decommentare nel caso in cui il componente Asset dia problemi
+            return aframe_assets.generateAsset
             (this.state.completeScene,
                                                this.state.completeScene.img, [], [],  'geometry')*/
         })
