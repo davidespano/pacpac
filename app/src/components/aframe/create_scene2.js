@@ -6,6 +6,7 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
 import SceneAPI from "../../utils/SceneAPI";
+import Asset from "./aframe_assets";
 import ConditionUtils from "../../rules/ConditionUtils";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
@@ -407,8 +408,19 @@ export default class VRScene extends React.Component {
     generateAssets(gameId){
         //[Vittoria] per ogni scena del current level richiama generateAssets
         return this.currentLevel.map(sceneName => {
-            return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
-                this.state.runState[sceneName].background, this.state.runState, this.state.audios, 'scene', gameId)
+            return (
+                <Asset
+                    scene = {this.state.graph.scenes[sceneName]}
+                    srcBackground = {this.state.runState[sceneName].background}
+                    runState = {this.state.runState}
+                    audios= {this.state.audios}
+                    mode = {'scene'}
+                    gameId = {gameId}
+                />
+            );
+
+            /*return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
+                this.state.runState[sceneName].background, this.state.runState, this.state.audios, 'scene', gameId)*/
         }).flat();
     }
 

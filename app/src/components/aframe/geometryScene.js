@@ -16,6 +16,7 @@ import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import interface_utils from "../interface/interface_utils";
 import Bubble from './Bubble';
+import Asset from "./aframe_assets";
 import aframe_assets from "./aframe_assets";
 import SceneAPI from "../../utils/SceneAPI";
 import Values from "../../rules/Values";
@@ -465,8 +466,18 @@ export default class GeometryScene extends React.Component{
      */
     generateAssets(){
         return this.currentLevel.map(sceneName =>{
-            return aframe_assets.generateAsset(this.state.completeScene,
-                                               this.state.completeScene.img, [], [],  'geometry')
+            return (
+                <Asset
+                    scene = {this.state.completeScene}
+                    srcBackground = {this.state.completeScene.img}
+                    runState = {[]}
+                    audios= {[]}
+                    mode = {'geometry'}
+                />
+            );
+            /*return aframe_assets.generateAsset
+            (this.state.completeScene,
+                                               this.state.completeScene.img, [], [],  'geometry')*/
         })
     }
 

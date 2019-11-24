@@ -5,7 +5,6 @@ import React from 'react';
 import AudioManager from './AudioManager'
 const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
-//TODO trasformarlo in un componente React ... forse ...
 /**
  * Funzione che si occupa di creare tutti gli assets necessari per la bolla corrente, viene richiamata per ogni bolla
  * @param scene scene con tutte le informazioni al suo interno
@@ -16,117 +15,136 @@ const {mediaURL} = settings;
  * @param gameId id del gioco
  * @returns {Array}
  */
-function generateAsset(scene, srcBackground, runState = [], audios, mode = 'scene', gameId = null){
-    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+export default class Asset extends React.Component{
 
-        let currAssets = []; //Variabile che conterra' tutti assets
-        let sceneBackground;
-        //TODO verificare, se non impostato risulta undefined
-        //Se non è impostato il loop lo imposto a false
-        let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
-        //first, push the background media. And check if the media is a video or image
-        if(stores_utils.getFileType(scene.img) === 'video'){
-            sceneBackground = (
-                <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={loop}  preload="auto"
-                       src={`${mediaURL}${id}/` + srcBackground}
-                       playsInline={true}  muted={true}
+    constructor(props) {
+        super(props);
+
+    }
+        render() {
+            let scene = this.props.scene;
+            let srcBackground = this.props.srcBackground;
+            let runState = this.props.runState;
+            let audios = this.props.audios;
+            let mode = this.props.mode;
+            let gameId = this.props.gameId;
+
+            let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+            let currAssets = []; //Variabile che conterra' tutti assets
+            let sceneBackground;
+            //TODO verificare, se non impostato risulta undefined
+            //Se non è impostato il loop lo imposto a false
+            let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
+            //first, push the background media. And check if the media is a video or image
+            if (stores_utils.getFileType(scene.img) === 'video') {
+                sceneBackground = (
+                    <video key={"key" + scene.name} crossOrigin={"anonymous"} id={scene.img} loop={loop} preload="auto"
+                           src={`${mediaURL}${id}/` + srcBackground}
+                           playsInline={true} muted={true}
+                    />)
+            } else {
+                sceneBackground = (<img id={scene.img} key={"key" + scene.name} crossOrigin="Anonymous"
+                                        src={`${mediaURL}${id}/` + srcBackground}
                 />)
-        } else {
-            sceneBackground =(<img id={scene.img} key={"key" + scene.name} crossOrigin="Anonymous"
-                                   src={`${mediaURL}${id}/` + srcBackground}
-            />)
-        }
-        currAssets.push(sceneBackground);
-        let objAssetMedia;
+            }
+            currAssets.push(sceneBackground);
+            let objAssetMedia;
 
-        //second, push the media of the interactive objs
-        //[Vittoria] K è media[0], media[1]...
-         //Quando ho uno switch ho due media: uno per lo spento (es. media[0]) e uno per l'acceso (es. media[1]) e quello che
-        // cambia è che media prende media[0] e media[1]
-        Object.values(scene.objects).flat().forEach(obj => {
-            if(obj.media){
-                Object.keys(obj.media).map(k => {
-                    if(obj.media[k] !== null){
-                        if(stores_utils.getFileType(obj.media[k]) === 'video'){
-                            objAssetMedia = (
-                                <video key={k+"_" + obj.uuid} crossOrigin={"anonymous"} id={k+"_" + obj.uuid} loop={true}  preload="auto"
-                                       src={`${mediaURL}${id}/` + obj.media[k]}
-                                       playsInline={true}  muted={true}
-                                />)
+            //second, push the media of the interactive objs
+            //[Vittoria] K è media[0], media[1]...
+            //Quando ho uno switch ho due media: uno per lo spento (es. media[0]) e uno per l'acceso (es. media[1]) e quello che
+            // cambia è che media prende media[0] e media[1]
+            Object.values(scene.objects).flat().forEach(obj => {
+                if (obj.media) {
+                    Object.keys(obj.media).map(k => {
+                        if (obj.media[k] !== null) {
+                            if (stores_utils.getFileType(obj.media[k]) === 'video') {
+                                objAssetMedia = (
+                                    <video key={k + "_" + obj.uuid} crossOrigin={"anonymous"} id={k + "_" + obj.uuid}
+                                           loop={true} preload="auto"
+                                           src={`${mediaURL}${id}/` + obj.media[k]}
+                                           playsInline={true} muted={true}
+                                    />)
+                            } else {
+                                objAssetMedia = (
+                                    <img id={k + "_" + obj.uuid} key={k + "_" + obj.uuid} crossOrigin="Anonymous"
+                                         src={`${mediaURL}${id}/` + obj.media[k]}
+                                    />)
+                            }
+                            currAssets.push(objAssetMedia)
+                        }
+                    });
+
+                }
+
+                //Creaizone traccia audio dei singoli oggetti, solo nella modalità gioco
+                if (mode === 'scene' && obj.audio) {
+                    Object.keys(obj.audio).map(k => {
+                        if (obj.audio[k] !== null && audios[obj.audio[k]] !== undefined) {
+                            let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj); //Funzione che converte la posizione da json a coordinate
+                            soundsHub[k + "_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], audioPosition)
+                        }
+                    });
+
+                }
+
+                //Genero l'asset dell'oggetto corrente in base allo stato del gioco (runState), se esiste lo aggiungo alla lista degli assets
+                let v = generateCurrentAsset(obj, runState, id);
+                if (v !== null) currAssets.push(v);
+
+                //Se l'oggetto ha una maschera la aggiungo alla lista degli assets
+                if (obj.mask !== "" && obj.mask !== undefined && obj.mask !== null) {
+                    currAssets.push(
+                        <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossOrigin="Anonymous"
+                                      preload="auto"
+                                      src={`${mediaURL}${id}/` + obj.mask}
+                        />
+                    )
+                }
+            });
+
+            //Scorro tutte le regole e carico i media coinvolti nelle regole, come per esempio un cambio sfondo
+            scene.rules.forEach(rule => {
+                rule.actions.forEach(action => {
+                    if (action.action === 'CHANGE_BACKGROUND') {
+                        if (stores_utils.getFileType(action.obj_uuid) === 'video') {
+                            currAssets.push(
+                                <video id={action.obj_uuid} key={"key" + action.obj_uuid}
+                                       src={`${mediaURL}${id}/` + action.obj_uuid}
+                                       preload="auto" loop={'true'} crossOrigin="anonymous" playsInline={true}
+                                       muted={true}
+                                />
+                            )
                         } else {
-                            objAssetMedia = (<img id={k+"_" + obj.uuid} key={k+"_" + obj.uuid} crossOrigin="Anonymous"
-                                                  src={`${mediaURL}${id}/` + obj.media[k]}
+                            currAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid}
+                                                 crossOrigin="Anonymous"
+                                                 src={`${mediaURL}${id}/` + action.obj_uuid}
                             />)
                         }
-                        currAssets.push(objAssetMedia)
                     }
-                });
+                    /* Non serve
+                    if(action.action === 'PLAY_LOOP' || action.action === 'PLAY_LOOP'){
+                         console.log('ciao sono un adio un po sfortunato')
+                     }*/
+                })
 
-            }
-
-            //Creaizone traccia audio dei singoli oggetti, solo nella modalità gioco
-            if(mode === 'scene' && obj.audio){
-                Object.keys(obj.audio).map(k => {
-                    if(obj.audio[k] !== null  && audios[obj.audio[k]] !== undefined){
-                        let audioPosition = calculateAudioPosition(audios[obj.audio[k]], obj); //Funzione che converte la posizione da json a coordinate
-                        soundsHub[k+"_" + audios[obj.audio[k]].uuid] = AudioManager.generateAudio(audios[obj.audio[k]], audioPosition)
-                    }
-                });
-
-            }
-
-            //Genero l'asset dell'oggetto corrente in base allo stato del gioco (runState), se esiste lo aggiungo alla lista degli assets
-            let v = generateCurrentAsset(obj, runState, id);
-            if(v!==null) currAssets.push(v);
-
-            //Se l'oggetto ha una maschera la aggiungo alla lista degli assets
-            if(obj.mask !== "" && obj.mask !== undefined&& obj.mask !== null){
-                currAssets.push(
-                    <a-asset-item id={"mask_" + obj.uuid} key={"mask_" + obj.uuid} crossOrigin="Anonymous"
-                                  preload="auto"
-                                  src={`${mediaURL}${id}/` + obj.mask}
-                    />
-                )
-            }
-        });
-
-        //Scorro tutte le regole e carico i media coinvolti nelle regole, come per esempio un cambio sfondo
-        scene.rules.forEach( rule => {
-            rule.actions.forEach(action => {
-                if(action.action === 'CHANGE_BACKGROUND'){
-                    if(stores_utils.getFileType(action.obj_uuid) === 'video'){
-                        currAssets.push(
-                            <video id={action.obj_uuid} key={"key" + action.obj_uuid}
-                                   src={`${mediaURL}${id}/` + action.obj_uuid}
-                                   preload="auto" loop={'true'} crossOrigin="anonymous" playsInline={true} muted={true}
-                            />
-                        )
-                    } else {
-                        currAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid} crossOrigin="Anonymous"
-                                             src={`${mediaURL}${id}/` + action.obj_uuid}
-                        />)
-                    }
-                }
-               /* Non serve
-               if(action.action === 'PLAY_LOOP' || action.action === 'PLAY_LOOP'){
-                    console.log('ciao sono un adio un po sfortunato')
-                }*/
-            })
-
-        });
-
-        //Creazione traccia audio globali
-        //[Vittoria] Tutti gli audio sono dentro soundsHub, le informazioni sono dentro l'oggetto Audio e qua viene fatta questa associazione
-        if(mode === 'scene') {
-            scene.audios.forEach(audio => {
-                soundsHub["audios_" + audio.uuid] = AudioManager.generateAudio(audio)
             });
+
+            //Creazione traccia audio globali
+            //[Vittoria] Tutti gli audio sono dentro soundsHub, le informazioni sono dentro l'oggetto Audio e qua viene fatta questa associazione
+            if (mode === 'scene') {
+                scene.audios.forEach(audio => {
+                    soundsHub["audios_" + audio.uuid] = AudioManager.generateAudio(audio)
+                });
+            }
+            //third, push the media present in the actions
+            //TODO Controllare se funziona anche senza
+            scene.rules.forEach(() => {
+            });
+            //return the assets
+            return currAssets;
         }
-        //third, push the media present in the actions
-        //TODO Controllare se funziona anche senza
-        scene.rules.forEach(()=>{});
-        //return the assets
-        return currAssets;
 }
 
 /**
@@ -226,6 +244,6 @@ function calculateAudioPosition (audio, obj){
 
     return baricenter;
 }
-export default {
+/*export default {
     generateAsset: generateAsset
-}
+}*/

@@ -116,10 +116,10 @@ export function convertRelativeCoordinates (verticesP,assetsDimention) {
     } else {
         canvasHeight = document.documentElement.clientHeight / 100;
         canvasWidth = canvasHeight * ratioAsset;
-    }*/
+    }
 
     let canvasWidth ;
-    let canvasHeight;
+    let canvasHeight;*/
 
     // numeri stabiliti empiricamente per la distanza e posizione corrente per la camera
     let maxH = 10;
