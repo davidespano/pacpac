@@ -7,6 +7,13 @@ import Values from "../rules/Values";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
+
+/* [Vittoria] una transizione non è altro che un oggetto interattivo (il quale è un oggetto Immutabile) e sovrascrivo
+alcune delle proprietà di default, per creare una nuova transizione uso questa sintassi:
+ let t = Transition({
+         qua ci vanno i valori che mi interessa modificare (gli altri saranno a default), in genere si dà nome e uuuid
+});*/
+
 const Transition = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.TRANSITION,
     properties : {

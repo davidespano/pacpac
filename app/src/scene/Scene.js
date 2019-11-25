@@ -13,6 +13,13 @@ import Values from "../rules/Values";
  * @param audios default empty arrat
  * @param music containing audio uuid for background music
  */
+
+/*[Vittoria] attenzione che in questo oggetto immutable ci sono degli array, quindi ogni volta che genero un'istanza di questo
+oggetto dovrò sempre creare per ogni attributo con un array un array vuoto, altrimenti si riferisce sempre a quella del padre
+es. let s1= Scene({name='s1'}); let s2= Scene({name='s1'});
+modificando l'attributo rules (che è un array) di s1 la stessa modifica verrà propagata a rules di s2 perchè l'indirizzo di memoria è lo stesso
+Un esempio si può trovare in ScenesStore dove quando creo newScene metto tutti gli array vuoti
+*/
 const Scene = Immutable.Record({
 
     uuid: null,

@@ -11,6 +11,16 @@ import Values from "../rules/Values";
 import ObjectsStore from "../data/ObjectsStore";
 import EditorStateStore from "../data/EditorStateStore";
 
+/**[Vittoria]
+ * In questo file troviamo le azioni, esse possono essere richiamate tramite props.nomefunzione
+ * Quando viene chiamata un'azione essa deve finire di essere eseguita prima di poterne richiamare un'altra, quindi
+ * c'è una gestione a collo di bottiglia,
+ * es: props.azione1;
+ *     props.azione2; -> Questa verrà sempre gestita dopo, quindi conviene evitare questo comportamento perchè sono due
+ *                      render diverse e ci sarà un aggiornamento. La cosa migliore è mettere un'azione per volta oppure
+ * se voglio gestire più azioni di seguito conviene accorparle
+ * Prendono un type (costante che ritroviamo su ActionType.js) ed eventuali altri campi
+ */
 const Actions = {
 
     /**
@@ -27,8 +37,6 @@ const Actions = {
     /**
      * This functions set interfaces mode, that is, what the interface should show
      **/
-
-
     editModeOn() {
         AppDispatcher.dispatch({
             type: ActionTypes.SET_INTERFACE_MODE,

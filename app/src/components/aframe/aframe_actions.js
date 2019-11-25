@@ -7,6 +7,7 @@ import './aframe_shader'
 const THREE = require('three');
 const soundsHub = require('./soundsHub');
 
+//[Vittoria] VRScene è createscene2
 function executeAction(VRScene, rule, action){
     let state = VRScene.state;
     let runState = VRScene.state.runState;
@@ -28,7 +29,7 @@ function executeAction(VRScene, rule, action){
             //TODO al momento e' possibile effettuare transizione anche senza un oggetto, decidere se eliminarlo o tenerlo
             let duration_transition = 0;
             let duration = (current_object && current_object.properties.duration) ? parseInt(current_object.properties.duration) : 0;
-            let direction = (current_object && current_object.properties.direction) ? current_object.properties.direction : 'nothing'
+            let direction = (current_object && current_object.properties.direction) ? current_object.properties.direction : 'nothing';
             //let duration = 0;
             //Se devo cambiare lo sguardo aggiungo 400 ms per dare il tempo alla camera di girare
             if(current_object) {
@@ -46,12 +47,11 @@ function executeAction(VRScene, rule, action){
             cursor.setAttribute('raycaster', 'far: 0.1');
 
             //Se la transizione ha un video associato lo riproduco e salvo la durata,
-            //if(current_object && current_object.type === 'TRANSITION'){
             if(current_object && current_object.type === 'TRANSITION'){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
-                    duration_transition = (parseInt(objectVideo_transition.duration) * 1000);
+                    duration_transition = (parseInt(objectVideo_transition.duration) * 1000); //una volta che il video finisce
                 }
             }
 
@@ -66,6 +66,8 @@ function executeAction(VRScene, rule, action){
                     soundsHub['audio0_' + audioTransition].play();
             }
 
+            //[Vittoria] se la musica di sottofondo o un altro audio tra due scene è la stesso allora non smette di riprodurlo, altrimenti
+            // il primo finisce e parte l'altro
             setTimeout(function () {
                 //Set di controlli per la cotinuita' dei file audio, musica di sottofondo, effetti audio di sottofondo, audio integrato del video
                 //Cambio musica di sottofondo da una scena ad un'altra
@@ -92,7 +94,8 @@ function executeAction(VRScene, rule, action){
                     soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
                 }
 
-                //TODO, questo controllo serve se la transizione non ha oggetto, decidere se eliminarlo
+                //[Vittoria] se la scena di destinazione e di arrivo sono dello stesso tipo (2D e 2D es.) lancia una transizione normale,
+                // se sono di tipo diverso invece lancia la transizione 2D
                 if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
                     (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
                 // se le due scene sono dello stesso tipo le gestisco allo stesso modo
@@ -332,8 +335,8 @@ function executeAction(VRScene, rule, action){
 function transition(actualScene, targetScene, duration, direction){
     let actualSky = document.querySelector('#' + actualScene.name);
     let actualSceneVideo = document.getElementById(actualScene.img);
-    if(store_utils.getFileType(actualScene.img) === 'video') actualSceneVideo.pause();
-    //TODO a volte non trova la scena, verificare perché
+    if(store_utils.getFileType(actualScene.img) === 'video')
+        actualSceneVideo.pause(); //se è un video lo pauso
     let targetSky = document.querySelector('#' + targetScene.name);
     let targetSceneVideo = document.getElementById(targetScene.img);
     let disappear = new CustomEvent(actualSky.id + "dis");
@@ -345,7 +348,8 @@ function transition(actualScene, targetScene, duration, direction){
     let positionTarget;
     let positionActual;
     let canvasWidth = document.documentElement.clientWidth / 100;
-    let canvasHeight = canvasWidth /1.77;
+    let canvasHeight = document.documentElement.clientHeight;
+    //[Vittoria] se ha una direzione imposta la posizione di conseguenza
     switch (direction) {
         case 'RIGHT':
             positionTarget = canvasWidth + ', 1.6, -6';
@@ -366,9 +370,12 @@ function transition(actualScene, targetScene, duration, direction){
         default:
             positionTarget = "0, 1.6, -6";
             positionActual = "0, 1.6, -6";
+            sceneMovement=false;
             break;
     }
-    if(targetScene.type === Values.TWO_DIM) targetSky.setAttribute('position', positionTarget);
+    //[Vittoria] se è 2D non sono al centro e posiziono il target
+    if(targetScene.type === Values.TWO_DIM)
+        targetSky.setAttribute('position', positionTarget);
 
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
@@ -391,14 +398,21 @@ function transition(actualScene, targetScene, duration, direction){
     targetSky.setAttribute('material', 'visible: true');
     actualSky.dispatchEvent(disappear);
 
+    //[Vittoria] ho un timeout anche in caso di scene da 2D->2D, c'è una sorta di effetto di fade
+   setTimeout(function () {
+            targetSky.dispatchEvent(appear);}
+        , parseInt(duration)
+    );
+
+/* Se non si vuole il fade decommentare qui
     if(is3dScene){
-        setTimeout(function () {
-                targetSky.dispatchEvent(appear);}
-            , parseInt(duration)
-        );
+    setTimeout(function () {
+            targetSky.dispatchEvent(appear);}
+        , parseInt(duration)
+    );
     } else {
-        targetSky.dispatchEvent(appear);
-    }
+     targetSky.dispatchEvent(appear);
+}*/
 
     //targetSky.dispatchEvent(appear);
 
@@ -425,17 +439,19 @@ function transition(actualScene, targetScene, duration, direction){
 function transition2D(actualScene, targetScene, duration){
     let camera = document.getElementById('camera');
     let cursor = document.getElementById('cursor');
-    let actualSky = document.querySelector('#' + actualScene.name);
+    let actualSky = document.querySelector('#' + actualScene.name); //[Vittoria] oggetto di aframe sky
     let actualSceneVideo = document.getElementById(actualScene.img);
     let targetSky = document.querySelector('#' + targetScene.name);
     let targetSceneVideo = document.getElementById(targetScene.img);
     let is3dScene = actualScene.type===Values.THREE_DIM;
+    // se è una scena 3D a muoversi sarà la scena di arrivo (2D), altrimenti a muoversi sarà la scena dove siamo (2D)
     let sceneMovement = is3dScene?targetSky:actualSky;
+    //[Vittoria] custom events per la posizione della bolla
     let disappear = new CustomEvent(actualSky.id + "dis");
     let appear = new CustomEvent(targetSky.id + "app");
     let movement = new CustomEvent(sceneMovement.id + "move");
 
-
+    //[Vittoria] attributi per sparire (actualsky) e apparire (targetSky)
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
     targetSky.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
@@ -455,13 +471,14 @@ function transition2D(actualScene, targetScene, duration){
     targetSky.setAttribute('visible', 'true');
     targetSky.setAttribute('material', 'visible: true');
 
-    if(store_utils.getFileType(actualScene.img) === 'video') actualSceneVideo.pause();
+    if(store_utils.getFileType(actualScene.img) === 'video')
+        actualSceneVideo.pause(); // se la scena attuale è un video lo metto in pausa
     actualSky.dispatchEvent(disappear);
     if(!is3dScene) {
         sceneMovement.dispatchEvent(movement);
     }
     setTimeout(function () {
-        lookObject(targetSky.id);
+        lookObject(targetSky.id); //[Vittoria] serve per rimettere al suo posto il cursore passando da una scena 3D a 2D
         targetSky.dispatchEvent(appear);
         sceneMovement.dispatchEvent(movement);
         if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
@@ -469,10 +486,14 @@ function transition2D(actualScene, targetScene, duration){
 
 }
 
+/*
+    Se gli passo un oggetto guardo quello, altrimenti posso passare un punto di interesse e guarda quello
+ */
 function lookObject(idObject, pointOI = null){
     let obj = document.getElementById(idObject);
     let center;
     let l;
+    //Cambio di camera
     let camera = document.getElementById('camera');
     let cameraPosition = camera.getAttribute('position');
     let euler = new THREE.Euler();
@@ -487,6 +508,7 @@ function lookObject(idObject, pointOI = null){
     }
 
     if(pointOI === null){
+        //[Vittoria] mi sto riferendo a una transizione tra scene
         camera.setAttribute("pac-look-controls", "planarScene: true" );
         camera.setAttribute("pac-look-controls", "pointerLockEnabled: false" );
     } else {
@@ -496,6 +518,7 @@ function lookObject(idObject, pointOI = null){
         quaternion.setFromUnitVectors(v, l);
         euler.setFromQuaternion(quaternion, 'YXZ', false);
     }
+    //[Vittoria] spostamenti della camera
     camera.components["pac-look-controls"].yawObject.rotation._y = euler._y;
     camera.components["pac-look-controls"].yawObject.rotation._x = 0;
     camera.components["pac-look-controls"].yawObject.rotation._z = 0;
@@ -513,12 +536,15 @@ function lookObject(idObject, pointOI = null){
  * @param state
  * @param current_object
  * @param action_uuid
+ * Cambio stato oggetti (chiavi e lucchetti) relativi alle regole
  */
 function changeStateObject(VRScene, runState, game_graph, state, current_object, action_uuid){
     runState[action_uuid].state=state;
     let audioKey = current_object.audio.audio0;
     if(soundsHub['audio0_' + audioKey])
         soundsHub['audio0_' + audioKey].play();
+    //TODO Vittoria prima veniva rimosso completamente l'oggetto chiave e il lucchetto, se c'era un video legato alla chiave veniva eliminato
+    //filtra tutti gli oggetti diversi da current object, togliere la filter e eliminare l'oggetto (obj)
     game_graph.scenes[VRScene.state.activeScene.uuid].objects.collectable_keys =
         game_graph.scenes[VRScene.state.activeScene.uuid].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
     if(current_object.media0 !== null){
@@ -527,17 +553,20 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     VRScene.setState({runState: runState, graph: game_graph});
 }
 
+/*
+    Cambio stato per l'oggetto Switch
+ */
 function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     let duration_switch = 0;
     let switchVideo = document.getElementById('media_'+current_object.uuid);
-    console.log(switchVideo)
+    console.log(switchVideo);
     if(switchVideo != null) {
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
         let videoType = current_object.properties.state === 'ON'?current_object.media.media0:current_object.media.media1;
-
-
-        if(store_utils.getFileType(videoType) === 'video') {switchVideo.play();}
+        if(store_utils.getFileType(videoType) === 'video') {
+            switchVideo.play();
+        }
         duration_switch = (parseInt(switchVideo.duration) * 1000);
     }
 
@@ -551,6 +580,7 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         cursor.setAttribute('material', 'visible: true');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('color', 'black');
+        //[Vittoria] l'oggetto cambia stato quindi lo shader dev'essere aggiornato, quindi aggiorno con il nuovo video
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
         runState[action.subj_uuid].state = action.obj_uuid;
         VRScene.setState({runState: runState});

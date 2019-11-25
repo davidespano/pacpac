@@ -5,6 +5,7 @@ import {ResonanceAudio} from "resonance-audio";
 import settings from "../../utils/settings";
 const {mediaURL} = settings;
 const resonanceee = require('./Audio/Resonance');
+//[Vittoria] per vedere cosa succede qua nell'editor vai in un oggetto e crea un oggetto Audio
 
 function generateAudio(audio, position=null, volume) {
     let audioPosition = position===null?audio.vertices:position;

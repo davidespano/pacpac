@@ -19,6 +19,7 @@ class EditorStateStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.ADD_NEW_OBJECT:
+                //non posso modificare più proprietà nella stessa set
                 return state.set('rightbarSelection', 'objects').set('objectNameRightbar', action.obj.name);
             case ActionTypes.AUDIO_POSITIONING:
                 return state.set('audioPositioning', action.status);

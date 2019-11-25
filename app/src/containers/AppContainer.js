@@ -20,6 +20,12 @@ import StoriesStore from '../data/StoriesStore';
 import EditStoriesStore from '../data/EditStoriesStore';
 import FormImagesStore from '../data/FormImagesStore';
 
+/**
+ * [Vittoria] Quando creo un nuovo store:
+ * 1) dev'essere importato qua sopra,
+ * 2) dev'essere aggiunto alla funzione getStores qua sotto
+ * 3) aggiungilo all'elenco degli stati dello store (funzione getState in questo file)
+ */
 function getStores() {
     return [
         ScenesStore,

@@ -2,6 +2,13 @@ import Immutable from 'immutable';
 import ActionTypes from "../actions/ActionTypes";
 import Orders from "./Orders";
 
+/**
+ * [Vittoria] EditorState è un record immutabile, quindi a differenza degli oggetti Javascript non posso aggiungere nuove
+ * proprietà, posso solo riprendermi i valori delle proprietà (tramite get) oppure modificarle tramite la set e il riassegnamento
+ * es. EditorState = EditorState.set(...)
+ * Questo è una sorta di prototipo dell'oggetto con tutte le proprietà che mi possono servire con valori di default
+ * Quando non vengono modificate rimangono al valore corrente
+ */
 const EditorState = Immutable.Record({
 
     actionId: null,                     //EudRuleEditor

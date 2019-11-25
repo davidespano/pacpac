@@ -137,9 +137,11 @@ export default class Bubble extends Component
             if(this.props.editMode){
                 let pointOfinterest = curve.type === 'POINT_OF_INTEREST';
                 return(
-                    <CurvedGeometry key={"keyC"+ curve.uuid}
+                    //Qua era CurvedGeometry
+                    <Curved key={"keyC"+ curve.uuid}
                                     position={positionCurved}
                                     vertices={curve.vertices}
+                                    mode={'edit'}
                                     id={curve.uuid}
                                     is3Dscene={is3Dscene}
                                     color={color}
@@ -152,6 +154,7 @@ export default class Bubble extends Component
                 return(
                     <Curved key={"keyC"+ curve.uuid}
                             onDebugMode={this.props.onDebugMode}
+                            mode={'game'}
                             position={positionCurved}
                             object_uuid={this.props.isActive?curve.uuid:""}
                             is3Dscene={is3Dscene}

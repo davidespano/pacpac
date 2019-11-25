@@ -1,3 +1,9 @@
+/**[Vittoria]
+ * Costanti per i tipi di azioni, per convenzione ogni costante ha come valore se stesso in forma di stringa
+ * Sono in ordine alfabetico
+ * Non possono esserci duplicati
+ */
+
 const ActionTypes = {
 
     RESET: 'RESET',
