@@ -38,7 +38,6 @@ const Scene = Immutable.Record({
         doors: [],
         acs: [],
         lights: [],
-        dlocks: [],
         motiondects: [],
         powoutlets: [],
         dswitches: [],

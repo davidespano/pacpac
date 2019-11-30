@@ -478,8 +478,6 @@ function objectTypeToString(objectType) {
             return "Condizionatore";
         case InteractiveObjectsTypes.LIGHT:
             return "Luce";
-        case InteractiveObjectsTypes.DLOCK:
-            return "Serratura";
         case InteractiveObjectsTypes.MOTION_DETECTOR:
             return "Sensore di movimento";
         case InteractiveObjectsTypes.POWER_OUTLET:

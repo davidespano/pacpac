@@ -22,7 +22,6 @@ import Blind from "../../interactives/Blind";
 import Door from "../../interactives/Door";
 import AirConditioner from "../../interactives/AirConditioner";
 import Light from "../../interactives/Light";
-import DLock from "../../interactives/DLock";
 import MotionDetector from "../../interactives/MotionDetector";
 import PowerOutlet from "../../interactives/PowerOutlet";
 import DSwitch from "../../interactives/DSwitch";
@@ -92,13 +91,6 @@ function TopBar(props){
                     }}>
                 <img src={interface_utils.getObjImg(InteractiveObjectsTypes.LIGHT)}/>
                 <figcaption>Luce</figcaption>
-            </figure>
-            <figure className={'nav-figures'}
-                    onClick={() => {
-                        createObject(props, InteractiveObjectsTypes.DLOCK);
-                    }}>
-                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.DLOCK)}/>
-                <figcaption>Serratura</figcaption>
             </figure>
             <figure className={'nav-figures'}
                     onClick={() => {
@@ -394,13 +386,6 @@ function createObject(props, type){
             case InteractiveObjectsTypes.LIGHT:
                 name = scene.name + '_lc' + (scene.objects.lights.length + 1);
                 obj = Light({
-                    uuid: uuid.v4(),
-                    name: name,
-                });
-                break;
-            case InteractiveObjectsTypes.DLOCK:
-                name = scene.name + '_dlck' + (scene.objects.dlocks.length + 1);
-                obj = DLock({
                     uuid: uuid.v4(),
                     name: name,
                 });

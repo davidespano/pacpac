@@ -50,7 +50,6 @@ function buildScene(record) {
         scene.doors = [];
         scene.acs = [];
         scene.lights = [];
-        scene.dlocks = [];
         scene.motiondects = [];
         scene.powoutlets = [];
         scene.dswitches = [];
@@ -83,8 +82,6 @@ function buildScene(record) {
                     scene.acs.push(obj); break;
                 case "LIGHT":
                     scene.lights.push(obj); break;
-                case "DLOCK":
-                    scene.dlocks.push(obj); break;
                 case "MOTION_DETECTOR":
                     scene.motiondects.push(obj); break;
                 case "POWER_OUTLET":

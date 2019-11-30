@@ -129,8 +129,6 @@ function defineField(object){
             return "acs";
         case InteractiveObjectsTypes.LIGHT:
             return "lights";
-        case InteractiveObjectsTypes.DLOCK:
-            return "dlocks";
         case InteractiveObjectsTypes.MOTION_DETECTOR:
             return "motiondects";
         case InteractiveObjectsTypes.POWER_OUTLET:

@@ -324,8 +324,6 @@ function getObjImg(objType) {
             return "icons/devices-ac.png";
         case InteractiveObjectsTypes.LIGHT:
             return "icons/devices-light.png";
-        case InteractiveObjectsTypes.DLOCK:
-            return "icons/devices-lock.png";
         case InteractiveObjectsTypes.MOTION_DETECTOR:
             return "icons/devices-motion.png";
         case InteractiveObjectsTypes.POWER_OUTLET:

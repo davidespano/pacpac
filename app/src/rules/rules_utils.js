@@ -142,13 +142,6 @@ function generateDefaultRule(object){
                 actions : Immutable.List([]),
             });
             break;
-        case InteractiveObjectsTypes.DLOCK:
-            r = Rule({
-                uuid : uuid.v4(),
-                event : Action({uuid: uuid.v4()}),
-                actions : Immutable.List([]),
-            });
-            break;
         case InteractiveObjectsTypes.MOTION_DETECTOR:
             r = Rule({
                 uuid : uuid.v4(),

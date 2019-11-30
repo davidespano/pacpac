@@ -53,7 +53,6 @@ class ScenesStore extends ReduceStore {
                                 doors: [],
                                 acs: [],
                                 lights: [],
-                                dlocks: [],
                                 motiondects: [],
                                 powoutlets: [],
                                 dswitches: [],

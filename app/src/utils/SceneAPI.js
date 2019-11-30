@@ -20,7 +20,6 @@ import Blind from "../interactives/Blind";
 import Door from "../interactives/Door";
 import AirConditioner from "../interactives/AirConditioner";
 import Light from "../interactives/Light";
-import DLock from "../interactives/DLock";
 import MotionDetector from "../interactives/MotionDetector";
 import PowerOutlet from "../interactives/PowerOutlet";
 import DSwitch from "../interactives/DSwitch";
@@ -65,7 +64,6 @@ function getByName(name, order = null, gameId=null) {
             let doors_uuids = [];
             let acs_uuids = [];
             let lights_uuids = [];
-            let dlocks_uuids = [];
             let motiondects_uuids = [];
             let powoutlets_uuids = [];
             let dswitches_uuids = [];
@@ -155,15 +153,6 @@ function getByName(name, order = null, gameId=null) {
                 response.body.lights.map((obj) => {
                     lights_uuids.push(obj.uuid); //save uuid
                     let c = Light(getProperties(obj));
-                    Actions.receiveObject(c, scene_type);
-                });
-            }
-
-            // generates locks and saves them to the objects store
-            if(response.body.dlocks){
-                response.body.dlocks.map((obj) => {
-                    dlocks_uuids.push(obj.uuid); //save uuid
-                    let c = DLock(getProperties(obj));
                     Actions.receiveObject(c, scene_type);
                 });
             }
@@ -316,7 +305,6 @@ function getByName(name, order = null, gameId=null) {
                     doors: doors_uuids,
                     acs: acs_uuids,
                     lights: lights_uuids,
-                    dlocks: dlocks_uuids,
                     motiondects: motiondects_uuids,
                     powoutlets: powoutlets_uuids,
                     dswitches: dswitches_uuids,
@@ -377,7 +365,6 @@ function createScene(name, img, index, type, tag, order) {
                     doors: [],
                     acs: [],
                     lights: [],
-                    dlocks: [],
                     motiondects: [],
                     powoutlets: [],
                     dswitches: [],
@@ -582,13 +569,6 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
             return c;
         });
 
-        // generates locks
-        const dlocks = !s.dlocks? [] : s.dlocks.map((obj) => {
-            let c = getProperties(obj);
-            gameGraph['objects'].set(c.uuid, c);
-            return c;
-        });
-
         // generates motiondects
         const motiondects = !s.motiondects? [] : s.motiondects.map((obj) => {
             let c = getProperties(obj);
@@ -693,7 +673,6 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
                 doors: doors,
                 acs: acs,
                 lights: lights,
-                dlocks: dlocks,
                 motiondects: motiondects,
                 powoutlets: powoutlets,
                 dswitches: dswitches,
