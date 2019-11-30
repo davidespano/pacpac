@@ -33,6 +33,19 @@ const Scene = Immutable.Record({
         locks: [],
         points: [],
         counters: [],
+        // IoT devices
+        blinds: [],
+        doors: [],
+        acs: [],
+        lights: [],
+        dlocks: [],
+        motiondects: [],
+        powoutlets: [],
+        dswitches: [],
+        sensors: [],
+        sirens: [],
+        smokedects: [],
+        speakers: [],
     },
     rules : [], // uuid list
     audios : [], // uuid list

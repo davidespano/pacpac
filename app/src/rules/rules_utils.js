@@ -114,6 +114,90 @@ function generateDefaultRule(object){
                 })]),
             });
             break;
+        case InteractiveObjectsTypes.BLIND:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.DOOR:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.AIR_CONDITIONER:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.LIGHT:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.DLOCK:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.MOTION_DETECTOR:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.POWER_OUTLET:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.DSWITCH:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.SENSOR:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.SIREN:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.SMOKE_DETECTOR:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
+        case InteractiveObjectsTypes.SPEAKER:
+            r = Rule({
+                uuid : uuid.v4(),
+                event : Action({uuid: uuid.v4()}),
+                actions : Immutable.List([]),
+            });
+            break;
         case InteractiveObjectsTypes.KEYPAD:
             r = Rule({
                 uuid: uuid.v4(),

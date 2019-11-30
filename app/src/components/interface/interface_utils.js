@@ -316,6 +316,30 @@ function getObjImg(objType) {
             return "icons/icons8-point-96.png";
         case InteractiveObjectsTypes.COUNTER:
             return "icons/icons8-counter-100.png";
+        case InteractiveObjectsTypes.BLIND:
+            return "icons/devices-blind.png";
+        case InteractiveObjectsTypes.DOOR:
+            return "icons/devices-door.png";
+        case InteractiveObjectsTypes.AIR_CONDITIONER:
+            return "icons/devices-ac.png";
+        case InteractiveObjectsTypes.LIGHT:
+            return "icons/devices-light.png";
+        case InteractiveObjectsTypes.DLOCK:
+            return "icons/devices-lock.png";
+        case InteractiveObjectsTypes.MOTION_DETECTOR:
+            return "icons/devices-motion.png";
+        case InteractiveObjectsTypes.POWER_OUTLET:
+            return "icons/devices-outlet.png";
+        case InteractiveObjectsTypes.DSWITCH:
+            return "icons/devices-switch.png";
+        case InteractiveObjectsTypes.SENSOR:
+            return "icons/devices-sensor.png";
+        case InteractiveObjectsTypes.SIREN:
+            return "icons/devices-siren.png";
+        case InteractiveObjectsTypes.SMOKE_DETECTOR:
+            return "icons/devices-smoke.png";
+        case InteractiveObjectsTypes.SPEAKER:
+            return "icons/devices-speaker.png";
         default:
             return "icons/icons8-plus-math-filled-100.png";
     }

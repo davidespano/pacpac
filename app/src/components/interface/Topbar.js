@@ -18,6 +18,18 @@ import InputSaveForm from "./InputSaveForm";
 import PointOfInterest from "../../interactives/PointOfInterest";
 import interface_utils from "./interface_utils";
 import Counter from "../../interactives/Counter";
+import Blind from "../../interactives/Blind";
+import Door from "../../interactives/Door";
+import AirConditioner from "../../interactives/AirConditioner";
+import Light from "../../interactives/Light";
+import DLock from "../../interactives/DLock";
+import MotionDetector from "../../interactives/MotionDetector";
+import PowerOutlet from "../../interactives/PowerOutlet";
+import DSwitch from "../../interactives/DSwitch";
+import Sensor from "../../interactives/Sensor";
+import Siren from "../../interactives/Siren";
+import SmokeDetector from "../../interactives/SmokeDetector";
+import Speaker from "../../interactives/Speaker";
 import Values from "../../rules/Values";
 
 
@@ -50,6 +62,137 @@ function TopBar(props){
                             <figcaption>Punto di interesse</figcaption>
                         </figure>
     }
+
+    let deviceButtons = (
+        <React.Fragment>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.BLIND);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.BLIND)}/>
+                <figcaption>Serranda</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.DOOR);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.DOOR)}/>
+                <figcaption>Porta</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.AIR_CONDITIONER);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.AIR_CONDITIONER)}/>
+                <figcaption>Condizionatore</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.LIGHT);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.LIGHT)}/>
+                <figcaption>Luce</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.DLOCK);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.DLOCK)}/>
+                <figcaption>Serratura</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.MOTION_DETECTOR);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.MOTION_DETECTOR)}/>
+                <figcaption>Sensore movimento</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.POWER_OUTLET);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.POWER_OUTLET)}/>
+                <figcaption>Presa elettrica</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.DSWITCH);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.DSWITCH)}/>
+                <figcaption>Interruttore</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.SENSOR);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SENSOR)}/>
+                <figcaption>Sensore</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.SIREN);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SIREN)}/>
+                <figcaption>Sirena</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.SMOKE_DETECTOR);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SMOKE_DETECTOR)}/>
+                <figcaption>Sensore fumo</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.SPEAKER);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SPEAKER)}/>
+                <figcaption>Altoparlante</figcaption>
+            </figure>
+        </React.Fragment>
+    )
+
+    let itemButtons = (
+        <React.Fragment>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.TRANSITION);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TRANSITION)}/>
+                <figcaption>Transizione</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.SWITCH);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SWITCH)}/>
+                <figcaption>Interruttore</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.KEY);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEY)}/>
+                <figcaption>Chiave</figcaption>
+            </figure>
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.LOCK);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.LOCK)}/>
+                <figcaption>Lucchetto</figcaption>
+            </figure>
+            {interestPoint}
+            <figure className={'nav-figures'}
+                    onClick={() => {
+                        createObject(props, InteractiveObjectsTypes.COUNTER);
+                    }}>
+                <img src={interface_utils.getObjImg(InteractiveObjectsTypes.COUNTER)}/>
+                <figcaption>Contatore</figcaption>
+            </figure>
+        </React.Fragment>
+    )
+
 
     return (
         <div className={'topbar'}>
@@ -114,42 +257,7 @@ function TopBar(props){
                 <div className={"tab-pane fade"}
                      id="nav-objects" role="tabpanel" aria-labelledby="nav-objects-tab">
                     <div className={"flex-container"}>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.TRANSITION);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TRANSITION)}/>
-                            <figcaption>Transizione</figcaption>
-                        </figure>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.SWITCH);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SWITCH)}/>
-                            <figcaption>Interruttore</figcaption>
-                        </figure>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.KEY);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEY)}/>
-                            <figcaption>Chiave</figcaption>
-                        </figure>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.LOCK);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.LOCK)}/>
-                            <figcaption>Lucchetto</figcaption>
-                        </figure>
-                        {interestPoint}
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.COUNTER);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.COUNTER)}/>
-                            <figcaption>Contatore</figcaption>
-                        </figure>
+                        {props.currentScene && props.scenes.get(props.currentScene).type === Values.IOT ? deviceButtons : itemButtons}
                     </div>
                 </div>
                 <div className={"tab-pane fade"}
@@ -260,6 +368,90 @@ function createObject(props, type){
                         inputSize: 3,
                         combination : [Math.floor(Math.random() * 1000)],
                     }
+                });
+                break;
+            case InteractiveObjectsTypes.BLIND:
+                name = scene.name + '_bl' + (scene.objects.blinds.length + 1);
+                obj = Blind({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.DOOR:
+                name = scene.name + '_dr' + (scene.objects.doors.length + 1);
+                obj = Door({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.AIR_CONDITIONER:
+                name = scene.name + '_ac' + (scene.objects.acs.length + 1);
+                obj = AirConditioner({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.LIGHT:
+                name = scene.name + '_lc' + (scene.objects.lights.length + 1);
+                obj = Light({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.DLOCK:
+                name = scene.name + '_dlck' + (scene.objects.dlocks.length + 1);
+                obj = DLock({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.MOTION_DETECTOR:
+                name = scene.name + '_md' + (scene.objects.motiondects.length + 1);
+                obj = MotionDetector({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.POWER_OUTLET:
+                name = scene.name + '_po' + (scene.objects.powoutlets.length + 1);
+                obj = PowerOutlet({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.DSWITCH:
+                name = scene.name + '_dsw' + (scene.objects.dswitches.length + 1);
+                obj = DSwitch({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.SENSOR:
+                name = scene.name + '_sn' + (scene.objects.sensors.length + 1);
+                obj = Sensor({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.SIREN:
+                name = scene.name + '_sr' + (scene.objects.sirens.length + 1);
+                obj = Siren({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.SMOKE_DETECTOR:
+                name = scene.name + '_sd' + (scene.objects.smokedects.length + 1);
+                obj = SmokeDetector({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case InteractiveObjectsTypes.SPEAKER:
+                name = scene.name + '_sp' + (scene.objects.speakers.length + 1);
+                obj = Speaker({
+                    uuid: uuid.v4(),
+                    name: name,
                 });
                 break;
             default:

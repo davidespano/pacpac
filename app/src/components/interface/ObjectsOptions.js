@@ -470,6 +470,30 @@ function objectTypeToString(objectType) {
             return "Chiave";
         case InteractiveObjectsTypes.TRANSITION:
             return "Transizione";
+        case InteractiveObjectsTypes.BLIND:
+            return "Serranda";
+        case InteractiveObjectsTypes.DOOR:
+            return "Porta";
+        case InteractiveObjectsTypes.AIR_CONDITIONER:
+            return "Condizionatore";
+        case InteractiveObjectsTypes.LIGHT:
+            return "Luce";
+        case InteractiveObjectsTypes.DLOCK:
+            return "Serratura";
+        case InteractiveObjectsTypes.MOTION_DETECTOR:
+            return "Sensore di movimento";
+        case InteractiveObjectsTypes.POWER_OUTLET:
+            return "Presa elettrica";
+        case InteractiveObjectsTypes.DSWITCH:
+            return "Interruttore";
+        case InteractiveObjectsTypes.SENSOR:
+            return "Sensore generico";
+        case InteractiveObjectsTypes.SIREN:
+            return "Sirena";
+        case InteractiveObjectsTypes.SMOKE_DETECTOR:
+            return "Sensore fumo";
+        case InteractiveObjectsTypes.SPEAKER:
+            return "Altoparlante";
         default:
             return "Sconosciuto";
     }

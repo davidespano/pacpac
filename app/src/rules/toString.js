@@ -80,6 +80,12 @@ function objectTypeToString(objectType) {
         case InteractiveObjectsTypes.PLAYER:
             type = "il giocatore";
             break;
+
+        // - IOTDeviceSearch: IoT Items
+        case InteractiveObjectsTypes.BLIND:
+            type = "la serranda";
+            break;
+
         case Values.THREE_DIM:
         case Values.IOT:
         case Values.TWO_DIM:

@@ -16,6 +16,18 @@ import Condition from "../rules/Condition";
 import Audio from "../audio/Audio";
 import PointOfInterest from "../interactives/PointOfInterest";
 import Counter from "../interactives/Counter";
+import Blind from "../interactives/Blind";
+import Door from "../interactives/Door";
+import AirConditioner from "../interactives/AirConditioner";
+import Light from "../interactives/Light";
+import DLock from "../interactives/DLock";
+import MotionDetector from "../interactives/MotionDetector";
+import PowerOutlet from "../interactives/PowerOutlet";
+import DSwitch from "../interactives/DSwitch";
+import Sensor from "../interactives/Sensor";
+import Siren from "../interactives/Siren";
+import SmokeDetector from "../interactives/SmokeDetector";
+import Speaker from "../interactives/Speaker";
 import ScenesStore from "../data/ScenesStore";
 import EditorStateStore from "../data/EditorStateStore";
 let uuid = require('uuid');
@@ -49,6 +61,18 @@ function getByName(name, order = null, gameId=null) {
             let audio_uuids = [];
             let points_uuids = [];
             let counters_uuids = [];
+            let blinds_uuids = [];
+            let doors_uuids = [];
+            let acs_uuids = [];
+            let lights_uuids = [];
+            let dlocks_uuids = [];
+            let motiondects_uuids = [];
+            let powoutlets_uuids = [];
+            let dswitches_uuids = [];
+            let sensors_uuids = [];
+            let sirens_uuids = [];
+            let smokedects_uuids = [];
+            let speakers_uuids = [];
 
             let scene_type = response.body.type;
 
@@ -95,6 +119,114 @@ function getByName(name, order = null, gameId=null) {
                 response.body.counters.map((counter) => {
                     counters_uuids.push(counter.uuid); //save uuid
                     let c = Counter(getProperties(counter));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates blinds and saves them to the objects store
+            if(response.body.blinds){
+                response.body.blinds.map((blind) => {
+                    blinds_uuids.push(blind.uuid); //save uuid
+                    let c = Blind(getProperties(blind));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates blinds and saves them to the objects store
+            if(response.body.doors){
+                response.body.doors.map((obj) => {
+                    doors_uuids.push(obj.uuid); //save uuid
+                    let c = Door(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates acs and saves them to the objects store
+            if(response.body.acs){
+                response.body.acs.map((obj) => {
+                    acs_uuids.push(obj.uuid); //save uuid
+                    let c = AirConditioner(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates lights and saves them to the objects store
+            if(response.body.lights){
+                response.body.lights.map((obj) => {
+                    lights_uuids.push(obj.uuid); //save uuid
+                    let c = Light(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates locks and saves them to the objects store
+            if(response.body.dlocks){
+                response.body.dlocks.map((obj) => {
+                    dlocks_uuids.push(obj.uuid); //save uuid
+                    let c = DLock(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates motiondects and saves them to the objects store
+            if(response.body.motiondects){
+                response.body.motiondects.map((obj) => {
+                    motiondects_uuids.push(obj.uuid); //save uuid
+                    let c = MotionDetector(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates powoutlets and saves them to the objects store
+            if(response.body.powoutlets){
+                response.body.powoutlets.map((obj) => {
+                    powoutlets_uuids.push(obj.uuid); //save uuid
+                    let c = PowerOutlet(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates switches and saves them to the objects store
+            if(response.body.dswitches){
+                response.body.dswitches.map((obj) => {
+                    dswitches_uuids.push(obj.uuid); //save uuid
+                    let c = DSwitch(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates sensors and saves them to the objects store
+            if(response.body.sensors){
+                response.body.sensors.map((obj) => {
+                    sensors_uuids.push(obj.uuid); //save uuid
+                    let c = Sensor(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates sirens and saves them to the objects store
+            if(response.body.sirens){
+                response.body.sirens.map((obj) => {
+                    sirens_uuids.push(obj.uuid); //save uuid
+                    let c = Siren(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates smokedects and saves them to the objects store
+            if(response.body.smokedects){
+                response.body.smokedects.map((obj) => {
+                    smokedects_uuids.push(obj.uuid); //save uuid
+                    let c = SmokeDetector(getProperties(obj));
+                    Actions.receiveObject(c, scene_type);
+                });
+            }
+
+            // generates speakers and saves them to the objects store
+            if(response.body.speakers){
+                response.body.speakers.map((obj) => {
+                    speakers_uuids.push(obj.uuid); //save uuid
+                    let c = Speaker(getProperties(obj));
                     Actions.receiveObject(c, scene_type);
                 });
             }
@@ -178,6 +310,20 @@ function getByName(name, order = null, gameId=null) {
                     locks: locks_uuids,
                     points: points_uuids,
                     counters: counters_uuids,
+
+                    // IoT Devices:
+                    blinds: blinds_uuids,
+                    doors: doors_uuids,
+                    acs: acs_uuids,
+                    lights: lights_uuids,
+                    dlocks: dlocks_uuids,
+                    motiondects: motiondects_uuids,
+                    powoutlets: powoutlets_uuids,
+                    dswitches: dswitches_uuids,
+                    sensors: sensors_uuids,
+                    sirens: sirens_uuids,
+                    smokedects: smokedects_uuids,
+                    speakers: speakers_uuids,
                 },
                 rules : rules_uuids,
                 audios : audio_uuids,
@@ -207,7 +353,7 @@ function createScene(name, img, index, type, tag, order) {
             if (err) {
                 return console.error(err);
             }
-            
+
             // new Scene object
             let newScene = Scene({
                 uuid: id,
@@ -225,6 +371,20 @@ function createScene(name, img, index, type, tag, order) {
                     locks: [],
                     points: [],
                     counters: [],
+
+                    // IoT Devices:
+                    blinds: [],
+                    doors: [],
+                    acs: [],
+                    lights: [],
+                    dlocks: [],
+                    motiondects: [],
+                    powoutlets: [],
+                    dswitches: [],
+                    sensors: [],
+                    sirens: [],
+                    smokedects: [],
+                    speakers: [],
                 }
             });
 
@@ -392,6 +552,92 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
             return c;
         });
 
+        // IoT Devices
+
+        // generates blinds
+        const blinds = !s.blinds? [] : s.blinds.map((blind) => {
+            let c = getProperties(blind);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates doors
+        const doors = !s.doors? [] : s.doors.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates acs
+        const acs = !s.acs? [] : s.acs.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates lights
+        const lights = !s.lights? [] : s.lights.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates locks
+        const dlocks = !s.dlocks? [] : s.dlocks.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates motiondects
+        const motiondects = !s.motiondects? [] : s.motiondects.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates powoutlets
+        const powoutlets = !s.powoutlets? [] : s.powoutlets.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates switches
+        const dswitches = !s.dswitches? [] : s.dswitches.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates sensors
+        const sensors = !s.sensors? [] : s.sensors.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates sirens
+        const sirens = !s.sirens? [] : s.sirens.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates smokedects
+        const smokedects = !s.smokedects? [] : s.smokedects.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
+        // generates speakers
+        const speakers = !s.speakers? [] : s.speakers.map((obj) => {
+            let c = getProperties(obj);
+            gameGraph['objects'].set(c.uuid, c);
+            return c;
+        });
+
         // generates rules
         const rules = s.rules.map(rule => {
             // check actions to find scene neighbours
@@ -441,6 +687,20 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
                 locks : locks,
                 points: points,
                 counters: counters,
+
+                // IoT Devices
+                blinds: blinds,
+                doors: doors,
+                acs: acs,
+                lights: lights,
+                dlocks: dlocks,
+                motiondects: motiondects,
+                powoutlets: powoutlets,
+                dswitches: dswitches,
+                sensors: sensors,
+                sirens: sirens,
+                smokedects: smokedects,
+                speakers: speakers,
             },
             rules : rules,
             audios : audios,
@@ -457,7 +717,7 @@ async function getHome(gameId = null) {
 
     const response = await request.get(`${apiBaseURL}/${id}/getHomeScene`)
         .set('Accept', 'application/json');
-    
+
     return response.body.uuid
 }
 

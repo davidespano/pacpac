@@ -47,6 +47,20 @@ class ScenesStore extends ReduceStore {
                                 locks: [],
                                 points: [],
                                 counters: [],
+
+                                // - IoT Devices:
+                                blinds: [],
+                                doors: [],
+                                acs: [],
+                                lights: [],
+                                dlocks: [],
+                                motiondects: [],
+                                powoutlets: [],
+                                dswitches: [],
+                                sensors: [],
+                                sirens: [],
+                                smokedects: [],
+                                speakers: [],
                             },
                         });
                         state = state.set(newScene.uuid, newScene).sort(stores_utils.chooseComparator(action.order));

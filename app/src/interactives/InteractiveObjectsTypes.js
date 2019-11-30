@@ -13,6 +13,20 @@ const InteractiveObjectsTypes = {
     TIMER : 'TIMER',
     TRANSITION : 'TRANSITION',
 
+    // - IoT Devices
+    BLIND : 'BLIND',
+    DOOR: 'DOOR',
+    AIR_CONDITIONER: 'AIR_CONDITIONER',
+    LIGHT : 'LIGHT',
+    DLOCK: 'DEVICE_LOCK',
+    MOTION_DETECTOR: 'MOTION_DETECTOR',
+    POWER_OUTLET: 'POWER_OUTLET',
+    DSWITCH: 'POWER_SWITCH',
+    SENSOR: 'SENSOR',
+    SIREN: 'SIREN',
+    SMOKE_DETECTOR: 'SMOKE_DETECTOR',
+    SPEAKER: 'SPEAKER',
+
 };
 
 export default InteractiveObjectsTypes;

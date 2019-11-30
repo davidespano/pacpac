@@ -766,72 +766,72 @@ const Actions = {
             StoryAPI.getCollectionByName(collection.name);
         })
 
-    },	
+    },
 
     receiveCollection(collection) {
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_COLLECTION,
 			collection:collection
         })
-    },		
+    },
 
     updateCollection(collection){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_COLLECTION,
             collection: collection,
         })
-    },		
-	
+    },
+
     removeCollection(collection){
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_COLLECTION,
             collection: collection,
         })
-    },			
-	
+    },
+
 
     receiveImage(image) {
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_IMAGE,
 			image:image
         })
-    },	
-	
+    },
+
     updateImage(image) {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_IMAGE,
 			image:image
         })
-    },	
-	
+    },
+
     updateStory(story){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_STORY,
             story: story,
         })
-    },	
-	
+    },
+
     receiveStory(story) {
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_STORY,
 			story:story
         })
     },
-	
+
     restoreStory(story) {
         AppDispatcher.dispatch({
             type: ActionTypes.RESTORE_STORY,
-			story: story			
+			story: story
         })
-    },	
+    },
 
     editStory(uuid, userStory) {
         AppDispatcher.dispatch({
             type: ActionTypes.EDIT_STORY,
 			uuid: uuid,
-			userStory: userStory			
+			userStory: userStory
         })
-    },	
+    },
 
     removeStory(collection, story) {
         AppDispatcher.dispatch({
@@ -840,42 +840,42 @@ const Actions = {
 			story: story
         })
     },
-	
+
     startEditingStory(uuid) {
         AppDispatcher.dispatch({
             type: ActionTypes.START_EDITING_STORY,
-			uuid: uuid			
+			uuid: uuid
         })
-    },	
-	
+    },
+
     stopEditingStory() {
         AppDispatcher.dispatch({
             type: ActionTypes.STOP_EDITING_STORY,
         })
-    },	
-	
+    },
+
     addFormImage(image) {
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_FORM_IMAGE,
 			index: image.index,
-			image: image,			
+			image: image,
         })
-    },		
-	
+    },
+
     receiveFormImage(image) {
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_FORM_IMAGE,
 			image: image,
         })
-    },		
-	
+    },
+
     updateFormImage(image) {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_FORM_IMAGE,
 			index: image.index,
 			image: image,
         })
-    },		
+    },
 
     updateFormImageName(index, name) {
         AppDispatcher.dispatch({
@@ -883,19 +883,19 @@ const Actions = {
 			index: index,
 			name: name,
         })
-    },		
+    },
     removeFormImage(index) {
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_FORM_IMAGE,
 			index: index,
         })
-    },		
+    },
 
     resetFormImage() {
         AppDispatcher.dispatch({
             type: ActionTypes.RESET_FORM_IMAGE,
         })
-    },		
+    },
 };
 
 export default Actions;

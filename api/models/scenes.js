@@ -45,6 +45,20 @@ function buildScene(record) {
         scene.points = [];
         scene.counters = [];
 
+        // - IoT
+        scene.blinds = [];
+        scene.doors = [];
+        scene.acs = [];
+        scene.lights = [];
+        scene.dlocks = [];
+        scene.motiondects = [];
+        scene.powoutlets = [];
+        scene.dswitches = [];
+        scene.sensors = [];
+        scene.sirens = [];
+        scene.smokedects = [];
+        scene.speakers = [];
+
         objects.forEach((o) => {
             const obj = new Interactiveobject(o);
 
@@ -61,6 +75,30 @@ function buildScene(record) {
                     scene.points.push(obj); break;
                 case "COUNTER":
                     scene.counters.push(obj); break;
+                case "BLIND":
+                    scene.blinds.push(obj); break;
+                case "DOOR":
+                    scene.doors.push(obj); break;
+                case "AIR_CONDITIONER":
+                    scene.acs.push(obj); break;
+                case "LIGHT":
+                    scene.lights.push(obj); break;
+                case "DLOCK":
+                    scene.dlocks.push(obj); break;
+                case "MOTION_DETECTOR":
+                    scene.motiondects.push(obj); break;
+                case "POWER_OUTLET":
+                    scene.powoutlets.push(obj); break;
+                case "DSWITCH":
+                    scene.dswitches.push(obj); break;
+                case "SENSOR":
+                    scene.sensors.push(obj); break;
+                case "SIREN":
+                    scene.sirens.push(obj); break;
+                case "SMOKE_DETECTOR":
+                    scene.smokedects.push(obj); break;
+                case "SPEAKER":
+                    scene.speakers.push(obj); break;
             }
         })
     }catch(error){console.error(error)}
@@ -188,7 +226,7 @@ function addScene(session, uuid, name, img, index, type, tag, gameID) {
 
 //update a scene
 function updateScene( session, scene, tag, gameID){
-    
+
     delete scene.tag;
     delete scene.objects;
     delete scene.audios;

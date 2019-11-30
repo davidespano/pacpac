@@ -120,6 +120,31 @@ function defineField(object){
             return 'points';
         case InteractiveObjectsTypes.COUNTER:
             return "counters";
+        // IoT Devices
+        case InteractiveObjectsTypes.BLIND:
+            return "blinds";
+        case InteractiveObjectsTypes.DOOR:
+            return "doors";
+        case InteractiveObjectsTypes.AIR_CONDITIONER:
+            return "acs";
+        case InteractiveObjectsTypes.LIGHT:
+            return "lights";
+        case InteractiveObjectsTypes.DLOCK:
+            return "dlocks";
+        case InteractiveObjectsTypes.MOTION_DETECTOR:
+            return "motiondects";
+        case InteractiveObjectsTypes.POWER_OUTLET:
+            return "powoutlets";
+        case InteractiveObjectsTypes.DSWITCH:
+            return "dswitches";
+        case InteractiveObjectsTypes.SENSOR:
+            return "sensors";
+        case InteractiveObjectsTypes.SIREN:
+            return "sirens";
+        case InteractiveObjectsTypes.SMOKE_DETECTOR:
+            return "smokedects";
+        case InteractiveObjectsTypes.SPEAKER:
+            return "speakers";
         default:
             return null;
     }
