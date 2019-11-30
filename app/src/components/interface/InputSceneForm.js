@@ -41,6 +41,7 @@ function InputSceneForm(props){
                                     <select id={'select-scene-type'}>
                                         <option value={Values.THREE_DIM}>3D</option>
                                         <option value={Values.TWO_DIM}>2D</option>
+                                        <option value={Values.IOT}>IoT</option>
                                     </select>
                                 </div>
                             </div>
@@ -114,5 +115,3 @@ function selectedFile(props){
 }
 
 export default InputSceneForm;
-
-

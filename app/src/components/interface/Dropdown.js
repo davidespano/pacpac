@@ -35,6 +35,7 @@ function generateOptions(props, component, property){
                 [
                     { value: Values.THREE_DIM, label: toString.valueUuidToString(Values.THREE_DIM)},
                     { value: Values.TWO_DIM, label: toString.valueUuidToString(Values.TWO_DIM)},
+                    { value: Values.IOT, label: toString.valueUuidToString(Values.IOT)},
                 ],
                 (e) => {
                     let scene = props.scenes.get(props.currentScene);

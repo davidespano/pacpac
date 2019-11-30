@@ -81,6 +81,7 @@ function objectTypeToString(objectType) {
             type = "il giocatore";
             break;
         case Values.THREE_DIM:
+        case Values.IOT:
         case Values.TWO_DIM:
             type = "la scena";
             break;
@@ -166,6 +167,8 @@ function valueUuidToString(valueUuid){
             return '3D';
         case Values.TWO_DIM:
             return '2D';
+        case Values.IOT:
+            return 'IoT';
         case Values.NO_DIR:
             return 'nessuna direzione';
         case Values.UP:

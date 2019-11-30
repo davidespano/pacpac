@@ -22,6 +22,7 @@ const Values = {
     // scene types
     THREE_DIM : '3D',
     TWO_DIM : '2D',
+    IOT: 'IOT',
 
     //directions
     NO_DIR:  'NO_DIR',
