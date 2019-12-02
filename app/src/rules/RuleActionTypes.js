@@ -4,6 +4,7 @@ import Immutable from "immutable";
 
 const RuleActionTypes = {
 
+    CHANGE_ACTIVABILITY: 'CHANGE_ACTIVABILITY',
     CHANGE_BACKGROUND: 'CHANGE_BACKGROUND',
     CHANGE_STATE: 'CHANGE_STATE',
     CHANGE_VISIBILITY : 'CHANGE_VISIBILITY',
@@ -21,6 +22,7 @@ const RuleActionTypes = {
     STOP: 'STOP',
     TRANSITION : 'TRANSITION',
     UNLOCK_LOCK: 'UNLOCK_LOCK',
+
 
 };
 

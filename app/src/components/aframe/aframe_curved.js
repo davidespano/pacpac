@@ -59,7 +59,7 @@ class Curved extends Component
                 <Entity material={material}
                         geometry={geometry}
                         id={"curv" + this.props.object_uuid}
-                        selectable={'object_uuid:' + this.props.object_uuid + '; visible: ' + this.props.visible + '; object_type: ' + this.props.type}
+                        selectable={'object_uuid:' + this.props.object_uuid + '; activable: ' + this.props.activable + '; object_type: ' + this.props.type}
                         position={position}
                         scale={scale}/> //[Vittoria] quello che nella scena 3D inverte gli assi
             );

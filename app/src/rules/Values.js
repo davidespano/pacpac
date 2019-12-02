@@ -4,6 +4,9 @@ const Values = {
     VISIBLE: 'VISIBLE',
     INVISIBLE: 'INVISIBLE',
 
+    ACTIVABLE: 'ACTIVABLE',
+    NOT_ACTIVABLE: 'NOT_ACTIVABLE',
+
     //switch
 
     ON: 'ON',

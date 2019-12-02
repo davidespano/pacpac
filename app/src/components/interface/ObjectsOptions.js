@@ -114,12 +114,20 @@ function generateProperties(props){
             </div>
             <label className={'rightbar-titles'}>Opzioni</label>
             <div className={'options-grid'}>
-                <label className={'options-labels'}>Attivazione:</label>
+                <label className={'options-labels'}>Visibilità:</label>
                 <Dropdown
                     props={props}
                     component={'visibility'}
                     property={'visible'}
                     defaultValue={currentObject.visible}/>
+            </div>
+            <div className={'options-grid'}>
+                <label className={'options-labels'}>Attivazione:</label>
+                <Dropdown
+                    props={props}
+                    component={'activability'}
+                    property={'activable'}
+                    defaultValue={currentObject.activable}/>
             </div>
             {generateSpecificProperties(currentObject, objectScene, props)}
             <div className={'options-grid'}>

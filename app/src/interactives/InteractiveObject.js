@@ -21,6 +21,7 @@ const InteractiveObject = Immutable.Record({
     visible: Values.VISIBLE,
     vertices : null,
     properties : null,
+    activable: Values.ACTIVABLE,
 
 });
 

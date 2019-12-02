@@ -34,6 +34,7 @@ function setPropertyFromValue(object, property, value, props){
         case "name":
         case "mask":
         case "vertices":
+        case "activable":
         case 'visible':
             newObject = object.set(property, value);
             break;

@@ -50,6 +50,7 @@ function getByName(name, order = null, gameId=null) {
             let points_uuids = [];
             let counters_uuids = [];
 
+
             let scene_type = response.body.type;
 
 
@@ -521,6 +522,7 @@ function getProperties(obj){
         audio: JSON.parse(obj.audio),
         properties: JSON.parse(obj.properties),
         visible: obj.visible,
+        activable: obj.activable,
     };
 }
 
