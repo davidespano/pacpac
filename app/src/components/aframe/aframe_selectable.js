@@ -49,11 +49,13 @@ AFRAME.registerComponent('selectable', {
                 elem.addEventListener('mouseleave', setMouseLeave);
             }
             elem.addEventListener('click', setClick);
+
         } else {
             if(this.data.object_type === 'TRANSITION'){
                 elem.removeEventListener('mouseenter', setMouseEnterTransition);
                 elem.removeEventListener('mouseleave', setMouseLeaveTransition);
             } else {
+                elem.emit('mouseleave');
                 elem.removeEventListener('mouseenter', setMouseEnter);
                 elem.removeEventListener('mouseleave', setMouseLeave);
             }
@@ -84,6 +86,8 @@ function setMouseLeaveTransition() {
         cursor.setAttribute('color', 'black');
         //transizione
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+        cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
+
     }
 }
 
@@ -100,6 +104,8 @@ function setMouseLeave() {
         cursor.setAttribute('color', 'black');
         //non transizione
         cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
+        cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:1 1 1;');
+
     }
 
 }

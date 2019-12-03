@@ -275,6 +275,8 @@ function createObject(props, type){
         }else{
             props.addNewRule(scene, defaultRule);
         }
+        //[TODO] passare all'editor geometria appena si crea un nuovo oggetto
+        // props.switchToGeometryMode();
 
     } else {
         alert('Nessuna scena selezionata!');
