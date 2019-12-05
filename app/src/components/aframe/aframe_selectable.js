@@ -106,7 +106,11 @@ function setMouseLeave() {
  * @param event
  */
 function setClick(event) {
-    event.detail.cursorEl.components.raycaster.intersectedEls.forEach(obj => eventBus.emit('click-'+obj.object_uuid))
+    event.detail.cursorEl.components.raycaster.intersectedEls.forEach(
+        obj => {
+            eventBus.emit('click-'+ obj.object_uuid)
+        }
+    );
 }
 
 /**

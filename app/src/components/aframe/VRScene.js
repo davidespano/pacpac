@@ -1,4 +1,4 @@
-import 'aframe';
+/*import 'aframe';
 import './aframe_selectable'
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
@@ -130,7 +130,7 @@ export default class VRScene extends React.Component {
             </div>
         )
     }
-}
+}*/
 
 
 

@@ -7,7 +7,7 @@ import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
 import SceneAPI from "../../utils/SceneAPI";
 import Asset from "./aframe_assets";
-import ConditionUtils from "../../rules/ConditionUtils";
+import evalCondition from "../../rules/ConditionUtils";
 import {executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
 import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
@@ -107,7 +107,7 @@ export default class VRScene extends React.Component {
     }
 
     /**
-     * Funzione assincrona che richiede al database tutte le informazioni del gioco, compresi audio,
+     * Funzione asincrona che richiede al database tutte le informazioni del gioco, compresi audio,
      * tutte le scene e gli oggetti, regole in esse contenute
      * @returns {Promise<void>}
      */
@@ -160,10 +160,13 @@ export default class VRScene extends React.Component {
      */
     createRuleListeners(){
         let me = this;
-
-        Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
+        //Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
+        let sceneId = this.state.activeScene["uuid"];
+        console.log("generating scene... " + sceneId);
+        this.state.graph.scenes[sceneId].rules.forEach(rule => {
             let duration = 0;
             let objectVideo;
+
             rule.actions.sort(stores_utils.actionComparator);
 
             //Funzione che si occupa di eseguire le azioni
@@ -191,9 +194,11 @@ export default class VRScene extends React.Component {
                 //se volessi creare un evento del counter chiamerei il uuid del contatore
                 case 'CLICK':
                     rule.actions.forEach(action => {
-                        if(!eventBus._events['click-' + rule.event.obj_uuid]){
+                        //if(!eventBus._events['click-' + rule.event.obj_uuid]){
+                        console.log("registering " + action.subj_uuid + " " + action.action + " " + action.obj_uuid);
                             eventBus.on('click-' + rule.event.obj_uuid, function () {
-                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                let condition = evalCondition(rule.condition, me.state.runState);
+                                if (condition) {
                                     // questa chiamata, come quelle di seguito, permette al debugger di
                                     // evidenziare la regola eseguita e all'utente di premere esplicitamente il
                                     // pulsante avanti per continuare.
@@ -208,7 +213,7 @@ export default class VRScene extends React.Component {
                                     }
                                 }
                             })
-                        }
+                        //}
                     });
                     break;
                 case 'IS':
@@ -229,7 +234,7 @@ export default class VRScene extends React.Component {
                             rule.actions.forEach(action => {
                                 //Creo l'execution per ogni azione, la gestisco sia per in debugmode che in playmode
                                 //Verifico che la condizione sia rispettata
-                                if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                if(evalCondition(rule.condition, me.state.runState)) {
                                     let actionExecution = actionCallback(action);
                                     if (me.props.debug) {
                                         setTimeout(function () {
@@ -256,7 +261,7 @@ export default class VRScene extends React.Component {
                             rule.actions.forEach(action => {
                                 //Creo l'execution per ogni azione, la gestisco sia per in debugmode che in playmode
                                 //Verifico che la condizione sia rispettata
-                                if(ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                if(evalCondition(rule.condition, me.state.runState)) {
                                     let actionExecution = actionCallback(action);
                                     if (me.props.debug) {
                                         setTimeout(function () {
@@ -440,7 +445,8 @@ export default class VRScene extends React.Component {
             //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'
             //i media non sono tutti presenti nella scena
             //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
-            this.createRuleListeners();
+            //TODO [davide] rimosso perche' causa problemi al resto
+            //this.createRuleListeners();
 
             //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (
