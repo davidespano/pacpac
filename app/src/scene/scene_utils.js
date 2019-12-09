@@ -131,6 +131,7 @@ function defineField(object){
  * @returns {*}
  */
 function allObjects(scene){
+    if(scene!=null)
     return Object.values(scene.objects).flat();
 }
 
