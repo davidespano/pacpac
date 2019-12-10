@@ -312,7 +312,7 @@ export default class Bubble extends Component
                 }
 
                 //se lo stato dell'oggetto esiste e se l'oggetto è invisibile dico allo shader di passare al successivo
-                if(this.props.runState[obj.uuid]){
+                if(this.props.runState){
                     if (this.props.runState[obj.uuid].visible===false )
                         return;
                 }
