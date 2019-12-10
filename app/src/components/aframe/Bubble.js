@@ -311,8 +311,16 @@ export default class Bubble extends Component
                         media = obj.media.media0;
                 }
 
+                //se lo stato dell'oggetto esiste e se l'oggetto è invisibile dico allo shader di passare al successivo
+                if(this.props.runState[obj.uuid]){
+                    if (this.props.runState[obj.uuid].visible===false )
+                        return;
+                }
                 //Se l'oggetto non ha un media passo al prossimo
-                if (asset === null) return; //||se l'altro è settato a false
+                if(asset === null){
+                    return;
+                }
+
 
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);

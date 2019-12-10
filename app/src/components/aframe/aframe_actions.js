@@ -197,6 +197,7 @@ function executeAction(VRScene, rule, action){
             //actualSky.setAttribute('primitive', primitive)
             //TODO capire se si può evitare questo comportamento: se di un video scelgo di tenere anche l'audio e lo imposto
             // in un'altra scena allora avrà l'audio anche quella scena
+
             if(soundsHub["audios_"+ actual_scene_Uuid]){
                 soundsHub["audios_"+ actual_scene_Uuid].pause();
                 let audioVideo = {};
@@ -577,10 +578,13 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     let audioKey = current_object.audio.audio0;
     if(soundsHub['audio0_' + audioKey])
         soundsHub['audio0_' + audioKey].play();
-    //TODO Vittoria prima veniva rimosso completamente l'oggetto chiave e il lucchetto, se c'era un video legato alla chiave veniva eliminato
-    //filtra tutti gli oggetti diversi da current object, togliere la filter e eliminare l'oggetto (obj)
-    game_graph.scenes[VRScene.state.activeScene.uuid].objects.collectable_keys =
-        game_graph.scenes[VRScene.state.activeScene.uuid].objects.collectable_keys.filter(obj =>  obj.uuid !== current_object.uuid);
+    // Quando una chiave viene raccolta o un lucchetto viene aperto sparisce e non è più attivabile nè visibile,
+    //prima l'oggetto veniva filtrato ed eliminato
+
+    runState[current_object.uuid].visible=false;
+    runState[current_object.uuid].activable=false;
+
+
     if(current_object.media0 !== null){
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
     }
