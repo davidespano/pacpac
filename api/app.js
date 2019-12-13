@@ -136,6 +136,7 @@ api.delete('/:gameID/delete-game', loginRequired, routes.games.delete_game);
 api.get('/:gameID/scenes', routes.scenes.list);
 api.get('/:gameID/scenes-all', routes.scenes.detailedList);
 api.get('/:gameID/scenes/:name', routes.scenes.getByName);
+api.get('/:gameID/scenes/uuid/:uuid', routes.scenes.getByUuid);
 api.get('/:gameID/getHomeScene', routes.scenes.getHomeScene);
 api.post('/:gameID/scenes/addScene', loginRequired, routes.scenes.addScene);
 api.put('/:gameID/scenes/updateScene', loginRequired, routes.scenes.updateScene);

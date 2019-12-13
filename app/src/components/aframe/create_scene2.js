@@ -94,6 +94,13 @@ export default class VRScene extends React.Component {
         this.interval = setInterval(() => this.tick(), 100);
     }
 
+    componentDidUpdate(prevProps){
+        if(this.props.activeScene != prevProps.activeScene){
+            this.createRuleListeners();
+        }
+
+    }
+
     /**
      * Funzione che aggiorna la rotazione della camera, utile per gli audio spaziali
      */
@@ -121,7 +128,7 @@ export default class VRScene extends React.Component {
         let audios = [];
         await AudioAPI.getAudios(audios, this.props.editor.gameId);
         let gameGraph = {};
-        await SceneAPI.getAllDetailedScenes(gameGraph, this.props.editor.gameId);
+        await SceneAPI.getDetailedScene(this.props.currentScene, gameGraph, this.props.editor.gameId);
 
         //Creo lo stato iniziale del gioco dal grafo
         let runState = this.createGameState(gameGraph);
@@ -158,15 +165,16 @@ export default class VRScene extends React.Component {
     /**
      * Funzione che crea tutti i listeners legati agli eventi delle regole
      */
-    createRuleListeners(){
+    async createRuleListeners(){
         let me = this;
         //Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
-        let sceneId = this.state.activeScene["uuid"];
+        let sceneId = me.state.activeScene["uuid"];
         console.log("generating scene... " + sceneId);
-        this.state.graph.scenes[sceneId].rules.forEach(rule => {
+        let gameGraph = {};
+        await SceneAPI.getDetailedScene(me.props.currentScene, gameGraph, me.props.editor.gameId);
 
-        //[Vittoria] ogni volta che c'è una scena fa tutte le regole del gioco
-        Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
+        gameGraph.scenes[sceneId].rules.forEach(rule => {
+
             let duration = 0;
             let objectVideo;
 
@@ -356,7 +364,7 @@ export default class VRScene extends React.Component {
 
     }
 
-    render() {
+    render(){
 
         let sceneUuid = null;
         //Verifico se sono in debug mode e prendo la scena corrente di conseguenza
