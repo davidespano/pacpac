@@ -348,7 +348,7 @@ const Actions = {
             tags: response.tags,
         });
         response.scenes.forEach(scene => {
-            SceneAPI.getByName(scene.name, order, gameId);
+            SceneAPI.getByName(scene.name, order, gameId, false);
         })
 
     },
@@ -358,13 +358,14 @@ const Actions = {
      * @param scene
      * @param order of scenes
      */
-    receiveScene(scene, order){
+    receiveScene(scene, order, creation = true){ //di default passando 2 parametri il terzo sarà come impostato qui, altrimenti prende il valore passato
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_SCENE,
             scene: scene,
             order: order,
             objectsToScene: ObjectToSceneStore.getState(),
             objects: ObjectsStore.getState(),
+            creation: creation,
         });
     },
 

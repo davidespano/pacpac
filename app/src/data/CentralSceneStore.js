@@ -3,6 +3,7 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from '../actions/ActionTypes';
 import Scene from '../scene/Scene';
 import Immutable from "immutable";
+import EditorStateStore from "./EditorStateStore";
 
 class CentralSceneStore extends ReduceStore {
 
@@ -17,7 +18,16 @@ class CentralSceneStore extends ReduceStore {
     reduce(state, action) {
         switch (action.type) {
             case ActionTypes.RECEIVE_SCENE:
-                return action.scene.uuid;
+                if(action.creation) //se stiamo creando una nuova scena la visualizziamo nell'interfaccia
+                {
+                    return action.scene.uuid;
+                }
+                else //altrimenti stiamo probabilmente caricando le scene e vogliamo la home scene
+                {
+                    if(action.scene.uuid === EditorStateStore.getState().homeScene)
+                        return action.scene.uuid;
+                };
+                return state;
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 return action.uuid;
             case ActionTypes.REMOVE_SCENE:

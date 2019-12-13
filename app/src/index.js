@@ -27,11 +27,14 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
         Actions.editModeOn();
         SceneAPI.getHomeScene();
         SceneAPI.getAllScenesAndTags();
+        //[TODO] impostare la home scene come scena iniziale dell'editor
         MediaAPI.getAllAssets();
         AudioAPI.getAllAudios();
 		StoryAPI.getAllCollections();
 		DebugAPI.getAllSaves();
 		//If modified edit gameSelection in components/interface/GameList.js
+        Actions.updateCurrentScene(EditorStateStore.getState().homeScene);
+
     }
 }).catch(()=>{}).then(()=>{
     ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));

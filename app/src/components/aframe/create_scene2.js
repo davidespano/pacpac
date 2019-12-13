@@ -1,7 +1,7 @@
 import 'aframe';
 import './aframe_selectable'
 import './pac-look-controls'
-import './aframeUtils'
+//import './aframeUtils'
 import React from 'react';
 import {Entity, Scene} from 'aframe-react';
 import Bubble from './Bubble';
@@ -164,6 +164,9 @@ export default class VRScene extends React.Component {
         let sceneId = this.state.activeScene["uuid"];
         console.log("generating scene... " + sceneId);
         this.state.graph.scenes[sceneId].rules.forEach(rule => {
+
+        //[Vittoria] ogni volta che c'è una scena fa tutte le regole del gioco
+        Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             let duration = 0;
             let objectVideo;
 
@@ -302,7 +305,7 @@ export default class VRScene extends React.Component {
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
                 runState[obj.uuid] = {state: obj.properties.state,
-                                      visible: obj.visible,
+                                      visible: obj.visible, activable: obj.activable,
                                       step: obj.properties.step
                 }
             });

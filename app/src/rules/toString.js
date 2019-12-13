@@ -23,6 +23,8 @@ function eventTypeToString(eventType) {
             return 'cambia stato a';
         case RuleActionTypes.CHANGE_VISIBILITY:
             return 'diventa';
+        case RuleActionTypes.CHANGE_ACTIVABILITY:
+            return 'cambia attivabilità in';
         case RuleActionTypes.PLAY:
             return 'riproduce';
         case RuleActionTypes.PLAY_LOOP:
@@ -147,8 +149,12 @@ function superOperatorsToString(superoperatorUuid) {
 function valueUuidToString(valueUuid){
     switch(valueUuid){
         case Values.VISIBLE:
-            return 'attivabile';
+            return 'visibile';
         case Values.INVISIBLE:
+            return 'non visibile';
+        case Values.ACTIVABLE:
+            return 'attivabile';
+        case Values.NOT_ACTIVABLE:
             return 'non attivabile';
         case Values.ON:
             return 'acceso';

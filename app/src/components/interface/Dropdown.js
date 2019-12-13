@@ -54,6 +54,18 @@ function generateOptions(props, component, property){
                 },
                 customStyle,
             ];
+        case 'activability':
+            return [
+                [
+                    { value: Values.ACTIVABLE, label: toString.valueUuidToString(Values.ACTIVABLE)},
+                    { value: Values.NOT_ACTIVABLE, label: toString.valueUuidToString(Values.NOT_ACTIVABLE)},
+                ],
+                (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                },
+                customStyle,
+            ];
         case 'on-off':
             return [
                 [

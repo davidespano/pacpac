@@ -160,6 +160,7 @@ export default class Bubble extends Component
                             is3Dscene={is3Dscene}
                             vertices={curve.vertices}
                             visible={this.props.runState[curve.uuid].visible}
+                            activable={this.props.runState[curve.uuid].activable}
                             type={curve.type}
                             assetsDimention = {this.props.assetsDimention}/>
                 );
@@ -311,7 +312,7 @@ export default class Bubble extends Component
                 }
 
                 //Se l'oggetto non ha un media passo al prossimo
-                if (asset === null) return;
+                if (asset === null) return; //||se l'altro è settato a false
 
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);

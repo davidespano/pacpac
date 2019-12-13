@@ -195,7 +195,8 @@ function executeAction(VRScene, rule, action){
             //let primitive = targetSceneVideo.nodeName === 'VIDEO'?"a-videosphere":"a-sky";
             //let actualSky = document.querySelector('#' + actual_scene);
             //actualSky.setAttribute('primitive', primitive)
-            //TODO questo non ha molto senso
+            //TODO capire se si può evitare questo comportamento: se di un video scelgo di tenere anche l'audio e lo imposto
+            // in un'altra scena allora avrà l'audio anche quella scena
             if(soundsHub["audios_"+ actual_scene_Uuid]){
                 soundsHub["audios_"+ actual_scene_Uuid].pause();
                 let audioVideo = {};
@@ -241,7 +242,7 @@ function executeAction(VRScene, rule, action){
             * */
             //TODO rivedere questi controlli fanno un po' schifo
             if(soundsHub["audios_"+ action_obj_uuid]){
-                soundsHub["audios_"+ action_obj_uuid].loop = false;
+                soundsHub["audios_"+ action_obj_uuid].loop = true;
                 soundsHub["audios_"+ action_obj_uuid].play();
             } else {
                 if(document.getElementById(actual_scene_img) !== null){
@@ -277,10 +278,43 @@ function executeAction(VRScene, rule, action){
             * Azione che si occupa di cambiare la visibilita', intesa come interagibilita' del cursore su un oggetto
             */
             let obj = document.querySelector('#curv' + action.subj_uuid);
-            let mediaObj = document.querySelector('#media_' + action.subj_uuid);
             if(obj)
                 obj.setAttribute('selectable', {visible: action.obj_uuid});
             runState[action.subj_uuid].visible=action.obj_uuid;
+            VRScene.setState({runState: runState, graph: game_graph});
+            break;
+        case RuleActionTypes.CHANGE_ACTIVABILITY:
+
+            let obj_act = document.querySelector('#curv' + action.subj_uuid);
+            if(current_object.activable==='ACTIVABLE'){ //lo stato iniziale è attivabile, quindi posso disattivarlo
+                if(obj_act)
+                    obj_act.setAttribute('selectable', {activable: action.obj_uuid});
+                if(cursor) {
+                    cursor.setAttribute('color', 'black');
+
+                    if(current_object.type==='TRANSITION'){ //è transizione
+                        cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                    }
+                    else { //non è transizione
+                        cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
+                    }
+                }
+            }else { //un altro oggetto lo sta attivando
+                if(obj_act)
+                    obj_act.setAttribute('selectable', {activable: action.obj_uuid});
+                    cursor.setAttribute('color', 'black');
+                if(current_object.type==='TRANSITION'){ //è transizione
+                    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                }
+                else { //non è transizione
+                    //in questo caso l'oggetto deve diventare attivabile, quindi il cursore sarà verde
+                    cursor.setAttribute('color', 'green');
+                    cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.01; to:0.001;');
+                }
+            }
+
+
+            runState[action.subj_uuid].activable=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.LOOK_AT:
@@ -299,7 +333,7 @@ function executeAction(VRScene, rule, action){
             /*
             * Azione che si occupa di decrementare  il valore del contattore, di uno step
             */
-            if (runState[action.subj_uuid].state >= 0){
+            if (runState[action.subj_uuid].state > 0){
                 runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
                 runState[action.subj_uuid].state -= parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
             }

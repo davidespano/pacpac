@@ -105,10 +105,27 @@ const RuleActionMap = Immutable.Map([
                 InteractiveObjectsTypes.KEY,
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.COUNTER,
             ],
             obj_type: ['value'],
             name: toString.eventTypeToString(RuleActionTypes.CHANGE_VISIBILITY),
             uuid: RuleActionTypes.CHANGE_VISIBILITY,
+        },
+    ],
+    [
+        RuleActionTypes.CHANGE_ACTIVABILITY,
+        {
+            type: "operation",
+            subj_type: [
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.COUNTER,
+            ],
+            obj_type: ['value'],
+            name: toString.eventTypeToString(RuleActionTypes.CHANGE_ACTIVABILITY),
+            uuid: RuleActionTypes.CHANGE_ACTIVABILITY,
         },
     ],
     [
@@ -299,6 +316,40 @@ const ValuesMap = Immutable.Map([
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.VISIBLE),
             uuid: Values.VISIBLE,
+        },
+
+    ],
+    [
+        Values.ACTIVABLE,
+        {
+            type: 'value',
+            subj_type: [
+                InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.COUNTER,
+            ],
+            verb_type: [RuleActionTypes.CHANGE_ACTIVABILITY],
+            name: toString.valueUuidToString(Values.ACTIVABLE),
+            uuid: Values.ACTIVABLE,
+        },
+
+    ],
+    [
+        Values.NOT_ACTIVABLE,
+        {
+            type: 'value',
+            subj_type: [
+                InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.SWITCH,
+                InteractiveObjectsTypes.LOCK,
+                InteractiveObjectsTypes.KEY,
+                InteractiveObjectsTypes.COUNTER,
+            ],
+            verb_type: [RuleActionTypes.CHANGE_ACTIVABILITY],
+            name: toString.valueUuidToString(Values.NOT_ACTIVABLE),
+            uuid: Values.NOT_ACTIVABLE,
         },
 
     ],

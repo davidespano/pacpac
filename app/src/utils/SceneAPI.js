@@ -30,7 +30,7 @@ const {apiBaseURL} = settings;
  * @param order actual order of the scenes in editor
  * @param gameId to load a specific game
  */
-function getByName(name, order = null, gameId=null) {
+function getByName(name, order = null, gameId=null, creation = true) {
     let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
 
     request.get(`${apiBaseURL}/${id}/scenes/${name}`)
@@ -49,6 +49,7 @@ function getByName(name, order = null, gameId=null) {
             let audio_uuids = [];
             let points_uuids = [];
             let counters_uuids = [];
+
 
             let scene_type = response.body.type;
 
@@ -183,7 +184,8 @@ function getByName(name, order = null, gameId=null) {
                 audios : audio_uuids,
             });
 
-            Actions.receiveScene(newScene, order);
+            Actions.receiveScene(newScene, order, creation);
+
 
         });
 }
@@ -521,6 +523,7 @@ function getProperties(obj){
         audio: JSON.parse(obj.audio),
         properties: JSON.parse(obj.properties),
         visible: obj.visible,
+        activable: obj.activable,
     };
 }
 

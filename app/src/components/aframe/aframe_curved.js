@@ -59,48 +59,13 @@ class Curved extends Component
                 <Entity material={material}
                         geometry={geometry}
                         id={"curv" + this.props.object_uuid}
-                        selectable={'object_uuid:' + this.props.object_uuid + '; visible: ' + this.props.visible + '; object_type: ' + this.props.type}
+                        selectable={'object_uuid:' + this.props.object_uuid + '; activable: ' + this.props.activable + '; object_type: ' + this.props.type}
                         position={position}
                         scale={scale}/> //[Vittoria] quello che nella scena 3D inverte gli assi
             );
         }
     }
 
-}
-
-/**
- * Simile a Curved semplice, con la differenza del materiale, e del fatto che nella fase di editing della geometria non
- * non e' presente il componente che lo rende cliccabile
- */
-class CurvedGeometry extends Component
-{
-    constructor(props){
-        super(props)
-    }
-
-    render() {
-        let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 ";
-        let vertices = this.props.vertices;
-
-        //conversione coordinate relative per la scena 2D, molto brutto sarebbe da riscrivere meglio, ma almeno funziona
-        if(!this.props.is3Dscene && this.props.vertices){
-            vertices = convertRelativeCoordinates(this.props.vertices, this.props.assetsDimention)
-        }
-
-        let geometry = this.props.type?'primitive: sphere; radius: 0.4':"primitive: polyline; vertices: " + vertices;
-        let position = this.props.position;
-
-        //punto di interesse
-        if (this.props.type && this.props.vertices){
-            let points = vertices.split(' ').map(function(x){return parseFloat(x);});
-            position = -points[0].toString() + ', ' + points[1].toString() + ', ' + points[2].toString()
-        }
-
-        return(
-            <Entity id={'curve_' + this.props.id} geometry={geometry}
-                    scale={scale} material={"side: double; opacity: 0.50; color: " + this.props.color} position={position}/>
-        )
-    }
 }
 
 /**
@@ -162,4 +127,4 @@ export function calculate2DSceneImageBounds(sourceWidth, sourceHeight){
     return {w: sourceWidth, h: sourceHeight};
 }
 
-export {Curved, CurvedGeometry}
+export {Curved}
