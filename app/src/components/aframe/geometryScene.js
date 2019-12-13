@@ -170,7 +170,7 @@ export default class GeometryScene extends React.Component{
 
             //Se e' una geometria e non un punto posso aggiungere punti e collegarli con della linee
             if(isCurved && !isPoint){
-                console.log(a_point)
+                //console.log(a_point)
                 tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
                 a_point[(length-1)].x *= moltiplier;
                 tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
@@ -263,7 +263,7 @@ export default class GeometryScene extends React.Component{
                 }
             }
             //[Vittoria] iniziamo a disegnare i punti, ripremendo E una volta che hai già disegnato, rimuove tutto quelo che è già stato
-            // disegnato per rigarlo
+            // disegnato per rifarlo
             if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
                 let lines = scene.querySelectorAll(".line");
@@ -301,17 +301,26 @@ export default class GeometryScene extends React.Component{
 
             //Tasto U rimuovo l'ultimo punto inserito se ho sbagliato
             if(keyName === 'u' || keyName === 'U') {
-                //TODO rimuovere le linee non solo i punti
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
                 if(pointsaver != null && pointsaver.points.length !== 0){
+                    //rimozione punti
                     let points = pointsaver.points;
                     let lastID = points.length - 1;
                     //let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let lastChild = scene.querySelector('#point' + lastID.toString());
                     points.splice(-1);
                     scene.removeChild(lastChild);
+
+                    //[vittoria] rimozione linee
+                    let lines = scene.querySelectorAll(".line");
+                    let last_line = lines[lines.length-1];
+                    if(last_line){ //se esiste, vedi caso in cui abbia un primo punto ma senza linea
+                        scene.removeChild(last_line);
+                    }
+
                 }
             }
+
 
             //Salvo le modifiche dell'oggetto e torno all'editor
             if(keyName === 'q' || keyName === 'Q') {

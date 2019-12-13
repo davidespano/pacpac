@@ -31,12 +31,15 @@ class CentroidsStore extends ReduceStore {
             case ActionTypes.RECEIVE_SCENE:
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 let sceneObjects = scene_utils.allObjects(action.scene);
-                sceneObjects.forEach(obj => {
-                    if(action.objects.has(obj) && action.objects.get(obj).vertices){
-                        let vertices = action.objects.get(obj).vertices;
-                        state = state.set(obj, interface_utils.centroid(vertices, action.scene.type));
-                    }
-                });
+                if (sceneObjects!=null)
+                {
+                    sceneObjects.forEach(obj => {
+                        if(action.objects.has(obj) && action.objects.get(obj).vertices){
+                            let vertices = action.objects.get(obj).vertices;
+                            state = state.set(obj, interface_utils.centroid(vertices, action.scene.type));
+                        }
+                    });
+                }
                 return state;
             case ActionTypes.UPDATE_VERTICES:
                 state = state.set(action.obj.uuid, interface_utils.centroid(action.vertices, action.scene_type));
