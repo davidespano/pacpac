@@ -215,6 +215,7 @@ export default class GeometryScene extends React.Component{
         //Creo la scena corrente
         this.createScene();
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
+        document.getElementById("deletelastpoint").style.color = 'gray';
         document.querySelector('#mainscene').addEventListener('keydown', (event) => {
             let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
 
@@ -223,6 +224,7 @@ export default class GeometryScene extends React.Component{
 
             //Tasto C confermo l'inserimento dei punti
             if(keyName === 'c' || keyName === 'C') {
+                document.getElementById("deletelastpoint").style.color = 'gray';
                 document.getElementById("startedit").style.color = 'white'
                 let pointsaver = document.querySelector('#cursor').components.pointsaver; //Componente point saver all'interno del cursor
                 let a_point = pointsaver.points;
@@ -245,7 +247,6 @@ export default class GeometryScene extends React.Component{
                         a_point = a_point.map(punto =>
                             punto.toArray().join(" ")
                         );
-                        // TODO [Vittoria] qua cerco ma posso tramite quello fatto prima assegnare a vertices a_point.join e verificare se funziona
                         this.getObjectsFromUuid(this.props.currentObject, a_point.join());
                         points.forEach(point => {
                             scene.removeChild(point);
@@ -266,6 +267,7 @@ export default class GeometryScene extends React.Component{
             // disegnato per rifarlo
             if(keyName === 'e' || keyName === 'E') {
                 document.getElementById("startedit").style.color = 'red';
+                document.getElementById("deletelastpoint").style.color = 'white';
                 let lines = scene.querySelectorAll(".line");
                 let point_saver = document.querySelector('#cursor').components.pointsaver;
                 let isPoint = point_saver.attrValue.isPoint === 'true';
@@ -302,8 +304,7 @@ export default class GeometryScene extends React.Component{
             //Tasto U rimuovo l'ultimo punto inserito se ho sbagliato
             if(keyName === 'u' || keyName === 'U') {
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
-                console.log("lunghezza pointsaver: "+ pointsaver.points.length);
-                console.log("lunghezza pointsaver: ", pointsaver.points[0]);
+
 
                 if(pointsaver != null && pointsaver.points.length !== 0){
                     //rimozione punti
@@ -420,7 +421,7 @@ export default class GeometryScene extends React.Component{
                         <ul class="keyElements">
                             <li id="startedit">E: Inizia a disegnare</li>
                             <li> C: Conferma </li>
-                            <li> U: Elimina ultimo punto </li>
+                            <li id="deletelastpoint"> U: Elimina ultimo punto </li>
                             <li> Q: Torna all'editor </li>
                             <li> H: Mostra/Nascondi </li>
                         </ul>
@@ -497,19 +498,16 @@ export default class GeometryScene extends React.Component{
             if(this.props.editor.audioToEdit && this.props.editor.audioToEdit.scene === a.scene){
                 let audio = document.createElement('a-entity');
 
-                //TODO forse si puo' semplificare alcuni campi sono uguali
                 //[Vittoria] se l'audio corrente è rosso, altrimenti è grigio
                 //Inserisco i punti, se e' quello che devo modificare lo colore di rosso
+                audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
+                audio.setAttribute('material', 'opacity: 0.7; shader: flat');
                 if(this.props.editor.audioToEdit.uuid !== a.uuid) {
                     audio.setAttribute('id', 'audio' + a.uuid);
-                    audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
                     audio.setAttribute('position', a.vertices);
-                    audio.setAttribute('material', 'opacity: 0.7; shader: flat');
                 } else {
                     audio.setAttribute('id', 'audio' + this.props.editor.audioToEdit.uuid);
-                    audio.setAttribute('geometry', 'primitive: sphere; radius: 0.4');
                     audio.setAttribute('position', this.props.editor.audioToEdit.vertices);
-                    audio.setAttribute('material', 'opacity: 0.7; shader: flat');
                     audio.setAttribute('material', 'color: red; shader: flat');
                 }
                 mainscene.appendChild(audio);
