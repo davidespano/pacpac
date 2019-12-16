@@ -302,6 +302,9 @@ export default class GeometryScene extends React.Component{
             //Tasto U rimuovo l'ultimo punto inserito se ho sbagliato
             if(keyName === 'u' || keyName === 'U') {
                 let pointsaver = document.querySelector('#cursor').components.pointsaver;
+                console.log("lunghezza pointsaver: "+ pointsaver.points.length);
+                console.log("lunghezza pointsaver: ", pointsaver.points[0]);
+
                 if(pointsaver != null && pointsaver.points.length !== 0){
                     //rimozione punti
                     let points = pointsaver.points;
@@ -309,15 +312,16 @@ export default class GeometryScene extends React.Component{
                     //let scene = is3dScene? document.getElementById(this.state.scenes.name) : document.querySelector('a-scene');
                     let lastChild = scene.querySelector('#point' + lastID.toString());
                     points.splice(-1);
-                    scene.removeChild(lastChild);
-
-                    //[vittoria] rimozione linee
-                    let lines = scene.querySelectorAll(".line");
-                    let last_line = lines[lines.length-1];
-                    if(last_line){ //se esiste, vedi caso in cui abbia un primo punto ma senza linea
-                        scene.removeChild(last_line);
+                    if(lastChild != null)
+                    {
+                        scene.removeChild(lastChild);
+                        //[vittoria] rimozione linee
+                        let lines = scene.querySelectorAll(".line");
+                        let last_line = lines[lines.length-1];
+                        if(last_line){ //se esiste, vedi caso in cui abbia un primo punto ma senza linea
+                            scene.removeChild(last_line);
+                        }
                     }
-
                 }
             }
 
