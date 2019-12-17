@@ -220,6 +220,8 @@ function createScene(name, img, index, type, tag, order) {
                 tag : tag,
                 rules: [],
                 audios: [],
+                isVideoInALoop: false,
+                isAudioOn: false,
                 objects: {
                     transitions: [],
                     switches: [],
@@ -231,6 +233,8 @@ function createScene(name, img, index, type, tag, order) {
             });
 
             Actions.receiveScene(newScene, order);
+            //TODO questo update è un fix temporaneo per isVideoInALoop e IsAudioOn che non vengono registrati nel DB alla creazione della scena e risultano undefined
+            updateScene(newScene, tag);
         });
 }
 
