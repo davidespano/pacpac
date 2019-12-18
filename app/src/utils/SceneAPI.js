@@ -357,9 +357,8 @@ async function getDetailedScene(sceneId, gameGraph, gameId = null){
     let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
 
     const response = await request.get(`${apiBaseURL}/${id}/scenes/uuid/${sceneId}`)
-        .set('Accept', 'application/json')
-        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`);
-    const raw_scenes = [response.body];
+        .set('Accept', 'application/json');
+    const raw_scenes = response.body;
     readScene(gameGraph, raw_scenes);
 }
 

@@ -89,15 +89,14 @@ export default class VRScene extends React.Component {
         });*/
         this.state.camera = new THREE.Vector3();
         //Lancio la funzione per caricare tutti i dati del gioco
+
         this.loadEverything();
 
         this.interval = setInterval(() => this.tick(), 100);
     }
 
     componentDidUpdate(prevProps){
-        if(this.props.activeScene != prevProps.activeScene){
-            this.createRuleListeners();
-        }
+
 
     }
 
@@ -128,7 +127,7 @@ export default class VRScene extends React.Component {
         let audios = [];
         await AudioAPI.getAudios(audios, this.props.editor.gameId);
         let gameGraph = {};
-        await SceneAPI.getDetailedScene(this.props.currentScene, gameGraph, this.props.editor.gameId);
+        await SceneAPI.getAllDetailedScenes(gameGraph, this.props.editor.gameId);
 
         //Creo lo stato iniziale del gioco dal grafo
         let runState = this.createGameState(gameGraph);
@@ -153,6 +152,7 @@ export default class VRScene extends React.Component {
         this.setState({
             graph: gameGraph,
             activeScene: scene,
+            currentScene: scene,
             runState: runState,
             audios: audios,
         });
@@ -165,15 +165,11 @@ export default class VRScene extends React.Component {
     /**
      * Funzione che crea tutti i listeners legati agli eventi delle regole
      */
-    async createRuleListeners(){
+    createRuleListeners(){
         let me = this;
-        //Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
-        let sceneId = me.state.activeScene["uuid"];
-        console.log("generating scene... " + sceneId);
-        let gameGraph = {};
-        await SceneAPI.getDetailedScene(me.props.currentScene, gameGraph, me.props.editor.gameId);
 
-        gameGraph.scenes[sceneId].rules.forEach(rule => {
+        //[Vittoria] ogni volta che c'è una scena fa tutte le regole del gioco
+        Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
 
             let duration = 0;
             let objectVideo;
@@ -204,7 +200,27 @@ export default class VRScene extends React.Component {
                 // [Vittoria] qua sto aggiungendo un evento click con il suo uuid dell'oggetto,
                 //se volessi creare un evento del counter chiamerei il uuid del contatore
                 case 'CLICK':
-                    rule.actions.forEach(action => {
+                    eventBus.on(`click-${rule.event.obj_uuid}`, function(){
+                        let condition = evalCondition(rule.condition, me.state.runState);
+                        if (condition) {
+                            rule.actions.forEach(action => {
+                                let actionExecution = actionCallback(action);
+                                if (me.props.debug) {
+                                    setTimeout(function () {
+                                        interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                        eventBus.on('debug-step', actionExecution);
+                                    }, duration);
+                                } else {
+                                    actionExecution();
+                                }
+
+                            });
+                        }
+                    });
+
+
+
+                    /*rule.actions.forEach(action => {
                         //if(!eventBus._events['click-' + rule.event.obj_uuid]){
                         console.log("registering " + action.subj_uuid + " " + action.action + " " + action.obj_uuid);
                             eventBus.on('click-' + rule.event.obj_uuid, function () {
@@ -225,7 +241,7 @@ export default class VRScene extends React.Component {
                                 }
                             })
                         //}
-                    });
+                    });*/
                     break;
                 case 'IS':
                     let media;
@@ -330,7 +346,8 @@ export default class VRScene extends React.Component {
         this.setState({
             scenes: this.props.scenes.toArray(),
             graph: this.state.graph,
-            activeScene: this.state.graph.scenes[newActiveScene]
+            activeScene: this.state.graph.scenes[newActiveScene],
+            currentScene: this.state.graph.scenes[newActiveScene]
         });
 
         if(this.props.debug){
@@ -457,7 +474,7 @@ export default class VRScene extends React.Component {
             //i media non sono tutti presenti nella scena
             //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
             //TODO [davide] rimosso perche' causa problemi al resto
-            //this.createRuleListeners();
+            this.createRuleListeners();
 
             //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (

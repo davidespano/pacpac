@@ -67,49 +67,46 @@ function executeAction(VRScene, rule, action){
                     soundsHub['audio0_' + audioTransition].play();
             }
 
-            let lazyGame = {};
-            SceneAPI.getDetailedScene(action_obj_uuid, lazyGame).then(()=>{
-                //[Vittoria] se la musica di sottofondo o un altro audio tra due scene è la stesso allora non smette di riprodurlo, altrimenti
-                // il primo finisce e parte l'altro
-                setTimeout(function () {
-                    //Set di controlli per la cotinuita' dei file audio, musica di sottofondo, effetti audio di sottofondo, audio integrato del video
-                    //Cambio musica di sottofondo da una scena ad un'altra
-                    if((soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].music]   &&
-                            (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].music])) ||
-                        (soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].music] === undefined)){
-                        soundsHub['audios_' + VRScene.state.activeScene.music].pause()
-                        soundsHub['audios_' + VRScene.state.activeScene.music].currentTime = 0;
-                    }
+            //[Vittoria] se la musica di sottofondo o un altro audio tra due scene è la stesso allora non smette di riprodurlo, altrimenti
+            // il primo finisce e parte l'altro
+            setTimeout(function () {
+                //Set di controlli per la cotinuita' dei file audio, musica di sottofondo, effetti audio di sottofondo, audio integrato del video
+                //Cambio musica di sottofondo da una scena ad un'altra
+                if((soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music]   &&
+                        (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music] === undefined)){
+                    soundsHub['audios_' + VRScene.state.activeScene.music].pause()
+                    soundsHub['audios_' + VRScene.state.activeScene.music].currentTime = 0;
+                }
 
-                    //Cambio effetti di sottofondo da una scena ad un'altra
-                    if((soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].sfx]   &&
-                            (soundsHub['audios_' + VRScene.state.activeScene.sfx] !== soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].sfx])) ||
-                        (soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].sfx] === undefined)){
-                        soundsHub['audios_' + VRScene.state.activeScene.sfx].pause()
-                        soundsHub['audios_' + VRScene.state.activeScene.sfx].currentTime = 0;
-                    }
+                //Cambio effetti di sottofondo da una scena ad un'altra
+                if((soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].sfx]   &&
+                        (soundsHub['audios_' + VRScene.state.activeScene.sfx] !== soundsHub['audios_' + state.graph.scenes[action_obj_uuid].sfx])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.sfx] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].sfx] === undefined)){
+                    soundsHub['audios_' + VRScene.state.activeScene.sfx].pause()
+                    soundsHub['audios_' + VRScene.state.activeScene.sfx].currentTime = 0;
+                }
 
-                    //Cambio audio scena
-                    if((soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].uuid]   &&
-                            (soundsHub['audios_' + VRScene.state.activeScene.uuid] !== soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].uuid])) ||
-                        (soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + lazyGame.scenes[action_obj_uuid].uuid] === undefined)){
-                        soundsHub['audios_' + VRScene.state.activeScene.uuid].pause();
-                        soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
-                    }
+                //Cambio audio scena
+                if((soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].uuid]   &&
+                        (soundsHub['audios_' + VRScene.state.activeScene.uuid] !== soundsHub['audios_' + state.graph.scenes[action_obj_uuid].uuid])) ||
+                    (soundsHub['audios_' + VRScene.state.activeScene.uuid] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].uuid] === undefined)){
+                    soundsHub['audios_' + VRScene.state.activeScene.uuid].pause();
+                    soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
+                }
 
-                    //[Vittoria] se la scena di destinazione e di arrivo sono dello stesso tipo (2D e 2D es.) lancia una transizione normale,
-                    // se sono di tipo diverso invece lancia la transizione 2D
-                    if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
-                        (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
-                    // se le due scene sono dello stesso tipo le gestisco allo stesso modo
-                    if(VRScene.state.activeScene.type === Values.THREE_DIM && lazyGame.scenes[action_obj_uuid].type === Values.THREE_DIM ||
-                        VRScene.state.activeScene.type === Values.TWO_DIM && lazyGame.scenes[action_obj_uuid].type === Values.TWO_DIM)
-                        transition(state.activeScene, lazyGame.scenes[action_obj_uuid], duration, direction);
-                    else
-                        transition2D(state.activeScene, lazyGame.scenes[action_obj_uuid], duration, VRScene)
+                //[Vittoria] se la scena di destinazione e di arrivo sono dello stesso tipo (2D e 2D es.) lancia una transizione normale,
+                // se sono di tipo diverso invece lancia la transizione 2D
+                if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
+                    (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
+                // se le due scene sono dello stesso tipo le gestisco allo stesso modo
+                if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[action_obj_uuid ].type === Values.THREE_DIM ||
+                    VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[action_obj_uuid ].type === Values.TWO_DIM)
+                    transition(state.activeScene, state.graph.scenes[action_obj_uuid], duration, direction);
+                else
+                    transition2D(state.activeScene, state.graph.scenes[action_obj_uuid ], duration, VRScene)
 
-                },duration_transition);
-            });
+            },duration_transition);
 
 
 
