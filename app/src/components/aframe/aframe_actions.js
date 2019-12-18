@@ -4,6 +4,7 @@ import store_utils from '../../data/stores_utils'
 import AudioManager from './AudioManager'
 import Values from '../../rules/Values';
 import './aframe_shader'
+import SceneAPI from "../../utils/SceneAPI";
 const THREE = require('three');
 const soundsHub = require('./soundsHub');
 
@@ -72,7 +73,7 @@ function executeAction(VRScene, rule, action){
                 //Set di controlli per la cotinuita' dei file audio, musica di sottofondo, effetti audio di sottofondo, audio integrato del video
                 //Cambio musica di sottofondo da una scena ad un'altra
                 if((soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music]   &&
-                  (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music])) ||
+                        (soundsHub['audios_' + VRScene.state.activeScene.music] !== soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music])) ||
                     (soundsHub['audios_' + VRScene.state.activeScene.music] && soundsHub['audios_' + state.graph.scenes[action_obj_uuid].music] === undefined)){
                     soundsHub['audios_' + VRScene.state.activeScene.music].pause()
                     soundsHub['audios_' + VRScene.state.activeScene.music].currentTime = 0;
@@ -106,6 +107,8 @@ function executeAction(VRScene, rule, action){
                     transition2D(state.activeScene, state.graph.scenes[action_obj_uuid ], duration, VRScene)
 
             },duration_transition);
+
+
 
             break;
         case RuleActionTypes.CHANGE_STATE:
@@ -279,8 +282,10 @@ function executeAction(VRScene, rule, action){
             * Azione che si occupa di cambiare la visibilita', intesa come interagibilita' del cursore su un oggetto
             */
             let obj = document.querySelector('#curv' + action.subj_uuid);
-            if(obj)
+            if(obj){
                 obj.setAttribute('selectable', {visible: action.obj_uuid});
+            }
+
             runState[action.subj_uuid].visible=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
             break;

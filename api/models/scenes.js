@@ -88,6 +88,40 @@ function getAll(session, gameID) {
             });
 }
 
+function getByUuid(session, uuid, gameID){
+    return session.run(`
+        MATCH (:Scene:\`${gameID}\`)-[:CONTAINS_OBJECT]->(t:Transition)
+        MATCH (trRule:Rule)<-[:CONTAINS_RULE]-(:Scene {uuid:'${uuid}'})
+        WHERE trRule.event CONTAINS ('"obj_uuid":"' + t.uuid + '"')
+        MATCH (trAction:Action)<-[:CONTAINS_ACTION]-(trRule)
+        MATCH (scene:Scene:\`${gameID}\`)
+        WHERE scene.uuid = trAction.obj_uuid or scene.uuid = '${uuid}'
+        OPTIONAL MATCH (scene)-[:TAGGED_AS]->(tag:Tag) 
+        WITH scene, tag 
+        OPTIONAL MATCH (scene)-[:CONTAINS_OBJECT]->(object:InteractiveObject) 
+        WITH scene, tag, COLLECT(object) as objects
+        OPTIONAL MATCH (scene)-[:CONTAINS_RULE]->(rule:Rule) 
+        WITH scene, tag, objects, rule 
+        OPTIONAL MATCH (rule)-[:CONTAINS_ACTION]->(action:Action)
+        WITH scene, tag, objects, rule, collect(action) as acts
+        OPTIONAL MATCH (scene)-[:CONTAINS_AUDIO]->(audio:Audio)
+        WITH scene, tag, objects, rule, acts, collect(audio) as audios 
+        RETURN scene, tag, objects, audios, collect(rule { .*,  actions :acts}) as rules
+        `)
+        .then(result => {
+                console.log(result.records);
+                if (!_.isEmpty(result.records)) {
+                    return multipleScenes(result);
+                }
+                else {
+                    throw {message: "gameID not found", status: 404}
+                }
+            }
+
+            , error => {
+            });
+}
+
 //get scene by name
 function getByName(session, name, gameID){
     return session.run(
@@ -128,7 +162,7 @@ function getAllDetailed(session, gameID) {
         'WITH scene, tag, objects, rule, collect(action) as acts ' +
         'OPTIONAL MATCH (scene)-[:CONTAINS_AUDIO]->(audio:Audio) ' +
         'WITH scene, tag, objects, rule, acts, collect(audio) as audios ' +
-        'RETURN scene, tag, objects, audios, collect(rule { .*,  actions :acts}) as rules',)
+        'RETURN scene, tag, objects, audios, collect(rule { .*,  actions :acts}) as rules')
         .then(result => {
                 if (!_.isEmpty(result.records)) {
                     return multipleScenes(result);
@@ -250,6 +284,7 @@ function setHomeScene(session, sceneID, gameID){
 module.exports = {
     getAll: getAll,
     getByName: getByName,
+    getByUuid: getByUuid,
     addScene: addScene,
     updateScene: updateScene,
     getHomeScene: getHomeScene,

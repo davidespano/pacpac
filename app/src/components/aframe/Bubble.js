@@ -241,10 +241,6 @@ export default class Bubble extends Component
             let canvasWidth = bounds.w;
             let canvasHeight = bounds.h;
 
-
-            console.log("Asset: " + this.props.assetsDimention.width + " " + this.props.assetsDimention.height);
-            console.log("Dimension:" + canvasWidth + " " + canvasHeight);
-
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}

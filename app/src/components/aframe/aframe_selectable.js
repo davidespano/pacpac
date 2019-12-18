@@ -24,7 +24,7 @@ AFRAME.registerComponent('selectable', {
 
         //Se interaggibile aggiungo i listener per le animazioni, in base al tipo saranno diverse, e il listener per il click
         //che scatenera' l'evento
-        if(this.data.activable === 'ACTIVABLE'){
+        if(this.data.visible === 'VISIBLE' && this.data.activable === 'ACTIVABLE'){
             if(this.data.object_type === 'TRANSITION'){
                 elem.addEventListener('mouseenter', setMouseEnterTransition);
                 elem.addEventListener('mouseleave', setMouseLeaveTransition);
@@ -40,7 +40,7 @@ AFRAME.registerComponent('selectable', {
         let elem = this.el;
 // TODO VITTORIA Se è in edit mode non fare tutto questo, in questo modo basterebbe un curved
         //Se in fasi di gioco cambia l'interaggibilita' di un oggetto la aggiorno aggiungendo o rimuovendo i listeners
-        if(this.data.activable === 'ACTIVABLE'){
+        if(this.data.visible === 'VISIBLE' && this.data.activable === 'ACTIVABLE'){
             if(this.data.object_type === 'TRANSITION'){
                 elem.addEventListener('mouseenter', setMouseEnterTransition);
                 elem.addEventListener('mouseleave', setMouseLeaveTransition);
@@ -115,7 +115,11 @@ function setMouseLeave() {
  * @param event
  */
 function setClick(event) {
-    event.detail.cursorEl.components.raycaster.intersectedEls.forEach(obj => eventBus.emit('click-'+obj.object_uuid))
+    event.detail.cursorEl.components.raycaster.intersectedEls.forEach(
+        obj => {
+            eventBus.emit('click-'+ obj.object_uuid)
+        }
+    );
 }
 
 /**

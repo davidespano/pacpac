@@ -339,6 +339,8 @@ function getHomeScene(gameId = null) {
         });
 }
 
+
+
 /**
  * Retrieves all data, builds Scenes and save them to gameGraph
  * @param gameGraph will contain game data, must be an object
@@ -351,9 +353,25 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
     const response = await request.get(`${apiBaseURL}/${id}/scenes-all`)
         .set('Accept', 'application/json');
     const raw_scenes = response.body;
+    readScene(gameGraph, raw_scenes);
+    //console.log(gameGraph);
+}
+
+async function getDetailedScene(sceneId, gameGraph, gameId = null){
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    const response = await request.get(`${apiBaseURL}/${id}/scenes/uuid/${sceneId}`)
+        .set('Accept', 'application/json');
+    const raw_scenes = response.body;
+    readScene(gameGraph, raw_scenes);
+}
+
+
+
+function readScene(gameGraph, raw_scenes) {
     gameGraph['scenes'] = {};
     gameGraph['neighbours'] = [];
-    gameGraph['objects']= new Map();
+    gameGraph['objects'] = new Map();
     raw_scenes.forEach(s => {
         // neighbours list
         const adj = [];
@@ -385,14 +403,14 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
         });
 
         // generates points
-        const points = !s.points? [] : s.points.map((point) => {
+        const points = !s.points ? [] : s.points.map((point) => {
             let pt = getProperties(point);
             gameGraph['objects'].set(pt.uuid, pt);
             return pt;
         });
 
         // generates counters
-        const counters = !s.counters? [] : s.counters.map((counter) => {
+        const counters = !s.counters ? [] : s.counters.map((counter) => {
             let c = getProperties(counter);
             gameGraph['objects'].set(c.uuid, c);
             return c;
@@ -416,7 +434,7 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
         });
 
         // generate audios
-        const audios = s.audios.map( audio => {
+        const audios = s.audios.map(audio => {
             return ({
                 uuid: audio.uuid,
                 name: audio.name,
@@ -431,31 +449,30 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
         // new Scene
         const newScene = ({ //Scene, not immutable
             uuid: s.uuid,
-            name : s.name,
-            img : s.img,
-            type : s.type,
-            index : s.index,
-            isAudioOn : s.isAudioOn,
+            name: s.name,
+            img: s.img,
+            type: s.type,
+            index: s.index,
+            isAudioOn: s.isAudioOn,
             isVideoInALoop: s.isVideoInALoop,
-            tag : s.tag,
-            music : s.music,
+            tag: s.tag,
+            music: s.music,
             sfx: s.sfx,
-            objects : {
-                transitions : transitions,
-                switches : switches,
+            objects: {
+                transitions: transitions,
+                switches: switches,
                 collectable_keys: keys,
-                locks : locks,
+                locks: locks,
                 points: points,
                 counters: counters,
             },
-            rules : rules,
-            audios : audios,
+            rules: rules,
+            audios: audios,
         });
 
         gameGraph['scenes'][newScene.uuid] = newScene;
         gameGraph['neighbours'][newScene.uuid] = adj;
     })
-    //console.log(gameGraph);
 }
 
 async function getHome(gameId = null) {
@@ -538,6 +555,7 @@ export default {
     getAllScenesAndTags: getAllScenesAndTags,
     deleteScene: deleteScene,
     getAllDetailedScenes: getAllDetailedScenes,
+    getDetailedScene: getDetailedScene,
     saveTag: saveTag,
     removeTag: removeTag,
     setHomeScene: setHomeScene,

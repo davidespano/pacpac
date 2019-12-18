@@ -22,9 +22,9 @@ function eventTypeToString(eventType) {
         case RuleActionTypes.CHANGE_STATE:
             return 'cambia stato a';
         case RuleActionTypes.CHANGE_VISIBILITY:
-            return 'diventa';
+            return 'cambia visibilità a';
         case RuleActionTypes.CHANGE_ACTIVABILITY:
-            return 'cambia attivabilità in';
+            return 'cambia attivabilità a';
         case RuleActionTypes.PLAY:
             return 'riproduce';
         case RuleActionTypes.PLAY_LOOP:

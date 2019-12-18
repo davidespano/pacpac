@@ -99,6 +99,14 @@ function getByName(req, res, next) {
         .catch(next);
 }
 
+function getByUuid(req, res, next) {
+    const uuid = req.params.uuid;
+    const gameID = req.params.gameID;
+    Scenes.getByUuid(dbUtils.getSession(req), uuid, gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
 /**
  * @swagger
  * /api/v0/{gameID}/scenes-all:
@@ -375,6 +383,7 @@ function setHomeScene(req, res, next) {
 module.exports = {
     list: list,
     getByName: getByName,
+    getByUuid: getByUuid,
     addScene: addScene,
     updateScene: updateScene,
     getHomeScene: getHomeScene,

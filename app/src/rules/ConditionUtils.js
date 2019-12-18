@@ -3,7 +3,7 @@ import Condition from './Condition'
 import {Operators} from "./Operators";
 import {SuperOperators} from "./Operators";
 
-function evalCondition(c, gameState) {
+export default function evalCondition(c, gameState) {
     if(JSON.stringify(c) == "{}" || c === '{}' || c==='"{}"') return true; //quick fix for conditions saved with wrong format
     if(c instanceof SuperCondition || c.hasOwnProperty("condition1")){
         switch (c.operator) {
@@ -39,8 +39,4 @@ function evalCondition(c, gameState) {
         console.log("The parameter is not a condition");
         console.log(c);
     }
-}
-
-export default {
-    evalCondition: evalCondition
 }

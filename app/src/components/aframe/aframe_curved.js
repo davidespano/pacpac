@@ -21,10 +21,20 @@ class Curved extends Component
     render(){
         let scale = this.props.is3Dscene?"-1 1 1":"1 1 1 "; //Se e' una scena 3D devo invertire uno degli assi in modo che si veda dall'interno
         let vertices = this.props.vertices;
-
+        let activable = this.props.activable;
+        let visible = this.props.visible;
         //conversione coordinate relative per la scena 2D
         if(!this.props.is3Dscene && this.props.vertices){
             vertices = convertRelativeCoordinates(this.props.vertices, this.props.assetsDimention) //[Vittoria] ricalcola sulla base della canvas
+        }
+
+        // di default, un oggetto e' attivabile
+        if(activable === undefined){
+            activable = 'ACTIVABLE';
+        }
+
+        if(visible === undefined){
+            visible = 'VISIBLE';
         }
 
         //gestico la primitiva della geometria a seconda che sia una geometria o un punto )POINT_OF_INTEREST
@@ -53,15 +63,16 @@ class Curved extends Component
             //Sono in debug mode li rendo visibili
             //TODO [debug] add to origin
             let material = this.props.onDebugMode ? "opacity:0.3;visible:true;side:double" : "opacity:0; visible:false; side:double";
-
+            let selectable = `object_uuid: ${this.props.object_uuid}; activable: ${activable}; visible: ${visible}; object_type:${this.props.type}`;
             return(
                 //[Vittoria] Entity di a-frame implementato con React
                 <Entity material={material}
                         geometry={geometry}
                         id={"curv" + this.props.object_uuid}
-                        selectable={'object_uuid:' + this.props.object_uuid + '; activable: ' + this.props.activable + '; object_type: ' + this.props.type}
+                        selectable={selectable}
                         position={position}
-                        scale={scale}/> //[Vittoria] quello che nella scena 3D inverte gli assi
+                        scale={scale}
+                        /> //[Vittoria] quello che nella scena 3D inverte gli assi
             );
         }
     }
