@@ -189,7 +189,7 @@ export default class Bubble extends Component
             }
         }
         //Carico audio incorporato nel video
-        if(this.props.isAudioOn){
+        if(this.props.scene.isAudioOn){
             if(soundsHub["audios_"+ this.props.scene.uuid] === undefined){
                 if(stores_utils.getFileType(scene.img) === 'video'){
                     let volume = this.props.onDebugMode?0:50;

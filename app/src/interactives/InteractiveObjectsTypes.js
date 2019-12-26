@@ -12,6 +12,7 @@ const InteractiveObjectsTypes = {
     SWITCH : 'SWITCH',
     TIMER : 'TIMER',
     TRANSITION : 'TRANSITION',
+    TEXTBOX : 'TEXTBOX',
 
 };
 

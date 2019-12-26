@@ -19,6 +19,8 @@ import PointOfInterest from "../../interactives/PointOfInterest";
 import interface_utils from "./interface_utils";
 import Counter from "../../interactives/Counter";
 import Values from "../../rules/Values";
+import Textbox from "../../interactives/Textbox";
+
 
 
 let uuid = require('uuid');
@@ -150,6 +152,13 @@ function TopBar(props){
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.COUNTER)}/>
                             <figcaption>Contatore</figcaption>
                         </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.TEXTBOX);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TEXTBOX)}/>
+                            <figcaption>Testo</figcaption>
+                        </figure>
                     </div>
                 </div>
                 <div className={"tab-pane fade"}
@@ -259,6 +268,19 @@ function createObject(props, type){
                         state: null,
                         inputSize: 3,
                         combination : [Math.floor(Math.random() * 1000)],
+                    }
+                });
+                break;
+            case InteractiveObjectsTypes.TEXTBOX:
+                name = scene.name + '_tx' + (scene.objects.textboxs.length + 1);
+                obj = Textbox({
+                    uuid: uuid.v4(),
+                    name: name,
+                    properties: {
+                        string: null,
+                        alignment: null,
+                        font: null,
+                        size: null,
                     }
                 });
                 break;

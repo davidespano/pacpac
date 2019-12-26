@@ -109,6 +109,7 @@ export default class VRScene extends React.Component {
         if(camera){
             camera.object3D.getWorldDirection(this.state.camera);
             this.updateAngles();
+            //potrei inserire qui lo spostamento per l'oggetto testo
         }
     }
 
@@ -340,7 +341,7 @@ export default class VRScene extends React.Component {
 
     /**
      * Questa funzione si occupa di gestire il cambio bolla, aggiorna lo stato corrente della scena dopo una transizione
-     * @param newActiveScene uuid della nuova scena corrente
+     * @param newActiveScene uuid della nuova scena correnteb
      */
     handleSceneChange(newActiveScene) {
         this.setState({
