@@ -18,6 +18,7 @@ import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
 
+
 let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
@@ -55,7 +56,7 @@ export default class EudRuleEditor extends Component {
                         </React.Fragment>
                     );
                 });
-            //TODO [debug] add to origin master
+            //in debug posso selezionare le regole quindi distinguo
             if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
@@ -124,12 +125,13 @@ export default class EudRuleEditor extends Component {
         this.props.ruleEditorCallback.eudShowCompletions(null, null)
     }
 
+    //[Vittoria] creazione nuova regola
     onNewRuleClick() {
-        let scene = this.props.scenes.get(this.props.currentScene);
-        let event = Action().set("uuid", uuid.v4());
+        let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
+        let event = Action().set("uuid", uuid.v4());    //la popolo con un evento (nb azione)
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
         let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts);
-        this.props.addNewRule(scene, rule);
+        this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
     }
 
     onRemoveRuleClick(ruleId) {
@@ -173,7 +175,7 @@ class EudRule extends Component {
         this.setState({isMouseInside: false});
     }
 
-
+//Bottoni sotto le regole per cancellare/copiare/aggiungere condizioni
     actionBtn(rule, action) {
         let disabled = rule.actions.size <= 1;
         //TODO [debug] add to master
@@ -241,7 +243,7 @@ class EudRule extends Component {
         }
     }
 
-
+    //operatore affianco alla condizione per collegarla alla precedente condizione tramite "and" o "or"
     generateOperatorSelector(props, condition, rule) {
         return (
             <span className={"eudIf"}>
@@ -591,6 +593,7 @@ class EudCondition extends Component {
     editSubCondition(condition, subConditionId, role, ruleUpdate) {
         if (condition instanceof Condition && condition.uuid === subConditionId) {
             switch (role) {
+                //se modifico il primo o il secondo valore di una regola gli altri andranno a null
                 case 'subject':
                     condition['obj_uuid'] = ruleUpdate.item;
                     condition['operator'] = null;
@@ -1284,19 +1287,28 @@ class EudAutoCompleteItem extends Component {
  * @returns {the list of possible completions}
  */
 function getCompletions(props) {
-
     switch (props.role) {
         case "subject":
             if(props.rulePartType === 'event'){ // event subject: player, audios and videos
-                return props.assets.filter(x => x.type === 'video').merge(props.audios).set(
+                //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
+                let subjects = props.assets.filter(x => x.type === 'video').merge(props.audios).set(
                     InteractiveObjectsTypes.PLAYER,
                     InteractiveObject({
                         type: InteractiveObjectsTypes.PLAYER,
                         uuid: InteractiveObjectsTypes.PLAYER,
                         name: ""
                     })
-                );
+                ).sort(function (a) {
+                    if(a.type=== "PLAYER"){
+                        return -1
+                    }
+                    else
+                        return 1;
+                });
+
+                return subjects;
             }
+
             let subjects = props.interactiveObjects.filter(x =>
                 x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
                 InteractiveObjectsTypes.PLAYER,
@@ -1311,7 +1323,9 @@ function getCompletions(props) {
 
         case "object":
             // the CLICK action is restricted to current scene objects only, might move to switch case later
+
             if(props.verb.action === RuleActionTypes.CLICK){
+                console.log("Case object scene object only: ", sceneObjectsOnly(props));
                 return sceneObjectsOnly(props);
             }
             
@@ -1323,7 +1337,16 @@ function getCompletions(props) {
                 allObjects = allObjects.filter(x => objType.includes(x.type));
             }
 
+            console.log("Case object all Objects",allObjects);
+
             return allObjects;
+                /*.sort(function (a) {
+                if(allObjects.includes(a.uuid)){
+                    return -1
+                }
+                else
+                    return 1;
+            });*/
         case "operation":
             if(props.rulePartType === 'event'){
                 if(props.subject){
@@ -1337,10 +1360,15 @@ function getCompletions(props) {
         case "operator":
             return props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
         case 'value':
+            console.log("case value")
             return props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
     }
 
 }
+
+/*var sortCriteria = function (objects, index) {
+    return objectSortOrder[index];
+};*/
 
 function filterValues(subject, verb) {
     let v = ValuesMap;
@@ -1360,4 +1388,13 @@ function filterValues(subject, verb) {
 function sceneObjectsOnly(props){
     let sceneObjects = scene_utils.allObjects(props.scenes.get(CentralSceneStore.getState()));
     return props.interactiveObjects.filter(x => sceneObjects.includes(x.uuid));
+}
+
+
+function orderByScene(a,b){
+    if(a.uuid=== InteractiveObjectsTypes.PLAYER){
+        return -1
+    }
+    else if(b.uuid=== InteractiveObjectsTypes.PLAYER)
+        return 1;
 }
