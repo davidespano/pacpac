@@ -22,6 +22,8 @@ function executeAction(VRScene, rule, action){
     let cursor = document.querySelector('#cursor');
 
     switch (action.action) {
+
+
         case RuleActionTypes.TRANSITION:
             /*
             * Azione che si occupa di gestire la transizione, se la transizione ha un video associato avvia la transizione
@@ -124,6 +126,7 @@ function executeAction(VRScene, rule, action){
                     changeStateSwitch(VRScene, runState, current_object, cursor, action);
                     break;
                 case 'COLLECTED':
+                    console.log(current_object.name + " collected");
                     changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.subj_uuid);
                     break;
                 case 'UNLOCKED':

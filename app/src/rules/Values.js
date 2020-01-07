@@ -37,6 +37,11 @@ const Values = {
     STARTED: 'STARTED',
     ENDED: 'ENDED',
 
+    //TEXTBOX
+    TEXTLEFT: 'TEXTLEFT',
+    TEXTRIGHT: 'TEXTRIGHT',
+    TEXTCENTER: 'TEXTCENTER',
+
 };
 
 export default Values;

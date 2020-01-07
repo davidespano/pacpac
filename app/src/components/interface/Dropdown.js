@@ -42,6 +42,19 @@ function generateOptions(props, component, property){
                 },
                 customStyle,
             ];
+        case 'alignment':
+            return [
+                [
+                    { value: Values.TEXTLEFT, label: toString.valueUuidToString(Values.TEXTLEFT)},
+                    { value: Values.TEXTCENTER, label: toString.valueUuidToString(Values.TEXTCENTER)},
+                    { value: Values.TEXTRIGHT, label: toString.valueUuidToString(Values.TEXTRIGHT)},
+                ],
+                (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                },
+                customStyle,
+            ];
         case 'visibility':
             return [
                 [

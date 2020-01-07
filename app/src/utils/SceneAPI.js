@@ -18,6 +18,7 @@ import PointOfInterest from "../interactives/PointOfInterest";
 import Counter from "../interactives/Counter";
 import ScenesStore from "../data/ScenesStore";
 import EditorStateStore from "../data/EditorStateStore";
+import Textbox from "../interactives/Textbox";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -49,6 +50,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
             let audio_uuids = [];
             let points_uuids = [];
             let counters_uuids = [];
+            let textboxes_uuids = [];
 
 
             let scene_type = response.body.type;
@@ -99,6 +101,14 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     Actions.receiveObject(c, scene_type);
                 });
             }
+
+            //TODO decommentare questa porzione quando si sarà inserita textboxes nel body, credo sia roba di db
+            // generates textboxes and saves them to the objects store
+            //response.body.textboxes.map((textbox) => {
+            //    textboxes_uuids.push(textbox.uuid); //save uuid
+            //    let tx = Textbox(getProperties(textbox));
+            //    Actions.receiveObject(tx, scene_type);
+           // });
 
             // generates rules and saves them to the rules store
             response.body.rules.map(rule => {
@@ -179,6 +189,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     locks: locks_uuids,
                     points: points_uuids,
                     counters: counters_uuids,
+                    textboxes: textboxes_uuids,
                 },
                 rules : rules_uuids,
                 audios : audio_uuids,
@@ -229,6 +240,7 @@ function createScene(name, img, index, type, tag, order) {
                     locks: [],
                     points: [],
                     counters: [],
+                    textboxes: [],
                 }
             });
 
@@ -388,6 +400,12 @@ function readScene(gameGraph, raw_scenes) {
             return s;
         });
 
+        const textboxes = s.textboxes.map(tx => {
+            let t = getProperties(tx);
+            gameGraph['objects'].set(t.uuid, t);
+            return t;
+        });
+
         // generates keys
         const keys = s.collectable_keys.map((key) => {
             let k = getProperties(key);
@@ -465,6 +483,7 @@ function readScene(gameGraph, raw_scenes) {
                 locks: locks,
                 points: points,
                 counters: counters,
+                textboxes: textboxes,
             },
             rules: rules,
             audios: audios,

@@ -186,6 +186,12 @@ function valueUuidToString(valueUuid){
             return 'iniziato';
         case Values.ENDED:
             return 'finito';
+        case Values.TEXTRIGHT:
+            return 'destra';
+        case Values.TEXTCENTER:
+            return 'centro';
+        case Values.TEXTLEFT:
+            return 'sinistra';
         default:
             return 'stato sconosciuto';
     }

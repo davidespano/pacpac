@@ -120,6 +120,8 @@ function defineField(object){
             return 'points';
         case InteractiveObjectsTypes.COUNTER:
             return "counters";
+        case InteractiveObjectsTypes.TEXTBOX:
+            return "textboxes";
         default:
             return null;
     }

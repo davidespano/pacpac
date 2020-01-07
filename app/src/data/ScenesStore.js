@@ -47,6 +47,7 @@ class ScenesStore extends ReduceStore {
                                 locks: [],
                                 points: [],
                                 counters: [],
+                                textboxes: [],
                             },
                         });
                         state = state.set(newScene.uuid, newScene).sort(stores_utils.chooseComparator(action.order));

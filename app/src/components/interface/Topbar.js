@@ -154,7 +154,8 @@ function TopBar(props){
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.TEXTBOX);
+                                    //TODO decommentare quando il componente textbox sarà pronto
+                                    //createObject(props, InteractiveObjectsTypes.TEXTBOX);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TEXTBOX)}/>
                             <figcaption>Testo</figcaption>
@@ -272,7 +273,7 @@ function createObject(props, type){
                 });
                 break;
             case InteractiveObjectsTypes.TEXTBOX:
-                name = scene.name + '_tx' + (scene.objects.textboxs.length + 1);
+                name = scene.name + '_tx' + (scene.objects.textboxes.length + 1);
                 obj = Textbox({
                     uuid: uuid.v4(),
                     name: name,

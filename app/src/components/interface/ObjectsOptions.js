@@ -326,6 +326,25 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </div>
             );
+        case InteractiveObjectsTypes.TEXTBOX: //TODO completare la visualizzazione delle proprietà della textbox
+            return (
+                <div className={"options-grid"}>
+                    <label className={'options-labels'}>Testo:</label>
+                    <Dropdown //puoi sostituire con react select per usare icone anzi che dropdown
+                        props={props}
+                        component={'alignment'}
+                        property={'alignment'}
+                        defaultValue={object.properties.alignment}/>
+                    <div className={'flex'}>
+                        <div id={"textboxString"}
+                             contentEditable={true} //sostituire setpropertyfromvalue che è più pulita
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'duration',"transitionDuration", props)}
+                        >
+                            {object.properties.string}
+                        </div>
+                    </div>
+                </div>
+            );
         default:
             return(<div>Error!</div>);
 
@@ -478,6 +497,8 @@ function objectTypeToString(objectType) {
             return "Chiave";
         case InteractiveObjectsTypes.TRANSITION:
             return "Transizione";
+        case InteractiveObjectsTypes.TEXTBOX:
+            return "Riquadro di testo";
         default:
             return "Sconosciuto";
     }
