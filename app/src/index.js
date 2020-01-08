@@ -27,7 +27,6 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
         Actions.editModeOn();
         SceneAPI.getHomeScene();
         SceneAPI.getAllScenesAndTags();
-        //[TODO] impostare la home scene come scena iniziale dell'editor
         MediaAPI.getAllAssets();
         AudioAPI.getAllAudios();
 		StoryAPI.getAllCollections();

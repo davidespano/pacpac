@@ -1308,7 +1308,7 @@ function getCompletions(props) {
 
                 return subjects;
             }
-
+            //soggetto nella seconda parte della frase
             let subjects = props.interactiveObjects.filter(x =>
                 x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
                 InteractiveObjectsTypes.PLAYER,
@@ -1318,12 +1318,19 @@ function getCompletions(props) {
                     name: ""
                 })
             );
-
-            return props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
+            let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
+            return result.sort(function (a) {
+                //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
+                // e il player
+                if(sceneObjectsOnly(props).includes(a)|| a.type=== "PLAYER"){
+                    return -1
+                }
+                else
+                    return 1;
+            });
 
         case "object":
             // the CLICK action is restricted to current scene objects only, might move to switch case later
-
             if(props.verb.action === RuleActionTypes.CLICK){
                 console.log("Case object scene object only: ", sceneObjectsOnly(props));
                 return sceneObjectsOnly(props);
@@ -1336,17 +1343,15 @@ function getCompletions(props) {
                 let objType = RuleActionMap.get(props.verb.action).obj_type;
                 allObjects = allObjects.filter(x => objType.includes(x.type));
             }
-
-            console.log("Case object all Objects",allObjects);
-
-            return allObjects;
-                /*.sort(function (a) {
-                if(allObjects.includes(a.uuid)){
+            //complemento oggetto, ordino sempre sulla base degli oggetti nella scena
+            return allObjects.sort(function (a) {
+                if(sceneObjectsOnly(props).includes(a)){
                     return -1
                 }
                 else
                     return 1;
-            });*/
+            });
+
         case "operation":
             if(props.rulePartType === 'event'){
                 if(props.subject){
@@ -1360,7 +1365,7 @@ function getCompletions(props) {
         case "operator":
             return props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
         case 'value':
-            console.log("case value")
+            console.log("case value");
             return props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
     }
 
@@ -1391,10 +1396,3 @@ function sceneObjectsOnly(props){
 }
 
 
-function orderByScene(a,b){
-    if(a.uuid=== InteractiveObjectsTypes.PLAYER){
-        return -1
-    }
-    else if(b.uuid=== InteractiveObjectsTypes.PLAYER)
-        return 1;
-}

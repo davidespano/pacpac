@@ -400,11 +400,12 @@ function readScene(gameGraph, raw_scenes) {
             return s;
         });
 
-        const textboxes = s.textboxes.map(tx => {
+        //TODO [Riccardo]: decommentare quando il componente sarà pronto (anche più in basso)
+        /*const textboxes = s.textboxes.map(tx => {
             let t = getProperties(tx);
             gameGraph['objects'].set(t.uuid, t);
             return t;
-        });
+        });*/
 
         // generates keys
         const keys = s.collectable_keys.map((key) => {
@@ -483,7 +484,7 @@ function readScene(gameGraph, raw_scenes) {
                 locks: locks,
                 points: points,
                 counters: counters,
-                textboxes: textboxes,
+                //textboxes: textboxes,
             },
             rules: rules,
             audios: audios,
