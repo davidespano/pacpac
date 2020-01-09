@@ -223,13 +223,20 @@ export default class Bubble extends Component
 
         //Genero la bolla in base al tio 3D o 2D
         if(is3Dscene){
-
+//TODO media hanno un onload, quando carica l'ultimo posso passare l'attributo del loading a not visible
             sceneRender = (
-                <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
-                                   id={this.props.scene.name} src={'#' + background} radius={radius}
-                                   material={material} play_video={active}>
-                {curves}
-                </Entity>)
+                <Entity>
+                    <Entity geometry="primitive: sphere"  scale={'-1 1 1 '} visible={this.props.isActive}
+                            id={'loading'} radius={radius} color={"yellow"}  material={material}>
+                        {curves}
+                    </Entity>
+                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
+                            id={this.props.scene.name} src={'#' + background} radius={radius}
+                            material={material} play_video={active}>
+                        {curves}
+                    </Entity>
+                </Entity>
+            )
         } else {
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
@@ -247,7 +254,8 @@ export default class Bubble extends Component
                     id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
                     material={material} play_video={active} position={positionPlane} >
                 {curves}
-                </Entity>)
+                </Entity>
+            )
         }
         return(sceneRender);
     }

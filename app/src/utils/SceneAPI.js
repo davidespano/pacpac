@@ -104,11 +104,11 @@ function getByName(name, order = null, gameId=null, creation = true) {
 
             //TODO decommentare questa porzione quando si sarà inserita textboxes nel body, credo sia roba di db
             // generates textboxes and saves them to the objects store
-            //response.body.textboxes.map((textbox) => {
-            //    textboxes_uuids.push(textbox.uuid); //save uuid
-            //    let tx = Textbox(getProperties(textbox));
-            //    Actions.receiveObject(tx, scene_type);
-           // });
+            response.body.textboxes.map((textbox) => {
+                textboxes_uuids.push(textbox.uuid); //save uuid
+                let tx = Textbox(getProperties(textbox));
+                Actions.receiveObject(tx, scene_type);
+            });
 
             // generates rules and saves them to the rules store
             response.body.rules.map(rule => {
@@ -401,11 +401,11 @@ function readScene(gameGraph, raw_scenes) {
         });
 
         //TODO [Riccardo]: decommentare quando il componente sarà pronto (anche più in basso)
-        /*const textboxes = s.textboxes.map(tx => {
+        const textboxes = s.textboxes.map(tx => {
             let t = getProperties(tx);
             gameGraph['objects'].set(t.uuid, t);
             return t;
-        });*/
+        });
 
         // generates keys
         const keys = s.collectable_keys.map((key) => {

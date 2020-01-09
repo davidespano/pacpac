@@ -155,7 +155,7 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     //TODO decommentare quando il componente textbox sarà pronto
-                                    //createObject(props, InteractiveObjectsTypes.TEXTBOX);
+                                    createObject(props, InteractiveObjectsTypes.TEXTBOX);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TEXTBOX)}/>
                             <figcaption>Testo</figcaption>
@@ -291,15 +291,19 @@ function createObject(props, type){
 
         let defaultRule = rules_utils.generateDefaultRule(obj);
         props.addNewObject(scene, obj);
-
-        if(obj.type === InteractiveObjectsTypes.SWITCH){ //switches have multiple default rules
-            props.addNewRule(scene, defaultRule[0]);
-            props.addNewRule(scene, defaultRule[1]);
-        }else{
-            props.addNewRule(scene, defaultRule);
+        //il controllo serve per la textbox che non ha bisogno di regole e questa chiamata verrebbe effettuata con defaultrule a null
+        if(defaultRule != null)
+        {
+            if(obj.type === InteractiveObjectsTypes.SWITCH){ //switches have multiple default rules
+                props.addNewRule(scene, defaultRule[0]);
+                props.addNewRule(scene, defaultRule[1]);
+            }else{
+                props.addNewRule(scene, defaultRule);
+            }
+            //[TODO] passare all'editor geometria appena si crea un nuovo oggetto
+            // props.switchToGeometryMode();
         }
-        //[TODO] passare all'editor geometria appena si crea un nuovo oggetto
-        // props.switchToGeometryMode();
+
 
     } else {
         alert('Nessuna scena selezionata!');
