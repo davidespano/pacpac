@@ -220,16 +220,16 @@ export default class Bubble extends Component
             }
         } else material += "opacity: 0; visible: false";
         let camera = document.getElementById('camera');
-
+        let loading = false;
         //Genero la bolla in base al tio 3D o 2D
         if(is3Dscene){
-//TODO media hanno un onload, quando carica l'ultimo posso passare l'attributo del loading a not visible
+//TODO fare loading screen solo per video, sparisce con la onplay del video, variabile loading da passare a false quando il video è in riproduzione
             sceneRender = (
                 <Entity>
-                    <Entity geometry="primitive: sphere"  scale={'-1 1 1 '} visible={this.props.isActive}
-                            id={'loading'} radius={radius} color={"yellow"}  material={material}>
-                        {curves}
-                    </Entity>
+                    <Entity visible={loading} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
+                            id={'loading'} radius={radius}  material={'shader: flat; color: gray; side: double'}  >
+                        <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
+                    </Entity>;
                     <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
@@ -250,10 +250,16 @@ export default class Bubble extends Component
 
             positionPlane = "0, 1.6, -6";
             sceneRender = (
-                <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
-                    id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
-                    material={material} play_video={active} position={positionPlane} >
-                {curves}
+                <Entity>
+                    <Entity visible={loading} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
+                            id={'loading'} radius={radius}  material={'shader: flat; color: gray; side: double'}  >
+                        <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
+                    </Entity>;
+                    <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
+                            id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
+                            material={material} play_video={active} position={positionPlane} >
+                        {curves}
+                    </Entity>
                 </Entity>
             )
         }
