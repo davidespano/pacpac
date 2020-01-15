@@ -5,6 +5,7 @@ import AudioManager from './AudioManager'
 import Values from '../../rules/Values';
 import './aframe_shader'
 import SceneAPI from "../../utils/SceneAPI";
+const eventBus = require('./eventBus');
 const THREE = require('three');
 const soundsHub = require('./soundsHub');
 
@@ -367,6 +368,9 @@ function executeAction(VRScene, rule, action){
             console.log('not yet implemented');
             console.log(action);
     }
+
+    console.log(`emit ${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
+    eventBus.emit(`${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
 }
 
 /**

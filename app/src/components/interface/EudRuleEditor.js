@@ -1291,7 +1291,7 @@ function getCompletions(props) {
         case "subject":
             if(props.rulePartType === 'event'){ // event subject: player, audios and videos
                 //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
-                let subjects = props.assets.filter(x => x.type === 'video').merge(props.audios).set(
+                let subjects = props.assets.filter(x => x.type === 'video').merge(props.audios).merge(sceneObjectsOnly(props)).set(
                     InteractiveObjectsTypes.PLAYER,
                     InteractiveObject({
                         type: InteractiveObjectsTypes.PLAYER,
@@ -1355,9 +1355,9 @@ function getCompletions(props) {
         case "operation":
             if(props.rulePartType === 'event'){
                 if(props.subject){
-                    return RuleActionMap.filter(x =>
-                        x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS).filter(x =>
-                        x.subj_type.includes(props.subject.type));
+                    return RuleActionMap
+                        //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
+                        .filter(x => x.subj_type.includes(props.subject.type));
                 }
                 return RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
             }

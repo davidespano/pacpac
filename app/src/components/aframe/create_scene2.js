@@ -200,7 +200,7 @@ export default class VRScene extends React.Component {
             switch (rule.event.action){
                 // [Vittoria] qua sto aggiungendo un evento click con il suo uuid dell'oggetto,
                 //se volessi creare un evento del counter chiamerei il uuid del contatore
-                case 'CLICK':
+                /*case 'CLICK':
                     eventBus.on(`click-${rule.event.obj_uuid}`, function(){
                         let condition = evalCondition(rule.condition, me.state.runState);
                         if (condition) {
@@ -221,7 +221,7 @@ export default class VRScene extends React.Component {
 
 
 
-                    /*rule.actions.forEach(action => {
+                    rule.actions.forEach(action => {
                         //if(!eventBus._events['click-' + rule.event.obj_uuid]){
                         console.log("registering " + action.subj_uuid + " " + action.action + " " + action.obj_uuid);
                             eventBus.on('click-' + rule.event.obj_uuid, function () {
@@ -242,8 +242,8 @@ export default class VRScene extends React.Component {
                                 }
                             })
                         //}
-                    });*/
-                    break;
+                    });
+                    break;*/
                 case 'IS':
                     let media;
                     //Controllo se il video è della scena o di un oggetto
@@ -311,9 +311,32 @@ export default class VRScene extends React.Component {
                         };
                     }
                     break;
+
+                default:
+                    let eventName = rule.event.action.toLowerCase();
+                    console.log(`registered ${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`);
+                    eventBus.on(`${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`, function(){
+                        let condition = evalCondition(rule.condition, me.state.runState);
+                        if (condition) {
+                            rule.actions.forEach(action => {
+                                let actionExecution = actionCallback(action);
+                                if (me.props.debug) {
+                                    setTimeout(function () {
+                                        interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                        eventBus.on('debug-step', actionExecution);
+                                    }, duration);
+                                } else {
+                                    actionExecution();
+                                }
+
+                            });
+                        }
+                    });
+                    break;
             }
         })
     }
+
 
     /**
      * Funzione che Crea lo stato di gioco iniziaale, cicla tutte le scene e tutti gli oggetti all'interno di una scena
@@ -474,8 +497,8 @@ export default class VRScene extends React.Component {
             //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'
             //i media non sono tutti presenti nella scena
             //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
-            //TODO [davide] rimosso perche' causa problemi al resto
-            this.createRuleListeners();
+            //TODO [davide] rimosso perche' crea più listener per lo stesso evento
+            //this.createRuleListeners();
 
             //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (

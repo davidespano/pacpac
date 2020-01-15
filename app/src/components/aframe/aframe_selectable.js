@@ -117,7 +117,7 @@ function setMouseLeave() {
 function setClick(event) {
     event.detail.cursorEl.components.raycaster.intersectedEls.forEach(
         obj => {
-            eventBus.emit('click-'+ obj.object_uuid)
+            eventBus.emit('PLAYER-click-'+ obj.object_uuid)
         }
     );
 }
