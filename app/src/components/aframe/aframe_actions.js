@@ -24,7 +24,6 @@ function executeAction(VRScene, rule, action){
 
     switch (action.action) {
 
-
         case RuleActionTypes.TRANSITION:
             /*
             * Azione che si occupa di gestire la transizione, se la transizione ha un video associato avvia la transizione
@@ -202,8 +201,6 @@ function executeAction(VRScene, rule, action){
             //let primitive = targetSceneVideo.nodeName === 'VIDEO'?"a-videosphere":"a-sky";
             //let actualSky = document.querySelector('#' + actual_scene);
             //actualSky.setAttribute('primitive', primitive)
-            //TODO capire se si può evitare questo comportamento: se di un video scelgo di tenere anche l'audio e lo imposto
-            // in un'altra scena allora avrà l'audio anche quella scena
 
             if(soundsHub["audios_"+ actual_scene_Uuid]){
                 soundsHub["audios_"+ actual_scene_Uuid].pause();
@@ -248,7 +245,6 @@ function executeAction(VRScene, rule, action){
             * Azione che si occupa di riprodurre un video o audio, nel caso sia un video ha la sola funziona di cambiare lo
             * stato interno della'attributo loop, se si tratta di un audio cambia lo stato di loop e riprodutce un audio
             * */
-            //TODO rivedere questi controlli fanno un po' schifo
             if(soundsHub["audios_"+ action_obj_uuid]){
                 soundsHub["audios_"+ action_obj_uuid].loop = true;
                 soundsHub["audios_"+ action_obj_uuid].play();
@@ -294,35 +290,36 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.CHANGE_ACTIVABILITY:
+                let obj_act = document.querySelector('#curv' + action.subj_uuid); //oggetto che si sta attivando o disattivando
 
-            let obj_act = document.querySelector('#curv' + action.subj_uuid);
-            if(current_object.activable==='ACTIVABLE'){ //lo stato iniziale è attivabile, quindi posso disattivarlo
-                if(obj_act)
+                //qua c'è l'effettiva disattivazione o attivazione dell'oggetto
+                if(obj_act){
                     obj_act.setAttribute('selectable', {activable: action.obj_uuid});
-                if(cursor) {
-                    cursor.setAttribute('color', 'black');
+                }
 
+                //da qua in poi il codice si concentra sul come far apparire il cursore a seconda dell'elemento sopra cui si trova
+                if(current_object.activable==='ACTIVABLE'){ //lo stato iniziale è attivabile
+                    if(cursor) {
+                        cursor.setAttribute('color', 'black');
+                        if(current_object.type==='TRANSITION'){ //è transizione
+                            cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                        }
+                        else { //non è transizione
+                            cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
+                        }
+                    }
+                }
+                else { //sono sopra un oggetto non attivabile
+                    cursor.setAttribute('color', 'black');
                     if(current_object.type==='TRANSITION'){ //è transizione
                         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
                     }
                     else { //non è transizione
-                        cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
+                        //in questo caso l'oggetto deve diventare attivabile, quindi il cursore sarà verde
+                        cursor.setAttribute('color', 'green');
+                        cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.01; to:0.001;');
                     }
                 }
-            }else { //un altro oggetto lo sta attivando
-                if(obj_act)
-                    obj_act.setAttribute('selectable', {activable: action.obj_uuid});
-                    cursor.setAttribute('color', 'black');
-                if(current_object.type==='TRANSITION'){ //è transizione
-                    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
-                }
-                else { //non è transizione
-                    //in questo caso l'oggetto deve diventare attivabile, quindi il cursore sarà verde
-                    cursor.setAttribute('color', 'green');
-                    cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.01; to:0.001;');
-                }
-            }
-
 
             runState[action.subj_uuid].activable=action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
@@ -591,8 +588,7 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     if(soundsHub['audio0_' + audioKey])
         soundsHub['audio0_' + audioKey].play();
     // Quando una chiave viene raccolta o un lucchetto viene aperto sparisce e non è più attivabile nè visibile,
-    //prima l'oggetto veniva filtrato ed eliminato
-
+    // prima l'oggetto veniva filtrato ed eliminato
     runState[current_object.uuid].visible=false;
     runState[current_object.uuid].activable=false;
 

@@ -16,19 +16,18 @@ AFRAME.registerComponent('selectable', {
         object_type: {type: 'string'}, //Tipo di oggetto
         activable: {type: 'string', default: 'ACTIVABLE'} //attivabilità dell'oggetto, attivabile di default
     },
-//TODO 1 Vittoria: trovare un modo (anche passando un null a selectable) che una volta che siamo lì ci faccia capire che siamo in editMode
-// disabilitare selectable in editMode: nello schema si può aggiungere un attributo per l'editMode
 
     init: function () {
         let elem = this.el;
 
         //Se interaggibile aggiungo i listener per le animazioni, in base al tipo saranno diverse, e il listener per il click
         //che scatenera' l'evento
-        if(this.data.visible === 'VISIBLE' && this.data.activable === 'ACTIVABLE'){
+        if(this.data.visible === 'VISIBLE' ){
             if(this.data.object_type === 'TRANSITION'){
-                elem.addEventListener('mouseenter', setMouseEnterTransition);
-                elem.addEventListener('mouseleave', setMouseLeaveTransition);
-            } else {
+                    elem.addEventListener('mouseenter', setMouseEnterTransition); //transizioni visibili e attivabili
+                    elem.addEventListener('mouseleave', setMouseLeaveTransition);
+            }
+            else {
                 elem.addEventListener('mouseenter', setMouseEnter);
                 elem.addEventListener('mouseleave', setMouseLeave);
             }
@@ -38,29 +37,50 @@ AFRAME.registerComponent('selectable', {
 
     update: function () {
         let elem = this.el;
-// TODO VITTORIA Se è in edit mode non fare tutto questo, in questo modo basterebbe un curved
-        //Se in fasi di gioco cambia l'interaggibilita' di un oggetto la aggiorno aggiungendo o rimuovendo i listeners
-        if(this.data.visible === 'VISIBLE' && this.data.activable === 'ACTIVABLE'){
-            if(this.data.object_type === 'TRANSITION'){
-                elem.addEventListener('mouseenter', setMouseEnterTransition);
-                elem.addEventListener('mouseleave', setMouseLeaveTransition);
-            } else {
-                elem.addEventListener('mouseenter', setMouseEnter);
-                elem.addEventListener('mouseleave', setMouseLeave);
-            }
-            elem.addEventListener('click', setClick);
 
-        } else {
+        //Se in fasi di gioco cambia l'interaggibilita' di un oggetto la aggiorno aggiungendo o rimuovendo i listeners
+        //se l'elemento non è visibile non gli aggiungo il listener e il cursore non ci può interagire
+        if(this.data.visible === 'VISIBLE'){
+            if(this.data.object_type === 'TRANSITION'){ //transizioni
+                if(this.data.activable==='ACTIVABLE'){
+                    elem.addEventListener('mouseenter', setMouseEnterTransition); //transizioni visibili e attivabili
+                    elem.addEventListener('mouseleave', setMouseLeaveTransition);
+                    elem.removeEventListener('mouseenter', setMouseEnterTransitionNotActive); //rimuovo l'event listener altrimenti collidono
+               }
+                else{
+                    elem.addEventListener('mouseenter', setMouseEnterTransitionNotActive);//transizioni visibili e non attivabili
+                    elem.addEventListener('mouseleave', setMouseLeaveTransition);
+                    elem.removeEventListener('mouseenter', setMouseEnterTransition);
+                }
+                elem.addEventListener('click', setClick);
+            }
+            else { //oggetti generici
+                if(this.data.activable==='ACTIVABLE'){
+                    elem.addEventListener('mouseenter', setMouseEnter); //oggetti generici visibili e attivabili
+                    elem.addEventListener('mouseleave', setMouseLeave);
+                    elem.removeEventListener('mouseenter', setMouseEnterNotActive);
+                }
+                else {
+                    elem.addEventListener('mouseenter', setMouseEnterNotActive); //oggetti generici visibili e non attivabili
+                    elem.addEventListener('mouseleave', setMouseLeave);
+                    elem.removeEventListener('mouseenter', setMouseEnter); //oggetti generici visibili e attivabili
+
+                }
+                elem.addEventListener('click', setClick);
+            }
+
+        } else { //oggetti non visibili
             if(this.data.object_type === 'TRANSITION'){
-                elem.removeEventListener('mouseenter', setMouseEnterTransition);
+                elem.removeEventListener('mouseenter', setMouseEnterTransition); //transizioni non visibili
                 elem.removeEventListener('mouseleave', setMouseLeaveTransition);
             } else {
                 elem.emit('mouseleave');
-                elem.removeEventListener('mouseenter', setMouseEnter);
+                elem.removeEventListener('mouseenter', setMouseEnter); //oggetti generici non visibili
                 elem.removeEventListener('mouseleave', setMouseLeave);
             }
             elem.removeEventListener('click', setClick);
         }
+
         if(this.data.object_uuid!==""){
             elem['object_uuid'] = this.data.object_uuid;
             elem.setAttribute('data-raycastable', true);
@@ -73,41 +93,76 @@ AFRAME.registerComponent('selectable', {
 /**
  * Animazioni per l'ingresso e l'uscita del mouse dalla zone interattive degli oggetti
  */
+
+/**
+ * Nel caso della transizione nel 3d voglio un comportamento diverso del cursore
+ */
 function setMouseEnterTransition() {
     let cursor = document.querySelector('#cursor');
+    //nel 3d
     cursor.setAttribute('color', 'green');
     cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:2 2 2;');
+    //nel 2d
+    document.getElementsByClassName('a-canvas')[0].style = 'cursor: pointer';
+}
+
+/**
+ * Funzione per le transizioni visibili ma non attive (forse si può unificare con setMouseEnterTransition)
+ */
+function setMouseEnterTransitionNotActive(){
+    let cursor = document.querySelector('#cursor');
+    //nel 3d
+    cursor.setAttribute('color', 'red');
+    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:2 2 2;');
+    //nel 2d
+    document.getElementsByClassName('a-canvas')[0].style = 'cursor: not-allowed';
 }
 
 function setMouseLeaveTransition() {
     let cursor = document.querySelector('#cursor');
-
+    //3d
     if(cursor) {
         cursor.setAttribute('color', 'black');
         //transizione
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
-
+        //nel 2d
+        document.getElementsByClassName('a-canvas')[0].style = 'cursor: default';
     }
 }
 
 function setMouseEnter() {
     let cursor = document.querySelector('#cursor');
+    //3d
     cursor.setAttribute('color', 'green');
     cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.01; to:0.001;');
+    //2d
+    document.getElementsByClassName('a-canvas')[0].style = 'cursor: pointer';
+}
+
+/**
+    Funzione per gli elementi visibili non attivi (ad eccezione della transizione)
+**/
+function setMouseEnterNotActive() {
+    let cursor = document.querySelector('#cursor');
+    //3d
+    cursor.setAttribute('color', 'red');
+    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+    cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.01; to:0.001;');
+    //2d
+    document.getElementsByClassName('a-canvas')[0].style = 'cursor: not-allowed';
 }
 
 function setMouseLeave() {
     let cursor = document.querySelector('#cursor');
-    
     if(cursor){
+        //3d
         cursor.setAttribute('color', 'black');
-        //non transizione
         cursor.setAttribute('animation__circlefill', 'property: geometry.radiusInner; dur:200; from:0.001; to:0.01;');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:1 1 1; to:1 1 1;');
-
+        //2d
+        document.getElementsByClassName('a-canvas')[0].style = 'cursor: default';
     }
-
 }
 
 /**
