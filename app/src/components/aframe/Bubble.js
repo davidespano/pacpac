@@ -67,7 +67,6 @@ export default class Bubble extends Component
     }
 
     componentDidUpdate(){
-
         //Riavolgo i video delle bolle adiacenti, se sono gia' stati avviati in precedenza non partono in automatico dall'inizio
         if(!this.props.isActive) { //[Vittoria] se non è la scena attiva se ci sono dei video li riporta a zero
             Object.values(this.props.scene.objects).flat().forEach(obj => {
@@ -88,7 +87,6 @@ export default class Bubble extends Component
         let camera = document.getElementById('camera');
         if(camera.getAttribute("pac-look-controls").pointerLockEnabled !== is3Dscene && this.props.isActive && !this.props.editMode)
             this.props.cameraChangeMode(is3Dscene)
-
         this.setVideoFrame();
     }
 
@@ -290,10 +288,10 @@ export default class Bubble extends Component
                 if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
                 return;
             }
-
             //Imposto la variabile per l'aggiornamento a false
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
 
+            //TODO:  document.getElementById(scene.img).currentTime; con questo posso sapere il current time del video, se > 0 imposto loading a false, come faccio? loading è in render
             //Creo il la texture in base al tipo di media dello sfondo
             if(stores_utils.getFileType(scene.img) === 'video'){  //[Vittoria]se lo sfondo è un video
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));  //[Vittoria] creo un THREE.VideoTexture
