@@ -7,10 +7,30 @@ function eventTypeToString(eventType) {
     switch (eventType) {
         case RuleActionTypes.CLICK:
             return "clicca";
+        case RuleActionTypes.CHANGE_STATE_EVENT:
+            return "cambia stato a";
+        case RuleActionTypes.CHANGE_VALUE_EVENT:
+            return "rileva cambiamento valore da";
+        case RuleActionTypes.CHANGE_COLOR_EVENT:
+            return "cambia colore a";
+        case RuleActionTypes.CHANGE_TEMPERATURE_EVENT:
+            return "cambia temperatura a";
+        case RuleActionTypes.CHANGE_VOLUME_EVENT:
+            return "cambia volume a";
+        case RuleActionTypes.CHANGE_STATE_SENSOR_EVENT:
+            return 'rileva cambiamento stato da';
+        case RuleActionTypes.CHANGE_SHUTTER:
+            return "cambia percentuale apertura a";
+        case RuleActionTypes.CHANGE_SHUTTER_EVENT:
+            return "cambia l'apertura di";
+        case RuleActionTypes.OPEN_CLOSE_DOOR_EVENT:
+            return "apre o chiude";
         case RuleActionTypes.COLLECT_KEY:
             return "raccoglie";
         case RuleActionTypes.UNLOCK_LOCK:
             return "sblocca";
+        case RuleActionTypes.UNLOCK_LOCK_DOOR:
+            return "cambia serratura a";
         case RuleActionTypes.TRANSITION:
             return "si sposta verso";
         case RuleActionTypes.CHANGE_BACKGROUND:
@@ -39,6 +59,16 @@ function eventTypeToString(eventType) {
             return "diminuisce di";
         case RuleActionTypes.IS:
             return 'è';
+        case RuleActionTypes.CHANGE_VOLUME:
+            return 'cambia volume al valore';
+        case RuleActionTypes.CHANGE_TEMPERATURE:
+            return 'cambia temperatura a';
+        case RuleActionTypes.CHANGE_COLOR:
+            return 'cambia colore a';
+        case RuleActionTypes.DETECTS_MOTION:
+            return 'rileva movimento di';
+        case RuleActionTypes.DETECTS_SMOKE:
+            return 'rileva fumo';
         default:
             return "";
     }
@@ -81,11 +111,40 @@ function objectTypeToString(objectType) {
             type = "il giocatore";
             break;
 
-        // - IOTDeviceSearch: IoT Items
+        // IoT Items
         case InteractiveObjectsTypes.BLIND:
-            type = "la serranda";
+          	type = "la serranda";
+          	break;
+        case InteractiveObjectsTypes.DOOR:
+            type = "la porta";
+        	break;
+        case InteractiveObjectsTypes.AIR_CONDITIONER:
+            type = "il condizionatore";
+        	break;
+        case InteractiveObjectsTypes.LIGHT:
+            type = "la luce";
+          	break;
+        case InteractiveObjectsTypes.POWER_OUTLET:
+        	type = "la presa elettrica";
+        	break;
+        case InteractiveObjectsTypes.DSWITCH:
+        	type = "l'interruttore";
+        	break;
+        case InteractiveObjectsTypes.SIREN:
+            type = "la sirena";
             break;
-
+        case InteractiveObjectsTypes.MOTION_DETECTOR:
+        	type = "il sensore di movimento";
+        	break;
+        case InteractiveObjectsTypes.SENSOR:
+          	type = "il sensore";
+          	break;
+        case InteractiveObjectsTypes.SMOKE_DETECTOR:
+        	type = "il sensore fumi";
+        	break;
+        case InteractiveObjectsTypes.SPEAKER:
+            type = "l'altoparlante";
+            break;
         case Values.THREE_DIM:
         case Values.IOT:
         case Values.TWO_DIM:
@@ -121,6 +180,14 @@ function operatorUuidToString(operatorUuid) {
             return "è";
         case Operators.NOT_EQUAL:
             return "non è";
+        case Operators.EQUAL_OPEN:
+            return "è";
+        case Operators.NOT_EQUAL_OPEN:
+            return "non è";
+        case Operators.EQUAL_LOCK:
+            return "la serratura è";
+        case Operators.NOT_EQUAL_LOCK:
+            return "la serratura è";
         case Operators.EQUAL_NUM:
             return "=";
         case Operators.NOT_EQUAL_NUM:
@@ -133,6 +200,42 @@ function operatorUuidToString(operatorUuid) {
             return "\>";
         case Operators.GREATER_EQUAL:
             return "\>=";
+        case Operators.TEMP_EQUAL_NUM:
+            return "ha la temperatura =";
+        case Operators.TEMP_NOT_EQUAL_NUM:
+            return "ha la temperatura ≠";
+        case Operators.TEMP_LESS_THAN:
+            return "ha la temperatura \<";
+        case Operators.TEMP_LESS_EQUAL:
+            return "ha la temperatura \<=";
+        case Operators.TEMP_GREATER_THAN:
+            return "ha la temperatura \>";
+        case Operators.TEMP_GREATER_EQUAL:
+            return "ha la temperatura \>=";
+        case Operators.VOLUME_EQUAL_NUM:
+            return "ha il volume =";
+        case Operators.VOLUME_NOT_EQUAL_NUM:
+            return "ha il volume ≠";
+        case Operators.VOLUME_LESS_THAN:
+            return "ha il volume \<";
+        case Operators.VOLUME_LESS_EQUAL:
+            return "ha il volume \<=";
+        case Operators.VOLUME_GREATER_THAN:
+            return "ha il volume \>";
+        case Operators.VOLUME_GREATER_EQUAL:
+            return "ha il volume \>=";
+        case Operators.SHUTTER_EQUAL_NUM:
+            return "ha l'apertura =";
+        case Operators.SHUTTER_NOT_EQUAL_NUM:
+            return "ha l'apertura ≠";
+        case Operators.SHUTTER_LESS_THAN:
+            return "ha l'apertura \<";
+        case Operators.SHUTTER_LESS_EQUAL:
+            return "ha l'apertura \<=";
+        case Operators.SHUTTER_GREATER_THAN:
+            return "ha l'apertura \>";
+        case Operators.SHUTTER_GREATER_EQUAL:
+            return "ha l'apertura \>=";
         default:
             return "";
     }
@@ -162,9 +265,9 @@ function valueUuidToString(valueUuid){
         case Values.OFF:
             return 'spento';
         case Values.LOCKED:
-            return 'chiuso';
+            return 'bloccato';
         case Values.UNLOCKED:
-            return 'aperto';
+            return 'sbloccato';
         case Values.COLLECTED:
             return 'raccolta';
         case Values.NOT_COLLECTED:
@@ -189,6 +292,14 @@ function valueUuidToString(valueUuid){
             return 'iniziato';
         case Values.ENDED:
             return 'finito';
+        case Values.OPEN:
+            return 'aperto';
+        case Values.CLOSED:
+            return 'chiuso';
+        case Values.SHUTTED:
+            return 'abbassata';
+        case Values.LIFTED:
+            return 'sollevata';
         default:
             return 'stato sconosciuto';
     }

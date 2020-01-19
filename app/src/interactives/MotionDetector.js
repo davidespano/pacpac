@@ -1,4 +1,4 @@
-import InteractiveObject from "./InteractiveObject";
+import IoTInteractiveObject from "./IoTInteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
 /**
@@ -6,10 +6,20 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const MotionDetector = defaultValues => InteractiveObject({
+const MotionDetector = defaultValues => IoTInteractiveObject({
     type : InteractiveObjectsTypes.MOTION_DETECTOR,
     properties : {
-        state: false
+        state: { motion: 'OFF' }
+    },
+    deviceStateMapping:
+    {
+        motion: { channel: ['motion', 'status', 'detect'], type: 'Switch', itemid: "", deviceChannel: "" }
+    },
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
     },
     ...defaultValues
 });

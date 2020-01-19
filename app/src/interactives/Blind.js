@@ -1,4 +1,4 @@
-import InteractiveObject from "./InteractiveObject";
+import IoTInteractiveObject from "./IoTInteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
 /**
@@ -6,10 +6,20 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const Blind = defaultValues => InteractiveObject({
+const Blind = defaultValues => IoTInteractiveObject({
     type : InteractiveObjectsTypes.BLIND,
     properties : {
-        state: 0.0
+        state: { roller: 0 }
+    },
+    deviceStateMapping:
+    {
+        roller: { channel: ['curtainControl', 'blindControl', 'control'], type: 'Rollershutter', itemid: "" },
+    },
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
     },
     ...defaultValues
 });

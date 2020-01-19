@@ -10,6 +10,7 @@ import StoryAPI from '../utils/StoryAPI';
 import Values from "../rules/Values";
 import ObjectsStore from "../data/ObjectsStore";
 import EditorStateStore from "../data/EditorStateStore";
+import OpenHabAPI from "../utils/OpenHabAPI"
 
 const Actions = {
 
@@ -495,6 +496,7 @@ const Actions = {
      * @param object
      */
     addNewObject(scene, object){
+        OpenHabAPI.updateThings();
         AppDispatcher.dispatch({
             type: ActionTypes.ADD_NEW_OBJECT,
             scene: scene,
@@ -543,6 +545,7 @@ const Actions = {
      * @param uuid
      */
     updateCurrentObject(obj){
+        OpenHabAPI.updateThings();
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_OBJECT,
             obj: obj,
@@ -896,6 +899,13 @@ const Actions = {
             type: ActionTypes.RESET_FORM_IMAGE,
         })
     },
+
+    updateThings(things) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_THINGS,
+            things: things
+        })
+    }
 };
 
 export default Actions;

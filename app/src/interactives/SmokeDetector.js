@@ -1,4 +1,4 @@
-import InteractiveObject from "./InteractiveObject";
+import IoTInteractiveObject from "./IoTInteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
 /**
@@ -6,10 +6,20 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const SmokeDetector = defaultValues => InteractiveObject({
+const SmokeDetector = defaultValues => IoTInteractiveObject({
     type : InteractiveObjectsTypes.SMOKE_DETECTOR,
     properties : {
-        state: {}
+        state: { smoke: 'OFF'}
+    },
+    deviceStateMapping:
+    {
+        smoke: { channel: ['smoke', 'state', 'detect', 'alarm'], type: 'Switch', itemid: "", deviceChannel: "" }
+    },
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
     },
     ...defaultValues
 });

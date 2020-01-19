@@ -317,6 +317,12 @@ div.rules{
     text-overflow: ellipsis;
 }
 
+#objectColor
+{
+    width: 100%;
+    padding: 0px;
+}
+
 .propertyForm-right-number{
     width: 30%;
 }
@@ -1329,6 +1335,25 @@ input.eudObjectString[type=text] {
     padding-left: 5px;
     padding-right: 5px;
 }
+
+input.eudObjectColor[type=color] {
+    display:inline-block;
+    left:0px;
+    right:0px;
+    border:0px;
+    overflow: no-display;
+    height: 18px;
+    width: 100%;
+    min-width: 50px;
+    color: #EF562D;
+    background-color: transparent;
+    border: None;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 .eudObjectButton{
     display: inline-block;
     position: absolute;

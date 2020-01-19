@@ -7,6 +7,9 @@ import ActionTypes from "../../actions/ActionTypes";
 import Actions from "../../actions/Actions"
 import toString from "../../rules/toString";
 import interface_utils from "./interface_utils";
+import OpenHabAPI from "../../utils/OpenHabAPI";
+import InteractiveObjectAPI from '../../utils/InteractiveObjectAPI';
+import DeviceMap from "../../utils/device_map";
 
 function Dropdown(properties){
     let props = properties.props,
@@ -68,7 +71,56 @@ function generateOptions(props, component, property){
                         Actions.updateObject(obj);
                     }
                     else
-                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    {
+                        if (obj.get('properties').state instanceof Object)
+                            interface_utils.setPropertyFromValue(obj, property, e.value, props, "state");
+                        else
+                            interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    }
+                },
+                customStyle,
+            ];
+        case 'open-closed':
+            return [
+                [
+                    { value: Values.OPEN, label: toString.valueUuidToString(Values.OPEN)},
+                    { value: Values.CLOSED, label: toString.valueUuidToString(Values.CLOSED)},
+                ],
+                (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        Actions.updateObject(obj);
+                    }
+                    else
+                    {
+                        if (obj.get('properties').state instanceof Object)
+                            interface_utils.setPropertyFromValue(obj, property, e.value, props, "open");
+                        else
+                            interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    }
+                },
+                customStyle,
+            ];
+        case 'locked-unlocked':
+            return [
+                [
+                    { value: Values.LOCKED, label: toString.valueUuidToString(Values.LOCKED)},
+                    { value: Values.UNLOCKED, label: toString.valueUuidToString(Values.UNLOCKED)},
+                ],
+                (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        Actions.updateObject(obj);
+                    }
+                    else
+                    {
+                        if (obj.get('properties').state instanceof Object)
+                            interface_utils.setPropertyFromValue(obj, property, e.value, props, "lock");
+                        else
+                            interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    }
                 },
                 customStyle,
             ];
@@ -180,6 +232,39 @@ function generateOptions(props, component, property){
                 },
                 tagStyle,
             ];
+        case 'devices':
+            let obj = props.interactiveObjects.get(props.currentObject);
+            return [
+                props.things.map(thing => {
+                    return {value: thing.uid, label: thing.label}
+                }),
+                async (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    obj = await OpenHabAPI.updateBinding(obj, e.value);
+
+                    props.updateObject(obj);
+                    let scene = props.scenes.get(props.objectToScene.get(obj.uuid));
+                    InteractiveObjectAPI.saveObject(scene, obj);
+                },
+                customStyle
+            ];
+        case 'thing-channel':
+            var object = props.interactiveObjects.get(props.currentObject);
+            var channel = props.channel;
+            return !props.things.some(x => x.uid == object.deviceUuid) ? [] : [
+                Object.values(props.things.find(x => x.uid == object.deviceUuid).channels).map(channel => {
+                    return {value: channel.id, label: channel.label}
+                }),
+                async (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    obj = await OpenHabAPI.changeBind(obj, channel, e.value);
+
+                    props.updateObject(obj);
+                    let scene = props.scenes.get(props.objectToScene.get(obj.uuid));
+                    InteractiveObjectAPI.saveObject(scene, obj);
+                },
+                customStyle
+            ];
     }
 }
 
@@ -205,6 +290,20 @@ function getDefaultValue(props, defaultValue, component){
                     label: tag.name,
                     color: tag.color,
                 };
+            case 'devices':
+                var device = props.things.find(thing => thing.uid === defaultValue)
+                label = !device ? "Nessun dispositivo" : device.label;
+                break;
+            case 'thing-channel':
+                let obj = props.interactiveObjects.get(props.currentObject);
+                if (!props.things.some(x => x.uid == obj.deviceUuid))
+                    label = "Nessun canale";
+                else
+                {
+                    var channel = Object.values(props.things.find(x => x.uid == obj.deviceUuid).channels).find(ch => ch.id === defaultValue)
+                    label = !channel ? "Nessun canale" : channel.label;
+                }
+                break;
             default:
                 label = toString.valueUuidToString(defaultValue);
             }

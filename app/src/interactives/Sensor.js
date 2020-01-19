@@ -1,4 +1,4 @@
-import InteractiveObject from "./InteractiveObject";
+import IoTInteractiveObject from "./IoTInteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
 /**
@@ -6,10 +6,21 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const Sensor = defaultValues => InteractiveObject({
+const Sensor = defaultValues => IoTInteractiveObject({
     type : InteractiveObjectsTypes.SENSOR,
     properties : {
-        state: {}
+        state: { state: 'OFF', value: 0 }
+    },
+    deviceStateMapping:
+    {
+        state: { channel: [], type: 'Switch', itemid: "", deviceChannel: "" },
+        value: { channel: [], type: 'Number', itemid: "", deviceChannel: "" }
+    },
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
     },
     ...defaultValues
 });

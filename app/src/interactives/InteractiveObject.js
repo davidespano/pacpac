@@ -21,7 +21,9 @@ const InteractiveObject = Immutable.Record({
     visible: Values.VISIBLE,
     vertices : null,
     properties : null,
-
+    deviceUuid: "",
+    deviceStateMapping: {},
+    deviceRecognitionTags: [],
 });
 
 export default InteractiveObject;

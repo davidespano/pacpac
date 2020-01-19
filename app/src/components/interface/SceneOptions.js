@@ -7,6 +7,7 @@ import FileSelectionBtn from "./FileSelectionBtn";
 import Dropdown from "./Dropdown";
 import SceneAPI from "../../utils/SceneAPI";
 import Actions from "../../actions/Actions";
+import Values from "../../rules/Values";
 
 function SceneOptions(props){
 
@@ -82,6 +83,31 @@ function SceneOptions(props){
                         <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-tags-white-50.png"}/>
                     </button>
                 </div>
+                {
+                    currentScene.type === Values.IOT ? (
+                        <React.Fragment>
+                        <label className={'rightbar-titles'}>Frequenza di aggiornamento (ms)</label>
+                        <div className={'rightbar-grid'}>
+                            <input id={"sceneName"}
+                             className={"propertyForm rightbar-box"}
+                             value={sceneOptions.updateFreq}
+                             type="number"
+                             maxLength={50}
+                             onChange={(e) => {
+                                 let value = e.target.value;
+                                 sceneOptions = sceneOptions.set('updateFreq', value);
+                                 props.updateSceneOptions(sceneOptions);
+                             }}
+                             onBlur={() => {
+                                 if(sceneOptions.updateFreq !== currentScene.updateFreq && sceneOptions.updateFreq !== ''){
+                                     scene_utils.setProperty(currentScene, 'updateFreq', sceneOptions.updateFreq, props);
+                                 }
+                             }}
+                            />
+                        </div>
+                        </React.Fragment>
+                    ) : ""
+                }
                 <label htmlFor={'select-file-scene'} className={'rightbar-titles'}>File</label>
                 <div className={'rightbar-grid'}>
                     <div id={'select-file-scene'}>

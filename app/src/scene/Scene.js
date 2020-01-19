@@ -22,6 +22,7 @@ const Scene = Immutable.Record({
     isAudioOn : false,
     isVideoInALoop: true,
     type : Values.THREE_DIM,
+    updateFreq: 1000,
     tag : 'default',
     music : null,
     sfx: null,

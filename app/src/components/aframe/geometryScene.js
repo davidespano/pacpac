@@ -32,7 +32,7 @@ export function givePoints(props) {
     let puntisalvati = cursor.components.pointsaver.points;
     let isCurved = cursor.components.pointsaver.attrValue.isCurved === 'true';
 
-    if(props.scenes.get(props.currentScene).type === '2D'){
+    if(props.scenes.get(props.currentScene).type === '2D' || props.scenes.get(props.currentScene).type === 'IOT'){
 
         let Width = props.assets.get(props.scenes.get(props.currentScene).img).width / 100;
         let Height = props.assets.get(props.scenes.get(props.currentScene).img).height / 100;
@@ -518,5 +518,3 @@ export default class GeometryScene extends React.Component{
     }
 
 }
-
-

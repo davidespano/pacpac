@@ -1,4 +1,4 @@
-import InteractiveObject from "./InteractiveObject";
+import IoTInteractiveObject from "./IoTInteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
 /**
@@ -6,10 +6,21 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const AirConditioner = defaultValues => InteractiveObject({
+const AirConditioner = defaultValues => IoTInteractiveObject({
     type : InteractiveObjectsTypes.AIR_CONDITIONER,
     properties : {
-        state: {}
+        state: { state: 'OFF', temperature: 23 }
+    },
+    deviceStateMapping:
+    {
+        state: { channel: ['power', 'isOn', 'state'], type: 'Switch', itemid: "", deviceChannel: "" },
+        temperature: { channel: ['temperature', 'settemp'], type: 'Number', itemid: "", deviceChannel: "" },
+    },
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
     },
     ...defaultValues
 });

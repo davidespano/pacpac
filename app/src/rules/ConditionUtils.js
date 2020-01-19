@@ -19,10 +19,21 @@ function evalCondition(c, gameState) {
 
         const state = gameState[c.obj_uuid].state;
         switch (c.operator) {
+            case Operators.EQUAL_OPEN: return state.open == c.state;
+            case Operators.NOT_EQUAL_OPEN: return state.open != c.state;
+            case Operators.EQUAL_LOCK: return state.lock == c.state;
+            case Operators.NOT_EQUAL_LOCK: return state.lock != c.state;
             case Operators.EQUAL:
+                if (state instanceof Object)
+                    console.log(state, c.state);
+                    return state.state == c.state;
+                return state == c.state;
             case Operators.EQUAL_NUM:
                 return state == c.state;
             case Operators.NOT_EQUAL:
+                if (state instanceof Object)
+                    return state.state != c.state;
+                return state != c.state;
             case Operators.NOT_EQUAL_NUM:
                 return state != c.state;
             case Operators.LESS_THAN: return state < c.state;
@@ -30,6 +41,24 @@ function evalCondition(c, gameState) {
             case Operators.GREATER_THAN: return state > c.state;
             case Operators.GREATER_EQUAL: return state >= c.state;
             case Operators.IN: return state >= c.state.lower && state <= c.state.upper();
+            case Operators.TEMP_EQUAL_NUM: return state.temperature == c.state;
+            case Operators.TEMP_NOT_EQUAL_NUM: return state.temperature != c.state;
+            case Operators.TEMP_LESS_THAN: return state.temperature < c.state;
+            case Operators.TEMP_LESS_EQUAL: return state.temperature <= c.state;
+            case Operators.TEMP_GREATER_THAN: return state.temperature > c.state;
+            case Operators.TEMP_GREATER_EQUAL: return state.temperature >= c.state;
+            case Operators.VOLUME_EQUAL_NUM: return state.volume == c.state;
+            case Operators.VOLUME_NOT_EQUAL_NUM: return state.volume != c.state;
+            case Operators.VOLUME_LESS_THAN: return state.volume < c.state;
+            case Operators.VOLUME_LESS_EQUAL: return state.volume <= c.state;
+            case Operators.VOLUME_GREATER_THAN: return state.volume < c.state;
+            case Operators.VOLUME_GREATER_EQUAL: return state.volume >= c.state;
+            case Operators.SHUTTER_EQUAL_NUM: return state.roller == c.state;
+            case Operators.SHUTTER_NOT_EQUAL_NUM: return state.roller != c.state;
+            case Operators.SHUTTER_LESS_THAN: return state.roller < c.state;
+            case Operators.SHUTTER_LESS_EQUAL: return state.roller <= c.state;
+            case Operators.SHUTTER_GREATER_THAN: return state.roller < c.state;
+            case Operators.SHUTTER_GREATER_EQUAL: return state.roller >= c.state;
             default:
                 console.log('operator not yet implemented');
                 console.log(c.operator);

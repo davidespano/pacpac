@@ -35,6 +35,20 @@ const Values = {
     STARTED: 'STARTED',
     ENDED: 'ENDED',
 
+    //door
+    OPEN: 'OPEN',
+    CLOSED: 'CLOSED',
+
+    //ac
+    TEMPERATURE: 'TEMPERATURE',
+
+    //smoke
+    SMOKE_ALLARM: 'SMOKE_ALLARM',
+    NO_SMOKE: 'NO_SMOKE',
+
+    //generic sensor
+    VALUE: 'VALUE'
+
 };
 
 export default Values;

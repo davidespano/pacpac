@@ -289,6 +289,7 @@ function getByName(name, order = null, gameId=null) {
                 index : response.body.index,
                 isAudioOn : response.body.isAudioOn,
                 isVideoInALoop: response.body.isVideoInALoop,
+                updateFreq: response.body.updateFreq,
                 tag : tag,
                 music: response.body.music,
                 sfx: response.body.sfx,
@@ -657,6 +658,7 @@ async function getAllDetailedScenes(gameGraph, gameId = null) {
             index : s.index,
             isAudioOn : s.isAudioOn,
             isVideoInALoop: s.isVideoInALoop,
+            updateFreq: s.updateFreq,
             tag : s.tag,
             music : s.music,
             sfx: s.sfx,
@@ -745,7 +747,7 @@ function conditionParser(c){
     if(c.hasOwnProperty('condition1')){
         return new SuperCondition(c.uuid, conditionParser(c.condition1), conditionParser(c.condition2), c.operator);
     } else {
-        return new Condition(c.uuid, c.obj_uuid, c.state, c.operator);
+        return new Condition(c.uuid, c.obj_uuid, c.state, c.operator, c.prop);
     }
 }
 
@@ -757,6 +759,9 @@ function getProperties(obj){
         media: JSON.parse(obj.media),
         mask: obj.mask,
         vertices: obj.vertices,
+        deviceUuid: obj.deviceUuid,
+        deviceStateMapping: obj.deviceStateMapping ? JSON.parse(obj.deviceStateMapping) : {},
+        deviceRecognitionTags: obj.deviceRecognitionTags ? JSON.parse(obj.deviceRecognitionTags) : {},
         audio: JSON.parse(obj.audio),
         properties: JSON.parse(obj.properties),
         visible: obj.visible,

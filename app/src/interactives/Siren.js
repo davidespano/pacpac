@@ -1,4 +1,4 @@
-import InteractiveObject from "./InteractiveObject";
+import IoTInteractiveObject from "./IoTInteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
 /**
@@ -6,10 +6,21 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const Siren = defaultValues => InteractiveObject({
+const Siren = defaultValues => IoTInteractiveObject({
     type : InteractiveObjectsTypes.SIREN,
     properties : {
-        state: {}
+        state: { state: 'OFF', volume: '100'}
+    },
+    deviceStateMapping:
+    {
+        state: { channel: ['power', 'ison', 'setpower'], type: 'Switch', itemid: "", deviceChannel: "" },
+        volume: { channel: ['volume', 'setvolume'], type: 'Number', itemid: "", deviceChannel: "" }
+    },
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
     },
     ...defaultValues
 });

@@ -14,7 +14,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
  * @param value
  * @param props
  */
-function setPropertyFromValue(object, property, value, props){
+function setPropertyFromValue(object, property, value, props, propname = null){
     let newObject, subProperty;
     let media = object.get('media');
     let audio = object.get('audio');
@@ -48,7 +48,8 @@ function setPropertyFromValue(object, property, value, props){
             break;
         default:
             let properties = object.get('properties');
-            properties[property] = value;
+            if (propname == null) properties[property] = value;
+            else properties[property][propname] = value;
             newObject = object.setIn(['properties'], properties);
     }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import interface_utils from "./interface_utils";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
+import OpenHabAPI from "../../utils/OpenHabAPI"
 import Actions from "../../actions/Actions";
 import Dropdown from "./Dropdown";
 import Values from "../../rules/Values";
@@ -195,6 +196,131 @@ function audioProperties(currentObject, props){
 }
 
 /**
+ * returns iot properties view
+ * @param currentObject
+ * @param props
+ * @returns {*}
+ */
+function iotProperties(currentObject, props){
+    return <React.Fragment>
+        <div className={'options-grid'}>
+            <p className={'options-labels'}>Dispositivo:</p>
+            <Dropdown
+                props={props}
+                component={'devices'}
+                property={'devices'}
+                deviceFilter={currentObject}
+                defaultValue={currentObject.deviceUuid}/>
+        </div>
+        {currentObject.type != InteractiveObjectsTypes.SENSOR
+        && currentObject.type != InteractiveObjectsTypes.MOTION_DETECTOR
+        && currentObject.type != InteractiveObjectsTypes.SMOKE_DETECTOR ?
+            <label className={'rightbar-titles'}>Valori iniziali:</label> : ""
+        }
+        {currentObject.type == InteractiveObjectsTypes.LIGHT
+        || currentObject.type == InteractiveObjectsTypes.AIR_CONDITIONER
+        || currentObject.type == InteractiveObjectsTypes.POWER_OUTLET
+        || currentObject.type == InteractiveObjectsTypes.DSWITCH
+        || currentObject.type == InteractiveObjectsTypes.SIREN
+        || currentObject.type == InteractiveObjectsTypes.SPEAKER ?
+                (<div className={'options-grid'}>
+                    <p className={'options-labels'}>Accensione:</p>
+                    <Dropdown
+                        props={props}
+                        component={'on-off'}
+                        property={'state'}
+                        defaultValue={currentObject.properties.state.state}/>
+                </div>) : ""
+        }
+        {currentObject.type == InteractiveObjectsTypes.LIGHT ?
+            (<div className={'options-grid'}>
+                <p className={'options-labels'}>Colore:</p>
+                <input id={"objectColor"} type={"color"}
+                       className={"propertyForm"}
+                       value={rgbToHex(hslToRgb(currentObject.properties.state.color))}
+                       onChange={(e) => {
+                           let value = e.target.value;
+                           if(value!==''){
+                               value = hexToRgb(value);
+                               value = rgbToHsl(value.r, value.g, value.b);
+                               interface_utils.setPropertyFromValue(currentObject, 'state', value, props, 'color');
+                           }
+                       }}/>
+            </div>): ""
+        }
+        {currentObject.type == InteractiveObjectsTypes.AIR_CONDITIONER ?
+                (<div className={'options-grid'}>
+                    <p className={'options-labels'}>Temperatura:</p>
+                    <input id={"objectTemperature"} type={"number"}
+                           className={"propertyForm"}
+                           value={currentObject.properties.state.temperature}
+                           onChange={(e) => {
+                               let value = e.target.value;
+                               if(value!==''){
+                                   interface_utils.setPropertyFromValue(currentObject, 'state', value, props, 'temperature');
+                               }
+                           }}
+                    />
+                </div>) : ""
+        }
+        {currentObject.type == InteractiveObjectsTypes.SPEAKER
+        || currentObject.type == InteractiveObjectsTypes.SIREN ?
+                (<div className={'options-grid'}>
+                    <p className={'options-labels'}>Volume:</p>
+                    <input id={"objectTemperature"} type={"number"}
+                           className={"propertyForm"}
+                           min={0} max={100}
+                           value={currentObject.properties.state.volume}
+                           onChange={(e) => {
+                               let value = e.target.value;
+                               if(value!==''){
+                                   interface_utils.setPropertyFromValue(currentObject, 'state', value, props, 'volume');
+                               }
+                           }}
+                    />
+                </div>) : ""
+        }
+        {currentObject.type == InteractiveObjectsTypes.BLIND ?
+                (<div className={'options-grid'}>
+                    <p className={'options-labels'}>Apertura:</p>
+                    <input id={"objectTemperature"} type={"number"}
+                           className={"propertyForm"}
+                           min={0} max={100}
+                           value={currentObject.properties.state.roller}
+                           onChange={(e) => {
+                               let value = e.target.value;
+                               if(value!==''){
+                                   interface_utils.setPropertyFromValue(currentObject, 'state', value, props, 'roller');
+                               }
+                           }}
+                    />
+                </div>) : ""
+        }
+        {currentObject.type == InteractiveObjectsTypes.DOOR ?
+                (<div className={'options-grid'}>
+                    <p className={'options-labels'}>Serratura:</p>
+                    <Dropdown
+                        props={props}
+                        component={'locked-unlocked'}
+                        property={'state'}
+                        defaultValue={currentObject.properties.state.lock}/>
+                </div>) : ""
+        }
+        <label className={'rightbar-titles'}>Collegamento proprietà:</label>
+        {Object.keys(currentObject.deviceStateMapping).map(key =>
+            (<div className={'options-grid'}>
+                    <p className={'options-labels'}>{key}:</p>
+                    <Dropdown
+                        props={{...props, channel: key}}
+                        component={'thing-channel'}
+                        defaultValue={currentObject.deviceStateMapping[key].deviceChannel}/>
+                </div>))
+        }
+        <label className={'rightbar-titles'}>Grafica editor:</label>
+    </React.Fragment>;
+}
+
+/**
  * Generate options according to the object type
  * @param object
  * @param objectScene scene the obj belongs to
@@ -318,6 +444,18 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </div>
             );
+        case InteractiveObjectsTypes.BLIND:
+        case InteractiveObjectsTypes.DOOR:
+        case InteractiveObjectsTypes.AIR_CONDITIONER:
+        case InteractiveObjectsTypes.LIGHT:
+        case InteractiveObjectsTypes.MOTION_DETECTOR:
+        case InteractiveObjectsTypes.POWER_OUTLET:
+        case InteractiveObjectsTypes.DSWITCH:
+        case InteractiveObjectsTypes.SENSOR:
+        case InteractiveObjectsTypes.SIREN:
+        case InteractiveObjectsTypes.SMOKE_DETECTOR:
+        case InteractiveObjectsTypes.SPEAKER:
+            return iotProperties(object, props);
         default:
             return(<div>Error!</div>);
 
@@ -348,6 +486,7 @@ function objectButtons(props){
                 onClick={() => {
                     let answer = window.confirm("Vuoi cancellare l'oggetto " + currentObject.name + "?");
                     if(answer){
+                        OpenHabAPI.updateBinding(currentObject, "");
                         InteractiveObjectAPI.removeObject(scene, currentObject);
                         props.updateCurrentObject(null);
                     }}
@@ -380,7 +519,9 @@ function generateObjectsList(props) {
             return (
                 <div key={obj.uuid} className={'objects-wrapper-no-buttons'}>
                     <p className={'objectsList-element'}
-                       onClick={()=> props.updateCurrentObject(obj)}>
+                       onClick={()=> {
+                           props.updateCurrentObject(obj);
+                       }}>
                         {obj.name}
                     </p>
                 </div>
@@ -407,7 +548,9 @@ function generateObjectsList(props) {
                 return (
                     <div key={obj.uuid} className={"objects-wrapper"}>
                         <p className={'objectsList-element-delete-button'}
-                           onClick={()=> props.updateCurrentObject(obj)}>
+                           onClick={()=> {
+                               props.updateCurrentObject(obj);
+                           }}>
                             {obj.name}
                         </p>
                         <img className={"action-buttons"}
@@ -495,6 +638,85 @@ function objectTypeToString(objectType) {
         default:
             return "Sconosciuto";
     }
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function hslToRgb(text){
+var r, g, b;
+
+if (!text) return "0,0,0";
+
+var values = text.replace(/\s/g, '').split(',');
+var h = parseInt(values[0]) / 360;
+var s = parseInt(values[1]) / 100;
+var l = parseInt(values[2]) / 100;
+
+if(s == 0){
+    r = g = b = l; // achromatic
+}else{
+    var hue2rgb = function hue2rgb(p, q, t){
+        if(t < 0) t += 1;
+        if(t > 1) t -= 1;
+        if(t < 1/6) return p + (q - p) * 6 * t;
+        if(t < 1/2) return q;
+        if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+    }
+
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+}
+
+return Math.round(r * 255) + ',' + Math.round(g * 255) + ',' + Math.round(b * 255);
+}
+
+function rgbToHsl(r, g, b)
+{
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+
+    if (max == min) { h = s = 0; }
+    else {
+        var d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+        switch (max){
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+
+        h /= 6;
+    }
+
+    return ((h*360+0.5)|0) + "," + ((s*100+0.5)|0) + "," + ((l*100+0.5)|0);
+}
+
+
+function rgbToHex(text) {
+    var values = text.replace(/\s/g, '').split(',');
+    var r = parseInt(values[0]);
+    var g = parseInt(values[1]);
+    var b = parseInt(values[2]);
+
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+  } : null;
 }
 
 /*

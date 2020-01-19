@@ -22,6 +22,7 @@ import ActionTypes from "../../actions/ActionTypes";
 import EditorState from "../../data/EditorState";
 import interface_utils from "../interface/interface_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
+import OpenHabAPI from "../../utils/OpenHabAPI";
 const soundsHub = require('./soundsHub');
 const resonance = require('./Audio/Resonance');
 const THREE = require('three');
@@ -67,6 +68,44 @@ export default class VRScene extends React.Component {
         if(!this.props.debug && this.props.editor.gameId === null){
             document.querySelector('link[href*="bootstrap"]').remove();
         }
+
+
+    }
+
+    componentDidUpdate(prevProps, prevState)
+    {
+        if (this.state.runState && prevState.runState)
+        {
+            for (var k of Object.keys(this.state.runState))
+            {
+                if (!Object.keys(prevState.runState).includes(k))
+                    continue;
+
+                var oldState = prevState.runState[k].state;
+                var newState = this.state.runState[k].state;
+
+                if (!oldState || !newState) continue;
+
+                if (newState.value && oldState.value != newState.value)
+                    eventBus.emit('valuechanged-' + k);
+                if (newState.state && oldState.state != newState.state)
+                    eventBus.emit('statechanged-' + k);
+                if (newState.motion && oldState.motion != newState.motion && newState.motion == 'ON')
+                    eventBus.emit('detectmotion-' + k);
+                if (newState.smoke && oldState.smoke != newState.smoke && newState.smoke == 'ON')
+                    eventBus.emit('detectsmoke-' + k);
+                if (newState.temperature && oldState.temperature != newState.temperature)
+                    eventBus.emit('tempchanged-' + k);
+                if (newState.volume && oldState.volume != newState.volume)
+                    eventBus.emit('volumechanged-' + k);
+                if (newState.color && oldState.color != newState.color)
+                    eventBus.emit('colorchanged-' + k);
+                if (newState.roller && oldState.roller != newState.roller)
+                    eventBus.emit('chutterchanged-' + k);
+                if (newState.open && oldState.open != newState.open)
+                    eventBus.emit('openclose-' + k);
+            }
+        }
     }
 
     componentDidMount() {
@@ -90,7 +129,62 @@ export default class VRScene extends React.Component {
         //Lancio la funzione per caricare tutti i dati del gioco
         this.loadEverything();
 
+        this.iotInitialize();
+
         this.interval = setInterval(() => this.tick(), 100);
+
+    }
+
+    async iotInitialize()
+    {
+        var objObjects = Object.values(this.state.activeScene.objects);
+        objObjects = objObjects.flat();
+
+        for (var i = 0; i < objObjects.length; i++)
+        {
+            var obj = this.props.interactiveObjects.get(objObjects[i]);
+
+            for (var prop of Object.keys(obj.get('properties').state))
+                await OpenHabAPI.commitInteractiveObj(obj, obj.get('properties').state, prop);
+        }
+
+        console.log(this.state.activeScene.updateFreq);
+        this.iotTimer = setInterval(() => this.iotUpdate(), this.state.activeScene.updateFreq);
+    }
+
+    /**
+     * Funzione che aggiorna lo stato dei dispositivi IOT inviando richieste a OpenHAB
+     */
+    async iotUpdate()
+    {
+        var objObjects = Object.values(this.state.activeScene.objects);
+        objObjects = objObjects.flat();
+
+        var runState = {...this.state.runState};
+
+        var changed = false;
+
+        OpenHabAPI.refreshItemsCache();
+
+        for (var i = 0; i < objObjects.length; i++)
+        {
+            var obj = this.props.interactiveObjects.get(objObjects[i]);
+
+            let newObj = await OpenHabAPI.updateInteractiveObj(obj);
+
+            if (!newObj) continue;
+
+            if (!Object.keys(newObj.properties.state).every(x => newObj.properties.state[x] == this.state.runState[newObj.uuid].state[x]))
+            {
+                changed = true;
+
+                runState[newObj.uuid] = {...this.state.runState[newObj.uuid]};
+                runState[newObj.uuid].state = {...newObj.properties.state};
+            }
+        }
+
+        if (changed) this.setState({ runState: runState });
+
     }
 
     /**
@@ -174,7 +268,12 @@ export default class VRScene extends React.Component {
                     if (action.action === 'CHANGE_BACKGROUND') {
                         objectVideo = document.getElementById(action.obj_uuid);
                     } else {
-                        objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                        try {
+                            objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                        } catch (e) {
+                            objectVideo = null;
+                        }
+
                     }
                     if (objectVideo) {
                         duration = (objectVideo.duration * 1000);
@@ -184,6 +283,187 @@ export default class VRScene extends React.Component {
             };
             switch (rule.event.action){
 
+                case 'DETECTS_MOTION':
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['detectmotion-' + rule.event.obj_uuid]) {
+                            eventBus.on('detectmotion-' + rule.event.subj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
+
+                case 'DETECTS_SMOKE':
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['detectsmoke-' + rule.event.obj_uuid]) {
+                            eventBus.on('detectsmoke-' + rule.event.subj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
+
+                case 'CHANGE_VALUE_EVENT':
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['valuechanged-' + rule.event.obj_uuid]) {
+                            eventBus.on('valuechanged-' + rule.event.obj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
+
+                case 'CHANGE_SHUTTER_EVENT':
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['chutterchanged-' + rule.event.obj_uuid]) {
+                            eventBus.on('chutterchanged-' + rule.event.obj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
+
+                case 'OPEN_CLOSE_DOOR_EVENT':
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['openclose-' + rule.event.obj_uuid]) {
+                            eventBus.on('openclose-' + rule.event.obj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
+
+                case 'CHANGE_COLOR_EVENT':
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['colorchanged-' + rule.event.obj_uuid]) {
+                            eventBus.on('colorchanged-' + rule.event.obj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
+
+                case 'CHANGE_VOLUME_EVENT':
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['volumechanged-' + rule.event.obj_uuid]) {
+                            eventBus.on('volumechanged-' + rule.event.obj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
+
+                case 'CHANGE_TEMP_EVENT':
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['tempchanged-' + rule.event.obj_uuid]) {
+                            eventBus.on('tempchanged-' + rule.event.obj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
+
+                case 'CHANGE_STATE_EVENT':
+                    console.log(rule);
+                    rule.actions.forEach(action => {
+                        //if(!eventBus._events['statechanged-' + rule.event.obj_uuid]){
+                            eventBus.on('statechanged-' + rule.event.obj_uuid, function () {
+                                if (ConditionUtils.evalCondition(rule.condition, me.state.runState)) {
+                                    let actionExecution = actionCallback(action);
+
+                                    if (me.props.debug) {
+                                        setTimeout(function () {
+                                            interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                            eventBus.on('debug-step', actionExecution);
+                                        }, duration);
+                                    } else {
+                                        actionExecution();
+                                    }
+                                }
+                            });
+                        //}
+                    });
+                    break;
                 case 'CLICK':
                     rule.actions.forEach(action => {
                         if(!eventBus._events['click-' + rule.event.obj_uuid]){
@@ -415,11 +695,17 @@ export default class VRScene extends React.Component {
             let scene = this.state.graph.scenes[sceneName];
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
+            let sceneUuid;
+            if(this.props.debug){
+                sceneUuid = this.props.currentScene;
+            }else{
+                sceneUuid = this.state.activeScene.uuid;
+            }
 
             //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'
             //i media non sono tutti presenti nella scena
             //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
-            this.createRuleListeners();
+            if (this.props.scenes.get(sceneUuid).type !== Values.IOT) this.createRuleListeners();
 
             //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (
@@ -446,14 +732,3 @@ export default class VRScene extends React.Component {
         resonance.default.setListenerFromMatrix(cameraMatrix4)
     }
 }
-
-
-
-
-
-
-
-
-
-
-

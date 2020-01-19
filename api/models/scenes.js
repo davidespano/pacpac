@@ -86,7 +86,7 @@ function buildScene(record) {
                     scene.motiondects.push(obj); break;
                 case "POWER_OUTLET":
                     scene.powoutlets.push(obj); break;
-                case "DSWITCH":
+                case "POWER_SWITCH":
                     scene.dswitches.push(obj); break;
                 case "SENSOR":
                     scene.sensors.push(obj); break;

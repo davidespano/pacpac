@@ -2,7 +2,8 @@ import stores_utils from "../../data/stores_utils";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import settings from "../../utils/settings";
 import React from 'react';
-import AudioManager from './AudioManager'
+import AudioManager from './AudioManager';
+import Utils from '../interface/interface_utils.js';
 const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
 //TODO trasformarlo in un componente React ... forse ...
@@ -202,7 +203,8 @@ function generateCurrentAsset(obj, runState, id){
             }
             else return null;
         default:
-            return null;
+            return <img id={"media_" + obj.uuid} key={"media_" + obj.uuid} crossOrigin="Anonymous"
+                                 src={Utils.getObjImg(obj.type)}/>;
     }
 }
 

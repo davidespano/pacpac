@@ -3,6 +3,7 @@ import settings from "../../utils/settings";
 import store_utils from '../../data/stores_utils'
 import AudioManager from './AudioManager'
 import Values from '../../rules/Values';
+import OpenHabAPI from "../../utils/OpenHabAPI";
 import './aframe_shader'
 const THREE = require('three');
 const soundsHub = require('./soundsHub');
@@ -14,7 +15,7 @@ function executeAction(VRScene, rule, action){
     let actual_scene_img = VRScene.state.activeScene.img;
     let actual_scene_Uuid = VRScene.state.activeScene.uuid;
     let game_graph = VRScene.state.graph;
-    let current_object = game_graph['objects'].get(rule.event.obj_uuid);
+    let current_object = game_graph['objects'].get(action.subj_uuid);
     let sceneName = action.subj_uuid;
     let action_obj_uuid = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
@@ -105,6 +106,27 @@ function executeAction(VRScene, rule, action){
             },duration_transition);
 
             break;
+
+        case RuleActionTypes.CHANGE_SHUTTER:
+            changeIOTStateObject(VRScene, runState, game_graph, action.obj_uuid, current_object, action.subj_uuid, "roller");
+            break;
+
+        case RuleActionTypes.UNLOCK_LOCK_DOOR:
+            changeIOTStateObject(VRScene, runState, game_graph, action.obj_uuid, current_object, action.subj_uuid, "lock");
+            break;
+
+        case RuleActionTypes.CHANGE_COLOR:
+            changeIOTStateObject(VRScene, runState, game_graph, action.obj_uuid, current_object, action.subj_uuid, "color");
+            break;
+
+        case RuleActionTypes.CHANGE_TEMPERATURE:
+            changeIOTStateObject(VRScene, runState, game_graph, action.obj_uuid, current_object, action.subj_uuid, "temperature");
+            break;
+
+        case RuleActionTypes.CHANGE_VOLUME:
+            changeIOTStateObject(VRScene, runState, game_graph, action.obj_uuid, current_object, action.subj_uuid, "volume");
+            break;
+
         case RuleActionTypes.CHANGE_STATE:
             /*
             * Azione che si occupa di gestire il cambio di stato dei vari oggetti, vengono richiamate le funzioni
@@ -317,6 +339,7 @@ function executeAction(VRScene, rule, action){
             runState[action.subj_uuid].state = parseInt(action.obj_uuid);
             VRScene.setState({runState: runState, graph: game_graph});
             break;
+        // TODO: IOT Actions
         default:
             console.log('not yet implemented');
             console.log(action);
@@ -514,8 +537,9 @@ function lookObject(idObject, pointOI = null){
  * @param current_object
  * @param action_uuid
  */
-function changeStateObject(VRScene, runState, game_graph, state, current_object, action_uuid){
-    runState[action_uuid].state=state;
+function changeStateObject(VRScene, runState, game_graph, state, current_object, action_uuid, prop = null){
+    if (prop) runState[action_uuid].state[prop] = state;
+    else runState[action_uuid].state=state;
     let audioKey = current_object.audio.audio0;
     if(soundsHub['audio0_' + audioKey])
         soundsHub['audio0_' + audioKey].play();
@@ -527,10 +551,18 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     VRScene.setState({runState: runState, graph: game_graph});
 }
 
+async function changeIOTStateObject(VRScene, runState, game_graph, state, current_object, action_uuid, prop = null){
+    if (prop) runState[action_uuid].state[prop] = state;
+    else runState[action_uuid].state=state;
+    let audioKey = current_object.audio.audio0;
+    if (current_object.deviceUuid != "")
+        await OpenHabAPI.commitInteractiveObj(current_object, runState[action_uuid].state, prop);
+    VRScene.setState({runState: runState, graph: game_graph});
+}
+
 function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     let duration_switch = 0;
     let switchVideo = document.getElementById('media_'+current_object.uuid);
-    console.log(switchVideo)
     if(switchVideo != null) {
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
@@ -546,13 +578,21 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     if(soundsHub[idAudio + audio])
         soundsHub[idAudio + audio].play();
 
-    setTimeout(function () {
+    setTimeout(async function () {
         cursor.setAttribute('raycaster', 'far: 10000');
         cursor.setAttribute('material', 'visible: true');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('color', 'black');
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
-        runState[action.subj_uuid].state = action.obj_uuid;
+        if (runState[action.subj_uuid].state instanceof Object)
+        {
+            var state = {...runState[action.subj_uuid].state}
+            state.state = action.obj_uuid;
+            runState[action.subj_uuid].state = state;
+        }
+        else runState[action.subj_uuid].state = action.obj_uuid;
+        if (current_object.deviceUuid != "")
+            await OpenHabAPI.commitInteractiveObj(current_object, runState[action.subj_uuid].state, "state");
         VRScene.setState({runState: runState});
 
     },duration_switch)

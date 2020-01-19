@@ -78,8 +78,8 @@ export default class Bubble extends Component
                 }
             })
         }else{
-            //if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
-            this.setShader();
+            if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
+            //this.setShader();
         }
 
         // Check forzare l'aggiornamento della camera nella nuova scena se passo da 2D a 3D o viceverse
@@ -371,16 +371,16 @@ export default class Bubble extends Component
                 `
                     precision mediump int;
                     precision mediump float;
-                    
+
                     varying vec2 vUv;
                     ${declarations}
                     uniform float opacity;
-                    
+
                     void main() {
-                    
+
                     gl_FragColor = ${mixFunction}
                     gl_FragColor.a = opacity;
-                    
+
                     }
             `;
             skyMesh.material.fragmentShader = fragShader;
@@ -415,4 +415,3 @@ export default class Bubble extends Component
     }
 
 }
-

@@ -1,4 +1,4 @@
-import InteractiveObject from "./InteractiveObject";
+import IoTInteractiveObject from "./IoTInteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
 /**
@@ -6,10 +6,20 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const PowerOutlet = defaultValues => InteractiveObject({
+const PowerOutlet = defaultValues => IoTInteractiveObject({
     type : InteractiveObjectsTypes.POWER_OUTLET,
     properties : {
-        state: {}
+        state: { state: 'OFF' }
+    },
+    deviceStateMapping:
+    {
+        state: { channel: ['power', 'ison', 'setpower', 'ch1'], type: 'Switch', itemid: "", deviceChannel: "" }
+    },
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
     },
     ...defaultValues
 });

@@ -26,6 +26,9 @@ function saveObject(scene, object) {
                 audio: JSON.stringify(object.audio),
                 vertices: object.vertices,
                 visible: object.visible,
+                deviceUuid: object.deviceUuid,
+                deviceStateMapping: object.deviceStateMapping ? JSON.stringify(object.deviceStateMapping) : {},
+                deviceRecognitionTags: object.deviceRecognitionTags ? JSON.stringify(object.deviceRecognitionTags) : [],
                 properties: JSON.stringify(object.properties),
             })
         .end(function (err, response) {

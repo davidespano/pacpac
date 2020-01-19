@@ -19,6 +19,7 @@ import StoryImagesStore from '../data/StoryImagesStore';
 import StoriesStore from '../data/StoriesStore';
 import EditStoriesStore from '../data/EditStoriesStore';
 import FormImagesStore from '../data/FormImagesStore';
+import ThingsStore from '../data/Things';
 
 function getStores() {
     return [
@@ -40,6 +41,7 @@ function getStores() {
 		StoryCollectionsStore,
 	    StoryImagesStore,
 		FormImagesStore,
+        ThingsStore
     ];
 }
 
@@ -64,13 +66,14 @@ function getState() {
 		stories: StoriesStore.getState(),
 		editStories: EditStoriesStore.getState(),
 		storyCollections: StoryCollectionsStore.getState(),
-		storyImages: StoryImagesStore.getState(),	
+		storyImages: StoryImagesStore.getState(),
 		formImages: FormImagesStore.getState(),
+        things: ThingsStore.getState(),
 
         //FUNCTIONS
 
         reset: Actions.reset,
-        
+
         //EDITOR
 
         //Interface modes
@@ -149,13 +152,13 @@ function getState() {
         addNewAudio: Actions.addNewAudio,
         removeAudio: Actions.removeAudio,
         updateAudio: Actions.updateAudio,
-		
+
 		//STORY EDITOR
-		
+
 		receiveCollection: Actions.receiveCollection,
-		removeCollection: Actions.removeCollection,		
-		receiveImage: Actions.receiveImage,		
-		
+		removeCollection: Actions.removeCollection,
+		receiveImage: Actions.receiveImage,
+
 		receiveStory: Actions.receiveStory,
 		removeStory: Actions.removeStory,
 		restoreStory: Actions.restoreStory,
@@ -163,7 +166,7 @@ function getState() {
 		onEditStory: Actions.editStory,
 		startEditingStory: Actions.startEditingStory,
 		stopEditingStory: Actions.stopEditingStory,
-		
+
 		addFormImage: Actions.addFormImage,
 		receiveFormImage: Actions.receiveFormImage,
 		updateFormImage: Actions.updateFormImage,
@@ -171,6 +174,8 @@ function getState() {
 		removeFormImage: Actions.removeFormImage,
 		resetFormImage: Actions.resetFormImage,
 
+        // IOT
+        updateThings: Actions.updateThings,
     };
 }
 

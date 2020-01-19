@@ -1,4 +1,4 @@
-import InteractiveObject from "./InteractiveObject";
+import IoTInteractiveObject from "./IoTInteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 
 /**
@@ -6,10 +6,22 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @returns {Immutable.Map<K, V>}
  * @constructor
  */
-const Light = defaultValues => InteractiveObject({
+const Light = defaultValues => IoTInteractiveObject({
     type : InteractiveObjectsTypes.LIGHT,
-    properties : {
-        state: false
+    properties :
+    {
+        state: { state: 'OFF', color: "RED" }
+    },
+    deviceStateMapping:
+    {
+        state: { channel: ['brightness', 'color'], type: 'Switch', itemid: "", deviceChannel: "" },
+        color: { channel: ['color'], type: 'Color', itemid: "", deviceChannel: "" },
+    },
+    media: {
+        media0: null,
+    },
+    audio: {
+        audio0: null,
     },
     ...defaultValues
 });
