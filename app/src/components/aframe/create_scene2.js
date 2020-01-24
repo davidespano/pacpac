@@ -111,6 +111,16 @@ export default class VRScene extends React.Component {
             this.updateAngles();
             //potrei inserire qui lo spostamento per l'oggetto testo
         }
+        //TODO: testare quanto sia pesante questa implementazione al tick
+        let skysphere = document.getElementById(this.state.activeScene.img);
+        if (skysphere != null) //se la skysphere ha caricato ed è stata trovata
+        {
+            let loadingsphere = document.getElementById('loading');
+            if (loadingsphere !=null && skysphere.currentTime > 0)
+            {
+                loadingsphere.setAttribute('visible', 'false');
+            }
+        }
     }
 
     /**

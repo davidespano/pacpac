@@ -24,6 +24,7 @@ const {mediaURL} = settings;
 
 export default class Bubble extends Component
 {
+
     constructor(props){
         super(props)
         //console.log(props)
@@ -59,6 +60,8 @@ export default class Bubble extends Component
 
         //dobbiamo eliminare gli ultimi millisecondi dal video per evitare frame neri
         if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame(); //[Vittoria] lasciare così
+
+//aaaaaaaaaaaaaa
     }
 
     //[Vittoria] funzione che aggiorna se riceve component
@@ -108,6 +111,7 @@ export default class Bubble extends Component
                     asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
             }
         })
+//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     }
 
     render() {
@@ -199,12 +203,21 @@ export default class Bubble extends Component
                 }
             }
         }
-
+        let isLoadingSphereVisible = false;
         //Se la scena e' quella attiva imposto i parametri neccessari in modo che sia visibile, se e' una bolla vicina larendo invisibile
         if (this.props.isActive) {
             material += "opacity: 1; visible: true; side: double";
             active = 'active: true; video: ' + scene.img;
             radius = 10;
+            //se la scena è un video visualizzo il caricamento, per le immagini no
+            if (stores_utils.getFileType(scene.img) === 'video')
+            {
+                isLoadingSphereVisible = true;
+            }
+            else
+            {
+                isLoadingSphereVisible = false;
+            }
             if(!this.props.editMode){
                 //play musica sottofondo
                 if(music && soundsHub["audios_"+ music.uuid])
@@ -216,18 +229,20 @@ export default class Bubble extends Component
                 if(audioVideo !== {} && soundsHub["audios_"+ this.props.scene.uuid])
                     soundsHub["audios_"+ this.props.scene.uuid].play();
             }
-        } else material += "opacity: 0; visible: false";
+        } else
+        {
+            material += "opacity: 0; visible: false";
+            isLoadingSphereVisible = false;
+        }
         let camera = document.getElementById('camera');
-        let loading = false;
-        //Genero la bolla in base al tio 3D o 2D
-        if(is3Dscene){
-//TODO fare loading screen solo per video, sparisce con la onplay del video, variabile loading da passare a false quando il video è in riproduzione
+        //Genero la bolla per scena 3D in gameplay
+        if(is3Dscene && !this.props.editMode){
             sceneRender = (
                 <Entity>
-                    <Entity visible={loading} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
-                            id={'loading'} radius={radius}  material={'shader: flat; color: gray; side: double'}  >
-                        <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
-                    </Entity>;
+                        <Entity visible={isLoadingSphereVisible} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
+                                id={'loading'} radius={radius}  material={'shader: flat; color: gray; side: double'}  >
+                            <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
+                        </Entity>
                     <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
@@ -235,7 +250,19 @@ export default class Bubble extends Component
                     </Entity>
                 </Entity>
             )
-        } else {
+        }
+        else if(is3Dscene && this.props.editMode){ //genero bolla per scena 3D in geometry mode
+            sceneRender = (
+                <Entity>
+                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
+                            id={this.props.scene.name} src={'#' + background} radius={radius}
+                            material={material} play_video={active}>
+                        {curves}
+                    </Entity>
+                </Entity>
+            )
+        }
+        else if (!is3Dscene && !this.props.editMode){ //genero bolla per scena 2D in gameplay
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
 
@@ -249,10 +276,32 @@ export default class Bubble extends Component
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity>
-                    <Entity visible={loading} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
-                            id={'loading'} radius={radius}  material={'shader: flat; color: gray; side: double'}  >
-                        <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
-                    </Entity>;
+                        <Entity visible={isLoadingSphereVisible} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
+                                id={'loading'} radius={radius}  material={'shader: flat; color: gray; side: double'}  >
+                            <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
+                        </Entity>
+                    <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
+                            id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
+                            material={material} play_video={active} position={positionPlane} >
+                        {curves}
+                    </Entity>
+                </Entity>
+            )
+        }
+        else if (!is3Dscene && this.props.editMode){
+            //TODO aggiungere il controllo del ridimensionamento della canvas
+            //TODO trovare una formula per il calcolo della dimensione del piano
+
+            let Width = this.props.assetsDimention.width ;
+            let Height = this.props.assetsDimention.height ;
+
+            let bounds = calculate2DSceneImageBounds(Width, Height);
+            let canvasWidth = bounds.w;
+            let canvasHeight = bounds.h;
+
+            positionPlane = "0, 1.6, -6";
+            sceneRender = (
+                <Entity>
                     <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
                             material={material} play_video={active} position={positionPlane} >
@@ -420,9 +469,13 @@ export default class Bubble extends Component
 
             //[Vittoria] una volta fatto tutto questo se è un video lo mando in play, altrimenti è un'immagine
             if (this.props.isActive && stores_utils.getFileType(this.props.scene.img) === 'video') {document.getElementById(scene.img).play()};
+
             this.videoTextures = video;
             this.masksTextures = masks;
         }, 50);
+        //let loadingSphere = document.getElementById('loading');
+        //console.log('bolla loading  ', loadingSphere);
+        //loadingSphere.setAttribute('visible', 'false')
     }
 
     /**
