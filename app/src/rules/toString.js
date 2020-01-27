@@ -2,6 +2,7 @@ import RuleActionTypes from "./RuleActionTypes";
 import {Operators, SuperOperators} from "./Operators";
 import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import Values from "./Values";
+import Rule from "./Rule";
 
 function eventTypeToString(eventType) {
     switch (eventType) {
@@ -41,6 +42,8 @@ function eventTypeToString(eventType) {
             return "diminuisce di";
         case RuleActionTypes.IS:
             return 'è';
+        case RuleActionTypes.TRIGGERS:
+            return 'avvia';
         default:
             return "";
     }
@@ -103,8 +106,12 @@ function objectTypeToString(objectType) {
         case "audio":
             type = "l\'audio";
             break;
+            //TODO far funzionare questo pezzo di codice e restituire caso di default "l'oggetto sconosciuto"
+        case Rule:
+            type = "la regola";
+            break;
         default:
-            type = "l'oggetto sconosciuto";
+            type = "l\'oggetto sconosciuto";
             break;
     }
     return type + " ";

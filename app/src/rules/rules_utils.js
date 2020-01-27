@@ -14,12 +14,13 @@ let uuid = require('uuid');
  * Generates a default rule depending on the given object
  * @param object
  */
-function generateDefaultRule(object){
+function generateDefaultRule(object, scene){
     let r, r1, r2;
     switch(object.type){
         case InteractiveObjectsTypes.TRANSITION:
             r = Rule({
                 uuid : uuid.v4(),
+                name : 'regola della transizione ' + object.name,
                 event : Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -32,10 +33,13 @@ function generateDefaultRule(object){
                     action: RuleActionTypes.TRANSITION,
                 })]),
             });
+            console.log ('regola salvata con nome ', r.name)
+
             break;
         case InteractiveObjectsTypes.SWITCH:
             r1 = Rule({
                 uuid : uuid.v4(),
+                name : 'regola dell\'interruttore ' + object.name,
                 event : Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -47,6 +51,7 @@ function generateDefaultRule(object){
             });
             r2 = Rule({
                 uuid : uuid.v4(),
+                name : 'regola dell\'interruttore ' + object.name,
                 event : Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -60,6 +65,7 @@ function generateDefaultRule(object){
         case InteractiveObjectsTypes.KEY:
             r = Rule({
                 uuid : uuid.v4(),
+                name : 'regola della chiave ' + object.name,
                 event : Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -77,6 +83,7 @@ function generateDefaultRule(object){
         case InteractiveObjectsTypes.LOCK:
             r = Rule({
                 uuid : uuid.v4(),
+                name : 'regola del lucchetto ' + object.name,
                 event : Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -94,6 +101,7 @@ function generateDefaultRule(object){
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
             r = Rule({
                 uuid: uuid.v4(),
+                name : 'regola del punto di interesse ' + object.name,
                 event: Action({uuid: uuid.v4()}),
                 actions : Immutable.List([Action({
                     uuid: uuid.v4(),
@@ -106,6 +114,7 @@ function generateDefaultRule(object){
         case InteractiveObjectsTypes.COUNTER:
             r = Rule({
                 uuid : uuid.v4(),
+                name : 'regola del contatore ' + object.name,
                 event : Action({uuid: uuid.v4()}),
                 actions : Immutable.List([Action({
                     uuid: uuid.v4(),
@@ -117,6 +126,7 @@ function generateDefaultRule(object){
         case InteractiveObjectsTypes.KEYPAD:
             r = Rule({
                 uuid: uuid.v4(),
+                name : 'regola del tastierino ' + object.name,
                 event: Action({}),
                 actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
@@ -229,6 +239,7 @@ function findConditionInsideSuperCondition(s, c){
 function setProperty(rule, property, value){
     return rule.set(property, value);
 }
+
 
 
 export default {

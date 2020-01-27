@@ -9,6 +9,7 @@ import Action from "./Action";
  * @param event default null
  * @param condition default empty object
  * @param actions default empty array
+ * @param name of the rule
  */
 const Rule = Immutable.Record({
 
@@ -16,7 +17,7 @@ const Rule = Immutable.Record({
     event : null,
     condition : {},
     actions : Immutable.List(),
-
+    name: null,
 });
 
 export default Rule;

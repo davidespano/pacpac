@@ -289,7 +289,7 @@ function createObject(props, type){
                 return;
         }
 
-        let defaultRule = rules_utils.generateDefaultRule(obj);
+        let defaultRule = rules_utils.generateDefaultRule(obj, scene);
         props.addNewObject(scene, obj);
         //il controllo serve per la textbox che non ha bisogno di regole e questa chiamata verrebbe effettuata con defaultrule a null
         if(defaultRule != null)

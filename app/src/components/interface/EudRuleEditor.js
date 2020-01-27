@@ -53,6 +53,7 @@ export default class EudRuleEditor extends Component {
                                     this.props.copyRule(rule)
                                 }}
                             />
+
                         </React.Fragment>
                     );
                 });
@@ -130,7 +131,7 @@ export default class EudRuleEditor extends Component {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
         let event = Action().set("uuid", uuid.v4());    //la popolo con un evento (nb azione)
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
-        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts);
+        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_tx' + (scene.rules.length + 1));
         this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
     }
 
@@ -309,6 +310,7 @@ class EudRule extends Component {
             buttonBarRendering =
                 <React.Fragment>
                     <div className={buttonBar}>
+
                         <button title={"Aggiungi una condizione"}
                                 key={'add-condition-' + rule.uuid}
                                 onClick={() => {
@@ -372,6 +374,8 @@ class EudRule extends Component {
                             ruleEditorCallback={this.props.ruleEditorCallback}
                         />
                         {this.actionBtn(rule, action)}
+
+
                     </React.Fragment>
                 });
             // (Object.keys(this.props.rule.condition).length !== 0 || this.props.rule.condition.constructor !== Object)
@@ -393,6 +397,7 @@ class EudRule extends Component {
                         onMouseLeave={() => {
                             this.mouseLeave()
                         }}>
+                <h6>{rule.name}</h6>
                 <span className={"eudWhen"}>Quando </span>
                 <EudAction
                     editor={this.props.editor}
@@ -410,6 +415,7 @@ class EudRule extends Component {
                 <span className={"eudThen"}>allora </span>
                 {actionRendering}
                 {buttonBarRendering}
+                <br/>
             </div>
         } else {
             return <p key={'rule-not-found-' + rule.uuid}>Regola non trovata</p>
@@ -1064,6 +1070,7 @@ class EudRulePart extends Component {
                 scenes={this.props.scenes}
                 assets={this.props.assets}
                 audios={this.props.audios}
+                rules={this.props.rules}
             />;
             buttonVisible = "eudObjectButton";
             text = this.props.inputText;
@@ -1084,8 +1091,9 @@ class EudRulePart extends Component {
                 <span>{text == "" ? this.getPlaceholder(this.props.role) : text}</span>
                 <input type={"text"}
                        className={"eudObjectString"} placeholder={this.getPlaceholder(this.props.role)}
-                       onChange={(e) => this.onChange(e)}
                        value={text}
+                       onChange={(e) => this.onChange(e)}
+
                 />
                 </span>
                 <button className={buttonVisible}
@@ -1214,6 +1222,7 @@ class EudAutoComplete extends Component {
             rulePartType: this.props.rulePartType,
             assets: this.props.assets,
             audios: this.props.audios,
+            rules: this.props.rules,
         });
         let li = items.valueSeq()
             .filter(i => {
@@ -1227,15 +1236,19 @@ class EudAutoComplete extends Component {
                                             verb={this.props.verb}
                                             subject={this.props.subject}
                                             role={this.props.role}
+                                            rules={this.props.rules}
                                             changeText={(text, role) => this.changeText(text, role)}
                                             updateRule={(rule, role) => this.props.updateRule(rule, role)}
                 />
             });
+        let h2 = "scene name";
         return <div className={"eudCompletionPopup"}>
+            {h2}
             <ul>
                 {li}
             </ul>
         </div>
+
 
     }
 }
@@ -1287,6 +1300,7 @@ class EudAutoCompleteItem extends Component {
  * @returns {the list of possible completions}
  */
 function getCompletions(props) {
+
     switch (props.role) {
         case "subject":
             if(props.rulePartType === 'event'){ // event subject: player, audios and videos
@@ -1335,6 +1349,12 @@ function getCompletions(props) {
                 console.log("Case object scene object only: ", sceneObjectsOnly(props));
                 return sceneObjectsOnly(props);
             }
+
+            //TODO forzalo a essere solo nella seconda riga
+            //TODO aggiungi subject il "gioco"
+            if(props.verb.action === RuleActionTypes.TRIGGERS){
+                return sceneRulesOnly(props);
+            }
             
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
@@ -1365,15 +1385,11 @@ function getCompletions(props) {
         case "operator":
             return props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
         case 'value':
-            console.log("case value");
             return props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
     }
 
 }
 
-/*var sortCriteria = function (objects, index) {
-    return objectSortOrder[index];
-};*/
 
 function filterValues(subject, verb) {
     let v = ValuesMap;
@@ -1395,4 +1411,13 @@ function sceneObjectsOnly(props){
     return props.interactiveObjects.filter(x => sceneObjects.includes(x.uuid));
 }
 
-
+//TODO escludere la regola in cui si sta scrivendo in modo da evitare bug
+function sceneRulesOnly(props) {
+    let current_scene = props.scenes.get(CentralSceneStore.getState());
+    let rules = props.rules.filter(x => current_scene.get('rules').includes(x.uuid));
+    /*
+    let prova= rules._root.entries[0][1] //._map.flatMap(x=>x))
+    console.log("prova", prova)
+    console.log("prova rule: ", prova._map._root.entries[1][1])*/
+    return rules;
+}

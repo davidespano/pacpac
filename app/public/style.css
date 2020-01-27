@@ -1269,7 +1269,7 @@ li > span {
     position: relative;
 }
 
-.eudCompletionPopup {
+.eudCompletionPopup  {
     margin-top: 2px;
     position: absolute;
     left: 0px;
@@ -1289,11 +1289,47 @@ li > span {
 }
 
 .eudCompletionPopup ul{
-    text-align: center;
+    text-align: left;
     list-style: none;
-    padding: 0px;
-    margin: 0px;
+    padding-left: 15px;
+    margin-left: 15px;
 }
+
+.eudCompletionPopupProva >ul >li {
+    margin-top: 2px;
+    position: absolute;
+    left: 0px;
+    right:0px;
+    z-index: 1000;
+    border: solid 1px darkgrey;
+    background-color: white;
+    border-radius: 2px;
+    cursor: pointer;
+    max-height: 100px;
+    overflow: scroll;
+    width: 400px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%)
+
+}
+
+
+.eudCompletionPopup span{
+    text-align: left;
+    display: block;
+    list-style: none;
+    padding-left: 5px;
+    margin-left: 5px;
+}
+
+.eudCompletionPopup span:hover{
+    text-align: left;
+    list-style: none;
+    cursor: default;
+}
+
+
 
 .eudCompletionPopup li:hover{
     background-color: #FFD8AC;

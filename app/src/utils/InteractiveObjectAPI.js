@@ -70,7 +70,8 @@ function saveRule(scene, rule) {
                 uuid: rule.uuid,
                 event: JSON.stringify(rule.event),
                 condition: JSON.stringify(rule.condition),
-                actions: rule.actions
+                actions: rule.actions,
+                name: rule.name
             })
         .end(function (err, response) {
             if (err) {

@@ -22,7 +22,7 @@ const RuleActionTypes = {
     STOP: 'STOP',
     TRANSITION : 'TRANSITION',
     UNLOCK_LOCK: 'UNLOCK_LOCK',
-
+    TRIGGERS: 'AVVIA',
 
 };
 

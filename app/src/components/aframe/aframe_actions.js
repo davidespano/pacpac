@@ -30,6 +30,7 @@ function executeAction(VRScene, rule, action){
             * avvia la transizione solo dopo aver riprodotto il video
             */
             //TODO al momento e' possibile effettuare transizione anche senza un oggetto, decidere se eliminarlo o tenerlo
+            let objectVideo_transition = 0;
             let duration_transition = 0;
             let duration = (current_object && current_object.properties.duration) ? parseInt(current_object.properties.duration) : 0;
             let direction = (current_object && current_object.properties.direction) ? current_object.properties.direction : 'nothing';
@@ -45,7 +46,6 @@ function executeAction(VRScene, rule, action){
             //let direction = 'nothing';
             if(current_object && current_object.properties.duration)
                 direction = current_object.properties.direction;
-            let objectVideo_transition = 0;
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
 
@@ -54,7 +54,7 @@ function executeAction(VRScene, rule, action){
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if(objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
-                    duration_transition = (parseInt(objectVideo_transition.duration) * 1000); //una volta che il video finisce
+                    duration_transition = (parseInt(objectVideo_transition.duration) * 1000); //una volta che il video finisce (durata del media)
                 }
             }
 
@@ -102,6 +102,7 @@ function executeAction(VRScene, rule, action){
                 if(objectVideo_transition !== 0 && objectVideo_transition !== null &&
                     (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
                 // se le due scene sono dello stesso tipo le gestisco allo stesso modo
+                // effettivo cambio di scena
                 if(VRScene.state.activeScene.type === Values.THREE_DIM && state.graph.scenes[action_obj_uuid ].type === Values.THREE_DIM ||
                     VRScene.state.activeScene.type === Values.TWO_DIM && state.graph.scenes[action_obj_uuid ].type === Values.TWO_DIM)
                     transition(state.activeScene, state.graph.scenes[action_obj_uuid], duration, direction);
@@ -361,11 +362,22 @@ function executeAction(VRScene, rule, action){
             runState[action.subj_uuid].state = parseInt(action.obj_uuid);
             VRScene.setState({runState: runState, graph: game_graph});
             break;
+        case RuleActionTypes.TRIGGERS:
+            /*
+                Azione che si occupa di avviare una transizione e relativo video da un altro oggetto
+             */
+            console.log("action_obj_uuid: ",action_obj_uuid); //nome della regola?
+
+            //action_obj_uuid (dovrebbe essere lo uuuid della regola)
+            //trovare il corpo della regola da qua
+            //    eventBus.emit(`${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`); action: regola trovata
+            eventBus.emit(`${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
+
+            break;
         default:
             console.log('not yet implemented');
             console.log(action);
     }
-
     console.log(`emit ${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
     eventBus.emit(`${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
 }

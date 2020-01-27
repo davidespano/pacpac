@@ -46,6 +46,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
             let switches_uuids = [];
             let collectable_keys_uuids = [];
             let locks_uuids = [];
+            let rules_names = [];
             let rules_uuids = [];
             let audio_uuids = [];
             let points_uuids = [];
@@ -129,13 +130,14 @@ function getByName(name, order = null, gameId=null, creation = true) {
                 actions = Immutable.List(actions).sort(stores_utils.actionComparator);
 
                 rules_uuids.push(rule.uuid); // save uuid
-
+                rules_names.push(rule.name);
                 let event;
                 try{
                     event = JSON.parse(rule.event)
                     // new Rule
                     let r = Rule({
                         uuid: rule.uuid,
+                        name: rule.name,
                         event: Action({
                             uuid: event.uuid,
                             subj_uuid: event.subj_uuid,
@@ -449,6 +451,7 @@ function readScene(gameGraph, raw_scenes) {
                 event: JSON.parse(rule.event),
                 condition: JSON.parse(rule.condition),
                 actions: rule.actions,
+                name: rule.name,
             });
         });
 

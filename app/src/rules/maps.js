@@ -208,6 +208,16 @@ const RuleActionMap = Immutable.Map([
             uuid: RuleActionTypes.IS,
         },
     ],
+    [
+        RuleActionTypes.TRIGGERS,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [InteractiveObjectsTypes.TRANSITION],
+            name: toString.eventTypeToString(RuleActionTypes.TRIGGERS),
+            uuid: RuleActionTypes.TRIGGERS,
+        },
+    ],
 ]);
 
 
