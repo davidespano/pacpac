@@ -6,7 +6,7 @@
     "@digaverse/aframe-resonance-audio-component": "^0.3.2",
     "@opuscapita/react-filemanager": "^1.1.0-beta.6",
     "@opuscapita/react-filemanager-connector-node-v1": "^1.1.0-beta.6",
-    "aframe": "^1.0.0",
+    "aframe": "1.0.0",
     "aframe-animation-component": "^4.2.0",
     "aframe-effects": "^0.8.0",
     "aframe-no-click-look-controls": "^1.0.4",
