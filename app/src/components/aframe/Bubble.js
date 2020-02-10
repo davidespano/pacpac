@@ -60,8 +60,6 @@ export default class Bubble extends Component
 
         //dobbiamo eliminare gli ultimi millisecondi dal video per evitare frame neri
         if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame(); //[Vittoria] lasciare così
-
-//aaaaaaaaaaaaaa
     }
 
     //[Vittoria] funzione che aggiorna se riceve component
@@ -76,7 +74,10 @@ export default class Bubble extends Component
                 if(obj.media) {
                     Object.values(obj.media).forEach(media => {
                         if (media !== null)
+                        {
                             document.getElementById("media_" + obj.uuid).currentTime = 0; //[Vittoria] riavvolge il video
+                            console.log ("riavvolgo bolla adiacente");
+                        }
                     });
                 }
             })
@@ -340,7 +341,6 @@ export default class Bubble extends Component
             //Imposto la variabile per l'aggiornamento a false
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
 
-            //TODO:  document.getElementById(scene.img).currentTime; con questo posso sapere il current time del video, se > 0 imposto loading a false, come faccio? loading è in render
             //Creo il la texture in base al tipo di media dello sfondo
             if(stores_utils.getFileType(scene.img) === 'video'){  //[Vittoria]se lo sfondo è un video
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));  //[Vittoria] creo un THREE.VideoTexture

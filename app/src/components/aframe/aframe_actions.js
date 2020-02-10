@@ -25,6 +25,8 @@ function executeAction(VRScene, rule, action){
     switch (action.action) {
 
         case RuleActionTypes.TRANSITION:
+            console.log ("RuleActionTypes.TRANSITION");
+
             /*
             * Azione che si occupa di gestire la transizione, se la transizione ha un video associato avvia la transizione
             * avvia la transizione solo dopo aver riprodotto il video
@@ -115,6 +117,8 @@ function executeAction(VRScene, rule, action){
 
             break;
         case RuleActionTypes.CHANGE_STATE:
+            console.log ("RuleActionTypes.CHANGE_STATE");
+
             /*
             * Azione che si occupa di gestire il cambio di stato dei vari oggetti, vengono richiamate le funzioni
             * corrispondenti a seconda dell'oggetto coinvolto, per chiavi e luchetti la funzione e' la stessa,
@@ -136,6 +140,8 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.ON:
+            console.log ("RuleActionTypes.ON");
+
             /*
             * Azione che si occupe del cambio stato utilizzando la regola 'accendi'
             */
@@ -166,6 +172,8 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.OFF:
+            console.log ("RuleActionTypes.OFF");
+
             /*
             * Azione che si occupe del cambio stato utilizzando la regola 'spegni'
             */
@@ -194,6 +202,7 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.CHANGE_BACKGROUND:
+            console.log ("RuleActionTypes.CHANGE_BACKGROUND");
             /*
             * Azione che si occupa di effettuare un cambio sfondo della scena
             */
@@ -220,6 +229,8 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, game_graph: game_graph});
             break;
         case RuleActionTypes.PLAY:
+            console.log ("RuleActionTypes.PLAY");
+
             /*
             * Azione che si occupa di riprodurre un video o audio, nel caso sia un video ha la sola funziona di cambiare lo
             * stato interno della'attributo loop, se si tratta di un audio cambia lo stato di loop e riprodutce un audio
@@ -241,6 +252,8 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.PLAY_LOOP:
+            console.log ("RuleActionTypes.PLAY_LOOP");
+
 
             /*
             * Azione che si occupa di riprodurre un video o audio, nel caso sia un video ha la sola funziona di cambiare lo
@@ -259,6 +272,8 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.STOP:
+            console.log ("RuleActionTypes.STOP");
+
             /*
             * Azione che si occupa di fermare la riproduzione di oggetti audio
             */
@@ -267,18 +282,24 @@ function executeAction(VRScene, rule, action){
                 soundsHub["audios_"+ action_obj_uuid].stop();
             break;
         case RuleActionTypes.COLLECT_KEY:
+            console.log ("RuleActionTypes.COLLECT_KEY");
+
             /*
             * Azione che si occupa di raccogliere una chiave
             */
             changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.obj_uuid);
             break;
         case RuleActionTypes.UNLOCK_LOCK:
+            console.log ("RuleActionTypes.UNLOCK_LOCK");
+
             /*
             * Azione che si occupa di aprire un lucchetto
             */
             changeStateObject(VRScene, runState, game_graph, 'UNLOCKED', current_object, action.obj_uuid);
             break;
         case RuleActionTypes.CHANGE_VISIBILITY:
+            console.log ("RuleActionTypes.CHANGE_VISIBILITY");
+
             /*
             * Azione che si occupa di cambiare la visibilita', intesa come interagibilita' del cursore su un oggetto
             */
@@ -292,6 +313,8 @@ function executeAction(VRScene, rule, action){
             break;
         case RuleActionTypes.CHANGE_ACTIVABILITY:
                 let obj_act = document.querySelector('#curv' + action.subj_uuid); //oggetto che si sta attivando o disattivando
+            console.log ("RuleActionTypes.CHANGE_ACTIVABILITY");
+
 
                 //qua c'è l'effettiva disattivazione o attivazione dell'oggetto
                 if(obj_act){
@@ -326,6 +349,8 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.LOOK_AT:
+            console.log ("RuleActionTypes.LOOK_AT");
+
             /*
             * Azione che si occupa di girare la camera verso un punto ben preciso impostato dall'utente
             */
@@ -338,6 +363,8 @@ function executeAction(VRScene, rule, action){
             }
             break;
         case RuleActionTypes.DECREASE_STEP:
+            console.log ("RuleActionTypes.DECREASE_STEP");
+
             /*
             * Azione che si occupa di decrementare  il valore del contattore, di uno step
             */
@@ -349,6 +376,8 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.INCREASE_STEP:
+            console.log ("RuleActionTypes.INCREASE_STEP");
+
             /*
             * Azione che si occupa di incrementare  il valore del contattore, di uno step
             */
@@ -357,6 +386,8 @@ function executeAction(VRScene, rule, action){
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.INCREASE:
+            console.log ("RuleActionTypes.INCREASE");
+
             /*
             * Azione che si occupa di assegnare un valore scelto dall'untente, al contattore*/
             runState[action.subj_uuid].state = parseInt(action.obj_uuid);
@@ -389,6 +420,8 @@ function executeAction(VRScene, rule, action){
  * @param duration
  */
 function transition(actualScene, targetScene, duration, direction){
+    console.log ("FUNCTION TRANSITION");
+
     let actualSky = document.querySelector('#' + actualScene.name);
     let actualSceneVideo = document.getElementById(actualScene.img);
     if(store_utils.getFileType(actualScene.img) === 'video')
@@ -476,13 +509,14 @@ function transition(actualScene, targetScene, duration, direction){
         actualSky.dispatchEvent(actualMove);
         targetSky.dispatchEvent(targetMove);
     }
-    setTimeout(function () {if(store_utils.getFileType(targetScene.img) === 'video'){
-        targetSceneVideo.currentTime = 0;
-        targetSceneVideo.play();
-        } }
+    setTimeout(function () {
+        if(store_utils.getFileType(targetScene.img) === 'video'){
+            targetSceneVideo.currentTime = 0;
+            targetSceneVideo.play();
+        }
+        }
         , parseInt(duration) + 100
     );
-
     //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
@@ -493,6 +527,8 @@ function transition(actualScene, targetScene, duration, direction){
  * @param duration
  */
 function transition2D(actualScene, targetScene, duration){
+    console.log ("FUNCTION TRANSITION2D");
+
     let camera = document.getElementById('camera');
     let cursor = document.getElementById('cursor');
     let actualSky = document.querySelector('#' + actualScene.name); //[Vittoria] oggetto di aframe sky
@@ -595,6 +631,8 @@ function lookObject(idObject, pointOI = null){
  * Cambio stato oggetti (chiavi e lucchetti) relativi alle regole
  */
 function changeStateObject(VRScene, runState, game_graph, state, current_object, action_uuid){
+    console.log ("FUNCTION CHANGESTATEOBJECT");
+
     runState[action_uuid].state=state;
     let audioKey = current_object.audio.audio0;
     if(soundsHub['audio0_' + audioKey])
@@ -615,6 +653,8 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     Cambio stato per l'oggetto Switch
  */
 function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
+    console.log ("FUNCTION CHANGESTATESWITCH");
+
     let duration_switch = 0;
     let switchVideo = document.getElementById('media_'+current_object.uuid);
     console.log(switchVideo);
@@ -634,6 +674,8 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         soundsHub[idAudio + audio].play();
 
     setTimeout(function () {
+        console.log ("SET TIMEOUT");
+
         cursor.setAttribute('raycaster', 'far: 10000');
         cursor.setAttribute('material', 'visible: true');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
