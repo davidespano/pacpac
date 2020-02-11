@@ -109,7 +109,6 @@ export default class VRScene extends React.Component {
         if(camera){
             camera.object3D.getWorldDirection(this.state.camera);
             this.updateAngles();
-            //potrei inserire qui lo spostamento per l'oggetto testo
         }
         //TODO: testare quanto sia pesante questa implementazione al tick
         let skysphere = document.getElementById(this.state.activeScene.img);
