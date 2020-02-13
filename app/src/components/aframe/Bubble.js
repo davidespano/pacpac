@@ -213,6 +213,7 @@ export default class Bubble extends Component
             //se la scena è un video visualizzo il caricamento, per le immagini no
             if (stores_utils.getFileType(scene.img) === 'video')
             {
+                //inserisci qui il play del video
                 isLoadingSphereVisible = true;
             }
             else
