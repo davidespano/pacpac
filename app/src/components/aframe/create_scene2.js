@@ -81,7 +81,7 @@ export default class VRScene extends React.Component {
             }
             //Attivo/Disattivo statistiche
             if(keyName === 's' || keyName === 'S') {
-                let stats = !this.state.stats;
+                let stats = !this.state.stats
                 this.setState({
                     stats: stats,
                 });
@@ -429,8 +429,10 @@ export default class VRScene extends React.Component {
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
         if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
-                this.state.graph.neighbours[sceneUuid].includes(uuid)
-                || uuid === sceneUuid);
+                this.state.graph.scenes[sceneUuid]); //TODO: qui non faccio più caricare le scene adiacenti, risolve il bug del video bloccato, da testare
+                //se questo sistema non funziona, commentare la riga sopra e decommentare le 2 sotto
+                //this.state.graph.neighbours[sceneUuid].includes(uuid)
+                //|| uuid === sceneUuid);
         }
         else
             this.currentLevel = [];
