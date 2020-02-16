@@ -119,8 +119,7 @@ export default class Bubble extends Component
         let scene = this.props.scene;
         let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img; //Prendo lo sfondo o dal runStato o o dalla scena corrente
         let is3Dscene = this.props.scene.type===Values.THREE_DIM;
-        let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky"; //Controllo se il media e' un video nel caso utilizzo 'a-videosphere' di A-Frame
-        // TODO verificare che a-sky non dia problemi con i video, se non dà problemi cancella il controllo della riga sopra di questa
+        let primitive = stores_utils.getFileType(this.props.scene.img)==='video'?"a-videosphere":"a-sky"; //Controllo se il media e' un video nel caso utilizzo 'a-videosphere' di A-Frame (LASCIARE COSI')
         //let primitive = this.props.assetsDimention.type === 'video'?"a-videosphere":"a-sky";
         let positionCurved = is3Dscene?"0, 0, 0":"0, -1.6, 6"; //Se la scena e' di tipo 3D metto la bolla al centro, altrimento posiziono il piano in un punto fisso
         //let positionPlane = this.props.isActive?"0, 1.6, -6.44":"0, 1.6, -9";
@@ -271,6 +270,8 @@ export default class Bubble extends Component
             let Height = this.props.assetsDimention.height ;
 
             let bounds = calculate2DSceneImageBounds(Width, Height);
+            //TODO perchè viene eseguito per tutte le scene del gioco ad ogni cambio di scena??
+            console.log("sto calcolando il bound di ", this.props.scene.name)
             let canvasWidth = bounds.w;
             let canvasHeight = bounds.h;
 
@@ -295,7 +296,6 @@ export default class Bubble extends Component
 
             let Width = this.props.assetsDimention.width ;
             let Height = this.props.assetsDimention.height ;
-
             let bounds = calculate2DSceneImageBounds(Width, Height);
             let canvasWidth = bounds.w;
             let canvasHeight = bounds.h;
@@ -341,7 +341,6 @@ export default class Bubble extends Component
             //Imposto la variabile per l'aggiornamento a false
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
 
-            //TODO:  document.getElementById(scene.img).currentTime; con questo posso sapere il current time del video, se > 0 imposto loading a false, come faccio? loading è in render
             //Creo il la texture in base al tipo di media dello sfondo
             if(stores_utils.getFileType(scene.img) === 'video'){  //[Vittoria]se lo sfondo è un video
                 aux = new THREE.VideoTexture(document.getElementById(scene.img));  //[Vittoria] creo un THREE.VideoTexture
