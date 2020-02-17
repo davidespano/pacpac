@@ -33,7 +33,6 @@ export default class Asset extends React.Component{
 
             let currAssets = []; //Variabile che conterra' tutti assets
             let sceneBackground;
-            //TODO verificare, se non impostato risulta undefined
             //Se non è impostato il loop lo imposto a false
             let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
             //first, push the background media. And check if the media is a video or image

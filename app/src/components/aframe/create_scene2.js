@@ -110,12 +110,14 @@ export default class VRScene extends React.Component {
             camera.object3D.getWorldDirection(this.state.camera);
             this.updateAngles();
         }
-        //TODO: testare quanto sia pesante questa implementazione al tick
         let skysphere = document.getElementById(this.state.activeScene.img);
         if (skysphere != null) //se la skysphere ha caricato ed è stata trovata
         {
             let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-            console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime);
+            //console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime);
+            //TODO capire perchè la prima scena caricata non è centrata, decommentando le due righe sotto si può vedere che la posizione è corretta
+            //let sky = document.getElementById(this.state.activeScene.name)
+            //console.log(sky.getAttribute("position"));
             if (loadingsphere !=null && skysphere.currentTime > 0)
             {
                 loadingsphere.setAttribute('visible', 'false');
@@ -429,7 +431,7 @@ export default class VRScene extends React.Component {
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
         if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
-                this.state.graph.scenes[sceneUuid]); //TODO: qui non faccio più caricare le scene adiacenti, risolve il bug del video bloccato, da testare
+                this.state.graph.scenes[sceneUuid]); //TODO: qui non faccio più caricare le scene adiacenti (invece le carica lo stesso), (ma comunque) risolve il bug del video bloccato, da testare
                 //se questo sistema non funziona, commentare la riga sopra e decommentare le 2 sotto
                 //this.state.graph.neighbours[sceneUuid].includes(uuid)
                 //|| uuid === sceneUuid);
