@@ -113,12 +113,13 @@ export default class VRScene extends React.Component {
         let skysphere = document.getElementById(this.state.activeScene.img);
         if (skysphere != null) //se la skysphere ha caricato ed è stata trovata
         {
+            let sphere = document.getElementById(this.state.activeScene.name)
             let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-            //console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime);
+            console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime);
             //TODO capire perchè la prima scena caricata non è centrata, decommentando le due righe sotto si può vedere che la posizione è corretta
             //let sky = document.getElementById(this.state.activeScene.name)
             //console.log(sky.getAttribute("position"));
-            if (loadingsphere !=null && skysphere.currentTime > 0)
+            if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
             {
                 loadingsphere.setAttribute('visible', 'false');
             }
@@ -385,7 +386,9 @@ export default class VRScene extends React.Component {
             activeScene: this.state.graph.scenes[newActiveScene],
             currentScene: this.state.graph.scenes[newActiveScene]
         });
-
+        //qui faccio partire il video dopo il cambio di scena
+        let sceneCanvas = document.getElementById(this.state.activeScene.name)
+        sceneCanvas.components["material"].data.src.play();
         if(this.props.debug){
             this.props.updateCurrentScene(this.state.graph.scenes[newActiveScene].uuid);
         }
@@ -418,7 +421,6 @@ export default class VRScene extends React.Component {
     }
 
     render(){
-
         let sceneUuid = null;
         //Verifico se sono in debug mode e prendo la scena corrente di conseguenza
         if(this.props.debug){
@@ -426,18 +428,23 @@ export default class VRScene extends React.Component {
         }else{
             sceneUuid = this.state.activeScene.uuid;
         }
-
+        console.log("uuid scena: ", sceneUuid)
         //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
         if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
             this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
-                this.state.graph.scenes[sceneUuid]); //TODO: qui non faccio più caricare le scene adiacenti (invece le carica lo stesso), (ma comunque) risolve il bug del video bloccato, da testare
+                //this.state.graph.scenes[sceneUuid]); //TODO: qui non faccio più caricare le scene adiacenti (invece le carica lo stesso), (ma comunque) risolve il bug del video bloccato, da testare
                 //se questo sistema non funziona, commentare la riga sopra e decommentare le 2 sotto
-                //this.state.graph.neighbours[sceneUuid].includes(uuid)
-                //|| uuid === sceneUuid);
+                this.state.graph.neighbours[sceneUuid].includes(uuid)
+                || uuid === sceneUuid);
+            console.log("neighbours di sceneUuid: ", this.state.graph.neighbours[sceneUuid])
+
         }
         else
+        {
             this.currentLevel = [];
+
+        }
         //Richiamo la funzione per la generazione degli assets
         //[Vittoria] gli assets vengono caricati non tutti insieme all'inizio ma quello della scena corrente e dei vicini
         let assets = this.generateAssets(this.props.editor.gameId);
@@ -513,7 +520,7 @@ export default class VRScene extends React.Component {
             //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
             //TODO [davide] rimosso perche' crea più listener per lo stesso evento
             //this.createRuleListeners();
-
+            console.log("genero bolla: " ,scene.uuid)
             //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (
                 <Bubble key={"key" + scene.name}
