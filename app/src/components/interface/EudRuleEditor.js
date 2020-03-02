@@ -758,9 +758,34 @@ class EudAction extends Component {
                         updateNumericRule={(props, value) => this.updateNumericRule(props, value)}
                     />;
                 break;
+            case RuleActionTypes.TRIGGERS:
+                let rule = sceneRulesOnly(this.props).get(this.props.action.obj_uuid); //riferimento alla regola
+                let objectCompletionRule = this.showCompletion(actionId, "object"); //prendi completion della regola
+                objectRendering =
+                    <EudRulePart
+                        interactiveObjects={this.props.interactiveObjects}
+                        rules={this.props.rules}
+                        rule={this.props.rule}
+                        rulePartType={this.props.rulePartType}
+                        subject={subject}
+                        complement={this.props.rule.object_uuid}
+                        verb={this.props.action}
+                        ruleEditorCallback={this.props.ruleEditorCallback}
+                        originalText={rule == null ? "" : rule.name}
+                        inputText={this.props.editor.get('completionInput')}
+                        showCompletion={objectCompletionRule}
+                        changeText={(text, role) => this.changeText(text, role)}
+                        updateRule={(rule, role) => this.updateRule(rule, role, this.props.interactiveObjects)}
+                        scenes={this.props.scenes}
+                        assets={this.props.assets}
+                        audios={this.props.audios}
+                        role={"object"}
+                    />;
+                break;
             default:
-                object = this.getInteractiveObjectReference(this.props.action.obj_uuid);
-                let objectCompletion = this.showCompletion(actionId, "object");
+                object = this.getInteractiveObjectReference(this.props.action.obj_uuid); //riferimento alla regola
+                let objectCompletion = this.showCompletion(actionId, "object"); //prendi completion della regola
+                this.provaFunzione(this.props.rule)
                 objectRendering =
                     <EudRulePart
                         interactiveObjects={this.props.interactiveObjects}
@@ -793,6 +818,10 @@ class EudAction extends Component {
 
     }
 
+    provaFunzione(rule){
+       // console.log("ho bisogno di controllare se rule qui c'è", rule)
+    }
+
     changeText(text, role) {
         let actionId = this.props.action.uuid;
         this.props.ruleEditorCallback.eudShowCompletions(
@@ -809,6 +838,13 @@ class EudAction extends Component {
             });
         }
 
+        if (uuid == InteractiveObjectsTypes.GAME) {
+            return InteractiveObject({
+                type: InteractiveObjectsTypes.GAME,
+                uuid: InteractiveObjectsTypes.GAME,
+                name: ""
+            });
+        }
         if (this.props.scenes.has(uuid)) {
             return this.props.scenes.get(uuid);
         }
@@ -1070,6 +1106,7 @@ class EudRulePart extends Component {
                 scenes={this.props.scenes}
                 assets={this.props.assets}
                 audios={this.props.audios}
+                rule={this.props.rule}
                 rules={this.props.rules}
             />;
             buttonVisible = "eudObjectButton";
@@ -1093,7 +1130,6 @@ class EudRulePart extends Component {
                        className={"eudObjectString"} placeholder={this.getPlaceholder(this.props.role)}
                        value={text}
                        onChange={(e) => this.onChange(e)}
-
                 />
                 </span>
                 <button className={buttonVisible}
@@ -1223,6 +1259,7 @@ class EudAutoComplete extends Component {
             assets: this.props.assets,
             audios: this.props.audios,
             rules: this.props.rules,
+            rule: this.props.rule,
         });
         let li = items.valueSeq()
             .filter(i => {
@@ -1241,7 +1278,9 @@ class EudAutoComplete extends Component {
                                             updateRule={(rule, role) => this.props.updateRule(rule, role)}
                 />
             });
+        //props.scenes.get(CentralSceneStore.getState());
         let h2 = "scene name";
+        console.log("trying to retrieve scene name: ", this.props.scenes.get(CentralSceneStore.getState()).name);
         return <div className={"eudCompletionPopup"}>
             {h2}
             <ul>
@@ -1285,7 +1324,6 @@ class EudAutoCompleteItem extends Component {
             action: this.props.verb,
             item: this.props.item.uuid
         };
-
         this.props.updateRule(ruleUpdate, this.props.role);
     }
 }
@@ -1311,7 +1349,8 @@ function getCompletions(props) {
                         type: InteractiveObjectsTypes.PLAYER,
                         uuid: InteractiveObjectsTypes.PLAYER,
                         name: ""
-                    })
+                    }),
+
                 ).sort(function (a) {
                     if(a.type=== "PLAYER"){
                         return -1
@@ -1325,13 +1364,19 @@ function getCompletions(props) {
             //soggetto nella seconda parte della frase
             let subjects = props.interactiveObjects.filter(x =>
                 x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
-                InteractiveObjectsTypes.PLAYER,
-                InteractiveObject({
-                    type: InteractiveObjectsTypes.PLAYER,
-                    uuid: InteractiveObjectsTypes.PLAYER,
-                    name: ""
-                })
-            );
+                    InteractiveObjectsTypes.GAME,
+                    InteractiveObject({
+                        type: InteractiveObjectsTypes.GAME,
+                        uuid: InteractiveObjectsTypes.GAME,
+                        name: ""
+                    })).set(
+                    InteractiveObjectsTypes.PLAYER,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.PLAYER,
+                            uuid: InteractiveObjectsTypes.PLAYER,
+                            name: ""
+                            })
+                );
             let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
             return result.sort(function (a) {
                 //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
@@ -1350,10 +1395,11 @@ function getCompletions(props) {
                 return sceneObjectsOnly(props);
             }
 
-            //TODO forzalo a essere solo nella seconda riga
-            //TODO aggiungi subject il "gioco"
+
             if(props.verb.action === RuleActionTypes.TRIGGERS){
-                return sceneRulesOnly(props);
+                let sceneRules = sceneRulesOnly(props);
+                //console.log("this.props.rule", props.rule)
+                return sceneRules
             }
             
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
@@ -1379,9 +1425,16 @@ function getCompletions(props) {
                         //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
                         .filter(x => x.subj_type.includes(props.subject.type));
                 }
+
                 return RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
             }
+            //se ho come soggetto il gioco allora mostro solo avvia come verbo
+            if(props.subject.type === InteractiveObjectsTypes.GAME){
+                return RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
+            }
+
             return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
+
         case "operator":
             return props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
         case 'value':
@@ -1411,13 +1464,12 @@ function sceneObjectsOnly(props){
     return props.interactiveObjects.filter(x => sceneObjects.includes(x.uuid));
 }
 
-//TODO escludere la regola in cui si sta scrivendo in modo da evitare bug
 function sceneRulesOnly(props) {
     let current_scene = props.scenes.get(CentralSceneStore.getState());
     let rules = props.rules.filter(x => current_scene.get('rules').includes(x.uuid));
-    /*
-    let prova= rules._root.entries[0][1] //._map.flatMap(x=>x))
-    console.log("prova", prova)
-    console.log("prova rule: ", prova._map._root.entries[1][1])*/
-    return rules;
+    let current_rule_uuid = props.rule._map._root.entries[0][1];
+    //filtro in modo tale da non avere la regola corrente tra le completions, altrimenti si creerebbe un loop
+    return rules.filter(x=>
+        !x.includes(current_rule_uuid)
+    );
 }

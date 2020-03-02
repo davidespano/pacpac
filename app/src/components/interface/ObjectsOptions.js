@@ -5,6 +5,7 @@ import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import Actions from "../../actions/Actions";
 import Dropdown from "./Dropdown";
 import Values from "../../rules/Values";
+import RuleActionTypes from "../../rules/RuleActionTypes";
 
 function ObjectOptions(props){
     if(props.currentObject){
@@ -499,6 +500,8 @@ function objectTypeToString(objectType) {
             return "Transizione";
         case InteractiveObjectsTypes.TEXTBOX:
             return "Riquadro di testo";
+        case RuleActionTypes.RULES:
+            return "Regola";
         default:
             return "Sconosciuto";
     }

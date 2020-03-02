@@ -3,6 +3,7 @@ import {Operators, SuperOperators} from "./Operators";
 import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import Values from "./Values";
 import Rule from "./Rule";
+import InteractiveObject from "../interactives/InteractiveObject";
 
 function eventTypeToString(eventType) {
     switch (eventType) {
@@ -51,6 +52,7 @@ function eventTypeToString(eventType) {
 
 function objectTypeToString(objectType) {
     let type = "";
+   // console.log("objectType", objectType)
     switch (objectType) {
         case InteractiveObjectsTypes.BUTTON:
             type = "il pulsante";
@@ -85,6 +87,9 @@ function objectTypeToString(objectType) {
         case InteractiveObjectsTypes.PLAYER:
             type = "il giocatore";
             break;
+        case InteractiveObjectsTypes.GAME:
+            type = 'il gioco';
+            break;
         case Values.THREE_DIM:
         case Values.TWO_DIM:
             type = "la scena";
@@ -92,6 +97,7 @@ function objectTypeToString(objectType) {
         case "number":
         case "operation":
         case "operator":
+
         case "value":
             return type;
         case 'video':
@@ -107,7 +113,7 @@ function objectTypeToString(objectType) {
             type = "l\'audio";
             break;
             //TODO far funzionare questo pezzo di codice e restituire caso di default "l'oggetto sconosciuto"
-        case Rule:
+        case InteractiveObjectsTypes.RULES:
             type = "la regola";
             break;
         default:

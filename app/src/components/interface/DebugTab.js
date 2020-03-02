@@ -386,7 +386,9 @@ function objectTypeToString(objectType) {
         case InteractiveObjectsTypes.TRANSITION:
             return "Transizione";
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
-            return "Punto di interesse"
+            return "Punto di interesse";
+        case RuleActionTypes.RULES:
+            return "Regola";
         default:
             return "Sconosciuto";
     }

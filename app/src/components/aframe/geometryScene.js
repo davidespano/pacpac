@@ -21,6 +21,7 @@ import aframe_assets from "./aframe_assets";
 import SceneAPI from "../../utils/SceneAPI";
 import Values from "../../rules/Values";
 import {calculate2DSceneImageBounds} from "./aframe_curved";
+import Actions from "../../actions/Actions";
 
 /**
  * Dati i punti presi da pointSaver viene aggiornato l'oggetto corrente
@@ -329,11 +330,18 @@ export default class GeometryScene extends React.Component{
 
             //Salvo le modifiche dell'oggetto e torno all'editor
             if(keyName === 'q' || keyName === 'Q') {
-                if(this.props.currentObject !== null)
+                console.log("currentObect", this.props.currentObject)
+                if(this.props.currentObject !== null){
                     InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
                         this.props.interactiveObjects.get(this.props.currentObject));
-                this.props.switchToEditMode();
-
+                }
+                //console.log("props:  ",this.props.currentScene);
+                //this.props.currentScene.reload();
+                //window.location.reload();
+                //document.querySelector('a-assets').load();
+                Actions.editModeOn();
+                //this.props.switchToEditMode();
+                /*document.location.reload();*/
 
             }
             //[Vittoria] nasconde e mostra il menù

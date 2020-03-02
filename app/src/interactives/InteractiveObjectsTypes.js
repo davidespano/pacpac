@@ -13,7 +13,8 @@ const InteractiveObjectsTypes = {
     TIMER : 'TIMER',
     TRANSITION : 'TRANSITION',
     TEXTBOX : 'TEXTBOX',
-
+    GAME : 'GAME',
+    RULES: 'RULES',
 };
 
 export default InteractiveObjectsTypes;
