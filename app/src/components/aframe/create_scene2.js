@@ -28,7 +28,7 @@ const resonance = require('./Audio/Resonance');
 const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
-
+let sceneLoaded = false;
 
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
@@ -39,6 +39,7 @@ const {mediaURL} = settings;
 // parametri in base al flag di debug.
 
 export default class VRScene extends React.Component {
+
 
     constructor(props) {
         super(props);
@@ -99,7 +100,6 @@ export default class VRScene extends React.Component {
 
 
     }
-
     /**
      * Funzione che aggiorna la rotazione della camera, utile per gli audio spaziali
      */
@@ -115,13 +115,24 @@ export default class VRScene extends React.Component {
         {
             let sphere = document.getElementById(this.state.activeScene.name)
             let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-            console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime);
+            console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime, "\ncurrent time data = ", sphere.components["material"].data.src.currentTime);
             //TODO capire perchè la prima scena caricata non è centrata, decommentando le due righe sotto si può vedere che la posizione è corretta
             //let sky = document.getElementById(this.state.activeScene.name)
             //console.log(sky.getAttribute("position"));
-            if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
+            if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
             {
-                loadingsphere.setAttribute('visible', 'false');
+                sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
+                if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
+                {
+                    console.log("sceneLoaded = ", sceneLoaded)
+                    loadingsphere.setAttribute('visible', 'false');
+                }
+                if (sphere.components["material"].data.src.currentTime > 1)
+                {
+                    //se la transizione è più lunga di un secondo potrebbe non funzionare
+                    sceneLoaded = true;
+                }
+
             }
         }
     }
@@ -389,6 +400,9 @@ export default class VRScene extends React.Component {
         //qui faccio partire il video dopo il cambio di scena
         let sceneCanvas = document.getElementById(this.state.activeScene.name)
         sceneCanvas.components["material"].data.src.play();
+        console.log("scena cambiata")
+        sceneLoaded = false;
+        console.log(sceneCanvas.components["material"])
         if(this.props.debug){
             this.props.updateCurrentScene(this.state.graph.scenes[newActiveScene].uuid);
         }
