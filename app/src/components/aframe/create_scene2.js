@@ -399,7 +399,7 @@ export default class VRScene extends React.Component {
         });
         //qui faccio partire il video dopo il cambio di scena
         let sceneCanvas = document.getElementById(this.state.activeScene.name)
-        sceneCanvas.components["material"].data.src.play();
+        //sceneCanvas.components["material"].data.src.play();
         console.log("scena cambiata")
         sceneLoaded = false;
         console.log(sceneCanvas.components["material"])
