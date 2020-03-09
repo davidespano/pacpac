@@ -331,19 +331,17 @@ function generateSpecificProperties(object, objectScene, props){
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Testo:</label>
+                    <input id={"textboxString"}
+                        value={object.properties.string}
+                           onBlur={()=> interface_utils.setPropertyFromId(object,'string',"textboxString", props)}
+                           contentEditable={true}
+                    />
+                    <label className={'options-labels'}>Allineamento:</label>
                     <Dropdown //puoi sostituire con react select per usare icone anzi che dropdown
                         props={props}
                         component={'alignment'}
                         property={'alignment'}
                         defaultValue={object.properties.alignment}/>
-                    <div className={'flex'}>
-                        <div id={"textboxString"}
-                             contentEditable={true} //sostituire setpropertyfromvalue che è più pulita
-                             onBlur={()=> interface_utils.setPropertyFromId(object,'duration',"transitionDuration", props)}
-                        >
-                            {object.properties.string}
-                        </div>
-                    </div>
                 </div>
             );
         default:

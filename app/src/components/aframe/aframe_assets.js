@@ -157,6 +157,7 @@ export default class Asset extends React.Component{
 function generateCurrentAsset(obj, runState, id){
     //TODO e' possibile che la creazione degli assets posso essere semplificata con una funzione, in alcuni casi il codice e' lo stesso
     let currentAsset;
+    console.log("genero oggetto: ", obj.name)
     switch (obj.type) {
         case InteractiveObjectsTypes.TRANSITION:
             if(obj.media.media0 !== null){
@@ -223,6 +224,10 @@ function generateCurrentAsset(obj, runState, id){
                 return(currentAsset)
             }
             else return null;
+        case InteractiveObjectsTypes.TEXTBOX:
+            currentAsset = (<a-entity text="value: Hello World;"></a-entity>)
+            return(currentAsset)
+            //else return null;
         default:
             return null;
     }

@@ -487,7 +487,7 @@ function readScene(gameGraph, raw_scenes) {
                 locks: locks,
                 points: points,
                 counters: counters,
-                //textboxes: textboxes,
+                textboxes: textboxes,
             },
             rules: rules,
             audios: audios,
