@@ -16,6 +16,7 @@ import interface_utils from "./components/interface/interface_utils";
 //import '../public/style.css';
 //import './aframe.js';
 
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 AuthenticationApi.isUserAuthenticated().then((response)=>{
     let gameUuid = window.localStorage.getItem("gameID");
@@ -36,5 +37,9 @@ AuthenticationApi.isUserAuthenticated().then((response)=>{
 
     }
 }).catch(()=>{}).then(()=>{
-    ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
+    //ReactDOM.render(<AppContainer/>, document.getElementById('sceneContainer'));
+    ReactDOM.render(
+    <Router basename={'pacpac'}>
+        <Route path="/" component={AppContainer} />
+    </Router>, document.getElementById('sceneContainer'));
 });
