@@ -1269,7 +1269,7 @@ li > span {
     position: relative;
 }
 
-.eudCompletionPopup  {
+.eudCompletionPopup, .eudCompletionPopupForGraph  {
     margin-top: 2px;
     position: absolute;
     left: 0px;
@@ -1289,31 +1289,11 @@ li > span {
 }
 
 .eudCompletionPopup ul{
-    text-align: left;
+    text-align: center;
     list-style: none;
-    padding-left: 15px;
-    margin-left: 15px;
+    padding-left: 0px;
+    margin-left: 0px;
 }
-
-.eudCompletionPopupProva >ul >li {
-    margin-top: 2px;
-    position: absolute;
-    left: 0px;
-    right:0px;
-    z-index: 1000;
-    border: solid 1px darkgrey;
-    background-color: white;
-    border-radius: 2px;
-    cursor: pointer;
-    max-height: 100px;
-    overflow: scroll;
-    width: 400px;
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%)
-
-}
-
 
 .eudCompletionPopup span{
     text-align: left;
@@ -1329,9 +1309,48 @@ li > span {
     cursor: default;
 }
 
-
-
 .eudCompletionPopup li:hover{
+    background-color: #FFD8AC;
+}
+
+.eudCompletionPopupForGraph ul{
+    text-align: left;
+    list-style: none;
+    padding-left: 15px;
+    margin-left: 15px;
+    margin-bottom: auto;
+}
+
+.eudCompletionPopupForGraph span{
+    text-align: left;
+    display: block;
+    list-style: none;
+    padding-left: 5px;
+    margin-left: 5px;
+}
+
+.dropdown-header li{
+    text-align: left;
+    display: block;
+    list-style: none;
+    padding-left: 5px;
+    margin-left: 5px;
+}
+.line {
+    width: 90%;;
+    height: 0;
+    border: 1px solid #C4C4C4;
+    margin: 3px;
+    display:inline-block;
+}
+
+.eudCompletionPopupForGraph span:hover{
+      text-align: left;
+      list-style: none;
+      cursor: default;
+}
+
+.eudCompletionPopupForGraph li:hover{
     background-color: #FFD8AC;
 }
 
@@ -1365,6 +1384,7 @@ input.eudObjectString[type=text] {
     padding-left: 5px;
     padding-right: 5px;
 }
+
 .eudObjectButton{
     display: inline-block;
     position: absolute;
@@ -1446,7 +1466,7 @@ input.eudObjectString[type=text] {
     text-align: left;
 }
 
-.eudWhen, .eudThen, .eudIf{
+.eudWhen, .eudThen, .eudIf {
     grid-column: 1;
     box-sizing: border-box;
     text-align: right;
@@ -1455,6 +1475,21 @@ input.eudObjectString[type=text] {
     max-width: 100px;
     margin-top: 5px;
     position: relative;
+}
+
+.eudName{
+    font-size: 15px;
+    grid-column: 2;
+    display: inline-block;
+    box-sizing: border-box;
+    margin-top: 5px;
+    text-align: center;
+}
+
+h6 {
+    font-size: 15px;
+    margin-top: 3%;
+    margin-bottom: 2%;
 }
 
 .eudThen, .eudIf{
@@ -1793,12 +1828,6 @@ input.eudObjectString[type=text] {
     display: grid;
     grid-template-columns: auto auto;
     grid-template-areas: 'scenes saves';
-}
-
-h6 {
-    font-size: 15px;
-    margin-top: 3%;
-    margin-bottom: 2%;
 }
 
 

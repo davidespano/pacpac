@@ -112,8 +112,7 @@ function objectTypeToString(objectType) {
         case "audio":
             type = "l\'audio";
             break;
-            //TODO far funzionare questo pezzo di codice e restituire caso di default "l'oggetto sconosciuto"
-        case InteractiveObjectsTypes.RULES:
+        case "rule":
             type = "la regola";
             break;
         default:

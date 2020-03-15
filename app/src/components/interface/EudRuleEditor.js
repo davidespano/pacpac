@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import RuleActionTypes from "../../rules/RuleActionTypes";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import InteractiveObject from "../../interactives/InteractiveObject"
-import Immutable from "immutable";
+import Immutable, {List} from "immutable";
 import Action from "../../rules/Action"
 import ActionTypes from "../../actions/ActionTypes"
 import Rule from "../../rules/Rule";
@@ -17,6 +17,7 @@ import CentralSceneStore from "../../data/CentralSceneStore";
 import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
+import ObjectToSceneStore from "../../data/ObjectToSceneStore";
 
 
 let uuid = require('uuid');
@@ -397,7 +398,7 @@ class EudRule extends Component {
                         onMouseLeave={() => {
                             this.mouseLeave()
                         }}>
-                <h6>{rule.name}</h6>
+                <span className={"eudName"}>{rule.name}</span>
                 <span className={"eudWhen"}>Quando </span>
                 <EudAction
                     editor={this.props.editor}
@@ -488,7 +489,6 @@ class EudCondition extends Component {
                 assets={this.props.assets}
                 audios={this.props.audios}
                 role={"operator"}
-
             />;
 
         let valueRendering = null;
@@ -673,6 +673,7 @@ class EudAction extends Component {
         let actionId = this.props.editor.get('actionId');
         let subjectCompletion = this.showCompletion(actionId, "subject");
         let subject = this.getInteractiveObjectReference(this.props.action.subj_uuid);
+
         let actionRendering =
             <EudRulePart
                 VRScene={this.props.VRScene}
@@ -785,7 +786,6 @@ class EudAction extends Component {
             default:
                 object = this.getInteractiveObjectReference(this.props.action.obj_uuid); //riferimento alla regola
                 let objectCompletion = this.showCompletion(actionId, "object"); //prendi completion della regola
-                this.provaFunzione(this.props.rule)
                 objectRendering =
                     <EudRulePart
                         interactiveObjects={this.props.interactiveObjects}
@@ -816,10 +816,6 @@ class EudAction extends Component {
             {objectRendering}
                 </span>;
 
-    }
-
-    provaFunzione(rule){
-       // console.log("ho bisogno di controllare se rule qui c'è", rule)
     }
 
     changeText(text, role) {
@@ -1261,36 +1257,138 @@ class EudAutoComplete extends Component {
             rules: this.props.rules,
             rule: this.props.rule,
         });
-        let li = items.valueSeq()
-            .filter(i => {
-                let key = toString.objectTypeToString(i.type) + i.name;
-                let n = (this.props.input ? this.props.input : "").split(" ");
-                const word = n[n.length - 1];
-                return key.includes(word);
-            })
-            .map(i => {
-                return <EudAutoCompleteItem item={i}
-                                            verb={this.props.verb}
-                                            subject={this.props.subject}
-                                            role={this.props.role}
-                                            rules={this.props.rules}
-                                            changeText={(text, role) => this.changeText(text, role)}
-                                            updateRule={(rule, role) => this.props.updateRule(rule, role)}
-                />
+        let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
+
+        let graph=false; //bool che mi serve per capire se devo usare il grafo dei suggerimenti o meno
+        if (li.toArray()[0]) { //controllo che ci siano elementi da mostrare
+            let info = li.toArray()[0].props.item;
+
+            //soggetto prima parte della frase, essendoci solo video, audio e soggetti
+            if (this.props.role === "object" || (this.props.role === "subject" && this.props.rulePartType !== 'event')) {
+                if(this.props.role ==="object") {
+                    if(info.type==="2D"||info.type==="3D" || info.type==="value" || info.type ==="video" || info.type ==="audio"){
+                       graph=false;
+                    }
+                    else graph=true;
+                }
+                else graph=true;
+            } else { graph=false;
+            }
+        }
+        else graph=false;
+        if(graph){
+            console.log("if graph")
+            //Se ho necessità di un grafo devo scindere gli items in due gruppi: un gruppo con gli Interactive object
+            //che hanno bisogno di un nome della scena, e tutti gli altri
+            let classes = this.props.scenes.size;
+
+            //Primo gruppo, gli oggetti appartenenti alle scene
+            let sceneObj = this.props.interactiveObjects.filter(x =>
+                x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST);
+            //mi prendo le scene coinvolte
+            let scenes =returnScenes(sceneObj, this.props);
+
+            //Secondo gruppo, tutti gli altri oggetti, quindi mi basta filtrare quelli che sono presenti in sceneObj
+            let notSceneObj = items.filter(d => !sceneObj.includes(d));
+            //trasformo in un oggetto che può essere inserito nel dropdown
+            let liNotSceneObj = listableItems(notSceneObj.valueSeq(), this.props);
+
+            let fragment = scenes.map( element => {
+                var obj = mapSceneWithObjects(this.props, element, sceneObj);
+                let objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
+                let scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
+                    return (<React.Fragment>
+                        {scene_name}
+                        <ul>
+                            {objects}
+                        </ul>
+                    </React.Fragment>)
             });
-        //props.scenes.get(CentralSceneStore.getState());
-        let h2 = "scene name";
-        console.log("trying to retrieve scene name: ", this.props.scenes.get(CentralSceneStore.getState()).name);
-        return <div className={"eudCompletionPopup"}>
-            {h2}
-            <ul>
-                {li}
-            </ul>
-        </div>
+            return (
+                    <div className={"eudCompletionPopupForGraph"}>
+                        {fragment}
+                        <ul>
+                            <div class={"line"}/>
+                            {liNotSceneObj}
+                        </ul>
 
-
+                    </div>
+            )
+        }
+        else {
+            return <div className={"eudCompletionPopup"}>
+                <ul>
+                    {li}
+                </ul>
+            </div>
+        }
     }
 }
+
+/**
+ * Funzione che da un array di elementi restituisce i <li> che possono essere restituiti come elenco
+ */
+function listableItems(list, props) {
+    let result = list.filter(i => {
+        let key = toString.objectTypeToString(i.type) + i.name;
+        let n = (props.input ? props.input : "").split(" ");
+        const word = n[n.length - 1];
+        return key.includes(word);
+        }).map(i => {
+            return <EudAutoCompleteItem item={i}
+                                        verb={props.verb}
+                                        subject={props.subject}
+                                        role={props.role}
+                                        rules={props.rules}
+                                        changeText={(text, role) => this.changeText(text, role)}
+                                        updateRule={(rule, role) => props.updateRule(rule, role)}
+            />
+        });
+    return result
+}
+
+/**
+ * Funzione che restituisce le scene che contengono gli item
+ * Se ho quindi [item1 item1 item3 item4] dove i primi due fanno parte di scena1 e gli altri di scena2 e scena3
+ * Il risultato della funzione sarà [scena1 scena1 scena2 scena3], per avere un unico risultato per scena1 alla fine
+ * della funzione creo un set
+**/
+function returnScenes(items, props){
+    if(items.size==0){ //se la lista è vuota non restituisco niente
+        return "";
+    }
+    let scenes=[];
+    let array = items.toArray();
+
+    for(var i =0; i<array.length;i++){
+        if(array[i]){
+            let scene_uuid =ObjectToSceneStore.getState().get(array[i].uuid);
+            let scene_name = props.scenes.get(scene_uuid);
+            scenes.push(scene_name);
+
+        }
+    }
+    return [...new Set(scenes)];
+}
+
+/**
+ *
+ * @param props
+ * @param scene: scena sulla map
+ * @param objects: tutti gli oggetti presenti
+ * @returns {[]}: oggetti relativi alla scena scene
+ */
+function mapSceneWithObjects(props, scene, objects){
+    let return_result= [];
+    let array = objects.toArray();
+    for(var i=0; i<objects.size;i++){
+        if(scene.uuid===ObjectToSceneStore.getState().get(array[i].uuid)){
+            return_result.push(array[i])
+        }
+    }
+    return return_result;
+}
+
 
 class EudAutoCompleteItem extends Component {
 
@@ -1306,7 +1404,6 @@ class EudAutoCompleteItem extends Component {
     }
 
     render() {
-
         let text = toString.objectTypeToString(this.props.item.type) + this.props.item.name;
 
         return <li
@@ -1341,9 +1438,10 @@ function getCompletions(props) {
 
     switch (props.role) {
         case "subject":
-            if(props.rulePartType === 'event'){ // event subject: player, audios and videos
+            if(props.rulePartType === 'event'){ // event subject: player, game, audios and videos
                 //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
-                let subjects = props.assets.filter(x => x.type === 'video').merge(props.audios).merge(sceneObjectsOnly(props)).set(
+                //merge(sceneObjectsOnly(props)).?
+                let subjects = props.assets.filter(x => x.type === 'video').merge(props.audios).set(
                     InteractiveObjectsTypes.PLAYER,
                     InteractiveObject({
                         type: InteractiveObjectsTypes.PLAYER,
@@ -1398,7 +1496,6 @@ function getCompletions(props) {
 
             if(props.verb.action === RuleActionTypes.TRIGGERS){
                 let sceneRules = sceneRulesOnly(props);
-                //console.log("this.props.rule", props.rule)
                 return sceneRules
             }
             
@@ -1428,9 +1525,11 @@ function getCompletions(props) {
 
                 return RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
             }
-            //se ho come soggetto il gioco allora mostro solo avvia come verbo
-            if(props.subject.type === InteractiveObjectsTypes.GAME){
-                return RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
+            if(props.subject){
+                //se ho come soggetto il gioco allora mostro solo avvia come verbo
+                if(props.subject.type === InteractiveObjectsTypes.GAME){
+                    return RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
+                }
             }
 
             return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;

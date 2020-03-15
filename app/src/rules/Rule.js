@@ -18,6 +18,7 @@ const Rule = Immutable.Record({
     condition : {},
     actions : Immutable.List(),
     name: null,
+    type: "rule",
 });
 
 export default Rule;
