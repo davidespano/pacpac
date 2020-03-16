@@ -6,6 +6,8 @@ import Actions from "../../actions/Actions";
 import Dropdown from "./Dropdown";
 import Values from "../../rules/Values";
 import RuleActionTypes from "../../rules/RuleActionTypes";
+import stores_utils from "../../data/stores_utils";
+import Orders from "../../data/Orders";
 
 function ObjectOptions(props){
     if(props.currentObject){
@@ -329,20 +331,10 @@ function generateSpecificProperties(object, objectScene, props){
             );
         case InteractiveObjectsTypes.TEXTBOX: //TODO completare la visualizzazione delle proprietà della textbox
             return (
-                <div className={"options-grid"}>
-                    <label className={'options-labels'}>Testo:</label>
-                    <input id={"textboxString"}
-                        value={object.properties.string}
-                           onBlur={()=> interface_utils.setPropertyFromId(object,'string',"textboxString", props)}
-                           contentEditable={true}
-                    />
-                    <label className={'options-labels'}>Allineamento:</label>
-                    <Dropdown //puoi sostituire con react select per usare icone anzi che dropdown
-                        props={props}
-                        component={'alignment'}
-                        property={'alignment'}
-                        defaultValue={object.properties.alignment}/>
-                </div>
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Testo:</label>
+                    {richText(props,object)}
+                </React.Fragment>
             );
         default:
             return(<div>Error!</div>);
@@ -518,5 +510,60 @@ function objectTypeToString(objectType) {
     <img className={"action-buttons"} src={"icons/icons8-save-as-50.png"} alt={'Salva'}/>
 </button>
 */
+
+function checkRichtextButtonActive(value, current) {
+    return current == value? '-active' : '';
+}
+
+function richText(props, object){
+
+    return (
+        <React.Fragment>
+            <div className={'audio-list-box-btns'}>
+                <button
+                    title={"Allinea a sinistra"}
+                    className={"action-buttons-container rich-text-buttons" + checkRichtextButtonActive(Values.TEXTLEFT, object.properties.alignment)}
+                    onClick={() => {
+                        interface_utils.setPropertyFromValue(object, 'alignment', Values.TEXTLEFT, props);
+                    }}
+                >
+                    <img className={"action-buttons"} src={"icons/icons8-allinea-a-sinistra-96" +
+                    checkRichtextButtonActive(Values.TEXTLEFT, object.properties.alignment) + '.png'} alt={'Allinea a sinistra'}/>
+                </button>
+
+                <button
+                    title={"Allinea al centro"}
+                    className={"action-buttons-container rich-text-buttons" + checkRichtextButtonActive(Values.TEXTCENTER, object.properties.alignment)}
+                    onClick={() => {
+                        interface_utils.setPropertyFromValue(object, 'alignment', Values.TEXTCENTER, props);
+                    }}
+                >
+                    <img className={"action-buttons"} src={"icons/icons8-allinea-al-centro-96"  +
+                    checkRichtextButtonActive(Values.TEXTCENTER, object.properties.alignment ) + '.png'} alt={'Allinea al centro'}/>
+                </button>
+
+                <button
+                title={"Allinea a destra"}
+                className={"action-buttons-container rich-text-buttons" + checkRichtextButtonActive(Values.TEXTRIGHT, object.properties.alignment)}
+                onClick={() => {
+                    interface_utils.setPropertyFromValue(object, 'alignment', Values.TEXTRIGHT, props);
+                }}
+            >
+                <img className={"action-buttons"} src={"icons/icons8-allinea-a-destra-96" +
+                checkRichtextButtonActive(Values.TEXTRIGHT, object.properties.alignment) + '.png'} alt={'Allinea a destra'}/>
+            </button>
+
+            </div>
+            <textarea id={"textboxString"}
+                      onBlur={()=> {
+                          let value = document.getElementById("textboxString").value;
+                          interface_utils.setPropertyFromValue(object, 'string', value, props)
+                      }}
+            >
+                    {object.properties.string}
+            </textarea>
+        </React.Fragment>
+    );
+}
 
 export default ObjectOptions;

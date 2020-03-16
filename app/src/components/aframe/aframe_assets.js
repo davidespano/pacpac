@@ -3,6 +3,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 import settings from "../../utils/settings";
 import React from 'react';
 import AudioManager from './AudioManager'
+import {Entity} from "aframe-react";
 const soundsHub = require('./soundsHub');
 const {mediaURL} = settings;
 /**
@@ -224,10 +225,6 @@ function generateCurrentAsset(obj, runState, id){
                 return(currentAsset)
             }
             else return null;
-        case InteractiveObjectsTypes.TEXTBOX:
-            currentAsset = (<a-entity text="value: Hello World;"></a-entity>)
-            return(currentAsset)
-            //else return null;
         default:
             return null;
     }
