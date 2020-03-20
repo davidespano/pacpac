@@ -33,8 +33,6 @@ function generateDefaultRule(object, scene){
                     action: RuleActionTypes.TRANSITION,
                 })]),
             });
-            console.log ('regola salvata con nome ', r.name)
-
             break;
         case InteractiveObjectsTypes.SWITCH:
             r1 = Rule({
@@ -47,11 +45,16 @@ function generateDefaultRule(object, scene){
                     obj_uuid: object.uuid,
                 }),
                 condition : new Condition(uuid.v4(), object.uuid, Values.ON, Operators.EQUAL),
-                actions : Immutable.List([Action({uuid: uuid.v4()})]),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: object.uuid,
+                    action: RuleActionTypes.CHANGE_STATE,
+                    obj_uuid: Values.OFF
+                })]),
             });
             r2 = Rule({
                 uuid : uuid.v4(),
-                name : 'regola dell\'interruttore ' + object.name,
+                name : 'regola dell\'interruttore ' + object.name + '_2',
                 event : Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -59,7 +62,12 @@ function generateDefaultRule(object, scene){
                     obj_uuid: object.uuid,
                 }),
                 condition : new Condition(uuid.v4(), object.uuid, Values.OFF, Operators.EQUAL),
-                actions : Immutable.List([Action({uuid: uuid.v4()})]),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: object.uuid,
+                    action: RuleActionTypes.CHANGE_STATE,
+                    obj_uuid: Values.ON
+                })])
             });
             return [r1, r2];
         case InteractiveObjectsTypes.KEY:
@@ -239,7 +247,6 @@ function findConditionInsideSuperCondition(s, c){
 function setProperty(rule, property, value){
     return rule.set(property, value);
 }
-
 
 
 export default {
