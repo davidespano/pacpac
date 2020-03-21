@@ -97,8 +97,6 @@ export default class VRScene extends React.Component {
     }
 
     componentDidUpdate(prevProps){
-
-
     }
     /**
      * Funzione che aggiorna la rotazione della camera, utile per gli audio spaziali
@@ -132,7 +130,10 @@ export default class VRScene extends React.Component {
                     //se la transizione è più lunga di un secondo potrebbe non funzionare
                     sceneLoaded = true;
                 }
-
+            }
+            else if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
+            {
+                loadingsphere.setAttribute('visible', 'false');
             }
         }
     }
@@ -481,11 +482,11 @@ export default class VRScene extends React.Component {
                     <Entity primitive="a-camera" key="keycamera" id="camera"
                             pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
                             look-controls="false" wasd-controls="false">
+
                             <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
                                     fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
                             <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
                                     fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
-
                     </Entity>
                 </Scene>
 

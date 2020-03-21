@@ -38,9 +38,9 @@ const Values = {
     ENDED: 'ENDED',
 
     //TEXTBOX
-    TEXTLEFT: 'TEXTLEFT',
-    TEXTRIGHT: 'TEXTRIGHT',
-    TEXTCENTER: 'TEXTCENTER',
+    TEXTLEFT: 'left',
+    TEXTRIGHT: 'right',
+    TEXTCENTER: 'center',
 
 };
 

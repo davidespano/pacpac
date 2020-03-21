@@ -137,23 +137,6 @@ export default class Bubble extends Component
         //Genero le zone interattive utilizzando i componenti Curved in base al tipo di scena che devo renderizzare
         const textboxes = Object.values(scene.objects).flat().map(curve => {
             if (curve.type === "TEXTBOX") {
-                if(is3Dscene)
-                {
-                    return(
-                        <Entity visible={true} geometry="primitive: sphere"  position={'0 0 -0.3'}  scale={'-3 3 3 '}
-                                id={this.props.scene.name + 'tttt'} radius={20}  material={'shader: flat; opacity: 1; color: black; side: double'}  >
-                            <Entity text="align: center; wrapCount: 30; side: double; value:LOADING"></Entity>
-                        </Entity>)
-                }
-                else
-                {
-                    return (
-                        <a-entity
-                            geometry="primitive: plane; width: 16; height: auto"
-                            material="color: black"
-                            text="align: center; value: This text will be 15 units wide."
-                            position="0 -5 0.8"></a-entity>)
-                }
             }
         })
         const curves = Object.values(scene.objects).flat().map(curve => {
