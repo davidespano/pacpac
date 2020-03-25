@@ -5,7 +5,7 @@ import Values from "../rules/Values";
 const Textbox = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.TEXTBOX,
     properties : {
-            string: "un placeholder",
+            string: "",
             alignment: Values.TEXTLEFT,
             font: null,
             size: null

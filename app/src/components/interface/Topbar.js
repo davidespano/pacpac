@@ -273,17 +273,25 @@ function createObject(props, type){
                 });
                 break;
             case InteractiveObjectsTypes.TEXTBOX:
-                name = scene.name + '_tx' + (scene.objects.textboxes.length + 1);
-                obj = Textbox({
-                    uuid: uuid.v4(),
-                    name: name,
-                    properties: {
-                        string: null,
-                        alignment: null,
-                        font: null,
-                        size: null,
-                    }
-                });
+                if(scene.objects.textboxes.length == 0) //ammessa una sola textbox per scena
+                {
+                    name = scene.name + '_tx' + (scene.objects.textboxes.length + 1);
+                    obj = Textbox({
+                        uuid: uuid.v4(),
+                        name: name,
+                        properties: {
+                            string: null,
+                            alignment: null,
+                            font: null,
+                            size: null,
+                        }
+                    });
+                }
+                else
+                {
+                    alert("Hai già un oggetto textbox in questa scena")
+                    return;
+                }
                 break;
             default:
                 return;

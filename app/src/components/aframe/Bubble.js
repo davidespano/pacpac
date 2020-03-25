@@ -128,17 +128,13 @@ export default class Bubble extends Component
         //[Vittoria] se per caso un animazione da 2D a 3D e viceversa non abbiamo l'animazione il motivo è che il controllo sopra questa riga è commentato
         let positionPlane;
         let sceneRender;
-
         //[Vittoria] Ho due tipi di scena: 2D (piano) e 3D (bolla), le transizioni tra le due cose
         //se invece la scena principale è la bolla e vado verso un piano, la bolla scompare e il piano va verso di me
         //se sono dello stesso tipo invece si "annullano"
         // se vado da una scena con piano verso una bolla, la bolla prende tutto
 
         //Genero le zone interattive utilizzando i componenti Curved in base al tipo di scena che devo renderizzare
-        const textboxes = Object.values(scene.objects).flat().map(curve => {
-            if (curve.type === "TEXTBOX") {
-            }
-        })
+
         const curves = Object.values(scene.objects).flat().map(curve => {
             let color = this.props.curvedToEdit===curve.uuid?'red':'white';
             if(this.props.editMode){
@@ -253,7 +249,6 @@ export default class Bubble extends Component
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
                         {curves}
-                        {textboxes}
                     </Entity>
                 </Entity>
             )
@@ -293,7 +288,7 @@ export default class Bubble extends Component
                             id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
                             material={material} play_video={active} position={positionPlane} >
                         {curves}
-                        {textboxes}
+
                     </Entity>
                 </Entity>
             )

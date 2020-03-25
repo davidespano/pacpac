@@ -443,17 +443,46 @@ export default class VRScene extends React.Component {
         }else{
             sceneUuid = this.state.activeScene.uuid;
         }
-        console.log("uuid scena: ", sceneUuid)
+        console.log("uuid scena render: ", sceneUuid)
+
+        let textProperties;
+        let textboxEntity = null;
+        let textboxUuid = this.state.activeScene.objects.textboxes[0]
+        let graph = this.state.graph
+        //TODO: rimuovere un po di console log
+
+        // console.log(this)
+        // console.log(graph)
+        // console.log(this.state.activeScene.objects)
+        // console.log(textboxUuid)
+
         //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
-        if (this.state.graph.neighbours !== undefined && this.state.graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
-            this.currentLevel = Object.keys(this.state.graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
+        if (this.state.graph.neighbours !== undefined && graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
+            this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
                 //this.state.graph.scenes[sceneUuid]); //TODO: qui non faccio più caricare le scene adiacenti (invece le carica lo stesso), (ma comunque) risolve il bug del video bloccato, da testare
                 //se questo sistema non funziona, commentare la riga sopra e decommentare le 2 sotto
-                this.state.graph.neighbours[sceneUuid].includes(uuid)
+                graph.neighbours[sceneUuid].includes(uuid)
                 || uuid === sceneUuid);
             console.log("neighbours di sceneUuid: ", this.state.graph.neighbours[sceneUuid])
 
+            let textObj = graph.objects.get(textboxUuid); //recupero l'oggetto di testo
+            if (textObj == undefined)
+            { //per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
+                textObj = textboxUuid;
+            }
+            console.log(textObj)
+            if (textObj) //se l'oggetto esiste genero la Entity
+            { //TODO: trovare un layout adatto (e automatico) alla textbox nella scena
+                textProperties = "baseline: center; side: double; wrapCount: 50" +
+                    "; align: " + textObj.properties.alignment +
+                    "; value:" + textObj.properties.string;
+                textboxEntity =
+                    <Entity visible={true} geometry="primitive: plane; width: 0.5; height: auto" position={'0 -0.22 -0.3'}
+                            id={'textbox'} material={'shader: flat; opacity: 1; color: black;'}
+                            text={textProperties}  >
+                    </Entity>
+            }
         }
         else
         {
@@ -466,6 +495,7 @@ export default class VRScene extends React.Component {
         let is3dScene = this.props.scenes.get(sceneUuid).type ===Values.THREE_DIM; //Variabile per sapere se la scena e' di tipo 2D o 3D
         let embedded = this.props.debug; //Varibile per sapere se siamo in debug mode
         let vr_mode_ui = this.props.debug ? "enabled : false": false;
+
         //<div id="mainscene2" tabIndex="0">
         //</div>
         //All'interno della render vengono caricati due tipi di cursori, uno per le scene 2D e uno per le scene 3D, quando si passa da una
@@ -482,6 +512,8 @@ export default class VRScene extends React.Component {
                     <Entity primitive="a-camera" key="keycamera" id="camera"
                             pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
                             look-controls="false" wasd-controls="false">
+
+                        {textboxEntity}
 
                             <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
                                     fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
