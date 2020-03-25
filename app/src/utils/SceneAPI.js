@@ -105,11 +105,13 @@ function getByName(name, order = null, gameId=null, creation = true) {
 
             //TODO decommentare questa porzione quando si sarà inserita textboxes nel body, credo sia roba di db
             // generates textboxes and saves them to the objects store
-            response.body.textboxes.map((textbox) => {
-                textboxes_uuids.push(textbox.uuid); //save uuid
-                let tx = Textbox(getProperties(textbox));
-                Actions.receiveObject(tx, scene_type);
-            });
+            if(response.body.textboxes) {
+                response.body.textboxes.map((textbox) => {
+                    textboxes_uuids.push(textbox.uuid); //save uuid
+                    let tx = Textbox(getProperties(textbox));
+                    Actions.receiveObject(tx, scene_type);
+                });
+            }
 
             // generates rules and saves them to the rules store
             response.body.rules.map(rule => {
