@@ -40,7 +40,7 @@ const Scene = Immutable.Record({
         locks: [],
         points: [],
         counters: [],
-        textboxs: [],
+        textboxes: [],
     },
     rules : [], // uuid list
     audios : [], // uuid list
