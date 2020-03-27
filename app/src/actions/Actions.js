@@ -68,7 +68,8 @@ const Actions = {
 
     debugModeOn(){
         AppDispatcher.dispatch({
-            type: ActionTypes.DEBUG_MODE_ON,
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.DEBUG_MODE_ON
         })
     },
 

@@ -29,7 +29,7 @@ function getAllSaves(session, gameID) {
         if (!_.isEmpty(result.records)) {
             return multipleSaves(result);
         } else {
-            throw {message: "gameID not found", status: 404}
+            return [];
         }
     });
 }
