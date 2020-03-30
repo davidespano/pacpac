@@ -21,7 +21,7 @@ const app = express()
     , api = express();
 
 //__dirname = "/Users/davide/WebstormProjects/pacpac-data/media/"
-
+//commento per commit
 app.use(nconf.get('api_path'), api);
 
 const swaggerDefinition = {
