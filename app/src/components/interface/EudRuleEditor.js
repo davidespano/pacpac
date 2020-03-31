@@ -1245,7 +1245,15 @@ class EudAutoComplete extends Component {
     }
 
     render() {
-        let items = getCompletions({
+        /*
+        graph: int che mi serve per capire se devo usare il grafo dei suggerimenti o meno
+        0 -> non devo usare il grafo,
+        1-> devo usare il grafo
+        2-> devo usare il grafo ma con una singola scena e senza altri elementi (es. object) objects scene only
+        3-> devo usare il grafo con una singola scena e con altri elementi (es. subject)
+        */
+
+        let  {items: items, graph: graph} = getCompletions({
             interactiveObjects: this.props.interactiveObjects,
             subject: this.props.subject,
             verb: this.props.verb,
@@ -1259,30 +1267,46 @@ class EudAutoComplete extends Component {
         });
         let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
 
-        let graph=false; //bool che mi serve per capire se devo usare il grafo dei suggerimenti o meno
+        if(this.props.interactiveObjects.size===0){
+            graph=0;
+        }
         if (li.toArray()[0]) { //controllo che ci siano elementi da mostrare
             let info = li.toArray()[0].props.item;
-
-            //soggetto prima parte della frase, essendoci solo video, audio e soggetti
-            if (this.props.role === "object" || (this.props.role === "subject" && this.props.rulePartType !== 'event')) {
-                if(this.props.role ==="object") {
-                    if(info.type==="2D"||info.type==="3D" || info.type==="value" || info.type ==="video" || info.type ==="audio"){
-                       graph=false;
-                    }
-                    else graph=true;
-                }
-                else graph=true;
-            } else { graph=false;
-            }
         }
-        else graph=false;
-        if(graph){
-            console.log("if graph")
+        else graph=0;
+        if(graph !=0){ //ho bisogno del grafo
+
+            //in questi due casi gli oggetti fanno tutti parte della scena corrente
+            if(graph===2){
+                //Case object scene/rules object only
+                return <div className={"eudCompletionPopupForGraph"}>
+                    <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
+                    <ul>
+                        {li}
+                    </ul>
+                </div>
+            }
+
+            //in questi due casi ci sono oggetti che fanno parte della scena corrente e altri (audio, video ...)
+            //aggiungo manualmente gli oggetti della scena
+            if(graph===3){
+                return <div className={"eudCompletionPopupForGraph"}>
+                    <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
+                    <ul>
+                        {listableItems(sceneObjectsOnly(this.props).valueSeq(), this.props)}
+                    </ul>
+
+                    <ul>
+                        <div className={"line"}/>
+                        {li}
+                    </ul>
+                </div>
+            }
+
             //Se ho necessità di un grafo devo scindere gli items in due gruppi: un gruppo con gli Interactive object
             //che hanno bisogno di un nome della scena, e tutti gli altri
-            let classes = this.props.scenes.size;
 
-            //Primo gruppo, gli oggetti appartenenti alle scene
+            //Primo gruppo, TUTTI gli oggetti appartenenti alle scene
             let sceneObj = this.props.interactiveObjects.filter(x =>
                 x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST);
             //mi prendo le scene coinvolte
@@ -1298,7 +1322,7 @@ class EudAutoComplete extends Component {
                 let objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
                 let scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
                     return (<React.Fragment>
-                        {scene_name}
+                        <span> {scene_name} </span>
                         <ul>
                             {objects}
                         </ul>
@@ -1315,7 +1339,7 @@ class EudAutoComplete extends Component {
                     </div>
             )
         }
-        else {
+        else { //caso di verbi, operatori etc..
             return <div className={"eudCompletionPopup"}>
                 <ul>
                     {li}
@@ -1417,6 +1441,7 @@ class EudAutoCompleteItem extends Component {
     }
 
     changeSelection() {
+        //action: uuid regola che modifico, item: uuid elemento che seleziono
         const ruleUpdate = {
             action: this.props.verb,
             item: this.props.item.uuid
@@ -1432,23 +1457,24 @@ class EudAutoCompleteItem extends Component {
  *          verb -> the type of action the subject executes
  *          interactiveObjects -> the list of the objects in the game
  *          rulePartType -> type of rule portion we are returning the completions for
- * @returns {the list of possible completions}
+ * @returns {the list of possible completions, int that indicates if a graph is necessary}
  */
 function getCompletions(props) {
-
+    let graph=0;
     switch (props.role) {
         case "subject":
-            if(props.rulePartType === 'event'){ // event subject: player, game, audios and videos
+            graph=1;
+            if(props.rulePartType === 'event'){ // event subject: player, game, audios videos, scene objects
                 //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
-                //merge(sceneObjectsOnly(props)).?
-                let subjects = props.assets.filter(x => x.type === 'video').merge(props.audios).set(
+                //il merge delle scene lo faccio nella render con graph
+                graph=3;
+                let items = props.assets.filter(x => x.type === 'video').merge(props.audios).set(
                     InteractiveObjectsTypes.PLAYER,
                     InteractiveObject({
                         type: InteractiveObjectsTypes.PLAYER,
                         uuid: InteractiveObjectsTypes.PLAYER,
                         name: ""
                     }),
-
                 ).sort(function (a) {
                     if(a.type=== "PLAYER"){
                         return -1
@@ -1456,12 +1482,12 @@ function getCompletions(props) {
                     else
                         return 1;
                 });
-
-                return subjects;
+                return {items, graph};
             }
-            //soggetto nella seconda parte della frase
-            let subjects = props.interactiveObjects.filter(x =>
-                x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
+            else{
+                //soggetto nella seconda parte della frase
+                let subjects = props.interactiveObjects.filter(x =>
+                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
                     InteractiveObjectsTypes.GAME,
                     InteractiveObject({
                         type: InteractiveObjectsTypes.GAME,
@@ -1469,34 +1495,40 @@ function getCompletions(props) {
                         name: ""
                     })).set(
                     InteractiveObjectsTypes.PLAYER,
-                        InteractiveObject({
-                            type: InteractiveObjectsTypes.PLAYER,
-                            uuid: InteractiveObjectsTypes.PLAYER,
-                            name: ""
-                            })
+                    InteractiveObject({
+                        type: InteractiveObjectsTypes.PLAYER,
+                        uuid: InteractiveObjectsTypes.PLAYER,
+                        name: ""
+                    })
                 );
-            let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
-            return result.sort(function (a) {
-                //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
-                // e il player
-                if(sceneObjectsOnly(props).includes(a)|| a.type=== "PLAYER"){
-                    return -1
-                }
-                else
-                    return 1;
-            });
+                let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
+                let items= result.sort(function (a) {
+                    //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
+                    // e il player
+                    if(sceneObjectsOnly(props).includes(a)|| a.type=== "PLAYER"){
+                        return -1
+                    }
+                    else
+                        return 1;
+                });
+                return {items, graph}
+            }
+
 
         case "object":
             // the CLICK action is restricted to current scene objects only, might move to switch case later
             if(props.verb.action === RuleActionTypes.CLICK){
                 console.log("Case object scene object only: ", sceneObjectsOnly(props));
-                return sceneObjectsOnly(props);
+                graph = 2;
+                let items = sceneObjectsOnly(props);
+                return {items, graph};
             }
 
 
             if(props.verb.action === RuleActionTypes.TRIGGERS){
-                let sceneRules = sceneRulesOnly(props);
-                return sceneRules
+                graph = 2;
+                let items = sceneRulesOnly(props);
+                return {items, graph}
             }
             
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
@@ -1506,8 +1538,9 @@ function getCompletions(props) {
                 let objType = RuleActionMap.get(props.verb.action).obj_type;
                 allObjects = allObjects.filter(x => objType.includes(x.type));
             }
+
             //complemento oggetto, ordino sempre sulla base degli oggetti nella scena
-            return allObjects.sort(function (a) {
+            let items= allObjects.sort(function (a) {
                 if(sceneObjectsOnly(props).includes(a)){
                     return -1
                 }
@@ -1515,33 +1548,59 @@ function getCompletions(props) {
                     return 1;
             });
 
+            //ulteriore controllo per vedere se nella lista restituita ci sono oggetti
+            if(items.some(a => typeof a == props.interactiveObjects)){
+                graph = 2;
+            }
+
+            //se il verbo è spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
+            // spostare nella scena in cui sono già)
+            if(props.verb.action === RuleActionTypes.TRANSITION){
+                let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
+                items= items.filter(x=>
+                    !x.includes(current_scene_uuid)
+                );
+            }
+
+            return {items, graph};
+
         case "operation":
             if(props.rulePartType === 'event'){
                 if(props.subject){
-                    return RuleActionMap
+                    let items = RuleActionMap
                         //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
                         .filter(x => x.subj_type.includes(props.subject.type));
-                }
 
-                return RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
+                    return {items, graph}
+                }
+                let items = RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
+                return {items, graph};
             }
             if(props.subject){
                 //se ho come soggetto il gioco allora mostro solo avvia come verbo
                 if(props.subject.type === InteractiveObjectsTypes.GAME){
-                    return RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
+                    let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
+                    return {items, graph};
                 }
+                let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
+                return {items, graph};
+            }
+            else{
+                let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
+                return {items, graph};
             }
 
-            return props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
-
-        case "operator":
-            return props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
-        case 'value':
-            return props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
+        case "operator":{
+            let items = props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
+            return {items, graph};
+        }
+        case 'value':{
+            let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
+            return {items, graph};
+        }
     }
 
 }
-
 
 function filterValues(subject, verb) {
     let v = ValuesMap;
