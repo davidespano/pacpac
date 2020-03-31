@@ -93,7 +93,6 @@ function getDebugState(req, res, next){
         .catch(next);
 }
 
-
 function getAllSaves(req, res, next) {
     const gameID = req.params.gameID;
 

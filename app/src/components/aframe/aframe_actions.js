@@ -424,7 +424,7 @@ function transition(actualScene, targetScene, duration, direction){
 
     let actualSky = document.querySelector('#' + actualScene.name);
     let actualSceneVideo = document.getElementById(actualScene.img);
-    if(store_utils.getFileType(actualScene.img) === 'video')
+    if(store_utils.getFileType(actualScene.img) === 'video' && actualSceneVideo)
         actualSceneVideo.pause(); //se è un video lo pauso
     let targetSky = document.querySelector('#' + targetScene.name);
     let targetSceneVideo = document.getElementById(targetScene.img);

@@ -60,7 +60,7 @@ export default class VRScene extends React.Component {
             graph: gameGraph,
             activeScene: scene,
             rulesAsString: "[]",
-            camera: {},
+            camera: new THREE.Vector3(),
             stats: false,
         };
         //console.log(props)
@@ -113,7 +113,7 @@ export default class VRScene extends React.Component {
         {
             let sphere = document.getElementById(this.state.activeScene.name)
             let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-            console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime, "\ncurrent time data = ", sphere.components["material"].data.src.currentTime);
+            //console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime, "\ncurrent time data = ", sphere.components["material"].data.src.currentTime);
             //TODO capire perchè la prima scena caricata non è centrata, decommentando le due righe sotto si può vedere che la posizione è corretta
             //let sky = document.getElementById(this.state.activeScene.name)
             //console.log(sky.getAttribute("position"));
@@ -178,7 +178,6 @@ export default class VRScene extends React.Component {
         this.setState({
             graph: gameGraph,
             activeScene: scene,
-            currentScene: scene,
             runState: runState,
             audios: audios,
         });
@@ -365,7 +364,7 @@ export default class VRScene extends React.Component {
 
     /**
      * Funzione che Crea lo stato di gioco iniziaale, cicla tutte le scene e tutti gli oggetti all'interno di una scena
-     * @param gameGraph Graffo con tutte le informazioni del gioco, scene, oggetti
+     * @param gameGraph Grafo con tutte le informazioni del gioco, scene, oggetti
      */
     createGameState(gameGraph){
         //
@@ -396,7 +395,7 @@ export default class VRScene extends React.Component {
             scenes: this.props.scenes.toArray(),
             graph: this.state.graph,
             activeScene: this.state.graph.scenes[newActiveScene],
-            currentScene: this.state.graph.scenes[newActiveScene]
+            //currentScene: this.state.graph.scenes[newActiveScene]
         });
         //qui faccio partire il video dopo il cambio di scena
         let sceneCanvas = document.getElementById(this.state.activeScene.name)
@@ -436,6 +435,7 @@ export default class VRScene extends React.Component {
     }
 
     render(){
+        if(!this.state) return null;
         let sceneUuid = null;
         //Verifico se sono in debug mode e prendo la scena corrente di conseguenza
         if(this.props.debug){
@@ -443,7 +443,7 @@ export default class VRScene extends React.Component {
         }else{
             sceneUuid = this.state.activeScene.uuid;
         }
-        console.log("uuid scena render: ", sceneUuid)
+        console.log("uuid scena render: ", sceneUuid);
 
         let textProperties;
         let textboxEntity = null;
