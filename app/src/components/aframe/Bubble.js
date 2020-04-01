@@ -239,6 +239,7 @@ export default class Bubble extends Component
         let camera = document.getElementById('camera');
         //Genero la bolla per scena 3D in gameplay
         if(is3Dscene && !this.props.editMode){
+            console.log("genero bolla 3D play mode")
             sceneRender = (
                 <Entity>
                         <Entity visible={isLoadingSphereVisible} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
@@ -254,6 +255,7 @@ export default class Bubble extends Component
             )
         }
         else if(is3Dscene && this.props.editMode){ //genero bolla per scena 3D in geometry mode
+            console.log("genero bolla 3D edit mode")
             sceneRender = (
                 <Entity>
                     <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
@@ -267,16 +269,26 @@ export default class Bubble extends Component
         else if (!is3Dscene && !this.props.editMode){ //genero bolla per scena 2D in gameplay
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
+            console.log("genero bolla 2D play mode")
+            console.log("is3Dscene: ", is3Dscene)
+            console.log("this.props.editMode: ", this.props.editMode)
 
             let Width = this.props.assetsDimention.width ;
             let Height = this.props.assetsDimention.height ;
 
             let bounds = calculate2DSceneImageBounds(Width, Height);
-            //TODO perchè viene eseguito per tutte le scene del gioco ad ogni cambio di scena??
             console.log("sto calcolando il bound di ", this.props.scene.name)
             let canvasWidth = bounds.w;
             let canvasHeight = bounds.h;
-
+            //TODO ridimensionamento textbox assoluto, ora avviene solo in verticale
+            let geometryProperties = "primitive: plane; width: "+ canvasWidth +"; height: auto"
+            let textbox = document.getElementById("textbox")
+            console.log(textbox)
+            if (textbox != null)
+            {
+                console.log("sto cambiando la dimensione della textbox")
+                textbox.setAttribute("geometry", geometryProperties)
+            }
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity>
@@ -288,7 +300,6 @@ export default class Bubble extends Component
                             id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
                             material={material} play_video={active} position={positionPlane} >
                         {curves}
-
                     </Entity>
                 </Entity>
             )
@@ -296,7 +307,7 @@ export default class Bubble extends Component
         else if (!is3Dscene && this.props.editMode){
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
-
+            console.log("genero bolla 2D edit mode")
             let Width = this.props.assetsDimention.width ;
             let Height = this.props.assetsDimention.height ;
             let bounds = calculate2DSceneImageBounds(Width, Height);

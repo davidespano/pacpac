@@ -319,6 +319,8 @@ function getObjImg(objType) {
             return "icons/icons8-counter-100.png";
         case InteractiveObjectsTypes.TEXTBOX:
             return "icons/icons8-text-100.png";
+        case InteractiveObjectsTypes.TIMER:
+            return  "icons/icons8-cronometro-100.png"
         default:
             return "icons/icons8-plus-math-filled-100.png";
     }

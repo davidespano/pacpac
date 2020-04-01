@@ -329,16 +329,21 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </div>
             );
-        case InteractiveObjectsTypes.TEXTBOX: //TODO completare la visualizzazione delle proprietà della textbox
+        case InteractiveObjectsTypes.TEXTBOX:
             return (
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Testo:</label>
                     {richText(props,object)}
                 </React.Fragment>
             );
+        case InteractiveObjectsTypes.TIMER:
+            return (
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Timer:</label>
+                </React.Fragment>
+            );
         default:
             return(<div>Error!</div>);
-
     }
 }
 
@@ -482,14 +487,14 @@ function objectTypeToString(objectType) {
             return "Selettore";
         case InteractiveObjectsTypes.SWITCH:
             return "Interruttore";
-        case InteractiveObjectsTypes.TIMER:
-            return "Timer";
         case InteractiveObjectsTypes.KEY:
             return "Chiave";
         case InteractiveObjectsTypes.TRANSITION:
             return "Transizione";
         case InteractiveObjectsTypes.TEXTBOX:
             return "Riquadro di testo";
+        case InteractiveObjectsTypes.TIMER:
+            return "Timer";
         case RuleActionTypes.RULES:
             return "Regola";
         default:

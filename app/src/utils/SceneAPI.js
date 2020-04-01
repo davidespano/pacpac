@@ -19,6 +19,7 @@ import Counter from "../interactives/Counter";
 import ScenesStore from "../data/ScenesStore";
 import EditorStateStore from "../data/EditorStateStore";
 import Textbox from "../interactives/Textbox";
+import Timer from "../interactives/Timer";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -52,10 +53,9 @@ function getByName(name, order = null, gameId=null, creation = true) {
             let points_uuids = [];
             let counters_uuids = [];
             let textboxes_uuids = [];
-
+            let timers_uuids = [];
 
             let scene_type = response.body.type;
-
 
             // generates transitions and saves them to the objects store
             response.body.transitions.map((transition) => {
@@ -103,13 +103,20 @@ function getByName(name, order = null, gameId=null, creation = true) {
                 });
             }
 
-            //TODO decommentare questa porzione quando si sarà inserita textboxes nel body, credo sia roba di db
             // generates textboxes and saves them to the objects store
             if(response.body.textboxes) {
                 response.body.textboxes.map((textbox) => {
                     textboxes_uuids.push(textbox.uuid); //save uuid
                     let tx = Textbox(getProperties(textbox));
                     Actions.receiveObject(tx, scene_type);
+                });
+            }
+
+            if(response.body.timers) {
+                response.body.timers.map((timer) => {
+                    timers_uuids.push(timer.uuid); //save uuid
+                    let tm = Timer(getProperties(timer));
+                    Actions.receiveObject(tm, scene_type);
                 });
             }
 
@@ -194,6 +201,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     points: points_uuids,
                     counters: counters_uuids,
                     textboxes: textboxes_uuids,
+                    timers: timers_uuids,
                 },
                 rules : rules_uuids,
                 audios : audio_uuids,
@@ -245,6 +253,7 @@ function createScene(name, img, index, type, tag, order) {
                     points: [],
                     counters: [],
                     textboxes: [],
+                    timers: [],
                 }
             });
 
@@ -404,9 +413,15 @@ function readScene(gameGraph, raw_scenes) {
             return s;
         });
 
-        //TODO [Riccardo]: decommentare quando il componente sarà pronto (anche più in basso)
         const textboxes = s.textboxes.map(tx => {
             let t = getProperties(tx);
+            gameGraph['objects'].set(t.uuid, t);
+            return t;
+        });
+
+        // generates timers
+        const timers = s.timers.map(tm => {
+            let t = getProperties(tm);
             gameGraph['objects'].set(t.uuid, t);
             return t;
         });
@@ -490,6 +505,7 @@ function readScene(gameGraph, raw_scenes) {
                 points: points,
                 counters: counters,
                 textboxes: textboxes,
+                timers: timers,
             },
             rules: rules,
             audios: audios,
