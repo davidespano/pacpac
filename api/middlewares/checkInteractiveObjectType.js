@@ -1,6 +1,6 @@
 function checkInteractiveObjectType(req, res, next, objType) {
     if (objType) {
-        const validObjs = ['transitions','switches','collectable_keys','locks','points','counters',"textboxes"];
+        const validObjs = ['transitions','switches','collectable_keys','locks','points','counters',"textboxes, timers"];
         if (!validObjs.includes(objType)) {
             res.sendStatus(404);
         }
@@ -13,6 +13,7 @@ function checkInteractiveObjectType(req, res, next, objType) {
                 points: 'PointOfInterest',
                 counters: 'Counter',
                 textboxes: "Textbox",
+                timers: "Timer"
             };
             req.params.objectType = conversion[objType];
             next();

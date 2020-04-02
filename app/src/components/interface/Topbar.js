@@ -162,7 +162,7 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     //TODO decommentare quando il componente timer sarà pronto
-                                    //createObject(props, InteractiveObjectsTypes.TIMER);
+                                    createObject(props, InteractiveObjectsTypes.TIMER);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)}/>
                             <figcaption>Timer</figcaption>

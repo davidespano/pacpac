@@ -334,6 +334,7 @@ function generateSpecificProperties(object, objectScene, props){
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Testo:</label>
                     {richText(props,object)}
+
                 </React.Fragment>
             );
         case InteractiveObjectsTypes.TIMER:
@@ -559,7 +560,7 @@ function richText(props, object){
             </button>
 
             </div>
-            <textarea id={"textboxString"}
+            <textarea id={"textboxString"} maxlength={170}
                       onBlur={()=> {
                           let value = document.getElementById("textboxString").value;
                           interface_utils.setPropertyFromValue(object, 'string', value, props)
