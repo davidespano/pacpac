@@ -4,11 +4,11 @@ import Values from "../rules/Values";
 
 const Textbox = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.TEXTBOX,
-    properties : {
-            string: "",
+    properties : {//valori di riferimento, quelli di default si cambiano in topbar.js
+            string: "testo",
             alignment: Values.TEXTLEFT,
-            font: null,
-            size: null
+            fontSize: 5,
+            boxSize: 5,
     },
     ...defaultValues
 });

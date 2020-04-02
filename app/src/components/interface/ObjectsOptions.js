@@ -329,18 +329,56 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </div>
             );
-        case InteractiveObjectsTypes.TEXTBOX:
+        case InteractiveObjectsTypes.TEXTBOX://TODO check dimensione tra 1 e 10
             return (
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Testo:</label>
                     {richText(props,object)}
 
+                    <label className={'options-labels'}>Dimensione testo:</label>
+                    <div className={'flex'}>
+                        <div id={"textSize"}
+                             className={"propertyForm-right"}
+                             contentEditable={true}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'fontSize',"textSize", props)}
+                             onInput={() => interface_utils.onlyNumbers("textSize")}
+                        >
+                            {object.properties.fontSize}
+                        </div>
+                        <span className={'measure-units'}>(1 - 10)</span>
+                    </div>
+
+                    <label className={'options-labels'}>Dimensione box:</label>
+                    <div className={'flex'}>
+                        <div id={"boxSize"}
+                             className={"propertyForm-right"}
+                             contentEditable={true}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'boxSize',"boxSize", props)}
+                             onInput={() => interface_utils.onlyNumbers("boxSize")}
+                        >
+                            {object.properties.boxSize}
+                        </div>
+                        <span className={'measure-units'}>(1 - 10)</span>
+                    </div>
                 </React.Fragment>
             );
         case InteractiveObjectsTypes.TIMER:
             return (
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Timer:</label>
+
+                    {/*<label className={'options-labels'}>Tempo:</label>*/}
+                    {/*<div className={'flex'}>*/}
+                    {/*    <div id={"timerDuration"}*/}
+                    {/*         className={"propertyForm-right"}*/}
+                    {/*         contentEditable={true}*/}
+                    {/*         onBlur={()=> interface_utils.setPropertyFromId(object,'time',"timerDuration", props)}*/}
+                    {/*         onInput={() => interface_utils.onlyNumbers("timerDuration")}*/}
+                    {/*    >*/}
+                    {/*        {object.properties.duration}*/}
+                    {/*    </div>*/}
+                    {/*    <span className={'measure-units'}>ms</span>*/}
+                    {/*</div>*/}
                 </React.Fragment>
             );
         default:
@@ -560,7 +598,7 @@ function richText(props, object){
             </button>
 
             </div>
-            <textarea id={"textboxString"} maxlength={170}
+            <textarea id={"textboxString"} maxlength={258}
                       onBlur={()=> {
                           let value = document.getElementById("textboxString").value;
                           interface_utils.setPropertyFromValue(object, 'string', value, props)

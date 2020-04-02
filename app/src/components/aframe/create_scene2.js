@@ -476,13 +476,14 @@ export default class VRScene extends React.Component {
 
             if (textObj) //se l'oggetto esiste genero la Entity
             {
-                let textProperties = "baseline: center; side: double; wrapCount: 50" +
+                let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*5)) +
                     "; align: " + textObj.properties.alignment +
                     "; value:" + textObj.properties.string;
-                let geometryProperties = "primitive: plane; width: 0.5; height: auto"
+                let geometryProperties = "primitive: plane; width: " + (0.5 + (textObj.properties.boxSize/20))+
+                    "; height: auto"
                 textboxEntity =
-                    <Entity visible={true} geometry={geometryProperties} position={'0 -0.22 -0.3'}
-                            id={'textbox'} material={'shader: flat; opacity: 1; color: black;'}
+                    <Entity visible={true} geometry={geometryProperties} position={'0 -0.214 -0.3'}
+                            id={'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
                             text={textProperties}>
                     </Entity>
             }

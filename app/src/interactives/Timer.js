@@ -6,7 +6,7 @@ import Values from "../rules/Values";
 const Timer = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.TIMER,
     properties : {
-
+        time : 1000,
     },
     ...defaultValues
 });

@@ -288,10 +288,10 @@ function createObject(props, type){
                         uuid: uuid.v4(),
                         name: name,
                         properties: {
-                            string: null,
-                            alignment: null,
-                            font: null,
-                            size: null,
+                            string: 'testo',
+                            alignment: Values.TEXTLEFT,
+                            fontSize: 5,
+                            boxSize: 5,
                         }
                     });
                 }
