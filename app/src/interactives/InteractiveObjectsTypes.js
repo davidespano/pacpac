@@ -10,9 +10,9 @@ const InteractiveObjectsTypes = {
     POINT_OF_INTEREST: 'POINT_OF_INTEREST',
     SELECTOR : 'SELECTOR',
     SWITCH : 'SWITCH',
-    TIMER : 'TIMER',
     TRANSITION : 'TRANSITION',
     TEXTBOX : 'TEXTBOX',
+    TIMER : 'TIMER',
     GAME : 'GAME',
     RULES: 'RULES',
 };

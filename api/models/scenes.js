@@ -45,6 +45,7 @@ function buildScene(record) {
         scene.points = [];
         scene.counters = [];
         scene.textboxes = [];
+        scene.timers = [];
 
         objects.forEach((o) => {
             const obj = new Interactiveobject(o);
@@ -64,6 +65,8 @@ function buildScene(record) {
                     scene.counters.push(obj); break;
                 case "TEXTBOX":
                     scene.textboxes.push(obj); break;
+                case "TIMER":
+                    scene.timers.push(obj); break;
             }
         })
     }catch(error){console.error(error)}

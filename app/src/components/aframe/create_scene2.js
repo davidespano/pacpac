@@ -23,6 +23,7 @@ import ActionTypes from "../../actions/ActionTypes";
 import EditorState from "../../data/EditorState";
 import interface_utils from "../interface/interface_utils";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
+import {calculate2DSceneImageBounds} from "./aframe_curved";
 const soundsHub = require('./soundsHub');
 const resonance = require('./Audio/Resonance');
 const THREE = require('three');
@@ -40,7 +41,7 @@ let sceneLoaded = false;
 
 export default class VRScene extends React.Component {
 
-
+    //TODO: rimuovere currentscene o activescene
     constructor(props) {
         super(props);
 
@@ -136,6 +137,7 @@ export default class VRScene extends React.Component {
                 loadingsphere.setAttribute('visible', 'false');
             }
         }
+
     }
 
     /**
@@ -445,7 +447,6 @@ export default class VRScene extends React.Component {
         }
         console.log("uuid scena render: ", sceneUuid);
 
-        let textProperties;
         let textboxEntity = null;
         let textboxUuid = this.state.activeScene.objects.textboxes[0]
         let graph = this.state.graph;
@@ -464,7 +465,7 @@ export default class VRScene extends React.Component {
                 //se questo sistema non funziona, commentare la riga sopra e decommentare le 2 sotto
                 graph.neighbours[sceneUuid].includes(uuid)
                 || uuid === sceneUuid);
-            console.log("neighbours di sceneUuid: ", this.state.graph.neighbours[sceneUuid])
+            // console.log("neighbours di sceneUuid: ", this.state.graph.neighbours[sceneUuid])
 
             let textObj = graph.objects.get(textboxUuid); //recupero l'oggetto di testo
             if (textObj == undefined)
@@ -472,15 +473,17 @@ export default class VRScene extends React.Component {
                 textObj = textboxUuid;
             }
             console.log(textObj)
+
             if (textObj) //se l'oggetto esiste genero la Entity
-            { //TODO: trovare un layout adatto (e automatico) alla textbox nella scena
-                textProperties = "baseline: center; side: double; wrapCount: 50" +
+            {
+                let textProperties = "baseline: center; side: double; wrapCount: 50" +
                     "; align: " + textObj.properties.alignment +
                     "; value:" + textObj.properties.string;
+                let geometryProperties = "primitive: plane; width: 0.5; height: auto"
                 textboxEntity =
-                    <Entity visible={true} geometry="primitive: plane; width: 0.5; height: auto" position={'0 -0.22 -0.3'}
+                    <Entity visible={true} geometry={geometryProperties} position={'0 -0.22 -0.3'}
                             id={'textbox'} material={'shader: flat; opacity: 1; color: black;'}
-                            text={textProperties}  >
+                            text={textProperties}>
                     </Entity>
             }
         }

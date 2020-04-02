@@ -20,7 +20,7 @@ import interface_utils from "./interface_utils";
 import Counter from "../../interactives/Counter";
 import Values from "../../rules/Values";
 import Textbox from "../../interactives/Textbox";
-
+import Timer from "../../interactives/Timer";
 
 
 let uuid = require('uuid');
@@ -154,12 +154,20 @@ function TopBar(props){
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //TODO decommentare quando il componente textbox sarà pronto
                                     createObject(props, InteractiveObjectsTypes.TEXTBOX);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TEXTBOX)}/>
                             <figcaption>Testo</figcaption>
                         </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    //TODO decommentare quando il componente timer sarà pronto
+                                    //createObject(props, InteractiveObjectsTypes.TIMER);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)}/>
+                            <figcaption>Timer</figcaption>
+                        </figure>
+
                     </div>
                 </div>
                 <div className={"tab-pane fade"}
@@ -292,6 +300,13 @@ function createObject(props, type){
                     alert("Hai già un oggetto textbox in questa scena")
                     return;
                 }
+                break;
+            case InteractiveObjectsTypes.TIMER:
+                name = scene.name + '_tm' + (scene.objects.timers.length + 1);
+                obj = Timer({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
                 break;
             default:
                 return;

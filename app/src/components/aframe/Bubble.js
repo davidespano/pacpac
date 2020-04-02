@@ -77,7 +77,6 @@ export default class Bubble extends Component
                         if (media !== null)
                         {
                             document.getElementById("media_" + obj.uuid).currentTime = 0; //[Vittoria] riavvolge il video
-                            console.log ("riavvolgo bolla adiacente");
                         }
                     });
                 }
@@ -272,11 +271,16 @@ export default class Bubble extends Component
             let Height = this.props.assetsDimention.height ;
 
             let bounds = calculate2DSceneImageBounds(Width, Height);
-            //TODO perchè viene eseguito per tutte le scene del gioco ad ogni cambio di scena??
             console.log("sto calcolando il bound di ", this.props.scene.name)
             let canvasWidth = bounds.w;
             let canvasHeight = bounds.h;
-
+            //TODO ridimensionamento textbox assoluto, ora avviene solo in verticale
+            let geometryProperties = "primitive: plane; width: "+ canvasWidth +"; height: auto"
+            let textbox = document.getElementById("textbox")
+            if (textbox != null)
+            {
+                textbox.setAttribute("geometry", geometryProperties)
+            }
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity>
@@ -288,7 +292,6 @@ export default class Bubble extends Component
                             id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
                             material={material} play_video={active} position={positionPlane} >
                         {curves}
-
                     </Entity>
                 </Entity>
             )
@@ -296,7 +299,6 @@ export default class Bubble extends Component
         else if (!is3Dscene && this.props.editMode){
             //TODO aggiungere il controllo del ridimensionamento della canvas
             //TODO trovare una formula per il calcolo della dimensione del piano
-
             let Width = this.props.assetsDimention.width ;
             let Height = this.props.assetsDimention.height ;
             let bounds = calculate2DSceneImageBounds(Width, Height);
