@@ -449,7 +449,7 @@ export default class VRScene extends React.Component {
 
         let textboxEntity = null;
         let textboxUuid = this.state.activeScene.objects.textboxes[0]
-        let graph = this.state.graph
+        let graph = this.state.graph;
         //TODO: rimuovere un po di console log
 
         // console.log(this)

@@ -82,7 +82,8 @@ function objPropsView(props) {
                             objGeometry.setAttribute('material', 'color', 'white');
                         interface_utils.setClassStyle(".eudRule", "background: ");
                         //props.updateCurrentScene(props.editor.debugFromScene);
-                        camera.setAttribute("pac-look-controls", "pointerLockEnabled: true");
+                        //camera.setAttribute("pac-look-controls", "pointerLockEnabled: true");
+                        props.updateCurrentObject(null);
                     }}>
                     <img className={"action-buttons"} src={"icons/icons8-go-back-50.png"}
                          alt={'Torna all\'elenco degli oggetti'}/>
@@ -239,6 +240,7 @@ function listCurrentSceneObjs(scene, props) {
                             if (scene.uuid !== props.scenes.get(props.currentScene).uuid) {
                                 props.updateCurrentScene(scene.uuid);
                             }
+
 
                             //EditorState.debugFromScene = props.scenes.get(props.currentScene).uuid;
 

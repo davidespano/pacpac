@@ -72,14 +72,25 @@ function getAllSaves() {
                 let newSaves = null;
 
                 if (response.body && response.body !== []) {
-                    /*response.body.forEach(el => {
-                            oldSaves = EditorState.debugSaves[el.currentScene];
+                    let debugSaves = new Immutable.Map();
+
+                    response.body.forEach(el => {
+                            if(!debugSaves.contains(el.currentScene)){
+                               debugSaves = debugSaves.set(el.currentScene, new Immutable.Set());
+                            }
+                            debugSaves = debugSaves.set(
+                                el.currentScene,
+                                debugSaves.get(el.currentScene).add(el.saveName))
+                            /*oldSaves = EditorState.debugSaves[el.currentScene];
                             newSaves = new Immutable.Set(oldSaves).add(el.saveName);
                             //state = state.set(el.currentScene, newSaves)
-                            EditorState.debugSaves[el.currentScene] = newSaves;
+                            EditorState.debugSaves[el.currentScene] = newSaves;*/
                         }
-                    );*/
-                    Actions.debugSaves(response);
+                    );
+
+                    return debugSaves;
+                }else{
+                    return null;
                 }
 
 

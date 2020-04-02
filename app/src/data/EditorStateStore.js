@@ -23,7 +23,7 @@ class EditorStateStore extends ReduceStore {
                 return state.set('rightbarSelection', 'objects').set('objectNameRightbar', action.obj.name);
             case ActionTypes.AUDIO_POSITIONING:
                 return state.set('audioPositioning', action.status);
- 			case ActionTypes.COPY_RULE:
+            case ActionTypes.COPY_RULE:
                 return state.set('ruleCopy', action.rule);
             case ActionTypes.EDITOR_EXPANDED:
                 return state.set('editorExpanded', action.status);
@@ -43,6 +43,9 @@ class EditorStateStore extends ReduceStore {
                 return state.set('newAudioNameTyped', action.status);
             case ActionTypes.NEW_SCENE_NAME_TYPED:
                 return state.set('newSceneNameTyped', action.status);
+
+                // [davide] questa action qui non mi pare che serva
+/*
             case ActionTypes.DEBUG_SAVES:
                 let oldSaves = null;
                 let newSaves = null;
@@ -51,7 +54,7 @@ class EditorStateStore extends ReduceStore {
                 action.response.body.forEach(el => {
                         oldSaves = EditorState.debugSaves[el.currentScene];
 
-                        if(oldSaves !== null) {
+                        if (oldSaves !== null) {
                             newSaves = new Immutable.Set(oldSaves).add(el.saveName);
 
                             //state = state.set(el.currentScene, newSaves)
@@ -60,11 +63,13 @@ class EditorStateStore extends ReduceStore {
                     }
                 );
                 return state.set('debugSaves', action.response);
+
+ */
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
                 state = state.set('sceneOptions', action.scene);
 
-                if(!state.get('homeScene')){ //if there is no homeScene selected, select the first one
+                if (!state.get('homeScene')) { //if there is no homeScene selected, select the first one
                     state = state.set('homeScene', action.scene.uuid);
                     SceneAPI.setHomeScene(action.scene.uuid, false);
                 }
@@ -79,7 +84,7 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.RIGHTBAR_SELECTION:
                 return state.set('rightbarSelection', action.selection);
             case ActionTypes.SET_INTERFACE_MODE:
-                if(action.gameId){
+                if (action.gameId) {
                     state = state.set('gameId', action.gameId);
                 } else {
                     state = state.set('gameId', null);
