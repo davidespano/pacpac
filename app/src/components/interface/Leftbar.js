@@ -51,11 +51,18 @@ function Leftbar(props) {
 function contentLeftbar(props){
     let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
 
-    return props.editor.leftbarSelection === 'scenes' ? <div>
-                                                            {buttonsBar(props)}
-                                                            {list(props, path)}
-                                                        </div>
-                                                      : <SavesOptions {...props}/>
+    if (props.editor.leftbarSelection === 'scenes'){
+        return (
+            <div>
+                    {buttonsBar(props)}
+                    {list(props, path)}
+            </div>
+        );
+    }else{
+        const debugSaves = DebugAPI.getAllSaves();
+        const newProps = {debugSaves, ...props};
+        return (<SavesOptions {...newProps}/>);
+    }
 }
 
 

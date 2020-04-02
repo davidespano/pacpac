@@ -1,6 +1,5 @@
 import React from 'react';
 import Immutable from "immutable";
-import EditorState from "../../data/EditorState";
 import DebugAPI from "../../utils/DebugAPI";
 import interface_utils from "./interface_utils";
 import settings from "../../utils/settings";
@@ -11,9 +10,6 @@ const {mediaURL} = settings;
 
 function SavesOptions(props) {
     let path = `${mediaURL}${window.localStorage.getItem("gameID")}/`;
-
-    //TODO la funzione va in loop anche se è presente in index.js
-    DebugAPI.getAllSaves();
 
     return (
         <div>
@@ -39,7 +35,7 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-        if(EditorState.debugSaves !== undefined && EditorState.debugSaves[child.uuid] !== undefined) {
+        if(props.debugSaves !== undefined && props.debugSaves[child.uuid] !== undefined) {
             return (
                     <div key={child.name} className={'node_element'}>
                         <h6>Salvataggi: {child.name}</h6>
@@ -60,8 +56,8 @@ function listSaves(props, path) {
 }
 
 function listSceneSaves(props, sceneUuid) {
-    if(EditorState.debugSaves[sceneUuid]) {
-        let savesList = EditorState.debugSaves[sceneUuid].toArray();
+    if(props.debugSaves[sceneUuid]) {
+        let savesList = props.debugSaves[sceneUuid].toArray();
         return savesList.map(saveName => {
             return (
                 <div id={"saves-list" + saveName} key={saveName} className={"saves-list"} onClick={() => {
