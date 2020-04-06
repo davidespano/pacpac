@@ -290,7 +290,6 @@ function listOtherScenesObjs(props) {
  * @returns {*}
  */
 function generateSpecificProperties(object, props) {
-
     // Variabile che rappresenta le proprietà comuni a tutti gli oggetti
     let genericProperties =
         <>
