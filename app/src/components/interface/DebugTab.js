@@ -9,6 +9,7 @@ import Immutable from 'immutable'
 import DebugAPI from "../../utils/DebugAPI";
 import toString from "../../rules/toString";
 import Values from '../../rules/Values';
+import Actions from "../../actions/Actions";
 let THREE = require('three');
 
 function DebugTab(props) {
@@ -282,13 +283,32 @@ function listOtherScenesObjs(props) {
  * @returns {*}
  */
 function generateSpecificProperties(object, props) {
+    // Variabile che rappresenta le proprietà comuni a tutti gli oggetti
+    let genericProperties =
+        <>
+            <label className={'options-labels'}>Attivabilità:</label>
+            <Dropdown props={props}
+                      component={'activability'}
+                      property={object.activable}
+                      defaultValue={EditorState.debugRunState[object.uuid.toString()].activable}
+            />
+            <label className={'options-labels'}>Visibilità:</label>
+            <Dropdown props={props}
+                      component={'visibility'}
+                      property={object.visible}
+                      defaultValue={EditorState.debugRunState[object.uuid.toString()].visible}
+            />
+        </>;
+
     switch (object.type) {
-        case InteractiveObjectsTypes.TRANSITION:
-        case InteractiveObjectsTypes.LOCK:
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
+        case InteractiveObjectsTypes.TEXTBOX:
+        case InteractiveObjectsTypes.LOCK:
+        case InteractiveObjectsTypes.TRANSITION:
+        case InteractiveObjectsTypes.TIMER:
             return (
-                <div>
-                    Non ci sono proprietà da modificare
+                <div className={"options-grid"}>
+                    {genericProperties}
                 </div>
             );
         case InteractiveObjectsTypes.SWITCH:
@@ -297,14 +317,40 @@ function generateSpecificProperties(object, props) {
                     <label className={'options-labels'}>Stato:</label>
                     <Dropdown props={props} component={'on-off'}
                               defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
+
+                    {genericProperties}
                 </div>
             );
         case InteractiveObjectsTypes.KEY:
             return (
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato:</label>
-                    <Dropdown props={props} component={'collected-not'}
-                              defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
+                    <Dropdown props={props}
+                              component={'collected-not'}
+                              defaultValue={EditorState.debugRunState[object.uuid.toString()].state}
+                    />
+
+                    {genericProperties}
+                </div>
+
+            );
+        case InteractiveObjectsTypes.COUNTER:
+            return (
+                <div className={"options-grid"}>
+                    {genericProperties}
+
+                    <label className={'options-labels'}>Valore iniziale:</label>
+                    <div id={"counterValue"}
+                         className={"propertyForm-right propertyForm-right-number"}
+                         contentEditable={true}
+                         onBlur={()=> {
+                             EditorState.debugRunState[object.uuid.toString()].step = document.getElementById("counterValue").textContent;
+                             Actions.updateObject(object);
+                         }}
+                         onInput={() => interface_utils.onlyNumbers("counterValue")}
+                    >
+                        {object.properties.state}
+                    </div>
                 </div>
             );
         default:
@@ -312,7 +358,6 @@ function generateSpecificProperties(object, props) {
 
     }
 }
-
 /**
  * ToString of an RuleActionType
  * @param action
