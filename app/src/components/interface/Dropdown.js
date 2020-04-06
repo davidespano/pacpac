@@ -12,6 +12,7 @@ function Dropdown(properties){
     let props = properties.props,
         component = properties.component,
         property = properties.property;
+
     let defaultValue = getDefaultValue(props, properties.defaultValue, component);
     let [options, onChange, style] = generateOptions(props, component, property);
 
@@ -63,7 +64,12 @@ function generateOptions(props, component, property){
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        EditorState.debugRunState[obj.uuid.toString()].visible = e.value;
+                        Actions.updateObject(obj);
+                    }
+                    else
+                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 },
                 customStyle,
             ];
@@ -75,7 +81,12 @@ function generateOptions(props, component, property){
                 ],
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
-                    interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        EditorState.debugRunState[obj.uuid.toString()].activable = e.value;
+                        Actions.updateObject(obj);
+                    }
+                    else
+                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
                 },
                 customStyle,
             ];
@@ -108,6 +119,7 @@ function generateOptions(props, component, property){
                 customStyle,
             ];
         case 'collected-not':
+
             return [
                 [
                     { value: Values.COLLECTED, label: toString.valueUuidToString(Values.COLLECTED)},
@@ -231,7 +243,7 @@ function getDefaultValue(props, defaultValue, component){
                 };
             default:
                 label = toString.valueUuidToString(defaultValue);
-            }
+        }
     }
 
     return  {
