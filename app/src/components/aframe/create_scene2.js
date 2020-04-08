@@ -30,7 +30,8 @@ const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
 let sceneLoaded = false;
-
+let timerSize;
+let timerTime;
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
 // Ho l'impressione che l'attributo this.props.currentScene che viene dalla vecchia
@@ -112,6 +113,8 @@ export default class VRScene extends React.Component {
         let skysphere = document.getElementById(this.state.activeScene.img);
         if (skysphere != null) //se la skysphere ha caricato ed è stata trovata
         {
+            //TODO provare a sostituire sphere con skysphere
+            let timer = document.getElementById(this.state.activeScene.name + 'timer')
             let sphere = document.getElementById(this.state.activeScene.name)
             let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
             //console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime, "\ncurrent time data = ", sphere.components["material"].data.src.currentTime);
@@ -135,6 +138,18 @@ export default class VRScene extends React.Component {
             else if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
             {
                 loadingsphere.setAttribute('visible', 'false');
+            }
+            if (timer != null && timerTime > 0)
+            {
+                //TODO: rendere il timer una funzione
+                //TODO: alzare l'evento al termine del timer
+                timerTime = timerTime - 0.1;
+                timerTime = timerTime.toFixed(1);
+                let textProperties = "baseline: center; side: double"+
+                    "; align: center" + //timerObj.properties.alignment +
+                    "; width:" + timerSize +
+                    "; value:" + timerTime;
+                timer.setAttribute('text', textProperties)
             }
         }
 
@@ -449,6 +464,9 @@ export default class VRScene extends React.Component {
 
         let textboxEntity = null;
         let textboxUuid = this.state.activeScene.objects.textboxes[0]
+        let timerEntity = null;
+        let timerUuid = this.state.activeScene.objects.timers[0]
+
         let graph = this.state.graph;
         //TODO: rimuovere un po di console log
 
@@ -474,7 +492,14 @@ export default class VRScene extends React.Component {
             }
             console.log(textObj)
 
-            if (textObj) //se l'oggetto esiste genero la Entity
+            let timerObj = graph.objects.get(timerUuid); //recupero l'oggetto di testo
+            if (timerObj == undefined)
+            { //per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
+                timerObj = textboxUuid;
+            }
+            console.log(timerObj)
+
+            if (textObj) //se l'oggetto textbox esiste genero la Entity
             {
                 let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*5)) +
                     "; align: " + textObj.properties.alignment +
@@ -483,15 +508,32 @@ export default class VRScene extends React.Component {
                     "; height: auto"
                 textboxEntity =
                     <Entity visible={true} geometry={geometryProperties} position={'0 -0.214 -0.3'}
-                            id={'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
+                            id={this.state.activeScene.name + 'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
                             text={textProperties}>
                     </Entity>
             }
+
+            if (timerObj) //se l'oggetto timer esiste genero la Entity
+            {
+                timerSize = 0.4 + (timerObj.properties.size/20);
+                timerTime = timerObj.properties.time;
+                let textProperties = "baseline: center; side: double"+
+                    "; align: center" + //timerObj.properties.alignment +
+                    "; width:" + timerSize +
+                    "; value:" + timerTime;
+                let geometryProperties = "primitive: plane; width: 0.15" + (0.4 + (timerObj.properties.size/20))+
+                    "; height: auto"
+                timerEntity =
+                    <Entity visible={true} geometry={geometryProperties} position={'0 0.23 -0.3'}
+                            id={this.state.activeScene.name + 'timer'} material={'shader: flat; opacity: 0.85; color: black;'}
+                            text={textProperties}>
+                    </Entity>
+            }
+
         }
         else
         {
             this.currentLevel = [];
-
         }
         //Richiamo la funzione per la generazione degli assets
         //[Vittoria] gli assets vengono caricati non tutti insieme all'inizio ma quello della scena corrente e dei vicini
@@ -518,6 +560,7 @@ export default class VRScene extends React.Component {
                             look-controls="false" wasd-controls="false">
 
                         {textboxEntity}
+                        {timerEntity}
 
                             <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
                                     fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>

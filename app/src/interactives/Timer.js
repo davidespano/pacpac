@@ -7,6 +7,7 @@ const Timer = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.TIMER,
     properties : {
         time : 1000,
+        size: 5,
     },
     ...defaultValues
 });

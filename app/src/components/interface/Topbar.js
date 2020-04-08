@@ -301,12 +301,24 @@ function createObject(props, type){
                     return;
                 }
                 break;
-            case InteractiveObjectsTypes.TIMER:
-                name = scene.name + '_tm' + (scene.objects.timers.length + 1);
-                obj = Timer({
-                    uuid: uuid.v4(),
-                    name: name,
-                });
+            case InteractiveObjectsTypes.TIMER: //TODO: gestire più timer per scena?
+                if(scene.objects.timers.length == 0) //ammesso un solo timer per scena al momento
+                {
+                    name = scene.name + '_tm' + (scene.objects.timers.length + 1);
+                    obj = Timer({
+                        uuid: uuid.v4(),
+                        name: name,
+                        properties: {
+                            time: 10,
+                            size: 5,
+                        }
+                    });
+                }
+                else
+                {
+                    alert("Hai già un oggetto timer in questa scena")
+                    return;
+                }
                 break;
             default:
                 return;

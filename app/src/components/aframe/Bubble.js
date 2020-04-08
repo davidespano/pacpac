@@ -17,7 +17,6 @@ import stores_utils from "../../data/stores_utils";
 import Values from '../../rules/Values'
 import './aframe_shader'
 import AudioManager from './AudioManager'
-import Textbox from "../../interactives/Textbox";
 const soundsHub = require('./soundsHub');
 const THREE = require('three');
 const {mediaURL} = settings;
