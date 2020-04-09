@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@digaverse/aframe-resonance-audio-component": "^0.3.2",
-    "@material-ui/core": "^4.9.8",
+    "@material-ui/core": "^4.9.9",
     "@opuscapita/react-filemanager": "^1.1.1",
     "@opuscapita/react-filemanager-connector-node-v1": "^1.1.1",
     "@testing-library/jest-dom": "^4.2.4",

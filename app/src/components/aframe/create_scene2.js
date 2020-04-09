@@ -30,7 +30,7 @@ const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
 let sceneLoaded = false;
-let timerSize;
+let timerSize; //variabili del timer pubbliche perchè accedute da render e tick
 let timerTime;
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
@@ -45,7 +45,6 @@ export default class VRScene extends React.Component {
     //TODO: rimuovere currentscene o activescene
     constructor(props) {
         super(props);
-
         let scene = null;
         //Se arrivo dal debug prendo la scena corrente, altrimenti prendo la prima scena dalla lista delle scene
         if(this.props.currentScene){
@@ -117,10 +116,6 @@ export default class VRScene extends React.Component {
             let timer = document.getElementById(this.state.activeScene.name + 'timer')
             let sphere = document.getElementById(this.state.activeScene.name)
             let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-            //console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime, "\ncurrent time data = ", sphere.components["material"].data.src.currentTime);
-            //TODO capire perchè la prima scena caricata non è centrata, decommentando le due righe sotto si può vedere che la posizione è corretta
-            //let sky = document.getElementById(this.state.activeScene.name)
-            //console.log(sky.getAttribute("position"));
             if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
             {
                 sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
@@ -139,18 +134,22 @@ export default class VRScene extends React.Component {
             {
                 loadingsphere.setAttribute('visible', 'false');
             }
-            if (timer != null && timerTime > 0)
+            if (timer != null && timerTime > 0) //se è presente un timer nella scena
             {
                 //TODO: rendere il timer una funzione
-                //TODO: alzare l'evento al termine del timer
                 timerTime = timerTime - 0.1;
                 timerTime = timerTime.toFixed(1);
                 let textProperties = "baseline: center; side: double"+
-                    "; align: center" + //timerObj.properties.alignment +
+                    "; align: center" +
                     "; width:" + timerSize +
                     "; value:" + timerTime;
                 timer.setAttribute('text', textProperties)
+                if (timerTime == 0)
+                {
+                    //TODO: alzare l'evento al termine del timer
+                }
             }
+
         }
 
     }
@@ -522,11 +521,14 @@ export default class VRScene extends React.Component {
                     "; width:" + timerSize +
                     "; value:" + timerTime;
                 let geometryProperties = "primitive: plane; width: 0.15" + (0.4 + (timerObj.properties.size/20))+
-                    "; height: auto"
+                    "; height: auto;"
+                let visibility = true; //per gestire la visibilità del timer
+                if (timerObj.visible == 'INVISIBLE')
+                    visibility = false;
                 timerEntity =
                     <Entity visible={true} geometry={geometryProperties} position={'0 0.23 -0.3'}
                             id={this.state.activeScene.name + 'timer'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textProperties}>
+                            text={textProperties} visible={visibility}>
                     </Entity>
             }
 
