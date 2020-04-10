@@ -46,7 +46,7 @@ function InputSaveForm(props) {
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm"
-                                    onClick={() => saveForm(props) }
+                                    onClick={() => saveForm(props)}
                                     data-dismiss="modal"
                                     >
                                 Conferma
@@ -60,8 +60,10 @@ function InputSaveForm(props) {
 }
 
 function saveForm(props) {
+    console.log(props);
     const name = document.getElementById("save-name").value;
     const description = document.getElementById("save-description").value;
+
     let alreadyExists = false;
 
     // Validazione form
@@ -70,8 +72,7 @@ function saveForm(props) {
         return;
     }
     // Controllo che non ci siano salvataggi con lo stesso nome, in caso imposto flag a true
-    props.scenes.map(scene => {
-        if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(scene.uuid) !== undefined){
+    props.scenes.map(scene => {if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(scene.uuid) !== undefined){
             if(alreadyExists) return;
             let sceneSaves = props.editor.debugSaves.get(scene.uuid).toArray();
 
@@ -96,7 +97,6 @@ function saveForm(props) {
 
     } else {
         alert("Il salvataggio " + name + " esiste già");
-
     }
 }
 
