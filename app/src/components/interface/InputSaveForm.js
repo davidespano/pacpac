@@ -124,7 +124,7 @@ function InputSaveForm(props) {
                             <button type="button"
                                     id="save-submit-button"
                                     className="btn btn-secondary buttonConferm"
-                                    onClick={() => saveForm(props) }
+                                    onClick={() => saveForm(props)}
                                     data-dismiss="modal"
                                     >
                                 Conferma
