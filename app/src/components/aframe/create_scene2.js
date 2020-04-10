@@ -112,48 +112,54 @@ export default class VRScene extends React.Component {
         let skysphere = document.getElementById(this.state.activeScene.img);
         if (skysphere != null) //se la skysphere ha caricato ed è stata trovata
         {
-            //TODO provare a sostituire sphere con skysphere
-            let timer = document.getElementById(this.state.activeScene.name + 'timer')
-            let sphere = document.getElementById(this.state.activeScene.name)
-            let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-            if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
+            this.loadingManager()
+            this.timerManager()
+        }
+    }
+
+    loadingManager()
+    {
+        let sphere = document.getElementById(this.state.activeScene.name)
+        let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
+        if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
+        {
+            sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
+            if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
             {
-                sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
-                if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
-                {
-                    console.log("sceneLoaded = ", sceneLoaded)
-                    loadingsphere.setAttribute('visible', 'false');
-                }
-                if (sphere.components["material"].data.src.currentTime > 1)
-                {
-                    //se la transizione è più lunga di un secondo potrebbe non funzionare
-                    sceneLoaded = true;
-                }
-            }
-            else if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
-            {
+                console.log("sceneLoaded = ", sceneLoaded)
                 loadingsphere.setAttribute('visible', 'false');
             }
-            if (timer != null && timerTime > 0) //se è presente un timer nella scena
+            if (sphere.components["material"].data.src.currentTime > 1)
             {
-                //TODO: rendere il timer una funzione
-                timerTime = timerTime - 0.1;
-                timerTime = timerTime.toFixed(1);
-                let textProperties = "baseline: center; side: double"+
-                    "; align: center" +
-                    "; width:" + timerSize +
-                    "; value:" + timerTime;
-                timer.setAttribute('text', textProperties)
-                if (timerTime == 0)
-                {
-                    //TODO: alzare l'evento al termine del timer
-                }
+                //se la transizione è più lunga di un secondo potrebbe non funzionare
+                sceneLoaded = true;
             }
+        }
+        else if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
+        {
+            loadingsphere.setAttribute('visible', 'false');
+        }
+    }
 
+    timerManager()
+    {
+        let timer = document.getElementById(this.state.activeScene.name + 'timer')
+        if (timer != null && timerTime > 0) //se è presente un timer nella scena
+        {
+            timerTime = timerTime - 0.1;
+            timerTime = timerTime.toFixed(1);
+            let textProperties = "baseline: center; side: double"+
+                "; align: center" +
+                "; width:" + timerSize +
+                "; value:" + timerTime;
+            timer.setAttribute('text', textProperties)
+            if (timerTime == 0)
+            {
+                //TODO: alzare l'evento al termine del timer
+            }
         }
 
     }
-
     /**
      * Funzione asincrona che richiede al database tutte le informazioni del gioco, compresi audio,
      * tutte le scene e gli oggetti, regole in esse contenute
@@ -494,7 +500,7 @@ export default class VRScene extends React.Component {
             let timerObj = graph.objects.get(timerUuid); //recupero l'oggetto di testo
             if (timerObj == undefined)
             { //per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
-                timerObj = textboxUuid;
+                timerObj = timerUuid;
             }
             console.log(timerObj)
 
@@ -505,10 +511,13 @@ export default class VRScene extends React.Component {
                     "; value:" + textObj.properties.string;
                 let geometryProperties = "primitive: plane; width: " + (0.5 + (textObj.properties.boxSize/20))+
                     "; height: auto"
+                let visibility = true; //per gestire la visibilità della textbox
+                if (textObj.visible == 'INVISIBLE')
+                    visibility = false;
                 textboxEntity =
                     <Entity visible={true} geometry={geometryProperties} position={'0 -0.214 -0.3'}
                             id={this.state.activeScene.name + 'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textProperties}>
+                            text={textProperties} visible={visibility}>
                     </Entity>
             }
 
@@ -516,6 +525,7 @@ export default class VRScene extends React.Component {
             {
                 timerSize = 0.4 + (timerObj.properties.size/20);
                 timerTime = timerObj.properties.time;
+                console.log("creo oggetto timer con tempo: ", timerTime)
                 let textProperties = "baseline: center; side: double"+
                     "; align: center" + //timerObj.properties.alignment +
                     "; width:" + timerSize +
