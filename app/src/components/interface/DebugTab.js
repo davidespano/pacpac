@@ -134,9 +134,16 @@ function debugOptionsView(props) {
             <div className={"rightbar-debug-element"}>
                 <span className={"rightbar-scene-name"}>{scene.name}
                 </span>
-                {listCurrentSceneObjs(scene, props)}
+                {listCurrentSceneObjs(scene, props, props.editor.objectsNameFilter)}
             </div>
             <label className={'rightbar-titles'}>Oggetti altre scene</label>
+            <div className={"rightbar-debug-element"}>
+                <input type={'text'} id={'searchBarOtherScenes'} className={'bar-filters'} placeholder={'Cerca altri oggetti...'}
+                       onChange={() => {
+                           let filter = document.getElementById('searchBarOtherScenes').value;
+                           props.updateOtherScenesObjectNameFilter(filter);
+                       }}/>
+            </div>
             <div className={"rightbar-debug-element"}>
                 {listOtherScenesObjs(props)}
             </div>
@@ -208,7 +215,7 @@ function listPlayerActions(scene, props) {
  * @param props
  * @return {any[]}
  */
-function listCurrentSceneObjs(scene, props) {
+function listCurrentSceneObjs(scene, props, filter1) {
     let objects = Object.values(scene.objects).flat();
 
     if (objects.length === 0) {
@@ -220,7 +227,7 @@ function listCurrentSceneObjs(scene, props) {
             let obj = props.interactiveObjects.get(obj_uuid);
             let objName = obj.name.length > 20 ? obj.name.substring(0, 16).concat("...") : obj.name;
 
-            if (objName.includes(props.editor.objectsNameFilter)) {
+            if (objName.includes(filter1)) {
                 return (
                     <div className={"rightbar-sections"} key={obj_uuid}>
                         <img className={"icon-obj-left"} alt={obj.name} src={interface_utils.getObjImg(obj.type)}/>
@@ -269,7 +276,7 @@ function listOtherScenesObjs(props) {
                 <div className={"rightbar-other-scene"} key={child.uuid}>
                     <span className={"rightbar-scene-name"}>
                         {child.name}</span>
-                    {listCurrentSceneObjs(child, props)}
+                    {listCurrentSceneObjs(child, props, props.editor.otherScenesObjectsNameFilter)}
                 </div>
             );
         }

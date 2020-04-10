@@ -134,6 +134,7 @@ function getState() {
         updateCurrentObject: Actions.updateCurrentObject,
         updateObject: Actions.updateObject,
         updateObjectNameFilter: Actions.updateObjectNameFilter,
+        updateOtherScenesObjectNameFilter: Actions.updateOtherScenesObjectNameFilter,
         updateObjectTypeFilter: Actions.updateObjectTypeFilter,
         updateSceneNameFilter: Actions.updateSceneNameFilter,
         editVertices: Actions.editVertices,
