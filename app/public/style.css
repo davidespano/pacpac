@@ -1767,7 +1767,7 @@ h6 {
     font-weight: bold;
 }
 
-#searchBar {
+#searchBar, #searchBarOtherScenes {
     padding-left: 3%;
     font-size: 0.7em;
     width: 70%;
