@@ -4,6 +4,7 @@ import EditorState from "../../data/EditorState";
 import DebugAPI from "../../utils/DebugAPI";
 
 function InputSaveForm(props) {
+
     return (
         <div id={"register"}>
             <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
@@ -18,15 +19,23 @@ function InputSaveForm(props) {
                         </div>
                         <div className="modal-body modalOptions">
                             <div className="form-group">
-                                <label htmlFor="exampleInputEmail1">Nome salvataggio</label>
+                                <label htmlFor="save-name">Nome salvataggio</label>
                                 <input type="text" id={"save-name"} className="form-control"
                                        aria-describedby="emailHelp"
                                        placeholder="Nome salvataggio"/>
+                                <label htmlFor="save-description">Descrizione</label>
+                                <textarea id={"save-description"} className="form-control"
+                                       aria-describedby="????"
+                                       placeholder="Descrizione salvataggio"/>
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary buttonConferm"
-                                    onClick={() => saveForm(props)} data-dismiss="modal">Conferma
+                            <button type="button"
+                                    className="btn btn-secondary buttonConferm"
+                                    onClick={() => saveForm(props)}
+                                    data-dismiss="modal"
+                                    >
+                                Conferma
                             </button>
                         </div>
                     </div>
@@ -37,31 +46,33 @@ function InputSaveForm(props) {
 }
 
 function saveForm(props) {
+    console.log(props);
     const name = document.getElementById("save-name").value;
+    const description = document.getElementById("save-description").value;
     let flag = false;
 
-
-    if (!name) {
+    // Validazione form
+    if (!name || !description) {
         alert("Completa tutti i campi");
         return;
     }
 
     props.scenes.map(scene => {
-        if(EditorState.debugSaves !== undefined && EditorState.debugSaves[scene.uuid] !== undefined && EditorState.debugSaves[scene.uuid].get(name) !== undefined) {
+        if(EditorState.debugSaves !== undefined
+            && EditorState.debugSaves[scene.uuid] !== undefined
+            && EditorState.debugSaves[scene.uuid].get(name) !== undefined) {
             flag = true;
             return;
         }
     });
-
     if (!flag) {
         let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
-            .map(i => [i, EditorState.debugRunState[i.toString()]]))
-            .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
-        DebugAPI.saveDebugState(name, EditorState.debugFromScene === undefined ? props.currentScene : EditorState.debugFromScene, objStateMap);
+                                                         .map(i => [i, EditorState.debugRunState[i.toString()]]))
+                                       .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
+        DebugAPI.saveDebugState(name, description, EditorState.debugFromScene === undefined ? props.currentScene : EditorState.debugFromScene, objStateMap);
     } else {
         alert("Salvataggio già presente");
     }
-
 }
 
 export default InputSaveForm;
