@@ -46,7 +46,7 @@ function InputSaveForm(props) {
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm"
-                                    onClick={() => saveForm(props) }
+                                    onClick={() => saveForm(props)}
                                     data-dismiss="modal"
                                     >
                                 Conferma
@@ -60,6 +60,7 @@ function InputSaveForm(props) {
 }
 
 function saveForm(props) {
+    console.log(props);
     const name = document.getElementById("save-name").value;
     const description = document.getElementById("save-description").value;
     let alreadyExists = false;
@@ -96,7 +97,6 @@ function saveForm(props) {
 
     } else {
         alert("Il salvataggio " + name + " esiste già");
-
     }
 }
 
