@@ -115,6 +115,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('objectNameRightbar', action.name);
             case ActionTypes.UPDATE_OBJECTS_NAME_FILTER:
                 return state.set('objectsNameFilter', action.filter);
+            case ActionTypes.UPDATE_OTHER_SCENES_OBJECTS_NAME_FILTER:
+                return state.set('otherScenesObjectsNameFilter', action.filter);
             case ActionTypes.UPDATE_OBJECTS_TYPE_FILTER:
                 return state.set('objectsTypeFilter', action.filter);
             case ActionTypes.UPDATE_SCENE_NAME_FILTER:

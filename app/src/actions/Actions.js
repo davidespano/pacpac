@@ -276,6 +276,17 @@ const Actions = {
     },
 
     /**
+     * Dispatch new filter selection for objects' names
+     * @param filterType string
+     */
+    updateOtherScenesObjectNameFilter(filterType){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_OTHER_SCENES_OBJECTS_NAME_FILTER,
+            filter: filterType,
+        })
+    },
+
+    /**
      * Dispatch new filter selection for scene's name
      * @param filterType string
      */

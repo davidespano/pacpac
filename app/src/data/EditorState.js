@@ -28,6 +28,7 @@ const EditorState = Immutable.Record({
     objectId: null,                     //EudRuleEditor, saves original object
     objectNameRightbar: null,           //content of field "name" in object options (rightbar). Saves intermediate value before updating object
     objectsNameFilter: '',              //ObjectOptions, contains value typed in filter
+    otherScenesObjectsNameFilter: '',   //ObjectOptions, contains value typed in filter (other scenes, debug)
     objectsTypeFilter: 'scene',         //objects shown in rightbar (possible values: 'scene' and 'all)
     rightbarSelection: 'scene',         //tab selected in rightbar (possible values: 'scene' and 'objects')
     role: null,                         //EudRuleEditor, role of rule portion that the user is modifying
