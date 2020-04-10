@@ -36,7 +36,7 @@ function loadDebugState(saveName) {
         });
 }
 
-function saveDebugState(saveName, sceneUuid, objects) {
+function saveDebugState(saveName, saveDescription, sceneUuid, objects) {
 
     let map = objects.map((v, k) => Object({uuid: k, ...v})).toArray();
 
@@ -45,6 +45,7 @@ function saveDebugState(saveName, sceneUuid, objects) {
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
         .send({
             saveName: saveName,
+            saveDescription: saveDescription,
             currentScene: sceneUuid,
             objectStates: map,
         })
