@@ -21,6 +21,9 @@ import Counter from "../../interactives/Counter";
 import Values from "../../rules/Values";
 import Textbox from "../../interactives/Textbox";
 import Timer from "../../interactives/Timer";
+import Dropdown from "./Dropdown";
+import FileSelectionBtn from "./FileSelectionBtn";
+
 
 
 let uuid = require('uuid');
@@ -54,6 +57,7 @@ function TopBar(props){
     }
 
     return (
+
         <div className={'topbar'}>
             <nav>
                 <div className="nav nav-tabs" id="nav-tab" role="tablist">
@@ -62,27 +66,56 @@ function TopBar(props){
                         props.reset();
                         AuthenticationAPI.getUserDetail();
                     }}>PacPac</button>
+
                     <a className="nav-item nav-link active"
                        id="nav-game-tab" data-toggle="tab" href="#nav-game" role="tab" aria-controls="nav-game"
                        aria-selected="true" onClick={() => handleNavbarSelection(props)}>Gioco</a>
+
                     <a className="nav-item nav-link" id="nav-objects-tab" data-toggle="tab" href="#nav-objects" role="tab"
                        aria-controls="nav-objects" aria-selected="false" onClick={() => handleNavbarSelection(props)}>Oggetti</a>
+
                     <a className="nav-item nav-link" id="nav-objects-assets" data-toggle="tab" role="tab" href="#nav-assets"
                        aria-controls="nav-assets" aria-selected="false"
                        onClick={() => handleAssetsMode(props)}>Assets</a>
+
                     <a className={"nav-item nav-link " + debugCheck(isDebugActive)} id="nav-debug-tab" data-toggle="tab"
                        role="tab" href={'#' + debugLink(isDebugActive)} aria-controls={debugLink(isDebugActive)} aria-selected="false"
                        onClick={() => {
-                           if(isDebugActive){
-                               handleDebugMode(props);
+                           //let  result = rules_utils.checkCompletionsRules(props);
+                           let  result = rules_utils.checkCompletionsRules(props);
+
+                           if(result.length === 0){
+                               if(isDebugActive){
+                                   hideSaveIcon(false);
+                                   deleteErrors("errorsDebug");
+                                   handleDebugMode(props);
+                               }
                            }
+                           else{
+                               generateErrors(result, "errorsDebug");
+                           }
+
                        }} >Debug</a>
-                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-play"
-                       aria-controls="nav-play" aria-selected="false"
-                       onClick={() => {props.switchToPlayMode()}} >Play <img src={'icons/icons8-play-50.png'}
-                                                                             alt={'avvia gioco'}
-                                                                             className={'action-buttons'}/>
+
+                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-playoff"
+                       aria-controls="nav-playoff" aria-selected="false"
+                       onClick={() => {
+                           let  result = rules_utils.checkCompletionsRules(props);
+
+                           if(result.length === 0){
+                               deleteErrors("errorsPlay");
+                               props.switchToPlayMode()
+                           }
+                           else{
+                               generateErrors(result, "errorsPlay");
+                               handleNavbarSelection(props);
+                           }
+
+                       }} >Play <img src={'icons/icons8-play-50.png'}
+                                     alt={'avvia gioco'}
+                                     className={'action-buttons'}/>
                     </a>
+
                     <div id={'topbar-game-title'} className={'navbar-brand'}>
                         {props.editor.gameTitle}
                     </div>
@@ -170,21 +203,88 @@ function TopBar(props){
 
                     </div>
                 </div>
+
                 <div className={"tab-pane fade"}
                      id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
                     <div className={"flex-container"}>
-                        <figure className={'nav-figures'}
+                        <figure id ="save-icon" className={'nav-figures'}
                                 data-toggle="modal" data-target="#save-modal">
 
                             <img src={"icons/icons8-save-100.png"}/>
                             <figcaption>Salva</figcaption>
                         </figure>
+                        <p id={"errors"}>Prima di continuare completa le seguenti regole:</p>
+                        <div className="item">
+                            <ul id={"errorsDebug"}>
+
+                            </ul>
+                        </div>
                         <InputSaveForm {...props}/>
                     </div>
                 </div>
+
+                <div className={"tab-pane fade"}
+                     id="nav-playoff" role="tabpanel" aria-labelledby="nav-objects-play">
+                    <div className={"flex-container"}>
+                        <p id={"errors"}>Prima di continuare completa le seguenti regole:</p>
+                        <div className="item">
+                            <ul id={"errorsPlay"}>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     );
+}
+
+/**
+ * @param errors: array con gli errori da mostrare
+ * @param id: id dell'ul a cui appenderli (play o debug)
+ */
+function generateErrors(errors, id){
+
+    var mainList = document.getElementById(id); //cerco l'ul
+
+    //se non elimino quelli già presenti ogni volta che premo il tab li riaggiunge
+    deleteErrors(id);
+
+    //nascondo l'icona di salvataggio in modalità debug, in modo che se ci sono errori non compaia
+    hideSaveIcon(true);
+
+    for(var i=0;i<errors.length;i++){
+        var item = errors[i];
+        var elem = document.createElement("li");
+        elem.value=item[0];
+        elem.innerHTML=item;
+
+        mainList.appendChild(elem);
+
+    }
+}
+
+//Mi serve per cancellare gli errori mostrati sulle regole vuote
+function deleteErrors(id) {
+    var mainList = document.getElementById(id);
+    while(mainList.firstChild) mainList.removeChild(mainList.firstChild);
+}
+
+//mi serve per nascondere l'icona del salvataggio quando mostro gli errori
+//e mostrare l'elemento <p> quando ci sono
+function hideSaveIcon(hide){
+    let icon = document.getElementById("save-icon")
+
+    if(hide){
+        icon.hidden=true;
+        //rifaccio comparire la scritta se l'avevo nascosta
+        document.getElementById("errors").hidden=false;
+    }
+    else {
+        icon.hidden=false;
+        document.getElementById("errors").hidden=true;
+    }
 }
 
 function handleNavbarSelection(props){
@@ -211,6 +311,7 @@ function handleDebugMode(props) {
         document.getElementById("nav-tabContent").hidden = false;
     }
 }
+
 
 /**
  * Generates a new InteractiveObject with default values according to the given type and calls the function for stores
@@ -329,7 +430,7 @@ function createObject(props, type){
         //il controllo serve per la textbox che non ha bisogno di regole e questa chiamata verrebbe effettuata con defaultrule a null
         if(defaultRule != null)
         {
-            if(obj.type === InteractiveObjectsTypes.SWITCH){ //switches have multiple default rules
+            if(obj.type === InteractiveObjectsTypes.SWITCH || obj.type ===InteractiveObjectsTypes.TIMER){ //switches and timers have multiple default rules
                 props.addNewRule(scene, defaultRule[0]);
                 props.addNewRule(scene, defaultRule[1]);
             }else{
@@ -358,6 +459,7 @@ function debugCheck(isDebugActive){
 function debugLink(isDebugActive){
     return isDebugActive ? 'nav-debug' : '';
 }
+
 
 
 export default TopBar;

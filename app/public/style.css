@@ -149,6 +149,7 @@ div.rules{
     font-size: 16px;
 }
 
+
 .rules{
     overflow-y: hidden;
     overflow-x: hidden;
@@ -575,6 +576,17 @@ div.rules{
     flex-direction: row;
     height: 100%;
     width: 100%;
+}
+
+.flex-container p, li{
+    padding-left: 5px;
+    padding-right: 50px;
+}
+
+.tab-pane{
+    height: 88px;
+    overflow-y:auto;
+    width:100%;
 }
 
 .nav-figures{
