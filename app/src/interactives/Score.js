@@ -2,14 +2,14 @@ import InteractiveObject from "./InteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 import Values from "../rules/Values";
 
-const Timer = defaultValues => InteractiveObject({
-    type : InteractiveObjectsTypes.TIMER,
+const Score = defaultValues => InteractiveObject({
+    type : InteractiveObjectsTypes.SCORE,
     properties : {
-        time : 1000,
+        score : 0,
         size: 5,
     },
     ...defaultValues
 });
 
-export default Timer;
+export default Score;
 

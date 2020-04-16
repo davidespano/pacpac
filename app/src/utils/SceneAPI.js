@@ -20,6 +20,9 @@ import ScenesStore from "../data/ScenesStore";
 import EditorStateStore from "../data/EditorStateStore";
 import Textbox from "../interactives/Textbox";
 import Timer from "../interactives/Timer";
+import Score from "../interactives/Score";
+import Health from "../interactives/Health";
+import PlayTime from "../interactives/PlayTime";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -54,6 +57,9 @@ function getByName(name, order = null, gameId=null, creation = true) {
             let counters_uuids = [];
             let textboxes_uuids = [];
             let timers_uuids = [];
+            let playtime_uuids = [];
+            let score_uuids = [];
+            let health_uuids = [];
 
             let scene_type = response.body.type;
 
@@ -118,6 +124,30 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     timers_uuids.push(timer.uuid); //save uuid
                     let tm = Timer(getProperties(timer));
                     Actions.receiveObject(tm, scene_type);
+                });
+            }
+
+            if(response.body.score) {
+                response.body.score.map((score) => {
+                    score_uuids.push(score.uuid); //save uuid
+                    let sc = Timer(getProperties(score));
+                    Actions.receiveObject(sc, scene_type);
+                });
+            }
+
+            if(response.body.health) {
+                response.body.health.map((health) => {
+                    health_uuids.push(health.uuid); //save uuid
+                    let hl = Timer(getProperties(health));
+                    Actions.receiveObject(hl, scene_type);
+                });
+            }
+
+            if(response.body.playtime) {
+                response.body.playtime.map((playtime) => {
+                    playtime_uuids.push(playtime.uuid); //save uuid
+                    let pt = Timer(getProperties(playtime));
+                    Actions.receiveObject(pt, scene_type);
                 });
             }
 
@@ -203,6 +233,9 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     counters: counters_uuids,
                     textboxes: textboxes_uuids,
                     timers: timers_uuids,
+                    score: score_uuids,
+                    health: health_uuids,
+                    playtime: playtime_uuids,
                 },
                 rules : rules_uuids,
                 audios : audio_uuids,
@@ -254,6 +287,9 @@ function createScene(name, img, index, type, tag, order) {
                     points: [],
                     counters: [],
                     textboxes: [],
+                    playtime: [],
+                    score: [],
+                    health: [],
                     timers: [],
                 }
             });
@@ -420,6 +456,24 @@ function readScene(gameGraph, raw_scenes) {
             return t;
         });
 
+        const score = s.score.map(sc => {
+            let ss = getProperties(sc);
+            gameGraph['objects'].set(ss.uuid, ss);
+            return ss;
+        });
+
+        const health = s.health.map(hl => {
+            let h = getProperties(hl);
+            gameGraph['objects'].set(h.uuid, h);
+            return h;
+        });
+
+        const playtime = s.playtime.map(pt => {
+            let p = getProperties(pt);
+            gameGraph['objects'].set(p.uuid, p);
+            return p;
+        });
+
         // generates timers
         const timers = s.timers.map(tm => {
             let t = getProperties(tm);
@@ -506,6 +560,9 @@ function readScene(gameGraph, raw_scenes) {
                 points: points,
                 counters: counters,
                 textboxes: textboxes,
+                score: score,
+                playtime: playtime,
+                health: health,
                 timers: timers,
             },
             rules: rules,

@@ -156,9 +156,9 @@ export default class VRScene extends React.Component {
             if (timerTime == 0)
             {
                 //TODO: alzare l'evento al termine del timer
+                eventBus.emit()
             }
         }
-
     }
     /**
      * Funzione asincrona che richiede al database tutte le informazioni del gioco, compresi audio,
@@ -473,12 +473,6 @@ export default class VRScene extends React.Component {
         let timerUuid = this.state.activeScene.objects.timers[0]
 
         let graph = this.state.graph;
-        //TODO: rimuovere un po di console log
-
-        // console.log(this)
-        // console.log(graph)
-        // console.log(this.state.activeScene.objects)
-        // console.log(textboxUuid)
 
         //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
         //filtro eliminando la scena corrente in modo che non venga caricata due volte

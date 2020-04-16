@@ -21,6 +21,9 @@ import Counter from "../../interactives/Counter";
 import Values from "../../rules/Values";
 import Textbox from "../../interactives/Textbox";
 import Timer from "../../interactives/Timer";
+import Score from "../../interactives/Score";
+import Health from "../../interactives/Health";
+import PlayTime from "../../interactives/PlayTime";
 import Dropdown from "./Dropdown";
 import FileSelectionBtn from "./FileSelectionBtn";
 
@@ -73,6 +76,9 @@ function TopBar(props){
 
                     <a className="nav-item nav-link" id="nav-objects-tab" data-toggle="tab" href="#nav-objects" role="tab"
                        aria-controls="nav-objects" aria-selected="false" onClick={() => handleNavbarSelection(props)}>Oggetti</a>
+
+                    <a className="nav-item nav-link" id="nav-objects-global" data-toggle="tab" href="#nav-global" role="tab"
+                       aria-controls="nav-global" aria-selected="false" onClick={() => handleNavbarSelection(props)}>Globali</a>
 
                     <a className="nav-item nav-link" id="nav-objects-assets" data-toggle="tab" role="tab" href="#nav-assets"
                        aria-controls="nav-assets" aria-selected="false"
@@ -201,6 +207,33 @@ function TopBar(props){
                             <figcaption>Timer</figcaption>
                         </figure>
 
+                    </div>
+                </div>
+
+                <div className={"tab-pane fade"}
+                     id="nav-global" role="tabpanel" aria-labelledby="nav-objects-global">
+                    <div className={"flex-container"}>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    //createObject(props, InteractiveObjectsTypes.HEALTH);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.HEALTH)}/>
+                            <figcaption>Vita</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    //createObject(props, InteractiveObjectsTypes.SCORE);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SCORE)}/>
+                            <figcaption>Punteggio</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    //createObject(props, InteractiveObjectsTypes.PLAYTIME);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)}/>
+                            <figcaption>Tempo in gioco</figcaption>
+                        </figure>
                     </div>
                 </div>
 
@@ -402,7 +435,7 @@ function createObject(props, type){
                     return;
                 }
                 break;
-            case InteractiveObjectsTypes.TIMER: //TODO: gestire più timer per scena?
+            case InteractiveObjectsTypes.TIMER: //TODO: gestire più timer per scena? (no?)
                 if(scene.objects.timers.length == 0) //ammesso un solo timer per scena al momento
                 {
                     name = scene.name + '_tm' + (scene.objects.timers.length + 1);
@@ -418,6 +451,69 @@ function createObject(props, type){
                 else
                 {
                     alert("Hai già un oggetto timer in questa scena")
+                    return;
+                }
+                break;
+            case InteractiveObjectsTypes.SCORE:
+                //TODO: creare quest'oggetto in ogni scena esistente
+                //TODO: creando una nuova scena, se l'oggetto esiste viene aggiunto automaticamente alla scena
+                if(scene.objects.score.length == 0) //ammesso un solo oggetto score per gioco
+                {
+                    name = scene.name + '_sc' + (scene.objects.score.length + 1);
+                    obj = Score({
+                        uuid: uuid.v4(),
+                        name: name,
+                        properties: {
+                            score: 0,
+                            size: 5,
+                        }
+                    });
+                }
+                else
+                {
+                    alert("Hai già l'oggetto Score nel gioco")
+                    return;
+                }
+                break;
+            case InteractiveObjectsTypes.HEALTH:
+                //TODO: creare quest'oggetto in ogni scena esistente
+                //TODO: creando una nuova scena, se l'oggetto esiste viene aggiunto automaticamente alla scena
+                if(scene.objects.health.length == 0) //ammesso un solo oggetto health per gioco
+                {
+                    name = scene.name + '_hl' + (scene.objects.health.length + 1);
+                    obj = Score({
+                        uuid: uuid.v4(),
+                        name: name,
+                        properties: {
+                            health: 100,
+                            size: 5,
+                        }
+                    });
+                }
+                else
+                {
+                    alert("Hai già l'oggetto Health nel gioco")
+                    return;
+                }
+                break;
+            case InteractiveObjectsTypes.PLAYTIME:
+                //TODO: creare quest'oggetto in ogni scena presente
+                //TODO: creando una nuova scena, se l'oggetto esiste viene aggiunto automaticamente alla scena
+                if(scene.objects.playtime.length == 0) //ammesso un solo oggetto playtime per gioco
+                {
+                    name = scene.name + '_pt' + (scene.objects.playtime.length + 1);
+                    obj = Score({
+                        uuid: uuid.v4(),
+                        name: name,
+                        properties: {
+                            time: 0,
+                            size: 5,
+                        }
+                    });
+                }
+                else
+                {
+                    alert("Hai già l'oggetto Play time nel gioco")
                     return;
                 }
                 break;

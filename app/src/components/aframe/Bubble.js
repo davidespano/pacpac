@@ -273,7 +273,6 @@ export default class Bubble extends Component
             console.log("sto calcolando il bound di ", this.props.scene.name)
             let canvasWidth = bounds.w;
             let canvasHeight = bounds.h;
-            //TODO ridimensionamento textbox assoluto, ora avviene solo in verticale
             let geometryProperties = "primitive: plane; width: "+ canvasWidth +"; height: auto"
             let textbox = document.getElementById("textbox")
             if (textbox != null)

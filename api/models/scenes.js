@@ -46,6 +46,9 @@ function buildScene(record) {
         scene.counters = [];
         scene.textboxes = [];
         scene.timers = [];
+        scene.health = [];
+        scene.playtime = [];
+        scene.score = [];
 
         objects.forEach((o) => {
             const obj = new Interactiveobject(o);
@@ -67,6 +70,12 @@ function buildScene(record) {
                     scene.textboxes.push(obj); break;
                 case "TIMER":
                     scene.timers.push(obj); break;
+                case "SCORE":
+                    scene.score.push(obj); break;
+                case "HEALTH":
+                    scene.health.push(obj); break;
+                case "PLAYTIME":
+                    scene.playtime.push(obj); break;
             }
         })
     }catch(error){console.error(error)}

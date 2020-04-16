@@ -5,7 +5,7 @@ import {Entity} from "aframe-react";
 import interface_utils from "../interface/interface_utils";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import {calculate2DSceneImageBounds, convertRelativeCoordinates} from "./aframe_curved";
-
+//TODO: controllare se questa classe è effettivamente inutilizzata
 class Textbox extends Component
 {
     constructor(props) {

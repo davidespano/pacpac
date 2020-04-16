@@ -13,6 +13,9 @@ const InteractiveObjectsTypes = {
     TRANSITION : 'TRANSITION',
     TEXTBOX : 'TEXTBOX',
     TIMER : 'TIMER',
+    PLAYTIME : 'PLAYTIME',
+    HEALTH : 'HEALTH',
+    SCORE : 'SCORE',
     GAME : 'GAME',
     RULES: 'RULES',
 };

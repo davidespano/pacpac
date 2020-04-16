@@ -122,6 +122,12 @@ function defineField(object){
             return "counters";
         case InteractiveObjectsTypes.TEXTBOX:
             return "textboxes";
+        case InteractiveObjectsTypes.PLAYTIME:
+            return "playtime"
+        case InteractiveObjectsTypes.SCORE:
+            return "score"
+        case InteractiveObjectsTypes.HEALTH:
+            return "health"
         case InteractiveObjectsTypes.TIMER:
             return "timers";
         case InteractiveObjectsTypes.RULES:

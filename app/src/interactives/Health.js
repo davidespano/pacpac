@@ -2,14 +2,14 @@ import InteractiveObject from "./InteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 import Values from "../rules/Values";
 
-const Timer = defaultValues => InteractiveObject({
-    type : InteractiveObjectsTypes.TIMER,
+const Health = defaultValues => InteractiveObject({
+    type : InteractiveObjectsTypes.HEALTH,
     properties : {
-        time : 1000,
+        health : 100,
         size: 5,
     },
     ...defaultValues
 });
 
-export default Timer;
+export default Health;
 

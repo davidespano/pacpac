@@ -321,6 +321,12 @@ function getObjImg(objType) {
             return "icons/icons8-text-100.png";
         case InteractiveObjectsTypes.TIMER:
             return  "icons/icons8-cronometro-100.png"
+        case InteractiveObjectsTypes.HEALTH:
+            return  "icons/icons8-health-100.png"
+        case InteractiveObjectsTypes.SCORE:
+            return  "icons/icons8-score-100.png"
+        case InteractiveObjectsTypes.PLAYTIME:
+            return  "icons/icons8-orologio-100.png"
         default:
             return "icons/icons8-plus-math-filled-100.png";
     }
