@@ -58,9 +58,9 @@ function saveForm(props) {
     }
 
     props.scenes.map(scene => {
-        if(EditorState.debugSaves !== undefined
-            && EditorState.debugSaves[scene.uuid] !== undefined
-            && EditorState.debugSaves[scene.uuid].get(name) !== undefined) {
+        if(props.debugSaves !== undefined
+            && props.debugSaves[scene.uuid] !== undefined
+            && props.debugSaves[scene.uuid].get(name) !== undefined) {
             flag = true;
             return;
         }
@@ -69,7 +69,13 @@ function saveForm(props) {
         let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
                                                          .map(i => [i, EditorState.debugRunState[i.toString()]]))
                                        .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
-        DebugAPI.saveDebugState(name, description, EditorState.debugFromScene === undefined ? props.currentScene : EditorState.debugFromScene, objStateMap);
+        props.debugSaves({
+            saveName: name,
+            saveDescription: description,
+            saveSceneID: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
+            saveObjects: objStateMap,
+        });
+        //DebugAPI.saveDebugState(name, description, EditorState.debugFromScene === undefined ? props.currentScene : EditorState.debugFromScene, objStateMap);
     } else {
         alert("Salvataggio già presente");
     }
