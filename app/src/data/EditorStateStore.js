@@ -5,6 +5,7 @@ import EditorState from "./EditorState";
 import Immutable from "immutable";
 import SceneAPI from "../utils/SceneAPI";
 import ScenesStore from "./ScenesStore";
+import DebugAPI from "../utils/DebugAPI";
 
 class EditorStateStore extends ReduceStore {
 
@@ -43,6 +44,10 @@ class EditorStateStore extends ReduceStore {
                 return state.set('newAudioNameTyped', action.status);
             case ActionTypes.NEW_SCENE_NAME_TYPED:
                 return state.set('newSceneNameTyped', action.status);
+            case ActionTypes.DEBUG_SAVES:
+                DebugAPI.saveDebugState(action.response.saveName, action.response.saveDescription,
+                    action.response.saveSceneID, action.response.saveObjects);
+                return state.set('debugSaves', action.response);
 
                 // [davide] questa action qui non mi pare che serva
 /*
