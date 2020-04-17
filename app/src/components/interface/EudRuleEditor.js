@@ -12,23 +12,38 @@ import Values from "../../rules/Values";
 import Condition from "../../rules/Condition";
 import SuperCondition from "../../rules/SuperCondition";
 import toString from "../../rules/toString";
-import { RuleActionMap, ValuesMap, OperatorsMap } from "../../rules/maps";
+import {RuleActionMap, ValuesMap, OperatorsMap} from "../../rules/maps";
 import CentralSceneStore from "../../data/CentralSceneStore";
 import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
 
+import {Widget, addResponseMessage, addLinkSnippet, addUserMessage} from 'react-chat-widget';
+import 'react-chat-widget/lib/styles.css';
+import stores_utils from "../../data/stores_utils";
+import EventTypes from "../../rules/EventTypes";
 
 let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            elementoMancante: "", //Variabile dove scrivo di volta in volta l'elemento che manca al bot per completare la regola
+            queryPrecedente: "",  //Variabile d'appoggio dove salvo la query precedente
+            response: {
+                intent: "",
+                scenaIniziale: "",
+                scenaFinale: "",
+                nomeTransizione: ""
+            }
+        };
     }
 
     render() {
         let scene = this.props.scenes.get(this.props.currentScene);
+        let icon = "icons/icon_chat-bot.png";
 
         if (this.props.currentScene) {
             let rules = scene.get('rules');
@@ -70,6 +85,13 @@ export default class EudRuleEditor extends Component {
                                  this.onOutsideClick();
                              }}>
                             {rulesRendering}
+                            <Widget
+                                title={"PAC-PAC BOT"}
+                                subtitle={""}
+                                profileAvatar={icon}
+                                handleNewUserMessage={this.handleNewUserMessage}
+                                senderPlaceHolder={"Scrivi qui la regola"}/>
+                            <br/>
                         </div>
                     </div>
                 </div>;
@@ -90,19 +112,21 @@ export default class EudRuleEditor extends Component {
                             <h2>Regole della scena</h2>
                             <div id={'rule-editor-btns'}>
                                 <button
-                                    disabled={this.props.editor.ruleCopy===null}
+                                    disabled={this.props.editor.ruleCopy === null}
                                     onClick={() => {
                                         this.onCopyRuleClick(scene);
                                     }}
                                 >
-                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                Copia qui
-                            </button>
+                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                         src={"icons/icons8-copia-50.png"}/>
+                                    Copia qui
+                                </button>
                                 <button className={"btn select-file-btn"}
                                         onClick={() => {
                                             this.onNewRuleClick();
                                         }}>
-                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
+                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                         src={"icons/icons8-plus-white-30.png"}/>
                                     Nuova Regola
                                 </button>
                             </div>
@@ -112,6 +136,13 @@ export default class EudRuleEditor extends Component {
                                  this.onOutsideClick();
                              }}>
                             {rulesRendering}
+                            <Widget
+                                title={"PAC-PAC BOT"}
+                                subtitle={""}
+                                profileAvatar={icon}
+                                handleNewUserMessage={this.handleNewUserMessage}
+                                senderPlaceHolder={"Scrivi qui la regola"}/>
+                            <br/>
                             <div className={'rules-footer'}></div>
                         </div>
                     </div>
@@ -132,7 +163,7 @@ export default class EudRuleEditor extends Component {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
         let event = Action().set("uuid", uuid.v4());    //la popolo con un evento (nb azione)
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
-        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_tx' + (scene.rules.length + 1));
+        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name", scene.name + '_tx' + (scene.rules.length + 1));
         this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
     }
 
@@ -142,14 +173,232 @@ export default class EudRuleEditor extends Component {
         this.props.removeRule(scene, rule);
     }
 
-    onCopyRuleClick(scene){
+    onCopyRuleClick(scene) {
         let newId = uuid.v4();
         let copiedRule = this.props.editor.ruleCopy.set('uuid', newId);
         this.props.addNewRule(scene, copiedRule);
     }
 
 
+    /** Luca - Widget Bot */
 
+    /* Messaggio di benvenuto. */
+    componentDidMount() {
+        addResponseMessage("Benvenuto nel bot delle regole di Pac-Pac, scrivi subito la prima regola! Ricorda che puoi scrivere \"reset\" " +
+            "in qualsiasi momento per resettare tutto e scrivere una regola da capo. ");
+    }
+
+    /* Metodo per inviare un messaggio. Capire se il bot ha trovato una transizione, se quella transizione ha tutti i
+    campi corretti allora creo la scena con tutto corretto, se no risolvo i conflitti in locale. */
+    handleNewUserMessage = async (newMessage) => {
+
+        /* Si da l'opportunità all'utente di resettare in ogni momento la regola che sta scrivendo e di scriverne una da capo. */
+        if (newMessage !== "reset") {
+            /* La prima query verrà sempre mandata al bot. */
+            if (this.state.elementoMancante === "") {
+                this.setState({response: await sendRequest(newMessage)});
+            } else {
+                /* Se dopo aver mandato al bot la prima query ci dovesse mancare qualcosa allora risolviamo localmente, modificando
+                * lo stato di response, usando una variabile d'appoggio "risposta". Il campo mancante prenderà ciò che scriviamo
+                * nell'input, successivamente processiamo ciò che abbiamo scritto in "queryControl". */
+                let risposta = this.state.response;
+
+                /* A seconda di cosa viene settato nel queryControl si esegue uno di questi case. */
+                switch (this.state.elementoMancante) {
+                    case "scenaFinale":
+                        risposta.scenaFinale = newMessage;
+                        this.setState({response: risposta});
+                        break;
+                    case "nomeTransizione":
+                        risposta.nomeTransizione = newMessage;
+                        this.setState({response: risposta});
+                        break;
+                    case "chiediConferma":
+                        if (newMessage.trim().toLowerCase() === "si") {
+                            //Creo la regola
+                            let transitionObj = this.returnTransitionByName(this.state.response.nomeTransizione);
+                            let finalSceneUuid = this.returnUuidSceneByName(this.state.response.scenaFinale, this.props);
+                            this.createTransitionRule(transitionObj, finalSceneUuid);
+                            addResponseMessage("Regola creata!");
+                            addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
+
+                            //Resetto i campi di response
+                            this.responseReset();
+                            return;
+                        } else if (newMessage.trim().toLowerCase() === "no") {
+                            addResponseMessage("Regola resettata!");
+                            addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
+                            //Resetto i campi di response
+                            this.responseReset();
+                            return;
+                        } else {
+                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
+                            return;
+                        }
+                }
+            }
+            /* Controlliamo tutti i dati di response. */
+            this.queryControl(this.state.response);
+        } else {
+            this.responseReset();
+            addResponseMessage("La regola è stata resettata! Puoi scriverne una da capo quando vuoi.");
+        }
+    };
+
+    /* Metodo per il controllo dei dati che abbiamo salvato in "response". */
+    queryControl() {
+        switch (this.state.response.intent) {
+            case "transizione": {
+                /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
+                * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
+                if (this.state.response.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
+                    let risposta = this.state.response;
+                    risposta.scenaIniziale = this.props.scenes.get(this.props.currentScene).name;
+                    this.setState({response: risposta});
+                }
+                /* Controllo che la scena finale che ha inserito l'utente esista, cioè che si trovi effettivamente tra le scene del gioco,
+                * ma che non sia la scena corrente. */
+                if (!this.doesFinalSceneExists(this.state.response.scenaFinale)) {
+                    if (this.state.response.scenaFinale === "") {
+                        addResponseMessage("Scrivimi qual'è la scena finale alla quale vuoi arrivare. Perfavore scegli tra una di queste: " + this.returnFinalScenesNames());
+                    } else {
+                        addResponseMessage("La scena finale che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnFinalScenesNames());
+                    }
+                    //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
+                    this.setState({elementoMancante: "scenaFinale"});
+                } else if (!this.doesTransitionExists(this.state.response.nomeTransizione)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
+                    if (this.state.response.nomeTransizione === "") {
+                        addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                    } else {
+                        addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                    }
+                    //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
+                    this.setState({elementoMancante: "nomeTransizione"});
+                } else {
+                    /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
+                    addResponseMessage("Ho tutto.");
+
+                    this.setState({elementoMancante: "chiediConferma"});
+                    addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
+                        " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.nomeTransizione);
+                    addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
+                }
+            }
+                break;
+            default:
+                addResponseMessage("Non è una transizione, verrà implementato in futuro.")
+        }
+    }
+
+    /* Resetto response per la prossima richiesta di nuova regola. */
+    responseReset() {
+        this.setState({elementoMancante: ""});
+        let risposta = this.state.response;
+        risposta.intent = "";
+        risposta.scenaIniziale = "";
+        risposta.scenaFinale = "";
+        risposta.nomeTransizione = "";
+        this.setState({response: risposta});
+    }
+
+    /* Ritorna i nomi delle transizioni della scena corrente. */
+    returnTransitionNames() {
+        let sceneTransitions = this.props.interactiveObjects.filter(x => x.type === InteractiveObjectsTypes.TRANSITION);
+
+        let transitions = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneTransitions);
+        for (var i = 0; i < transitions.length; i++) {
+            transitions[i] = transitions[i].name;
+        }
+        return transitions;
+    }
+
+    /* Torna true se la transizione passata come parametro (stringa) esiste, false altrimenti. */
+    doesTransitionExists(transition) {
+        let transitionNames = this.returnTransitionNames();
+        for (var i = 0; i < transitionNames.length; i++) {
+            if (transition === transitionNames[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Ritorna i nomi delle sceneFinali possibili. */
+    returnFinalScenesNames() {
+        let scene = this.props.scenes;
+        let nomeScenaCorrente = this.props.scenes.get(this.props.currentScene).name;
+        let nomiScene = []; // Array che conterrà tutti i nomi delle scene, tranne quello della scena corrente.
+
+        //Aggiungo i nome di tutte le scene, ma saltando la scena corrente
+        scene.forEach(function (singleScene) {
+            if (singleScene.name !== nomeScenaCorrente)
+                nomiScene.push(singleScene.name);
+        });
+        return nomiScene;
+    }
+
+    /* Torna true se la scena passsata come parametro (stringa) esiste tra i nomi delle scene nella quale è possibile spostarsi, false altrimenti. */
+    doesFinalSceneExists(scene) {
+        let sceneNames = this.returnFinalScenesNames();
+
+        for (var i = 0; i < sceneNames.length; i++) {
+            if (scene === sceneNames[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Ritorna l'oggetto transizione corrispondente al nome passato. */
+    returnTransitionByName(transitionName) {
+        let sceneTransitions = this.props.interactiveObjects.filter(x =>
+            x.type === InteractiveObjectsTypes.TRANSITION);
+
+        let transitions = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneTransitions);
+        for (var i = 0; i < transitions.length; i++) {
+            if (transitionName === transitions[i].name) {
+                return transitions[i];
+            }
+        }
+        return undefined;
+    }
+
+    /* Ritorna l'oggetto scena corrispondente al nome passato. */
+    returnUuidSceneByName(sceneName, props) {
+        let scene = this.props.scenes;
+        let uuid = undefined;
+        //Quando trovo il nome della scena corrispondente allora lo restituisco
+        scene.forEach(function (singleScene) {
+            if (singleScene.name === sceneName) {
+                uuid = props.scenes.get(singleScene.uuid).uuid;
+            }
+        });
+        return uuid;
+    }
+
+    /* Crea la regola transizione data la transizione (oggetto) e l'uuid della scena finale. Non abbiamo bisogno di
+     * altri campi visto che per la transizione sono sempre li stessi. */
+    createTransitionRule(transition, finalSceneUuid) {
+        let r;
+        r = Rule({
+            uuid: uuid.v4(),
+            name: 'regola della transizione ' + transition.name,
+            event: Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: EventTypes.CLICK,
+                obj_uuid: transition.uuid,
+            }),
+            actions: Immutable.List([Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: RuleActionTypes.TRANSITION,
+                obj_uuid: finalSceneUuid,
+            })]),
+        });
+
+        this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
+    }
 }
 
 class EudRule extends Component {
@@ -277,8 +526,6 @@ class EudRule extends Component {
             }
         }
     }
-
-
 
 
     render() {
@@ -493,7 +740,7 @@ class EudCondition extends Component {
 
         let valueRendering = null;
 
-        switch(this.props.condition.operator){
+        switch (this.props.condition.operator) {
             case Operators.EQUAL_NUM:
             case Operators.NOT_EQUAL_NUM:
             case Operators.GREATER_THAN:
@@ -572,7 +819,7 @@ class EudCondition extends Component {
             return this.props.assets(uuid);
         }
 
-        if (this.props.audios.has(uuid)){
+        if (this.props.audios.has(uuid)) {
             return this.props.audios.get(uuid);
         }
 
@@ -721,12 +968,12 @@ class EudAction extends Component {
         let object = null;
         let objectRendering = null;
 
-        switch(this.props.action.action){
+        switch (this.props.action.action) {
             case RuleActionTypes.INCREASE_STEP:
             case RuleActionTypes.DECREASE_STEP:
                 let subj = this.props.action.subj_uuid;
                 let step = 1;
-                if(subj && this.props.interactiveObjects.has(subj)){
+                if (subj && this.props.interactiveObjects.has(subj)) {
                     step = this.props.interactiveObjects.get(subj).properties.step;
                 }
                 objectRendering =
@@ -853,7 +1100,7 @@ class EudAction extends Component {
             return ValuesMap.get(uuid);
         }
 
-        if (this.props.audios.has(uuid)){
+        if (this.props.audios.has(uuid)) {
             return this.props.audios.get(uuid);
         }
 
@@ -931,7 +1178,7 @@ class EudAction extends Component {
                         case RuleActionTypes.DECREASE_STEP:
                         case RuleActionTypes.INCREASE_STEP:
                             let val = null;
-                            if(action.subj_uuid){
+                            if (action.subj_uuid) {
                                 val = objects.get(action.subj_uuid).properties.step;
                             }
                             list = list.set(index,
@@ -963,7 +1210,7 @@ class EudAction extends Component {
 
     }
 
-    updateNumericRule(props, value){
+    updateNumericRule(props, value) {
         let rule = this.props.rule;
         let index = -1;
         let event = false;
@@ -1024,7 +1271,7 @@ class EudRuleStaticPart extends Component {
     }
 
 
-    render(){
+    render() {
         let text = this.props.originalText;
         let buttonVisible = "eudHide";
         let css = "eudRulePart eudCompletionRoot eud" + this.props.role;
@@ -1253,7 +1500,7 @@ class EudAutoComplete extends Component {
         3-> devo usare il grafo con una singola scena e con altri elementi (es. subject)
         */
 
-        let  {items: items, graph: graph} = getCompletions({
+        let {items: items, graph: graph} = getCompletions({
             interactiveObjects: this.props.interactiveObjects,
             subject: this.props.subject,
             verb: this.props.verb,
@@ -1267,17 +1514,16 @@ class EudAutoComplete extends Component {
         });
         let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
 
-        if(this.props.interactiveObjects.size===0){
-            graph=0;
+        if (this.props.interactiveObjects.size === 0) {
+            graph = 0;
         }
         if (li.toArray()[0]) { //controllo che ci siano elementi da mostrare
             let info = li.toArray()[0].props.item;
-        }
-        else graph=0;
-        if(graph !=0){ //ho bisogno del grafo
+        } else graph = 0;
+        if (graph != 0) { //ho bisogno del grafo
 
             //in questi due casi gli oggetti fanno tutti parte della scena corrente
-            if(graph===2){
+            if (graph === 2) {
                 //Case object scene/rules object only
                 return <div className={"eudCompletionPopupForGraph"}>
                     <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
@@ -1289,7 +1535,7 @@ class EudAutoComplete extends Component {
 
             //in questi due casi ci sono oggetti che fanno parte della scena corrente e altri (audio, video ...)
             //aggiungo manualmente gli oggetti della scena
-            if(graph===3){
+            if (graph === 3) {
                 return <div className={"eudCompletionPopupForGraph"}>
                     <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
                     <ul>
@@ -1310,36 +1556,35 @@ class EudAutoComplete extends Component {
             let sceneObj = this.props.interactiveObjects.filter(x =>
                 x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST);
             //mi prendo le scene coinvolte
-            let scenes =returnScenes(sceneObj, this.props);
+            let scenes = returnScenes(sceneObj, this.props);
 
             //Secondo gruppo, tutti gli altri oggetti, quindi mi basta filtrare quelli che sono presenti in sceneObj
             let notSceneObj = items.filter(d => !sceneObj.includes(d));
             //trasformo in un oggetto che può essere inserito nel dropdown
             let liNotSceneObj = listableItems(notSceneObj.valueSeq(), this.props);
 
-            let fragment = scenes.map( element => {
+            let fragment = scenes.map(element => {
                 var obj = mapSceneWithObjects(this.props, element, sceneObj);
                 let objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
-                let scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
-                    return (<React.Fragment>
-                        <span> {scene_name} </span>
-                        <ul>
-                            {objects}
-                        </ul>
-                    </React.Fragment>)
+                let scene_name = objects != "" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
+                return (<React.Fragment>
+                    <span> {scene_name} </span>
+                    <ul>
+                        {objects}
+                    </ul>
+                </React.Fragment>)
             });
             return (
-                    <div className={"eudCompletionPopupForGraph"}>
-                        {fragment}
-                        <ul>
-                            <div class={"line"}/>
-                            {liNotSceneObj}
-                        </ul>
+                <div className={"eudCompletionPopupForGraph"}>
+                    {fragment}
+                    <ul>
+                        <div class={"line"}/>
+                        {liNotSceneObj}
+                    </ul>
 
-                    </div>
+                </div>
             )
-        }
-        else { //caso di verbi, operatori etc..
+        } else { //caso di verbi, operatori etc..
             return <div className={"eudCompletionPopup"}>
                 <ul>
                     {li}
@@ -1347,6 +1592,45 @@ class EudAutoComplete extends Component {
             </div>
         }
     }
+}
+
+
+/* Funzione per fare la richiesta a wit.ai e restituire l'intent di risposta trovato (Luca) */
+async function sendRequest(sentence) {
+    let CLIENT_TOKEN = "45NRTW3MHAX4S4B4FS3APRUK67BFSAFX"; //Token bot Wit.ai
+    /* Variabile che verrà restituita dal bot*/
+    let risposta = {
+        intent: "",
+        scenaIniziale: "",
+        scenaFinale: "",
+        nomeTransizione: ""
+    };
+
+    const q = encodeURIComponent(sentence);
+    const uri = 'https://api.wit.ai/message?q=' + q;
+    const auth = 'Bearer ' + CLIENT_TOKEN;
+
+    /* Se il bot non trova qualche pezzo allora il campo resta come inizializzato cioè: "" */
+    return await fetch(uri, {headers: {Authorization: auth}})
+        .then(res => res.json())
+        .then(res => {
+                if (res.entities !== undefined) {
+                    if (res.entities.intent !== undefined) {
+                        risposta.intent = res.entities.intent[0].value;
+                    }
+                    if (res.entities.scenaIniziale !== undefined) {
+                        risposta.scenaIniziale = res.entities.scenaIniziale[0].value;
+                    }
+                    if (res.entities.scenaFinale !== undefined) {
+                        risposta.scenaFinale = res.entities.scenaFinale[0].value;
+                    }
+                    if (res.entities.nomeTransizione !== undefined) {
+                        risposta.nomeTransizione = res.entities.nomeTransizione[0].value;
+                    }
+                }
+                return risposta;
+            }
+        )
 }
 
 /**
@@ -1358,16 +1642,16 @@ function listableItems(list, props) {
         let n = (props.input ? props.input : "").split(" ");
         const word = n[n.length - 1];
         return key.includes(word);
-        }).map(i => {
-            return <EudAutoCompleteItem item={i}
-                                        verb={props.verb}
-                                        subject={props.subject}
-                                        role={props.role}
-                                        rules={props.rules}
-                                        changeText={(text, role) => this.changeText(text, role)}
-                                        updateRule={(rule, role) => props.updateRule(rule, role)}
-            />
-        });
+    }).map(i => {
+        return <EudAutoCompleteItem item={i}
+                                    verb={props.verb}
+                                    subject={props.subject}
+                                    role={props.role}
+                                    rules={props.rules}
+                                    changeText={(text, role) => this.changeText(text, role)}
+                                    updateRule={(rule, role) => props.updateRule(rule, role)}
+        />
+    });
     return result
 }
 
@@ -1376,17 +1660,17 @@ function listableItems(list, props) {
  * Se ho quindi [item1 item1 item3 item4] dove i primi due fanno parte di scena1 e gli altri di scena2 e scena3
  * Il risultato della funzione sarà [scena1 scena1 scena2 scena3], per avere un unico risultato per scena1 alla fine
  * della funzione creo un set
-**/
-function returnScenes(items, props){
-    if(items.size==0){ //se la lista è vuota non restituisco niente
+ **/
+function returnScenes(items, props) {
+    if (items.size == 0) { //se la lista è vuota non restituisco niente
         return "";
     }
-    let scenes=[];
+    let scenes = [];
     let array = items.toArray();
 
-    for(var i =0; i<array.length;i++){
-        if(array[i]){
-            let scene_uuid =ObjectToSceneStore.getState().get(array[i].uuid);
+    for (var i = 0; i < array.length; i++) {
+        if (array[i]) {
+            let scene_uuid = ObjectToSceneStore.getState().get(array[i].uuid);
             let scene_name = props.scenes.get(scene_uuid);
             scenes.push(scene_name);
 
@@ -1402,11 +1686,11 @@ function returnScenes(items, props){
  * @param objects: tutti gli oggetti presenti
  * @returns {[]}: oggetti relativi alla scena scene
  */
-function mapSceneWithObjects(props, scene, objects){
-    let return_result= [];
+function mapSceneWithObjects(props, scene, objects) {
+    let return_result = [];
     let array = objects.toArray();
-    for(var i=0; i<objects.size;i++){
-        if(scene.uuid===ObjectToSceneStore.getState().get(array[i].uuid)){
+    for (var i = 0; i < objects.size; i++) {
+        if (scene.uuid === ObjectToSceneStore.getState().get(array[i].uuid)) {
             return_result.push(array[i])
         }
     }
@@ -1460,14 +1744,14 @@ class EudAutoCompleteItem extends Component {
  * @returns {the list of possible completions, int that indicates if a graph is necessary}
  */
 function getCompletions(props) {
-    let graph=0;
+    let graph = 0;
     switch (props.role) {
         case "subject":
-            graph=1;
-            if(props.rulePartType === 'event'){ // event subject: player, game, audios videos, scene objects
+            graph = 1;
+            if (props.rulePartType === 'event') { // event subject: player, game, audios videos, scene objects
                 //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
                 //il merge delle scene lo faccio nella render con graph
-                graph=3;
+                graph = 3;
                 let items = props.assets.filter(x => x.type === 'video').merge(props.audios).set(
                     InteractiveObjectsTypes.PLAYER,
                     InteractiveObject({
@@ -1476,15 +1760,13 @@ function getCompletions(props) {
                         name: ""
                     }),
                 ).sort(function (a) {
-                    if(a.type=== "PLAYER"){
+                    if (a.type === "PLAYER") {
                         return -1
-                    }
-                    else
+                    } else
                         return 1;
                 });
                 return {items, graph};
-            }
-            else{
+            } else {
                 //soggetto nella seconda parte della frase
                 let subjects = props.interactiveObjects.filter(x =>
                     x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
@@ -1502,13 +1784,12 @@ function getCompletions(props) {
                     })
                 );
                 let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
-                let items= result.sort(function (a) {
+                let items = result.sort(function (a) {
                     //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
                     // e il player
-                    if(sceneObjectsOnly(props).includes(a)|| a.type=== "PLAYER"){
+                    if (sceneObjectsOnly(props).includes(a) || a.type === "PLAYER") {
                         return -1
-                    }
-                    else
+                    } else
                         return 1;
                 });
                 return {items, graph}
@@ -1517,7 +1798,7 @@ function getCompletions(props) {
 
         case "object":
             // the CLICK action is restricted to current scene objects only, might move to switch case later
-            if(props.verb.action === RuleActionTypes.CLICK){
+            if (props.verb.action === RuleActionTypes.CLICK) {
                 console.log("Case object scene object only: ", sceneObjectsOnly(props));
                 graph = 2;
                 let items = sceneObjectsOnly(props);
@@ -1525,12 +1806,12 @@ function getCompletions(props) {
             }
 
 
-            if(props.verb.action === RuleActionTypes.TRIGGERS){
+            if (props.verb.action === RuleActionTypes.TRIGGERS) {
                 graph = 2;
                 let items = sceneRulesOnly(props);
                 return {items, graph}
             }
-            
+
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
@@ -1540,24 +1821,23 @@ function getCompletions(props) {
             }
 
             //complemento oggetto, ordino sempre sulla base degli oggetti nella scena
-            let items= allObjects.sort(function (a) {
-                if(sceneObjectsOnly(props).includes(a)){
+            let items = allObjects.sort(function (a) {
+                if (sceneObjectsOnly(props).includes(a)) {
                     return -1
-                }
-                else
+                } else
                     return 1;
             });
 
             //ulteriore controllo per vedere se nella lista restituita ci sono oggetti
-            if(items.some(a => typeof a == props.interactiveObjects)){
+            if (items.some(a => typeof a == props.interactiveObjects)) {
                 graph = 2;
             }
 
             //se il verbo è spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
             // spostare nella scena in cui sono già)
-            if(props.verb.action === RuleActionTypes.TRANSITION){
+            if (props.verb.action === RuleActionTypes.TRANSITION) {
                 let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
-                items= items.filter(x=>
+                items = items.filter(x =>
                     !x.includes(current_scene_uuid)
                 );
             }
@@ -1565,8 +1845,8 @@ function getCompletions(props) {
             return {items, graph};
 
         case "operation":
-            if(props.rulePartType === 'event'){
-                if(props.subject){
+            if (props.rulePartType === 'event') {
+                if (props.subject) {
                     let items = RuleActionMap
                         //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
                         .filter(x => x.subj_type.includes(props.subject.type));
@@ -1576,25 +1856,24 @@ function getCompletions(props) {
                 let items = RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
                 return {items, graph};
             }
-            if(props.subject){
+            if (props.subject) {
                 //se ho come soggetto il gioco allora mostro solo avvia come verbo
-                if(props.subject.type === InteractiveObjectsTypes.GAME){
-                    let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
+                if (props.subject.type === InteractiveObjectsTypes.GAME) {
+                    let items = RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
                     return {items, graph};
                 }
                 let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
                 return {items, graph};
-            }
-            else{
+            } else {
                 let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
                 return {items, graph};
             }
 
-        case "operator":{
+        case "operator": {
             let items = props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
             return {items, graph};
         }
-        case 'value':{
+        case 'value': {
             let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
             return {items, graph};
         }
@@ -1617,7 +1896,7 @@ function filterValues(subject, verb) {
  * returns a map containing only the objects belonging to the current scene
  * @param props
  */
-function sceneObjectsOnly(props){
+function sceneObjectsOnly(props) {
     let sceneObjects = scene_utils.allObjects(props.scenes.get(CentralSceneStore.getState()));
     return props.interactiveObjects.filter(x => sceneObjects.includes(x.uuid));
 }
@@ -1627,7 +1906,7 @@ function sceneRulesOnly(props) {
     let rules = props.rules.filter(x => current_scene.get('rules').includes(x.uuid));
     let current_rule_uuid = props.rule._map._root.entries[0][1];
     //filtro in modo tale da non avere la regola corrente tra le completions, altrimenti si creerebbe un loop
-    return rules.filter(x=>
+    return rules.filter(x =>
         !x.includes(current_rule_uuid)
     );
 }
