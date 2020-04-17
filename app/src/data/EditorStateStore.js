@@ -44,7 +44,6 @@ class EditorStateStore extends ReduceStore {
                 return state.set('newAudioNameTyped', action.status);
             case ActionTypes.NEW_SCENE_NAME_TYPED:
                 return state.set('newSceneNameTyped', action.status);
-
             case ActionTypes.DEBUG_SAVE:
                 // Aggiornamento stato
                 if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
