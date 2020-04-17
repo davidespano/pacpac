@@ -579,7 +579,12 @@ div.rules{
     width: 100%;
 }
 
-.flex-container p, li{
+.flex-container li{
+    padding-left: 5px;
+    padding-right: 50px;
+}
+
+#errors {
     padding-left: 5px;
     padding-right: 50px;
 }
