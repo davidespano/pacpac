@@ -72,32 +72,32 @@ function saveForm(props) {
         return;
     }
     // Controllo che non ci siano salvataggi con lo stesso nome, in caso imposto flag a true
-    props.scenes.map(scene => {if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(scene.uuid) !== undefined){
-            if(alreadyExists) return;
+    props.scenes.map(scene => {
+        if (props.editor.debugSaves !== undefined && props.editor.debugSaves.get(scene.uuid) !== undefined) {
+            if (alreadyExists) return;
             let sceneSaves = props.editor.debugSaves.get(scene.uuid).toArray();
-
-            console.log(scene.name,sceneSaves);
+            console.log(scene.name, sceneSaves);
             sceneSaves.forEach(save => {
-                if(save.saveName === name){
+                if (save.saveName === name) {
                     alreadyExists = true;
                 }
             });
         }
     });
-    if (!alreadyExists) {
-        let objStateMap = new Immutable.OrderedMap(Object.keys(props.debugRunState)
-                                                         .map(i => [i, props.debugRunState[i.toString()]]))
-                                       .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
-        props.debugSave({
-            saveName: name,
-            saveDescription: description,
-            currentScene: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
-            objectStates: objStateMap,
-        });
 
-    } else {
-        alert("Il salvataggio " + name + " esiste già");
+            if (!alreadyExists) {
+                let objStateMap = new Immutable.OrderedMap(Object.keys(props.debugRunState)
+                    .map(i => [i, props.debugRunState[i.toString()]]))
+                    .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
+                props.debugSaves({
+                    saveName: name,
+                    saveDescription: description,
+                    saveSceneID: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
+                    saveObjects: objStateMap,
+                });
+            } else {
+                alert("Il salvataggio " + name + " esiste già");
+            }
     }
-}
 
 export default InputSaveForm;
