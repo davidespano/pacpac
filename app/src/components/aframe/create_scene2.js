@@ -32,6 +32,8 @@ const {mediaURL} = settings;
 let sceneLoaded = false;
 let timerSize; //variabili del timer pubbliche perchè accedute da render e tick
 let timerTime;
+let timerIsRunning = true;
+//window.nomeoggetto = oggetto
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
 // Ho l'impressione che l'attributo this.props.currentScene che viene dalla vecchia
@@ -144,7 +146,7 @@ export default class VRScene extends React.Component {
     timerManager()
     {
         let timer = document.getElementById(this.state.activeScene.name + 'timer')
-        if (timer != null && timerTime > 0) //se è presente un timer nella scena
+        if (timer != null && timerTime > 0 && timerIsRunning) //se è presente un timer nella scena
         {
             timerTime = timerTime - 0.1;
             timerTime = timerTime.toFixed(1);
@@ -156,10 +158,16 @@ export default class VRScene extends React.Component {
             if (timerTime == 0)
             {
                 //TODO: alzare l'evento al termine del timer
-                eventBus.emit()
+                //eventBus.emit()
             }
         }
     }
+
+    changeTimerValue(newTime)
+    {
+        timerTime= newTime;
+    }
+
     /**
      * Funzione asincrona che richiede al database tutte le informazioni del gioco, compresi audio,
      * tutte le scene e gli oggetti, regole in esse contenute
@@ -519,7 +527,8 @@ export default class VRScene extends React.Component {
             {
                 timerSize = 0.4 + (timerObj.properties.size/20);
                 timerTime = timerObj.properties.time;
-                console.log("creo oggetto timer con tempo: ", timerTime)
+                timerIsRunning = timerObj.properties.autoStart;
+                console.log("creo oggetto timer con tempo: ", timerTime, " autostart: ", timerIsRunning)
                 let textProperties = "baseline: center; side: double"+
                     "; align: center" + //timerObj.properties.alignment +
                     "; width:" + timerSize +
@@ -535,7 +544,6 @@ export default class VRScene extends React.Component {
                             text={textProperties} visible={visibility}>
                     </Entity>
             }
-
         }
         else
         {

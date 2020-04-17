@@ -7,6 +7,7 @@ const Timer = defaultValues => InteractiveObject({
     properties : {
         time : 1000,
         size: 5,
+        autoStart: true,
     },
     ...defaultValues
 });

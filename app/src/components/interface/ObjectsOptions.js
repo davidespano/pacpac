@@ -11,6 +11,7 @@ import Orders from "../../data/Orders";
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
+import SceneAPI from "../../utils/SceneAPI";
 
 
 function ObjectOptions(props){
@@ -386,6 +387,15 @@ function generateSpecificProperties(object, objectScene, props){
                             {object.properties.time}
                         </div>
                         <span className={'measure-units'}> secondi</span>
+                    </div>
+                    <div className={'rightbar-checkbox'}>
+                        <input type={'checkbox'} className={'checkbox-audio-form'}
+                               id={'timer-autostart'} checked={object.properties.autoStart}
+                               onChange={() => {
+                                   interface_utils.setPropertyFromValue(object,'autoStart', !object.properties.autoStart,props)
+                               }}
+                        />
+                        <label htmlFor={'home-scene'}>Avvio automatico</label>
                     </div>
                     <label className={'options-labels'}>Dimensione box:</label>
                     <div className={'flex'}>

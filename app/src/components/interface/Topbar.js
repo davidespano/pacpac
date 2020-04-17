@@ -445,6 +445,7 @@ function createObject(props, type){
                         properties: {
                             time: 10,
                             size: 5,
+                            autoStart: false,
                         }
                     });
                 }

@@ -270,7 +270,6 @@ export default class Bubble extends Component
             let Height = this.props.assetsDimention.height ;
 
             let bounds = calculate2DSceneImageBounds(Width, Height);
-            console.log("sto calcolando il bound di ", this.props.scene.name)
             let canvasWidth = bounds.w;
             let canvasHeight = bounds.h;
             let geometryProperties = "primitive: plane; width: "+ canvasWidth +"; height: auto"
