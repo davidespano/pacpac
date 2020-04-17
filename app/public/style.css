@@ -1,11 +1,23 @@
-.leftbar { grid-area: leftbar; }
-.rightbar { grid-area: rightbar; }
-.scene { grid-area: scene; }
+.leftbar {
+    grid-area: leftbar;
+}
+
+.rightbar {
+    grid-area: rightbar;
+}
+
+.scene {
+    grid-area: scene;
+}
+
 .rules {
     grid-area: rules;
     position: relative;
 }
-.topbar {grid-area: topbar;}
+
+.topbar {
+    grid-area: topbar;
+}
 
 *{
     box-sizing: border-box;
@@ -154,7 +166,6 @@ div.rules{
     font-family: latoregular;
     font-size: 16px;
 }
-
 
 .rules{
     overflow-y: hidden;
@@ -325,7 +336,6 @@ div.rules{
     text-overflow: ellipsis;
 }
 
-
 .propertyForm-right-number{
     width: 30%;
 }
@@ -440,7 +450,6 @@ div.rules{
     font-size: 20px;
     font-family: latoregular;
 }
-
 
 .node_element{
     position: relative;
@@ -572,12 +581,17 @@ div.rules{
     height: 30px;
 }
 
-.waste-action-buttons:hover{
+.waste-action-buttons:hover {
     cursor: pointer;
     background-color: rgba(0, 0, 0, .1);
 }
 
-.action-buttons-container{
+.action-buttons {
+    width: 20px;
+    height: 20px;
+}
+
+.action-buttons-container {
     border: solid 1px #8C9093;
     border-radius: .25rem;
     background-color: transparent;
@@ -626,7 +640,6 @@ div.rules{
     text-align: center;
     transition: .3s ease;
 }
-
 
 .tab-content {
     width: 100%;
@@ -742,8 +755,13 @@ figcaption {
 
 /* Rightbar objects */
 
-.objects-wrapper > button { grid-area: button}
-.objects-wrapper > p {grid-area: object-name}
+.objects-wrapper > button {
+    grid-area: button
+}
+
+.objects-wrapper > p {
+    grid-area: object-name
+}
 
 .objects-wrapper {
     display: grid;
@@ -1489,7 +1507,6 @@ li > span {
     background-color: #FFD8AC;
 }
 
-
 span.eudObjectString {
     position: relative;
     display: inline-block;
@@ -1978,7 +1995,8 @@ h6 {
     float: right;
     padding: 1%;
 }
-.icon-obj-right:hover {
+
+.icon -obj-right:hover {
     border-radius: 5px;
     background-color: rgba(239, 86, 45, .3);
     padding: 0%;
@@ -2078,8 +2096,14 @@ h6 {
     text-align: right;
 }
 
-#nav-tab-scenes { grid-area: scenes; border-right: 1px solid #8C9093; }
-#nav-tab-saves { grid-area: saves; }
+#nav-tab-scenes {
+    grid-area: scenes;
+    border-right: 1px solid #8C9093;
+}
+
+#nav-tab-saves {
+    grid-area: saves;
+}
 
 #nav-leftbar {
     width: 100%;
@@ -2159,7 +2183,6 @@ textarea {
     transition: opacity .2s;
 }
 
-
 .rightbar-footer{
     height: 100px;
 }
@@ -2178,6 +2201,12 @@ textarea {
     background-color: white;
 
 }
+
+.rcw-conversation-container .rcw-header, .rcw-launcher, .rcw-client {
+    background-color: #ef562d !important;
+    color: white;
+}
+
 
 /********* END debug css ************/
 

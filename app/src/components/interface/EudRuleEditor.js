@@ -12,12 +12,17 @@ import Values from "../../rules/Values";
 import Condition from "../../rules/Condition";
 import SuperCondition from "../../rules/SuperCondition";
 import toString from "../../rules/toString";
-import { RuleActionMap, ValuesMap, OperatorsMap } from "../../rules/maps";
+import {RuleActionMap, ValuesMap, OperatorsMap} from "../../rules/maps";
 import CentralSceneStore from "../../data/CentralSceneStore";
 import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
+
+import {Widget, addResponseMessage, addLinkSnippet, addUserMessage} from 'react-chat-widget';
+import 'react-chat-widget/lib/styles.css';
+import stores_utils from "../../data/stores_utils";
+import EventTypes from "../../rules/EventTypes";
 import RulesStore from "../../data/RulesStore";
 import ScenesNamesStore from "../../data/ScenesNamesStore";
 import ObjectsStore from "../../data/ObjectsStore";
@@ -31,9 +36,20 @@ var ghostScene=null;
 export default class EudRuleEditor extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            elementoMancante: "", //Variabile dove scrivo di volta in volta l'elemento che manca al bot per completare la regola
+            queryPrecedente: "",  //Variabile d'appoggio dove salvo la query precedente
+            response: {
+                intent: "",
+                scenaIniziale: "",
+                scenaFinale: "",
+                nomeTransizione: ""
+            }
+        };
     }
 
     render() {
+        let icon = "icons/icon_chat-bot.png";
 
         let scene = this.props.scenes.get(this.props.currentScene); //uuid
         // console.log("this.props.currentScene. ", this.props.currentScene)
@@ -185,6 +201,13 @@ export default class EudRuleEditor extends Component {
                                  this.onOutsideClick();
                              }}>
                             {rulesRendering}
+                            <Widget
+                                title={"PAC-PAC BOT"}
+                                subtitle={""}
+                                profileAvatar={icon}
+                                handleNewUserMessage={this.handleNewUserMessage}
+                                senderPlaceHolder={"Scrivi qui la regola"}/>
+                            <br/>
                         </div>
                     </div>
                 </div>;
@@ -237,7 +260,6 @@ export default class EudRuleEditor extends Component {
                                      this.onOutsideClick();
                                  }}>
                                 {rulesRendering}
-                                <div className={'rules-footer'}></div>
                             </div>
                         </div>
                     </div>
@@ -277,7 +299,13 @@ export default class EudRuleEditor extends Component {
                                      this.onOutsideClick();
                                  }}>
                                 {globalRulesRendering}
-
+                                <Widget
+                                    title={"PAC-PAC BOT"}
+                                    subtitle={""}
+                                    profileAvatar={icon}
+                                    handleNewUserMessage={this.handleNewUserMessage}
+                                    senderPlaceHolder={"Scrivi qui la regola"}/>
+                                <br/>
                                 <div className={'rules-footer'}/>
                             </div>
                         </div>
@@ -338,6 +366,103 @@ export default class EudRuleEditor extends Component {
     }
 
 
+    /** Luca - Widget Bot */
+
+    /* Messaggio di benvenuto. */
+    componentDidMount() {
+        addResponseMessage("Benvenuto nel bot delle regole di Pac-Pac, scrivi subito la prima regola! Ricorda che puoi scrivere \"reset\" " +
+            "in qualsiasi momento per resettare tutto e scrivere una regola da capo. ");
+    }
+
+    /* Metodo per inviare un messaggio. Capire se il bot ha trovato una transizione, se quella transizione ha tutti i
+    campi corretti allora creo la scena con tutto corretto, se no risolvo i conflitti in locale. */
+    handleNewUserMessage = async (newMessage) => {
+
+        /* Si da l'opportunità all'utente di resettare in ogni momento la regola che sta scrivendo e di scriverne una da capo. */
+        if (newMessage !== "reset") {
+            /* La prima query verrà sempre mandata al bot. */
+            if (this.state.elementoMancante === "") {
+                this.setState({response: await sendRequest(newMessage)});
+            } else {
+                /* Se dopo aver mandato al bot la prima query ci dovesse mancare qualcosa allora risolviamo localmente, modificando
+                * lo stato di response, usando una variabile d'appoggio "risposta". Il campo mancante prenderà ciò che scriviamo
+                * nell'input, successivamente processiamo ciò che abbiamo scritto in "queryControl". */
+                let risposta = this.state.response;
+
+                /* A seconda di cosa viene settato nel queryControl si esegue uno di questi case. */
+                switch (this.state.elementoMancante) {
+                    case "scenaFinale":
+                        risposta.scenaFinale = newMessage;
+                        this.setState({response: risposta});
+                        break;
+                    case "nomeTransizione":
+                        risposta.nomeTransizione = newMessage;
+                        this.setState({response: risposta});
+                        break;
+                    case "chiediConferma":
+                        if (newMessage.trim().toLowerCase() === "si") {
+                            //Creo la regola
+                            let transitionObj = this.returnTransitionByName(this.state.response.nomeTransizione);
+                            let finalSceneUuid = this.returnUuidSceneByName(this.state.response.scenaFinale, this.props);
+                            this.createTransitionRule(transitionObj, finalSceneUuid);
+                            addResponseMessage("Regola creata!");
+                            addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
+
+                            //Resetto i campi di response
+                            this.responseReset();
+                            return;
+                        } else if (newMessage.trim().toLowerCase() === "no") {
+                            addResponseMessage("Regola resettata!");
+                            addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
+                            //Resetto i campi di response
+                            this.responseReset();
+                            return;
+                        } else {
+                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
+                            return;
+                        }
+                }
+            }
+            /* Controlliamo tutti i dati di response. */
+            this.queryControl(this.state.response);
+        } else {
+            this.responseReset();
+            addResponseMessage("La regola è stata resettata! Puoi scriverne una da capo quando vuoi.");
+        }
+    };
+
+    /* Metodo per il controllo dei dati che abbiamo salvato in "response". */
+    queryControl() {
+        switch (this.state.response.intent) {
+            case "transizione": {
+                /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
+                * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
+                if (this.state.response.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
+                    let risposta = this.state.response;
+                    risposta.scenaIniziale = this.props.scenes.get(this.props.currentScene).name;
+                    this.setState({response: risposta});
+                }
+                /* Controllo che la scena finale che ha inserito l'utente esista, cioè che si trovi effettivamente tra le scene del gioco,
+                * ma che non sia la scena corrente. */
+                if (!this.doesFinalSceneExists(this.state.response.scenaFinale)) {
+                    if (this.state.response.scenaFinale === "") {
+                        addResponseMessage("Scrivimi qual'è la scena finale alla quale vuoi arrivare. Perfavore scegli tra una di queste: " + this.returnFinalScenesNames());
+                    } else {
+                        addResponseMessage("La scena finale che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnFinalScenesNames());
+                    }
+                    //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
+                    this.setState({elementoMancante: "scenaFinale"});
+                } else if (!this.doesTransitionExists(this.state.response.nomeTransizione)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
+                    if (this.state.response.nomeTransizione === "") {
+                        addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                    } else {
+                        addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                    }
+                    //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
+                    this.setState({elementoMancante: "nomeTransizione"});
+                } else {
+                    /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
+                    addResponseMessage("Ho tutto.");
 }
 
 /**
@@ -357,6 +482,127 @@ function onAccordionClick(accordionId) {
         }
     }
 
+                    this.setState({elementoMancante: "chiediConferma"});
+                    addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
+                        " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.nomeTransizione);
+                    addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
+                }
+            }
+                break;
+            default:
+                addResponseMessage("Non è una transizione, verrà implementato in futuro.")
+        }
+    }
+
+    /* Resetto response per la prossima richiesta di nuova regola. */
+    responseReset() {
+        this.setState({elementoMancante: ""});
+        let risposta = this.state.response;
+        risposta.intent = "";
+        risposta.scenaIniziale = "";
+        risposta.scenaFinale = "";
+        risposta.nomeTransizione = "";
+        this.setState({response: risposta});
+    }
+
+    /* Ritorna i nomi delle transizioni della scena corrente. */
+    returnTransitionNames() {
+        let sceneTransitions = this.props.interactiveObjects.filter(x => x.type === InteractiveObjectsTypes.TRANSITION);
+
+        let transitions = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneTransitions);
+        for (var i = 0; i < transitions.length; i++) {
+            transitions[i] = transitions[i].name;
+        }
+        return transitions;
+    }
+
+    /* Torna true se la transizione passata come parametro (stringa) esiste, false altrimenti. */
+    doesTransitionExists(transition) {
+        let transitionNames = this.returnTransitionNames();
+        for (var i = 0; i < transitionNames.length; i++) {
+            if (transition === transitionNames[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Ritorna i nomi delle sceneFinali possibili. */
+    returnFinalScenesNames() {
+        let scene = this.props.scenes;
+        let nomeScenaCorrente = this.props.scenes.get(this.props.currentScene).name;
+        let nomiScene = []; // Array che conterrà tutti i nomi delle scene, tranne quello della scena corrente.
+
+        //Aggiungo i nome di tutte le scene, ma saltando la scena corrente
+        scene.forEach(function (singleScene) {
+            if (singleScene.name !== nomeScenaCorrente)
+                nomiScene.push(singleScene.name);
+        });
+        return nomiScene;
+    }
+
+    /* Torna true se la scena passsata come parametro (stringa) esiste tra i nomi delle scene nella quale è possibile spostarsi, false altrimenti. */
+    doesFinalSceneExists(scene) {
+        let sceneNames = this.returnFinalScenesNames();
+
+        for (var i = 0; i < sceneNames.length; i++) {
+            if (scene === sceneNames[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Ritorna l'oggetto transizione corrispondente al nome passato. */
+    returnTransitionByName(transitionName) {
+        let sceneTransitions = this.props.interactiveObjects.filter(x =>
+            x.type === InteractiveObjectsTypes.TRANSITION);
+
+        let transitions = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneTransitions);
+        for (var i = 0; i < transitions.length; i++) {
+            if (transitionName === transitions[i].name) {
+                return transitions[i];
+            }
+        }
+        return undefined;
+    }
+
+    /* Ritorna l'oggetto scena corrispondente al nome passato. */
+    returnUuidSceneByName(sceneName, props) {
+        let scene = this.props.scenes;
+        let uuid = undefined;
+        //Quando trovo il nome della scena corrispondente allora lo restituisco
+        scene.forEach(function (singleScene) {
+            if (singleScene.name === sceneName) {
+                uuid = props.scenes.get(singleScene.uuid).uuid;
+            }
+        });
+        return uuid;
+    }
+
+    /* Crea la regola transizione data la transizione (oggetto) e l'uuid della scena finale. Non abbiamo bisogno di
+     * altri campi visto che per la transizione sono sempre li stessi. */
+    createTransitionRule(transition, finalSceneUuid) {
+        let r;
+        r = Rule({
+            uuid: uuid.v4(),
+            name: 'regola della transizione ' + transition.name,
+            event: Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: EventTypes.CLICK,
+                obj_uuid: transition.uuid,
+            }),
+            actions: Immutable.List([Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: RuleActionTypes.TRANSITION,
+                obj_uuid: finalSceneUuid,
+            })]),
+        });
+
+        this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
+    }
 }
 
 class EudRule extends Component {
@@ -484,8 +730,6 @@ class EudRule extends Component {
             }
         }
     }
-
-
 
 
     render() {
@@ -1066,7 +1310,6 @@ class EudAction extends Component {
             default:
                 object = this.getInteractiveObjectReference(this.props.action.obj_uuid); //riferimento alla regola
                 let objectCompletion = this.showCompletion(actionId, "object"); //prendi completion della regola
-
                 objectRendering =
                     <EudRulePart
                         interactiveObjects={this.props.interactiveObjects}
@@ -1489,10 +1732,10 @@ class EudRuleNumericPart extends Component {
         }
         return <div className={css} key={'numeric-input' + this.props.rule.uuid + this.props.role}>
                 <span>
-                <span className={className}>
+                <span className={"eudObjectString"}>
                 <span>{text == "" ? "[un valore]" : text}</span>
                 <input type={"text"}
-                       className={className} placeholder={"[digita un numero]"}
+                       className={"eudObjectString"} placeholder={"[digita un numero]"}
                        onChange={(e) => {
                            this.onChange(e)
                        }}
@@ -1680,13 +1923,51 @@ class EudAutoComplete extends Component {
 
 }
 
+
+/* Funzione per fare la richiesta a wit.ai e restituire l'intent di risposta trovato (Luca) */
+async function sendRequest(sentence) {
+    let CLIENT_TOKEN = "45NRTW3MHAX4S4B4FS3APRUK67BFSAFX"; //Token bot Wit.ai
+    /* Variabile che verrà restituita dal bot*/
+    let risposta = {
+        intent: "",
+        scenaIniziale: "",
+        scenaFinale: "",
+        nomeTransizione: ""
+    };
+
+    const q = encodeURIComponent(sentence);
+    const uri = 'https://api.wit.ai/message?q=' + q;
+    const auth = 'Bearer ' + CLIENT_TOKEN;
+
+    /* Se il bot non trova qualche pezzo allora il campo resta come inizializzato cioè: "" */
+    return await fetch(uri, {headers: {Authorization: auth}})
+        .then(res => res.json())
+        .then(res => {
+                if (res.entities !== undefined) {
+                    if (res.entities.intent !== undefined) {
+                        risposta.intent = res.entities.intent[0].value;
+                    }
+                    if (res.entities.scenaIniziale !== undefined) {
+                        risposta.scenaIniziale = res.entities.scenaIniziale[0].value;
+                    }
+                    if (res.entities.scenaFinale !== undefined) {
+                        risposta.scenaFinale = res.entities.scenaFinale[0].value;
+                    }
+                    if (res.entities.nomeTransizione !== undefined) {
+                        risposta.nomeTransizione = res.entities.nomeTransizione[0].value;
+                    }
+                }
+                return risposta;
+            }
+        )
+}
+
 /**
  * Funzione che da un array di elementi restituisce i <li> che possono essere restituiti come elenco
  */
 function listableItems(list, props) {
     let result = list.filter(i => {
         let key = toString.objectTypeToString(i.type) + i.name;
-
         let n = (props.input ? props.input : "").split(" ");
         const word = n[n.length - 1];
         return key.includes(word);
