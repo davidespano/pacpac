@@ -72,10 +72,9 @@ function saveForm(props) {
         props.debugSaves({
             saveName: name,
             saveDescription: description,
-            saveSceneID: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
-            saveObjects: objStateMap,
+            currentScene: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
+            objectStates: objStateMap,
         });
-        //DebugAPI.saveDebugState(name, description, EditorState.debugFromScene === undefined ? props.currentScene : EditorState.debugFromScene, objStateMap);
     } else {
         alert("Salvataggio già presente");
     }
