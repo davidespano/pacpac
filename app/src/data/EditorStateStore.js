@@ -46,7 +46,7 @@ class EditorStateStore extends ReduceStore {
                 return state.set('newSceneNameTyped', action.status);
             case ActionTypes.DEBUG_SAVES:
                 DebugAPI.saveDebugState(action.response.saveName, action.response.saveDescription,
-                    action.response.saveSceneID, action.response.saveObjects);
+                    action.response.currentScene, action.response.objectStates);
                 return state.set('debugSaves', action.response);
 
             case ActionTypes.DEBUG_SAVE:
