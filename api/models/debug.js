@@ -5,8 +5,10 @@ function createUpdateDebugState(session, debugState, gameID) {
     let state = new DebugState(debugState);
     let objectStates = state.objectStates;
     let saveName = state.saveName;
+    let saveDescription = state.saveDescription;
 
     delete state.saveName;
+    delete state.saveDescription;
     delete state.objectStates;
 
     return session.run(
@@ -17,14 +19,14 @@ function createUpdateDebugState(session, debugState, gameID) {
         'MERGE (o:Debug:DebugObject {uuid: object.uuid, saveName: $saveName}) ' +
         'SET o += object ' +
         'MERGE (state)-[:STORES_OBJECT]->(o) ' +
-        'RETURN state', {saveName: saveName, state: state, objectStates: objectStates})
+        'RETURN state', {saveName: saveName, saveDescription: saveDescription, state: state, objectStates: objectStates})
         .then(() => debugState);
 }
 
 function getAllSaves(session, gameID) {
     return session.run(
         'MATCH (state:Debug:DebugState:`' + gameID + '`)-[:STORES_OBJECT]->(object:DebugObject) ' +
-        'RETURN state.saveName AS saveName, state, collect(object) AS objects'
+        'RETURN state.saveName AS saveName, state.saveDescription AS saveDescription, state, collect(object) AS objects'
     ).then(result => {
         if (!_.isEmpty(result.records)) {
             return multipleSaves(result);
@@ -48,7 +50,7 @@ function getDebugState(session, gameID, saveName) {
             const debugState = new DebugState({
                 currentScene: currentScene,
                 objectStates: objectsStates,
-            })
+            });
 
             if (debugState)
                 return debugState;
@@ -66,14 +68,17 @@ function buildSave(record) {
 
     if (record !== undefined) {
         const saveName = record.get('saveName');
+        const saveDescription = record.get('saveDescription');
+
         const currentScene = record.get('state').properties.currentScene;
         const objectsStates = record.get('objects').map(obj => obj.properties);
 
         const debugState = new DebugState({
             saveName: saveName,
+            saveDescription: saveDescription,
             currentScene: currentScene,
             objectStates: objectsStates,
-        })
+        });
 
         if (debugState)
             return debugState;
