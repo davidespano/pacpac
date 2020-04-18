@@ -168,7 +168,7 @@ function saveForm(props) {
         currentScene: sceneUuid,
         objectStates: objStateMap,
     });
-    
+
 }
 
 export default InputSaveForm;
