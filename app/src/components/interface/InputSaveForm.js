@@ -105,6 +105,7 @@ function saveForm(props) {
         currentScene: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
         objectStates: objStateMap,
     });
+
 }
 
 export default InputSaveForm;
