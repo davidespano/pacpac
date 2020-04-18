@@ -63,38 +63,40 @@ function getAllSaves() {
             if (err) {
                 return console.error(err);
             }
-                if (EditorState.debugSaves === undefined) {
-                    EditorState.debugSaves = new Immutable.OrderedMap({
-                        currentScene: new Immutable.Set
+            /* Nessun errore nella richiesta, nel body della response c'è un array che contiene
+               tutti i salvataggi del gioco corrente */
+            console.log(response.body);
 
-                    });
-                }
-                let oldSaves = null;
-                let newSaves = null;
+            if (EditorState.debugSaves === undefined) {
+                EditorState.debugSaves = new Immutable.OrderedMap({
+                    currentScene: new Immutable.Set
 
-                if (response.body && response.body !== []) {
-                    let debugSaves = new Immutable.Map();
+                });
+            }
+            let oldSaves = null;
+            let newSaves = null;
 
-                    response.body.forEach(el => {
-                            if(!debugSaves.contains(el.currentScene)){
-                               debugSaves = debugSaves.set(el.currentScene, new Immutable.Set());
-                            }
-                            debugSaves = debugSaves.set(
-                                el.currentScene,
-                                debugSaves.get(el.currentScene).add(el.saveName))
-                            /*oldSaves = EditorState.debugSaves[el.currentScene];
-                            newSaves = new Immutable.Set(oldSaves).add(el.saveName);
-                            //state = state.set(el.currentScene, newSaves)
-                            EditorState.debugSaves[el.currentScene] = newSaves;*/
+            if (response.body && response.body !== []) {
+                let debugSaves = new Immutable.Map();
+
+                response.body.forEach(el => {
+                        if(!debugSaves.contains(el.currentScene)){
+                            debugSaves = debugSaves.set(el.currentScene, new Immutable.Set());
                         }
-                    );
-
-                    return debugSaves;
-                }else{
-                    return null;
-                }
-
-
+                        debugSaves = debugSaves.set(
+                            el.currentScene,
+                            debugSaves.get(el.currentScene).add(el.saveName))
+                        /*oldSaves = EditorState.debugSaves[el.currentScene];
+                        newSaves = new Immutable.Set(oldSaves).add(el.saveName);
+                        //state = state.set(el.currentScene, newSaves)
+                        EditorState.debugSaves[el.currentScene] = newSaves;*/
+                    }
+                );
+                return debugSaves;
+            } else {
+                console.log("Nessun salvataggio presente");
+                return null;
+            }
         });
 }
 
