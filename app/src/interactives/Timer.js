@@ -12,5 +12,12 @@ const Timer = defaultValues => InteractiveObject({
     ...defaultValues
 });
 
+export function stop() {
+    window.timerTime = 0;
+    window.timerIsRunning = false;
+}
+
+
+
 export default Timer;
 

@@ -22,6 +22,7 @@ import 'aframe-mouse-cursor-component';
 import ActionTypes from "../../actions/ActionTypes";
 import EditorState from "../../data/EditorState";
 import interface_utils from "../interface/interface_utils";
+import Timer from "../../interactives/Timer";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import {calculate2DSceneImageBounds} from "./aframe_curved";
 const soundsHub = require('./soundsHub');
@@ -31,8 +32,7 @@ const eventBus = require('./eventBus');
 const {mediaURL} = settings;
 let sceneLoaded = false;
 let timerSize; //variabili del timer pubbliche perchè accedute da render e tick
-let timerTime;
-let timerIsRunning = true;
+var timerTime;
 //window.nomeoggetto = oggetto
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
@@ -43,7 +43,6 @@ let timerIsRunning = true;
 // parametri in base al flag di debug.
 
 export default class VRScene extends React.Component {
-
     //TODO: rimuovere currentscene o activescene
     constructor(props) {
         super(props);
@@ -146,16 +145,16 @@ export default class VRScene extends React.Component {
     timerManager()
     {
         let timer = document.getElementById(this.state.activeScene.name + 'timer')
-        if (timer != null && timerTime > 0 && timerIsRunning) //se è presente un timer nella scena
+        if (timer != null && window.timerTime > 0 && window.timerIsRunning) //se è presente un timer nella scena
         {
-            timerTime = timerTime - 0.1;
-            timerTime = timerTime.toFixed(1);
+            window.timerTime = window.timerTime - 0.1;
+            window.timerTime = window.timerTime.toFixed(1);
             let textProperties = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + timerSize +
-                "; value:" + timerTime;
+                "; value:" + window.timerTime;
             timer.setAttribute('text', textProperties)
-            if (timerTime == 0)
+            if (window.timerTime == 0)
             {
                 //TODO: alzare l'evento al termine del timer
                 //eventBus.emit()
@@ -163,10 +162,18 @@ export default class VRScene extends React.Component {
         }
     }
 
-    changeTimerValue(newTime)
-    {
-        timerTime= newTime;
+    timerStop() {
+        window.timerIsRunning = false;
     }
+
+    timerStart() {
+        window.timerIsRunning = true;
+    }
+
+    changeTimerTime(time){
+        window.timerTime = time;
+    }
+
 
     /**
      * Funzione asincrona che richiede al database tutte le informazioni del gioco, compresi audio,
@@ -526,13 +533,13 @@ export default class VRScene extends React.Component {
             if (timerObj) //se l'oggetto timer esiste genero la Entity
             {
                 timerSize = 0.4 + (timerObj.properties.size/20);
-                timerTime = timerObj.properties.time;
-                timerIsRunning = timerObj.properties.autoStart;
-                console.log("creo oggetto timer con tempo: ", timerTime, " autostart: ", timerIsRunning)
+                window.timerTime = timerObj.properties.time;
+                window.timerIsRunning = timerObj.properties.autoStart;
+                console.log("creo oggetto timer con tempo: ", window.timerTime, " autostart: ", window.timerIsRunning)
                 let textProperties = "baseline: center; side: double"+
                     "; align: center" + //timerObj.properties.alignment +
                     "; width:" + timerSize +
-                    "; value:" + timerTime;
+                    "; value:" + window.timerTime;
                 let geometryProperties = "primitive: plane; width: 0.15" + (0.4 + (timerObj.properties.size/20))+
                     "; height: auto;"
                 let visibility = true; //per gestire la visibilità del timer
