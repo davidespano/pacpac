@@ -90,7 +90,7 @@ function getState() {
         switchToGameList: Actions.gameSelectionModeOn,
 
         audioPositioning: Actions.audioPositioning,
-        debugSaves: Actions.debugSaves,
+        debugSave: Actions.debugSave,
         expandEditor: Actions.expandEditor,
         isItNew: Actions.isItNew,
         leftbarSelection: Actions.leftbarSelection,
