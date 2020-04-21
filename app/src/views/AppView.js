@@ -17,6 +17,7 @@ import GameList from "../components/interface/GameList";
 import EudRuleEditor from "../components/interface/EudRuleEditor";
 import StoryEditor from "../components/interface/StoryEditor";
 import ActionTypes from "../actions/ActionTypes";
+import EditorState from "../data/EditorState";
 
 function AppView(props) {
 
@@ -71,16 +72,22 @@ function AppView(props) {
             );
         case ActionTypes.DEBUG_MODE_ON:
             let vrScene = <VRScene debug={true} {...props}/>;
+
+            let debugProps = {
+                ...props,
+                debugRunState: EditorState.debugRunState
+            };
+
             return (
                 <div>
-                    <TopBar {...props} />
+                    <TopBar {...debugProps}/>
                     <div className={'grid-container'}>
-                        <LeftBar {...props} />
-                        <DebugTab {...props} />
+                        <LeftBar {...debugProps} />
+                        <DebugTab {...debugProps} />
                         <div className={"scene"} id={"debug-scene"}>
                             {vrScene}
                         </div>
-                        <EudRuleEditor {...props} VRScene={vrScene}/>
+                        <EudRuleEditor {...debugProps} VRScene={vrScene}/>
                     </div>
                 </div>
             );
