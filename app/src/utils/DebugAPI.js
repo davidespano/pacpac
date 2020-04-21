@@ -82,11 +82,9 @@ function getAllSaves() {
                     }
                     debugSaves = debugSaves.update(save.currentScene, set => set.add(save));
                 });
-
                 console.log("DebugAPI/debugSaves", debugSaves.toArray());
 
                 Actions.loadDebugSaves(debugSaves);
-
                 return null;
             } else {
                 console.log("Nessun salvataggio presente");
