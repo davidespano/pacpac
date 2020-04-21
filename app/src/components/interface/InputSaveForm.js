@@ -85,25 +85,6 @@ function InputSaveForm(props) {
                      aria-labelledby="register-modal-label" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="register-modal-label">Non ci sono modifiche</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    console.clear();
-    console.log("props.debugRunState", props.debugRunState);
-    if(props.debugRunState === undefined){
-        return (
-            <div id={"register"}>
-                <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
-                     aria-labelledby="register-modal-label" aria-hidden="true">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
                             <div className="modal-body">
                                 <h5 className="modal-title" id="register-modal-label">Non ci sono modifiche</h5>
                             </div>
@@ -113,55 +94,6 @@ function InputSaveForm(props) {
             </div>
         );
     }
-
-    //Recupero gli elementi del form
-    let submitButton = document.getElementById('save-submit-button');
-
-    let nameField = document.getElementById('save-name');
-    let descriptionField = document.getElementById('save-description');
-    let errorMessageNotValidName = document.getElementById('error-message');
-    let errorMessageFields = document.getElementById('error-message-footer');
-
-    let flagValidName = false; // flag per dire se il nome inserito dall'utente è valido o meno (quindi se è un nome che già esiste o meno)
-
-    let validateForm = () => {
-        // Il bottone è abilitato solo se il entrambi i campi di input sono stati compilati e se il nome è valido
-        //submitButton.disabled = !(nameField.value !== '' && descriptionField.value !== '' && flagValidName);
-
-        if(!(nameField.value !== '' && descriptionField.value !== '' && flagValidName)){
-            /*submitButton.disabled = true;
-            submitButton.className.replace('disabled', '');*/
-            submitButton.setAttribute('disabled', 'true');
-        } else {
-           /* submitButton.disabled = false;
-            submitButton.className += " disabled";*/
-           submitButton.removeAttribute('disabled');
-        }
-    };
-    let checkName = () => {
-        let name = nameField.value;
-        let alreadyExists = false;
-
-        // Controllo che non ci siano salvataggi con lo stesso nome, in caso imposto flag a true
-        props.scenes.map(scene => {
-            if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(scene.uuid) !== undefined){
-                if(alreadyExists) return;
-                let sceneSaves = props.editor.debugSaves.get(scene.uuid).toArray();
-
-                sceneSaves.forEach(save => {
-                    if(save.saveName === name){
-                        alreadyExists = true;
-                    }
-                });
-            }
-        });
-        errorMessageNotValidName.innerHTML = alreadyExists ? 'Esiste già un salvataggio con nome ' + name : '';
-        flagValidName = !alreadyExists;
-        validateForm();
-    };
-    let bottomErrorMessages = () => {
-        errorMessageFields.innerHTML = submitButton.disabled === true ? 'Compila tutti i campi correttamente' : '';
-    };
 
     return (
         <div id={"register"}>
