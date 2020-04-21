@@ -77,12 +77,12 @@ function AppView(props) {
                 <div>
                     <TopBar {...props}/>
                     <div className={'grid-container'}>
-                        <LeftBar {...props} />
-                        <DebugTab {...props} />
+                        <LeftBar {...debugProps} />
+                        <DebugTab {...debugProps} />
                         <div className={"scene"} id={"debug-scene"}>
                             {vrScene}
                         </div>
-                        <EudRuleEditor {...props} VRScene={vrScene}/>
+                        <EudRuleEditor {...debugProps} VRScene={vrScene}/>
                     </div>
                 </div>
             );
