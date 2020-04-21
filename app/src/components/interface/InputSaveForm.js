@@ -1,9 +1,27 @@
 import React from "react";
 import Immutable from "immutable";
-import EditorState from "../../data/EditorState";
-import DebugAPI from "../../utils/DebugAPI";
 
 function InputSaveForm(props) {
+
+    console.clear();
+    console.log("props.debugRunState", props.debugRunState);
+
+    if(props.debugRunState === undefined){
+        return (
+            <div id={"register"}>
+                <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
+                     aria-labelledby="register-modal-label" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="register-modal-label">Non ci sono modifiche</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div id={"register"}>
@@ -32,7 +50,7 @@ function InputSaveForm(props) {
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm"
-                                    onClick={() => saveForm(props)}
+                                    onClick={() =>  saveForm(props)}
                                     data-dismiss="modal"
                                     >
                                 Conferma
@@ -46,7 +64,6 @@ function InputSaveForm(props) {
 }
 
 function saveForm(props) {
-    console.log(props);
     const name = document.getElementById("save-name").value;
     const description = document.getElementById("save-description").value;
     let flag = false;
@@ -66,10 +83,10 @@ function saveForm(props) {
         }
     });
     if (!flag) {
-        let objStateMap = new Immutable.OrderedMap(Object.keys(EditorState.debugRunState)
-                                                         .map(i => [i, EditorState.debugRunState[i.toString()]]))
+        let objStateMap = new Immutable.OrderedMap(Object.keys(props.debugRunState)
+                                                         .map(i => [i, props.debugRunState[i.toString()]]))
                                        .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
-        props.debugSaves({
+        props.debugSave({
             saveName: name,
             saveDescription: description,
             currentScene: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,

@@ -44,9 +44,11 @@ class EditorStateStore extends ReduceStore {
                 return state.set('newAudioNameTyped', action.status);
             case ActionTypes.NEW_SCENE_NAME_TYPED:
                 return state.set('newSceneNameTyped', action.status);
-            case ActionTypes.DEBUG_SAVES:
+
+            case ActionTypes.DEBUG_SAVE:
                 DebugAPI.saveDebugState(action.response.saveName, action.response.saveDescription,
                     action.response.currentScene, action.response.objectStates);
+                // In questo punto sovrascriviamo i salvataggi già presenti, bisogna aggiungerli
                 return state.set('debugSaves', action.response);
 
                 // [davide] questa action qui non mi pare che serva

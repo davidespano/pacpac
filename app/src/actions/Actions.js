@@ -108,11 +108,9 @@ const Actions = {
         })
     },
 
-
-
-    debugSaves(response){
+    debugSave(response){
         AppDispatcher.dispatch({
-            type: ActionTypes.DEBUG_SAVES,
+            type: ActionTypes.DEBUG_SAVE,
             response: response,
         })
     },
