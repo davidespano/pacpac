@@ -48,30 +48,18 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.DEBUG_SAVE:
                 DebugAPI.saveDebugState(action.response.saveName, action.response.saveDescription,
                     action.response.currentScene, action.response.objectStates);
-                // In questo punto sovrascriviamo i salvataggi già presenti, bisogna aggiungerli
+                //TODO sistemare questo pezzo di codice, debugSaves rimane vuoto
+                /*let saves = state.debugSaves;
+                if(saves === null){
+                    saves = new Immutable.Map();
+                }
+                if(!saves.has(action.response.currentScene)){ // Caso in cui la mappa non contenga l'entrata con la chiave currentScene
+                    saves = saves.set(action.response.currentScene, new Immutable.Set());
+                }
+                saves = saves.set(action.response.currentScene, saves.get(action.response.currentScene).add(action.response));
+                return state.set('debugSaves', saves);*/
                 return state.set('debugSaves', action.response);
 
-                // [davide] questa action qui non mi pare che serva
-/*
-            case ActionTypes.DEBUG_SAVES:
-                let oldSaves = null;
-                let newSaves = null;
-                let c = 0; //counter
-
-                action.response.body.forEach(el => {
-                        oldSaves = EditorState.debugSaves[el.currentScene];
-
-                        if (oldSaves !== null) {
-                            newSaves = new Immutable.Set(oldSaves).add(el.saveName);
-
-                            //state = state.set(el.currentScene, newSaves)
-                            EditorState.debugSaves[el.currentScene] = newSaves;
-                        }
-                    }
-                );
-                return state.set('debugSaves', action.response);
-
- */
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
                 state = state.set('sceneOptions', action.scene);
