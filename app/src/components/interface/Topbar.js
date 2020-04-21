@@ -52,7 +52,6 @@ function TopBar(props){
                             <figcaption>Punto di interesse</figcaption>
                         </figure>
     }
-
     return (
         <div className={'topbar'}>
             <nav>
@@ -224,7 +223,6 @@ function createObject(props, type){
         let scene = props.scenes.get(props.currentScene);
         let name = "";
         let obj = null;
-
         switch(type){
             case InteractiveObjectsTypes.TRANSITION:
                 name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
