@@ -46,12 +46,6 @@ class EditorStateStore extends ReduceStore {
                 return state.set('newSceneNameTyped', action.status);
 
             case ActionTypes.DEBUG_SAVE:
-                DebugAPI.saveDebugState(action.response.saveName, action.response.saveDescription,
-                    action.response.currentScene, action.response.objectStates);
-                // In questo punto sovrascriviamo i salvataggi già presenti, bisogna aggiungerli
-                return state.set('debugSaves', action.response);
-
-            case ActionTypes.DEBUG_SAVE:
                 // Aggiornamento stato
                 if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
                     /* debugSaves è una mappa immutabile ordinata
