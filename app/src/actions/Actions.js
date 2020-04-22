@@ -10,6 +10,7 @@ import StoryAPI from '../utils/StoryAPI';
 import Values from "../rules/Values";
 import ObjectsStore from "../data/ObjectsStore";
 import EditorStateStore from "../data/EditorStateStore";
+import DebugAPI from "../utils/DebugAPI";
 
 /**[Vittoria]
  * In questo file troviamo le azioni, esse possono essere richiamate tramite props.nomefunzione
@@ -105,7 +106,12 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.DEBUG_SAVE,
             response: response,
-        })
+        });
+        //Salvataggio dati nel database
+        DebugAPI.saveDebugState(response.saveName,
+                                response.saveDescription,
+                                response.currentScene,
+                                response.objectStates);
     },
 
     /**
