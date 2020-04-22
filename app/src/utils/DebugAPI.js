@@ -59,8 +59,6 @@ function saveDebugState(saveName, saveDescription, sceneUuid, objects) {
 }
 
 function getAllSaves() {
-    console.clear();
-    console.log(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`);
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
@@ -82,10 +80,11 @@ function getAllSaves() {
                     debugSaves = debugSaves.update(save.currentScene, set => set.add(save));
                 });
 
-                //console.clear();
-                console.log("DebugAPI/debugSaves", debugSaves);
+                console.log("DebugAPI/debugSaves", debugSaves.toArray());
 
-                return debugSaves;
+                Actions.loadDebugSaves(debugSaves);
+
+                return null;
             } else {
                 console.log("Nessun salvataggio presente");
                 return null;
