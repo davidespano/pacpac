@@ -63,15 +63,18 @@ function getAllSaves() {
             if (err) {
                 return console.error(err);
             }
+
             /* Nessun errore nella richiesta, nel body della response c'è un array che contiene
                tutti i salvataggi del gioco corrente, di tutte le scene */
             console.log(response.body);
 
             if (EditorState.debugSaves === undefined) {
-                EditorState.debugSaves = new Immutable.OrderedMap({
+              /*  EditorState.debugSaves = new Immutable.OrderedMap({
                     currentScene: new Immutable.Set
 
-                });
+                });  EditorState.debugSaves = new Immutable.Map();
+                let s = EditorState.debugSaves;
+                EditorState.debugSaves = s.set("t", new Immutable.Set());*/
             }
             let oldSaves = null;
             let newSaves = null;
@@ -81,8 +84,6 @@ function getAllSaves() {
 
                 response.body.forEach(el => {
 
-                    console.log(el.saveName);
-
                     if(!debugSaves.contains(el.currentScene)){
                         debugSaves = debugSaves.set(el.currentScene, new Immutable.Set());
                     }
@@ -90,7 +91,7 @@ function getAllSaves() {
                     debugSaves = debugSaves.set(
                         el.currentScene,
                         debugSaves.get(el.currentScene).add(el.saveName));
-                    console.log(debugSaves.get(el.currentScene));
+
 
                     /*oldSaves = EditorState.debugSaves[el.currentScene];
                     newSaves = new Immutable.Set(oldSaves).add(el.saveName);

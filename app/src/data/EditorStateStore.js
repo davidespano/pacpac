@@ -47,18 +47,23 @@ class EditorStateStore extends ReduceStore {
 
             case ActionTypes.DEBUG_SAVE:
                 DebugAPI.saveDebugState(action.response.saveName, action.response.saveDescription,
-                    action.response.currentScene, action.response.objectStates);
-                //TODO sistemare questo pezzo di codice, debugSaves rimane vuoto
-                /*let saves = state.debugSaves;
-                if(saves === null){
-                    saves = new Immutable.Map();
+                    action.response.currentScene, action.response.objectStates); //Salvataggio dati nel database
+
+                // Aggiornamento stato
+                if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
+                    /* debugSaves è una mappa immutabile
+                            <K, V> = <scene uuid, set di salvataggi relativi a quella scena>  */
+                    state = state.set('debugSaves', new Immutable.Map()); // Creazione mappa
                 }
-                if(!saves.has(action.response.currentScene)){ // Caso in cui la mappa non contenga l'entrata con la chiave currentScene
-                    saves = saves.set(action.response.currentScene, new Immutable.Set());
+                let saves = state.get('debugSaves'); // Recupero la mappa
+                if(!saves.has(action.response.currentScene)){ // Caso in cui non ci sia un'entrata <K, V> dove K==action.response.currentScene
+                    saves = saves.set(action.response.currentScene, new Immutable.Set()); // Creazione set
                 }
-                saves = saves.set(action.response.currentScene, saves.get(action.response.currentScene).add(action.response));
-                return state.set('debugSaves', saves);*/
-                return state.set('debugSaves', action.response);
+                saves = saves.update(action.response.currentScene, set => set.add(action.response)); // Aggiungo il salvataggio corrente
+                // Saves è ora la mappa state.debugSaves però con il salvataggio corrente aggiunto correttamente
+                state = state.set('debugSaves', saves);
+                return state;
+
 
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
