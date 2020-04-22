@@ -57,9 +57,7 @@ class EditorStateStore extends ReduceStore {
                 }
                 saves = saves.update(action.response.currentScene, set => set.add(action.response)); // Aggiungo il salvataggio corrente
                 // Saves è ora la mappa state.debugSaves però con il salvataggio corrente aggiunto correttamente
-                state = state.set('debugSaves', saves);
-                return state;
-
+                return state.set('debugSaves', saves);
             case ActionTypes.LOAD_DEBUG_SAVES:
                 let debugSaves = action.saves;
 
