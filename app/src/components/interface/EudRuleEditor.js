@@ -29,6 +29,7 @@ import ObjectsStore from "../../data/ObjectsStore";
 import ScenesStore from "../../data/ScenesStore";
 import SceneAPI from "../../utils/SceneAPI";
 import Orders from "../../data/Orders";
+import Transition from "../../interactives/Transition";
 
 let uuid = require('uuid');
 var ghostScene=null;
@@ -316,12 +317,12 @@ export default class EudRuleEditor extends Component {
         } else {
             return <p>Nessuna scena selezionata</p>
         }
-
     }
 
     onOutsideClick() {
         this.props.ruleEditorCallback.eudShowCompletions(null, null)
     }
+
     //[Vittoria] creazione nuova regola
     onNewRuleClick(global) {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
@@ -339,6 +340,7 @@ export default class EudRuleEditor extends Component {
             this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
         }
         console.log("added rule: ", rule)
+
 
     }
 
@@ -399,7 +401,28 @@ export default class EudRuleEditor extends Component {
                         risposta.nomeTransizione = newMessage;
                         this.setState({response: risposta});
                         break;
-                    case "chiediConferma":
+                    /* Quando la scena non ha transizioni e si tenta di creare una regola con una transizione
+                    * allora il bot chiede all'utente se ne vuole creare una. In caso affermativo viene creata e
+                    * posta come transazione della regola che l'utente sta creando. In caso negativo invece viene resettata
+                    * la regola e viene data la possibilità di creare una regola da zero all'utente. */
+                    case "confermaCreazioneTransizione":
+                        if (newMessage.trim().toLowerCase() === "si") {
+                            risposta.nomeTransizione = await this.createDefaultTransitionObject(this.props);
+                            this.setState({response: risposta});
+                            addResponseMessage("Transizione aggiunta");
+                        } else if (newMessage.trim().toLowerCase() === "no") {
+                            addResponseMessage("Regola resettata!");
+                            addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
+                            //Resetto i campi di response
+                            this.responseReset();
+                            return;
+                        } else {
+                            //In caso l'utente non scriva ne si e ne no
+                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
+                            return;
+                        }
+                        break;
+                    case "chiediConfermaCreazioneRegola":
                         if (newMessage.trim().toLowerCase() === "si") {
                             //Creo la regola
                             let transitionObj = this.returnTransitionByName(this.state.response.nomeTransizione);
@@ -436,7 +459,7 @@ export default class EudRuleEditor extends Component {
         switch (this.state.response.intent) {
             case "transizione": {
                 /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
-                * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
+                 * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
                 if (this.state.response.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
                     let risposta = this.state.response;
                     risposta.scenaIniziale = this.props.scenes.get(this.props.currentScene).name;
@@ -453,13 +476,19 @@ export default class EudRuleEditor extends Component {
                     //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
                     this.setState({elementoMancante: "scenaFinale"});
                 } else if (!this.doesTransitionExists(this.state.response.nomeTransizione)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
-                    if (this.state.response.nomeTransizione === "") {
-                        addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
-                    } else {
-                        addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                    if (this.returnTransitionNames().length > 0) { //Se esiste qualche transizione le elenchiamo
+                        if (this.state.response.nomeTransizione === "") {
+                            addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                        } else {
+                            addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                        }
+                        //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
+                        this.setState({elementoMancante: "nomeTransizione"});
+                    } else { //Se non esiste neanche una transizione chiediamo se ne vuole aggiungere una
+                        addResponseMessage("Sembra che tu non abbia transizioni per interagire. Vuoi crearne una? " +
+                            "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
+                        this.setState({elementoMancante: "confermaCreazioneTransizione"});
                     }
-                    //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
-                    this.setState({elementoMancante: "nomeTransizione"});
                 } else {
                     /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
                     addResponseMessage("Ho tutto.");
@@ -482,7 +511,7 @@ function onAccordionClick(accordionId) {
         }
     }
 
-                    this.setState({elementoMancante: "chiediConferma"});
+                    this.setState({elementoMancante: "chiediConfermaCreazioneRegola"});
                     addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
                         " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.nomeTransizione);
                     addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
@@ -602,6 +631,22 @@ function onAccordionClick(accordionId) {
         });
 
         this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
+    }
+
+    /* Crea una transizione di default quando non esistono transizioni e l'utente vuole creare la regola trarmite bot. */
+    createDefaultTransitionObject(props) {
+        let scene = props.scenes.get(props.currentScene);
+        let name = "";
+        let obj = null;
+
+        name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
+        obj = Transition({
+            uuid: uuid.v4(),
+            name: name,
+        });
+
+        props.addNewObject(scene, obj);
+        return name;
     }
 }
 
@@ -1920,7 +1965,6 @@ class EudAutoComplete extends Component {
             </div>
         }
     }
-
 }
 
 
@@ -1973,7 +2017,6 @@ function listableItems(list, props) {
         return key.includes(word);
     }).map(i => {
         return <EudAutoCompleteItem item={i}
-                                    key={i}
                                     verb={props.verb}
                                     subject={props.subject}
                                     role={props.role}
