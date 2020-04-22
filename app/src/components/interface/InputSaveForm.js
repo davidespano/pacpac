@@ -46,9 +46,7 @@ function InputSaveForm(props) {
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm"
-                                    onClick={() =>  {
-                                        saveForm(props);
-                                    }}
+                                    onClick={() => saveForm(props) }
                                     data-dismiss="modal"
                                     >
                                 Conferma
