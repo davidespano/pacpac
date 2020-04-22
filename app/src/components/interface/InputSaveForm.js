@@ -78,7 +78,6 @@ function InputSaveForm(props) {
 
     console.clear();
     console.log("props.debugRunState", props.debugRunState);
-
     if(props.debugRunState === undefined){
         return (
             <div id={"register"}>
