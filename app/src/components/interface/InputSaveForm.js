@@ -62,23 +62,28 @@ function InputSaveForm(props) {
 function saveForm(props) {
     const name = document.getElementById("save-name").value;
     const description = document.getElementById("save-description").value;
-    let flag = false;
+    let alreadyExists = false;
 
     // Validazione form
     if (!name || !description) {
         alert("Completa tutti i campi");
         return;
     }
-
+    // Controllo che non ci siano salvataggi con lo stesso nome, in caso imposto flag a true
     props.scenes.map(scene => {
-        if(props.debugSaves !== undefined
-            && props.debugSaves[scene.uuid] !== undefined
-            && props.debugSaves[scene.uuid].get(name) !== undefined) {
-            flag = true;
-            return;
+        if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(scene.uuid) !== undefined){
+            if(alreadyExists) return;
+            let sceneSaves = props.editor.debugSaves.get(scene.uuid).toArray();
+
+            console.log(scene.name,sceneSaves);
+            sceneSaves.forEach(save => {
+                if(save.saveName === name){
+                    alreadyExists = true;
+                }
+            });
         }
     });
-    if (!flag) {
+    if (!alreadyExists) {
         let objStateMap = new Immutable.OrderedMap(Object.keys(props.debugRunState)
                                                          .map(i => [i, props.debugRunState[i.toString()]]))
                                        .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
@@ -90,7 +95,8 @@ function saveForm(props) {
         });
 
     } else {
-        alert("Salvataggio già presente");
+        alert("Il salvataggio " + name + " esiste già");
+
     }
 }
 
