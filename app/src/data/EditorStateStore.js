@@ -67,16 +67,16 @@ class EditorStateStore extends ReduceStore {
     //            console.clear();
                 console.log(action.saves);
                 return state;
-                if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
+                /*if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
                     /* debugSaves è una mappa immutabile ordinata
                             <K, V> = <scene uuid, set di salvataggi relativi a quella scena>  */
-                    state = state.set('debugSaves', new Immutable.OrderedMap()); // Creazione mappa
-                }
+                   /* state = state.set('debugSaves', new Immutable.OrderedMap()); // Creazione mappa
+                }*/
 
                 if(debugSaves){ // Se sono presenti salvataggi nel db
                     state = state.set('debugSaves', debugSaves); // Aggiornamento dello stato
                 }
-                console.log(state.get('debugSaves'));
+                console.log("EdiStateStore/debugSaves", state.get('debugSaves'));
                 return state;
 
              case ActionTypes.RECEIVE_SCENE:
