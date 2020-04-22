@@ -5,7 +5,6 @@ import EditorState from "./EditorState";
 import Immutable from "immutable";
 import SceneAPI from "../utils/SceneAPI";
 import ScenesStore from "./ScenesStore";
-import DebugAPI from "../utils/DebugAPI";
 
 class EditorStateStore extends ReduceStore {
 
@@ -58,7 +57,6 @@ class EditorStateStore extends ReduceStore {
                 }
                 saves = saves.update(action.response.currentScene, set => set.add(action.response)); // Aggiungo il salvataggio corrente
                 // Saves è ora la mappa state.debugSaves però con il salvataggio corrente aggiunto correttamente
-
                 state = state.set('debugSaves', saves);
                 return state;
 
@@ -80,7 +78,7 @@ class EditorStateStore extends ReduceStore {
                 console.log("EdiStateStore/debugSaves", state.get('debugSaves'));
                 return state;
 
-             case ActionTypes.RECEIVE_SCENE:
+            case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
                 state = state.set('sceneOptions', action.scene);
 
