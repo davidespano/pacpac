@@ -59,16 +59,18 @@ function saveDebugState(saveName, saveDescription, sceneUuid, objects) {
 }
 
 function getAllSaves() {
+    console.clear();
+    console.log(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`);
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
             if (err) {
                 return console.error(err);
             }
-
             /* Nessun errore nella richiesta, nel body della response c'è un array che contiene
                tutti i salvataggi del gioco corrente, di tutte le scene */
             console.log(response.body);
+
             if (response.body && response.body !== []) {
                 /* debugSaves è una Immutable.OrderedMap dove <K, V> = <uuid scene, Immutable.Set of K saves> */
                 let debugSaves = new Immutable.OrderedMap();
