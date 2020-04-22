@@ -81,7 +81,6 @@ function getAllSaves() {
 
                 Actions.loadDebugSaves(debugSaves);
                 return null;
-
             } else {
                 console.log("Nessun salvataggio presente");
                 return null;
