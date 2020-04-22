@@ -2,45 +2,8 @@ import React from "react";
 import Immutable from "immutable";
 
 function InputSaveForm(props) {
-    if(props.editor.debugRunState === undefined){
-        return (
-            <div id={"register"}>
-                <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
-                     aria-labelledby="register-modal-label" aria-hidden="true">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-body">
-                                <h5 className="modal-title" id="register-modal-label">Non ci sono modifiche</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     console.clear();
     console.log("props.debugRunState", props.debugRunState);
-    if(props.debugRunState === undefined){
-        return (
-            <div id={"register"}>
-                <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
-                     aria-labelledby="register-modal-label" aria-hidden="true">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="register-modal-label">Non ci sono modifiche</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    console.clear();
-    console.log("props.debugRunState", props.debugRunState);
-
     if(props.debugRunState === undefined){
         return (
             <div id={"register"}>
@@ -95,7 +58,9 @@ function InputSaveForm(props) {
                             <button type="button"
                                     id="save-submit-button"
                                     className="btn btn-secondary buttonConferm"
-                                    onClick={() =>  saveForm(props)}
+                                    onClick={() =>  {
+                                        saveForm(props);
+                                    }}
                                     data-dismiss="modal"
                                     >
                                 Conferma
