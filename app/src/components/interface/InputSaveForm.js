@@ -2,10 +2,6 @@ import React from "react";
 import Immutable from "immutable";
 
 function InputSaveForm(props) {
-
-    console.clear();
-    console.log("props.debugRunState", props.debugRunState);
-
     if(props.debugRunState === undefined){
         return (
             <div id={"register"}>
@@ -97,6 +93,7 @@ function saveForm(props) {
             currentScene: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
             objectStates: objStateMap,
         });
+
     } else {
         alert("Il salvataggio " + name + " esiste già");
     }
