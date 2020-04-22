@@ -18,11 +18,11 @@ import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
-
 import {Widget, addResponseMessage, addLinkSnippet, addUserMessage} from 'react-chat-widget';
 import 'react-chat-widget/lib/styles.css';
 import stores_utils from "../../data/stores_utils";
 import EventTypes from "../../rules/EventTypes";
+import Transition from "../../interactives/Transition";
 
 let uuid = require('uuid');
 
@@ -181,7 +181,6 @@ export default class EudRuleEditor extends Component {
 
 
     /** Luca - Widget Bot */
-
     /* Messaggio di benvenuto. */
     componentDidMount() {
         addResponseMessage("Benvenuto nel bot delle regole di Pac-Pac, scrivi subito la prima regola! Ricorda che puoi scrivere \"reset\" " +
@@ -191,7 +190,6 @@ export default class EudRuleEditor extends Component {
     /* Metodo per inviare un messaggio. Capire se il bot ha trovato una transizione, se quella transizione ha tutti i
     campi corretti allora creo la scena con tutto corretto, se no risolvo i conflitti in locale. */
     handleNewUserMessage = async (newMessage) => {
-
         /* Si da l'opportunità all'utente di resettare in ogni momento la regola che sta scrivendo e di scriverne una da capo. */
         if (newMessage !== "reset") {
             /* La prima query verrà sempre mandata al bot. */
@@ -213,7 +211,28 @@ export default class EudRuleEditor extends Component {
                         risposta.nomeTransizione = newMessage;
                         this.setState({response: risposta});
                         break;
-                    case "chiediConferma":
+                    /* Quando la scena non ha transizioni e si tenta di creare una regola con una transizione
+                    * allora il bot chiede all'utente se ne vuole creare una. In caso affermativo viene creata e
+                    * posta come transazione della regola che l'utente sta creando. In caso negativo invece viene resettata
+                    * la regola e viene data la possibilità di creare una regola da zero all'utente. */
+                    case "confermaCreazioneTransizione":
+                        if (newMessage.trim().toLowerCase() === "si") {
+                            risposta.nomeTransizione = await this.createDefaultTransitionObject(this.props);
+                            this.setState({response: risposta});
+                            addResponseMessage("Transizione aggiunta");
+                        } else if (newMessage.trim().toLowerCase() === "no") {
+                            addResponseMessage("Regola resettata!");
+                            addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
+                            //Resetto i campi di response
+                            this.responseReset();
+                            return;
+                        } else {
+                            //In caso l'utente non scriva ne si e ne no
+                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
+                            return;
+                        }
+                        break;
+                    case "chiediConfermaCreazioneRegola":
                         if (newMessage.trim().toLowerCase() === "si") {
                             //Creo la regola
                             let transitionObj = this.returnTransitionByName(this.state.response.nomeTransizione);
@@ -250,7 +269,7 @@ export default class EudRuleEditor extends Component {
         switch (this.state.response.intent) {
             case "transizione": {
                 /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
-                * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
+                 * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
                 if (this.state.response.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
                     let risposta = this.state.response;
                     risposta.scenaIniziale = this.props.scenes.get(this.props.currentScene).name;
@@ -267,18 +286,24 @@ export default class EudRuleEditor extends Component {
                     //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
                     this.setState({elementoMancante: "scenaFinale"});
                 } else if (!this.doesTransitionExists(this.state.response.nomeTransizione)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
-                    if (this.state.response.nomeTransizione === "") {
-                        addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
-                    } else {
-                        addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                    if (this.returnTransitionNames().length > 0) { //Se esiste qualche transizione le elenchiamo
+                        if (this.state.response.nomeTransizione === "") {
+                            addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                        } else {
+                            addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                        }
+                        //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
+                        this.setState({elementoMancante: "nomeTransizione"});
+                    } else { //Se non esiste neanche una transizione chiediamo se ne vuole aggiungere una
+                        addResponseMessage("Sembra che tu non abbia transizioni per interagire. Vuoi crearne una? " +
+                            "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
+                        this.setState({elementoMancante: "confermaCreazioneTransizione"});
                     }
-                    //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
-                    this.setState({elementoMancante: "nomeTransizione"});
                 } else {
                     /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
                     addResponseMessage("Ho tutto.");
 
-                    this.setState({elementoMancante: "chiediConferma"});
+                    this.setState({elementoMancante: "chiediConfermaCreazioneRegola"});
                     addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
                         " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.nomeTransizione);
                     addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
@@ -398,6 +423,22 @@ export default class EudRuleEditor extends Component {
         });
 
         this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
+    }
+
+    /* Crea una transizione di default quando non esistono transizioni e l'utente vuole creare la regola trarmite bot. */
+    createDefaultTransitionObject(props) {
+        let scene = props.scenes.get(props.currentScene);
+        let name = "";
+        let obj = null;
+
+        name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
+        obj = Transition({
+            uuid: uuid.v4(),
+            name: name,
+        });
+
+        props.addNewObject(scene, obj);
+        return name;
     }
 }
 
@@ -800,7 +841,6 @@ class EudCondition extends Component {
         this.props.ruleEditorCallback.eudShowCompletions(
             actionId, role, text)
     }
-
 
     getInteractiveObjectReference(uuid) {
         if (uuid == InteractiveObjectsTypes.PLAYER) {
