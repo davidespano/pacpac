@@ -70,7 +70,6 @@ function InputSaveForm(props) {
 
     console.clear();
     console.log("props.debugRunState", props.debugRunState);
-
     if(props.debugRunState === undefined){
         return (
             <div id={"register"}>
@@ -125,7 +124,9 @@ function InputSaveForm(props) {
                             <button type="button"
                                     id="save-submit-button"
                                     className="btn btn-secondary buttonConferm"
-                                    onClick={() =>  saveForm(props)}
+                                    onClick={() =>  {
+                                        saveForm(props);
+                                    }}
                                     data-dismiss="modal"
                                     >
                                 Conferma
