@@ -77,7 +77,7 @@ class EditorStateStore extends ReduceStore {
                 }
                 console.log("EdiStateStore/debugSaves", state.get('debugSaves'));
                 return state;
-                
+
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
                 if(action.scene.uuid!='ghostScene'){
