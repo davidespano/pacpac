@@ -364,6 +364,17 @@ const Actions = {
     },
 
     /**
+     * Gets all debug saves of the current game from db
+     * @param saves: Immutable.Map<K, V> where (K = uuid scene) and (V = Immutable.Set of K saves)
+     */
+    loadDebugSaves(saves){
+        AppDispatcher.dispatch({
+            type: ActionTypes.LOAD_DEBUG_SAVES,
+            saves: saves,
+        });
+    },
+
+    /**
      * Dispatch to the stores the Scene received from db
      * @param scene
      * @param order of scenes
