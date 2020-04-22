@@ -58,7 +58,6 @@ function contentLeftbar(props){
                     {list(props, path)}
             </div>
         );
-
     }else{ // Debug mode
         return (<SavesOptions {...props}/>);
     }
