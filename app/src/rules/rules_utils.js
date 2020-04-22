@@ -140,6 +140,35 @@ function generateDefaultRule(object, scene){
                 actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             break;
+        case InteractiveObjectsTypes.TIMER:
+            r1 = Rule({
+                uuid: uuid.v4(),
+                name : 'regola del timer ' + object.name,
+                event: Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: RuleActionTypes.ENTER_SCENE,
+                    obj_uuid: scene.uuid,
+                }),
+                actions : Immutable.List([Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.GAME,
+                    action: RuleActionTypes.TRIGGERS,
+                    obj_uuid: object.uuid,
+                })]),
+            });
+            r2 =Rule({
+                uuid: uuid.v4(),
+                name : 'regola del timer ' + object.name + '_2',
+                event: Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: object.uuid,
+                    action: RuleActionTypes.REACH_TIMER,
+                    obj_uuid: 0,
+                }),
+                actions : Immutable.List([Action({uuid: uuid.v4()})]),
+            });
+            return [r1, r2];
         default:
             return;
     }
@@ -413,6 +442,7 @@ function getValue (object, key) {
     return key.split(".").reduce(function (obj, val) {
         return (typeof obj == "undefined" || obj === null || obj === "") ? obj : (_.isString(obj[val]) ? obj[val].trim() : obj[val]);}, object);
 }
+
 
 export default {
     generateDefaultRule : generateDefaultRule,

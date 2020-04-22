@@ -275,13 +275,9 @@ export default class VRScene extends React.Component {
                                 } else {
                                     actionExecution();
                                 }
-
                             });
                         }
                     });
-
-
-
                     rule.actions.forEach(action => {
                         //if(!eventBus._events['click-' + rule.event.obj_uuid]){
                         console.log("registering " + action.subj_uuid + " " + action.action + " " + action.obj_uuid);
@@ -375,8 +371,8 @@ export default class VRScene extends React.Component {
 
                 default:
                     let eventName = rule.event.action.toLowerCase();
-                    console.log(`registered ${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`);
-                    eventBus.on(`${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`, function(){
+                    let event = `${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`;
+                    eventBus.on(event, function () {
                         let condition = evalCondition(rule.condition, me.state.runState);
                         if (condition) {
                             rule.actions.forEach(action => {
@@ -393,6 +389,9 @@ export default class VRScene extends React.Component {
                             });
                         }
                     });
+                    if(rule.event.action==="ENTER_SCENE"){
+                        eventBus.emit(event);
+                    }
                     break;
             }
         })
@@ -414,8 +413,8 @@ export default class VRScene extends React.Component {
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
                 runState[obj.uuid] = {state: obj.properties.state,
-                                      visible: obj.visible, activable: obj.activable,
-                                      step: obj.properties.step
+                    visible: obj.visible, activable: obj.activable,
+                    step: obj.properties.step
                 }
             });
         });
@@ -569,26 +568,26 @@ export default class VRScene extends React.Component {
         //all'altra si attivano e disattivano a seconda del tipo di scena
         //Sempre dentro la render viene richiamata la funzione generateBubbles che si occupa di creare tutte le bolle nella scena corrente
         return (
-                //[Vittoria] <Scene, <a-assets sono un componenti e tag di React A-frame
-                <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
-                    <a-assets>
-                        {assets}
-                    </a-assets>
-                    {this.generateBubbles()}
+            //[Vittoria] <Scene, <a-assets sono un componenti e tag di React A-frame
+            <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
+                <a-assets>
+                    {assets}
+                </a-assets>
+                {this.generateBubbles()}
 
-                    <Entity primitive="a-camera" key="keycamera" id="camera"
-                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
-                            look-controls="false" wasd-controls="false">
+                <Entity primitive="a-camera" key="keycamera" id="camera"
+                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
+                        look-controls="false" wasd-controls="false">
 
-                        {textboxEntity}
-                        {timerEntity}
+                    {textboxEntity}
+                    {timerEntity}
 
-                            <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
-                                    fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
-                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
-                                    fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
-                    </Entity>
-                </Scene>
+                    <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
+                            fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                    <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
+                            fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
+                </Entity>
+            </Scene>
 
         )
     }
@@ -661,14 +660,3 @@ export default class VRScene extends React.Component {
         resonance.default.setListenerFromMatrix(cameraMatrix4)
     }
 }
-
-
-
-
-
-
-
-
-
-
-

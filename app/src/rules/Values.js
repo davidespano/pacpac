@@ -37,7 +37,7 @@ const Values = {
     STARTED: 'STARTED',
     ENDED: 'ENDED',
 
-    //TEXTBOX
+    //textbox
     TEXTLEFT: 'left',
     TEXTRIGHT: 'right',
     TEXTCENTER: 'center',

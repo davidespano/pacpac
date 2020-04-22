@@ -213,9 +213,39 @@ const RuleActionMap = Immutable.Map([
         {
             type: "operation",
             subj_type: [InteractiveObjectsTypes.GAME],
-            obj_type: [InteractiveObjectsTypes.RULES],
+            obj_type: [InteractiveObjectsTypes.RULES, InteractiveObjectsTypes.TIMER],
             name: toString.eventTypeToString(RuleActionTypes.TRIGGERS),
             uuid: RuleActionTypes.TRIGGERS,
+        },
+    ],
+    [
+        RuleActionTypes.REACH_TIMER,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.TIMER],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.REACH_TIMER),
+            uuid: RuleActionTypes.REACH_TIMER,
+        },
+    ],
+    [
+        RuleActionTypes.ENTER_SCENE,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.PLAYER],
+            obj_type: [Values.TWO_DIM],
+            name: toString.eventTypeToString(RuleActionTypes.ENTER_SCENE),
+            uuid: RuleActionTypes.ENTER_SCENE,
+        },
+    ],
+    [
+        RuleActionTypes.STOP_TIMER,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.GAME],
+            obj_type: [InteractiveObjectsTypes.TIMER],
+            name: toString.eventTypeToString(RuleActionTypes.STOP_TIMER),
+            uuid: RuleActionTypes.STOP_TIMER,
         },
     ],
 ]);
@@ -468,6 +498,7 @@ const ValuesMap = Immutable.Map([
         },
 
     ],
+
 ]);
 
 export {
