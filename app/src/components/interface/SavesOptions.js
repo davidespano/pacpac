@@ -38,7 +38,6 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-
         if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(child.uuid) !== undefined) {
             return (
                     <div key={child.name} className={'node_element'}>
@@ -64,7 +63,7 @@ function listSceneSaves(props, sceneUuid, sceneName) {
         let savesList = props.editor.debugSaves.get(sceneUuid).toArray();
         return savesList.map(save => {
             return (
-                <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} title={"Descrizione: " + save.saveDescription} onClick={() => {
+                <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} onClick={() => {
                     let load = document.getElementById("load-button" + save.saveName);
                     let list = document.getElementById("saves-list" + save.saveName);
                     
@@ -87,6 +86,7 @@ function listSceneSaves(props, sceneUuid, sceneName) {
                             DebugAPI.loadDebugState(save.saveName);
                         }*/
                     }} data-toggle="modal" data-target={"#load-save-modal" + save.saveName}>
+
                         Carica
                     </button>
                     <LoadDebugSave key={save.saveName} {...{sceneName: sceneName, save: save, ...props}} />
