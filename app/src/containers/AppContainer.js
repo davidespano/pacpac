@@ -92,6 +92,7 @@ function getState() {
 
         audioPositioning: Actions.audioPositioning,
         debugSave: Actions.debugSave,
+        loadDebugSaves: Actions.loadDebugSaves,
         expandEditor: Actions.expandEditor,
         isItNew: Actions.isItNew,
         leftbarSelection: Actions.leftbarSelection,

@@ -16,7 +16,7 @@ const EditorState = Immutable.Record({
     completionInput: null,              //EudRuleEditor
     debugFromScene: null,               //set scene the debug should start from
     debugRunState: null,                //set run state for debugging the game
-    debugSaves: null,                   //DebugTab
+    debugSaves: null,                   //Contains an Immutable.OrderedMap where <K, V> = <scene uuid, K debug saves>
     editorExpanded: false,              //boolean to check if rules editor is expanded or not
     gameId: null,                       //used to store the code of a specific game that the user wants to play
     gameTitle: null,                    //title of the game we are editing
