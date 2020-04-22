@@ -59,9 +59,11 @@ function contentLeftbar(props){
             </div>
         );
     }else{
-        const debugSaves = DebugAPI.getAllSaves();
-        const newProps = {debugSaves, ...props};
-        return (<SavesOptions {...newProps}/>);
+        let debugSaves = DebugAPI.getAllSaves();
+        console.clear();
+        console.log("debugSaves", debugSaves);
+        //props.loadDebugSaves(debugSaves);
+        return (<SavesOptions {...props}/>);
     }
 }
 
