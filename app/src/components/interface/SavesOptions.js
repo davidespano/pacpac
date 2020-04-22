@@ -59,7 +59,6 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-
         if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(child.uuid) !== undefined) {
             if(checkFilter(props.editor.debugSaves.get(child.uuid), props.editor.debugSavesFilter))
                 return (
@@ -93,7 +92,6 @@ function listSceneSaves(props, sceneUuid, sceneName) {
         if(save.saveName.includes(props.editor.debugSavesFilter))
             return (
                 <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} title={"Descrizione: " + save.saveDescription} onClick={() => {
-
                     let load = document.getElementById("load-button" + save.saveName);
                     let list = document.getElementById("saves-list" + save.saveName);
                     
