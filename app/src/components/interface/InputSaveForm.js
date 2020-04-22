@@ -97,7 +97,6 @@ function InputSaveForm(props) {
 
     console.clear();
     console.log("props.debugRunState", props.debugRunState);
-
     if(props.debugRunState === undefined){
         return (
             <div id={"register"}>
@@ -187,7 +186,6 @@ function saveForm(props) {
         currentScene: sceneUuid,
         objectStates: objStateMap,
     });
-
 }
 
 export default InputSaveForm;
