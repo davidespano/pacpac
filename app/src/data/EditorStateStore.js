@@ -5,7 +5,6 @@ import EditorState from "./EditorState";
 import Immutable from "immutable";
 import SceneAPI from "../utils/SceneAPI";
 import ScenesStore from "./ScenesStore";
-import DebugAPI from "../utils/DebugAPI";
 
 class EditorStateStore extends ReduceStore {
 
