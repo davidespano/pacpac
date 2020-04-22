@@ -51,9 +51,9 @@ class EditorStateStore extends ReduceStore {
 
                 // Aggiornamento stato
                 if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
-                    /* debugSaves è una mappa immutabile
+                    /* debugSaves è una mappa immutabile ordinata
                             <K, V> = <scene uuid, set di salvataggi relativi a quella scena>  */
-                    state = state.set('debugSaves', new Immutable.Map()); // Creazione mappa
+                    state = state.set('debugSaves', new Immutable.OrderedMap()); // Creazione mappa
                 }
                 let saves = state.get('debugSaves'); // Recupero la mappa
                 if(!saves.has(action.response.currentScene)){ // Caso in cui non ci sia un'entrata <K, V> dove K==action.response.currentScene
@@ -64,6 +64,23 @@ class EditorStateStore extends ReduceStore {
                 state = state.set('debugSaves', saves);
                 return state;
 
+            case ActionTypes.LOAD_DEBUG_SAVES:
+                let debugSaves = action.saves;
+
+    //            console.clear();
+                console.log(action.saves);
+                return state;
+                if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
+                    /* debugSaves è una mappa immutabile ordinata
+                            <K, V> = <scene uuid, set di salvataggi relativi a quella scena>  */
+                    state = state.set('debugSaves', new Immutable.OrderedMap()); // Creazione mappa
+                }
+
+                if(debugSaves){ // Se sono presenti salvataggi nel db
+                    state = state.set('debugSaves', debugSaves); // Aggiornamento dello stato
+                }
+                console.log(state.get('debugSaves'));
+                return state;
 
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');

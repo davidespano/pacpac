@@ -35,7 +35,7 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-        if(props.debugSaves !== undefined && props.debugSaves[child.uuid] !== undefined) {
+        if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(child.uuid) !== undefined) {
             return (
                     <div key={child.name} className={'node_element'}>
                         <h6>Salvataggi: {child.name}</h6>
@@ -56,28 +56,28 @@ function listSaves(props, path) {
 }
 
 function listSceneSaves(props, sceneUuid) {
-    if(props.debugSaves[sceneUuid]) {
-        let savesList = props.debugSaves[sceneUuid].toArray();
-        return savesList.map(saveName => {
+    if(props.editor.debugSaves.get(sceneUuid)) {
+        let savesList = props.editor.debugSaves.get(sceneUuid).toArray();
+        return savesList.map(save => {
             return (
-                <div id={"saves-list" + saveName} key={saveName} className={"saves-list"} onClick={() => {
-                    let load = document.getElementById("load-button" + saveName);
-                    let list = document.getElementById("saves-list" + saveName);
+                <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} onClick={() => {
+                    let load = document.getElementById("load-button" + save.saveName);
+                    let list = document.getElementById("saves-list" + save.saveName);
                     
                     interface_utils.setClassStyle(".saves-list", "margin-right: -10%");
                     interface_utils.setClassStyle(".load-button", "visibility: hidden");
 
                     if (load != null) {
-                        interface_utils.setIdStyle("load-button", saveName, "visibility: visible");
+                        interface_utils.setIdStyle("load-button", save.saveName, "visibility: visible");
                         list.style = "margin-right: 36%";
                     }
 
                 }}>
-                    {saveName}
+                    {save.saveName}
 
-                    <button id={"load-button" + saveName} className={"select-file-btn btn load-button"} onClick={() => {
+                    <button id={"load-button" + save.saveName} className={"select-file-btn btn load-button"} onClick={() => {
                         if (window.confirm("Vuoi caricare questo salvataggio?")) {
-                            DebugAPI.loadDebugState(saveName);
+                            DebugAPI.loadDebugState(save.saveName);
                         }
                     }}>
                         Carica

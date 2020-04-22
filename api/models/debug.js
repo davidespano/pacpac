@@ -12,11 +12,11 @@ function createUpdateDebugState(session, debugState, gameID) {
     delete state.objectStates;
 
     return session.run(
-        'MERGE (state:Debug:DebugState:`' + gameID + '` {saveName: $saveName}) ' +
+        'MERGE (state:Debug:DebugState:`' + gameID + '` {saveName: $saveName, saveDescription: $saveDescription}) ' +
         'SET state += $state ' +
         'WITH state ' +
         'UNWIND $objectStates as object ' +
-        'MERGE (o:Debug:DebugObject {uuid: object.uuid, saveName: $saveName}) ' +
+        'MERGE (o:Debug:DebugObject {uuid: object.uuid, saveName: $saveName, saveDescription: $saveDescription}) ' +
         'SET o += object ' +
         'MERGE (state)-[:STORES_OBJECT]->(o) ' +
         'RETURN state', {saveName: saveName, saveDescription: saveDescription, state: state, objectStates: objectStates})
@@ -44,11 +44,13 @@ function getDebugState(session, gameID, saveName) {
             'RETURN state, collect(object) AS objects', {}
         ).then(result => {
             const record = result.records[0];
+            const saveDescription = record.get('saveDescription');
             const currentScene = record.get('state').properties.currentScene;
             const objectsStates = record.get('objects').map(obj => obj.properties);
 
             const debugState = new DebugState({
                 currentScene: currentScene,
+                saveDescription: saveDescription,
                 objectStates: objectsStates,
             });
 
