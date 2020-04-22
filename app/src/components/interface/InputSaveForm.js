@@ -62,7 +62,6 @@ function InputSaveForm(props) {
 function saveForm(props) {
     const name = document.getElementById("save-name").value;
     const description = document.getElementById("save-description").value;
-
     let alreadyExists = false;
 
     // Validazione form
@@ -82,20 +81,21 @@ function saveForm(props) {
                 }
             });
         }
-    });
-            if (!alreadyExists) {
-                let objStateMap = new Immutable.OrderedMap(Object.keys(props.debugRunState)
-                    .map(i => [i, props.debugRunState[i.toString()]]))
-                    .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
-                props.debugSaves({
-                    saveName: name,
-                    saveDescription: description,
-                    saveSceneID: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
-                    saveObjects: objStateMap,
-                });
-            } else {
-                alert("Il salvataggio " + name + " esiste già");
-            }
+    }); }
+    if (!alreadyExists) {
+        let objStateMap = new Immutable.OrderedMap(Object.keys(props.debugRunState)
+                                                         .map(i => [i, props.debugRunState[i.toString()]]))
+                                       .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
+        props.debugSave({
+            saveName: name,
+            saveDescription: description,
+            currentScene: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
+            objectStates: objStateMap,
+        });
+
+    } else {
+        alert("Il salvataggio " + name + " esiste già");
+
     }
 
 export default InputSaveForm;
