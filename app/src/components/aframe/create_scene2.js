@@ -158,20 +158,13 @@ export default class VRScene extends React.Component {
             {
                 //TODO: alzare l'evento al termine del timer
                 //eventBus.emit()
+                //this.timerStop();
             }
         }
     }
 
-    timerStop() {
+     timerStop() {
         window.timerIsRunning = false;
-    }
-
-    timerStart() {
-        window.timerIsRunning = true;
-    }
-
-    changeTimerTime(time){
-        window.timerTime = time;
     }
 
 
@@ -659,4 +652,18 @@ export default class VRScene extends React.Component {
         let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld;
         resonance.default.setListenerFromMatrix(cameraMatrix4)
     }
+
+
+    static timerStop() {
+        window.timerIsRunning = false;
+
+    }
+    static timerStart() {
+        window.timerIsRunning = true;
+    }
+
+    static changeTimerTime(time){
+        window.timerTime = time;
+    }
+
 }

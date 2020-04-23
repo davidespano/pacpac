@@ -7,6 +7,7 @@ import './aframe_shader'
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import RulesStore from "../../data/RulesStore";
+import create_scene2 from "./create_scene2";
 
 const eventBus = require('./eventBus');
 const THREE = require('three');
@@ -401,20 +402,16 @@ function executeAction(VRScene, rule, action) {
             if (RulesStore.getState().get(action_obj_uuid) !== undefined) {//sto triggerando una regola regola?
                 eventBus.emit(`${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`); //Solo per regole
             } else { //sto triggerando un timer
-
+                create_scene2.timerStart();
             }
             break;
-
         case RuleActionTypes.STOP_TIMER:
             console.log(action);
-
+            create_scene2.timerStop();
         case RuleActionTypes.REACH_TIMER:
-            console.log("sto venendo chiamato reach timer")
+            let time = parseInt(action.obj_uuid);
+            create_scene2.changeTimerTime(time);
             console.log(action);
-        /*case RuleActionTypes.ENTER_SCENE:
-            console.log(action);*/
-        case RuleActionTypes.ENTER_SCENE:
-            console.log("prova")
         default:
             console.log('not yet implemented');
             console.log(action);
