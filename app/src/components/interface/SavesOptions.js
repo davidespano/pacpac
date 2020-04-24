@@ -62,7 +62,7 @@ function listSceneSaves(props, sceneUuid) {
         let savesList = props.editor.debugSaves.get(sceneUuid).toArray();
         return savesList.map(save => {
             return (
-                <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} onClick={() => {
+                <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} title={"Descrizione: " + save.saveDescription} onClick={() => {
                     let load = document.getElementById("load-button" + save.saveName);
                     let list = document.getElementById("saves-list" + save.saveName);
                     
@@ -78,12 +78,18 @@ function listSceneSaves(props, sceneUuid) {
                     {save.saveName}
 
                     <button id={"load-button" + save.saveName} className={"select-file-btn btn load-button"} onClick={() => {
-                        if (window.confirm("Vuoi caricare questo salvataggio?")) {
+                        console.clear();
+                        console.log("save", save);
+                        let stringa = "";
+                        let obj = save.objectStates.map(os => os.uuid + " Stato: " + os.state + "; " + os.activable);
+                        obj.forEach(os => { stringa += os + "\n"})
+                        if (window.confirm("Vuoi caricare questo salvataggio? Gli oggetti in scena sono: \n" + stringa)) {
                             DebugAPI.loadDebugState(save.saveName);
                         }
                     }}>
                         Carica
                     </button>
+
                 </div>
             )
         });
