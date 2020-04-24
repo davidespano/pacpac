@@ -65,7 +65,7 @@ function listSceneSaves(props, sceneUuid, sceneName) {
         let savesList = props.editor.debugSaves.get(sceneUuid).toArray();
         return savesList.map(save => {
             return (
-                <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} onClick={() => {
+                <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} title={"Descrizione: " + save.saveDescription} onClick={() => {
                     let load = document.getElementById("load-button" + save.saveName);
                     let list = document.getElementById("saves-list" + save.saveName);
                     
