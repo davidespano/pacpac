@@ -203,7 +203,7 @@ function LoadDebugSave({sceneName, save, ...props}){
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm "
-                                    onClick={() => DebugAPI.loadDebugState(save.saveName) }
+                                    onClick={() => {DebugAPI.loadDebugState(save.saveName);} }
                                     data-dismiss="modal"
                             >
                                 Carica salvataggio
