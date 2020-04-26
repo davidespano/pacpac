@@ -49,7 +49,7 @@ function listSaves(props, path) {
                             style={s}
                         />
                         <div>
-                            {listSceneSaves(props, child.uuid)}
+                            {listSceneSaves(props, child.uuid, child.name)}
                         </div>
                     </div>
             );
@@ -57,7 +57,7 @@ function listSaves(props, path) {
     }));
 }
 
-function listSceneSaves(props, sceneUuid) {
+function listSceneSaves(props, sceneUuid, sceneName) {
     if(props.editor.debugSaves.get(sceneUuid)) {
         let savesList = props.editor.debugSaves.get(sceneUuid).toArray();
         return savesList.map(save => {
@@ -78,19 +78,18 @@ function listSceneSaves(props, sceneUuid) {
                     {save.saveName}
 
                     <button id={"load-button" + save.saveName} className={"select-file-btn btn load-button"} onClick={() => {
-                        console.clear();
-                        console.log("save", save);
-                        let stringa = "";
+                       /* let stringa = "";
                         let obj = save.objectStates.map(os => os.uuid + " Stato: " + os.state + "; " + os.activable);
                         obj.forEach(os => { stringa += os + "\n"})
                         if (window.confirm("Vuoi caricare questo salvataggio? Gli oggetti in scena sono: \n" + stringa)) {
                             DebugAPI.loadDebugState(save.saveName);
-                        }
-                    }}>
+                        }*/
+                    }} data-toggle="modal" data-target="#load-save-modal">
                         Carica
                     </button>
-
+                    <LoadDebugSave {...{sceneName: sceneName, save: save, ...props}} />
                 </div>
+
             )
         });
     }
@@ -98,6 +97,69 @@ function listSceneSaves(props, sceneUuid) {
         return;
 }
 
+function LoadDebugSave({sceneName, save, ...props}){
+    let str = (scene) => "" + scene.name + ", " + scene.uuid + ", " + scene.tag + "\n";
+    let stringa = "";
+    let scenes = [...props.scenes.values()].map(child => <p>{str(child)}</p>).forEach(i => stringa += i);
+
+    return (
+        <div id={"register"} title="">
+            <div className="modal fade" id="load-save-modal" tabIndex="-1" role="dialog"
+                 aria-labelledby="register-modal-label" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h6 className="modal-title" id="register-modal-label">
+                                Scena di riferimento:
+                                <span className="h5" >{" " + sceneName}</span>
+                            </h6>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body modalOptions">
+                            <div className="form-group row">
+                                <label htmlFor="sceneRef" className="col-sm-2 col-form-label">Nome Salvataggio</label>
+                                <div className="col-sm-10">
+                                    <input readOnly={true}
+                                           type="text"
+                                           value={save.saveName}
+                                           className="form-control-plaintext"
+                                           id="SceneRef"/>
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">Descrizione</label>
+                                <div className="col-sm-10">
+                                    <p
+                                           className="form-control-plaintext text-left"
+                                           id="inputPassword3" >{save.saveDescription}</p>
+                                </div>
+                            </div>
+                            <div className="form.group row">
+                                <label htmlFor="saveObjsState" className="col-form-label col-sm-auto">Stato degli oggetti</label>
+                                <div className="col-sm-12 text-left" id="saveObjsState">
+                                    <p className="form-control-plaintext">
+                                        Aggiungere stato degli oggetti
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button"
+                                    className="btn btn-secondary buttonConferm "
+                                    onClick={() => {DebugAPI.loadDebugState(save.saveName);} }
+                                    data-dismiss="modal"
+                            >
+                                Carica salvataggio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 
 export default SavesOptions;
