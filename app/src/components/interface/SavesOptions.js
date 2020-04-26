@@ -98,9 +98,9 @@ function listSceneSaves(props, sceneUuid, sceneName) {
 }
 
 function LoadDebugSave({sceneName, save, ...props}){
-    let str = (scene) => "" + scene.name + ", " + scene.uuid + ", " + scene.tag + "\n";
     let stringa = "";
-    let scenes = [...props.scenes.values()].map(child => <p>{str(child)}</p>).forEach(i => stringa += i);
+    let obj = save.objectStates.map(os => os.uuid + " Stato: " + os.state + "; " + os.activable);
+    obj.forEach(os => { stringa += os + "\n"})
 
     return (
         <div id={"register"} title="">
@@ -140,7 +140,7 @@ function LoadDebugSave({sceneName, save, ...props}){
                                 <label htmlFor="saveObjsState" className="col-form-label col-sm-auto">Stato degli oggetti</label>
                                 <div className="col-sm-12 text-left" id="saveObjsState">
                                     <p className="form-control-plaintext">
-                                        Aggiungere stato degli oggetti
+                                        {stringa}
                                     </p>
                                 </div>
                             </div>
