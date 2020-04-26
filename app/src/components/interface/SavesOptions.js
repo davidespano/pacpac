@@ -131,7 +131,7 @@ function LoadDebugSave({sceneName, save, ...props}){
                                 <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">Descrizione</label>
                                 <div className="col-sm-10">
                                     <p
-                                           className="text-left list-group-item list-group-item-action"
+                                           className="form-control-plaintext text-left"
                                            id="inputPassword3" >{save.saveDescription}</p>
                                 </div>
                             </div>
@@ -180,14 +180,13 @@ function LoadDebugSave({sceneName, save, ...props}){
                                                 }
                                             </tbody>
                                         </table>
-
                                 </div>
                             </div>
                         </div>
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm "
-                                    onClick={() => DebugAPI.loadDebugState(save.saveName) }
+                                    onClick={() => {DebugAPI.loadDebugState(save.saveName);} }
                                     data-dismiss="modal"
                             >
                                 Carica salvataggio
