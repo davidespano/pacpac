@@ -197,7 +197,6 @@ function LoadDebugSave({sceneName, save, ...props}){
                                         }
                                         </tbody>
                                     </table>
-
                                 </div>
                             </div>
                         </div>
