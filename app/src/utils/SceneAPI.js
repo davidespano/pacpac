@@ -23,6 +23,8 @@ import Timer from "../interactives/Timer";
 import Score from "../interactives/Score";
 import Health from "../interactives/Health";
 import PlayTime from "../interactives/PlayTime";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
+import {createGlobalObjectForNewScene} from "../components/interface/Topbar";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -255,9 +257,11 @@ function getByName(name, order = null, gameId=null, creation = true) {
  * @param type
  * @param tag
  * @param order of scenes
+ * @param props
  */
-function createScene(name, img, index, type, tag, order) {
+function createScene(name, img, index, type, tag, order, props) {
     let id = uuid.v4();
+    let newScene = null;
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -268,7 +272,7 @@ function createScene(name, img, index, type, tag, order) {
             }
             
             // new Scene object
-            let newScene = Scene({
+            newScene = Scene({
                 uuid: id,
                 name : name,
                 img : img,
@@ -295,9 +299,12 @@ function createScene(name, img, index, type, tag, order) {
             });
 
             Actions.receiveScene(newScene, order);
-            //TODO questo update è un fix temporaneo per isVideoInALoop e IsAudioOn che non vengono registrati nel DB alla creazione della scena e risultano undefined
             updateScene(newScene, tag);
+            if(props.scenes.first().objects.playtime.length > 0) {
+                createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.PLAYTIME);
+            }
         });
+
 }
 
 /**

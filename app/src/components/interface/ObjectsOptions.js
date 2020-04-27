@@ -12,6 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import SceneAPI from "../../utils/SceneAPI";
+import InteractiveObject from "../../interactives/InteractiveObject";
 
 
 function ObjectOptions(props){
@@ -414,6 +415,27 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </React.Fragment>
             );
+        case InteractiveObjectsTypes.PLAYTIME:
+            return (
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Tempo di gioco:</label>
+                    <label className={'options-labels'}>Dimensione box:</label>
+                    <div className={'flex'}>
+                        <Slider
+                            defaultValue={object.properties.size}
+                            id="gameTimeSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'size',"gameTimeSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'size',"gameTimeSize", props)}
+                        />
+                    </div>
+                </React.Fragment>
+            );
         default:
             return(<div>Error!</div>);
     }
@@ -443,8 +465,17 @@ function objectButtons(props){
                 onClick={() => {
                     let answer = window.confirm("Vuoi cancellare l'oggetto " + currentObject.name + "?");
                     if(answer){
-                        InteractiveObjectAPI.removeObject(scene, currentObject);
-                        props.updateCurrentObject(null);
+                        if(currentObject.type == "PLAYTIME")
+                        {
+                            console.log(props.objects)
+                            InteractiveObjectAPI.removeObject(scene, currentObject);
+                            props.updateCurrentObject(null);
+                        }
+                        else
+                        {
+                            InteractiveObjectAPI.removeObject(scene, currentObject);
+                            props.updateCurrentObject(null);
+                        }
                     }}
                 }
             >

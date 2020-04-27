@@ -229,7 +229,7 @@ function TopBar(props){
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //createObject(props, InteractiveObjectsTypes.PLAYTIME);
+                                    createObject(props, InteractiveObjectsTypes.PLAYTIME);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)}/>
                             <figcaption>Tempo in gioco</figcaption>
@@ -354,11 +354,10 @@ function handleDebugMode(props) {
  */
 function createObject(props, type){
     if(props.currentScene != null){
-
         let scene = props.scenes.get(props.currentScene);
         let name = "";
         let obj = null;
-
+        let creatingGlobal = false;
         switch(type){
             case InteractiveObjectsTypes.TRANSITION:
                 name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
@@ -435,7 +434,7 @@ function createObject(props, type){
                     return;
                 }
                 break;
-            case InteractiveObjectsTypes.TIMER: //TODO: gestire più timer per scena? (no?)
+            case InteractiveObjectsTypes.TIMER:
                 if(scene.objects.timers.length == 0) //ammesso un solo timer per scena al momento
                 {
                     name = scene.name + '_tm' + (scene.objects.timers.length + 1);
@@ -482,7 +481,7 @@ function createObject(props, type){
                 if(scene.objects.health.length == 0) //ammesso un solo oggetto health per gioco
                 {
                     name = scene.name + '_hl' + (scene.objects.health.length + 1);
-                    obj = Score({
+                    obj = Health({
                         uuid: uuid.v4(),
                         name: name,
                         properties: {
@@ -498,19 +497,25 @@ function createObject(props, type){
                 }
                 break;
             case InteractiveObjectsTypes.PLAYTIME:
-                //TODO: creare quest'oggetto in ogni scena presente
-                //TODO: creando una nuova scena, se l'oggetto esiste viene aggiunto automaticamente alla scena
-                if(scene.objects.playtime.length == 0) //ammesso un solo oggetto playtime per gioco
+                let sceneArray = props.scenes.toArray()
+                if(scene.objects.playtime.length == 0) //ammesso un solo oggetto playtime per scena
                 {
-                    name = scene.name + '_pt' + (scene.objects.playtime.length + 1);
-                    obj = Score({
-                        uuid: uuid.v4(),
-                        name: name,
-                        properties: {
-                            time: 0,
-                            size: 5,
+                    for (let i = 0, len = sceneArray.length; i < len; i++) {
+                        name = sceneArray[i].name + '_pt' //TypeError: Cannot read property 'name' of null
+                            obj = PlayTime({
+                                uuid: uuid.v4(),//TODO: modificare con IDscenaPT per poterlo rintracciare nel db
+                                name: name,
+                                properties: {
+                                    time: 0,
+                                    size: 5,
+                                }
+                            })
+                        if(sceneArray[i].objects.playtime.length == 0)
+                        {
+                            props.addNewObject(sceneArray[i], obj);
                         }
-                    });
+                    }
+                    creatingGlobal = true;
                 }
                 else
                 {
@@ -522,23 +527,63 @@ function createObject(props, type){
                 return;
         }
 
-        let defaultRule = rules_utils.generateDefaultRule(obj, scene);
-        props.addNewObject(scene, obj);
-        //il controllo serve per la textbox che non ha bisogno di regole e questa chiamata verrebbe effettuata con defaultrule a null
-        if(defaultRule != null)
+        if (!creatingGlobal)
         {
-            if(obj.type === InteractiveObjectsTypes.SWITCH || obj.type ===InteractiveObjectsTypes.TIMER){ //switches and timers have multiple default rules
-                props.addNewRule(scene, defaultRule[0]);
-                props.addNewRule(scene, defaultRule[1]);
-            }else{
-                props.addNewRule(scene, defaultRule);
+            let defaultRule = rules_utils.generateDefaultRule(obj, scene);
+            props.addNewObject(scene, obj);
+            //il controllo serve per la textbox che non ha bisogno di regole e questa chiamata verrebbe effettuata con defaultrule a null
+            if(defaultRule != null)
+            {
+                if(obj.type === InteractiveObjectsTypes.SWITCH || obj.type ===InteractiveObjectsTypes.TIMER){ //switches and timers have multiple default rules
+                    props.addNewRule(scene, defaultRule[0]);
+                    props.addNewRule(scene, defaultRule[1]);
+                }else{
+                    props.addNewRule(scene, defaultRule);
+                }
+                // props.switchToGeometryMode();
             }
-            // props.switchToGeometryMode();
         }
+
 
 
     } else {
         alert('Nessuna scena selezionata!');
+    }
+}
+
+/**
+ * Creates global objects in the new scene if there are any in other scenes
+ * @param props
+ * @param scene
+ * @param type
+ */
+export function createGlobalObjectForNewScene(props, scene, type) {
+    console.log("sto creando oggetto globale per nuova scena");
+    console.log(scene);
+    if (scene != null) {
+        console.log("scene != null");
+
+        let name = "";
+        let obj = null;
+        switch (type) {
+            case InteractiveObjectsTypes.PLAYTIME:
+                let sceneArray = props.scenes.toArray()
+                if (scene.objects.playtime.length == 0){ //ammesso un solo oggetto playtime per gioco
+                    name = scene.name + 'pt';
+                    obj = PlayTime({
+                        uuid: uuid.v4(),
+                        name: name,
+                        properties: {
+                            time: 0,
+                            size: 5,
+                        }
+                    })
+                    props.addNewObject(scene, obj);
+                }
+                break;
+            default:
+                return;
+        }
     }
 }
 

@@ -111,7 +111,6 @@ export default class Bubble extends Component
                     asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
             }
         })
-//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     }
 
     render() {

@@ -27,11 +27,18 @@ function addInteractiveObjectToScene(scene, object){
  */
 function removeInteractiveObject(scene, object){
     let field = defineField(object);
-
+    console.log("scena in cui cancello oggetto", scene);
     // updating scene
     if(field){
         let objects = scene.get('objects');
-        objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
+        if(object.type == InteractiveObjectsTypes.PLAYTIME)
+        {
+            objects[field] = [];
+        }
+        else
+        {
+            objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
+        }
         return scene.setIn(['objects'], objects);
     }
     return scene;

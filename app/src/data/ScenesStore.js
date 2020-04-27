@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 import Scene from "../scene/Scene";
 import scene_utils from '../scene/scene_utils';
 import stores_utils from "./stores_utils";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 
 class ScenesStore extends ReduceStore {
 
@@ -89,7 +90,19 @@ class ScenesStore extends ReduceStore {
                 newScene = scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
                 state = state.set(newScene.uuid, newScene);
                 return state;
-            case ActionTypes.REMOVE_OBJECT:
+            case ActionTypes.REMOVE_OBJECT://TODO: la parte commentata rimuove solo dagli array, rimane nel db...
+                /*if (action.obj.type == InteractiveObjectsTypes.PLAYTIME) {
+                    state = state.map(scene => {
+                        newScene = scene_utils.removeInteractiveObject(scene, action.obj);
+                        return newScene;
+                    })
+                    return state;
+                }
+                else {
+                    newScene = scene_utils.removeInteractiveObject(action.scene, action.obj);
+                    state = state.set(newScene.uuid, newScene);
+                    return state;
+                }*/
                 newScene = scene_utils.removeInteractiveObject(action.scene, action.obj);
                 state = state.set(newScene.uuid, newScene);
                 return state;
