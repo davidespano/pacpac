@@ -59,7 +59,6 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-        console.log("SavesOptions/debugSaves", props.editor.debugSaves);
 
         if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(child.uuid) !== undefined) {
             if(checkFilter(props.editor.debugSaves.get(child.uuid), props.editor.debugSavesFilter))
@@ -203,7 +202,7 @@ function LoadDebugSave({sceneName, save, ...props}){
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm "
-                                    onClick={() => {DebugAPI.loadDebugState(save.saveName);} }
+                                    onClick={() => DebugAPI.loadDebugState(save.saveName) }
                                     data-dismiss="modal"
                             >
                                 Carica salvataggio
