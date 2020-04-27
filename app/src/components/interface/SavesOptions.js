@@ -4,6 +4,9 @@ import DebugAPI from "../../utils/DebugAPI";
 import interface_utils from "./interface_utils";
 import settings from "../../utils/settings";
 import InputSaveForm from "./InputSaveForm";
+import ObjectsStore from "../../data/ObjectsStore";
+import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
+import toString from "../../rules/toString";
 
 
 const {mediaURL} = settings;
@@ -35,7 +38,6 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-        console.log("SavesOptions/debugSaves", props.editor.debugSaves);
 
         if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(child.uuid) !== undefined) {
             return (
@@ -84,13 +86,13 @@ function listSceneSaves(props, sceneUuid, sceneName) {
                         if (window.confirm("Vuoi caricare questo salvataggio? Gli oggetti in scena sono: \n" + stringa)) {
                             DebugAPI.loadDebugState(save.saveName);
                         }*/
-                    }} data-toggle="modal" data-target="#load-save-modal">
+                    }} data-toggle="modal" data-target={"#load-save-modal" + save.saveName}>
                         Carica
                     </button>
-                    <LoadDebugSave {...{sceneName: sceneName, save: save, ...props}} />
+                    <LoadDebugSave key={save.saveName} {...{sceneName: sceneName, save: save, ...props}} />
                 </div>
 
-            )
+            );
         });
     }
     else
@@ -98,13 +100,10 @@ function listSceneSaves(props, sceneUuid, sceneName) {
 }
 
 function LoadDebugSave({sceneName, save, ...props}){
-    let stringa = "";
-    let obj = save.objectStates.map(os => os.uuid + " Stato: " + os.state + "; " + os.activable);
-    obj.forEach(os => { stringa += os + "\n"})
 
     return (
         <div id={"register"} title="">
-            <div className="modal fade" id="load-save-modal" tabIndex="-1" role="dialog"
+            <div className="modal fade" id={"load-save-modal" + save.saveName} tabIndex="-1" role="dialog"
                  aria-labelledby="register-modal-label" aria-hidden="true">
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
@@ -121,34 +120,72 @@ function LoadDebugSave({sceneName, save, ...props}){
                             <div className="form-group row">
                                 <label htmlFor="sceneRef" className="col-sm-2 col-form-label">Nome Salvataggio</label>
                                 <div className="col-sm-10">
-                                    <input readOnly={true}
-                                           type="text"
-                                           value={save.saveName}
-                                           className="form-control-plaintext"
-                                           id="SceneRef"/>
+                                    <p
+                                        className="text-left list-group-item list-group-item-action font-weight-bold"
+                                        id="inputPassword3" >{save.saveName}</p>
                                 </div>
                             </div>
                             <div className="form-group row">
                                 <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">Descrizione</label>
                                 <div className="col-sm-10">
                                     <p
-                                           className="form-control-plaintext text-left"
+                                           className="text-left list-group-item list-group-item-action"
                                            id="inputPassword3" >{save.saveDescription}</p>
                                 </div>
                             </div>
                             <div className="form.group row">
                                 <label htmlFor="saveObjsState" className="col-form-label col-sm-auto">Stato degli oggetti</label>
                                 <div className="col-sm-12 text-left" id="saveObjsState">
-                                    <p className="form-control-plaintext">
-                                        {stringa}
-                                    </p>
+                                        <table className="form-control-plaintext table table-borderless table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Tipo</th>
+                                                <th>Nome</th>
+                                                <th>Stato</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                {/* Per ogni oggetto salvato viene creata una riga nella tabella dello stato degli oggetti*/
+                                                    save.objectStates.map(obj => {
+                                                    /* Questo controllo è per evitare che nuovi salvataggi, alla cui scena sono stati inseriti nuovi oggetti, diano errore*/
+                                                    if(props.interactiveObjects.get(obj.uuid) === undefined)
+                                                        return <></>;
+
+                                                    let state = obj.state ? toString.valueUuidToString(obj.state) : "" ; // Proprietà di key e switch
+                                                    let step = obj.step ? "Valore iniziale: " + obj.step : ""; // Proprietà di counter
+
+                                                    return (
+                                                        <tr key={obj.uuid}>
+                                                            <td className="col-md-1">
+                                                                <img className="icon-obj-left"
+                                                                     src={interface_utils.getObjImg(props.interactiveObjects.get(obj.uuid).type)}
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                {props.interactiveObjects.get(obj.uuid).name}
+                                                            </td>
+                                                            <td>
+                                                                <ul className="list-unstyled">
+                                                                    <li className="font-weight-bold">{state}</li>
+                                                                    <li className="font-weight-bold">{step}</li>
+                                                                    <li>{toString.valueUuidToString(obj.visible)}</li>
+                                                                    <li>{toString.valueUuidToString(obj.activable)}</li>
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                                    )})
+                                                }
+                                            </tbody>
+                                        </table>
+
                                 </div>
                             </div>
                         </div>
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm "
-                                    onClick={() => {DebugAPI.loadDebugState(save.saveName);} }
+                                    onClick={() => DebugAPI.loadDebugState(save.saveName) }
                                     data-dismiss="modal"
                             >
                                 Carica salvataggio
