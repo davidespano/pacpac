@@ -38,7 +38,6 @@ function listSaves(props, path) {
 
         let src = path + '_thumbnails_/' + child.img + (regex.test(child.img) ? ".png" : "");
 
-        console.log("SavesOptions/debugSaves", props.editor.debugSaves);
 
         if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(child.uuid) !== undefined) {
             return (
@@ -88,7 +87,6 @@ function listSceneSaves(props, sceneUuid, sceneName) {
                             DebugAPI.loadDebugState(save.saveName);
                         }*/
                     }} data-toggle="modal" data-target={"#load-save-modal" + save.saveName}>
-
                         Carica
                     </button>
                     <LoadDebugSave key={save.saveName} {...{sceneName: sceneName, save: save, ...props}} />
@@ -131,7 +129,7 @@ function LoadDebugSave({sceneName, save, ...props}){
                                 <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">Descrizione</label>
                                 <div className="col-sm-10">
                                     <p
-                                           className="form-control-plaintext text-left"
+                                           className="text-left list-group-item list-group-item-action"
                                            id="inputPassword3" >{save.saveDescription}</p>
                                 </div>
                             </div>
@@ -186,7 +184,7 @@ function LoadDebugSave({sceneName, save, ...props}){
                         <div className="modal-footer">
                             <button type="button"
                                     className="btn btn-secondary buttonConferm "
-                                    onClick={() => {DebugAPI.loadDebugState(save.saveName);} }
+                                    onClick={() => DebugAPI.loadDebugState(save.saveName) }
                                     data-dismiss="modal"
                             >
                                 Carica salvataggio
