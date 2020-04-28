@@ -96,17 +96,22 @@ function checkFormAndCreateScene(props){
     }
 
     let media = props.editor.selectedFile,
-        index = props.scenes._map.last() + 1,
+        index = props.scenes._map.last() + 1,//TODO: che è successo qui?
         tag = props.editor.selectedTagNewScene;
     let e = document.getElementById("select-scene-type");
     let type = e.options[e.selectedIndex].value;
 
     if(!props.scenesNames.has(name) && media != null) {
         if(!index) index = 0;
-        SceneAPI.createScene(name, media, index, type, tag, props.editor.scenesOrder);
+        SceneAPI.createScene(name, media, index, type, tag, props.editor.scenesOrder, props);
         props.rightbarSelection('scene');
+        //TODO: crea oggetti globali se presenti in altre scene
         props.selectFile(null);
     }
+}
+
+function checkGlobalObject(props) {
+
 }
 
 function selectedFile(props){

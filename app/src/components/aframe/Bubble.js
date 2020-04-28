@@ -17,7 +17,6 @@ import stores_utils from "../../data/stores_utils";
 import Values from '../../rules/Values'
 import './aframe_shader'
 import AudioManager from './AudioManager'
-import Textbox from "../../interactives/Textbox";
 const soundsHub = require('./soundsHub');
 const THREE = require('three');
 const {mediaURL} = settings;
@@ -112,7 +111,6 @@ export default class Bubble extends Component
                     asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
             }
         })
-//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     }
 
     render() {
@@ -271,10 +269,8 @@ export default class Bubble extends Component
             let Height = this.props.assetsDimention.height ;
 
             let bounds = calculate2DSceneImageBounds(Width, Height);
-            console.log("sto calcolando il bound di ", this.props.scene.name)
             let canvasWidth = bounds.w;
             let canvasHeight = bounds.h;
-            //TODO ridimensionamento textbox assoluto, ora avviene solo in verticale
             let geometryProperties = "primitive: plane; width: "+ canvasWidth +"; height: auto"
             let textbox = document.getElementById("textbox")
             if (textbox != null)

@@ -22,6 +22,7 @@ import 'aframe-mouse-cursor-component';
 import ActionTypes from "../../actions/ActionTypes";
 import EditorState from "../../data/EditorState";
 import interface_utils from "../interface/interface_utils";
+import Timer from "../../interactives/Timer";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import {calculate2DSceneImageBounds} from "./aframe_curved";
 const soundsHub = require('./soundsHub');
@@ -30,7 +31,8 @@ const THREE = require('three');
 const eventBus = require('./eventBus');
 const {mediaURL} = settings;
 let sceneLoaded = false;
-
+let gameTimeSize;
+let timerSize; //variabili del timer pubbliche perchè accedute da render e tick
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
 // Ho l'impressione che l'attributo this.props.currentScene che viene dalla vecchia
@@ -40,11 +42,9 @@ let sceneLoaded = false;
 // parametri in base al flag di debug.
 
 export default class VRScene extends React.Component {
-
     //TODO: rimuovere currentscene o activescene
     constructor(props) {
         super(props);
-
         let scene = null;
         //Se arrivo dal debug prendo la scena corrente, altrimenti prendo la prima scena dalla lista delle scene
         if(this.props.currentScene){
@@ -112,32 +112,78 @@ export default class VRScene extends React.Component {
         let skysphere = document.getElementById(this.state.activeScene.img);
         if (skysphere != null) //se la skysphere ha caricato ed è stata trovata
         {
-            let sphere = document.getElementById(this.state.activeScene.name)
-            let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-            //console.log("loadingsphere: ",loadingsphere.id, "\nskysphere: ", skysphere.id, "\ncurrent time = ", skysphere.currentTime, "\ncurrent time data = ", sphere.components["material"].data.src.currentTime);
-            //TODO capire perchè la prima scena caricata non è centrata, decommentando le due righe sotto si può vedere che la posizione è corretta
-            //let sky = document.getElementById(this.state.activeScene.name)
-            //console.log(sky.getAttribute("position"));
-            if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
+            this.loadingManager()
+            this.timerManager()
+            this.gameTimeManager()
+        }
+    }
+
+    loadingManager()
+    {
+        let sphere = document.getElementById(this.state.activeScene.name)
+        let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
+        if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
+        {
+            sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
+            if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
             {
-                sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
-                if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
-                {
-                    console.log("sceneLoaded = ", sceneLoaded)
-                    loadingsphere.setAttribute('visible', 'false');
-                }
-                if (sphere.components["material"].data.src.currentTime > 1)
-                {
-                    //se la transizione è più lunga di un secondo potrebbe non funzionare
-                    sceneLoaded = true;
-                }
-            }
-            else if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
-            {
+                console.log("sceneLoaded = ", sceneLoaded)
                 loadingsphere.setAttribute('visible', 'false');
             }
+            if (sphere.components["material"].data.src.currentTime > 1)
+            {
+                //se la transizione è più lunga di un secondo potrebbe non funzionare
+                sceneLoaded = true;
+            }
         }
+        else if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
+        {
+            loadingsphere.setAttribute('visible', 'false');
+        }
+    }
 
+    timerManager()
+    {
+        let timer = document.getElementById(this.state.activeScene.name + 'timer')
+        if (timer != null && window.timerTime > 0 && window.timerIsRunning) //se è presente un timer nella scena
+        {
+            window.timerTime = window.timerTime - 0.1;
+            window.timerTime = window.timerTime.toFixed(1);
+            let textProperties = "baseline: center; side: double"+
+                "; align: center" +
+                "; width:" + timerSize +
+                "; value:" + window.timerTime;
+            timer.setAttribute('text', textProperties)
+            if (window.timerTime == 0)
+            { //nel caso il timer venga azzerato da regola devo aggiornarlo qui manualmente
+                let textProperties = "baseline: center; side: double"+
+                    "; align: center" +
+                    "; width:" + timerSize +
+                    "; value:" + 0;
+                timer.setAttribute('text', textProperties)
+                //TODO: alzare l'evento al termine del timer
+                //eventBus.emit()
+            }
+        }
+    }
+
+    gameTimeManager()
+    {
+        let gameTime = document.getElementById(this.state.activeScene.name + 'gameTime')
+        if (gameTime != null) //se è presente il game timer nella scena
+        {
+            if (window.gameTimeValue == undefined)
+            {
+                window.gameTimeValue = 0;
+            }
+            window.gameTimeValue = window.gameTimeValue - (-0.1); //non toccare, col + concatena stringhe a caso
+            window.gameTimeValue = window.gameTimeValue.toFixed(1);
+            let textProperties = "baseline: center; side: double"+
+                "; align: center" +
+                "; width:" + gameTimeSize +
+                "; value:" + window.gameTimeValue;
+            gameTime.setAttribute('text', textProperties)
+        }
     }
 
     /**
@@ -240,13 +286,9 @@ export default class VRScene extends React.Component {
                                 } else {
                                     actionExecution();
                                 }
-
                             });
                         }
                     });
-
-
-
                     rule.actions.forEach(action => {
                         //if(!eventBus._events['click-' + rule.event.obj_uuid]){
                         console.log("registering " + action.subj_uuid + " " + action.action + " " + action.obj_uuid);
@@ -340,8 +382,8 @@ export default class VRScene extends React.Component {
 
                 default:
                     let eventName = rule.event.action.toLowerCase();
-                    console.log(`registered ${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`);
-                    eventBus.on(`${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`, function(){
+                    let event = `${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`;
+                    eventBus.on(event, function () {
                         let condition = evalCondition(rule.condition, me.state.runState);
                         if (condition) {
                             rule.actions.forEach(action => {
@@ -358,6 +400,9 @@ export default class VRScene extends React.Component {
                             });
                         }
                     });
+                    if(rule.event.action==="ENTER_SCENE"){
+                        eventBus.emit(event);
+                    }
                     break;
             }
         })
@@ -379,8 +424,8 @@ export default class VRScene extends React.Component {
             //create the state for all the objs in the scene
             Object.values(scene.objects).flat().forEach(obj => {
                 runState[obj.uuid] = {state: obj.properties.state,
-                                      visible: obj.visible, activable: obj.activable,
-                                      step: obj.properties.step
+                    visible: obj.visible, activable: obj.activable,
+                    step: obj.properties.step
                 }
             });
         });
@@ -404,7 +449,6 @@ export default class VRScene extends React.Component {
         //sceneCanvas.components["material"].data.src.play();
         console.log("scena cambiata")
         sceneLoaded = false;
-        console.log(sceneCanvas.components["material"])
         if(this.props.debug){
             this.props.updateCurrentScene(this.state.graph.scenes[newActiveScene].uuid);
         }
@@ -445,17 +489,15 @@ export default class VRScene extends React.Component {
         }else{
             sceneUuid = this.state.activeScene.uuid;
         }
-        console.log("uuid scena render: ", sceneUuid);
 
         let textboxEntity = null;
         let textboxUuid = this.state.activeScene.objects.textboxes[0]
-        let graph = this.state.graph;
-        //TODO: rimuovere un po di console log
+        let timerEntity = null;
+        let timerUuid = this.state.activeScene.objects.timers[0]
+        let gameTimeEntity = null;
+        let gameTimeUuid = this.state.activeScene.objects.playtime[0]
 
-        // console.log(this)
-        // console.log(graph)
-        // console.log(this.state.activeScene.objects)
-        // console.log(textboxUuid)
+        let graph = this.state.graph;
 
         //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
@@ -472,26 +514,79 @@ export default class VRScene extends React.Component {
             { //per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
                 textObj = textboxUuid;
             }
-            console.log(textObj)
 
-            if (textObj) //se l'oggetto esiste genero la Entity
+            let timerObj = graph.objects.get(timerUuid); //recupero l'oggetto timer
+            if (timerObj == undefined)
+            {
+                timerObj = timerUuid;
+            }
+
+            let gameTimeObj = graph.objects.get(gameTimeUuid); //recupero l'oggetto gameTime
+            if (gameTimeObj == undefined)
+            {
+                gameTimeObj = gameTimeUuid;
+            }
+            console.log(gameTimeObj);
+
+            if (textObj) //se l'oggetto textbox esiste genero la Entity
             {
                 let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*5)) +
                     "; align: " + textObj.properties.alignment +
                     "; value:" + textObj.properties.string;
                 let geometryProperties = "primitive: plane; width: " + (0.5 + (textObj.properties.boxSize/20))+
                     "; height: auto"
+                let visibility = true; //per gestire la visibilità della textbox
+                if (textObj.visible == 'INVISIBLE')
+                    visibility = false;
                 textboxEntity =
                     <Entity visible={true} geometry={geometryProperties} position={'0 -0.214 -0.3'}
-                            id={'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textProperties}>
+                            id={this.state.activeScene.name + 'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
+                            text={textProperties} visible={visibility}>
+                    </Entity>
+            }
+            if (timerObj) //se l'oggetto timer esiste genero la Entity
+            {
+                timerSize = 0.4 + (timerObj.properties.size/20);
+                window.timerTime = timerObj.properties.time;
+                window.timerIsRunning = timerObj.properties.autoStart;
+                let textProperties = "baseline: center; side: double"+
+                    "; align: center" +
+                    "; width:" + timerSize +
+                    "; value:" + window.timerTime;
+                let geometryProperties = "primitive: plane; width: 0.1" + (0.4 + timerSize)+
+                    "; height: auto;"
+                let visibility = true;
+                if (timerObj.visible == 'INVISIBLE')
+                    visibility = false;
+                timerEntity =
+                    <Entity visible={true} geometry={geometryProperties} position={'0 0.23 -0.3'}
+                            id={this.state.activeScene.name + 'timer'} material={'shader: flat; opacity: 0.85; color: black;'}
+                            text={textProperties} visible={visibility}>
+                    </Entity>
+            }
+            if (gameTimeObj) //se l'oggetto game time esiste genero la Entity
+            {
+                gameTimeSize = 0.4 + (gameTimeObj.properties.size/20);
+                let textPropertiesPT = "baseline: center; side: double"+
+                    "; align: center" +
+                    "; width:" + gameTimeSize +
+                    "; value:" + window.gameTimeValue +
+                    ";color: #dbdbdb";
+                let geometryPropertiesPT = "primitive: plane; width: 0.12" + (0.4 + gameTimeSize)+
+                    "; height: auto;"
+                let visibility = true;
+                if (gameTimeObj.visible == 'INVISIBLE')
+                    visibility = false;
+                gameTimeEntity =
+                    <Entity visible={true} geometry={geometryPropertiesPT} position={'0.31 0.23 -0.3'}
+                            id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
+                            text={textPropertiesPT} visible={visibility}>
                     </Entity>
             }
         }
         else
         {
             this.currentLevel = [];
-
         }
         //Richiamo la funzione per la generazione degli assets
         //[Vittoria] gli assets vengono caricati non tutti insieme all'inizio ma quello della scena corrente e dei vicini
@@ -506,25 +601,27 @@ export default class VRScene extends React.Component {
         //all'altra si attivano e disattivano a seconda del tipo di scena
         //Sempre dentro la render viene richiamata la funzione generateBubbles che si occupa di creare tutte le bolle nella scena corrente
         return (
-                //[Vittoria] <Scene, <a-assets sono un componenti e tag di React A-frame
-                <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
-                    <a-assets>
-                        {assets}
-                    </a-assets>
-                    {this.generateBubbles()}
+            //[Vittoria] <Scene, <a-assets sono un componenti e tag di React A-frame
+            <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
+                <a-assets>
+                    {assets}
+                </a-assets>
+                {this.generateBubbles()}
 
-                    <Entity primitive="a-camera" key="keycamera" id="camera"
-                            pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
-                            look-controls="false" wasd-controls="false">
+                <Entity primitive="a-camera" key="keycamera" id="camera"
+                        pac-look-controls={"pointerLockEnabled: " + is3dScene.toString()+ ";planarScene:" + !is3dScene +";"}
+                        look-controls="false" wasd-controls="false">
 
-                        {textboxEntity}
+                    {textboxEntity}
+                    {timerEntity}
+                    {gameTimeEntity}
 
-                            <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
-                                    fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
-                            <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
-                                    fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
-                    </Entity>
-                </Scene>
+                    <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
+                            fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
+                    <Entity primitive="a-cursor" id="cursor" cursor={"rayOrigin: entity" }
+                            fuse={false}   visible={is3dScene} raycaster={"objects: [data-raycastable]; enabled: " + is3dScene + ";"}/>
+                </Entity>
+            </Scene>
 
         )
     }
@@ -596,15 +693,18 @@ export default class VRScene extends React.Component {
         let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld;
         resonance.default.setListenerFromMatrix(cameraMatrix4)
     }
+
+
+    static timerStop() {
+        window.timerIsRunning = false;
+
+    }
+    static timerStart() {
+        window.timerIsRunning = true;
+    }
+
+    static changeTimerTime(time){
+        window.timerTime = time;
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-

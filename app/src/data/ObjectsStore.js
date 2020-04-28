@@ -35,10 +35,8 @@ class ObjectsStore extends ReduceStore {
                 state = state.set(action.obj.uuid, action.obj).sort(stores_utils.alphabetical);
                 return state;
             case ActionTypes.REMOVE_SCENE:
-
                 let objects = scene_utils.allObjects(action.scene);
                 objects.forEach(obj => state = state.delete(obj));
-
                 return state;
             case ActionTypes.RESET:
                 return Immutable.Map();

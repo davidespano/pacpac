@@ -19,7 +19,6 @@ import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
 
-
 let uuid = require('uuid');
 
 export default class EudRuleEditor extends Component {
@@ -585,7 +584,6 @@ class EudCondition extends Component {
     }
 
     updateRule(ruleUpdate, role) {
-
         let rule = this.props.rule;
         let condition = this.props.condition;
 
@@ -743,6 +741,7 @@ class EudAction extends Component {
                         role={"object"}
                     />;
                 break;
+            case RuleActionTypes.REACH_TIMER:
             case RuleActionTypes.INCREASE:
                 objectRendering =
                     <EudRuleNumericPart
@@ -760,7 +759,14 @@ class EudAction extends Component {
                     />;
                 break;
             case RuleActionTypes.TRIGGERS:
-                let rule = sceneRulesOnly(this.props).get(this.props.action.obj_uuid); //riferimento alla regola
+                //è possibile avviare una regola o un timer
+                let object_t = this.getInteractiveObjectReference(this.props.action.obj_uuid); //è un oggetto
+                let rule=false; //se è una regola e non un timer
+                if(object_t===undefined){ //è una regola
+                    rule=true;
+                    object_t = sceneRulesOnly(this.props).get(this.props.action.obj_uuid); //riferimento alla regola
+                }
+
                 let objectCompletionRule = this.showCompletion(actionId, "object"); //prendi completion della regola
                 objectRendering =
                     <EudRulePart
@@ -772,7 +778,9 @@ class EudAction extends Component {
                         complement={this.props.rule.object_uuid}
                         verb={this.props.action}
                         ruleEditorCallback={this.props.ruleEditorCallback}
-                        originalText={rule == null ? "" : rule.name}
+                        originalText={rule? (object_t == null ? "" : toString.objectTypeToString(object_t.type) + object_t.name) : (
+                            object_t == null ? "" : "il timer "+ object_t.name)
+                        }
                         inputText={this.props.editor.get('completionInput')}
                         showCompletion={objectCompletionRule}
                         changeText={(text, role) => this.changeText(text, role)}
@@ -861,7 +869,6 @@ class EudAction extends Component {
     }
 
     updateRule(ruleUpdate, role, objects) {
-
         let rule = this.props.rule;
         let index = -1;
         let action;
@@ -1460,7 +1467,9 @@ class EudAutoCompleteItem extends Component {
  * @returns {the list of possible completions, int that indicates if a graph is necessary}
  */
 function getCompletions(props) {
+
     let graph=0;
+
     switch (props.role) {
         case "subject":
             graph=1;
@@ -1514,23 +1523,40 @@ function getCompletions(props) {
                 return {items, graph}
             }
 
-
         case "object":
             // the CLICK action is restricted to current scene objects only, might move to switch case later
             if(props.verb.action === RuleActionTypes.CLICK){
                 console.log("Case object scene object only: ", sceneObjectsOnly(props));
                 graph = 2;
-                let items = sceneObjectsOnly(props);
+                let items = sceneObjectsOnly(props).filter(x =>
+                    x.type !== InteractiveObjectsTypes.TIMER); //filtro il timer perchè non è cliccabile
                 return {items, graph};
             }
 
-
+            //si possono triggerare regole o timers
             if(props.verb.action === RuleActionTypes.TRIGGERS){
                 graph = 2;
-                let items = sceneRulesOnly(props);
+                let items = sceneRulesOnly(props).merge(sceneObjectsOnly(props).filter (
+                    x => x.type ===InteractiveObjectsTypes.TIMER
+                ));
                 return {items, graph}
             }
-            
+
+            //stop va bene sia per gli audio sia per i timer, ma se il soggetto è game allora si riferisce solo ai timer
+            if(props.verb.action === RuleActionTypes.STOP_TIMER && props.subject.type === InteractiveObjectsTypes.GAME){
+                    let items = (sceneObjectsOnly(props).filter (
+                        x => x.type ===InteractiveObjectsTypes.TIMER
+                    ));
+                    return {items, graph}
+            }
+
+            //entra nella scena supporta solo il nome della scena corrente
+            if(props.verb.action === RuleActionTypes.ENTER_SCENE){
+                graph=0;
+                let items = (props.scenes.filter( x=> x.uuid === CentralSceneStore.getState())); //scena corrente
+                return {items, graph}
+            }
+
             let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
             allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
@@ -1579,10 +1605,22 @@ function getCompletions(props) {
             if(props.subject){
                 //se ho come soggetto il gioco allora mostro solo avvia come verbo
                 if(props.subject.type === InteractiveObjectsTypes.GAME){
-                    let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
+                    let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS || x.uuid ===RuleActionTypes.STOP_TIMER);
                     return {items, graph};
                 }
-                let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
+
+               /* Decommenta se dà problemi
+               if(props.subject.type === InteractiveObjectsTypes.TIMER){
+                    let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.REACH_TIMER );
+                    return {items, graph};
+                }*/
+
+                //faccio in modo che "entra nella scena" non compaia come azione nella seconda parte della frase
+                let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)
+                    && x.uuid !== RuleActionTypes.ENTER_SCENE) : RuleActionMap.filter(
+                    x => x.uuid !== RuleActionTypes.ENTER_SCENE
+                );
+
                 return {items, graph};
             }
             else{

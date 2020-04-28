@@ -2,16 +2,14 @@ import InteractiveObject from "./InteractiveObject";
 import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 import Values from "../rules/Values";
 
-const Timer = defaultValues => InteractiveObject({
-    type : InteractiveObjectsTypes.TIMER,
+const PlayTime = defaultValues => InteractiveObject({
+    type : InteractiveObjectsTypes.PLAYTIME,
     properties : {
-        time : 1000,
+        time : 0, //TODO: bisognerà convertire i secondi in ore:minuti:secondi
         size: 5,
-        autoStart: true,
     },
     ...defaultValues
 });
 
-
-export default Timer;
+export default PlayTime;
 

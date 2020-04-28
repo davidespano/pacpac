@@ -33,6 +33,8 @@ function eventTypeToString(eventType) {
             return 'riproduce in loop';
         case RuleActionTypes.STOP:
             return 'interrompe';
+        case RuleActionTypes.STOP_TIMER:
+            return 'interrompe';
         case RuleActionTypes.LOOK_AT:
             return 'guarda';
         case RuleActionTypes.INCREASE:
@@ -45,6 +47,10 @@ function eventTypeToString(eventType) {
             return 'è';
         case RuleActionTypes.TRIGGERS:
             return 'avvia';
+        case RuleActionTypes.ENTER_SCENE:
+            return 'entra nella ';
+        case RuleActionTypes.REACH_TIMER:
+            return 'arriva a';
         default:
             return "";
     }
@@ -93,6 +99,9 @@ function objectTypeToString(objectType) {
         case Values.THREE_DIM:
         case Values.TWO_DIM:
             type = "la scena";
+            break;
+        case Values.ZERO:
+            type = "zero";
             break;
         case "number":
         case "operation":
@@ -204,6 +213,8 @@ function valueUuidToString(valueUuid){
             return 'centro';
         case Values.TEXTLEFT:
             return 'sinistra';
+        case Values.ZERO:
+            return "zero";
         default:
             return 'stato sconosciuto';
     }

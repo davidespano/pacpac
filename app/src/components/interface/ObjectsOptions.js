@@ -8,6 +8,12 @@ import Values from "../../rules/Values";
 import RuleActionTypes from "../../rules/RuleActionTypes";
 import stores_utils from "../../data/stores_utils";
 import Orders from "../../data/Orders";
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
+import SceneAPI from "../../utils/SceneAPI";
+import InteractiveObject from "../../interactives/InteractiveObject";
+
 
 function ObjectOptions(props){
     if(props.currentObject){
@@ -71,7 +77,6 @@ function generateProperties(props){
     let currentObject = props.interactiveObjects.get(props.currentObject);
     let objectScene = props.scenes.get(props.objectToScene.get(currentObject.uuid));
     let type = objectTypeToString(currentObject.type);
-
 
     return(
         <div className={'currentOptions'}>
@@ -138,7 +143,8 @@ function generateProperties(props){
                 <button
                     className={"btn select-file-btn rightbar-btn"}
                     onClick={() => props.switchToGeometryMode() }
-                    disabled={currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM}
+                    disabled={(currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM) ||
+                    (currentObject.type === InteractiveObjectsTypes.TEXTBOX && objectScene.type === Values.TWO_DIM)}
                 >
                     Modifica geometria
                 </button>
@@ -334,31 +340,36 @@ function generateSpecificProperties(object, objectScene, props){
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Testo:</label>
                     {richText(props,object)}
-
                     <label className={'options-labels'}>Dimensione testo:</label>
                     <div className={'flex'}>
-                        <div id={"textSize"}
-                             className={"propertyForm-right"}
-                             contentEditable={true}
-                             onBlur={()=> interface_utils.setPropertyFromId(object,'fontSize',"textSize", props)}
-                             onInput={() => interface_utils.onlyNumbers("textSize")}
-                        >
-                            {object.properties.fontSize}
-                        </div>
-                        <span className={'measure-units'}>(1 - 10)</span>
+                        <Slider
+                            defaultValue={object.properties.fontSize} //se uso value non fa scorrere lo slider
+                            id="textSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'fontSize',"textSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'fontSize',"textSize", props)}
+                        />
                     </div>
 
                     <label className={'options-labels'}>Dimensione box:</label>
                     <div className={'flex'}>
-                        <div id={"boxSize"}
-                             className={"propertyForm-right"}
-                             contentEditable={true}
-                             onBlur={()=> interface_utils.setPropertyFromId(object,'boxSize',"boxSize", props)}
-                             onInput={() => interface_utils.onlyNumbers("boxSize")}
-                        >
-                            {object.properties.boxSize}
-                        </div>
-                        <span className={'measure-units'}>(1 - 10)</span>
+                        <Slider
+                            defaultValue={object.properties.boxSize}
+                            id="boxSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'boxSize',"boxSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'boxSize',"boxSize", props)}
+                        />
                     </div>
                 </React.Fragment>
             );
@@ -366,19 +377,63 @@ function generateSpecificProperties(object, objectScene, props){
             return (
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Timer:</label>
-
-                    {/*<label className={'options-labels'}>Tempo:</label>*/}
-                    {/*<div className={'flex'}>*/}
-                    {/*    <div id={"timerDuration"}*/}
-                    {/*         className={"propertyForm-right"}*/}
-                    {/*         contentEditable={true}*/}
-                    {/*         onBlur={()=> interface_utils.setPropertyFromId(object,'time',"timerDuration", props)}*/}
-                    {/*         onInput={() => interface_utils.onlyNumbers("timerDuration")}*/}
-                    {/*    >*/}
-                    {/*        {object.properties.duration}*/}
-                    {/*    </div>*/}
-                    {/*    <span className={'measure-units'}>ms</span>*/}
-                    {/*</div>*/}
+                    <label className={'options-labels'}>Tempo:</label>
+                    <div className={'flex'}>
+                        <div id={"timerDuration"}
+                             className={"propertyForm-right"}
+                             contentEditable={true}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'time',"timerDuration", props)}
+                             onInput={() => interface_utils.onlyNumbers("timerDuration")}
+                        >
+                            {object.properties.time}
+                        </div>
+                        <span className={'measure-units'}> secondi</span>
+                    </div>
+                    <div className={'rightbar-checkbox'}>
+                        <input type={'checkbox'} className={'checkbox-audio-form'}
+                               id={'timer-autostart'} checked={object.properties.autoStart}
+                               onChange={() => {
+                                   interface_utils.setPropertyFromValue(object,'autoStart', !object.properties.autoStart,props)
+                               }}
+                        />
+                        <label htmlFor={'home-scene'}>Avvio automatico</label>
+                    </div>
+                    <label className={'options-labels'}>Dimensione box:</label>
+                    <div className={'flex'}>
+                        <Slider
+                            defaultValue={object.properties.size}
+                            id="timerSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'size',"timerSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'size',"timerSize", props)}
+                        />
+                    </div>
+                </React.Fragment>
+            );
+        case InteractiveObjectsTypes.PLAYTIME:
+            return (
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Tempo di gioco:</label>
+                    <label className={'options-labels'}>Dimensione box:</label>
+                    <div className={'flex'}>
+                        <Slider
+                            defaultValue={object.properties.size}
+                            id="gameTimeSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'size',"gameTimeSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'size',"gameTimeSize", props)}
+                        />
+                    </div>
                 </React.Fragment>
             );
         default:
@@ -410,8 +465,17 @@ function objectButtons(props){
                 onClick={() => {
                     let answer = window.confirm("Vuoi cancellare l'oggetto " + currentObject.name + "?");
                     if(answer){
-                        InteractiveObjectAPI.removeObject(scene, currentObject);
-                        props.updateCurrentObject(null);
+                        if(currentObject.type == "PLAYTIME")
+                        {
+                            console.log(props.objects)
+                            InteractiveObjectAPI.removeObject(scene, currentObject);
+                            props.updateCurrentObject(null);
+                        }
+                        else
+                        {
+                            InteractiveObjectAPI.removeObject(scene, currentObject);
+                            props.updateCurrentObject(null);
+                        }
                     }}
                 }
             >
