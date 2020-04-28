@@ -30,8 +30,10 @@ function removeInteractiveObject(scene, object){
     console.log("scena in cui cancello oggetto", scene);
     // updating scene
     if(field){
-        let objects = scene.get('objects');
-        if(object.type == InteractiveObjectsTypes.PLAYTIME)
+        let objects = scene.get('objects');//predisposizione a cancellazione globale
+        if(object.type == InteractiveObjectsTypes.PLAYTIME ||
+            object.type == InteractiveObjectsTypes.SCORE ||
+            object.type == InteractiveObjectsTypes.HEALTH)
         {
             objects[field] = [];
         }

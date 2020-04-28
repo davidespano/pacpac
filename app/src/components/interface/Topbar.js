@@ -215,14 +215,14 @@ function TopBar(props){
                     <div className={"flex-container"}>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //createObject(props, InteractiveObjectsTypes.HEALTH);
+                                    createObject(props, InteractiveObjectsTypes.HEALTH);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.HEALTH)}/>
                             <figcaption>Vita</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //createObject(props, InteractiveObjectsTypes.SCORE);
+                                    createObject(props, InteractiveObjectsTypes.SCORE);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SCORE)}/>
                             <figcaption>Punteggio</figcaption>
@@ -358,6 +358,7 @@ function createObject(props, type){
         let name = "";
         let obj = null;
         let creatingGlobal = false;
+        let sceneArray = props.scenes.toArray()
         switch(type){
             case InteractiveObjectsTypes.TRANSITION:
                 name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
@@ -455,19 +456,24 @@ function createObject(props, type){
                 }
                 break;
             case InteractiveObjectsTypes.SCORE:
-                //TODO: creare quest'oggetto in ogni scena esistente
-                //TODO: creando una nuova scena, se l'oggetto esiste viene aggiunto automaticamente alla scena
-                if(scene.objects.score.length == 0) //ammesso un solo oggetto score per gioco
+                creatingGlobal = true;
+                if(scene.objects.score.length == 0)
                 {
-                    name = scene.name + '_sc' + (scene.objects.score.length + 1);
-                    obj = Score({
-                        uuid: uuid.v4(),
-                        name: name,
-                        properties: {
-                            score: 0,
-                            size: 5,
+                    for (let i = 0, len = sceneArray.length; i < len; i++) {
+                        if(sceneArray[i].objects.score.length == 0)
+                        {
+                            name = sceneArray[i].name + '_sc';
+                            obj = Score({
+                                uuid: uuid.v4(),
+                                name: name,
+                                properties: {
+                                    score: 100,
+                                    size: 5,
+                                }
+                            });
+                            props.addNewObject(sceneArray[i], obj);
                         }
-                    });
+                    }
                 }
                 else
                 {
@@ -476,19 +482,24 @@ function createObject(props, type){
                 }
                 break;
             case InteractiveObjectsTypes.HEALTH:
-                //TODO: creare quest'oggetto in ogni scena esistente
-                //TODO: creando una nuova scena, se l'oggetto esiste viene aggiunto automaticamente alla scena
-                if(scene.objects.health.length == 0) //ammesso un solo oggetto health per gioco
+                creatingGlobal = true;
+                if(scene.objects.health.length == 0)
                 {
-                    name = scene.name + '_hl' + (scene.objects.health.length + 1);
-                    obj = Health({
-                        uuid: uuid.v4(),
-                        name: name,
-                        properties: {
-                            health: 100,
-                            size: 5,
+                    for (let i = 0, len = sceneArray.length; i < len; i++) {
+                        if(sceneArray[i].objects.health.length == 0)
+                        {
+                            name = sceneArray[i].name + '_hl';
+                            obj = Health({
+                                uuid: uuid.v4(),
+                                name: name,
+                                properties: {
+                                    health: 100,
+                                    size: 5,
+                                }
+                            });
+                            props.addNewObject(sceneArray[i], obj);
                         }
-                    });
+                    }
                 }
                 else
                 {
@@ -497,25 +508,24 @@ function createObject(props, type){
                 }
                 break;
             case InteractiveObjectsTypes.PLAYTIME:
-                let sceneArray = props.scenes.toArray()
-                if(scene.objects.playtime.length == 0) //ammesso un solo oggetto playtime per scena
+                creatingGlobal = true;
+                if(scene.objects.playtime.length == 0)
                 {
                     for (let i = 0, len = sceneArray.length; i < len; i++) {
-                        name = sceneArray[i].name + '_pt' //TypeError: Cannot read property 'name' of null
+                        if(sceneArray[i].objects.playtime.length == 0)
+                        {
+                            name = sceneArray[i].name + '_pt';
                             obj = PlayTime({
-                                uuid: uuid.v4(),//TODO: modificare con IDscenaPT per poterlo rintracciare nel db
+                                uuid: uuid.v4(),
                                 name: name,
                                 properties: {
                                     time: 0,
                                     size: 5,
                                 }
-                            })
-                        if(sceneArray[i].objects.playtime.length == 0)
-                        {
+                            });
                             props.addNewObject(sceneArray[i], obj);
                         }
                     }
-                    creatingGlobal = true;
                 }
                 else
                 {
@@ -558,23 +568,48 @@ function createObject(props, type){
  * @param type
  */
 export function createGlobalObjectForNewScene(props, scene, type) {
-    console.log("sto creando oggetto globale per nuova scena");
-    console.log(scene);
     if (scene != null) {
-        console.log("scene != null");
-
         let name = "";
         let obj = null;
+        let sceneArray = props.scenes.toArray()
+
         switch (type) {
             case InteractiveObjectsTypes.PLAYTIME:
-                let sceneArray = props.scenes.toArray()
                 if (scene.objects.playtime.length == 0){ //ammesso un solo oggetto playtime per gioco
-                    name = scene.name + 'pt';
+                    name = scene.name + '_pt';
                     obj = PlayTime({
                         uuid: uuid.v4(),
                         name: name,
                         properties: {
                             time: 0,
+                            size: 5,
+                        }
+                    })
+                    props.addNewObject(scene, obj);
+                }
+                break;
+            case InteractiveObjectsTypes.SCORE:
+                if (scene.objects.score.length == 0){ //ammesso un solo oggetto playtime per gioco
+                    name = scene.name + '_sc';
+                    obj = Score({
+                        uuid: uuid.v4(),
+                        name: name,
+                        properties: {
+                            score: 0,
+                            size: 5,
+                        }
+                    })
+                    props.addNewObject(scene, obj);
+                }
+                break;
+            case InteractiveObjectsTypes.HEALTH:
+                if (scene.objects.health.length == 0){ //ammesso un solo oggetto playtime per gioco
+                    name = scene.name + '_hl';
+                    obj = Health({
+                        uuid: uuid.v4(),
+                        name: name,
+                        properties: {
+                            score: 0,
                             size: 5,
                         }
                     })

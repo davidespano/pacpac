@@ -105,7 +105,6 @@ function checkFormAndCreateScene(props){
         if(!index) index = 0;
         SceneAPI.createScene(name, media, index, type, tag, props.editor.scenesOrder, props);
         props.rightbarSelection('scene');
-        //TODO: crea oggetti globali se presenti in altre scene
         props.selectFile(null);
     }
 }

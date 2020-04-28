@@ -32,6 +32,8 @@ const eventBus = require('./eventBus');
 const {mediaURL} = settings;
 let sceneLoaded = false;
 let gameTimeSize;
+let healthSize;
+let scoreSize;
 let timerSize; //variabili del timer pubbliche perchè accedute da render e tick
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
@@ -64,9 +66,7 @@ export default class VRScene extends React.Component {
             camera: new THREE.Vector3(),
             stats: false,
         };
-        //console.log(props)
-        //console.log(props.assets.get(this.state.activeScene.img))
-        //console.log(this.props.scenes.toArray())
+
         if(!this.props.debug && this.props.editor.gameId === null){
             document.querySelector('link[href*="bootstrap"]').remove();
         }
@@ -142,6 +142,7 @@ export default class VRScene extends React.Component {
         }
     }
 
+    //TODO: alzare l'evento al termine del timer
     timerManager()
     {
         let timer = document.getElementById(this.state.activeScene.name + 'timer')
@@ -161,7 +162,6 @@ export default class VRScene extends React.Component {
                     "; width:" + timerSize +
                     "; value:" + 0;
                 timer.setAttribute('text', textProperties)
-                //TODO: alzare l'evento al termine del timer
                 //eventBus.emit()
             }
         }
@@ -491,11 +491,17 @@ export default class VRScene extends React.Component {
         }
 
         let textboxEntity = null;
-        let textboxUuid = this.state.activeScene.objects.textboxes[0]
+        let textboxUuid = this.state.activeScene.objects.textboxes[0];
         let timerEntity = null;
-        let timerUuid = this.state.activeScene.objects.timers[0]
+        let timerUuid = this.state.activeScene.objects.timers[0];
         let gameTimeEntity = null;
-        let gameTimeUuid = this.state.activeScene.objects.playtime[0]
+        let gameTimeUuid = this.state.activeScene.objects.playtime[0];
+        let scoreEntity = null;
+        let scoreUuid = this.state.activeScene.objects.score[0];
+        window.scoreValue = undefined;
+        let healthEntity = null;
+        let healtUuid = this.state.activeScene.objects.health[0];
+        window.healthValue = undefined;
 
         let graph = this.state.graph;
 
@@ -503,30 +509,32 @@ export default class VRScene extends React.Component {
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
         if (this.state.graph.neighbours !== undefined && graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
             this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
-                //this.state.graph.scenes[sceneUuid]); //TODO: qui non faccio più caricare le scene adiacenti (invece le carica lo stesso), (ma comunque) risolve il bug del video bloccato, da testare
+                //this.state.graph.scenes[sceneUuid]);
                 //se questo sistema non funziona, commentare la riga sopra e decommentare le 2 sotto
                 graph.neighbours[sceneUuid].includes(uuid)
                 || uuid === sceneUuid);
             // console.log("neighbours di sceneUuid: ", this.state.graph.neighbours[sceneUuid])
 
             let textObj = graph.objects.get(textboxUuid); //recupero l'oggetto di testo
-            if (textObj == undefined)
-            { //per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
+            if (textObj == undefined)//per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
                 textObj = textboxUuid;
-            }
 
             let timerObj = graph.objects.get(timerUuid); //recupero l'oggetto timer
             if (timerObj == undefined)
-            {
                 timerObj = timerUuid;
-            }
 
             let gameTimeObj = graph.objects.get(gameTimeUuid); //recupero l'oggetto gameTime
             if (gameTimeObj == undefined)
-            {
                 gameTimeObj = gameTimeUuid;
-            }
-            console.log(gameTimeObj);
+
+            let scoreObj = graph.objects.get(scoreUuid);
+            if (scoreObj == undefined)
+                scoreObj = scoreUuid;
+
+            let healthObj = graph.objects.get(healtUuid);
+            if (healthObj == undefined)
+                healthObj = healtUuid;
+
 
             if (textObj) //se l'oggetto textbox esiste genero la Entity
             {
@@ -583,6 +591,49 @@ export default class VRScene extends React.Component {
                             text={textPropertiesPT} visible={visibility}>
                     </Entity>
             }
+            if (scoreObj) //se l'oggetto score esiste genero la Entity
+            {
+                if (window.scoreValue == undefined)
+                    window.scoreValue = 0;
+                scoreSize = 0.1 + (scoreObj.properties.size/10);
+                let textPropertiesSC = "baseline: center; side: double"+
+                    "; align: center" +
+                    "; width:" + scoreSize +
+                    "; value:" + window.scoreValue +
+                    ";color: #dbdbdb";
+                let geometryPropertiesSC = "primitive: plane; width: " + (0.05 + scoreSize/10)+
+                    "; height:" + (0.02 + scoreSize/50) +";"
+                let visibility = true;
+                if (scoreObj.visible == 'INVISIBLE')
+                    visibility = false;
+                scoreEntity =
+                    <Entity visible={true} geometry={geometryPropertiesSC} position={'-0.31 0.23 -0.3'}
+                            id={this.state.activeScene.name + 'score'} material={'shader: flat; opacity: 0.85; color: black;'}
+                            text={textPropertiesSC} visible={visibility}>
+                    </Entity>
+            }
+            if (healthObj) //se l'oggetto health esiste genero la Entity
+            {
+                if (window.healthValue == undefined)
+                    window.healthValue = healthObj.properties.health;
+                healthSize = 0.1 + (healthObj.properties.size/10);
+                let textPropertiesHL = "baseline: center; side: double"+
+                    "; align: center" +
+                    "; width:" + healthSize +
+                    "; value:" +window.healthValue +
+                    ";color: #dbdbdb";
+                let geometryPropertiesHL = "primitive: plane; width:" + (0.05 + healthSize/10) +
+                    "; height:" + (0.02 + healthSize/50) +";"
+                let visibility = true;
+                if (healthObj.visible == 'INVISIBLE')
+                    visibility = false;
+                healthEntity =
+                    <Entity visible={true} geometry={geometryPropertiesHL} position={'-0.31 0.19 -0.3'}
+                            id={this.state.activeScene.name + 'health'} material={'shader: flat; opacity: 0.85; color: black;'}
+                            text={textPropertiesHL} visible={visibility}>
+                    </Entity>
+            }
+
         }
         else
         {
@@ -615,6 +666,8 @@ export default class VRScene extends React.Component {
                     {textboxEntity}
                     {timerEntity}
                     {gameTimeEntity}
+                    {scoreEntity}
+                    {healthEntity}
 
                     <Entity primitive="a-cursor" id="cursorMouse" cursor={"rayOrigin: mouse" }
                             fuse={false}   visible={false} raycaster={"objects: [data-raycastable]; enabled: " + !is3dScene + ";"}/>
@@ -668,7 +721,7 @@ export default class VRScene extends React.Component {
             //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
             //TODO [davide] rimosso perche' crea più listener per lo stesso evento
             //this.createRuleListeners();
-            console.log("genero bolla: " ,scene.uuid)
+            //console.log("genero bolla: " ,scene.uuid)
             //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (
                 <Bubble key={"key" + scene.name}
@@ -707,4 +760,29 @@ export default class VRScene extends React.Component {
         window.timerTime = time;
     }
 
+    //TODO: finire questi metodi
+    static changeHealthValue(newHealthValue){
+        let healthObj = null;
+        //let healthObj = document.getElementById(this.state.activeScene.name + 'health')
+        window.healthValue = newHealthValue;
+        let textPropertiesHL = "baseline: center; side: double"+
+                "; align: center" +
+                "; width:" + healthSize +
+                "; value:" + window.healthValue +
+                ";color: #dbdbdb";
+        healthObj.setAttribute('text', textPropertiesHL);
+    }
+
+    //TODO: finire questi metodi
+    static changeScoreValue(newScoreValue){
+        let scoreObj = null;
+        //let scoreObj = document.getElementById(this.state.activeScene.name + 'score')
+        window.scoreValue = newScoreValue;
+        let textPropertiesSC = "baseline: center; side: double"+
+                "; align: center" +
+                "; width:" + scoreSize +
+                "; value:" + window.scoreValue +
+                ";color: #dbdbdb";
+        scoreObj.setAttribute('text', textPropertiesSC);
+        }
 }

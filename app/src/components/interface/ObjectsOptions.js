@@ -335,7 +335,7 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </div>
             );
-        case InteractiveObjectsTypes.TEXTBOX://TODO check dimensione tra 1 e 10
+        case InteractiveObjectsTypes.TEXTBOX:
             return (
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Testo:</label>
@@ -436,6 +436,48 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </React.Fragment>
             );
+        case InteractiveObjectsTypes.SCORE:
+            return (
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Punteggio:</label>
+                    <label className={'options-labels'}>Dimensione box:</label>
+                    <div className={'flex'}>
+                        <Slider
+                            defaultValue={object.properties.size}
+                            id="scoreSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'size',"scoreSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'size',"scoreSize", props)}
+                        />
+                    </div>
+                </React.Fragment>
+            );
+        case InteractiveObjectsTypes.HEALTH:
+            return (
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Punti vita:</label>
+                    <label className={'options-labels'}>Dimensione box:</label>
+                    <div className={'flex'}>
+                        <Slider
+                            defaultValue={object.properties.size}
+                            id="healthSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'size',"healthSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'size',"healthSize", props)}
+                        />
+                    </div>
+                </React.Fragment>
+            );
         default:
             return(<div>Error!</div>);
     }
@@ -465,9 +507,10 @@ function objectButtons(props){
                 onClick={() => {
                     let answer = window.confirm("Vuoi cancellare l'oggetto " + currentObject.name + "?");
                     if(answer){
-                        if(currentObject.type == "PLAYTIME")
+                        if(currentObject.type == InteractiveObjectsTypes.PLAYTIME ||
+                            currentObject.type == InteractiveObjectsTypes.SCORE ||
+                            currentObject.type == InteractiveObjectsTypes.HEALTH)
                         {
-                            console.log(props.objects)
                             InteractiveObjectAPI.removeObject(scene, currentObject);
                             props.updateCurrentObject(null);
                         }
