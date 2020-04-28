@@ -63,6 +63,7 @@ function TopBar(props){
                             <figcaption>Punto di interesse</figcaption>
                         </figure>
     }
+
     return (
 
         <div className={'topbar'}>
