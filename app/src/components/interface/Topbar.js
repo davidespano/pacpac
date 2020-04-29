@@ -77,7 +77,8 @@ function TopBar(props){
                     <a className="nav-item nav-link" id="nav-objects-tab" data-toggle="tab" href="#nav-objects" role="tab"
                        aria-controls="nav-objects" aria-selected="false" onClick={() => handleNavbarSelection(props)}>Oggetti</a>
 
-
+                    <a className="nav-item nav-link" id="nav-objects-global" data-toggle="tab" href="#nav-global" role="tab"
+                       aria-controls="nav-global" aria-selected="false" onClick={() => handleNavbarSelection(props)}>Globali</a>
 
                     <a className="nav-item nav-link" id="nav-objects-assets" data-toggle="tab" role="tab" href="#nav-assets"
                        aria-controls="nav-assets" aria-selected="false"
