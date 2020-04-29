@@ -747,6 +747,7 @@ figcaption {
     height: 50px;
 }
 
+
 .icons-img:hover{
     background-color: rgba(239, 86, 45, .3);
 }
@@ -759,6 +760,17 @@ figcaption {
             -2px 0 2px black,
             0 2px 2px black,
             0 -2px 2px black;
+}
+
+/* Per oggetti globali */
+.icons-global-img {
+    background-color: rgba(239, 86, 45, .3);
+    width: 50px;
+    height: 50px;
+}
+
+.icons-global-img:hover{
+    background-color: rgba(255, 255, 255, .4);
 }
 
 /* Dropdown menu leftbar and tags */

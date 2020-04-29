@@ -1595,7 +1595,8 @@ function getCompletions(props) {
                 if(props.subject){
                     let items = RuleActionMap
                         //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
-                        .filter(x => x.subj_type.includes(props.subject.type));
+                        .filter(x => x.subj_type.includes(props.subject.type)
+                        && x.uuid !== RuleActionTypes.TRANSITION);
 
                     return {items, graph}
                 }

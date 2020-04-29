@@ -83,6 +83,9 @@ function generateObjectsIcons(props){
 
         let obj = props.interactiveObjects.get(obj_uuid);
 
+        //se è un oggetto globale uso il css con il background scuro, altrimenti quello di default
+        let img = (obj.type === "PLAYTIME" || obj.type === "HEALTH" || obj.type === "SCORE") ? "icons-global-img" : "icons-img";
+
         return(
             <figure className={'icons'}
                     onClick={() => {
@@ -92,7 +95,7 @@ function generateObjectsIcons(props){
                     style={getPosition(props.centroids, obj.uuid)}
                     key={'icon-figure-' + obj.uuid}
             >
-                <img className={'icons-img'}
+                <img className={img}
                      id={'icon-' + obj.uuid}
                      src={interface_utils.getObjImg(obj.type)}
                      alt={obj.name}
