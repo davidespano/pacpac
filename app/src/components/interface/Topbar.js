@@ -369,6 +369,7 @@ function createObject(props, type){
     if(props.currentScene != null){
         let scene = props.scenes.get(props.currentScene);
         let name = "";
+        let creatingGlobal = false;
         let obj = null;
         let creatingGlobal = false;
         let sceneArray = props.scenes.toArray()

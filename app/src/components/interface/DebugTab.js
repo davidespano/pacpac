@@ -290,6 +290,7 @@ function listOtherScenesObjs(props) {
  * @returns {*}
  */
 function generateSpecificProperties(object, props) {
+
     // Variabile che rappresenta le proprietà comuni a tutti gli oggetti
     let genericProperties =
         <>
@@ -297,13 +298,13 @@ function generateSpecificProperties(object, props) {
             <Dropdown props={props}
                       component={'activability'}
                       property={object.activable}
-                      defaultValue={EditorState.debugRunState[object.uuid.toString()].activable}
+                      defaultValue={props.editor.debugRunState[object.uuid.toString()].activable}
             />
             <label className={'options-labels'}>Visibilità:</label>
             <Dropdown props={props}
                       component={'visibility'}
                       property={object.visible}
-                      defaultValue={EditorState.debugRunState[object.uuid.toString()].visible}
+                      defaultValue={props.editor.debugRunState[object.uuid.toString()].visible}
             />
         </>;
 
@@ -323,7 +324,7 @@ function generateSpecificProperties(object, props) {
                 <div className={"options-grid"}>
                     <label className={'options-labels'}>Stato:</label>
                     <Dropdown props={props} component={'on-off'}
-                              defaultValue={EditorState.debugRunState[object.uuid.toString()].state}/>
+                              defaultValue={props.editor.debugRunState[object.uuid.toString()].state}/>
 
                     {genericProperties}
                 </div>
@@ -334,7 +335,7 @@ function generateSpecificProperties(object, props) {
                     <label className={'options-labels'}>Stato:</label>
                     <Dropdown props={props}
                               component={'collected-not'}
-                              defaultValue={EditorState.debugRunState[object.uuid.toString()].state}
+                              defaultValue={props.editor.debugRunState[object.uuid.toString()].state}
                     />
 
                     {genericProperties}
