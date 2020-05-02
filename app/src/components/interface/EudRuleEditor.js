@@ -30,6 +30,7 @@ import ScenesStore from "../../data/ScenesStore";
 import SceneAPI from "../../utils/SceneAPI";
 import Orders from "../../data/Orders";
 import Transition from "../../interactives/Transition";
+import Switch from "../../interactives/Switch";
 
 let uuid = require('uuid');
 var ghostScene=null;
@@ -44,7 +45,7 @@ export default class EudRuleEditor extends Component {
                 intent: "",
                 scenaIniziale: "",
                 scenaFinale: "",
-                nomeTransizione: ""
+                oggetto: ""
             }
         };
     }
@@ -397,8 +398,8 @@ export default class EudRuleEditor extends Component {
                         risposta.scenaFinale = newMessage;
                         this.setState({response: risposta});
                         break;
-                    case "nomeTransizione":
-                        risposta.nomeTransizione = newMessage;
+                    case "oggetto":
+                        risposta.oggetto = newMessage;
                         this.setState({response: risposta});
                         break;
                     /* Quando la scena non ha transizioni e si tenta di creare una regola con una transizione
@@ -407,7 +408,7 @@ export default class EudRuleEditor extends Component {
                     * la regola e viene data la possibilità di creare una regola da zero all'utente. */
                     case "confermaCreazioneTransizione":
                         if (newMessage.trim().toLowerCase() === "si") {
-                            risposta.nomeTransizione = await this.createDefaultTransitionObject(this.props);
+                            risposta.oggetto = await this.createDefaultTransitionObject(this.props);
                             this.setState({response: risposta});
                             addResponseMessage("Transizione aggiunta");
                         } else if (newMessage.trim().toLowerCase() === "no") {
@@ -425,7 +426,7 @@ export default class EudRuleEditor extends Component {
                     case "chiediConfermaCreazioneRegola":
                         if (newMessage.trim().toLowerCase() === "si") {
                             //Creo la regola
-                            let transitionObj = this.returnTransitionByName(this.state.response.nomeTransizione);
+                            let transitionObj = this.returnTransitionByName(this.state.response.oggetto);
                             let finalSceneUuid = this.returnUuidSceneByName(this.state.response.scenaFinale, this.props);
                             this.createTransitionRule(transitionObj, finalSceneUuid);
                             addResponseMessage("Regola creata!");
@@ -475,15 +476,15 @@ export default class EudRuleEditor extends Component {
                     }
                     //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
                     this.setState({elementoMancante: "scenaFinale"});
-                } else if (!this.doesTransitionExists(this.state.response.nomeTransizione)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
+                } else if (!this.doesTransitionExists(this.state.response.oggetto)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
                     if (this.returnTransitionNames().length > 0) { //Se esiste qualche transizione le elenchiamo
-                        if (this.state.response.nomeTransizione === "") {
+                        if (this.state.response.oggetto === "") {
                             addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
                         } else {
                             addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
                         }
                         //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
-                        this.setState({elementoMancante: "nomeTransizione"});
+                        this.setState({elementoMancante: "oggetto"});
                     } else { //Se non esiste neanche una transizione chiediamo se ne vuole aggiungere una
                         addResponseMessage("Sembra che tu non abbia transizioni per interagire. Vuoi crearne una? " +
                             "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
@@ -513,13 +514,17 @@ function onAccordionClick(accordionId) {
 
                     this.setState({elementoMancante: "chiediConfermaCreazioneRegola"});
                     addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
-                        " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.nomeTransizione);
+                        " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.oggetto);
                     addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
                 }
             }
                 break;
+            case "interazioneSwitch" :
+                addResponseMessage("I dati della tua regola sono questi: STATO INIZIALE: " + this.state.response.statoIniziale +
+                    " STATO FINALE: " + this.state.response.statoFinale + " NOME SWITCH: " + this.state.response.oggetto);
+                break;
             default:
-                addResponseMessage("Non è una transizione, verrà implementato in futuro.")
+                addResponseMessage("Non è nè una transizione, nè una interazione con lo switch, verrà implementato in futuro.")
         }
     }
 
@@ -530,31 +535,10 @@ function onAccordionClick(accordionId) {
         risposta.intent = "";
         risposta.scenaIniziale = "";
         risposta.scenaFinale = "";
-        risposta.nomeTransizione = "";
+        risposta.oggetto = "";
         this.setState({response: risposta});
     }
 
-    /* Ritorna i nomi delle transizioni della scena corrente. */
-    returnTransitionNames() {
-        let sceneTransitions = this.props.interactiveObjects.filter(x => x.type === InteractiveObjectsTypes.TRANSITION);
-
-        let transitions = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneTransitions);
-        for (var i = 0; i < transitions.length; i++) {
-            transitions[i] = transitions[i].name;
-        }
-        return transitions;
-    }
-
-    /* Torna true se la transizione passata come parametro (stringa) esiste, false altrimenti. */
-    doesTransitionExists(transition) {
-        let transitionNames = this.returnTransitionNames();
-        for (var i = 0; i < transitionNames.length; i++) {
-            if (transition === transitionNames[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /* Ritorna i nomi delle sceneFinali possibili. */
     returnFinalScenesNames() {
@@ -582,6 +566,43 @@ function onAccordionClick(accordionId) {
         return false;
     }
 
+    /* Ritorna l'oggetto scena corrispondente al nome passato. */
+    returnUuidSceneByName(sceneName, props) {
+        let scene = this.props.scenes;
+        let uuid = undefined;
+        //Quando trovo il nome della scena corrispondente allora lo restituisco
+        scene.forEach(function (singleScene) {
+            if (singleScene.name === sceneName) {
+                uuid = props.scenes.get(singleScene.uuid).uuid;
+            }
+        });
+        return uuid;
+    }
+
+    /** TRANSITIONS **/
+
+    /* Ritorna i nomi delle transizioni della scena corrente. */
+    returnTransitionNames() {
+        let sceneTransitions = this.props.interactiveObjects.filter(x => x.type === InteractiveObjectsTypes.TRANSITION);
+
+        let transitions = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneTransitions);
+        for (var i = 0; i < transitions.length; i++) {
+            transitions[i] = transitions[i].name;
+        }
+        return transitions;
+    }
+
+    /* Torna true se la transizione passata come parametro (stringa) esiste, false altrimenti. */
+    doesTransitionExists(transition) {
+        let transitionNames = this.returnTransitionNames();
+        for (var i = 0; i < transitionNames.length; i++) {
+            if (transition === transitionNames[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /* Ritorna l'oggetto transizione corrispondente al nome passato. */
     returnTransitionByName(transitionName) {
         let sceneTransitions = this.props.interactiveObjects.filter(x =>
@@ -594,19 +615,6 @@ function onAccordionClick(accordionId) {
             }
         }
         return undefined;
-    }
-
-    /* Ritorna l'oggetto scena corrispondente al nome passato. */
-    returnUuidSceneByName(sceneName, props) {
-        let scene = this.props.scenes;
-        let uuid = undefined;
-        //Quando trovo il nome della scena corrispondente allora lo restituisco
-        scene.forEach(function (singleScene) {
-            if (singleScene.name === sceneName) {
-                uuid = props.scenes.get(singleScene.uuid).uuid;
-            }
-        });
-        return uuid;
     }
 
     /* Crea la regola transizione data la transizione (oggetto) e l'uuid della scena finale. Non abbiamo bisogno di
@@ -641,6 +649,85 @@ function onAccordionClick(accordionId) {
 
         name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
         obj = Transition({
+            uuid: uuid.v4(),
+            name: name,
+        });
+
+        props.addNewObject(scene, obj);
+        return name;
+    }
+
+    /** SWITCH **/
+
+    /* Ritorna i nomi degli switch della scena corrente. */
+    returnSwitchNames() {
+        let sceneSwitch = this.props.interactiveObjects.filter(x => x.type === InteractiveObjectsTypes.SWITCH);
+
+        let switches = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneSwitch);
+        for (var i = 0; i < switches.length; i++) {
+            switches[i] = switches[i].name;
+        }
+        return switches;
+    }
+
+    /* Torna true se lo switch passato come parametro (stringa) esiste, false altrimenti. */
+    doesSwitchExists(interruttore) {
+        let switchNames = this.returnSwitchNames();
+        for (var i = 0; i < switchNames.length; i++) {
+            if (interruttore === switchNames[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Ritorna l'oggetto switch corrispondente al nome passato. */
+    returnSwitchByName(switchName) {
+        let sceneSwitches = this.props.interactiveObjects.filter(x =>
+            x.type === InteractiveObjectsTypes.SWITCH);
+
+        let switches = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneSwitches);
+        for (var i = 0; i < switches.length; i++) {
+            if (switchName === switches[i].name) {
+                return switches[i];
+            }
+        }
+        return undefined;
+    }
+
+    /* Crea la regola per lo switch data lo switch (oggetto), il suo stato iniziale e finale. */
+    createSwitchRule(interruttore, initialState, finalState) {
+        let r;
+        /*
+                r = Rule({
+                    uuid : uuid.v4(),
+                    name : 'regola dell\'interruttore ' + interruttore.name,
+                    event : Action({
+                        uuid: uuid.v4(),
+                        subj_uuid: InteractiveObjectsTypes.PLAYER,
+                        action: EventTypes.CLICK,
+                        obj_uuid: interruttore.uuid,
+                    }),
+                    condition : new Condition(uuid.v4(), interruttore.uuid, Values.ON, Operators.EQUAL),
+                    actions : Immutable.List([Action({
+                        uuid: uuid.v4(),
+                        subj_uuid: interruttore.uuid,
+                        action: RuleActionTypes.CHANGE_STATE,
+                        obj_uuid: Values.OFF
+                    })]),
+                });
+                this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
+        */
+    }
+
+    /* Crea uno switch di default quando non esistono switch e l'utente vuole creare la regola trarmite bot. */
+    createDefaultSwitchObject(props) {
+        let scene = props.scenes.get(props.currentScene);
+        let name = "";
+        let obj = null;
+
+        name = scene.name + '_sw' + (scene.objects.switches.length + 1);
+        obj = Switch({
             uuid: uuid.v4(),
             name: name,
         });
@@ -1971,12 +2058,14 @@ class EudAutoComplete extends Component {
 /* Funzione per fare la richiesta a wit.ai e restituire l'intent di risposta trovato (Luca) */
 async function sendRequest(sentence) {
     let CLIENT_TOKEN = "45NRTW3MHAX4S4B4FS3APRUK67BFSAFX"; //Token bot Wit.ai
-    /* Variabile che verrà restituita dal bot*/
+    /* Variabile che verrà restituita dal bot */
     let risposta = {
         intent: "",
         scenaIniziale: "",
         scenaFinale: "",
-        nomeTransizione: ""
+        statoIniziale: "",
+        statoFinale: "",
+        oggetto: ""
     };
 
     const q = encodeURIComponent(sentence);
@@ -1990,16 +2079,33 @@ async function sendRequest(sentence) {
                 if (res.entities !== undefined) {
                     if (res.entities.intent !== undefined) {
                         risposta.intent = res.entities.intent[0].value;
+
+                        //Transizione
+                        if (res.entities.scenaIniziale !== undefined) {
+                            risposta.scenaIniziale = res.entities.scenaIniziale[0].value;
+                        }
+                        if (res.entities.scenaFinale !== undefined) {
+                            risposta.scenaFinale = res.entities.scenaFinale[0].value;
+                        }
+                        if (res.entities.oggetto !== undefined) {
+                            risposta.oggetto = res.entities.oggetto[0].value;
+                        }
+
+                        //Switch
+                        if (risposta.intent === "interazioneSwitch") {
+                            if (res.entities.statoIniziale !== undefined) {
+                                risposta.statoIniziale = res.entities.statoIniziale[0].value;
+                            }
+                            if (res.entities.statoFinale !== undefined) {
+                                risposta.statoFinale = res.entities.statoFinale[0].value;
+                            }
+                        }
+
+                    } else {
+                        console.log("Ricevuto intent sbagliato da Wit.AI");
                     }
-                    if (res.entities.scenaIniziale !== undefined) {
-                        risposta.scenaIniziale = res.entities.scenaIniziale[0].value;
-                    }
-                    if (res.entities.scenaFinale !== undefined) {
-                        risposta.scenaFinale = res.entities.scenaFinale[0].value;
-                    }
-                    if (res.entities.nomeTransizione !== undefined) {
-                        risposta.nomeTransizione = res.entities.nomeTransizione[0].value;
-                    }
+
+
                 }
                 return risposta;
             }
