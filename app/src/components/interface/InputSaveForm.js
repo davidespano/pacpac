@@ -94,7 +94,6 @@ function InputSaveForm(props) {
             </div>
         );
     }
-
     return (
         <div id={"register"}>
             <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
