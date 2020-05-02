@@ -92,6 +92,9 @@ class EditorStateStore extends ReduceStore {
                 return state.set('audioToEdit', action.audio);
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
+            case ActionTypes.SET_DEBUG_RUN_STATE:
+                state = state.set('debugRunState', action.response);
+                return state;
             case ActionTypes.SET_HOME_SCENE:
                 return state.set('homeScene', action.scene);
             case ActionTypes.SET_GAME_TITLE:
@@ -100,6 +103,8 @@ class EditorStateStore extends ReduceStore {
                 return state.set('scenesOrder', action.order);
             case ActionTypes.UPDATE_AUDIO_FILTER:
                 return state.set('audioFilter', action.filter);
+            case ActionTypes.UPDATE_DEBUG_SAVE_NAME_FILTER:
+                return state.set('debugSavesFilter', action.filter);
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 return state.set('sceneOptions', action.scene);
             case ActionTypes.UPDATE_CURRENT_OBJECT:
