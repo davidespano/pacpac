@@ -464,7 +464,7 @@ function createObject(props, type){
                         {
                             name = sceneArray[i].name + '_sc';
                             obj = Score({
-                                uuid: uuid.v4(),
+                                uuid: sceneArray[i].uuid+"_sc",
                                 name: name,
                                 properties: {
                                     score: 100,
@@ -490,7 +490,7 @@ function createObject(props, type){
                         {
                             name = sceneArray[i].name + '_hl';
                             obj = Health({
-                                uuid: uuid.v4(),
+                                uuid: sceneArray[i].uuid+"_hl",
                                 name: name,
                                 properties: {
                                     health: 100,
@@ -516,7 +516,7 @@ function createObject(props, type){
                         {
                             name = sceneArray[i].name + '_pt';
                             obj = PlayTime({
-                                uuid: uuid.v4(),
+                                uuid: sceneArray[i].uuid+"_pt",
                                 name: name,
                                 properties: {
                                     time: 0,
@@ -550,11 +550,8 @@ function createObject(props, type){
                 }else{
                     props.addNewRule(scene, defaultRule);
                 }
-                // props.switchToGeometryMode();
             }
         }
-
-
 
     } else {
         alert('Nessuna scena selezionata!');

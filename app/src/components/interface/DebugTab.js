@@ -383,6 +383,14 @@ function objectTypeToString(objectType) {
             return "Interruttore";
         case InteractiveObjectsTypes.TIMER:
             return "Timer";
+        case InteractiveObjectsTypes.TEXTBOX:
+            return "Testo";
+        case InteractiveObjectsTypes.HEALTH:
+            return "Vita";
+        case InteractiveObjectsTypes.SCORE:
+            return "Punteggio";
+        case InteractiveObjectsTypes.PLAYTIME:
+            return "Tempo di gioco";
         case InteractiveObjectsTypes.KEY:
             return "Chiave";
         case InteractiveObjectsTypes.TRANSITION:

@@ -300,14 +300,17 @@ function createScene(name, img, index, type, tag, order, props) {
 
             Actions.receiveScene(newScene, order);
             updateScene(newScene, tag);
-            if(props.scenes.first().objects.playtime.length > 0) {
-                createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.PLAYTIME);
-            }
-            if(props.scenes.first().objects.score.length > 0) {
-                createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.SCORE);
-            }
-            if(props.scenes.first().objects.health.length > 0) {
-                createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.HEALTH);
+            if(props.scenes.first() !=undefined)
+            {
+                if(props.scenes.first().objects.playtime.length > 0) {
+                    createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.PLAYTIME);
+                }
+                if(props.scenes.first().objects.score.length > 0) {
+                    createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.SCORE);
+                }
+                if(props.scenes.first().objects.health.length > 0) {
+                    createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.HEALTH);
+                }
             }
         });
 

@@ -531,13 +531,18 @@ const Actions = {
      * @param scene
      * @param object
      */
-    removeObject(scene, object){
+    removeObject(scene, object, objType){
+        console.log("sono nella removeObject")
+        console.log(object);
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_OBJECT,
             scene: scene,
             obj: object,
+            objType: objType,
         })
     },
+
+
 
     /**
      * Dispatch all object selection (rightbar)

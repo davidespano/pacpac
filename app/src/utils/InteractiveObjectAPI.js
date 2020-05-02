@@ -1,6 +1,7 @@
 import Actions from '../actions/Actions'
 import settings from './settings'
 import scene_utils from "../scene/scene_utils";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 
 const request = require('superagent');
 
@@ -43,17 +44,65 @@ function saveObject(scene, object) {
  * @param scene the obj belongs to
  * @param object
  */
-function removeObject(scene, object) {
+function removeObject(scene, object, props) {
+    console.log("sono nella function removeObject");
+    let sceneArray = props.scenes.toArray();
+    let objType = null;
     const field = scene_utils.defineField(object);
-    request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${scene.name}/${field}/${object.uuid}`)
-        .set('Accept', 'application/json')
-        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
-        .end(function (err, response) {
-            if (err) {
-                return console.error(err)
-            }
-            Actions.removeObject(scene, object);
-        });
+    switch (object.type){
+        case InteractiveObjectsTypes.PLAYTIME:
+            objType = InteractiveObjectsTypes.PLAYTIME;
+            for (let i = 0, len = sceneArray.length; i < len; i++) {
+                let objUuid = sceneArray[i].uuid +"_pt"
+                request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${sceneArray[i].name}/${field}/${objUuid}`)
+                    .set('Accept', 'application/json')
+                    .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+                    .end(function (err, response) {
+                        if (err) {
+                            return console.error(err)
+                        }
+                        Actions.removeObject(sceneArray[i], sceneArray[i].objects.playtime[0], objType);
+                    });
+            } break;
+        case InteractiveObjectsTypes.SCORE:
+            objType = InteractiveObjectsTypes.SCORE;
+            for (let i = 0, len = sceneArray.length; i < len; i++) {
+                let objUuid = sceneArray[i].uuid +"_sc"
+                request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${sceneArray[i].name}/${field}/${objUuid}`)
+                    .set('Accept', 'application/json')
+                    .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+                    .end(function (err, response) {
+                        if (err) {
+                            return console.error(err)
+                        }
+                        Actions.removeObject(sceneArray[i], sceneArray[i].objects.score[0], objType);
+                    });
+            } break;
+        case InteractiveObjectsTypes.HEALTH:
+            objType = InteractiveObjectsTypes.HEALTH;
+            for (let i = 0, len = sceneArray.length; i < len; i++) {
+                let objUuid = sceneArray[i].uuid +"_hl"
+                request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${sceneArray[i].name}/${field}/${objUuid}`)
+                    .set('Accept', 'application/json')
+                    .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+                    .end(function (err, response) {
+                        if (err) {
+                            return console.error(err)
+                        }
+                        Actions.removeObject(sceneArray[i], sceneArray[i].objects.health[0], objType);
+                    });
+            } break;
+        default:
+            request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${scene.name}/${field}/${object.uuid}`)
+                .set('Accept', 'application/json')
+                .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+                .end(function (err, response) {
+                    if (err) {
+                        return console.error(err)
+                    }
+                    Actions.removeObject(scene, object);
+                });
+    }
 }
 
 /**

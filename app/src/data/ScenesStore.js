@@ -91,7 +91,11 @@ class ScenesStore extends ReduceStore {
                 state = state.set(newScene.uuid, newScene);
                 return state;
             case ActionTypes.REMOVE_OBJECT://TODO: la parte commentata rimuove solo dagli array, rimane nel db...
-                /*if (action.obj.type == InteractiveObjectsTypes.PLAYTIME) {
+                console.log("sono nella  ActionTypes.REMOVE_OBJECT");
+                console.log(action.obj);//questo dovrebbe essere un oggetto, è una stringa nel caso di oggetto globale
+                if (action.obj.type == InteractiveObjectsTypes.PLAYTIME ||
+                    action.obj.type == InteractiveObjectsTypes.SCORE ||
+                    action.obj.type == InteractiveObjectsTypes.HEALTH) {
                     state = state.map(scene => {
                         newScene = scene_utils.removeInteractiveObject(scene, action.obj);
                         return newScene;
@@ -102,10 +106,7 @@ class ScenesStore extends ReduceStore {
                     newScene = scene_utils.removeInteractiveObject(action.scene, action.obj);
                     state = state.set(newScene.uuid, newScene);
                     return state;
-                }*/
-                newScene = scene_utils.removeInteractiveObject(action.scene, action.obj);
-                state = state.set(newScene.uuid, newScene);
-                return state;
+                }
             case ActionTypes.ADD_NEW_RULE:
                 newScene = scene_utils.addRuleToScene(action.scene, action.rule);
                 state = state.set(newScene.uuid, newScene);
