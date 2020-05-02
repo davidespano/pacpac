@@ -103,10 +103,11 @@ function getState() {
         selectMediaToEdit: Actions.selectMediaToEdit,
         selectAudioToEdit: Actions.selectAudioToEdit,
         selectTagNewScene: Actions.selectTagNewScene,
+        setDebugRunState: Actions.setDebugRunState,
         setHomeScene: Actions.setHomeScene,
         setGameTitle: Actions.setGameTitle,
-
         updateAudioFilter: Actions.updateAudioFilter,
+        updateDebugSaveNameFilter: Actions.updateDebugSaveNameFilter,
         updateTagFilter: Actions.updateTagFilter,
         updateObjectNameRightbar: Actions.updateObjectNameRightbar,
         updateSceneOptions: Actions.updateSceneOptions,
