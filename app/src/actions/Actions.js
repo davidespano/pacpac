@@ -102,6 +102,13 @@ const Actions = {
         })
     },
 
+    setDebugRunState(runState){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_DEBUG_RUN_STATE,
+            response: runState,
+        });
+    },
+
     debugSave(response){
         AppDispatcher.dispatch({
             type: ActionTypes.DEBUG_SAVE,
@@ -242,6 +249,17 @@ const Actions = {
     updateAudioFilter(filter){
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_AUDIO_FILTER,
+            filter: filter,
+        })
+    },
+
+    /**
+     * Dispatch new filter selection for debug saves
+     * @param filter
+     */
+    updateDebugSaveNameFilter(filter){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_DEBUG_SAVE_NAME_FILTER,
             filter: filter,
         })
     },

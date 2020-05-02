@@ -75,7 +75,7 @@ function AppView(props) {
 
             let debugProps = {
                 ...props,
-                debugRunState: EditorState.debugRunState
+               /* debugRunState: EditorState.debugRunState*/
             };
 
             return (
