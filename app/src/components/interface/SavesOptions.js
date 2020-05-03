@@ -92,21 +92,26 @@ function listSceneSaves(props, sceneUuid, sceneName) {
         //Se il nome del salvataggio rispetta le ricerche del filtro dei salvatggi viene renderizzato il salvataggio
         if(save.saveName.includes(props.editor.debugSavesFilter))
             return (
-                <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} title={"Descrizione: " + save.saveDescription} onClick={() => {
-                    let load = document.getElementById("load-button" + save.saveName);
-                    let list = document.getElementById("saves-list" + save.saveName);
-                    
-                    interface_utils.setClassStyle(".saves-list", "margin-right: -10%");
-                    interface_utils.setClassStyle(".load-button", "visibility: hidden");
+                <li id={"saves-list" + save.saveName}
+                     key={save.saveName}
+                     className="list-group-item d-flex justify-content-between align-items-center"
+                     title={`Nome: ${save.saveName}\nDescrizione: ${save.saveDescription}`}
+                     onClick={() => {
+                        /* let load = document.getElementById("load-button" + save.saveName);
+                         let list = document.getElementById("saves-list" + save.saveName);
 
-                    if (load != null) {
-                        interface_utils.setIdStyle("load-button", save.saveName, "visibility: visible");
-                        list.style = "margin-right: 36%";
-                    }
+                         interface_utils.setClassStyle(".saves-list", "margin-right: -10%");
+                         interface_utils.setClassStyle(".load-button", "visibility: hidden");
 
-                }}>
+                         if (load != null) {
+                             interface_utils.setIdStyle("load-button", save.saveName, "visibility: visible");
+                             list.style = "margin-right: 36%";
+                         }*/
+                     }}
+                >
                     {save.saveName}
                     <LoadDebugSave
+
                         {...{sceneName: sceneName,
                             save: save,
                             ...props }}
@@ -118,7 +123,7 @@ function listSceneSaves(props, sceneUuid, sceneName) {
                     >
                         info
                     </div>
-                </div>
+                </li>
 
             );
     });
@@ -161,48 +166,48 @@ function LoadDebugSave({sceneName, save, ...props}){
                             <div className="form.group row">
                                 <label htmlFor="saveObjsState" className="col-form-label col-sm-auto">Stato degli oggetti</label>
                                 <div className="col-sm-12 text-left" id="saveObjsState">
-                                        <table className="form-control-plaintext table table-borderless table-hover">
-                                            <thead>
-                                            <tr>
-                                                <th>Tipo</th>
-                                                <th>Nome</th>
-                                                <th>Stato</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
+                                    <table className="form-control-plaintext table table-borderless table-hover">
+                                        <thead>
+                                        <tr className="f">
+                                            <th className="th-sm">Tipo</th>
+                                            <th className="th-sm">Nome</th>
+                                            <th className="th-sm">Stato</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
 
-                                                {/* Per ogni oggetto salvato viene creata una riga nella tabella dello stato degli oggetti*/
-                                                    save.objectStates.map(obj => {
-                                                    /* Questo controllo è per evitare che nuovi salvataggi, alla cui scena sono stati inseriti nuovi oggetti, diano errore*/
-                                                    if(props.interactiveObjects.get(obj.uuid) === undefined)
-                                                        return <></>;
+                                        {/* Per ogni oggetto salvato viene creata una riga nella tabella dello stato degli oggetti*/
+                                            save.objectStates.map(obj => {
+                                                /* Questo controllo è per evitare che nuovi salvataggi, alla cui scena sono stati inseriti nuovi oggetti, diano errore*/
+                                                if(props.interactiveObjects.get(obj.uuid) === undefined)
+                                                    return <></>;
 
-                                                    let state = obj.state ? toString.valueUuidToString(obj.state) : "" ; // Proprietà di key e switch
-                                                    let step = obj.step ? "Valore iniziale: " + obj.step : ""; // Proprietà di counter
+                                                let state = obj.state ? toString.valueUuidToString(obj.state) : "" ; // Proprietà di key e switch
+                                                let step = obj.step ? "Valore iniziale: " + obj.step : ""; // Proprietà di counter
 
-                                                    return (
-                                                        <tr key={obj.uuid}>
-                                                            <td className="col-md-1">
-                                                                <img className="icon-obj-left"
-                                                                     src={interface_utils.getObjImg(props.interactiveObjects.get(obj.uuid).type)}
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                {props.interactiveObjects.get(obj.uuid).name}
-                                                            </td>
-                                                            <td>
-                                                                <ul className="list-unstyled">
-                                                                    <li className="font-weight-bold">{state}</li>
-                                                                    <li className="font-weight-bold">{step}</li>
-                                                                    <li>{toString.valueUuidToString(obj.visible)}</li>
-                                                                    <li>{toString.valueUuidToString(obj.activable)}</li>
-                                                                </ul>
-                                                            </td>
-                                                        </tr>
-                                                    )})
-                                                }
-                                            </tbody>
-                                        </table>
+                                                return (
+                                                    <tr key={obj.uuid}>
+                                                        <td className="col-md-1">
+                                                            <img className="icon-obj-left"
+                                                                 src={interface_utils.getObjImg(props.interactiveObjects.get(obj.uuid).type)}
+                                                            />
+                                                        </td>
+                                                        <td>
+                                                            {props.interactiveObjects.get(obj.uuid).name}
+                                                        </td>
+                                                        <td>
+                                                            <ul className="list-unstyled">
+                                                                <li className="font-weight-bold">{state}</li>
+                                                                <li className="font-weight-bold">{step}</li>
+                                                                <li>{toString.valueUuidToString(obj.visible)}</li>
+                                                                <li>{toString.valueUuidToString(obj.activable)}</li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                )})
+                                        }
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
