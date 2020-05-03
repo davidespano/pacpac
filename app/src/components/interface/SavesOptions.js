@@ -7,6 +7,7 @@ import InputSaveForm from "./InputSaveForm";
 import ObjectsStore from "../../data/ObjectsStore";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import toString from "../../rules/toString";
+import Orders from "../../data/Orders";
 
 
 const {mediaURL} = settings;
@@ -16,12 +17,20 @@ function SavesOptions(props) {
 
     return (
         <div>
+            <div className={'currentOptions'}>
+                <div className={"buttonGroup"}>
+                    <input type={'text'} id={'debug-save-filter-text'} placeholder={'Filtra per nome...'}
+                           onChange={() => {
+                               let filter = document.getElementById('debug-save-filter-text').value;
+                               props.updateDebugSaveNameFilter(filter);
+                           }}/>
+                </div>
+            </div>
             {listSaves(props, path)}
         </div>
 
     )
 }
-
 
 /**
  * Generates saves list
@@ -32,6 +41,18 @@ function SavesOptions(props) {
 function listSaves(props, path) {
     let regex = RegExp('.*\.mp4$');
 
+    /* Controlla che nei salvataggi passati ci sia almeno un salvataggio che nel nome includa la stringa filter */
+    let checkFilter = (saves, filter) => {
+        let names = saves.toArray().map(save => save.saveName);
+
+        for (let name of names)
+            if(name.includes(filter))
+                return true;
+
+        // Nessun salvataggio contiene filter nel suo nome
+        return false;
+    };
+    console.log('debugSaves', props.editor.debugSaves);
     return ([...props.scenes.values()].map(child => {
         let s;
         s = {border: '2px solid black'};
@@ -40,7 +61,8 @@ function listSaves(props, path) {
 
 
         if(props.editor.debugSaves !== undefined && props.editor.debugSaves.get(child.uuid) !== undefined) {
-            return (
+            if(checkFilter(props.editor.debugSaves.get(child.uuid), props.editor.debugSavesFilter))
+                return (
                     <div key={child.name} className={'node_element'}>
                         <h6>Salvataggi: {child.name}</h6>
                         <img
@@ -50,19 +72,25 @@ function listSaves(props, path) {
                             title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                             style={s}
                         />
-                        <div>
+                        <ul className="list-group list-group-flush debugSavesList">
                             {listSceneSaves(props, child.uuid, child.name)}
-                        </div>
+                        </ul>
                     </div>
-            );
+                );
         }
     }));
 }
 
 function listSceneSaves(props, sceneUuid, sceneName) {
-    if(props.editor.debugSaves.get(sceneUuid)) {
-        let savesList = props.editor.debugSaves.get(sceneUuid).toArray();
-        return savesList.map(save => {
+    let savesList = props.editor.debugSaves.get(sceneUuid);
+
+    //Se non ci sono salvataggi, non mostra niente
+    if(savesList === undefined)
+        return;
+
+    return savesList.toArray().map(save => {
+        //Se il nome del salvataggio rispetta le ricerche del filtro dei salvatggi viene renderizzato il salvataggio
+        if(save.saveName.includes(props.editor.debugSavesFilter))
             return (
                 <div id={"saves-list" + save.saveName} key={save.saveName} className={"saves-list"} title={"Descrizione: " + save.saveDescription} onClick={() => {
 
@@ -79,29 +107,27 @@ function listSceneSaves(props, sceneUuid, sceneName) {
 
                 }}>
                     {save.saveName}
-
-                    <button id={"load-button" + save.saveName} className={"select-file-btn btn load-button"} onClick={() => {
-                       /* let stringa = "";
-                        let obj = save.objectStates.map(os => os.uuid + " Stato: " + os.state + "; " + os.activable);
-                        obj.forEach(os => { stringa += os + "\n"})
-                        if (window.confirm("Vuoi caricare questo salvataggio? Gli oggetti in scena sono: \n" + stringa)) {
-                            DebugAPI.loadDebugState(save.saveName);
-                        }*/
-                    }} data-toggle="modal" data-target={"#load-save-modal" + save.saveName}>
-                        Carica
-                    </button>
-                    <LoadDebugSave key={save.saveName} {...{sceneName: sceneName, save: save, ...props}} />
+                    <LoadDebugSave
+                        key={save.saveName + "_load"}
+                        {...{sceneName: sceneName,
+                            save: save,
+                            ...props }}
+                    />
+                    <div id={"load-button" + save.saveName}
+                         className="btn load-buttons badge badge-primary badge-pill"
+                         data-toggle="modal"
+                         data-target={"#load-save-modal" + save.saveName}
+                    >
+                        info
+                    </div>
                 </div>
 
             );
-        });
-    }
-    else
-        return;
+    });
 }
 
 function LoadDebugSave({sceneName, save, ...props}){
-
+    // Finestra riepilogativa dei dati di un salvataggio, compreso di pulsante per caricarlo
     return (
         <div id={"register"} title="">
             <div className="modal fade" id={"load-save-modal" + save.saveName} tabIndex="-1" role="dialog"
@@ -130,8 +156,8 @@ function LoadDebugSave({sceneName, save, ...props}){
                                 <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">Descrizione</label>
                                 <div className="col-sm-10">
                                     <p
-                                           className="text-left list-group-item list-group-item-action"
-                                           id="inputPassword3" >{save.saveDescription}</p>
+                                        className="text-left list-group-item list-group-item-action"
+                                        id="inputPassword3" >{save.saveDescription}</p>
                                 </div>
                             </div>
                             <div className="form.group row">
