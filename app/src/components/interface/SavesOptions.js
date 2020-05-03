@@ -74,7 +74,7 @@ function listSaves(props, path) {
                         />
                         <div className="s">
                             {listSceneSaves(props, child.uuid, child.name)}
-                        </div>
+                        </ul>
                     </div>
                 );
         }
