@@ -71,9 +71,9 @@ function listSaves(props, path) {
                             title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                             style={s}
                         />
-                        <div>
+                        <ul className="list-group list-group-flush debugSavesList">
                             {listSceneSaves(props, child.uuid, child.name)}
-                        </div>
+                        </ul>
                     </div>
                 );
         }
