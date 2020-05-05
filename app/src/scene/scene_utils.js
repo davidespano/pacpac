@@ -27,26 +27,11 @@ function addInteractiveObjectToScene(scene, object){
  */
 function removeInteractiveObject(scene, object, objType){
     let field = defineField(object);
-    console.log("scena in cui cancello oggetto", scene.name);
-    console.log(object); //per i globali non arriva l'oggetto ma solo uuid
-    console.log(field);
     // updating scene
 
     if(field){//TODO: qui non ci entra mai?
         let objects = scene.get('objects');//predisposizione a cancellazione globale dallo stato
-        if(objType == InteractiveObjectsTypes.PLAYTIME ||
-            objType == InteractiveObjectsTypes.SCORE ||
-            objType == InteractiveObjectsTypes.HEALTH)
-        {
-            console.log("tipo globale");
-            objects[field] = [];
-        }
-        else
-        {
-            console.log("tipo non globale")
-            objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
-        }
-        //objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
+        objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
         return scene.setIn(['objects'], objects);
     }
     else
@@ -54,11 +39,14 @@ function removeInteractiveObject(scene, object, objType){
         let objects = scene.get('objects');//predisposizione a cancellazione globale dallo stato
         switch (objType) {
             case InteractiveObjectsTypes.PLAYTIME:
-                objects.playtime = []; break;
+                objects.playtime = [];
+                break;
             case InteractiveObjectsTypes.HEALTH:
-                objects.health = []; break;
+                objects.health = [];
+                break;
             case InteractiveObjectsTypes.SCORE:
-                objects.score = []; break;
+                objects.score = [];
+                break;
         }
         return scene.setIn(['objects'], objects);
     }

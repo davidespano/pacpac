@@ -34,7 +34,9 @@ let sceneLoaded = false;
 let gameTimeSize;
 let healthSize;
 let scoreSize;
-let timerSize; //variabili del timer pubbliche perchè accedute da render e tick
+let timerSize;
+window.healthValue = undefined;
+//variabili del timer pubbliche perchè accedute da render e tick
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
 // Ho l'impressione che l'attributo this.props.currentScene che viene dalla vecchia
@@ -481,6 +483,7 @@ export default class VRScene extends React.Component {
     }
 
     render(){
+        console.log("nuova render");
         if(!this.state) return null;
         let sceneUuid = null;
         //Verifico se sono in debug mode e prendo la scena corrente di conseguenza
@@ -501,7 +504,6 @@ export default class VRScene extends React.Component {
         window.scoreValue = undefined;
         let healthEntity = null;
         let healtUuid = this.state.activeScene.objects.health[0];
-        window.healthValue = undefined;
 
         let graph = this.state.graph;
 

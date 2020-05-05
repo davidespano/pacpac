@@ -49,6 +49,7 @@ function removeObject(scene, object, props) {
     let sceneArray = props.scenes.toArray();
     let objType = null;
     const field = scene_utils.defineField(object);
+    console.log(field);
     switch (object.type){
         case InteractiveObjectsTypes.PLAYTIME:
             objType = InteractiveObjectsTypes.PLAYTIME;

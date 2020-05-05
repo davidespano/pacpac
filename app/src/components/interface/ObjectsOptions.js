@@ -532,6 +532,7 @@ function objectButtons(props){ //FUNZIONE LISTA OGGETTI SCENA RIGHTBAR
                 onClick={() => {
                     let answer = window.confirm("Vuoi cancellare l'oggetto " + currentObject.name + "?");
                     if(answer){
+                        //TODO: per i globali, rimuove dalla lista in interfaccia solo dopo clic su un altro pannello... why?
                         InteractiveObjectAPI.removeObject(scene, currentObject, props);
                         props.updateCurrentObject(null);
                     }}

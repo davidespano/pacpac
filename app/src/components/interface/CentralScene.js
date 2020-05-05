@@ -79,12 +79,26 @@ function generateObjectsIcons(props){
 
     return (allObjects.map(obj_uuid => {
 
-        if(!props.centroids.has(obj_uuid)) return;
 
         let obj = props.interactiveObjects.get(obj_uuid);
 
         //se è un oggetto globale uso il css con il background scuro, altrimenti quello di default
         let img = (obj.type === "PLAYTIME" || obj.type === "HEALTH" || obj.type === "SCORE") ? "icons-global-img" : "icons-img";
+        let objStyle = null;
+        switch (obj.type) {
+            case InteractiveObjectsTypes.PLAYTIME:
+                objStyle = {left: "97%" , top: "7.5%"};
+                break;
+            case InteractiveObjectsTypes.HEALTH:
+                objStyle = {left: "3%" , top: "7.5%"};
+                break;
+            case InteractiveObjectsTypes.SCORE:
+                objStyle = {left: "9%" , top: "7.5%"};
+                break;
+            default:
+                if(!props.centroids.has(obj_uuid)) return;
+                objStyle = getPosition(props.centroids, obj.uuid);
+        }
 
         return(
             <figure className={'icons'}
@@ -92,7 +106,7 @@ function generateObjectsIcons(props){
                         props.updateCurrentObject(obj);
                         props.rightbarSelection('objects');
                     }}
-                    style={getPosition(props.centroids, obj.uuid)}
+                    style={objStyle}
                     key={'icon-figure-' + obj.uuid}
             >
                 <img className={img}
