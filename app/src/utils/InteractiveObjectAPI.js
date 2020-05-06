@@ -2,6 +2,7 @@ import Actions from '../actions/Actions'
 import settings from './settings'
 import scene_utils from "../scene/scene_utils";
 import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
+import ObjectsStore from "../data/ObjectsStore";
 
 const request = require('superagent');
 
@@ -45,11 +46,9 @@ function saveObject(scene, object) {
  * @param object
  */
 function removeObject(scene, object, props) {
-    console.log("sono nella function removeObject");
     let sceneArray = props.scenes.toArray();
     let objType = null;
     const field = scene_utils.defineField(object);
-    console.log(field);
     switch (object.type){
         case InteractiveObjectsTypes.PLAYTIME:
             objType = InteractiveObjectsTypes.PLAYTIME;
@@ -62,7 +61,7 @@ function removeObject(scene, object, props) {
                         if (err) {
                             return console.error(err)
                         }
-                        Actions.removeObject(sceneArray[i], sceneArray[i].objects.playtime[0], objType);
+                        Actions.removeObject(sceneArray[i], ObjectsStore.getState().get(objUuid), objType);
                     });
             } break;
         case InteractiveObjectsTypes.SCORE:
@@ -76,7 +75,7 @@ function removeObject(scene, object, props) {
                         if (err) {
                             return console.error(err)
                         }
-                        Actions.removeObject(sceneArray[i], sceneArray[i].objects.score[0], objType);
+                        Actions.removeObject(sceneArray[i], ObjectsStore.getState().get(objUuid), objType);
                     });
             } break;
         case InteractiveObjectsTypes.HEALTH:
@@ -90,7 +89,7 @@ function removeObject(scene, object, props) {
                         if (err) {
                             return console.error(err)
                         }
-                        Actions.removeObject(sceneArray[i], sceneArray[i].objects.health[0], objType);
+                        Actions.removeObject(sceneArray[i], ObjectsStore.getState().get(objUuid), objType);
                     });
             } break;
         default:

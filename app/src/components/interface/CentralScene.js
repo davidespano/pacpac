@@ -83,7 +83,8 @@ function generateObjectsIcons(props){
         let obj = props.interactiveObjects.get(obj_uuid);
 
         //se è un oggetto globale uso il css con il background scuro, altrimenti quello di default
-        let img = (obj.type === "PLAYTIME" || obj.type === "HEALTH" || obj.type === "SCORE") ? "icons-global-img" : "icons-img";
+        let img = (obj.type === InteractiveObjectsTypes.PLAYTIME || obj.type === InteractiveObjectsTypes.HEALTH ||
+            obj.type === InteractiveObjectsTypes.SCORE) ? "icons-global-img" : "icons-img";
         let objStyle = null;
         switch (obj.type) {
             case InteractiveObjectsTypes.PLAYTIME:
