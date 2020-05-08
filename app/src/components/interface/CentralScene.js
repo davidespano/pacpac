@@ -96,6 +96,12 @@ function generateObjectsIcons(props){
             case InteractiveObjectsTypes.SCORE:
                 objStyle = {left: "9%" , top: "7.5%"};
                 break;
+            case InteractiveObjectsTypes.TEXTBOX:
+                objStyle = {left: "50%" , bottom: "1%"};
+                break;
+            case InteractiveObjectsTypes.TIMER:
+                objStyle = {left: "50%" , top: "7.5%"};
+                break;
             default:
                 if(!props.centroids.has(obj_uuid)) return;
                 objStyle = getPosition(props.centroids, obj.uuid);
