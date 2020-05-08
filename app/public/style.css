@@ -546,6 +546,16 @@ div.rules{
     height: 18px;
 }
 
+.waste-action-buttons{
+    width: 30px;
+    height: 30px;
+}
+
+.waste-action-buttons:hover {
+    cursor: pointer;
+    background-color: #8C9093;
+}
+
 .action-buttons-container{
     border: solid 1px #8C9093;
     border-radius: .25rem;
@@ -718,8 +728,8 @@ figcaption {
     display: grid;
     width: 100%;
     margin: 0;
-    padding: 0;
-    grid-template-columns: 80% 20%;
+    padding-bottom: 5px;
+    grid-template-columns: 87% 13%;
     grid-template-areas:
             'object-name button';
 }
@@ -744,6 +754,16 @@ figcaption {
 .objectsList-element:hover, .objectsList-element-delete-button:hover {
     background-color: rgba(0, 0, 0, .1);
     cursor: pointer;
+    color: orangered;
+    border-radius: 5px;
+}
+
+.object-thumbnail {
+    max-height: 30px;
+    max-width: 30px;
+    margin-right: auto;
+    margin-bottom: auto;
+
 }
 
 /* Rightbar buttons */

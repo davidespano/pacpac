@@ -594,9 +594,10 @@ function generateObjectsList(props) {
                     <div key={obj.uuid} className={"objects-wrapper"}>
                         <p className={'objectsList-element-delete-button'}
                            onClick={()=> props.updateCurrentObject(obj)}>
+                            <img className={"object-thumbnail"} src={interface_utils.getObjImg(obj.type)}/>
                             {obj.name}
                         </p>
-                        <img className={"action-buttons"}
+                        <img className={"waste-action-buttons"}
                              src={"icons/icons8-waste-50.png"}
                              alt={'Cancella'}
                              onClick={() => {
