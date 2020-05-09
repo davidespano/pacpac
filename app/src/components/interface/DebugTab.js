@@ -385,6 +385,8 @@ function objectTypeToString(objectType) {
             return "Timer";
         case InteractiveObjectsTypes.TEXTBOX:
             return "Testo";
+        case InteractiveObjectsTypes.KEYPAD:
+            return "Tastierino";
         case InteractiveObjectsTypes.HEALTH:
             return "Vita";
         case InteractiveObjectsTypes.SCORE:

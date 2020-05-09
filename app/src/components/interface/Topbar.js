@@ -20,6 +20,7 @@ import interface_utils from "./interface_utils";
 import Counter from "../../interactives/Counter";
 import Values from "../../rules/Values";
 import Textbox from "../../interactives/Textbox";
+import Selector from "../../interactives/Selector";
 import Timer from "../../interactives/Timer";
 import Score from "../../interactives/Score";
 import Health from "../../interactives/Health";
@@ -200,13 +201,25 @@ function TopBar(props){
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //TODO decommentare quando il componente timer sarà pronto
                                     createObject(props, InteractiveObjectsTypes.TIMER);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)}/>
                             <figcaption>Timer</figcaption>
                         </figure>
-
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    //createObject(props, InteractiveObjectsTypes.KEYPAD);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEYPAD)}/>
+                            <figcaption>Tastierino</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    //createObject(props, InteractiveObjectsTypes.SELECTOR);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SELECTOR)}/>
+                            <figcaption>Selettore</figcaption>
+                        </figure>
                     </div>
                 </div>
 
@@ -402,7 +415,7 @@ function createObject(props, type){
                     name: name,
                 });
                 break;
-            case InteractiveObjectsTypes.KEYPAD:
+            case InteractiveObjectsTypes.KEYPAD: //TODO KEYPAD rivedere questi parametri
                 name = scene.name + '_kp' + (scene.objects.keypads.length + 1);
                 obj = Keypad ({
                     uuid : uuid.v4(),
@@ -411,6 +424,16 @@ function createObject(props, type){
                         state: null,
                         inputSize: 3,
                         combination : [Math.floor(Math.random() * 1000)],
+                    }
+                });
+                break;
+            case InteractiveObjectsTypes.SELECTOR: //TODO SELECTOR rivedere questi parametri
+                name = scene.name + '_sl' + (scene.objects.selectors.length + 1);
+                obj = Selector ({
+                    uuid : uuid.v4(),
+                    name : name,
+                    properties: {
+                        state: null,
                     }
                 });
                 break;

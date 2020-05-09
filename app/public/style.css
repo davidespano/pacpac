@@ -531,8 +531,8 @@ div.rules{
 }
 
 .nav-link.active{
-    margin-right: 3px;
-    margin-left: 3px;
+    margin-right: 4px;
+    margin-left: 4px;
 }
 
 #ruleObjSelection{
@@ -551,9 +551,9 @@ div.rules{
     height: 30px;
 }
 
-.waste-action-buttons:hover {
+.waste-action-buttons:hover{
     cursor: pointer;
-    background-color: #8C9093;
+    background-color: rgba(0, 0, 0, .1);
 }
 
 .action-buttons-container{
@@ -1366,7 +1366,6 @@ li > span {
 
 .eudRulePart:hover {
     border-color: gray;
-    font-style: italic;
 }
 
 .eudCompletionRoot {
@@ -1390,7 +1389,6 @@ li > span {
     border-radius: 3px;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%)
-
 }
 
 .eudCompletionPopup ul{
