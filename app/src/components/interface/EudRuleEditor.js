@@ -198,7 +198,7 @@ export default class EudRuleEditor extends Component {
             if (this.state.elementoMancante === "") {
                 this.setState({response: await sendRequest(newMessage)});
             } else {
-                /* Se dopo aver mandato al bot la prima query ci dovesse mancare qualcosa allora risolviamo localmente, modificando
+                /* Se dopo aver mandato al bot la prima query ci dovesse mancare qualche elemento per la regola allora risolviamo localmente, modificando
                 * lo stato di response, usando una variabile d'appoggio "risposta". Il campo mancante prenderà ciò che scriviamo
                 * nell'input, successivamente processiamo ciò che abbiamo scritto in "queryControl". */
                 let risposta = this.state.response;
@@ -209,14 +209,22 @@ export default class EudRuleEditor extends Component {
                         risposta.scenaFinale = newMessage;
                         this.setState({response: risposta});
                         break;
-                    case "oggetto":
+                    case "oggetto": //Nome dell'oggetto
                         risposta.oggetto = newMessage;
                         this.setState({response: risposta});
                         break;
-                    /* Quando la scena non ha transizioni e si tenta di creare una regola con una transizione
-                    * allora il bot chiede all'utente se ne vuole creare una. In caso affermativo viene creata e
-                    * posta come transazione della regola che l'utente sta creando. In caso negativo invece viene resettata
-                    * la regola e viene data la possibilità di creare una regola da zero all'utente. */
+                    case "statoIniziale":
+                        risposta.statoIniziale = newMessage;
+                        this.setState({response: risposta});
+                        break;
+                    case "statoFinale":
+                        risposta.statoFinale = newMessage;
+                        this.setState({response: risposta});
+                        break;
+                    /* Quando la scena non ha transizioni o switch e si tenta di creare una regola con uno di essi
+                    * allora il bot chiede all'utente se vuole creare un oggetto di default. In caso affermativo viene creato e
+                    * posto come oggeto della regola che l'utente sta creando. In caso negativo invece viene resettata
+                    * la regola e viene data la possibilità di crearne una da zero. */
                     case "confermaCreazioneOggetto":
                         if (newMessage.trim().toLowerCase() === "si") {
                             if (risposta.intent === "transizione") {
@@ -268,14 +276,8 @@ export default class EudRuleEditor extends Component {
                             addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
                             return;
                         }
-                    case "statoIniziale":
-                        risposta.statoIniziale = newMessage;
-                        this.setState({response: risposta});
-                        break;
-                    case "statoFinale":
-                        risposta.statoFinale = newMessage;
-                        this.setState({response: risposta});
-                        break;
+                    default:
+                        addResponseMessage("Ci dev'essere qualche errore, mancano degli elementi, ma non riesco a capire quali. ")
                 }
             }
             /* Controlliamo tutti i dati di response. */
@@ -289,93 +291,11 @@ export default class EudRuleEditor extends Component {
     /* Metodo per il controllo dei dati che abbiamo salvato in "response". */
     queryControl() {
         switch (this.state.response.intent) {
-            case "transizione": {
-                /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
-                 * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
-                if (this.state.response.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
-                    let risposta = this.state.response;
-                    risposta.scenaIniziale = this.props.scenes.get(this.props.currentScene).name;
-                    this.setState({response: risposta});
-                }
-                /* Controllo che la scena finale che ha inserito l'utente esista, cioè che si trovi effettivamente tra le scene del gioco,
-                * ma che non sia la scena corrente. */
-                if (!this.doesFinalSceneExists(this.state.response.scenaFinale)) {
-                    if (this.state.response.scenaFinale === "") {
-                        addResponseMessage("Scrivimi qual'è la scena finale alla quale vuoi arrivare. Perfavore scegli tra una di queste: " + this.returnFinalScenesNames());
-                    } else {
-                        addResponseMessage("La scena finale che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnFinalScenesNames());
-                    }
-                    //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
-                    this.setState({elementoMancante: "scenaFinale"});
-                } else if (!this.doesTransitionExists(this.state.response.oggetto)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
-                    if (this.returnTransitionNames().length > 0) { //Se esiste qualche transizione le elenchiamo
-                        if (this.state.response.oggetto === "") {
-                            addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
-                        } else {
-                            addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
-                        }
-                        //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
-                        this.setState({elementoMancante: "oggetto"});
-                    } else { //Se non esiste neanche una transizione chiediamo se ne vuole aggiungere una
-                        addResponseMessage("Sembra che tu non abbia transizioni per interagire. Vuoi crearne una? " +
-                            "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
-                        this.setState({elementoMancante: "confermaCreazioneOggetto"});
-                    }
-                } else {
-                    /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
-                    addResponseMessage("Ho tutto.");
-
-                    this.setState({elementoMancante: "confermaCreazioneRegola"});
-                    addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
-                        " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.oggetto);
-                    addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
-                }
-            }
+            case "transizione":
+                this.transitionElementsControl();
                 break;
             case "interazioneSwitch" :
-                addResponseMessage("I dati della tua regola sono questi: STATO INIZIALE: " + this.state.response.statoIniziale +
-                    " STATO FINALE: " + this.state.response.statoFinale + " NOME SWITCH: " + this.state.response.oggetto);
-
-                //Controllo se nella scena esistono switch
-                if (this.returnSwitchNames().length > 0) {
-                    /* Controllo che il nome dello switch inserito dall'utente esista tra gli switch esistenti nel gioco. */
-                    if (!this.doesSwitchExists(this.state.response.oggetto)) {
-                        addResponseMessage("Hai inserito il nome di uno switch che non esiste. Perfavore scegli tra uno di questi: " + this.returnSwitchNames());
-                        this.setState({elementoMancante: "oggetto"});
-                    } else {
-                        /* Setto lo stato inziale e quello finale con valore ON o OFF a seconda di cosa contengono. */
-                        let risposta = this.state.response;
-                        risposta.statoIniziale = this.getSwitchState(risposta.statoIniziale);
-                        risposta.statoFinale = this.getSwitchState(risposta.statoFinale);
-                        this.setState({response: risposta});
-
-                        //Se non contengono qualcosa riconducibile ad ON o OFF allora chiedo all'utente di specificarlo
-                        if (this.state.response.statoIniziale === "non trovato") {
-                            addResponseMessage("Scrivimi qual'è lo stato inziale dello switch. È acceso o spento?");
-                            //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
-                            this.setState({elementoMancante: "statoIniziale"});
-                        } else if (this.state.response.statoFinale === "non trovato") {
-                            addResponseMessage("Scrivimi quale sarà lo stato finale dello switch. Vuoi che sia acceso o spento?");
-                            //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
-                            this.setState({elementoMancante: "statoFinale"});
-                        } else {
-                            /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
-                            addResponseMessage("Ho tutto.");
-
-                            this.setState({elementoMancante: "confermaCreazioneRegola"});
-                            addResponseMessage("I dati della tua regola sono questi: STATO INIZIALE: " + this.state.response.statoIniziale +
-                                " STATO FINALE: " + this.state.response.statoFinale + " NOME SWITCH: " + this.state.response.oggetto);
-                            addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
-                        }
-                    }
-                } else {
-                    //Se non esistono switch gli propongo di crearne uno di default
-                    addResponseMessage("Sembra che tu non abbia switch per interagire. Vuoi crearne uno? " +
-                        "Scrivi \"si\" se vuoi crearlo, oppure \"no\" se vuoi scrivere da capo la regola.  ");
-                    this.setState({elementoMancante: "confermaCreazioneOggetto"});
-                }
-
-
+                this.switchElementsControl();
                 break;
             default:
                 addResponseMessage("Non è nè una transizione, nè una interazione con lo switch, verrà implementato in futuro.")
@@ -392,7 +312,6 @@ export default class EudRuleEditor extends Component {
         risposta.oggetto = "";
         this.setState({response: risposta});
     }
-
 
     /* Ritorna i nomi delle sceneFinali possibili. */
     returnFinalScenesNames() {
@@ -434,6 +353,50 @@ export default class EudRuleEditor extends Component {
     }
 
     /** TRANSITIONS **/
+
+    /* Metodo per controllare se tutti gli elementi della regola transizione che vogliamo creare sono corretti. */
+    transitionElementsControl() {
+        /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
+         * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
+        if (this.state.response.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
+            let risposta = this.state.response;
+            risposta.scenaIniziale = this.props.scenes.get(this.props.currentScene).name;
+            this.setState({response: risposta});
+        }
+        /* Controllo che la scena finale che ha inserito l'utente esista, cioè che si trovi effettivamente tra le scene del gioco,
+        * ma che non sia la scena corrente. */
+        if (!this.doesFinalSceneExists(this.state.response.scenaFinale)) {
+            if (this.state.response.scenaFinale === "") {
+                addResponseMessage("Scrivimi qual'è la scena finale alla quale vuoi arrivare. Perfavore scegli tra una di queste: " + this.returnFinalScenesNames());
+            } else {
+                addResponseMessage("La scena finale che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnFinalScenesNames());
+            }
+            //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
+            this.setState({elementoMancante: "scenaFinale"});
+        } else if (!this.doesTransitionExists(this.state.response.oggetto)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
+            if (this.returnTransitionNames().length > 0) { //Se esiste qualche transizione le elenchiamo
+                if (this.state.response.oggetto === "") {
+                    addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                } else {
+                    addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                }
+                //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
+                this.setState({elementoMancante: "oggetto"});
+            } else { //Se non esiste neanche una transizione chiediamo se ne vuole aggiungere una
+                addResponseMessage("Sembra che tu non abbia transizioni per interagire. Vuoi crearne una? " +
+                    "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
+                this.setState({elementoMancante: "confermaCreazioneOggetto"});
+            }
+        } else {
+            /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
+            addResponseMessage("Ho tutto.");
+
+            this.setState({elementoMancante: "confermaCreazioneRegola"});
+            addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
+                " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.oggetto);
+            addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
+        }
+    }
 
     /* Ritorna i nomi delle transizioni della scena corrente. */
     returnTransitionNames() {
@@ -513,6 +476,51 @@ export default class EudRuleEditor extends Component {
 
     /** SWITCH **/
 
+    /* Metodo per controllare se tutti gli elementi della regola per lo switch che vogliamo creare siano corretti. Se dovesse mancare qualcosa
+    * lo settiamo su "elementoMancante" in modo tale da ricavarcelo poi in "handleNewUserMessage" */
+    switchElementsControl() {
+        //Controllo se nella scena esistono switch se no chiedo all'utente se ne vuole creare uno di default.
+        if (this.returnSwitchNames().length > 0) {
+
+            /* Controllo che il NOME dello switch inserito dall'utente esista tra gli switch esistenti nel gioco. */
+            if (!this.doesSwitchExists(this.state.response.oggetto)) {
+                addResponseMessage("Hai inserito il nome di uno switch che non esiste. Perfavore scegli tra uno di questi: " + this.returnSwitchNames());
+                this.setState({elementoMancante: "oggetto"});
+            } else {
+                /* Setto lo stato inziale e quello finale con valore ON o OFF a seconda di cosa contengono. */
+                let risposta = this.state.response;
+                risposta.statoIniziale = this.getSwitchState(risposta.statoIniziale);
+                risposta.statoFinale = this.getSwitchState(risposta.statoFinale);
+                this.setState({response: risposta});
+
+                //Se non contengono qualcosa riconducibile ad ON o OFF allora chiedo all'utente di specificarlo
+                //Controllo STATO INIZIALE
+                if (this.state.response.statoIniziale === "non trovato") {
+                    addResponseMessage("Scrivimi qual'è lo stato inziale dello switch. È acceso o spento?");
+                    //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
+                    this.setState({elementoMancante: "statoIniziale"});
+                } else if (this.state.response.statoFinale === "non trovato") {  //Controllo STATO FINALE
+                    addResponseMessage("Scrivimi quale sarà lo stato finale dello switch. Vuoi che sia acceso o spento?");
+                    //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
+                    this.setState({elementoMancante: "statoFinale"});
+                } else {
+                    // Se HO TUTTO
+                    /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
+                    addResponseMessage("Ho tutto.");
+                    this.setState({elementoMancante: "confermaCreazioneRegola"});
+                    addResponseMessage("I dati della tua regola sono questi: STATO INIZIALE: " + this.state.response.statoIniziale +
+                        " STATO FINALE: " + this.state.response.statoFinale + " NOME SWITCH: " + this.state.response.oggetto);
+                    addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
+                }
+            }
+        } else {
+            //Se non esistono switch gli propongo di crearne uno di default
+            addResponseMessage("Sembra che tu non abbia switch per interagire. Vuoi crearne uno? " +
+                "Scrivi \"si\" se vuoi crearlo, oppure \"no\" se vuoi scrivere da capo la regola.  ");
+            this.setState({elementoMancante: "confermaCreazioneOggetto"});
+        }
+    }
+
     /* Ritorna i nomi degli switch della scena corrente. */
     returnSwitchNames() {
         let sceneSwitch = this.props.interactiveObjects.filter(x => x.type === InteractiveObjectsTypes.SWITCH);
@@ -588,8 +596,9 @@ export default class EudRuleEditor extends Component {
         return name;
     }
 
-    /* Funzione che controlla se la stringa passata come parametro corrisponda ad uno stato possibile per uno switch.
-    * Se lo trova ne restituisce uno di default. */
+    /* Funzione che controlla se la stringa passata come parametro corrisponde ad uno stato possibile per uno switch.
+    * Se lo trova ne restituisce uno di default in modo da sostituirlo anche nella response. Infatti verranno messi ON oppure
+    * OFF a seconda di cosa scrive l'utente. */
     getSwitchState(stato) {
         if (["on", "acceso", "attivo", "accendilo", "attivalo"].includes(stato.trim().toLowerCase())) {
             return "ON"
