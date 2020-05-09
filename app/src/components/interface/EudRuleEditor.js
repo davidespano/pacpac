@@ -406,11 +406,18 @@ export default class EudRuleEditor extends Component {
                     * allora il bot chiede all'utente se ne vuole creare una. In caso affermativo viene creata e
                     * posta come transazione della regola che l'utente sta creando. In caso negativo invece viene resettata
                     * la regola e viene data la possibilità di creare una regola da zero all'utente. */
-                    case "confermaCreazioneTransizione":
+                    case "confermaCreazioneOggetto":
                         if (newMessage.trim().toLowerCase() === "si") {
-                            risposta.oggetto = await this.createDefaultTransitionObject(this.props);
+                            if (risposta.intent === "transizione") {
+                                risposta.oggetto = await this.createDefaultTransitionObject(this.props);
+                                addResponseMessage("Transizione aggiunta");
+                            } else {
+                                if (risposta.intent === "interazioneSwitch") {
+                                    risposta.oggetto = await this.createDefaultSwitchObject(this.props);
+                                    addResponseMessage("Switch aggiunto");
+                                }
+                            }
                             this.setState({response: risposta});
-                            addResponseMessage("Transizione aggiunta");
                         } else if (newMessage.trim().toLowerCase() === "no") {
                             addResponseMessage("Regola resettata!");
                             addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
@@ -423,15 +430,20 @@ export default class EudRuleEditor extends Component {
                             return;
                         }
                         break;
-                    case "chiediConfermaCreazioneRegola":
+                    case "confermaCreazioneRegola":
                         if (newMessage.trim().toLowerCase() === "si") {
                             //Creo la regola
-                            let transitionObj = this.returnTransitionByName(this.state.response.oggetto);
-                            let finalSceneUuid = this.returnUuidSceneByName(this.state.response.scenaFinale, this.props);
-                            this.createTransitionRule(transitionObj, finalSceneUuid);
+                            if (risposta.intent === "transizione") {
+                                let transitionObj = this.returnTransitionByName(risposta.oggetto);
+                                let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
+                                this.createTransitionRule(transitionObj, finalSceneUuid);
+                            } else if (risposta.intent === "interazioneSwitch") {
+                                let switchObj = this.returnSwitchByName(risposta.oggetto);
+                                this.createSwitchRule(switchObj, risposta.statoIniziale, risposta.statoFinale)
+                            }
+
                             addResponseMessage("Regola creata!");
                             addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
-
                             //Resetto i campi di response
                             this.responseReset();
                             return;
@@ -445,6 +457,14 @@ export default class EudRuleEditor extends Component {
                             addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
                             return;
                         }
+                    case "statoIniziale":
+                        risposta.statoIniziale = newMessage;
+                        this.setState({response: risposta});
+                        break;
+                    case "statoFinale":
+                        risposta.statoFinale = newMessage;
+                        this.setState({response: risposta});
+                        break;
                 }
             }
             /* Controlliamo tutti i dati di response. */
@@ -488,7 +508,7 @@ export default class EudRuleEditor extends Component {
                     } else { //Se non esiste neanche una transizione chiediamo se ne vuole aggiungere una
                         addResponseMessage("Sembra che tu non abbia transizioni per interagire. Vuoi crearne una? " +
                             "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
-                        this.setState({elementoMancante: "confermaCreazioneTransizione"});
+                        this.setState({elementoMancante: "confermaCreazioneOggetto"});
                     }
                 } else {
                     /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
@@ -512,7 +532,7 @@ function onAccordionClick(accordionId) {
         }
     }
 
-                    this.setState({elementoMancante: "chiediConfermaCreazioneRegola"});
+                    this.setState({elementoMancante: "confermaCreazioneRegola"});
                     addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
                         " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.oggetto);
                     addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
@@ -522,6 +542,47 @@ function onAccordionClick(accordionId) {
             case "interazioneSwitch" :
                 addResponseMessage("I dati della tua regola sono questi: STATO INIZIALE: " + this.state.response.statoIniziale +
                     " STATO FINALE: " + this.state.response.statoFinale + " NOME SWITCH: " + this.state.response.oggetto);
+
+                //Controllo se nella scena esistono switch
+                if (this.returnSwitchNames().length > 0) {
+                    /* Controllo che il nome dello switch inserito dall'utente esista tra gli switch esistenti nel gioco. */
+                    if (!this.doesSwitchExists(this.state.response.oggetto)) {
+                        addResponseMessage("Hai inserito il nome di uno switch che non esiste. Perfavore scegli tra uno di questi: " + this.returnSwitchNames());
+                        this.setState({elementoMancante: "oggetto"});
+                    } else {
+                        /* Setto lo stato inziale e quello finale con valore ON o OFF a seconda di cosa contengono. */
+                        let risposta = this.state.response;
+                        risposta.statoIniziale = this.getSwitchState(risposta.statoIniziale);
+                        risposta.statoFinale = this.getSwitchState(risposta.statoFinale);
+                        this.setState({response: risposta});
+
+                        //Se non contengono qualcosa riconducibile ad ON o OFF allora chiedo all'utente di specificarlo
+                        if (this.state.response.statoIniziale === "non trovato") {
+                            addResponseMessage("Scrivimi qual'è lo stato inziale dello switch. È acceso o spento?");
+                            //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
+                            this.setState({elementoMancante: "statoIniziale"});
+                        } else if (this.state.response.statoFinale === "non trovato") {
+                            addResponseMessage("Scrivimi quale sarà lo stato finale dello switch. Vuoi che sia acceso o spento?");
+                            //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
+                            this.setState({elementoMancante: "statoFinale"});
+                        } else {
+                            /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
+                            addResponseMessage("Ho tutto.");
+
+                            this.setState({elementoMancante: "confermaCreazioneRegola"});
+                            addResponseMessage("I dati della tua regola sono questi: STATO INIZIALE: " + this.state.response.statoIniziale +
+                                " STATO FINALE: " + this.state.response.statoFinale + " NOME SWITCH: " + this.state.response.oggetto);
+                            addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
+                        }
+                    }
+                } else {
+                    //Se non esistono switch gli propongo di crearne uno di default
+                    addResponseMessage("Sembra che tu non abbia switch per interagire. Vuoi crearne uno? " +
+                        "Scrivi \"si\" se vuoi crearlo, oppure \"no\" se vuoi scrivere da capo la regola.  ");
+                    this.setState({elementoMancante: "confermaCreazioneOggetto"});
+                }
+
+
                 break;
             default:
                 addResponseMessage("Non è nè una transizione, nè una interazione con lo switch, verrà implementato in futuro.")
@@ -698,26 +759,24 @@ function onAccordionClick(accordionId) {
     /* Crea la regola per lo switch data lo switch (oggetto), il suo stato iniziale e finale. */
     createSwitchRule(interruttore, initialState, finalState) {
         let r;
-        /*
-                r = Rule({
-                    uuid : uuid.v4(),
-                    name : 'regola dell\'interruttore ' + interruttore.name,
-                    event : Action({
-                        uuid: uuid.v4(),
-                        subj_uuid: InteractiveObjectsTypes.PLAYER,
-                        action: EventTypes.CLICK,
-                        obj_uuid: interruttore.uuid,
-                    }),
-                    condition : new Condition(uuid.v4(), interruttore.uuid, Values.ON, Operators.EQUAL),
-                    actions : Immutable.List([Action({
-                        uuid: uuid.v4(),
-                        subj_uuid: interruttore.uuid,
-                        action: RuleActionTypes.CHANGE_STATE,
-                        obj_uuid: Values.OFF
-                    })]),
-                });
-                this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
-        */
+        r = Rule({
+            uuid: uuid.v4(),
+            name: 'regola dell\'interruttore ' + interruttore.name,
+            event: Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: EventTypes.CLICK,
+                obj_uuid: interruttore.uuid,
+            }),
+            condition: new Condition(uuid.v4(), interruttore.uuid, initialState, Operators.EQUAL),
+            actions: Immutable.List([Action({
+                uuid: uuid.v4(),
+                subj_uuid: interruttore.uuid,
+                action: RuleActionTypes.CHANGE_STATE,
+                obj_uuid: finalState
+            })]),
+        });
+        this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
     }
 
     /* Crea uno switch di default quando non esistono switch e l'utente vuole creare la regola trarmite bot. */
@@ -734,6 +793,18 @@ function onAccordionClick(accordionId) {
 
         props.addNewObject(scene, obj);
         return name;
+    }
+
+    /* Funzione che controlla se la stringa passata come parametro corrisponda ad uno stato possibile per uno switch.
+    * Se lo trova ne restituisce uno di default. */
+    getSwitchState(stato) {
+        if (["on", "acceso", "attivo", "accendilo", "attivalo"].includes(stato.trim().toLowerCase())) {
+            return "ON"
+        } else {
+            if (["off", "spento", "disattivo", "spegnilo", "disattivalo"].includes(stato.trim().toLowerCase())) {
+                return "OFF"
+            } else return "non trovato";
+        }
     }
 }
 
