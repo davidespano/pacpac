@@ -7,6 +7,7 @@ function Login(props){
 
         return(
             <React.Fragment>
+
                 <InputRegisterForm {...props}/>
                 <SetGameId {...props}/>
                 <div className={'login-home'} onKeyDown={(event) => {

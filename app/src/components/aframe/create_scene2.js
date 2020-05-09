@@ -35,6 +35,7 @@ let gameTimeSize;
 let healthSize;
 let scoreSize;
 let timerSize;
+let timerID;
 window.healthValue = undefined;
 //variabili del timer pubbliche perchè accedute da render e tick
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
@@ -557,8 +558,15 @@ export default class VRScene extends React.Component {
             if (timerObj) //se l'oggetto timer esiste genero la Entity
             {
                 timerSize = 0.4 + (timerObj.properties.size/20);
-                window.timerTime = timerObj.properties.time;
-                window.timerIsRunning = timerObj.properties.autoStart;
+                if (timerID ==  this.state.activeScene.name + 'timer') {
+
+                }
+                else{
+                    window.timerTime = timerObj.properties.time;
+                    window.timerIsRunning = timerObj.properties.autoStart;
+                    timerID =  this.state.activeScene.name + 'timer';
+                }
+
                 let textProperties = "baseline: center; side: double"+
                     "; align: center" +
                     "; width:" + timerSize +
@@ -570,7 +578,7 @@ export default class VRScene extends React.Component {
                     visibility = false;
                 timerEntity =
                     <Entity visible={true} geometry={geometryProperties} position={'0 0.23 -0.3'}
-                            id={this.state.activeScene.name + 'timer'} material={'shader: flat; opacity: 0.85; color: black;'}
+                            id={timerID} material={'shader: flat; opacity: 0.85; color: black;'}
                             text={textProperties} visible={visibility}>
                     </Entity>
             }

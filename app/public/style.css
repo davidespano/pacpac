@@ -519,6 +519,10 @@ div.rules{
     color: white !important;
 }
 
+.nav {
+    background-color: white;
+}
+
 .nav-link{
     background-color: #EF562D;
     color: #FFFFFF;
@@ -617,6 +621,7 @@ div.rules{
 
 .flex-container, .flex{
     display: flex;
+    background-color: white;
     flex-direction: row;
     height: 100%;
     width: 100%;
@@ -2009,7 +2014,14 @@ textarea {
     height: 100px;
 }
 
+body {
+    //background-image:url(background-pac-base.png);
+    background-repeat:repeat;
+}
 
+.list-group, .login-home {
+    background-color: white;
+}
 
 
 /********* END debug css ************/
