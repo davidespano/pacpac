@@ -29,7 +29,7 @@ function removeInteractiveObject(scene, object, objType){
     let field = defineField(object);
     // updating scene
 
-    if(field){//TODO: qui non ci entra mai?
+    if(field){
         let objects = scene.get('objects');//predisposizione a cancellazione globale dallo stato
         objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
         return scene.setIn(['objects'], objects);
@@ -138,6 +138,10 @@ function defineField(object){
             return "counters";
         case InteractiveObjectsTypes.TEXTBOX:
             return "textboxes";
+        case InteractiveObjectsTypes.SELECTOR:
+            return "selectors";
+        case InteractiveObjectsTypes.KEYPAD:
+            return "keypads";
         case InteractiveObjectsTypes.PLAYTIME:
             return "playtime"
         case InteractiveObjectsTypes.SCORE:

@@ -49,6 +49,8 @@ class ScenesStore extends ReduceStore {
                                 points: [],
                                 counters: [],
                                 textboxes: [],
+                                keypads: [],
+                                selectors: [],
                                 timers: [],
                                 playtime: [],
                                 score: [],

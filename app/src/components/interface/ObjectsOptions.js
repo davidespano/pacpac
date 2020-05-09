@@ -336,15 +336,23 @@ function generateSpecificProperties(object, objectScene, props){
                         <div id={"keypadSize"}
                              className={"propertyForm-right"}
                              contentEditable={true}
-                             onBlur={()=> {
-                                 let size = document.getElementById('keypadSize').textContent;
-                                 interface_utils.changeKeypadSize(object, size);
-                             }}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'inputSize',"keypadSize", props)}
                              onInput={() => interface_utils.onlyNumbers("keypadSize")}
                         >
-                            {object.properties.duration}
+                            {object.properties.inputSize}
                         </div>
-                        <span className={'measure-units'}>ms</span>
+                        <span className={'measure-units'}>tasti</span>
+                    </div>
+                    <label className={'options-labels'}>Combinazione corretta:</label>
+                    <div className={'flex'}>
+                        <div id={"combination"}
+                             className={"propertyForm-right"}
+                             contentEditable={true}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'combination',"combination", props)}
+                             onInput={() => interface_utils.onlyNumbers("combination")}
+                        >
+                            {object.properties.combination}
+                        </div>
                     </div>
                 </div>
             );
@@ -659,6 +667,8 @@ function objectTypeToString(objectType) {
             return "Timer";
         case InteractiveObjectsTypes.TEXTBOX:
             return "Testo";
+        case InteractiveObjectsTypes.KEYPAD:
+            return "Tastierino";
         case InteractiveObjectsTypes.HEALTH:
             return "Vita";
         case InteractiveObjectsTypes.SCORE:
