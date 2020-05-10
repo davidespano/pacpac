@@ -72,9 +72,9 @@ function listSaves(props, path) {
                             title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                             style={s}
                         />
-                        <ul className="list-group list-group-flush debugSavesList">
+                        <div className="s">
                             {listSceneSaves(props, child.uuid, child.name)}
-                        </ul>
+                        </div>
                     </div>
                 );
         }
@@ -92,26 +92,14 @@ function listSceneSaves(props, sceneUuid, sceneName) {
         //Se il nome del salvataggio rispetta le ricerche del filtro dei salvatggi viene renderizzato il salvataggio
         if(save.saveName.includes(props.editor.debugSavesFilter))
             return (
-                <li id={"saves-list" + save.saveName}
-                     key={save.saveName}
-                     className="list-group-item d-flex justify-content-between align-items-center"
+                <div id={"saves-list" + save.saveName}
+                     key={save.saveName + "_li"}
+                     className="d-flex justify-content-between align-items-center saves-list"
                      title={`Nome: ${save.saveName}\nDescrizione: ${save.saveDescription}`}
-                     onClick={() => {
-                        /* let load = document.getElementById("load-button" + save.saveName);
-                         let list = document.getElementById("saves-list" + save.saveName);
-
-                         interface_utils.setClassStyle(".saves-list", "margin-right: -10%");
-                         interface_utils.setClassStyle(".load-button", "visibility: hidden");
-
-                         if (load != null) {
-                             interface_utils.setIdStyle("load-button", save.saveName, "visibility: visible");
-                             list.style = "margin-right: 36%";
-                         }*/
-                     }}
                 >
                     {save.saveName}
+
                     <LoadDebugSave
-                        key={save.saveName + "_load"}
                         {...{sceneName: sceneName,
                             save: save,
                             ...props }}
@@ -123,7 +111,7 @@ function listSceneSaves(props, sceneUuid, sceneName) {
                     >
                         info
                     </div>
-                </li>
+                </div>
 
             );
     });
