@@ -44,13 +44,11 @@ function getDebugState(session, gameID, saveName) {
             'RETURN state, collect(object) AS objects', {}
         ).then(result => {
             const record = result.records[0];
-            const saveDescription = record.get('saveDescription');
             const currentScene = record.get('state').properties.currentScene;
             const objectsStates = record.get('objects').map(obj => obj.properties);
 
             const debugState = new DebugState({
                 currentScene: currentScene,
-                saveDescription: saveDescription,
                 objectStates: objectsStates,
             });
 

@@ -10,6 +10,7 @@ const request = require('superagent');
 const {apiBaseURL} = settings;
 
 function loadDebugState(saveName) {
+    console.log(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`);
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
