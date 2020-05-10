@@ -49,6 +49,8 @@ class ScenesStore extends ReduceStore {
                                 points: [],
                                 counters: [],
                                 textboxes: [],
+                                keypads: [],
+                                selectors: [],
                                 timers: [],
                                 playtime: [],
                                 score: [],
@@ -91,21 +93,19 @@ class ScenesStore extends ReduceStore {
                 state = state.set(newScene.uuid, newScene);
                 return state;
             case ActionTypes.REMOVE_OBJECT://TODO: la parte commentata rimuove solo dagli array, rimane nel db...
-                /*if (action.obj.type == InteractiveObjectsTypes.PLAYTIME) {
-                    state = state.map(scene => {
-                        newScene = scene_utils.removeInteractiveObject(scene, action.obj);
-                        return newScene;
-                    })
+                //TODO: action.obj arriva come uuid e non come map nel caso di oggetti globali, fixare
+                if (action.objType == InteractiveObjectsTypes.PLAYTIME ||
+                    action.objType == InteractiveObjectsTypes.SCORE ||
+                    action.objType == InteractiveObjectsTypes.HEALTH) {
+                    newScene = scene_utils.removeInteractiveObject(action.scene, action.obj, action.objType);
+                    state = state.set(newScene.uuid, newScene);
                     return state;
                 }
                 else {
                     newScene = scene_utils.removeInteractiveObject(action.scene, action.obj);
                     state = state.set(newScene.uuid, newScene);
                     return state;
-                }*/
-                newScene = scene_utils.removeInteractiveObject(action.scene, action.obj);
-                state = state.set(newScene.uuid, newScene);
-                return state;
+                }
             case ActionTypes.ADD_NEW_RULE:
                 newScene = scene_utils.addRuleToScene(action.scene, action.rule);
                 state = state.set(newScene.uuid, newScene);

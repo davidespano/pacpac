@@ -289,9 +289,11 @@ function executeAction(VRScene, rule, action) {
             break;
         case RuleActionTypes.COLLECT_KEY:
             console.log("RuleActionTypes.COLLECT_KEY");
+            current_object = game_graph['objects'].get(action.obj_uuid);
 
             /*
-            * Azione che si occupa di raccogliere una chiave
+            * Azione che si occupa di raccogliere una chiave, il giocatore raccoglie la chiave: la chiave è sempre
+            * l'oggetto di actions
             */
             changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.obj_uuid);
             break;

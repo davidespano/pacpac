@@ -13,25 +13,27 @@ function GameList(props) {
 
     return (
         <React.Fragment>
-            <InputGameForm {...props} />
-            <SetGameId {...props}/>
-            <div className="list-group login-home">
-                <h4 className={"loginlabel"}>I tuoi giochi</h4>
-                <div className={"gameList"}>
-                    {games(props)}
-                </div>
-                <div className={'form-group'}>
-                    <button className="btn login-btn" data-toggle="modal" data-target="#add-game-modal">Nuovo gioco</button>
-                </div>
-                <div className={'form-group'}>
-                    <a id={'logout-link'} onClick={()=> {
-                        props.reset();
-                        window.localStorage.clear();
-                        props.switchToLoginMode();
-                    }}>Logout</a>
-                </div>
-                <div className={'form-group'}>
-                    <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
+            <div className={"loginBackground"}>
+                <InputGameForm {...props} />
+                <SetGameId {...props}/>
+                <div className="list-group login-home">
+                    <h4 className={"loginlabel"}>I tuoi giochi</h4>
+                    <div className={"gameList"}>
+                        {games(props)}
+                    </div>
+                    <div className={'form-group'}>
+                        <button className="btn login-btn" data-toggle="modal" data-target="#add-game-modal">Nuovo gioco</button>
+                    </div>
+                    <div className={'form-group'}>
+                        <a id={'logout-link'} onClick={()=> {
+                            props.reset();
+                            window.localStorage.clear();
+                            props.switchToLoginMode();
+                        }}>Logout</a>
+                    </div>
+                    <div className={'form-group'}>
+                        <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
+                    </div>
                 </div>
             </div>
         </React.Fragment>

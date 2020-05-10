@@ -126,8 +126,6 @@ function getVideoOptions(currentScene, sceneOptions, props){
     if(type === 'video'){
         let isAudioOn = sceneOptions.isAudioOn;
         let isVideoInALoop = sceneOptions.isVideoInALoop;
-        console.log(currentScene.name + " isAudioOn = ", isAudioOn);
-        console.log(currentScene.name + " isVideoInALoop = ", isVideoInALoop);
         return <React.Fragment>
             <div className={'rightbar-checkbox'}>
                 <input type={'checkbox'} className={'checkbox-audio-form'}

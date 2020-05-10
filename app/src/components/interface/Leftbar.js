@@ -123,7 +123,7 @@ function buttonsBar(props) {
     return (
         <div className={'currentOptions'}>
             <div className={"buttonGroup"}>
-                <input type={'text'} id={'scene-filter-text'} placeholder={'Filtra...'}
+                <input class="scene-filters" type={'text'} id={'scene-filter-text'} placeholder={'Filtra...'}
                        onChange={() => {
                            let filter = document.getElementById('scene-filter-text').value;
                            props.updateSceneNameFilter(filter);

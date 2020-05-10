@@ -77,6 +77,28 @@ function generateProperties(props){
     let currentObject = props.interactiveObjects.get(props.currentObject);
     let objectScene = props.scenes.get(props.objectToScene.get(currentObject.uuid));
     let type = objectTypeToString(currentObject.type);
+    let geometryButton = null;
+    if(currentObject.type == InteractiveObjectsTypes.PLAYTIME ||
+        currentObject.type == InteractiveObjectsTypes.SCORE ||
+        currentObject.type == InteractiveObjectsTypes.HEALTH ||
+        currentObject.type == InteractiveObjectsTypes.TIMER ||
+        currentObject.type == InteractiveObjectsTypes.TEXTBOX)
+    {}
+    else
+    {// gli oggetti globali e alcuni altri non hanno bisogno della geometria impostata dall'utente
+        geometryButton =
+            <div className={'options-grid'}>
+            <label className={'options-labels'}>Geometria:</label>
+            <button
+                className={"btn select-file-btn rightbar-btn"}
+                onClick={() => props.switchToGeometryMode() }
+                disabled={(currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM) ||
+                (currentObject.type === InteractiveObjectsTypes.TEXTBOX && objectScene.type === Values.TWO_DIM)}
+            >
+                Modifica geometria
+            </button>
+        </div>
+    }
 
     return(
         <div className={'currentOptions'}>
@@ -138,17 +160,8 @@ function generateProperties(props){
                     defaultValue={currentObject.activable}/>
             </div>
             {generateSpecificProperties(currentObject, objectScene, props)}
-            <div className={'options-grid'}>
-                <label className={'options-labels'}>Geometria:</label>
-                <button
-                    className={"btn select-file-btn rightbar-btn"}
-                    onClick={() => props.switchToGeometryMode() }
-                    disabled={(currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM) ||
-                    (currentObject.type === InteractiveObjectsTypes.TEXTBOX && objectScene.type === Values.TWO_DIM)}
-                >
-                    Modifica geometria
-                </button>
-            </div>
+
+            {geometryButton}
             {currentObject.media? mediaProperties(currentObject, props) : null}
             {currentObject.audio? audioProperties(currentObject, props) : null}
         </div>
@@ -323,19 +336,27 @@ function generateSpecificProperties(object, objectScene, props){
                         <div id={"keypadSize"}
                              className={"propertyForm-right"}
                              contentEditable={true}
-                             onBlur={()=> {
-                                 let size = document.getElementById('keypadSize').textContent;
-                                 interface_utils.changeKeypadSize(object, size);
-                             }}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'inputSize',"keypadSize", props)}
                              onInput={() => interface_utils.onlyNumbers("keypadSize")}
                         >
-                            {object.properties.duration}
+                            {object.properties.inputSize}
                         </div>
-                        <span className={'measure-units'}>ms</span>
+                        <span className={'measure-units'}>tasti</span>
+                    </div>
+                    <label className={'options-labels'}>Combinazione corretta:</label>
+                    <div className={'flex'}>
+                        <div id={"combination"}
+                             className={"propertyForm-right"}
+                             contentEditable={true}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'combination',"combination", props)}
+                             onInput={() => interface_utils.onlyNumbers("combination")}
+                        >
+                            {object.properties.combination}
+                        </div>
                     </div>
                 </div>
             );
-        case InteractiveObjectsTypes.TEXTBOX://TODO check dimensione tra 1 e 10
+        case InteractiveObjectsTypes.TEXTBOX:
             return (
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Testo:</label>
@@ -376,7 +397,7 @@ function generateSpecificProperties(object, objectScene, props){
         case InteractiveObjectsTypes.TIMER:
             return (
                 <React.Fragment>
-                    <label className={'rightbar-titles'}>Timer:</label>
+                    <label className={'rightbar-titles'}>Opzioni Timer:</label>
                     <label className={'options-labels'}>Tempo:</label>
                     <div className={'flex'}>
                         <div id={"timerDuration"}
@@ -436,6 +457,60 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </React.Fragment>
             );
+        case InteractiveObjectsTypes.SCORE:
+            return (
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Punteggio:</label>
+                    <label className={'options-labels'}>Dimensione box:</label>
+                    <div className={'flex'}>
+                        <Slider
+                            defaultValue={object.properties.size}
+                            id="scoreSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'size',"scoreSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'size',"scoreSize", props)}
+                        />
+                    </div>
+                </React.Fragment>
+            );
+        case InteractiveObjectsTypes.HEALTH:
+            return (
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Opzioni vita:</label>
+                    <label className={'options-labels'}>Punti vita iniziali:</label>
+                    <div className={'flex'}>
+                        <div id={"startingHealth"}
+                             className={"propertyForm-right"}
+                             contentEditable={true}
+                             onBlur={()=> interface_utils.setPropertyFromId(object,'health',"startingHealth", props)}
+                             onInput={() => interface_utils.onlyNumbers("startingHealth")}
+                        >
+                            {object.properties.health}
+                        </div>
+                        <span className={'measure-units'}> Punti vita</span>
+                    </div>
+                    <label className={'options-labels'}>Dimensione box:</label>
+                    <div className={'flex'}>
+                        <Slider
+                            defaultValue={object.properties.size}
+                            id="healthSize"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={0}
+                            max={10}
+                            onChange={()=> interface_utils.setPropertyFromId(object,'size',"healthSize", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'size',"healthSize", props)}
+                        />
+                    </div>
+                </React.Fragment>
+            );
         default:
             return(<div>Error!</div>);
     }
@@ -447,7 +522,7 @@ function generateSpecificProperties(object, objectScene, props){
  * @param props
  * @returns {*}
  */
-function objectButtons(props){
+function objectButtons(props){ //FUNZIONE LISTA OGGETTI SCENA RIGHTBAR
     let scene = props.scenes.get(props.objectToScene.get(props.currentObject));
     let currentObject = props.interactiveObjects.get(props.currentObject);
     return(
@@ -465,17 +540,9 @@ function objectButtons(props){
                 onClick={() => {
                     let answer = window.confirm("Vuoi cancellare l'oggetto " + currentObject.name + "?");
                     if(answer){
-                        if(currentObject.type == "PLAYTIME")
-                        {
-                            console.log(props.objects)
-                            InteractiveObjectAPI.removeObject(scene, currentObject);
-                            props.updateCurrentObject(null);
-                        }
-                        else
-                        {
-                            InteractiveObjectAPI.removeObject(scene, currentObject);
-                            props.updateCurrentObject(null);
-                        }
+                        //TODO: per i globali, rimuove dalla lista in interfaccia solo dopo clic su un altro pannello... why?
+                        InteractiveObjectAPI.removeObject(scene, currentObject, props);
+                        props.updateCurrentObject(null);
                     }}
                 }
             >
@@ -527,6 +594,7 @@ function generateObjectsList(props) {
 
 
         // scene objects mapping
+        //let currentObject = props.interactiveObjects.get(props.currentObject);
         return (allObjects.map(obj_uuid => {
             let obj = props.interactiveObjects.get(obj_uuid);
             if(obj.name.includes(props.editor.objectsNameFilter)){
@@ -534,15 +602,16 @@ function generateObjectsList(props) {
                     <div key={obj.uuid} className={"objects-wrapper"}>
                         <p className={'objectsList-element-delete-button'}
                            onClick={()=> props.updateCurrentObject(obj)}>
+                            <img className={"object-thumbnail"} src={interface_utils.getObjImg(obj.type)}/>
                             {obj.name}
                         </p>
-                        <img className={"action-buttons"}
+                        <img className={"waste-action-buttons"}
                              src={"icons/icons8-waste-50.png"}
                              alt={'Cancella'}
                              onClick={() => {
                                  let answer = window.confirm("Vuoi cancellare l'oggetto " + obj.name + "?");
                                  if (answer) {
-                                     InteractiveObjectAPI.removeObject(scene, obj);
+                                     InteractiveObjectAPI.removeObject(scene, obj, props);
                                      props.updateCurrentObject(null);
                                  }
                              }}
@@ -594,10 +663,18 @@ function objectTypeToString(objectType) {
             return "Chiave";
         case InteractiveObjectsTypes.TRANSITION:
             return "Transizione";
-        case InteractiveObjectsTypes.TEXTBOX:
-            return "Riquadro di testo";
         case InteractiveObjectsTypes.TIMER:
             return "Timer";
+        case InteractiveObjectsTypes.TEXTBOX:
+            return "Testo";
+        case InteractiveObjectsTypes.KEYPAD:
+            return "Tastierino";
+        case InteractiveObjectsTypes.HEALTH:
+            return "Vita";
+        case InteractiveObjectsTypes.SCORE:
+            return "Punteggio";
+        case InteractiveObjectsTypes.PLAYTIME:
+            return "Tempo di gioco";
         case RuleActionTypes.RULES:
             return "Regola";
         default:

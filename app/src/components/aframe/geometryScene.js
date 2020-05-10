@@ -330,7 +330,7 @@ export default class GeometryScene extends React.Component{
 
             //Salvo le modifiche dell'oggetto e torno all'editor
             if(keyName === 'q' || keyName === 'Q') {
-                console.log("currentObect", this.props.currentObject)
+                //console.log("currentObect", this.props.currentObject)
                 if(this.props.currentObject !== null){
                     InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
                         this.props.interactiveObjects.get(this.props.currentObject));

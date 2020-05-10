@@ -19,6 +19,8 @@ import Counter from "../interactives/Counter";
 import ScenesStore from "../data/ScenesStore";
 import EditorStateStore from "../data/EditorStateStore";
 import Textbox from "../interactives/Textbox";
+import Selector from "../interactives/Selector";
+import Keypad from "../interactives/Keypad";
 import Timer from "../interactives/Timer";
 import Score from "../interactives/Score";
 import Health from "../interactives/Health";
@@ -58,6 +60,8 @@ function getByName(name, order = null, gameId=null, creation = true) {
             let points_uuids = [];
             let counters_uuids = [];
             let textboxes_uuids = [];
+            let selectors_uuids = [];
+            let keypads_uuids = [];
             let timers_uuids = [];
             let playtime_uuids = [];
             let score_uuids = [];
@@ -113,11 +117,27 @@ function getByName(name, order = null, gameId=null, creation = true) {
 
             // generates textboxes and saves them to the objects store
             if(response.body.textboxes) {
-                console.log("response textbox")
+                //console.log("response textbox")
                 response.body.textboxes.map((textbox) => {
                     textboxes_uuids.push(textbox.uuid); //save uuid
                     let tx = Textbox(getProperties(textbox));
                     Actions.receiveObject(tx, scene_type);
+                });
+            }
+
+            if(response.body.selectors) {
+                response.body.selectors.map((selector) => {
+                    selectors_uuids.push(selector.uuid); //save uuid
+                    let sl = Selector(getProperties(selector));
+                    Actions.receiveObject(sl, scene_type);
+                });
+            }
+
+            if(response.body.keypads) {
+                response.body.keypads.map((keypad) => {
+                    keypads_uuids.push(keypad.uuid); //save uuid
+                    let kp = Keypad(getProperties(keypad));
+                    Actions.receiveObject(kp, scene_type);
                 });
             }
 
@@ -132,7 +152,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
             if(response.body.score) {
                 response.body.score.map((score) => {
                     score_uuids.push(score.uuid); //save uuid
-                    let sc = Timer(getProperties(score));
+                    let sc = Score(getProperties(score));
                     Actions.receiveObject(sc, scene_type);
                 });
             }
@@ -140,7 +160,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
             if(response.body.health) {
                 response.body.health.map((health) => {
                     health_uuids.push(health.uuid); //save uuid
-                    let hl = Timer(getProperties(health));
+                    let hl = Health(getProperties(health));
                     Actions.receiveObject(hl, scene_type);
                 });
             }
@@ -148,7 +168,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
             if(response.body.playtime) {
                 response.body.playtime.map((playtime) => {
                     playtime_uuids.push(playtime.uuid); //save uuid
-                    let pt = Timer(getProperties(playtime));
+                    let pt = PlayTime(getProperties(playtime));
                     Actions.receiveObject(pt, scene_type);
                 });
             }
@@ -234,6 +254,8 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     points: points_uuids,
                     counters: counters_uuids,
                     textboxes: textboxes_uuids,
+                    selectors: selectors_uuids,
+                    keypads: keypads_uuids,
                     timers: timers_uuids,
                     score: score_uuids,
                     health: health_uuids,
@@ -291,6 +313,8 @@ function createScene(name, img, index, type, tag, order, props) {
                     points: [],
                     counters: [],
                     textboxes: [],
+                    keypads: [],
+                    selectors: [],
                     playtime: [],
                     score: [],
                     health: [],
@@ -300,8 +324,17 @@ function createScene(name, img, index, type, tag, order, props) {
 
             Actions.receiveScene(newScene, order);
             updateScene(newScene, tag);
-            if(props.scenes.first().objects.playtime.length > 0) {
-                createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.PLAYTIME);
+            if(props.scenes.first() !=undefined)
+            {
+                if(props.scenes.first().objects.playtime.length > 0) {
+                    createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.PLAYTIME);
+                }
+                if(props.scenes.first().objects.score.length > 0) {
+                    createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.SCORE);
+                }
+                if(props.scenes.first().objects.health.length > 0) {
+                    createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.HEALTH);
+                }
             }
         });
 
@@ -463,6 +496,18 @@ function readScene(gameGraph, raw_scenes) {
             return t;
         });
 
+        const keypads = s.keypads.map(kp => {
+            let k = getProperties(kp);
+            gameGraph['objects'].set(k.uuid, k);
+            return k;
+        });
+
+        const selectors = s.selectors.map(sl => {
+            let s = getProperties(sl);
+            gameGraph['objects'].set(s.uuid, s);
+            return s;
+        });
+
         const score = s.score.map(sc => {
             let ss = getProperties(sc);
             gameGraph['objects'].set(ss.uuid, ss);
@@ -567,6 +612,8 @@ function readScene(gameGraph, raw_scenes) {
                 points: points,
                 counters: counters,
                 textboxes: textboxes,
+                keypads: keypads,
+                selectors: selectors,
                 score: score,
                 playtime: playtime,
                 health: health,

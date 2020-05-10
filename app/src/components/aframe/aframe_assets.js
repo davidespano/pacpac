@@ -139,7 +139,6 @@ export default class Asset extends React.Component{
                 });
             }
             //third, push the media present in the actions
-            //TODO Controllare se funziona anche senza
             scene.rules.forEach(() => {
             });
             //return the assets
@@ -158,7 +157,7 @@ export default class Asset extends React.Component{
 function generateCurrentAsset(obj, runState, id){
     //TODO e' possibile che la creazione degli assets posso essere semplificata con una funzione, in alcuni casi il codice e' lo stesso
     let currentAsset;
-    console.log("genero oggetto: ", obj.name)
+    //console.log("genero oggetto: ", obj.name)
     switch (obj.type) {
         case InteractiveObjectsTypes.TRANSITION:
             if(obj.media.media0 !== null){

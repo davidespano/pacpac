@@ -109,6 +109,7 @@ div.rules{
     max-height: 85vh;
 }
 
+
 .grid-container > .rules {
     max-height: 40vh;
 }
@@ -314,6 +315,7 @@ div.rules{
     background-color: #FFFFFF;
     border: 1px solid darkgrey;
     padding: 5px;
+    border-radius: 4px;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
@@ -343,6 +345,25 @@ div.rules{
 .selected-filter{
     background-color: darkgrey !important;
     border-color: darkgrey !important;
+}
+.bar-filters {
+    background-color: #FFFFFF;
+    border: 1px solid darkgrey;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.scene-filters {
+    background-color: #FFFFFF;
+    border: 1px solid darkgrey;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.css-f8sj28-control {
+    border-radius: 4px;
 }
 
 #transitionDuration, #point-of-interest-delay {
@@ -393,10 +414,7 @@ div.rules{
     background-color: #8C9093;
 }
 
-.nav-item{
-    border-radius: .25rem;
-    text-align: center;
-}
+
 
 .buttonConferm{
     color: #FFFFFF;
@@ -501,13 +519,24 @@ div.rules{
     color: white !important;
 }
 
+.nav {
+    background-color: white;
+}
+
 .nav-link{
     background-color: #EF562D;
     color: #FFFFFF;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 .nav-link:hover{
     color: #FFFFFF;
+}
+
+.nav-link.active{
+    margin-right: 4px;
+    margin-left: 4px;
 }
 
 #ruleObjSelection{
@@ -517,8 +546,18 @@ div.rules{
 }
 
 .action-buttons{
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
+}
+
+.waste-action-buttons{
+    width: 30px;
+    height: 30px;
+}
+
+.waste-action-buttons:hover{
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, .1);
 }
 
 .action-buttons-container{
@@ -558,11 +597,19 @@ div.rules{
     margin-left: 1rem;
 }
 
+.navbar-brand:hover{
+    margin-left: 1rem;
+    color: red;
+}
 .nav-item {
+    margin-top: 1px;
     height: 50px;
     font-size: 1em !important;
     font-weight: bold;
+    text-align: center;
+    transition: .3s ease;
 }
+
 
 .tab-content {
     width: 100%;
@@ -574,6 +621,7 @@ div.rules{
 
 .flex-container, .flex{
     display: flex;
+    background-color: white;
     flex-direction: row;
     height: 100%;
     width: 100%;
@@ -609,9 +657,19 @@ div.rules{
     font-size: 0.7em !important;
 }
 
+.nav-figures:hover{
+    color: orangered;
+}
+
 .nav-figures > img {
     max-height: 50px;
     max-width: 50px;
+    transition: .1s ease;
+}
+
+.nav-figures:hover > img {
+    max-height: 52px;
+    max-width: 52px;
 }
 
 figcaption {
@@ -623,6 +681,7 @@ figcaption {
     opacity: 1;
     transition: .1s ease;
     backface-visibility: hidden;
+    border-radius: 5px;
 }
 
 .list-labels {
@@ -632,10 +691,7 @@ figcaption {
     left: 0;
     width: 100%;
     text-align: center;
-}
-
-.list-labels {
-    transition: .5s ease;
+    transition: .4s ease;
 }
 
 .node_element:hover .list-img {
@@ -650,6 +706,9 @@ figcaption {
     opacity: 1;
     color: white;
     font-size: 0.9em;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
 }
 
 /* Actions reprentation in rules editor */
@@ -674,8 +733,8 @@ figcaption {
     display: grid;
     width: 100%;
     margin: 0;
-    padding: 0;
-    grid-template-columns: 80% 20%;
+    padding-bottom: 5px;
+    grid-template-columns: 87% 13%;
     grid-template-areas:
             'object-name button';
 }
@@ -700,6 +759,16 @@ figcaption {
 .objectsList-element:hover, .objectsList-element-delete-button:hover {
     background-color: rgba(0, 0, 0, .1);
     cursor: pointer;
+    color: orangered;
+    border-radius: 5px;
+}
+
+.object-thumbnail {
+    max-height: 30px;
+    max-width: 30px;
+    margin-right: auto;
+    margin-bottom: auto;
+
 }
 
 /* Rightbar buttons */
@@ -719,6 +788,7 @@ figcaption {
     text-align: center;
     font-size: 1em;
     font-weight: bold;
+    border-radius: 3px;
     cursor: pointer;
 }
 
@@ -745,10 +815,13 @@ figcaption {
     background-color: rgba(255, 255, 255, .4);
     width: 50px;
     height: 50px;
+    border-radius: 10px;
 }
+
 
 .icons-img:hover{
     background-color: rgba(239, 86, 45, .3);
+    cursor: pointer;
 }
 
 .icons-labels {
@@ -759,6 +832,19 @@ figcaption {
             -2px 0 2px black,
             0 2px 2px black,
             0 -2px 2px black;
+}
+
+/* Per oggetti globali */
+.icons-global-img {
+    background-color: rgba(239, 86, 45, .3);
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.icons-global-img:hover{
+    background-color: rgba(255, 255, 255, .4);
 }
 
 /* Dropdown menu leftbar and tags */
@@ -1283,6 +1369,10 @@ li > span {
     text-overflow: ellipsis;
 }
 
+.eudRulePart:hover {
+    border-color: gray;
+}
+
 .eudCompletionRoot {
     position: relative;
 }
@@ -1301,9 +1391,9 @@ li > span {
     overflow: scroll;
     width: 400px;
     left: 50%;
+    border-radius: 3px;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%)
-
 }
 
 .eudCompletionPopup ul{
@@ -1371,6 +1461,7 @@ li > span {
 .eudCompletionPopupForGraph li:hover{
     background-color: #FFD8AC;
 }
+
 
 span.eudObjectString {
     position: relative;
@@ -1642,7 +1733,7 @@ h6 {
     width: 450px;
     height: 500px;
     border: solid 1.5px #EF562D;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
 .gameList{
@@ -1776,7 +1867,6 @@ h6 {
 
 .rightbar-other-scene {
     margin-bottom: 5%;
-
 }
 
 .rightbar-scene-name {
@@ -1932,7 +2022,20 @@ textarea {
     height: 100px;
 }
 
+.loginBackground {
+    //background-image:url(background-pac-base.png);
+    background-image:url(pacpac-login-bacground2.png);
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
 
+    /* Set up proportionate scaling */
+}
+
+.list-group, .login-home {
+    background-color: white;
+
+}
 
 
 /********* END debug css ************/

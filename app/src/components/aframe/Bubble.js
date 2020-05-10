@@ -475,7 +475,6 @@ export default class Bubble extends Component
             this.masksTextures = masks;
         }, 50);
         //let loadingSphere = document.getElementById('loading');
-        //console.log('bolla loading  ', loadingSphere);
         //loadingSphere.setAttribute('visible', 'false')
     }
 

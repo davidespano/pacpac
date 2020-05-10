@@ -79,9 +79,33 @@ function generateObjectsIcons(props){
 
     return (allObjects.map(obj_uuid => {
 
-        if(!props.centroids.has(obj_uuid)) return;
 
         let obj = props.interactiveObjects.get(obj_uuid);
+
+        //se è un oggetto globale uso il css con il background scuro, altrimenti quello di default
+        let img = (obj.type === InteractiveObjectsTypes.PLAYTIME || obj.type === InteractiveObjectsTypes.HEALTH ||
+            obj.type === InteractiveObjectsTypes.SCORE) ? "icons-global-img" : "icons-img";
+        let objStyle = null;
+        switch (obj.type) {
+            case InteractiveObjectsTypes.PLAYTIME:
+                objStyle = {left: "97%" , top: "7.5%"};
+                break;
+            case InteractiveObjectsTypes.HEALTH:
+                objStyle = {left: "3%" , top: "7.5%"};
+                break;
+            case InteractiveObjectsTypes.SCORE:
+                objStyle = {left: "9%" , top: "7.5%"};
+                break;
+            case InteractiveObjectsTypes.TEXTBOX:
+                objStyle = {left: "50%" , bottom: "1%"};
+                break;
+            case InteractiveObjectsTypes.TIMER:
+                objStyle = {left: "50%" , top: "7.5%"};
+                break;
+            default:
+                if(!props.centroids.has(obj_uuid)) return;
+                objStyle = getPosition(props.centroids, obj.uuid);
+        }
 
         return(
             <figure className={'icons'}
@@ -89,10 +113,10 @@ function generateObjectsIcons(props){
                         props.updateCurrentObject(obj);
                         props.rightbarSelection('objects');
                     }}
-                    style={getPosition(props.centroids, obj.uuid)}
+                    style={objStyle}
                     key={'icon-figure-' + obj.uuid}
             >
-                <img className={'icons-img'}
+                <img className={img}
                      id={'icon-' + obj.uuid}
                      src={interface_utils.getObjImg(obj.type)}
                      alt={obj.name}

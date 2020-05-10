@@ -25,19 +25,28 @@ function addInteractiveObjectToScene(scene, object){
  * @param scene
  * @param object
  */
-function removeInteractiveObject(scene, object){
+function removeInteractiveObject(scene, object, objType){
     let field = defineField(object);
-    console.log("scena in cui cancello oggetto", scene);
     // updating scene
+
     if(field){
-        let objects = scene.get('objects');
-        if(object.type == InteractiveObjectsTypes.PLAYTIME)
-        {
-            objects[field] = [];
-        }
-        else
-        {
-            objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
+        let objects = scene.get('objects');//predisposizione a cancellazione globale dallo stato
+        objects[field] = objects[field].filter((uuid) => uuid !== object.get('uuid'));
+        return scene.setIn(['objects'], objects);
+    }
+    else
+    {
+        let objects = scene.get('objects');//predisposizione a cancellazione globale dallo stato
+        switch (objType) {
+            case InteractiveObjectsTypes.PLAYTIME:
+                objects.playtime = [];
+                break;
+            case InteractiveObjectsTypes.HEALTH:
+                objects.health = [];
+                break;
+            case InteractiveObjectsTypes.SCORE:
+                objects.score = [];
+                break;
         }
         return scene.setIn(['objects'], objects);
     }
@@ -129,6 +138,10 @@ function defineField(object){
             return "counters";
         case InteractiveObjectsTypes.TEXTBOX:
             return "textboxes";
+        case InteractiveObjectsTypes.SELECTOR:
+            return "selectors";
+        case InteractiveObjectsTypes.KEYPAD:
+            return "keypads";
         case InteractiveObjectsTypes.PLAYTIME:
             return "playtime"
         case InteractiveObjectsTypes.SCORE:

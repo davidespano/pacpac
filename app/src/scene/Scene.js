@@ -41,6 +41,8 @@ const Scene = Immutable.Record({
         points: [],
         counters: [],
         textboxes: [],
+        selectors: [],
+        keypads: [],
         playtime: [],
         score: [],
         health: [],
