@@ -10,12 +10,15 @@ const request = require('superagent');
 const {apiBaseURL} = settings;
 
 function loadDebugState(saveName) {
+    console.log(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`);
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
             if (err) {
+                console.log(response.body);
                 return console.error(err);
             }
+            console.log("not error", response.body);
                 if (response.body && response.body !== []) {
                     response.body.objectStates.map((rec) => {
                         let s = Immutable.Record({
@@ -30,7 +33,7 @@ function loadDebugState(saveName) {
                     }, {});
 
                     Actions.updateCurrentScene(response.body.currentScene);
-                    EditorState.debugRunState = arr;
+                    Actions.setDebugRunState({...arr});
                 }
 
         });
