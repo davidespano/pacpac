@@ -1733,7 +1733,7 @@ h6 {
     width: 450px;
     height: 500px;
     border: solid 1.5px #EF562D;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
 .gameList{
@@ -2014,13 +2014,19 @@ textarea {
     height: 100px;
 }
 
-body {
+.loginBackground {
     //background-image:url(background-pac-base.png);
-    background-repeat:repeat;
+    background-image:url(pacpac-login-bacground2.png);
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    /* Set up proportionate scaling */
 }
 
 .list-group, .login-home {
     background-color: white;
+
 }
 
 
