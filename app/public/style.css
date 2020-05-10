@@ -1961,13 +1961,13 @@ h6 {
     color: #EF562D;
 }
 
-ul.debugSavesList li{
+div.debugSavesList > div{
     background-color: transparent;
 }
-ul.debugSavesList li:hover{
+div.debugSavesList > div:hover{
      color: #EF562D;
      background-color: #8C90930F;
- }
+}
 
 .load-button {
     visibility: hidden;
