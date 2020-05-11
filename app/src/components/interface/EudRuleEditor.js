@@ -18,7 +18,7 @@ import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
-import {Widget, addResponseMessage, addLinkSnippet, addUserMessage} from 'react-chat-widget';
+import {Widget, addResponseMessage, addLinkSnippet, addUserMessage, renderCustomComponent} from 'react-chat-widget';
 import 'react-chat-widget/lib/styles.css';
 import stores_utils from "../../data/stores_utils";
 import EventTypes from "../../rules/EventTypes";
@@ -356,6 +356,7 @@ export default class EudRuleEditor extends Component {
 
     /* Metodo per controllare se tutti gli elementi della regola transizione che vogliamo creare sono corretti. */
     transitionElementsControl() {
+        let transizioni = this.returnTransitionNames();
         /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
          * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
         if (this.state.response.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
@@ -376,9 +377,19 @@ export default class EudRuleEditor extends Component {
         } else if (!this.doesTransitionExists(this.state.response.oggetto)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
             if (this.returnTransitionNames().length > 0) { //Se esiste qualche transizione le elenchiamo
                 if (this.state.response.oggetto === "") {
-                    addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                    addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: " );
+                    renderCustomComponent(ButtonObjectNames, {
+                        oggetto: "transizione",
+                        transizioni: transizioni,
+                        oggettoCliccato: (o) => this.oggettoCliccato(o)
+                    });
                 } else {
-                    addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: " + this.returnTransitionNames());
+                    addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: ");
+                    renderCustomComponent(ButtonObjectNames, {
+                        oggetto: "transizione",
+                        transizioni: transizioni,
+                        oggettoCliccato: (o) => this.oggettoCliccato(o)
+                    });
                 }
                 //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
                 this.setState({elementoMancante: "oggetto"});
@@ -479,12 +490,18 @@ export default class EudRuleEditor extends Component {
     /* Metodo per controllare se tutti gli elementi della regola per lo switch che vogliamo creare siano corretti. Se dovesse mancare qualcosa
     * lo settiamo su "elementoMancante" in modo tale da ricavarcelo poi in "handleNewUserMessage" */
     switchElementsControl() {
+        let interruttori = this.returnSwitchNames();
         //Controllo se nella scena esistono switch se no chiedo all'utente se ne vuole creare uno di default.
         if (this.returnSwitchNames().length > 0) {
 
             /* Controllo che il NOME dello switch inserito dall'utente esista tra gli switch esistenti nel gioco. */
             if (!this.doesSwitchExists(this.state.response.oggetto)) {
-                addResponseMessage("Hai inserito il nome di uno switch che non esiste. Perfavore scegli tra uno di questi: " + this.returnSwitchNames());
+                addResponseMessage("Hai inserito il nome di uno switch che non esiste. Perfavore scegli tra uno di questi: ");
+                renderCustomComponent(ButtonObjectNames, {
+                    oggetto: "interazioneSwitch",
+                    interruttori: interruttori,
+                    oggettoCliccato: (o) => this.oggettoCliccato(o)
+                });
                 this.setState({elementoMancante: "oggetto"});
             } else {
                 /* Setto lo stato inziale e quello finale con valore ON o OFF a seconda di cosa contengono. */
@@ -608,6 +625,11 @@ export default class EudRuleEditor extends Component {
             } else return "non trovato";
         }
     }
+
+    oggettoCliccato(oggetto) {
+        this.handleNewUserMessage(oggetto);
+    }
+
 }
 
 class EudRule extends Component {
@@ -1802,6 +1824,29 @@ class EudAutoComplete extends Component {
     }
 }
 
+class ButtonObjectNames extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        switch (this.props.oggetto) {
+            case "transizione":
+                return this.returnObjectButtons(this.props.transizioni);
+                break;
+            case "interazioneSwitch":
+                return this.returnObjectButtons(this.props.interruttori);
+                break;
+        }
+
+    }
+
+    /* Ritorna i bottoni degli oggetti richiesti della scena corrente. */
+    returnObjectButtons(nomiOggetti) {
+        return nomiOggetti.map(o => <button key={o} onClick={() => this.props.oggettoCliccato(o)}>{o}</button>);
+    }
+
+}
 
 /* Funzione per fare la richiesta a wit.ai e restituire l'intent di risposta trovato (Luca) */
 async function sendRequest(sentence) {
