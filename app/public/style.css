@@ -2202,6 +2202,22 @@ textarea {
 
 }
 
+/** BOT*/
+.divBottoniOggettoBot{
+    width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.bottoniOggettoBot {
+    background: #f4f4f4;
+    display: inline-block;
+    width: 100%;
+    padding: 5px;
+    margin: 2px;
+    border: 3px solid #ef562d;
+    border-radius: 8px;
+}
+
 .rcw-conversation-container .rcw-header, .rcw-launcher, .rcw-client {
     background-color: #ef562d !important;
     color: white;
