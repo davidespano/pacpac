@@ -1944,12 +1944,13 @@ h6 {
     max-width: 150px;
     max-height: 75px;
     position: relative;
+    border-radius: 6px;
 }
 
 .saves-list {
     width: auto;
     font-size: 13px;
-    padding: 4%;
+    padding: 2% 15% 2% 15%;
     margin-top: 3%;
     margin-left: -13%;
     margin-right: -13%;
@@ -1959,14 +1960,6 @@ h6 {
 
 .saves-list:hover {
     color: #EF562D;
-}
-
-div.debugSavesList > div{
-    background-color: transparent;
-}
-div.debugSavesList > div:hover{
-     color: #EF562D;
-     background-color: #8C90930F;
 }
 
 .load-button {
