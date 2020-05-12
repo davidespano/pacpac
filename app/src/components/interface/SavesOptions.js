@@ -70,7 +70,7 @@ function listSaves(props, path) {
                             title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                             style={s}
                         />
-                        <div className="s">
+                        <div>
                             {listSceneSaves(props, child.uuid, child.name)}
                         </div>
                     </div>
