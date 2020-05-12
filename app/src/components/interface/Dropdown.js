@@ -65,7 +65,7 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-                        EditorState.debugRunState[obj.uuid.toString()].visible = e.value;
+                        props.editor.debugRunState[obj.uuid.toString()].visible = e.value;
                         Actions.updateObject(obj);
                     }
                     else
@@ -82,7 +82,7 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-                        EditorState.debugRunState[obj.uuid.toString()].activable = e.value;
+                        props.editor.debugRunState[obj.uuid.toString()].activable = e.value;
                         Actions.updateObject(obj);
                     }
                     else
@@ -99,7 +99,7 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        props.editor.debugRunState[obj.uuid.toString()].state = e.value;
                         Actions.updateObject(obj);
                     }
                     else
@@ -128,7 +128,7 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        props.editor.debugRunState[obj.uuid.toString()].state = e.value;
                         Actions.updateObject(obj);
                     }
                     else
