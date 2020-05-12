@@ -72,7 +72,7 @@ function listSaves(props, path) {
                             title={interface_utils.title(child.name, props.tags.get(child.tag.name))}
                             style={s}
                         />
-                        <div className="s">
+                        <div>
                             {listSceneSaves(props, child.uuid, child.name)}
                         </div>
                     </div>
@@ -96,21 +96,13 @@ function listSceneSaves(props, sceneUuid, sceneName) {
                      key={save.saveName + "_li"}
                      className="d-flex justify-content-between align-items-center saves-list"
                      title={`Nome: ${save.saveName}\nDescrizione: ${save.saveDescription}`}
+                     data-toggle="modal"
+                     data-target={"#load-save-modal" + save.saveName}
                 >
                     {save.saveName}
-
-                    <LoadDebugSave
-                        {...{sceneName: sceneName,
-                            save: save,
-                            ...props }}
-                    />
+                    <LoadDebugSave {...{sceneName: sceneName, save: save, ...props }} />
                     <div id={"load-button" + save.saveName}
-                         className="btn load-buttons badge badge-primary badge-pill"
-                         data-toggle="modal"
-                         data-target={"#load-save-modal" + save.saveName}
-                    >
-                        info
-                    </div>
+                         className="btn load-buttons badge badge-primary badge-pill">info</div>
                 </div>
 
             );
@@ -166,13 +158,14 @@ function LoadDebugSave({sceneName, save, ...props}){
 
                                         {/* Per ogni oggetto salvato viene creata una riga nella tabella dello stato degli oggetti*/
                                             save.objectStates.map(obj => {
-                                                /* Questo controllo è per evitare che nuovi salvataggi, alla cui scena sono stati inseriti nuovi oggetti, diano errore*/
+                                                /* Questo controllo è per evitare bug con eventuali oggetti eliminati in seguito al salvataggio */
                                                 if(props.interactiveObjects.get(obj.uuid) === undefined)
-                                                    return <></>;
+                                                    return;
 
                                                 let state = obj.state ? toString.valueUuidToString(obj.state) : "" ; // Proprietà di key e switch
                                                 let step = obj.step ? "Valore iniziale: " + obj.step : ""; // Proprietà di counter
 
+                                                /* 1a col: anteprima oggetto; 2a: nome; 3a col: proprietà */
                                                 return (
                                                     <tr key={obj.uuid}>
                                                         <td className="col-md-1">

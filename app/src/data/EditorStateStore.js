@@ -113,8 +113,7 @@ class EditorStateStore extends ReduceStore {
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
             case ActionTypes.SET_DEBUG_RUN_STATE:
-                state = state.set('debugRunState', action.response);
-                return state;
+                return state.set('debugRunState', action.response);
             case ActionTypes.SET_HOME_SCENE:
                 return state.set('homeScene', action.scene);
             case ActionTypes.SET_GAME_TITLE:
