@@ -319,6 +319,8 @@ function getObjImg(objType) {
             return "icons/icons8-counter-100.png";
         case InteractiveObjectsTypes.TEXTBOX:
             return "icons/icons8-text-100.png";
+        case InteractiveObjectsTypes.BUTTON:
+            return "icons/icons8-button-100.png";
         case InteractiveObjectsTypes.KEYPAD:
             return "icons/icons8-keypad-100.png";
         case InteractiveObjectsTypes.SELECTOR:

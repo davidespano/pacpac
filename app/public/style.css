@@ -621,7 +621,6 @@ div.rules{
 
 .flex-container, .flex{
     display: flex;
-    background-color: white;
     flex-direction: row;
     height: 100%;
     width: 100%;

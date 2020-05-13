@@ -19,6 +19,7 @@ import Counter from "../interactives/Counter";
 import ScenesStore from "../data/ScenesStore";
 import EditorStateStore from "../data/EditorStateStore";
 import Textbox from "../interactives/Textbox";
+import Button from "../interactives/Button";
 import Selector from "../interactives/Selector";
 import Keypad from "../interactives/Keypad";
 import Timer from "../interactives/Timer";
@@ -60,6 +61,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
             let points_uuids = [];
             let counters_uuids = [];
             let textboxes_uuids = [];
+            let buttons_uuids = [];
             let selectors_uuids = [];
             let keypads_uuids = [];
             let timers_uuids = [];
@@ -122,6 +124,14 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     textboxes_uuids.push(textbox.uuid); //save uuid
                     let tx = Textbox(getProperties(textbox));
                     Actions.receiveObject(tx, scene_type);
+                });
+            }
+
+            if(response.body.buttons) {
+                response.body.buttons.map((button) => {
+                    buttons_uuids.push(button.uuid); //save uuid
+                    let bt = Button(getProperties(button));
+                    Actions.receiveObject(bt, scene_type);
                 });
             }
 
@@ -254,6 +264,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     points: points_uuids,
                     counters: counters_uuids,
                     textboxes: textboxes_uuids,
+                    buttons: buttons_uuids,
                     selectors: selectors_uuids,
                     keypads: keypads_uuids,
                     timers: timers_uuids,
@@ -313,6 +324,7 @@ function createScene(name, img, index, type, tag, order, props) {
                     points: [],
                     counters: [],
                     textboxes: [],
+                    buttons:[],
                     keypads: [],
                     selectors: [],
                     playtime: [],
@@ -496,6 +508,12 @@ function readScene(gameGraph, raw_scenes) {
             return t;
         });
 
+        const buttons = s.buttons.map(bt => {
+            let b = getProperties(bt);
+            gameGraph['objects'].set(b.uuid, b);
+            return b;
+        });
+
         const keypads = s.keypads.map(kp => {
             let k = getProperties(kp);
             gameGraph['objects'].set(k.uuid, k);
@@ -612,6 +630,7 @@ function readScene(gameGraph, raw_scenes) {
                 points: points,
                 counters: counters,
                 textboxes: textboxes,
+                buttons: buttons,
                 keypads: keypads,
                 selectors: selectors,
                 score: score,

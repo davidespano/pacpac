@@ -329,20 +329,24 @@ function generateSpecificProperties(object, objectScene, props){
                 </div>
             );
         case InteractiveObjectsTypes.KEYPAD:
+            let scene = props.scenes.get(props.currentScene);
+            let allObjects = Object.values(scene.objects).flat();
+
+            let buttonList = allObjects.map(obj_uuid => {
+                let obj = props.interactiveObjects.get(obj_uuid);
+                if(obj.type == InteractiveObjectsTypes.BUTTON){
+                    return (
+                        <div className={'options-grid'}>
+                            <label className={'options-labels'}>{obj.name}</label>
+
+                        </div>
+                    );
+                }
+            });
+
+
             return(
                 <div className={"options-grid"}>
-                    <label className={'options-labels'}>Numero tasti:</label>
-                    <div className={'flex'}>
-                        <div id={"keypadSize"}
-                             className={"propertyForm-right"}
-                             contentEditable={true}
-                             onBlur={()=> interface_utils.setPropertyFromId(object,'inputSize',"keypadSize", props)}
-                             onInput={() => interface_utils.onlyNumbers("keypadSize")}
-                        >
-                            {object.properties.inputSize}
-                        </div>
-                        <span className={'measure-units'}>tasti</span>
-                    </div>
                     <label className={'options-labels'}>Combinazione corretta:</label>
                     <div className={'flex'}>
                         <div id={"combination"}
@@ -353,6 +357,14 @@ function generateSpecificProperties(object, objectScene, props){
                         >
                             {object.properties.combination}
                         </div>
+                    </div>
+                    <label className={'rightbar-titles'}>Pulsanti:</label>
+                    <div className={'options-grid'}>
+
+                    </div>
+                    <div className={'flex'}>
+                        <span className={'measure-units'}>tasti</span>
+                        {buttonList}
                     </div>
                 </div>
             );
@@ -394,31 +406,60 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </React.Fragment>
             );
+        case InteractiveObjectsTypes.SELECTOR:
+            return (
+                <React.Fragment>
+                    <label className={'rightbar-titles'}>Selettore:</label>
+                    <label className={'options-labels'}>Numero opzioni:</label>
+                    <div className={'flex'}>
+                        <Slider
+                            defaultValue={object.properties.optionsNumber}
+                            id="optionsNumber"
+                            aria-labelledby="discrete-slider"
+                            valueLabelDisplay="auto"
+                            step={1}
+                            marks
+                            min={3}
+                            max={10}//TODO selettore, assegnare uno pseudonimo ad ogni opzione?
+                            onChange={()=> interface_utils.setPropertyFromId(object,'optionsNumber',"optionsNumber", props)}
+                            onBlur={()=> interface_utils.setPropertyFromId(object,'optionsNumber',"optionsNumber", props)}
+                        />
+                    </div>
+                </React.Fragment>
+
+            );
         case InteractiveObjectsTypes.TIMER:
             return (
                 <React.Fragment>
                     <label className={'rightbar-titles'}>Opzioni Timer:</label>
-                    <label className={'options-labels'}>Tempo:</label>
-                    <div className={'flex'}>
-                        <div id={"timerDuration"}
-                             className={"propertyForm-right"}
-                             contentEditable={true}
-                             onBlur={()=> interface_utils.setPropertyFromId(object,'time',"timerDuration", props)}
-                             onInput={() => interface_utils.onlyNumbers("timerDuration")}
-                        >
-                            {object.properties.time}
+                    <div className={'options-grid'}>
+                        <label className={'options-labels'}>Tempo:</label>
+                        <div className={'flex'}>
+                            <div id={"timerDuration"}
+                                 className={"propertyForm-right"}
+                                 contentEditable={true}
+                                 onBlur={()=> interface_utils.setPropertyFromId(object,'time',"timerDuration", props)}
+                                 onInput={() => interface_utils.onlyNumbers("timerDuration")}
+                            >
+                                {object.properties.time}
+                            </div>
+                            <span className={'measure-units'}> secondi</span>
                         </div>
-                        <span className={'measure-units'}> secondi</span>
                     </div>
-                    <div className={'rightbar-checkbox'}>
-                        <input type={'checkbox'} className={'checkbox-audio-form'}
-                               id={'timer-autostart'} checked={object.properties.autoStart}
-                               onChange={() => {
-                                   interface_utils.setPropertyFromValue(object,'autoStart', !object.properties.autoStart,props)
-                               }}
-                        />
-                        <label htmlFor={'home-scene'}>Avvio automatico</label>
+                    <div className={'options-grid'}>
+                        <label className={'options-labels'}>Avvio automatico:</label>
+                        <div className={'flex'}>
+                            <div className={'rightbar-checkbox'}>
+                                <input type={'checkbox'} className={'checkbox-audio-form'}
+                                       id={'timer-autostart'} checked={object.properties.autoStart}
+                                       onChange={() => {
+                                           interface_utils.setPropertyFromValue(object,'autoStart', !object.properties.autoStart,props)
+                                       }}
+                                />
+                            </div>
+                        </div>
                     </div>
+
                     <label className={'options-labels'}>Dimensione box:</label>
                     <div className={'flex'}>
                         <Slider
@@ -436,6 +477,8 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </React.Fragment>
             );
+        case InteractiveObjectsTypes.BUTTON:
+            return;
         case InteractiveObjectsTypes.PLAYTIME:
             return (
                 <React.Fragment>
@@ -667,6 +710,8 @@ function objectTypeToString(objectType) {
             return "Timer";
         case InteractiveObjectsTypes.TEXTBOX:
             return "Testo";
+        case InteractiveObjectsTypes.BUTTON:
+            return "Pulsante";
         case InteractiveObjectsTypes.KEYPAD:
             return "Tastierino";
         case InteractiveObjectsTypes.HEALTH:

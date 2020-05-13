@@ -138,6 +138,8 @@ function defineField(object){
             return "counters";
         case InteractiveObjectsTypes.TEXTBOX:
             return "textboxes";
+        case InteractiveObjectsTypes.BUTTON:
+            return "buttons";
         case InteractiveObjectsTypes.SELECTOR:
             return "selectors";
         case InteractiveObjectsTypes.KEYPAD:

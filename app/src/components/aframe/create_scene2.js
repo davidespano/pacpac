@@ -37,6 +37,8 @@ let scoreSize;
 let timerSize;
 let timerID;
 window.healthValue = undefined;
+window.playtimeValue = undefined;
+window.scoreValue = undefined;
 //variabili del timer pubbliche perchè accedute da render e tick
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
@@ -502,7 +504,6 @@ export default class VRScene extends React.Component {
         let gameTimeUuid = this.state.activeScene.objects.playtime[0];
         let scoreEntity = null;
         let scoreUuid = this.state.activeScene.objects.score[0];
-        window.scoreValue = undefined;
         let healthEntity = null;
         let healtUuid = this.state.activeScene.objects.health[0];
 
@@ -770,29 +771,42 @@ export default class VRScene extends React.Component {
         window.timerTime = time;
     }
 
-    //TODO: finire questi metodi
-    static changeHealthValue(newHealthValue){
-        let healthObj = null;
-        //let healthObj = document.getElementById(this.state.activeScene.name + 'health')
-        window.healthValue = newHealthValue;
-        let textPropertiesHL = "baseline: center; side: double"+
+/*    static changeHealthValue(newHealthValue){
+        let healthObj = document.getElementById(props.activeScene.name + 'health')
+        if (healthObj !=null){
+            window.healthValue = newHealthValue;
+            let textPropertiesHL = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + healthSize +
                 "; value:" + window.healthValue +
                 ";color: #dbdbdb";
-        healthObj.setAttribute('text', textPropertiesHL);
+            healthObj.setAttribute('text', textPropertiesHL);
+        }
     }
 
-    //TODO: finire questi metodi
     static changeScoreValue(newScoreValue){
-        let scoreObj = null;
-        //let scoreObj = document.getElementById(this.state.activeScene.name + 'score')
-        window.scoreValue = newScoreValue;
-        let textPropertiesSC = "baseline: center; side: double"+
+        let scoreObj = document.getElementById(props.activeScene.name + 'score')
+        if (scoreObj != null){
+            window.scoreValue = newScoreValue;
+            let textPropertiesSC = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + scoreSize +
                 "; value:" + window.scoreValue +
                 ";color: #dbdbdb";
-        scoreObj.setAttribute('text', textPropertiesSC);
+            scoreObj.setAttribute('text', textPropertiesSC);
         }
+    }
+
+    static changePlaytimeValue(newPlaytimeValue){
+        let playtimeObj = document.getElementById(props.activeScene.name + 'gameTime')
+        if(playtimeObj != null){
+            window.gameTimeValue = newPlaytimeValue;
+            let textPropertiesPT = "baseline: center; side: double"+
+                "; align: center" +
+                "; width:" + gameTimeSize +
+                "; value:" + window.gameTimeValue +
+                ";color: #dbdbdb";
+            playtimeObj.setAttribute('text', textPropertiesPT);
+        }
+    }*/
 }

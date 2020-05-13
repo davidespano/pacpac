@@ -20,6 +20,7 @@ import interface_utils from "./interface_utils";
 import Counter from "../../interactives/Counter";
 import Values from "../../rules/Values";
 import Textbox from "../../interactives/Textbox";
+import Button from "../../interactives/Button";
 import Selector from "../../interactives/Selector";
 import Timer from "../../interactives/Timer";
 import Score from "../../interactives/Score";
@@ -205,6 +206,13 @@ function TopBar(props){
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)}/>
                             <figcaption>Timer</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    //createObject(props, InteractiveObjectsTypes.BUTTON);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.BUTTON)}/>
+                            <figcaption>Pulsante</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
@@ -422,7 +430,8 @@ function createObject(props, type){
                     name : name,
                     properties: {
                         state: null,
-                        inputSize: 3,
+                        buttonUuid: [],
+                        buttonValue: [],
                         combination : [Math.floor(Math.random() * 1000)],
                     }
                 });
@@ -433,7 +442,17 @@ function createObject(props, type){
                     uuid : uuid.v4(),
                     name : name,
                     properties: {
-                        state: null,
+                        optionsNumber: 3,
+                        state: [],
+                    }
+                });
+                break;
+            case InteractiveObjectsTypes.BUTTON: //TODO SELECTOR rivedere questi parametri
+                name = scene.name + '_bt' + (scene.objects.buttons.length + 1);
+                obj = Button ({
+                    uuid : uuid.v4(),
+                    name : name,
+                    properties: {
                     }
                 });
                 break;
@@ -485,7 +504,7 @@ function createObject(props, type){
                     for (let i = 0, len = sceneArray.length; i < len; i++) {
                         if(sceneArray[i].objects.score.length == 0)
                         {
-                            name = sceneArray[i].name + '_sc';
+                            name = 'Punteggio';
                             obj = Score({
                                 uuid: sceneArray[i].uuid+"_sc",
                                 name: name,
@@ -511,7 +530,7 @@ function createObject(props, type){
                     for (let i = 0, len = sceneArray.length; i < len; i++) {
                         if(sceneArray[i].objects.health.length == 0)
                         {
-                            name = sceneArray[i].name + '_hl';
+                            name = 'Vita';
                             obj = Health({
                                 uuid: sceneArray[i].uuid+"_hl",
                                 name: name,
@@ -537,7 +556,7 @@ function createObject(props, type){
                     for (let i = 0, len = sceneArray.length; i < len; i++) {
                         if(sceneArray[i].objects.playtime.length == 0)
                         {
-                            name = sceneArray[i].name + '_pt';
+                            name = 'Tempo di gioco';
                             obj = PlayTime({
                                 uuid: sceneArray[i].uuid+"_pt",
                                 name: name,
