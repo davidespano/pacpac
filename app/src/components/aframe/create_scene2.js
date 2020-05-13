@@ -771,7 +771,7 @@ export default class VRScene extends React.Component {
         window.timerTime = time;
     }
 
-/*    static changeHealthValue(newHealthValue){
+    static changeHealthValue(newHealthValue, props){
         let healthObj = document.getElementById(props.activeScene.name + 'health')
         if (healthObj !=null){
             window.healthValue = newHealthValue;
@@ -784,7 +784,7 @@ export default class VRScene extends React.Component {
         }
     }
 
-    static changeScoreValue(newScoreValue){
+    static changeScoreValue(newScoreValue, props){
         let scoreObj = document.getElementById(props.activeScene.name + 'score')
         if (scoreObj != null){
             window.scoreValue = newScoreValue;
@@ -797,7 +797,7 @@ export default class VRScene extends React.Component {
         }
     }
 
-    static changePlaytimeValue(newPlaytimeValue){
+    static changePlaytimeValue(newPlaytimeValue, props){
         let playtimeObj = document.getElementById(props.activeScene.name + 'gameTime')
         if(playtimeObj != null){
             window.gameTimeValue = newPlaytimeValue;
@@ -808,5 +808,5 @@ export default class VRScene extends React.Component {
                 ";color: #dbdbdb";
             playtimeObj.setAttribute('text', textPropertiesPT);
         }
-    }*/
+    }
 }
