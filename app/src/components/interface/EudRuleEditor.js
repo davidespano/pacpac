@@ -30,6 +30,7 @@ import SceneAPI from "../../utils/SceneAPI";
 import Orders from "../../data/Orders";
 import Transition from "../../interactives/Transition";
 import Switch from "../../interactives/Switch";
+import Lock from "../../interactives/Lock";
 
 let uuid = require('uuid');
 var ghostScene=null;
@@ -414,14 +415,21 @@ export default class EudRuleEditor extends Component {
                     * la regola e viene data la possibilità di crearne una da zero. */
                     case "confermaCreazioneOggetto":
                         if (newMessage.trim().toLowerCase() === "si") {
-                            if (risposta.intent === "transizione") {
-                                risposta.oggetto = await this.createDefaultTransitionObject(this.props);
-                                addResponseMessage("Transizione aggiunta");
-                            } else {
-                                if (risposta.intent === "interazioneSwitch") {
-                                    risposta.oggetto = await this.createDefaultSwitchObject(this.props);
+                            switch (risposta.intent) {
+                                case "transizione":
+                                    risposta.oggetto = await this.createDefaultObject(this.props, "TRANSITION");
+                                    addResponseMessage("Transizione aggiunta");
+                                    break;
+                                case "interazioneSwitch":
+                                    risposta.oggetto = await this.createDefaultObject(this.props, "SWITCH");
                                     addResponseMessage("Switch aggiunto");
-                                }
+                                    break;
+                                case "interazioneLucchetto":
+                                    risposta.oggetto = await this.createDefaultObject(this.props, "LOCK");
+                                    addResponseMessage("Lucchetto aggiunto");
+                                    break;
+                                default:
+                                    addResponseMessage("C'è stato qualche problema nella creazione dell'oggetto.")
                             }
                             this.setState({response: risposta});
                         } else if (newMessage.trim().toLowerCase() === "no") {
@@ -439,13 +447,22 @@ export default class EudRuleEditor extends Component {
                     case "confermaCreazioneRegola":
                         if (newMessage.trim().toLowerCase() === "si") {
                             //Creo la regola
-                            if (risposta.intent === "transizione") {
-                                let transitionObj = this.returnTransitionByName(risposta.oggetto);
-                                let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
-                                this.createTransitionRule(transitionObj, finalSceneUuid);
-                            } else if (risposta.intent === "interazioneSwitch") {
-                                let switchObj = this.returnSwitchByName(risposta.oggetto);
-                                this.createSwitchRule(switchObj, risposta.statoIniziale, risposta.statoFinale)
+                            switch (risposta.intent) {
+                                case "transizione":
+                                    let transitionObj = this.returnObjectByName(risposta.oggetto, "TRANSITION");
+                                    let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
+                                    this.createTransitionRule(transitionObj, finalSceneUuid);
+                                    break;
+                                case "interazioneSwitch":
+                                    let switchObj = this.returnObjectByName(risposta.oggetto, "SWITCH");
+                                    this.createSwitchRule(switchObj, risposta.statoIniziale, risposta.statoFinale);
+                                    break;
+                                case "interazioneLucchetto":
+                                    let padlockObject = this.returnObjectByName(risposta.oggetto, "LOCK");
+                                    this.createPadlockRule(padlockObject);
+                                    break;
+                                default:
+                                    addResponseMessage("C'è stato qualche problema nella creazione della regola.")
                             }
 
                             addResponseMessage("Regola creata!");
@@ -484,8 +501,12 @@ export default class EudRuleEditor extends Component {
             case "interazioneSwitch" :
                 this.switchElementsControl();
                 break;
+            case "interazioneLucchetto":
+                this.padlockElementsControl();
+                break;
             default:
-                addResponseMessage("Non è nè una transizione, nè una interazione con lo switch, verrà implementato in futuro.")
+                addResponseMessage("Non è una transizione, una interazione con lo switch e neanche un interazione con " +
+                    "un lucchetto. Verrà implementato in futuro.");
         }
     }
 
@@ -498,6 +519,10 @@ export default class EudRuleEditor extends Component {
         risposta.scenaFinale = "";
         risposta.oggetto = "";
         this.setState({response: risposta});
+    }
+
+    oggettoCliccato(oggetto) {
+        this.handleNewUserMessage(oggetto);
     }
 
     /* Ritorna i nomi delle sceneFinali possibili. */
@@ -539,11 +564,88 @@ export default class EudRuleEditor extends Component {
         return uuid;
     }
 
+    /* Torna true se il nome dell'oggetto passato come parametro (stringa) esiste, false altrimenti. bisogna passare
+  anche il tipo dell'oggetto, in modo tale da usare la stessa funzione per tutti gli oggetti. */
+    doesObjectExists(objectName, objectType) {
+        let objectNames = this.returnObjectNames(objectType);
+        for (var i = 0; i < objectNames.length; i++) {
+            if (objectName === objectNames[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Ritorna i nomi degli oggetti della scena corrente che hanno il tipo passato come parametro. */
+    returnObjectNames(objectType) {
+        let sceneObjects = this.props.interactiveObjects.filter(x => x.type === objectType);
+
+        let objects = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneObjects);
+        for (var i = 0; i < objects.length; i++) {
+            objects[i] = objects[i].name;
+        }
+        return objects;
+    }
+
+    /* Ritorna l'oggetto corrispondente al nome e al tipo passato. */
+    returnObjectByName(objectName, objectType) {
+        let sceneObjects = this.props.interactiveObjects.filter(x =>
+            x.type === objectType);
+
+        let objects = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneObjects);
+        for (var i = 0; i < objects.length; i++) {
+            if (objectName === objects[i].name) {
+                return objects[i];
+            }
+        }
+        return undefined;
+    }
+
+
+    /* Crea un oggetto di default quando non esistono oggetti inerenti alla regola che stiamo creando
+    e l'utente vuole creare quest'ultima trarmite bot. */
+    createDefaultObject(props, objectType) {
+        let scene = props.scenes.get(props.currentScene);
+        let name = "";
+        let obj = null;
+
+        switch (objectType) {
+            case "TRANSITION":
+                name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
+                obj = Transition({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+
+            case "SWITCH":
+                name = scene.name + '_sw' + (scene.objects.switches.length + 1);
+                obj = Switch({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            case "LOCK":
+                name = scene.name + '_lk' + (scene.objects.locks.length + 1);
+                obj = Lock({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
+            default:
+                return undefined;
+        }
+
+
+        props.addNewObject(scene, obj);
+        return name;
+    }
+
     /** TRANSITIONS **/
 
     /* Metodo per controllare se tutti gli elementi della regola transizione che vogliamo creare sono corretti. */
     transitionElementsControl() {
-        let transizioni = this.returnTransitionNames();
+        let transizioni = this.returnObjectNames("TRANSITION");
         let sceneFinali = this.returnFinalScenesNames();
         let scelte = ["Si", "No"];
         /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
@@ -567,8 +669,8 @@ export default class EudRuleEditor extends Component {
             });
             //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
             this.setState({elementoMancante: "scenaFinale"});
-        } else if (!this.doesTransitionExists(this.state.response.oggetto)) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
-            if (this.returnTransitionNames().length > 0) { //Se esiste qualche transizione le elenchiamo
+        } else if (!this.doesObjectExists(this.state.response.oggetto, "TRANSITION")) { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
+            if (this.returnObjectNames("TRANSITION").length > 0) { //Se esiste qualche transizione le elenchiamo
                 if (this.state.response.oggetto === "") {
                     addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: ");
                     renderCustomComponent(ButtonObjectNames, {
@@ -608,42 +710,6 @@ export default class EudRuleEditor extends Component {
         }
     }
 
-    /* Ritorna i nomi delle transizioni della scena corrente. */
-    returnTransitionNames() {
-        let sceneTransitions = this.props.interactiveObjects.filter(x => x.type === InteractiveObjectsTypes.TRANSITION);
-
-        let transitions = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneTransitions);
-        for (var i = 0; i < transitions.length; i++) {
-            transitions[i] = transitions[i].name;
-        }
-        return transitions;
-    }
-
-    /* Torna true se la transizione passata come parametro (stringa) esiste, false altrimenti. */
-    doesTransitionExists(transition) {
-        let transitionNames = this.returnTransitionNames();
-        for (var i = 0; i < transitionNames.length; i++) {
-            if (transition === transitionNames[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /* Ritorna l'oggetto transizione corrispondente al nome passato. */
-    returnTransitionByName(transitionName) {
-        let sceneTransitions = this.props.interactiveObjects.filter(x =>
-            x.type === InteractiveObjectsTypes.TRANSITION);
-
-        let transitions = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneTransitions);
-        for (var i = 0; i < transitions.length; i++) {
-            if (transitionName === transitions[i].name) {
-                return transitions[i];
-            }
-        }
-        return undefined;
-    }
-
     /* Crea la regola transizione data la transizione (oggetto) e l'uuid della scena finale. Non abbiamo bisogno di
      * altri campi visto che per la transizione sono sempre li stessi. */
     createTransitionRule(transition, finalSceneUuid) {
@@ -668,36 +734,21 @@ export default class EudRuleEditor extends Component {
         this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
     }
 
-    /* Crea una transizione di default quando non esistono transizioni e l'utente vuole creare la regola trarmite bot. */
-    createDefaultTransitionObject(props) {
-        let scene = props.scenes.get(props.currentScene);
-        let name = "";
-        let obj = null;
-
-        name = scene.name + '_tr' + (scene.objects.transitions.length + 1);
-        obj = Transition({
-            uuid: uuid.v4(),
-            name: name,
-        });
-
-        props.addNewObject(scene, obj);
-        return name;
-    }
 
     /** SWITCH **/
 
     /* Metodo per controllare se tutti gli elementi della regola per lo switch che vogliamo creare siano corretti. Se dovesse mancare qualcosa
     * lo settiamo su "elementoMancante" in modo tale da ricavarcelo poi in "handleNewUserMessage" */
     switchElementsControl() {
-        let interruttori = this.returnSwitchNames();
+        let interruttori = this.returnObjectNames("SWITCH");
         let statoInterruttore = ["Acceso", "Spento"];
         let scelte = ["Si", "No"];
 
         //Controllo se nella scena esistono switch se no chiedo all'utente se ne vuole creare uno di default.
-        if (this.returnSwitchNames().length > 0) {
+        if (this.returnObjectNames("SWITCH").length > 0) {
 
             /* Controllo che il NOME dello switch inserito dall'utente esista tra gli switch esistenti nel gioco. */
-            if (!this.doesSwitchExists(this.state.response.oggetto)) {
+            if (!this.doesObjectExists(this.state.response.oggetto, "SWITCH")) {
                 addResponseMessage("Hai inserito il nome di uno switch che non esiste. Perfavore scegli tra uno di questi: ");
                 renderCustomComponent(ButtonObjectNames, {
                     oggetti: interruttori,
@@ -755,42 +806,6 @@ export default class EudRuleEditor extends Component {
         }
     }
 
-    /* Ritorna i nomi degli switch della scena corrente. */
-    returnSwitchNames() {
-        let sceneSwitch = this.props.interactiveObjects.filter(x => x.type === InteractiveObjectsTypes.SWITCH);
-
-        let switches = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneSwitch);
-        for (var i = 0; i < switches.length; i++) {
-            switches[i] = switches[i].name;
-        }
-        return switches;
-    }
-
-    /* Torna true se lo switch passato come parametro (stringa) esiste, false altrimenti. */
-    doesSwitchExists(interruttore) {
-        let switchNames = this.returnSwitchNames();
-        for (var i = 0; i < switchNames.length; i++) {
-            if (interruttore === switchNames[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /* Ritorna l'oggetto switch corrispondente al nome passato. */
-    returnSwitchByName(switchName) {
-        let sceneSwitches = this.props.interactiveObjects.filter(x =>
-            x.type === InteractiveObjectsTypes.SWITCH);
-
-        let switches = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneSwitches);
-        for (var i = 0; i < switches.length; i++) {
-            if (switchName === switches[i].name) {
-                return switches[i];
-            }
-        }
-        return undefined;
-    }
-
     /* Crea la regola per lo switch data lo switch (oggetto), il suo stato iniziale e finale. */
     createSwitchRule(interruttore, initialState, finalState) {
         let r;
@@ -814,22 +829,6 @@ export default class EudRuleEditor extends Component {
         this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
     }
 
-    /* Crea uno switch di default quando non esistono switch e l'utente vuole creare la regola trarmite bot. */
-    createDefaultSwitchObject(props) {
-        let scene = props.scenes.get(props.currentScene);
-        let name = "";
-        let obj = null;
-
-        name = scene.name + '_sw' + (scene.objects.switches.length + 1);
-        obj = Switch({
-            uuid: uuid.v4(),
-            name: name,
-        });
-
-        props.addNewObject(scene, obj);
-        return name;
-    }
-
     /* Funzione che controlla se la stringa passata come parametro corrisponde ad uno stato possibile per uno switch.
     * Se lo trova ne restituisce uno di default in modo da sostituirlo anche nella response. Infatti verranno messi ON oppure
     * OFF a seconda di cosa scrive l'utente. */
@@ -843,13 +842,76 @@ export default class EudRuleEditor extends Component {
         }
     }
 
-    oggettoCliccato(oggetto) {
-        this.handleNewUserMessage(oggetto);
+    /** LUCCHETTO */
+    padlockElementsControl() {
+        let lucchetti = this.returnObjectNames("LOCK");
+        let scelte = ["Si", "No"];
+
+        //Controllo se nella scena esistono lucchetti se no chiedo all'utente se ne vuole creare uno di default.
+        if (this.returnObjectNames("LOCK").length > 0) {
+
+            /* Controllo che il NOME del lucchetto inserito dall'utente esista tra i lucchetti esistenti nel gioco. */
+            if (!this.doesObjectExists(this.state.response.oggetto, "LOCK")) {
+                addResponseMessage("Hai inserito il nome di un lucchetto che non esiste. Perfavore scegli tra uno di questi: ");
+                renderCustomComponent(ButtonObjectNames, {
+                    oggetti: lucchetti,
+                    oggettoCliccato: (o) => this.oggettoCliccato(o)
+                });
+                this.setState({elementoMancante: "oggetto"});
+            } else {
+                // Se HO TUTTO
+                /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
+                addResponseMessage("Ho tutto.");
+                this.setState({elementoMancante: "confermaCreazioneRegola"});
+                addResponseMessage("Presumo che se stai scrivendo una regola base per il lucchetto il tuo intento è quello di " +
+                    "sbloccarlo quando lo clicchi. " +
+                    "Dunque: I dati della tua regola sono questi: STATO FINALE: " + this.state.response.statoFinale +
+                    " NOME LUCCHETTO: " + this.state.response.oggetto);
+                addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
+                renderCustomComponent(ButtonObjectNames, {
+                    oggetti: scelte,
+                    oggettoCliccato: (o) => this.oggettoCliccato(o)
+                });
+            }
+        } else {
+            //Se non esistono lucchetti gli propongo di crearne uno di default
+            addResponseMessage("Sembra che tu non abbia lucchetti per interagire. Vuoi crearne uno? " +
+                "Scrivi \"si\" se vuoi crearlo, oppure \"no\" se vuoi scrivere da capo la regola.  ");
+            renderCustomComponent(ButtonObjectNames, {
+                oggetti: scelte,
+                oggettoCliccato: (o) => this.oggettoCliccato(o)
+            });
+            this.setState({elementoMancante: "confermaCreazioneOggetto"});
+        }
+
     }
 
+    createPadlockRule(lucchetto) {
+        let r;
+
+        r = Rule({
+            uuid: uuid.v4(),
+            name: 'regola del lucchetto ' + lucchetto.name,
+            event: Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: EventTypes.CLICK,
+                obj_uuid: lucchetto.uuid,
+            }),
+            actions: Immutable.List([Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: RuleActionTypes.UNLOCK_LOCK,
+                obj_uuid: lucchetto.uuid,
+            })]),
+        });
+
+        this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
+    }
 }
 
-class EudRule extends Component {
+class EudRule
+    extends Component {
     /**
      *
      * @param props
@@ -2096,7 +2158,7 @@ class ButtonObjectNames extends Component {
 
 /* Funzione per fare la richiesta a wit.ai e restituire l'intent di risposta trovato (Luca) */
 async function sendRequest(sentence) {
-    let CLIENT_TOKEN = "45NRTW3MHAX4S4B4FS3APRUK67BFSAFX"; //Token bot Wit.ai
+    let CLIENT_TOKEN = "ZURQC5XOJEARGLPUHYYUV4V6HH5IBR6K"; //Token bot Wit.ai
     /* Variabile che verrà restituita dal bot */
     let risposta = {
         intent: "",
@@ -2108,44 +2170,48 @@ async function sendRequest(sentence) {
     };
 
     const q = encodeURIComponent(sentence);
-    const uri = 'https://api.wit.ai/message?q=' + q;
+    const uri = 'https://api.wit.ai/message?v=20200513&q=' + q;
     const auth = 'Bearer ' + CLIENT_TOKEN;
 
     /* Se il bot non trova qualche pezzo allora il campo resta come inizializzato cioè: "" */
     return await fetch(uri, {headers: {Authorization: auth}})
         .then(res => res.json())
         .then(res => {
-                if (res.entities !== undefined) {
-                    if (res.entities.intent !== undefined) {
-                        risposta.intent = res.entities.intent[0].value;
+                if (res.intents !== undefined) {
+                    risposta.intent = res.intents[0].name;
 
-                        //Transizione
-                        if (res.entities.scenaIniziale !== undefined) {
-                            risposta.scenaIniziale = res.entities.scenaIniziale[0].value;
-                        }
-                        if (res.entities.scenaFinale !== undefined) {
-                            risposta.scenaFinale = res.entities.scenaFinale[0].value;
-                        }
-                        if (res.entities.oggetto !== undefined) {
-                            risposta.oggetto = res.entities.oggetto[0].value;
-                        }
-
-                        //Switch
-                        if (risposta.intent === "interazioneSwitch") {
-                            if (res.entities.statoIniziale !== undefined) {
-                                risposta.statoIniziale = res.entities.statoIniziale[0].value;
-                            }
-                            if (res.entities.statoFinale !== undefined) {
-                                risposta.statoFinale = res.entities.statoFinale[0].value;
-                            }
-                        }
-
-                    } else {
-                        console.log("Ricevuto intent sbagliato da Wit.AI");
+                    //Transizione
+                    if (res.entities["scenaIniziale:scenaIniziale"] !== undefined) {
+                        risposta.scenaIniziale = res.entities["scenaIniziale:scenaIniziale"][0].value;
+                    }
+                    if (res.entities["scenaFinale:scenaFinale"] !== undefined) {
+                        risposta.scenaFinale = res.entities["scenaFinale:scenaFinale"][0].value;
+                    }
+                    if (res.entities["oggetto:oggetto"] !== undefined) {
+                        risposta.oggetto = res.entities["oggetto:oggetto"][0].value;
                     }
 
+                    //Switch
+                    if (risposta.intent === "interazioneSwitch") {
+                        if (res.entities["statoIniziale:statoIniziale"] !== undefined) {
+                            risposta.statoIniziale = res.entities["statoIniziale:statoIniziale"][0].value;
+                        }
+                        if (res.entities["statoFinale:statoFinale"] !== undefined) {
+                            risposta.statoFinale = res.entities["statoFinale:statoFinale"][0].value;
+                        }
+                    }
 
+                    //Lucchetto
+                    if (risposta.intent === "interazioneLucchetto") {
+                        if (res.entities["statoFinale:statoFinale"] !== undefined) {
+                            risposta.statoFinale = res.entities["statoFinale:statoFinale"][0].value;
+                        }
+                    }
+
+                } else {
+                    console.log("Ricevuto intent sbagliato da Wit.AI");
                 }
+
                 return risposta;
             }
         )
