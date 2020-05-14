@@ -264,6 +264,19 @@ const Actions = {
     },
 
     /**
+     * Dispatch new runState to ad to the current
+     * @param entityType vale 'runState' se entity è una runState già costruita, oppure vale 'object' se entity è un oggetto semplicemente da aggiungere alla runState giò esistente
+     * @param entity
+     */
+    updateDebugRunState(entityType, entity){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_DEBUG_RUN_STATE,
+            responseType: entityType,
+            response: entity,
+        });
+    },
+
+    /**
      * Triggered when creating/editing a new audio
      * @param bool true if creating, false if editing
      */

@@ -73,21 +73,16 @@ function AppView(props) {
         case ActionTypes.DEBUG_MODE_ON:
             let vrScene = <VRScene debug={true} {...props}/>;
 
-            let debugProps = {
-                ...props,
-               /* debugRunState: EditorState.debugRunState*/
-            };
-
             return (
                 <div>
-                    <TopBar {...debugProps}/>
+                    <TopBar {...props}/>
                     <div className={'grid-container'}>
-                        <LeftBar {...debugProps} />
-                        <DebugTab {...debugProps} />
+                        <LeftBar {...props} />
+                        <DebugTab {...props} />
                         <div className={"scene"} id={"debug-scene"}>
                             {vrScene}
                         </div>
-                        <EudRuleEditor {...debugProps} VRScene={vrScene}/>
+                        <EudRuleEditor {...props} VRScene={vrScene}/>
                     </div>
                 </div>
             );

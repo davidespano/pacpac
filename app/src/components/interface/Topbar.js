@@ -366,7 +366,6 @@ function handleDebugMode(props) {
     }
 }
 
-
 /**
  * Generates a new InteractiveObject with default values according to the given type and calls the function for stores
  * update (including association between scene and object and generation of the default rule)
@@ -600,6 +599,14 @@ function createObject(props, type){
                     props.addNewRule(scene, defaultRule);
                 }
             }
+            /* Aggiunta dell'oggetto appena creato al debugRunState */
+            props.updateDebugRunState('object', {
+                uuid : obj.uuid,
+                obj: {state: obj.properties.state,
+                    visible: obj.visible, activable: obj.activable,
+                    step: obj.properties.step
+                },
+            });
         }
 
     } else {

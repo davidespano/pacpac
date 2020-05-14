@@ -5,6 +5,7 @@ import EditorState from "./EditorState";
 import Immutable from "immutable";
 import SceneAPI from "../utils/SceneAPI";
 import ScenesStore from "./ScenesStore";
+import {createGlobalObjectForNewScene} from "../components/interface/Topbar";
 
 class EditorStateStore extends ReduceStore {
 
@@ -104,8 +105,6 @@ class EditorStateStore extends ReduceStore {
                 return state.set('audioToEdit', action.audio);
             case ActionTypes.SELECT_TAG_NEW_SCENE:
                 return state.set('selectedTagNewScene', action.tag);
-            case ActionTypes.SET_DEBUG_RUN_STATE:
-                return state.set('debugRunState', action.response);
             case ActionTypes.SET_HOME_SCENE:
                 return state.set('homeScene', action.scene);
             case ActionTypes.SET_GAME_TITLE:
@@ -116,6 +115,24 @@ class EditorStateStore extends ReduceStore {
                 return state.set('audioFilter', action.filter);
             case ActionTypes.UPDATE_DEBUG_SAVE_NAME_FILTER:
                 return state.set('debugSavesFilter', action.filter);
+            case ActionTypes.UPDATE_DEBUG_RUN_STATE:
+                let debugRunState = state.get('debugRunState');
+                if(!debugRunState){ // In caso il debugRunState sia vuoto, allora è da creare
+                    debugRunState = {};
+                }
+                /* action.responseType ha due valori possibili:
+                *   'runState' se action.response è un runState già costuito;
+                *   'object' se action.respose è un oggetto js che rappresenta un oggetto da aggiungere o sovrascrivere alla runState già presente.
+                *            In questo caso action.response contiene due campi:
+                *               - action.response.uuid rappresenta l'identificatore dell'oggetto da aggiungere;
+                *               - action.response.obj rappresenta le proprietà effettive dell'oggetto */
+                let responseType = action.responseType;
+                if(responseType === 'runState'){
+                    debugRunState = {...debugRunState, ...action.response};
+                } else {
+                    debugRunState[action.response.uuid] = action.response.obj;
+                }
+                return state.set('debugRunState', debugRunState);
             case ActionTypes.UPDATE_CURRENT_SCENE:
                 return state.set('sceneOptions', action.scene);
             case ActionTypes.UPDATE_CURRENT_OBJECT:
