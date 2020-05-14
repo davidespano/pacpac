@@ -224,7 +224,7 @@ export default class VRScene extends React.Component {
             // scene init for debug purposes
             scene = gameGraph['scenes'][this.props.currentScene]; //[Vittoria]prendo la scena su cui ho cliccato
             //EditorState.debugRunState = runState;
-            this.props.setDebugRunState({...runState});
+            this.props.updateDebugRunState('runState', {...runState});
         }
 
         this.setState({

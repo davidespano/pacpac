@@ -102,13 +102,6 @@ const Actions = {
         })
     },
 
-    setDebugRunState(runState){
-        AppDispatcher.dispatch({
-            type: ActionTypes.SET_DEBUG_RUN_STATE,
-            response: runState,
-        });
-    },
-
     debugSave(response){
         AppDispatcher.dispatch({
             type: ActionTypes.DEBUG_SAVE,
@@ -262,6 +255,19 @@ const Actions = {
             type: ActionTypes.UPDATE_DEBUG_SAVE_NAME_FILTER,
             filter: filter,
         })
+    },
+
+    /**
+     * Dispatch new runState to ad to the current
+     * @param entityType vale 'runState' se entity è una runState già costruita, oppure vale 'object' se entity è un oggetto semplicemente da aggiungere alla runState giò esistente
+     * @param entity
+     */
+    updateDebugRunState(entityType, entity){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_DEBUG_RUN_STATE,
+            responseType: entityType,
+            response: entity,
+        });
     },
 
     /**

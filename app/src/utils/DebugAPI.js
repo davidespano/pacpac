@@ -18,23 +18,20 @@ function loadDebugState(saveName) {
                 console.log(response.body);
                 return console.error(err);
             }
-            console.log("not error", response.body);
-                if (response.body && response.body !== []) {
-                    response.body.objectStates.map((rec) => {
-                        let s = Immutable.Record({
-                            uuid: rec.uuid,
-                            state: rec.state,
-                        });
-                    });
 
-                    let arr = response.body.objectStates.reduce(function (map, obj) {
-                        map[obj.uuid] = Object({state: obj.state});
-                        return map;
-                    }, {});
-
-                    Actions.updateCurrentScene(response.body.currentScene);
-                    Actions.setDebugRunState({...arr});
+            if (response.body && response.body !== []) {
+                //Creazione del debugRunState
+                let debugRunState = {};
+                // response.body.objectStates è un array di oggetti di gioco
+                for(let obj of response.body.objectStates){
+                    let {saveName, saveDescription, uuid, ...properties} = obj;
+                    debugRunState[uuid] = properties;
                 }
+
+                Actions.updateCurrentScene(response.body.currentScene);
+                Actions.updateDebugRunState('runState', {...debugRunState});
+            }
+            return null;
 
         });
 }
