@@ -126,14 +126,19 @@ function saveForm(props) {
     const name = document.getElementById("save-name").value;
     const description = document.getElementById("save-description").value;
 
+    let sceneUuid = props.debugFromScene === undefined ? props.currentScene : props.debugFromScene;
+    let currentSceneObj = Object.values(props.scenes.get(sceneUuid).objects).flat();
+
     let objStateMap = new Immutable.OrderedMap(Object.keys(props.editor.debugRunState)
-        .map(i => [i, props.editor.debugRunState[i.toString()]]))
-        .filter((k, v) => props.interactiveObjects.get(v) !== undefined);
+                                                     .map(i => [i, props.editor.debugRunState[i.toString()]]))
+        .filter((k, v) => props.interactiveObjects.get(v) !== undefined  && currentSceneObj.includes(v))
+        .map((v, k) => Object({uuid: k, ...v}))
+        .toArray();
 
     props.debugSave({
         saveName: name,
         saveDescription: description,
-        currentScene: props.debugFromScene === undefined ? props.currentScene : props.debugFromScene,
+        currentScene: sceneUuid,
         objectStates: objStateMap,
     });
 

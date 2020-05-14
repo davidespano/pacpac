@@ -52,7 +52,6 @@ function listSaves(props, path) {
         // Nessun salvataggio contiene filter nel suo nome
         return false;
     };
-    console.log('debugSaves', props.editor.debugSaves);
     return ([...props.scenes.values()].map(child => {
         let s;
         s = {border: '2px solid black'};
