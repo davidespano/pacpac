@@ -381,7 +381,6 @@ export function handleGraphViewMode(props){
         document.getElementById("nav-tabContent").hidden = true;
     }
 }
-
 /**
  * Generates a new InteractiveObject with default values according to the given type and calls the function for stores
  * update (including association between scene and object and generation of the default rule)

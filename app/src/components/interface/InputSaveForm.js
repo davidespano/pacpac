@@ -149,7 +149,6 @@ function InputSaveForm(props) {
 }
 
 function saveForm(props) {
-    console.log('fgb');
     const name = document.getElementById("save-name").value;
     const description = document.getElementById("save-description").value;
 
