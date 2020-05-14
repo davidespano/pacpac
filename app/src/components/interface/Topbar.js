@@ -680,6 +680,14 @@ export function createObject(props, type){
                     props.addNewRule(scene, defaultRule);
                 }
             }
+            /* Aggiunta dell'oggetto appena creato al debugRunState */
+            props.updateDebugRunState('object', {
+                uuid : obj.uuid,
+                obj: {state: obj.properties.state,
+                    visible: obj.visible, activable: obj.activable,
+                    step: obj.properties.step
+                },
+            });
         }
 
 
