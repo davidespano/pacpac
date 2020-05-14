@@ -19,7 +19,7 @@ function createUpdateDebugState(session, debugState, gameID) {
         'MERGE (o:Debug:DebugObject {uuid: object.uuid, saveName: $saveName, saveDescription: $saveDescription}) ' +
         'SET o += object ' +
         'MERGE (state)-[:STORES_OBJECT]->(o) ' +
-        'RETURN state', {saveName: saveName, saveDescription: saveDescription, state: state, objectStates: objectStates})
+        'RETURN state', {/*saveName: saveName, saveDescription: saveDescription, */state: state, objectStates: objectStates})
         .then(() => debugState);
 }
 

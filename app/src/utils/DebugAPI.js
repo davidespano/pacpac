@@ -10,7 +10,6 @@ const request = require('superagent');
 const {apiBaseURL} = settings;
 
 function loadDebugState(saveName) {
-    console.log(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`);
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
@@ -37,9 +36,6 @@ function loadDebugState(saveName) {
 }
 
 function saveDebugState(saveName, saveDescription, sceneUuid, objects) {
-
-    let map = objects.map((v, k) => Object({uuid: k, ...v})).toArray();
-
     request.put(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state`)
         .set('Accept', 'application/json')
         .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
@@ -47,7 +43,7 @@ function saveDebugState(saveName, saveDescription, sceneUuid, objects) {
             saveName: saveName,
             saveDescription: saveDescription,
             currentScene: sceneUuid,
-            objectStates: map,
+            objectStates: objects,
         })
         .end(function (err, response) {
             if (err) {
@@ -67,7 +63,6 @@ function getAllSaves() {
             }
             /* Nessun errore nella richiesta, nel body della response c'è un array che contiene
                tutti i salvataggi del gioco corrente, di tutte le scene */
-            console.log(response.body);
 
             if (response.body && response.body !== []) {
                 /* debugSaves è una Immutable.OrderedMap dove <K, V> = <uuid scene, Immutable.Set of K saves> */
@@ -79,8 +74,6 @@ function getAllSaves() {
                     }
                     debugSaves = debugSaves.update(save.currentScene, set => set.add(save));
                 });
-
-                console.log("DebugAPI/debugSaves", debugSaves.toArray());
 
                 Actions.loadDebugSaves(debugSaves);
 
