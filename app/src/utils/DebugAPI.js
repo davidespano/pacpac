@@ -10,7 +10,6 @@ const request = require('superagent');
 const {apiBaseURL} = settings;
 
 function loadDebugState(saveName) {
-    console.log(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`);
     request.get(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/debug/state/${saveName}`)
         .set('Accept', 'application/json')
         .end(function (err, response) {
@@ -76,7 +75,6 @@ function getAllSaves() {
                     debugSaves = debugSaves.update(save.currentScene, set => set.add(save));
                 });
                 console.log("DebugAPI/debugSaves", debugSaves.toArray());
-
                 Actions.loadDebugSaves(debugSaves);
                 return null;
             } else {
