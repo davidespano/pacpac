@@ -10,6 +10,7 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 const Button = (defaultValues) => InteractiveObject({
     type : InteractiveObjectsTypes.BUTTON,
     properties : {
+        keypadUuid: null,
     },
     media : {
         media0 : null,

@@ -424,17 +424,18 @@ function createObject(props, type){
                 });
                 break;
             case InteractiveObjectsTypes.KEYPAD: //TODO KEYPAD rivedere questi parametri
-                name = scene.name + '_kp' + (scene.objects.keypads.length + 1);
-                obj = Keypad ({
-                    uuid : uuid.v4(),
-                    name : name,
-                    properties: {
-                        state: null,
-                        buttonUuid: [],
-                        buttonValue: [],
-                        combination : [Math.floor(Math.random() * 1000)],
-                    }
-                });
+                if (scene.objects.keypads.length == 0){
+                    name = scene.name + '_kp' + (scene.objects.keypads.length + 1);
+                    obj = Keypad ({
+                        uuid : uuid.v4(),
+                        name : name,
+                        properties: {
+                            state: null,
+                            buttonsValues: {},
+                            combination : [Math.floor(Math.random() * 1000)],
+                        }
+                    });
+                }
                 break;
             case InteractiveObjectsTypes.SELECTOR: //TODO SELECTOR rivedere questi parametri
                 name = scene.name + '_sl' + (scene.objects.selectors.length + 1);
@@ -453,6 +454,7 @@ function createObject(props, type){
                     uuid : uuid.v4(),
                     name : name,
                     properties: {
+                        keypadUuid: null,
                     }
                 });
                 break;

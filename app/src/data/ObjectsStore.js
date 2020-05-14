@@ -4,7 +4,8 @@ import ActionTypes from '../actions/ActionTypes';
 import Immutable from 'immutable';
 import stores_utils from "./stores_utils";
 import scene_utils from "../scene/scene_utils";
-
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
+import InteractiveObjectAPI from "../utils/InteractiveObjectAPI";
 
 class ObjectsStore extends ReduceStore {
 
@@ -23,7 +24,44 @@ class ObjectsStore extends ReduceStore {
     reduce(state, action){
         switch(action.type){
             case ActionTypes.ADD_NEW_OBJECT:
-                state = state.set(action.obj.uuid, action.obj).sort(stores_utils.alphabetical); //Aggiornamento dello stato
+                let obj = action.obj;
+                if (action.obj.type === InteractiveObjectsTypes.KEYPAD){
+                    //Quando creo un tastierino, aggiorno tutti i pulsanti della scena per esserne parte
+                    let buttons = action.scene.objects.buttons;
+                    if (buttons.size !== 0){
+                        buttons.forEach(b => {
+                            let properties = b.get['properties'];
+                            properties['keypadUuid'] = obj.uuid;
+                            let new_b = b.setIn(['properties'], properties);
+                            state = state.set(new_b.uuid, new_b)
+                            InteractiveObjectAPI.saveObject(action.scene, new_b);
+
+                            //inserisco i valori dei pulsanti e i loro uuid nel tastierino
+                            properties = obj.get['properties'];
+                            properties['buttonsValues'][new_b.uuid] = null;
+                            obj = obj.setIn(['properties'], properties);
+                        })
+                    }
+                }
+
+                if (action.obj.type === InteractiveObjectsTypes.BUTTON){
+                    let keypad = action.scene.objects.keypads;
+                    if (keypad.size !== 0){
+                        keypad.forEach(k => {
+                            //assegno al tastierino il pulsante appena creato
+                            let properties = k.get['properties'];
+                            properties['buttonsValues'][obj.uuid] = null;
+                            let new_k = k.setIn(['properties'], properties);
+                            state = state.set(new_k.uuid, new_k)
+                            InteractiveObjectAPI.saveObject(action.scene, new_k);
+                            //assegno il uuid del tastierino alle proprietà del pulsante
+                            properties = obj.get['properties'];
+                            properties['keypadUuid'] = obj.uuid;
+                            obj = obj.setIn(['properties'], properties);
+                        })
+                    }
+                }
+                state = state.set(obj.uuid, obj).sort(stores_utils.alphabetical); //Aggiornamento dello stato
                 return state;
             case ActionTypes.RECEIVE_OBJECT:
                 state = state.set(action.obj.uuid, action.obj).sort(stores_utils.alphabetical);

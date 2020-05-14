@@ -335,10 +335,10 @@ function generateSpecificProperties(object, objectScene, props){
             let buttonList = allObjects.map(obj_uuid => {
                 let obj = props.interactiveObjects.get(obj_uuid);
                 if(obj.type == InteractiveObjectsTypes.BUTTON){
+                    interface_utils.setPropertyFromValue(obj, 'keypadUuid',object.uuid, props);
                     return (
                         <div className={'options-grid'}>
                             <label className={'options-labels'}>{obj.name}</label>
-
                         </div>
                     );
                 }

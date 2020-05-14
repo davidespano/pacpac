@@ -12,12 +12,10 @@ const Keypad = (defaultValues) => InteractiveObject({
     properties : {
         state: null,
         combination : null, //must be an array
-        buttonUuid: [],
-        buttonValue:[],
+        buttonsValues: {},
     },
     media : {
         media0 : null,
-
     },
     audio : {
         audio0: null,
