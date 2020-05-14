@@ -31,6 +31,7 @@ import Orders from "../../data/Orders";
 import Transition from "../../interactives/Transition";
 import Switch from "../../interactives/Switch";
 import Lock from "../../interactives/Lock";
+import Key from "../../interactives/Key";
 
 let uuid = require('uuid');
 var ghostScene=null;
@@ -428,6 +429,10 @@ export default class EudRuleEditor extends Component {
                                     risposta.oggetto = await this.createDefaultObject(this.props, "LOCK");
                                     addResponseMessage("Lucchetto aggiunto");
                                     break;
+                                case "interazioneChiave":
+                                    risposta.oggetto = await this.createDefaultObject(this.props, "KEY");
+                                    addResponseMessage("Chiave aggiunta");
+                                    break;
                                 default:
                                     addResponseMessage("C'è stato qualche problema nella creazione dell'oggetto.")
                             }
@@ -460,6 +465,10 @@ export default class EudRuleEditor extends Component {
                                 case "interazioneLucchetto":
                                     let padlockObject = this.returnObjectByName(risposta.oggetto, "LOCK");
                                     this.createPadlockRule(padlockObject);
+                                    break;
+                                case "interazioneChiave":
+                                    let keyObject = this.returnObjectByName(risposta.oggetto, "KEY");
+                                    this.createKeyRule(keyObject);
                                     break;
                                 default:
                                     addResponseMessage("C'è stato qualche problema nella creazione della regola.")
@@ -503,6 +512,9 @@ export default class EudRuleEditor extends Component {
                 break;
             case "interazioneLucchetto":
                 this.padlockElementsControl();
+                break;
+            case "interazioneChiave":
+                this.keyElementControl();
                 break;
             default:
                 addResponseMessage("Non è una transizione, una interazione con lo switch e neanche un interazione con " +
@@ -632,8 +644,15 @@ export default class EudRuleEditor extends Component {
                     name: name,
                 });
                 break;
+            case "KEY":
+                name = scene.name + '_key' + (scene.objects.collectable_keys.length + 1);
+                obj = Key({
+                    uuid: uuid.v4(),
+                    name: name,
+                });
+                break;
             default:
-                return undefined;
+                addResponseMessage("C'è stato un problema con la creazione dell'oggetto di default. ");
         }
 
 
@@ -883,7 +902,6 @@ export default class EudRuleEditor extends Component {
             });
             this.setState({elementoMancante: "confermaCreazioneOggetto"});
         }
-
     }
 
     createPadlockRule(lucchetto) {
@@ -903,6 +921,72 @@ export default class EudRuleEditor extends Component {
                 subj_uuid: InteractiveObjectsTypes.PLAYER,
                 action: RuleActionTypes.UNLOCK_LOCK,
                 obj_uuid: lucchetto.uuid,
+            })]),
+        });
+
+        this.props.addNewRule(this.props.scenes.get(CentralSceneStore.getState()), r);
+    }
+
+    /** CHIAVI */
+    keyElementControl() {
+        let chiavi = this.returnObjectNames("KEY");
+        let scelte = ["Si", "No"];
+
+        //Controllo se nella scena esistono chiavi se no chiedo all'utente se ne vuole creare una di default.
+        if (this.returnObjectNames("KEY").length > 0) {
+
+            /* Controllo che il NOME della chiave inserito dall'utente esista tra le chiavi esistenti nel gioco. */
+            if (!this.doesObjectExists(this.state.response.oggetto, "KEY")) {
+                addResponseMessage("Hai inserito il nome di una chiave che non esiste. Perfavore scegli tra una di queste: ");
+                renderCustomComponent(ButtonObjectNames, {
+                    oggetti: chiavi,
+                    oggettoCliccato: (o) => this.oggettoCliccato(o)
+                });
+                this.setState({elementoMancante: "oggetto"});
+            } else {
+                // Se HO TUTTO
+                /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
+                addResponseMessage("Ho tutto.");
+                this.setState({elementoMancante: "confermaCreazioneRegola"});
+                addResponseMessage("Presumo che se stai scrivendo una regola base per la chiave, il tuo intento è quello di " +
+                    "raccoglierla quando la clicchi. " +
+                    "Dunque: I dati della tua regola sono questi: AZIONE: raccogli" +
+                    " NOME CHIAVE: " + this.state.response.oggetto);
+                addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
+                renderCustomComponent(ButtonObjectNames, {
+                    oggetti: scelte,
+                    oggettoCliccato: (o) => this.oggettoCliccato(o)
+                });
+            }
+        } else {
+            //Se non esistono chiavi gli propongo di crearne una di default
+            addResponseMessage("Sembra che tu non abbia chiavi per interagire. Vuoi crearne una? " +
+                "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
+            renderCustomComponent(ButtonObjectNames, {
+                oggetti: scelte,
+                oggettoCliccato: (o) => this.oggettoCliccato(o)
+            });
+            this.setState({elementoMancante: "confermaCreazioneOggetto"});
+        }
+    }
+
+    createKeyRule(chiave) {
+        let r;
+
+        r = Rule({
+            uuid: uuid.v4(),
+            name: 'regola della chiave ' + chiave.name,
+            event: Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: EventTypes.CLICK,
+                obj_uuid: chiave.uuid,
+            }),
+            actions: Immutable.List([Action({
+                uuid: uuid.v4(),
+                subj_uuid: InteractiveObjectsTypes.PLAYER,
+                action: RuleActionTypes.COLLECT_KEY,
+                obj_uuid: chiave.uuid,
             })]),
         });
 
