@@ -1953,7 +1953,7 @@ h6 {
     padding: 2% 15% 2% 15%;
     margin-top: 3%;
     margin-left: -13%;
-    margin-right: -13%;
+    margin-right: -13% !important;
     text-align: center;
     cursor: pointer;
 }
