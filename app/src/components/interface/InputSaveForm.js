@@ -132,7 +132,6 @@ function InputSaveForm(props) {
                             <button type="button"
                                     id="save-submit-button"
                                     className="btn btn-secondary buttonConferm"
-
                                     onClick={() => {saveForm(props); clearForm()}}
                                     data-dismiss="modal"
                                     >
