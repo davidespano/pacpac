@@ -22,7 +22,6 @@ function InputSaveForm(props) {
 
     //Recupero gli elementi del form
     let submitButton = document.getElementById('save-submit-button');
-
     let nameField = document.getElementById('save-name');
     let descriptionField = document.getElementById('save-description');
     let errorMessageNotValidName = document.getElementById('error-message');
@@ -69,6 +68,13 @@ function InputSaveForm(props) {
         errorMessageFields.innerHTML = submitButton.disabled === true ? 'Compila tutti i campi correttamente' : '';
     };
 
+    let clearForm = () => {
+        errorMessageNotValidName.innerHTML = '';
+        errorMessageFields.innerHTML = '';
+        nameField.value = "";
+        descriptionField.value = "";
+    };
+
     return (
         <div id={"register"}>
             <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
@@ -77,7 +83,8 @@ function InputSaveForm(props) {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="register-modal-label">Salvataggio</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close"
+                            onClick={() => clearForm()}>
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -106,7 +113,7 @@ function InputSaveForm(props) {
                             <button type="button"
                                     id="save-submit-button"
                                     className="btn btn-secondary buttonConferm"
-                                    onClick={() => saveForm(props)}
+                                    onClick={() => {saveForm(props); clearForm()}}
                                     data-dismiss="modal"
                                     >
                                 Conferma
