@@ -366,9 +366,10 @@ div.rules{
     border-radius: 4px;
 }
 
-#transitionDuration, #point-of-interest-delay {
+#transitionDuration, .button-Value, #combination, #point-of-interest-delay {
     padding: 5px;
     width: 50%;
+    min-width: 50%;
 }
 
 .figure-grid {
@@ -760,6 +761,11 @@ figcaption {
     cursor: pointer;
     color: orangered;
     border-radius: 5px;
+}
+
+.buttonValuesLabels
+{
+    margin-bottom: 0!important;
 }
 
 .object-thumbnail {

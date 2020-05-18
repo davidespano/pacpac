@@ -209,14 +209,14 @@ function TopBar(props){
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //createObject(props, InteractiveObjectsTypes.BUTTON);
+                                    createObject(props, InteractiveObjectsTypes.BUTTON);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.BUTTON)}/>
                             <figcaption>Pulsante</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //createObject(props, InteractiveObjectsTypes.KEYPAD);
+                                    createObject(props, InteractiveObjectsTypes.KEYPAD);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEYPAD)}/>
                             <figcaption>Tastierino</figcaption>
@@ -435,6 +435,10 @@ function createObject(props, type){
                             combination : [Math.floor(Math.random() * 1000)],
                         }
                     });
+                }
+                else{
+                    alert("Hai già un oggetto tastierino in questa scena")
+                    return;
                 }
                 break;
             case InteractiveObjectsTypes.SELECTOR: //TODO SELECTOR rivedere questi parametri

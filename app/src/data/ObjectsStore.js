@@ -28,16 +28,16 @@ class ObjectsStore extends ReduceStore {
                 if (action.obj.type === InteractiveObjectsTypes.KEYPAD){
                     //Quando creo un tastierino, aggiorno tutti i pulsanti della scena per esserne parte
                     let buttons = action.scene.objects.buttons;
-                    if (buttons.size !== 0){
+                    if (buttons.length !== 0){
                         buttons.forEach(b => {
-                            let properties = b.get['properties'];
+                            let currentB = state.get(b);
+                            let properties = currentB.get('properties');
                             properties['keypadUuid'] = obj.uuid;
-                            let new_b = b.setIn(['properties'], properties);
+                            let new_b = currentB.setIn(['properties'], properties);
                             state = state.set(new_b.uuid, new_b)
                             InteractiveObjectAPI.saveObject(action.scene, new_b);
-
                             //inserisco i valori dei pulsanti e i loro uuid nel tastierino
-                            properties = obj.get['properties'];
+                            properties = obj.get('properties');
                             properties['buttonsValues'][new_b.uuid] = null;
                             obj = obj.setIn(['properties'], properties);
                         })
@@ -46,17 +46,18 @@ class ObjectsStore extends ReduceStore {
 
                 if (action.obj.type === InteractiveObjectsTypes.BUTTON){
                     let keypad = action.scene.objects.keypads;
-                    if (keypad.size !== 0){
+                    if (keypad.length !== 0){
                         keypad.forEach(k => {
-                            //assegno al tastierino il pulsante appena creato
-                            let properties = k.get['properties'];
+                            //aggiungo al tastierino il pulsante appena creato
+                            let currentK = state.get(k);
+                            let properties = currentK.get('properties');
                             properties['buttonsValues'][obj.uuid] = null;
-                            let new_k = k.setIn(['properties'], properties);
+                            let new_k = currentK.setIn(['properties'], properties);
                             state = state.set(new_k.uuid, new_k)
                             InteractiveObjectAPI.saveObject(action.scene, new_k);
-                            //assegno il uuid del tastierino alle proprietà del pulsante
-                            properties = obj.get['properties'];
-                            properties['keypadUuid'] = obj.uuid;
+                            //assegno il uuid del tastierino alla proprietà del pulsante
+                            properties = obj.get('properties');
+                            properties['keypadUuid'] = new_k.uuid;
                             obj = obj.setIn(['properties'], properties);
                         })
                     }
@@ -67,6 +68,21 @@ class ObjectsStore extends ReduceStore {
                 state = state.set(action.obj.uuid, action.obj).sort(stores_utils.alphabetical);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
+                if (action.obj.type === InteractiveObjectsTypes.BUTTON) {
+                    let keypad = action.scene.objects.keypads;
+                    if (keypad.length !== 0){
+                        keypad.forEach(k => {
+                            //aggiungo al tastierino il pulsante appena creato
+                            let currentK = state.get(k);
+                            let properties = currentK.get('properties');
+                            //properties['buttonsValues'][obj.uuid] = null;
+                            delete properties['buttonsValues'][action.obj.uuid];
+                            let new_k = currentK.setIn(['properties'], properties);
+                            state = state.set(new_k.uuid, new_k)
+                            InteractiveObjectAPI.saveObject(action.scene, new_k);
+                        })
+                    }
+                }
                 state = state.delete(action.obj.uuid);
                 return state;
             case ActionTypes.UPDATE_OBJECT:

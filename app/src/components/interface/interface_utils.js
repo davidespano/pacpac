@@ -64,6 +64,15 @@ function setPropertyFromValue(object, property, value, props){
     }
 }
 
+function setButtonsValues(object, buttonID, value, props){
+    let properties = object.get('properties');
+    properties['buttonsValues'][buttonID] = value;
+    let newObject = object.setIn(['properties'], properties);
+    props.updateObject(newObject);
+    let scene = props.scenes.get(props.objectToScene.get(newObject.uuid));
+    InteractiveObjectAPI.saveObject(scene, newObject);
+}
+
 function updateAudioVertices(audio, vertices, props) {
     audio=audio.set('vertices', vertices)
     props.selectAudioToEdit(audio);
@@ -355,4 +364,5 @@ export default {
     highlightRule: highlightRule,
     updateAudioVertices: updateAudioVertices,
     getObjImg: getObjImg,
+    setButtonsValues : setButtonsValues,
 }

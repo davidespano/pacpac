@@ -82,7 +82,8 @@ function generateProperties(props){
         currentObject.type == InteractiveObjectsTypes.SCORE ||
         currentObject.type == InteractiveObjectsTypes.HEALTH ||
         currentObject.type == InteractiveObjectsTypes.TIMER ||
-        currentObject.type == InteractiveObjectsTypes.TEXTBOX)
+        currentObject.type == InteractiveObjectsTypes.TEXTBOX ||
+        currentObject.type == InteractiveObjectsTypes.KEYPAD)
     {}
     else
     {// gli oggetti globali e alcuni altri non hanno bisogno della geometria impostata dall'utente
@@ -159,9 +160,10 @@ function generateProperties(props){
                     property={'activable'}
                     defaultValue={currentObject.activable}/>
             </div>
+            {geometryButton}
+
             {generateSpecificProperties(currentObject, objectScene, props)}
 
-            {geometryButton}
             {currentObject.media? mediaProperties(currentObject, props) : null}
             {currentObject.audio? audioProperties(currentObject, props) : null}
         </div>
@@ -329,44 +331,58 @@ function generateSpecificProperties(object, objectScene, props){
                 </div>
             );
         case InteractiveObjectsTypes.KEYPAD:
-            let scene = props.scenes.get(props.currentScene);
-            let allObjects = Object.values(scene.objects).flat();
+            let buttonsValues = object.properties.buttonsValues;
+            let buttonList = Object.keys(buttonsValues).map(button => {
+                console.log(button);
+                let obj = props.interactiveObjects.get(button);
+                let buttonValueID = obj.name +"value"
+                //interface_utils.setPropertyFromValue(obj, 'keypadUuid',object.uuid, props);
+                return (
+                    <React.Fragment>
+                        <p className={'objectsList-element-delete-button buttonValuesLabels'}
+                           onClick={()=> props.updateCurrentObject(obj)}>
+                            <img className={"object-thumbnail"} src={interface_utils.getObjImg(obj.type)}/>
+                            {obj.name}
+                        </p>
+                        <div>
+                            <div id={buttonValueID}
+                                 className={"propertyForm-right button-Value"}
+                                 contentEditable={true}
+                                 onBlur={()=> {
+                                     let value = document.getElementById(buttonValueID).textContent;
+                                     interface_utils.setButtonsValues(object, obj.uuid,value,props);
+                                 }}
+                                 onInput={() => interface_utils.onlyNumbers(buttonValueID)}
+                            >
+                                {buttonsValues[button]}
+                            </div>
 
-            let buttonList = allObjects.map(obj_uuid => {
-                let obj = props.interactiveObjects.get(obj_uuid);
-                if(obj.type == InteractiveObjectsTypes.BUTTON){
-                    interface_utils.setPropertyFromValue(obj, 'keypadUuid',object.uuid, props);
-                    return (
-                        <div className={'options-grid'}>
-                            <label className={'options-labels'}>{obj.name}</label>
                         </div>
-                    );
-                }
+
+                    </React.Fragment>
+                );
             });
 
-
             return(
-                <div className={"options-grid"}>
-                    <label className={'options-labels'}>Combinazione corretta:</label>
-                    <div className={'flex'}>
-                        <div id={"combination"}
-                             className={"propertyForm-right"}
-                             contentEditable={true}
-                             onBlur={()=> interface_utils.setPropertyFromId(object,'combination',"combination", props)}
-                             onInput={() => interface_utils.onlyNumbers("combination")}
-                        >
-                            {object.properties.combination}
+                <React.Fragment>
+                    <div className={"options-grid"}>
+                        <label className={'options-labels'}>Combinazione corretta:</label>
+                        <div className={'flex'}>
+                            <div id={"combination"}
+                                 className={"propertyForm-right"}
+                                 contentEditable={true}
+                                 onBlur={()=> interface_utils.setPropertyFromId(object,'combination',"combination", props)}
+                                 onInput={() => interface_utils.onlyNumbers("combination")}
+                            >
+                                {object.properties.combination}
+                            </div>
                         </div>
                     </div>
                     <label className={'rightbar-titles'}>Pulsanti:</label>
-                    <div className={'options-grid'}>
-
-                    </div>
-                    <div className={'flex'}>
-                        <span className={'measure-units'}>tasti</span>
+                    <div className={"options-grid"}>
                         {buttonList}
                     </div>
-                </div>
+                </React.Fragment>
             );
         case InteractiveObjectsTypes.TEXTBOX:
             return (
@@ -478,7 +494,29 @@ function generateSpecificProperties(object, objectScene, props){
                 </React.Fragment>
             );
         case InteractiveObjectsTypes.BUTTON:
-            return;
+            let properties = object.get('properties');
+            console.log(properties);
+            console.log(properties['keypadUuid']);
+            let keypad = props.interactiveObjects.get(properties['keypadUuid']);
+            if (keypad != undefined)
+            {
+                return(
+                    <React.Fragment>
+                        <label className={'rightbar-titles'}>Tastierino di riferimento:</label>
+                        <div className={"options-grid"}>
+                            <p className={'objectsList-element-delete-button'}
+                               onClick={()=> props.updateCurrentObject(keypad)}>
+                                <img className={"object-thumbnail"} src={interface_utils.getObjImg(keypad.type)}/>
+                                {keypad.name}
+                            </p>
+                        </div>
+                    </React.Fragment>
+                );
+            }
+            else
+            {
+                return
+            }
         case InteractiveObjectsTypes.PLAYTIME:
             return (
                 <React.Fragment>
