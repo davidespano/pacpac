@@ -64,10 +64,17 @@ function setPropertyFromValue(object, property, value, props){
     }
 }
 
+/**
+ *
+ * @param object is the keypad
+ * @param buttonID
+ * @param value to assign the button
+ * @param props
+ */
 function setButtonsValues(object, buttonID, value, props){
-    let properties = object.get('properties');
-    properties['buttonsValues'][buttonID] = value;
-    let newObject = object.setIn(['properties'], properties);
+    let properties = object.get('properties'); //properties contiene la mappa buttonValues
+    properties['buttonsValues'][buttonID] = value; //assegno il valore in base alla chiave del button
+    let newObject = object.setIn(['properties'], properties); //sovrascrivo l'oggetto con le proprietà aggiornate
     props.updateObject(newObject);
     let scene = props.scenes.get(props.objectToScene.get(newObject.uuid));
     InteractiveObjectAPI.saveObject(scene, newObject);

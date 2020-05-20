@@ -726,13 +726,11 @@ export default class VRScene extends React.Component {
             let scene = this.state.graph.scenes[sceneName];
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
-
             //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'
             //i media non sono tutti presenti nella scena
             //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
             //TODO [davide] rimosso perche' crea più listener per lo stesso evento
             //this.createRuleListeners();
-            //console.log("genero bolla: " ,scene.uuid)
             //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (
                 <Bubble key={"key" + scene.name}
@@ -784,6 +782,18 @@ export default class VRScene extends React.Component {
         }
     }
 
+    static increaseScoreValue(increaseBy, props)
+    {
+        let sum = window.scoreValue + increaseBy;
+        this.changePlaytimeValue(sum, props);
+    }
+
+    static decreaseScoreValue(decreaseBy, props)
+    {
+        let sub = window.scoreValue - decreaseBy;
+        this.changePlaytimeValue(sub, props);
+    }
+
     static changeScoreValue(newScoreValue, props){
         let scoreObj = document.getElementById(props.activeScene.name + 'score')
         if (scoreObj != null){
@@ -795,6 +805,18 @@ export default class VRScene extends React.Component {
                 ";color: #dbdbdb";
             scoreObj.setAttribute('text', textPropertiesSC);
         }
+    }
+
+    static increasePlaytimeValue(increaseBy, props)
+    {
+        let sum = window.playtimeValue + increaseBy;
+        this.changePlaytimeValue(sum, props);
+    }
+
+    static decreasePlaytimeValue(decreaseBy, props)
+    {
+        let sub = window.playtimeValue - decreaseBy;
+        this.changePlaytimeValue(sub, props);
     }
 
     static changePlaytimeValue(newPlaytimeValue, props){

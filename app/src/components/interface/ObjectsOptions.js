@@ -331,12 +331,10 @@ function generateSpecificProperties(object, objectScene, props){
                 </div>
             );
         case InteractiveObjectsTypes.KEYPAD:
-            let buttonsValues = object.properties.buttonsValues;
+            let buttonsValues = object.properties.buttonsValues; //leggo la mappa contenente i riferimenti a pulsanti e valori corrispondenti
             let buttonList = Object.keys(buttonsValues).map(button => {
-                console.log(button);
                 let obj = props.interactiveObjects.get(button);
                 let buttonValueID = obj.name +"value"
-                //interface_utils.setPropertyFromValue(obj, 'keypadUuid',object.uuid, props);
                 return (
                     <React.Fragment>
                         <p className={'objectsList-element-delete-button buttonValuesLabels'}
@@ -350,7 +348,7 @@ function generateSpecificProperties(object, objectScene, props){
                                  contentEditable={true}
                                  onBlur={()=> {
                                      let value = document.getElementById(buttonValueID).textContent;
-                                     interface_utils.setButtonsValues(object, obj.uuid,value,props);
+                                     interface_utils.setButtonsValues(object, obj.uuid, value, props);//questa è una funzione fatta appositamente
                                  }}
                                  onInput={() => interface_utils.onlyNumbers(buttonValueID)}
                             >
@@ -495,10 +493,8 @@ function generateSpecificProperties(object, objectScene, props){
             );
         case InteractiveObjectsTypes.BUTTON:
             let properties = object.get('properties');
-            console.log(properties);
-            console.log(properties['keypadUuid']);
             let keypad = props.interactiveObjects.get(properties['keypadUuid']);
-            if (keypad != undefined)
+            if (keypad != undefined)//se è presente il keypad nella scena, ne mostro il riferimento
             {
                 return(
                     <React.Fragment>
