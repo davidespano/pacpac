@@ -572,15 +572,24 @@ export default class VRScene extends React.Component {
                     "; align: center" +
                     "; width:" + timerSize +
                     "; value:" + window.timerTime;
-                let geometryProperties = "primitive: plane; width: 0.1" + (0.4 + timerSize)+
+                let geometryPropertiesTM = "primitive: plane; width: 0.1" + (0.4 + timerSize)+
                     "; height: auto;"
+                let timerPosition = '0 0.23 -0.3'
+                let timerImgPosition = (0.07) + (0.001 * timerObj.properties.size) +" 0.23 -0.3" //+0.075
+                let geometryPropertiesTMimg = "" + (0.02 + timerSize/50) + " " + (0.02 + timerSize/50) + " " +
+                    (0.02 + timerSize/50)
                 let visibility = true;
                 if (timerObj.visible == 'INVISIBLE')
                     visibility = false;
                 timerEntity =
-                    <Entity visible={true} geometry={geometryProperties} position={'0 0.23 -0.3'}
-                            id={timerID} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textProperties} visible={visibility}>
+                    <Entity>
+                        <a-plane id={this.state.activeScene.name + 'timerIMG'}
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)} position={timerImgPosition}
+                        scale={geometryPropertiesTMimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        <Entity visible={true} geometry={geometryPropertiesTM} position={timerPosition}
+                                id={timerID} material={'shader: flat; opacity: 0.85; color: black;'}
+                                text={textProperties} visible={visibility}>
+                        </Entity>
                     </Entity>
             }
             if (gameTimeObj) //se l'oggetto game time esiste genero la Entity
@@ -593,13 +602,22 @@ export default class VRScene extends React.Component {
                     ";color: #dbdbdb";
                 let geometryPropertiesPT = "primitive: plane; width: 0.12" + (0.4 + gameTimeSize)+
                     "; height: auto;"
+                let positionPT = "0.31 0.23 -0.3"
+                let geometryPropertiesPTimg = "" + (0.02 + gameTimeSize/50) + " " + (0.02 + gameTimeSize/50) + " " +
+                    (0.02 + gameTimeSize/50)
+                let positionPTimg = 0.355 + (0.006 * gameTimeObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (gameTimeObj.visible == 'INVISIBLE')
                     visibility = false;
                 gameTimeEntity =
-                    <Entity visible={true} geometry={geometryPropertiesPT} position={'0.31 0.23 -0.3'}
-                            id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textPropertiesPT} visible={visibility}>
+                    <Entity>
+                        <a-plane id={this.state.activeScene.name + 'gametimeIMG'}
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)} position="0.39 0.23 -0.3"
+                        scale={geometryPropertiesPTimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
+                                id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
+                                text={textPropertiesPT} visible={visibility}>
+                        </Entity>
                     </Entity>
             }
             if (scoreObj) //se l'oggetto score esiste genero la Entity
@@ -614,13 +632,22 @@ export default class VRScene extends React.Component {
                     ";color: #dbdbdb";
                 let geometryPropertiesSC = "primitive: plane; width: " + (0.05 + scoreSize/10)+
                     "; height:" + (0.02 + scoreSize/50) +";"
+                let positionSC = "-0.31 0.23 -0.3"
+                let geometryPropertiesSCimg = "" + (0.02 + scoreSize/50) + " " + (0.02 + scoreSize/50) + " " +
+                    (0.02 + scoreSize/50)
+                let positionSCimg = -(0.355) - (0.006 * scoreObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (scoreObj.visible == 'INVISIBLE')
                     visibility = false;
                 scoreEntity =
-                    <Entity visible={true} geometry={geometryPropertiesSC} position={'-0.31 0.23 -0.3'}
-                            id={this.state.activeScene.name + 'score'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textPropertiesSC} visible={visibility}>
+                    <Entity>
+                        <a-plane id={this.state.activeScene.name + 'scoreIMG'}
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.SCORE)} position={positionSCimg}
+                        scale={geometryPropertiesSCimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        <Entity visible={true} geometry={geometryPropertiesSC} position={positionSC}
+                                id={this.state.activeScene.name + 'score'} material={'shader: flat; opacity: 0.8; color: black;'}
+                                text={textPropertiesSC} visible={visibility}>
+                        </Entity>
                     </Entity>
             }
             if (healthObj) //se l'oggetto health esiste genero la Entity
@@ -635,13 +662,22 @@ export default class VRScene extends React.Component {
                     ";color: #dbdbdb";
                 let geometryPropertiesHL = "primitive: plane; width:" + (0.05 + healthSize/10) +
                     "; height:" + (0.02 + healthSize/50) +";"
+                let positionHL = "-0.31 0.19 -0.3"
+                let geometryPropertiesHLimg = "" + (0.02 + healthSize/50) + " " + (0.02 + healthSize/50) + " " +
+                    (0.02 + healthSize/50)
+                let positionHLimg = -(0.355) - (0.006 * healthObj.properties.size) +" 0.19 -0.3"
                 let visibility = true;
                 if (healthObj.visible == 'INVISIBLE')
                     visibility = false;
                 healthEntity =
-                    <Entity visible={true} geometry={geometryPropertiesHL} position={'-0.31 0.19 -0.3'}
-                            id={this.state.activeScene.name + 'health'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textPropertiesHL} visible={visibility}>
+                    <Entity>
+                        <a-plane id={this.state.activeScene.name + 'healthIMG'}
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.HEALTH)} position={positionHLimg}
+                        scale={geometryPropertiesHLimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        <Entity visible={true} geometry={geometryPropertiesHL} position={positionHL}
+                                id={this.state.activeScene.name + 'health'} material={'shader: flat; opacity: 0.85; color: black;'}
+                                text={textPropertiesHL} visible={visibility}>
+                        </Entity>
                     </Entity>
             }
 
