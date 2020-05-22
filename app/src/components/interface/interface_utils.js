@@ -342,13 +342,13 @@ function getObjImg(objType) {
         case InteractiveObjectsTypes.SELECTOR:
             return "icons/icons8-selector-100.png";
         case InteractiveObjectsTypes.TIMER:
-            return  "icons/icons8-cronometro-100.png"
+            return  "icons/icons8-cronometro-100.png";
         case InteractiveObjectsTypes.HEALTH:
-            return  "icons/icons8-health-100.png"
+            return  "icons/icons8-health-100.png";
         case InteractiveObjectsTypes.SCORE:
-            return  "icons/icons8-score-100.png"
+            return  "icons/icons8-score-100.png";
         case InteractiveObjectsTypes.PLAYTIME:
-            return  "icons/icons8-orologio-100.png"
+            return  "icons/icons8-orologio-100.png";
         default:
             return "icons/icons8-plus-math-filled-100.png";
     }

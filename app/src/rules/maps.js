@@ -182,7 +182,8 @@ const RuleActionMap = Immutable.Map([
         RuleActionTypes.INCREASE,
         {
             type: "operation",
-            subj_type: [InteractiveObjectsTypes.COUNTER],
+            subj_type: [InteractiveObjectsTypes.COUNTER, InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.SCORE, InteractiveObjectsTypes.PLAYTIME],
             obj_type: ['number'],
             name: toString.eventTypeToString(RuleActionTypes.INCREASE),
             uuid: RuleActionTypes.INCREASE,
@@ -248,8 +249,27 @@ const RuleActionMap = Immutable.Map([
             uuid: RuleActionTypes.STOP_TIMER,
         },
     ],
+    [
+        RuleActionTypes.INCREASE_NUMBER,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.HEALTH, InteractiveObjectsTypes.SCORE],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.INCREASE_NUMBER),
+            uuid: RuleActionTypes.INCREASE_NUMBER,
+        },
+    ],
+    [
+        RuleActionTypes.DECREASE_NUMBER,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.HEALTH, InteractiveObjectsTypes.SCORE],
+            obj_type: ['number'],
+            name: toString.eventTypeToString(RuleActionTypes.DECREASE_NUMBER),
+            uuid: RuleActionTypes.DECREASE_NUMBER,
+        },
+    ],
 ]);
-
 
 const OperatorsMap = Immutable.Map([
     [
@@ -262,6 +282,7 @@ const OperatorsMap = Immutable.Map([
                 InteractiveObjectsTypes.TRANSITION,
                 InteractiveObjectsTypes.POINT_OF_INTEREST,
                 InteractiveObjectsTypes.COUNTER,
+                InteractiveObjectsTypes.HEALTH,
             ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.EQUAL),
@@ -278,6 +299,7 @@ const OperatorsMap = Immutable.Map([
                 InteractiveObjectsTypes.TRANSITION,
                 InteractiveObjectsTypes.POINT_OF_INTEREST,
                 InteractiveObjectsTypes.COUNTER,
+                InteractiveObjectsTypes.HEALTH,
             ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.NOT_EQUAL),
@@ -287,7 +309,7 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.EQUAL_NUM,
         {
-            subj_type: [InteractiveObjectsTypes.COUNTER],
+            subj_type: [InteractiveObjectsTypes.COUNTER, InteractiveObjectsTypes.HEALTH],
             type: "operator",
             name: toString.operatorUuidToString(Operators.EQUAL_NUM),
             uuid: Operators.EQUAL_NUM,
@@ -296,7 +318,7 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.NOT_EQUAL_NUM,
         {
-            subj_type: [InteractiveObjectsTypes.COUNTER],
+            subj_type: [InteractiveObjectsTypes.COUNTER, InteractiveObjectsTypes.HEALTH],
             type: "operator",
             name: toString.operatorUuidToString(Operators.NOT_EQUAL_NUM),
             uuid: Operators.NOT_EQUAL_NUM,
@@ -305,7 +327,7 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.LESS_EQUAL,
         {
-            subj_type: [InteractiveObjectsTypes.COUNTER],
+            subj_type: [InteractiveObjectsTypes.COUNTER, InteractiveObjectsTypes.HEALTH],
             type: "operator",
             name: toString.operatorUuidToString(Operators.LESS_EQUAL),
             uuid: Operators.LESS_EQUAL,
@@ -314,7 +336,7 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.LESS_THAN,
         {
-            subj_type: [InteractiveObjectsTypes.COUNTER],
+            subj_type: [InteractiveObjectsTypes.COUNTER, InteractiveObjectsTypes.HEALTH],
             type: "operator",
             name: toString.operatorUuidToString(Operators.LESS_THAN),
             uuid: Operators.LESS_THAN,
@@ -323,7 +345,7 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.GREATER_EQUAL,
         {
-            subj_type: [InteractiveObjectsTypes.COUNTER],
+            subj_type: [InteractiveObjectsTypes.COUNTER, InteractiveObjectsTypes.HEALTH],
             type: "operator",
             name: toString.operatorUuidToString(Operators.GREATER_EQUAL),
             uuid: Operators.GREATER_EQUAL,
@@ -332,7 +354,7 @@ const OperatorsMap = Immutable.Map([
     [
         Operators.GREATER_THAN,
         {
-            subj_type: [InteractiveObjectsTypes.COUNTER],
+            subj_type: [InteractiveObjectsTypes.COUNTER, InteractiveObjectsTypes.HEALTH],
             type: "operator",
             name: toString.operatorUuidToString(Operators.GREATER_THAN),
             uuid: Operators.GREATER_THAN,

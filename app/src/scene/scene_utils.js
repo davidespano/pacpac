@@ -145,11 +145,11 @@ function defineField(object){
         case InteractiveObjectsTypes.KEYPAD:
             return "keypads";
         case InteractiveObjectsTypes.PLAYTIME:
-            return "playtime"
+            return "playtime";
         case InteractiveObjectsTypes.SCORE:
-            return "score"
+            return "score";
         case InteractiveObjectsTypes.HEALTH:
-            return "health"
+            return "health";
         case InteractiveObjectsTypes.TIMER:
             return "timers";
         case InteractiveObjectsTypes.RULES:

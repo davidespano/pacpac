@@ -30,7 +30,6 @@ class RulesStore extends ReduceStore {
             case ActionTypes.REMOVE_OBJECT:
                 state = state.map(rule => {
                     let event = rule.get('event');
-                    console.log(action.obj);
 
                     //check event
                     if(event.get('subj_uuid') === action.obj.get('uuid')){

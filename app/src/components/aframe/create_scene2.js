@@ -370,7 +370,7 @@ export default class VRScene extends React.Component {
                                             if(me.props.interactiveObjects.get(rule.event.subj_uuid))
                                                 object = me.props.interactiveObjects.get(rule.event.subj_uuid);
                                             else
-                                                object = me.state.audios[rule.event.subj_uuid]
+                                                object = me.state.audios[rule.event.subj_uuid];
                                             interface_utils.highlightRule(me.props, object);
                                             eventBus.on('debug-step', actionExecution);
                                         }, duration);
@@ -408,6 +408,7 @@ export default class VRScene extends React.Component {
                     if(rule.event.action==="ENTER_SCENE"){
                         eventBus.emit(event);
                     }
+                 //   console.log(eventBus)
                     break;
             }
         })
@@ -486,7 +487,6 @@ export default class VRScene extends React.Component {
     }
 
     render(){
-        console.log("nuova render");
         if(!this.state) return null;
         let sceneUuid = null;
         //Verifico se sono in debug mode e prendo la scena corrente di conseguenza
@@ -757,6 +757,7 @@ export default class VRScene extends React.Component {
     }
 
 
+    //Metodi timer
     static timerStop() {
         window.timerIsRunning = false;
 
@@ -769,8 +770,22 @@ export default class VRScene extends React.Component {
         window.timerTime = time;
     }
 
-    static changeHealthValue(newHealthValue, props){
-        let healthObj = document.getElementById(props.activeScene.name + 'health')
+
+    //Metodi vita
+    static increaseHealthValue(increaseBy, activeSceneName)
+    {
+        let sum = window.playtimeValue + increaseBy;
+        this.changeHealthValue(sum, activeSceneName);
+    }
+
+    static decreaseHealthValue(decreaseBy, activeSceneName)
+    {
+        let sub = window.playtimeValue - decreaseBy;
+        this.changeHealthValue(sub, activeSceneName);
+    }
+
+    static changeHealthValue(newHealthValue, activeSceneName){
+        let healthObj = document.getElementById(activeSceneName + 'health')
         if (healthObj !=null){
             window.healthValue = newHealthValue;
             let textPropertiesHL = "baseline: center; side: double"+
@@ -782,20 +797,22 @@ export default class VRScene extends React.Component {
         }
     }
 
-    static increaseScoreValue(increaseBy, props)
+
+    //Metodi punteggio
+    static increaseScoreValue(increaseBy, activeSceneName)
     {
         let sum = window.scoreValue + increaseBy;
-        this.changePlaytimeValue(sum, props);
+        this.changeScoreValue(sum, activeSceneName);
     }
 
-    static decreaseScoreValue(decreaseBy, props)
+    static decreaseScoreValue(decreaseBy, activeSceneName)
     {
         let sub = window.scoreValue - decreaseBy;
-        this.changePlaytimeValue(sub, props);
+        this.changeScoreValue(sub, activeSceneName);
     }
 
-    static changeScoreValue(newScoreValue, props){
-        let scoreObj = document.getElementById(props.activeScene.name + 'score')
+    static changeScoreValue(newScoreValue, activeSceneName){
+        let scoreObj = document.getElementById(activeSceneName + 'score')
         if (scoreObj != null){
             window.scoreValue = newScoreValue;
             let textPropertiesSC = "baseline: center; side: double"+
@@ -807,20 +824,10 @@ export default class VRScene extends React.Component {
         }
     }
 
-    static increasePlaytimeValue(increaseBy, props)
-    {
-        let sum = window.playtimeValue + increaseBy;
-        this.changePlaytimeValue(sum, props);
-    }
 
-    static decreasePlaytimeValue(decreaseBy, props)
-    {
-        let sub = window.playtimeValue - decreaseBy;
-        this.changePlaytimeValue(sub, props);
-    }
-
-    static changePlaytimeValue(newPlaytimeValue, props){
-        let playtimeObj = document.getElementById(props.activeScene.name + 'gameTime')
+    //Metodi tempo di gioco
+    static changePlaytimeValue(newPlaytimeValue, activeSceneName){
+        let playtimeObj = document.getElementById(activeSceneName + 'gameTime');
         if(playtimeObj != null){
             window.gameTimeValue = newPlaytimeValue;
             let textPropertiesPT = "baseline: center; side: double"+
