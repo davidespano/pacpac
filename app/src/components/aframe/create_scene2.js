@@ -346,6 +346,7 @@ export default class VRScene extends React.Component {
                                             else
                                                 object = this.state.audios[rule.event.subj_uuid]
                                             interface_utils.highlightRule(me.props, object);
+                                            //interface_utils.highlightAction(me.props, action);
                                             eventBus.on('debug-step', actionExecution);
                                         }, duration);
                                     } else {
@@ -373,6 +374,7 @@ export default class VRScene extends React.Component {
                                             else
                                                 object = me.state.audios[rule.event.subj_uuid];
                                             interface_utils.highlightRule(me.props, object);
+                                            //interface_utils.highlightAction(me.props, action);
                                             eventBus.on('debug-step', actionExecution);
                                         }, duration);
                                     } else {
@@ -393,10 +395,12 @@ export default class VRScene extends React.Component {
                         let condition = evalCondition(rule.condition, me.state.runState);
                         if (condition) {
                             rule.actions.forEach(action => {
+                                console.log("action", action);
                                 let actionExecution = actionCallback(action);
                                 if (me.props.debug) {
                                     setTimeout(function () {
-                                        interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                        //interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                        interface_utils.highlightAction(me.props, action);
                                         eventBus.on('debug-step', actionExecution);
                                     }, duration);
                                 } else {
