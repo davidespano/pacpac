@@ -186,7 +186,7 @@ export default class VRScene extends React.Component {
             let textProperties = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + gameTimeSize +
-                "; value:" + window.gameTimeValue;
+                "; value:" + (new Date(window.gameTimeValue * 1000).toISOString().substr(11, 8));
             gameTime.setAttribute('text', textProperties)
         }
     }
@@ -542,23 +542,23 @@ export default class VRScene extends React.Component {
 
             if (textObj) //se l'oggetto textbox esiste genero la Entity
             {
-                let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*5)) +
+                let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*4)) +
                     "; align: " + textObj.properties.alignment +
                     "; value:" + textObj.properties.string;
-                let geometryProperties = "primitive: plane; width: " + (0.5 + (textObj.properties.boxSize/20))+
-                    "; height: auto"
+                let geometryProperties = "primitive: plane; width: " + (0.25 + (textObj.properties.boxSize/15))+
+                    "; height: " + (0.01 + textObj.properties.boxSize/100)
                 let visibility = true; //per gestire la visibilità della textbox
                 if (textObj.visible == 'INVISIBLE')
                     visibility = false;
                 textboxEntity =
-                    <Entity visible={true} geometry={geometryProperties} position={'0 -0.214 -0.3'}
+                    <Entity visible={true} geometry={geometryProperties} position={'0 -0.20 -0.3'}
                             id={this.state.activeScene.name + 'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
                             text={textProperties} visible={visibility}>
                     </Entity>
             }
             if (timerObj) //se l'oggetto timer esiste genero la Entity
             {
-                timerSize = 0.4 + (timerObj.properties.size/20);
+                timerSize = 0.1 + (timerObj.properties.size/10);
                 if (timerID ==  this.state.activeScene.name + 'timer') {
 
                 }
@@ -570,14 +570,13 @@ export default class VRScene extends React.Component {
 
                 let textProperties = "baseline: center; side: double"+
                     "; align: center" +
-                    "; width:" + timerSize +
                     "; value:" + window.timerTime;
-                let geometryPropertiesTM = "primitive: plane; width: 0.1" + (0.4 + timerSize)+
+                let geometryPropertiesTM = "primitive: plane; width:" + (timerSize/5)+
                     "; height: auto;"
                 let timerPosition = '0 0.23 -0.3'
-                let timerImgPosition = (0.07) + (0.001 * timerObj.properties.size) +" 0.23 -0.3" //+0.075
-                let geometryPropertiesTMimg = "" + (0.02 + timerSize/50) + " " + (0.02 + timerSize/50) + " " +
-                    (0.02 + timerSize/50)
+                let timerImgPosition = 0.02 + (0.0115 * timerObj.properties.size) +" 0.23 -0.3" //+0.075
+                let geometryPropertiesTMimg = "" + (timerSize/25) + " " + (timerSize/25) + " " +
+                    (timerSize/25)
                 let visibility = true;
                 if (timerObj.visible == 'INVISIBLE')
                     visibility = false;
@@ -594,25 +593,24 @@ export default class VRScene extends React.Component {
             }
             if (gameTimeObj) //se l'oggetto game time esiste genero la Entity
             {
-                gameTimeSize = 0.4 + (gameTimeObj.properties.size/20);
+                gameTimeSize = 0.1 + (gameTimeObj.properties.size/10);
                 let textPropertiesPT = "baseline: center; side: double"+
                     "; align: center" +
-                    "; width:" + gameTimeSize +
                     "; value:" + window.gameTimeValue +
                     ";color: #dbdbdb";
-                let geometryPropertiesPT = "primitive: plane; width: 0.12" + (0.4 + gameTimeSize)+
+                let geometryPropertiesPT = "primitive: plane; width:" + (gameTimeSize/5) +
                     "; height: auto;"
                 let positionPT = "0.31 0.23 -0.3"
-                let geometryPropertiesPTimg = "" + (0.02 + gameTimeSize/50) + " " + (0.02 + gameTimeSize/50) + " " +
-                    (0.02 + gameTimeSize/50)
-                let positionPTimg = 0.355 + (0.006 * gameTimeObj.properties.size) +" 0.23 -0.3"
+                let geometryPropertiesPTimg = "" + (gameTimeSize/25) + " " + (gameTimeSize/25) + " " +
+                    (gameTimeSize/25)
+                let positionPTimg = 0.33 + (0.0115 * gameTimeObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (gameTimeObj.visible == 'INVISIBLE')
                     visibility = false;
                 gameTimeEntity =
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'gametimeIMG'}
-                        src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)} position="0.39 0.23 -0.3"
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)} position={positionPTimg}
                         scale={geometryPropertiesPTimg} transparent={true} opacity="0.8" visible={visibility}/>
                         <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
                                 id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
@@ -630,12 +628,12 @@ export default class VRScene extends React.Component {
                     "; width:" + scoreSize +
                     "; value:" + window.scoreValue +
                     ";color: #dbdbdb";
-                let geometryPropertiesSC = "primitive: plane; width: " + (0.05 + scoreSize/10)+
-                    "; height:" + (0.02 + scoreSize/50) +";"
+                let geometryPropertiesSC = "primitive: plane; width: " + (scoreSize/5)+
+                    "; height:" + (scoreSize/22) +";"
                 let positionSC = "-0.31 0.23 -0.3"
-                let geometryPropertiesSCimg = "" + (0.02 + scoreSize/50) + " " + (0.02 + scoreSize/50) + " " +
-                    (0.02 + scoreSize/50)
-                let positionSCimg = -(0.355) - (0.006 * scoreObj.properties.size) +" 0.23 -0.3"
+                let geometryPropertiesSCimg = "" + (scoreSize/25) + " " + (scoreSize/25) + " " +
+                    (scoreSize/25)
+                let positionSCimg = -(0.33) - (0.0115 * scoreObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (scoreObj.visible == 'INVISIBLE')
                     visibility = false;
@@ -660,12 +658,12 @@ export default class VRScene extends React.Component {
                     "; width:" + healthSize +
                     "; value:" +window.healthValue +
                     ";color: #dbdbdb";
-                let geometryPropertiesHL = "primitive: plane; width:" + (0.05 + healthSize/10) +
-                    "; height:" + (0.02 + healthSize/50) +";"
-                let positionHL = "-0.31 0.19 -0.3"
-                let geometryPropertiesHLimg = "" + (0.02 + healthSize/50) + " " + (0.02 + healthSize/50) + " " +
-                    (0.02 + healthSize/50)
-                let positionHLimg = -(0.355) - (0.006 * healthObj.properties.size) +" 0.19 -0.3"
+                let geometryPropertiesHL = "primitive: plane; width:" + (healthSize/5) +
+                    "; height:" + (healthSize/22) +";"
+                let positionHL = "-0.31 0.18 -0.3"
+                let geometryPropertiesHLimg = "" + (healthSize/25) + " " + (healthSize/25) + " " +
+                    (healthSize/25)
+                let positionHLimg = -(0.33) - (0.0115 * healthObj.properties.size) +" 0.18 -0.3"
                 let visibility = true;
                 if (healthObj.visible == 'INVISIBLE')
                     visibility = false;
