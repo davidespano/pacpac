@@ -298,6 +298,36 @@ function highlightRule(props, obj) {
         });
 }
 
+function highlightAction(props, action) {
+    let scene = props.scenes.get(props.currentScene);
+    setClassStyle(".eudRule", "background: ");
+    setClassStyle(".btnNext", "visibility: hidden");
+
+    return scene.get('rules').map(
+        rule => {
+            let item = props.rules.get(rule).uuid;
+            let next = document.getElementById('btnNext' + item);
+
+            props.rules.get(rule).actions._tail.array.forEach(function (sub) {
+                if (sub.uuid === action.uuid) {
+
+                    setIdStyle("eudAction", action.uuid, "background: rgba(239, 86, 55, .3)");
+
+                    if(next !== null && props.currentObject === null)
+                        next.style = "visibility: visible";
+                }
+            });
+
+            /*if (props.rules.get(rule).event.obj_uuid === action.uuid || props.rules.get(rule).event.subj_uuid === action.uuid) {
+                setIdStyle("eudAction", action.uuid, "background: rgba(239, 86, 55, .3)");
+                console.log('e qui ci entro?')
+                if(next !== null && props.currentObject === null)
+                    next.style = "visibility: visible";
+            }*/
+
+        });
+}
+
 /**
  * returns appropriate icon for an object given the type
  * @param objType
@@ -351,6 +381,7 @@ export default {
     setClassStyle: setClassStyle,
     setIdStyle: setIdStyle,
     highlightRule: highlightRule,
+    highlightAction: highlightAction,
     updateAudioVertices: updateAudioVertices,
     getObjImg: getObjImg,
 }

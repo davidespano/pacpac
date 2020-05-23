@@ -818,7 +818,7 @@ class EudAction extends Component {
 
         }
 
-        return <span className={"eudAction"} key={this.props.action.uuid}>
+        return <span id={"eudAction" + this.props.action.uuid} className={"eudAction"} key={this.props.action.uuid}>
                 {actionRendering}
             {operationRendering}
             {objectRendering}
