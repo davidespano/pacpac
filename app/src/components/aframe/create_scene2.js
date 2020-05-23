@@ -459,6 +459,7 @@ export default class VRScene extends React.Component {
                         }
                         if (condition) {
                             rule.actions.forEach(action => {
+                                console.log("action", action);
                                 let actionExecution = actionCallback(action);
                                 if (me.props.debug) {
                                     setTimeout(function () {
