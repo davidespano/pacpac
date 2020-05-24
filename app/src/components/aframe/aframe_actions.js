@@ -25,6 +25,7 @@ function executeAction(VRScene, rule, action) {
     let sceneName = action.subj_uuid;
     let action_obj_uuid = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
+    let subject_obj = game_graph['objects'].get(action.subj_uuid);
 
     switch (action.action) {
 
@@ -390,13 +391,30 @@ function executeAction(VRScene, rule, action) {
             VRScene.setState({runState: runState, graph: game_graph});
             break;
         case RuleActionTypes.INCREASE:
-            console.log("RuleActionTypes.INCREASE");
+            console.log("RuleActionTypes.INCREASE", sceneName, "type: ", sceneName.type);
 
             /*
-            * Azione che si occupa di assegnare un valore scelto dall'untente, al contattore*/
-            runState[action.subj_uuid].state = parseInt(action.obj_uuid);
-            VRScene.setState({runState: runState, graph: game_graph});
+            * Azione che si occupa di assegnare un valore scelto dall'untente, al contatore,
+            * alla vita, al punteggio o al tempo di gioco
+            */
+            let numberValue =parseInt(action.obj_uuid);
+            switch (subject_obj.type) {
+                case InteractiveObjectsTypes.COUNTER:
+                    runState[action.subj_uuid].state = numberValue;
+                    VRScene.setState({runState: runState, graph: game_graph});
+                    break;
+                case InteractiveObjectsTypes.HEALTH:
+                    create_scene2.changeHealthValue(numberValue, actual_scene_name);
+                    break;
+                case InteractiveObjectsTypes.SCORE:
+                    create_scene2.changeScoreValue(numberValue, actual_scene_name);
+                    break;
+                case InteractiveObjectsTypes.PLAYTIME:
+                    create_scene2.changePlaytimeValue(numberValue, actual_scene_name);
+                    break;
+            }
             break;
+
         case RuleActionTypes.TRIGGERS:
             /*
                 Azione che si occupa di avviare una regola o un timer
@@ -408,12 +426,35 @@ function executeAction(VRScene, rule, action) {
             }
             break;
         case RuleActionTypes.STOP_TIMER:
-            console.log(action);
             create_scene2.timerStop();
+            break;
         case RuleActionTypes.REACH_TIMER:
             let time = parseInt(action.obj_uuid);
             create_scene2.changeTimerTime(time);
-            console.log(action);
+            break;
+        case RuleActionTypes.INCREASE_NUMBER:
+            let numberVal =parseInt(action.obj_uuid); //di quanto aumenta
+
+            switch (subject_obj.type) {
+                case InteractiveObjectsTypes.SCORE:
+                    create_scene2.increaseScoreValue(numberVal, actual_scene_name);
+                    break;
+                case InteractiveObjectsTypes.HEALTH:
+                    create_scene2.increaseHealthValue(numberVal, actual_scene_name);
+                    break;
+            }
+            break;
+        case RuleActionTypes.DECREASE_NUMBER:
+            let numberVale =parseInt(action.obj_uuid); //di quanto aumenta
+            switch (subject_obj.type) {
+                case InteractiveObjectsTypes.SCORE:
+                    create_scene2.decreaseScoreValue(numberVale, actual_scene_name);
+                    break;
+                case InteractiveObjectsTypes.HEALTH:
+                    create_scene2.decreaseHealthValue(numberVale, actual_scene_name);
+                    break;
+            }
+            break;
         default:
             console.log('not yet implemented');
             console.log(action);

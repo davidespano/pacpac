@@ -45,6 +45,7 @@ function buildScene(record) {
         scene.points = [];
         scene.counters = [];
         scene.textboxes = [];
+        scene.buttons = [];
         scene.keypads = [];
         scene.selectors = [];
         scene.timers = [];
@@ -70,6 +71,8 @@ function buildScene(record) {
                     scene.counters.push(obj); break;
                 case "TEXTBOX":
                     scene.textboxes.push(obj); break;
+                case "BUTTON":
+                    scene.buttons.push(obj); break;
                 case "KEYPAD":
                     scene.keypads.push(obj); break;
                 case "SELECTOR":

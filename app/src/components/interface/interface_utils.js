@@ -64,6 +64,22 @@ function setPropertyFromValue(object, property, value, props){
     }
 }
 
+/**
+ *
+ * @param object is the keypad
+ * @param buttonID
+ * @param value to assign the button
+ * @param props
+ */
+function setButtonsValues(object, buttonID, value, props){
+    let properties = object.get('properties'); //properties contiene la mappa buttonValues
+    properties['buttonsValues'][buttonID] = value; //assegno il valore in base alla chiave del button
+    let newObject = object.setIn(['properties'], properties); //sovrascrivo l'oggetto con le proprietà aggiornate
+    props.updateObject(newObject);
+    let scene = props.scenes.get(props.objectToScene.get(newObject.uuid));
+    InteractiveObjectAPI.saveObject(scene, newObject);
+}
+
 function updateAudioVertices(audio, vertices, props) {
     audio=audio.set('vertices', vertices)
     props.selectAudioToEdit(audio);
@@ -349,18 +365,20 @@ function getObjImg(objType) {
             return "icons/icons8-counter-100.png";
         case InteractiveObjectsTypes.TEXTBOX:
             return "icons/icons8-text-100.png";
+        case InteractiveObjectsTypes.BUTTON:
+            return "icons/icons8-button-100.png";
         case InteractiveObjectsTypes.KEYPAD:
             return "icons/icons8-keypad-100.png";
         case InteractiveObjectsTypes.SELECTOR:
             return "icons/icons8-selector-100.png";
         case InteractiveObjectsTypes.TIMER:
-            return  "icons/icons8-cronometro-100.png"
+            return  "icons/icons8-cronometro-100.png";
         case InteractiveObjectsTypes.HEALTH:
-            return  "icons/icons8-health-100.png"
+            return  "icons/icons8-health-100.png";
         case InteractiveObjectsTypes.SCORE:
-            return  "icons/icons8-score-100.png"
+            return  "icons/icons8-score-100.png";
         case InteractiveObjectsTypes.PLAYTIME:
-            return  "icons/icons8-orologio-100.png"
+            return  "icons/icons8-orologio-100.png";
         default:
             return "icons/icons8-plus-math-filled-100.png";
     }
@@ -384,4 +402,5 @@ export default {
     highlightAction: highlightAction,
     updateAudioVertices: updateAudioVertices,
     getObjImg: getObjImg,
+    setButtonsValues : setButtonsValues,
 }

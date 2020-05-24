@@ -7,15 +7,14 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
  * @constructor
  * Keypad must have at least three buttons (two digit/chars and a confirmation button)
  */
-const Keypad = (defaultValues) => InteractiveObject({
-    type : InteractiveObjectsTypes.KEYPAD,
+const Button = (defaultValues) => InteractiveObject({
+    type : InteractiveObjectsTypes.BUTTON,
     properties : {
-        state: null,
-        combination : null, //must be an array
-        buttonsValues: {},
+        keypadUuid: null,
     },
     media : {
         media0 : null,
+
     },
     audio : {
         audio0: null,
@@ -25,4 +24,4 @@ const Keypad = (defaultValues) => InteractiveObject({
 });
 
 
-export default Keypad;
+export default Button;

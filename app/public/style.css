@@ -366,9 +366,10 @@ div.rules{
     border-radius: 4px;
 }
 
-#transitionDuration, #point-of-interest-delay {
+#transitionDuration, .button-Value, #combination, #point-of-interest-delay {
     padding: 5px;
     width: 50%;
+    min-width: 50%;
 }
 
 .figure-grid {
@@ -621,9 +622,9 @@ div.rules{
 
 .flex-container, .flex{
     display: flex;
-    background-color: white;
     flex-direction: row;
     height: 100%;
+    background: white;
     width: 100%;
 }
 
@@ -761,6 +762,11 @@ figcaption {
     cursor: pointer;
     color: orangered;
     border-radius: 5px;
+}
+
+.buttonValuesLabels
+{
+    margin-bottom: 0!important;
 }
 
 .object-thumbnail {
@@ -1517,6 +1523,49 @@ input.eudObjectString[type=text] {
 
 /* NAVBAR REGOLE */
 
+/* Accordion */
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    margin-top: 20px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+    background-color: #ccc;
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+/* accordion icons */
+button.accordion:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+}
+
+button.accordion.active:after {
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+
+/* eud */
 .eudBar {
     background-color: white;
     text-align: center;

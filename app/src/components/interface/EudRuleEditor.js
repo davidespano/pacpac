@@ -27,6 +27,7 @@ export default class EudRuleEditor extends Component {
     }
 
     render() {
+
         let scene = this.props.scenes.get(this.props.currentScene);
 
         if (this.props.currentScene) {
@@ -57,6 +58,35 @@ export default class EudRuleEditor extends Component {
                         </React.Fragment>
                     );
                 });
+
+       /*     //let globalr = this.props.globalRules;
+            let globalRules = rules.map(
+                rule => {
+                    return (
+                        <React.Fragment key={'fragment-' + rule}>
+                            <EudRule
+                                VRScene={this.props.VRScene}
+                                editor={this.props.editor}
+                                interactiveObjects={this.props.interactiveObjects}
+                                scenes={this.props.scenes}
+                                assets={this.props.assets}
+                                audios={this.props.audios}
+                                currentScene={this.props.currentScene}
+                                rules={this.props.rules}
+                                rule={rule}
+                                ruleEditorGlobalCallback={this.props.ruleEditorGlobalCallback}
+                                removeRule={(rule) => {
+                                    this.onRemoveRuleClick(rule)
+                                }}
+                                copyRule={(rule) => {
+                                    this.props.copyRule(rule)
+                                }}
+                            />
+
+                        </React.Fragment>
+                    );
+                }
+            );*/
             //in debug posso selezionare le regole quindi distinguo
             if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
                 return <div className={"rules"}>
@@ -71,8 +101,103 @@ export default class EudRuleEditor extends Component {
                             {rulesRendering}
                         </div>
                     </div>
+                    <div className={"rule-container"}>
+                        <div className={'eudBar'}>
+                            <h2>Regole oggetti globali</h2>
+                        </div>
+                        <div className={"rule-editor"}
+                             onClick={() => {
+                                 this.onOutsideClick();
+                             }}>
+                            {rulesRendering}
+                        </div>
+                    </div>
                 </div>;
             } else {
+              /*  return <div className={"rules"}>
+                    <div className={"expand-btn"} >
+                        <figure className={'expand-btn'}
+                                onClick={() => {
+                                    this.props.expandEditor(!this.props.editor.editorExpanded);
+                                    onAccordionClick("accordionScene");
+                                    onAccordionClick("accordionGlobal")
+                                }}>
+                            <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                 src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
+                                     "icons/icons8-expand-arrow-filled-50.png"}
+                                 alt={'Espandi'}
+                            />
+                        </figure>
+                    </div>
+                    <button className="accordion" id={"accordionScene"} onClick={onAccordionClick("accordionScene")}
+                        >Regole di scena</button>
+                    <div className="panel">
+                        <div className={"rule-container"}>
+                            <div className={"eudBar"}>
+                                <div id={'rule-editor-btns'}>
+                                    <button
+                                        disabled={this.props.editor.ruleCopy===null}
+                                        onClick={() => {
+                                            this.onCopyRuleClick(scene);
+                                        }}
+                                    >
+                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
+                                    Copia qui
+                                </button>
+                                    <button className={"btn select-file-btn"}
+                                            onClick={() => {
+                                                this.onNewRuleClick();
+                                            }}>
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
+                                        Nuova Regola
+                                    </button>
+                                </div>
+                            </div>
+                            <div className={"rule-editor"}
+                                 onClick={() => {
+                                     this.onOutsideClick();
+                                 }}>
+                                {rulesRendering}
+                                <div className={'rules-footer'}></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button className="accordion" id={"accordionGlobal"}  onClick={onAccordionClick("accordionGlobal")}
+                            >Regole globali</button>
+                    <div className="panel">
+                        <div className={"rule-container"}>
+                            <div className={"eudBar"}>
+
+                                <div id={'rule-editor-btns'}>
+                                    <button
+                                        disabled={this.props.editor.ruleCopy===null}
+                                        onClick={() => {
+                                            this.onCopyRuleClick(scene);
+                                        }}
+                                    >
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
+                                        Copia qui
+                                    </button>
+                                    <button className={"btn select-file-btn"}
+                                            onClick={() => {
+                                                this.onNewRuleClick();
+                                            }}>
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
+                                        Nuova Regola
+                                    </button>
+                                </div>
+                            </div>
+                            <div className={"rule-editor"}
+                                 onClick={() => {
+                                     this.onOutsideClick();
+                                 }}>
+                                {globalRules}
+                                <div className={'rules-footer'}></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>;*/
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
                         <div className={"eudBar"}>
@@ -94,9 +219,9 @@ export default class EudRuleEditor extends Component {
                                         this.onCopyRuleClick(scene);
                                     }}
                                 >
-                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                Copia qui
-                            </button>
+                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
+                                    Copia qui
+                                </button>
                                 <button className={"btn select-file-btn"}
                                         onClick={() => {
                                             this.onNewRuleClick();
@@ -120,12 +245,12 @@ export default class EudRuleEditor extends Component {
         } else {
             return <p>Nessuna scena selezionata</p>
         }
+
     }
 
     onOutsideClick() {
         this.props.ruleEditorCallback.eudShowCompletions(null, null)
     }
-
     //[Vittoria] creazione nuova regola
     onNewRuleClick() {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
@@ -148,6 +273,46 @@ export default class EudRuleEditor extends Component {
     }
 
 
+    /*onAccordionClick(){
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        console.log("this: ", this)
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+    }*/
+
+}
+
+/**
+ * Funzione per aggiungere i listener all'accordion, viene chiamata al click del button accordion
+ * passando come parametro l'accordionId
+ * e quando clicco il button per espandere le regole altrimenti gli accordion non funzionano
+ */
+function onAccordionClick(accordionId) {
+    let acc = document.getElementById(accordionId);
+    let added; //boolean per aggiungere l'event listener una volta e basta
+    if(acc!= null && added != true){ //ha caricato
+        acc.addEventListener("click", function() {
+                acc.classList.toggle("active");
+                var panel = acc.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+        added=true;
+        });
+    }
 
 }
 
@@ -673,6 +838,15 @@ class EudAction extends Component {
         let actionId = this.props.editor.get('actionId');
         let subjectCompletion = this.showCompletion(actionId, "subject");
         let subject = this.getInteractiveObjectReference(this.props.action.subj_uuid);
+        let originalText = subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name;
+
+        if(subject){
+            //se è un oggetto globale non voglio che si scriva "la vita Vita"
+            if(subject.type === InteractiveObjectsTypes.PLAYTIME || subject.type === InteractiveObjectsTypes.SCORE ||
+                subject.type === InteractiveObjectsTypes.HEALTH){
+                originalText = toString.objectTypeToString(subject.type);
+            }
+        }
 
         let actionRendering =
             <EudRulePart
@@ -685,7 +859,7 @@ class EudAction extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.action}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name}
+                originalText={originalText}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
@@ -744,6 +918,8 @@ class EudAction extends Component {
                     />;
                 break;
             case RuleActionTypes.REACH_TIMER:
+            case RuleActionTypes.DECREASE_NUMBER:
+            case RuleActionTypes.INCREASE_NUMBER:
             case RuleActionTypes.INCREASE:
                 objectRendering =
                     <EudRuleNumericPart
@@ -768,6 +944,9 @@ class EudAction extends Component {
                     rule=true;
                     object_t = sceneRulesOnly(this.props).get(this.props.action.obj_uuid); //riferimento alla regola
                 }
+                let originalText = rule? (object_t == null ? "" : toString.objectTypeToString(object_t.type) + object_t.name) : (
+                    object_t == null ? "" : "il timer "+ object_t.name);
+
 
                 let objectCompletionRule = this.showCompletion(actionId, "object"); //prendi completion della regola
                 objectRendering =
@@ -780,9 +959,7 @@ class EudAction extends Component {
                         complement={this.props.rule.object_uuid}
                         verb={this.props.action}
                         ruleEditorCallback={this.props.ruleEditorCallback}
-                        originalText={rule? (object_t == null ? "" : toString.objectTypeToString(object_t.type) + object_t.name) : (
-                            object_t == null ? "" : "il timer "+ object_t.name)
-                        }
+                        originalText={ originalText }
                         inputText={this.props.editor.get('completionInput')}
                         showCompletion={objectCompletionRule}
                         changeText={(text, role) => this.changeText(text, role)}
@@ -796,6 +973,7 @@ class EudAction extends Component {
             default:
                 object = this.getInteractiveObjectReference(this.props.action.obj_uuid); //riferimento alla regola
                 let objectCompletion = this.showCompletion(actionId, "object"); //prendi completion della regola
+
                 objectRendering =
                     <EudRulePart
                         interactiveObjects={this.props.interactiveObjects}
@@ -1120,7 +1298,8 @@ class EudRulePart extends Component {
         return <div className={css} key={this.props.rule.uuid + this.props.role}>
                 <span className={"eudInputBox"}
                       onClick={
-                          (e) => {
+                          (e) =>
+                          {
                               e.stopPropagation();
                               if (!this.props.showCompletion) {
                                   this.props.changeText(this.props.originalText, this.props.role);
@@ -1364,6 +1543,7 @@ class EudAutoComplete extends Component {
 function listableItems(list, props) {
     let result = list.filter(i => {
         let key = toString.objectTypeToString(i.type) + i.name;
+
         let n = (props.input ? props.input : "").split(" ");
         const word = n[n.length - 1];
         return key.includes(word);
@@ -1437,7 +1617,16 @@ class EudAutoCompleteItem extends Component {
     }
 
     render() {
-        let text = toString.objectTypeToString(this.props.item.type) + this.props.item.name;
+        let text;
+        if(this.props.item.type === InteractiveObjectsTypes.HEALTH ||
+            this.props.item.type === InteractiveObjectsTypes.SCORE ||
+            this.props.item.type === InteractiveObjectsTypes.PLAYTIME
+        ){
+            text = toString.objectTypeToString(this.props.item.type);
+        }
+        else {
+            text = toString.objectTypeToString(this.props.item.type) + this.props.item.name;
+        }
 
         return <li
             key={this.props.item.name}
@@ -1531,7 +1720,11 @@ function getCompletions(props) {
                 console.log("Case object scene object only: ", sceneObjectsOnly(props));
                 graph = 2;
                 let items = sceneObjectsOnly(props).filter(x =>
-                    x.type !== InteractiveObjectsTypes.TIMER); //filtro il timer perchè non è cliccabile
+                    x.type !== InteractiveObjectsTypes.TIMER &&
+                    x.type !== InteractiveObjectsTypes.HEALTH &&
+                    x.type !== InteractiveObjectsTypes.SCORE &&
+                    x.type !== InteractiveObjectsTypes.PLAYTIME
+                ); //filtro il timer e gli oggetti globali perchè non sono cliccabili
                 return {items, graph};
             }
 

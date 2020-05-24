@@ -40,8 +40,10 @@ function eventTypeToString(eventType) {
         case RuleActionTypes.INCREASE:
             return "va a";
         case RuleActionTypes.INCREASE_STEP:
+        case RuleActionTypes.INCREASE_NUMBER:
             return "aumenta di";
         case RuleActionTypes.DECREASE_STEP:
+        case RuleActionTypes.DECREASE_NUMBER:
             return "diminuisce di";
         case RuleActionTypes.IS:
             return 'è';
@@ -95,6 +97,15 @@ function objectTypeToString(objectType) {
             break;
         case InteractiveObjectsTypes.GAME:
             type = 'il gioco';
+            break;
+        case InteractiveObjectsTypes.HEALTH:
+            type = 'la vita';
+            break;
+        case InteractiveObjectsTypes.SCORE:
+            type = 'il punteggio';
+            break;
+        case InteractiveObjectsTypes.PLAYTIME:
+            type = 'il tempo di gioco';
             break;
         case Values.THREE_DIM:
         case Values.TWO_DIM:
@@ -154,7 +165,6 @@ function operatorUuidToString(operatorUuid) {
     }
 }
 
-
 function superOperatorsToString(superoperatorUuid) {
     switch (superoperatorUuid) {
         case SuperOperators.AND:
@@ -165,7 +175,6 @@ function superOperatorsToString(superoperatorUuid) {
             return '?';
     }
 }
-
 
 function valueUuidToString(valueUuid){
     switch(valueUuid){

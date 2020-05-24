@@ -37,6 +37,8 @@ let scoreSize;
 let timerSize;
 let timerID;
 window.healthValue = undefined;
+window.playtimeValue = undefined;
+window.scoreValue = undefined;
 //variabili del timer pubbliche perchè accedute da render e tick
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
@@ -184,7 +186,7 @@ export default class VRScene extends React.Component {
             let textProperties = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + gameTimeSize +
-                "; value:" + window.gameTimeValue;
+                "; value:" + (new Date(window.gameTimeValue * 1000).toISOString().substr(11, 8));
             gameTime.setAttribute('text', textProperties)
         }
     }
@@ -370,7 +372,7 @@ export default class VRScene extends React.Component {
                                             if(me.props.interactiveObjects.get(rule.event.subj_uuid))
                                                 object = me.props.interactiveObjects.get(rule.event.subj_uuid);
                                             else
-                                                object = me.state.audios[rule.event.subj_uuid]
+                                                object = me.state.audios[rule.event.subj_uuid];
                                             interface_utils.highlightRule(me.props, object);
                                             //interface_utils.highlightAction(me.props, action);
                                             eventBus.on('debug-step', actionExecution);
@@ -410,6 +412,7 @@ export default class VRScene extends React.Component {
                     if(rule.event.action==="ENTER_SCENE"){
                         eventBus.emit(event);
                     }
+                 //   console.log(eventBus)
                     break;
             }
         })
@@ -488,7 +491,6 @@ export default class VRScene extends React.Component {
     }
 
     render(){
-        console.log("nuova render");
         if(!this.state) return null;
         let sceneUuid = null;
         //Verifico se sono in debug mode e prendo la scena corrente di conseguenza
@@ -506,7 +508,6 @@ export default class VRScene extends React.Component {
         let gameTimeUuid = this.state.activeScene.objects.playtime[0];
         let scoreEntity = null;
         let scoreUuid = this.state.activeScene.objects.score[0];
-        window.scoreValue = undefined;
         let healthEntity = null;
         let healtUuid = this.state.activeScene.objects.health[0];
 
@@ -545,23 +546,23 @@ export default class VRScene extends React.Component {
 
             if (textObj) //se l'oggetto textbox esiste genero la Entity
             {
-                let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*5)) +
+                let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*4)) +
                     "; align: " + textObj.properties.alignment +
                     "; value:" + textObj.properties.string;
-                let geometryProperties = "primitive: plane; width: " + (0.5 + (textObj.properties.boxSize/20))+
-                    "; height: auto"
+                let geometryProperties = "primitive: plane; width: " + (0.25 + (textObj.properties.boxSize/15))+
+                    "; height: " + (0.01 + textObj.properties.boxSize/100)
                 let visibility = true; //per gestire la visibilità della textbox
                 if (textObj.visible == 'INVISIBLE')
                     visibility = false;
                 textboxEntity =
-                    <Entity visible={true} geometry={geometryProperties} position={'0 -0.214 -0.3'}
+                    <Entity visible={true} geometry={geometryProperties} position={'0 -0.20 -0.3'}
                             id={this.state.activeScene.name + 'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
                             text={textProperties} visible={visibility}>
                     </Entity>
             }
             if (timerObj) //se l'oggetto timer esiste genero la Entity
             {
-                timerSize = 0.4 + (timerObj.properties.size/20);
+                timerSize = 0.1 + (timerObj.properties.size/10);
                 if (timerID ==  this.state.activeScene.name + 'timer') {
 
                 }
@@ -573,36 +574,52 @@ export default class VRScene extends React.Component {
 
                 let textProperties = "baseline: center; side: double"+
                     "; align: center" +
-                    "; width:" + timerSize +
                     "; value:" + window.timerTime;
-                let geometryProperties = "primitive: plane; width: 0.1" + (0.4 + timerSize)+
+                let geometryPropertiesTM = "primitive: plane; width:" + (timerSize/5)+
                     "; height: auto;"
+                let timerPosition = '0 0.23 -0.3'
+                let timerImgPosition = 0.02 + (0.0115 * timerObj.properties.size) +" 0.23 -0.3" //+0.075
+                let geometryPropertiesTMimg = "" + (timerSize/25) + " " + (timerSize/25) + " " +
+                    (timerSize/25)
                 let visibility = true;
                 if (timerObj.visible == 'INVISIBLE')
                     visibility = false;
                 timerEntity =
-                    <Entity visible={true} geometry={geometryProperties} position={'0 0.23 -0.3'}
-                            id={timerID} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textProperties} visible={visibility}>
+                    <Entity>
+                        <a-plane id={this.state.activeScene.name + 'timerIMG'}
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)} position={timerImgPosition}
+                        scale={geometryPropertiesTMimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        <Entity visible={true} geometry={geometryPropertiesTM} position={timerPosition}
+                                id={timerID} material={'shader: flat; opacity: 0.85; color: black;'}
+                                text={textProperties} visible={visibility}>
+                        </Entity>
                     </Entity>
             }
             if (gameTimeObj) //se l'oggetto game time esiste genero la Entity
             {
-                gameTimeSize = 0.4 + (gameTimeObj.properties.size/20);
+                gameTimeSize = 0.1 + (gameTimeObj.properties.size/10);
                 let textPropertiesPT = "baseline: center; side: double"+
                     "; align: center" +
-                    "; width:" + gameTimeSize +
                     "; value:" + window.gameTimeValue +
                     ";color: #dbdbdb";
-                let geometryPropertiesPT = "primitive: plane; width: 0.12" + (0.4 + gameTimeSize)+
+                let geometryPropertiesPT = "primitive: plane; width:" + (gameTimeSize/5) +
                     "; height: auto;"
+                let positionPT = "0.31 0.23 -0.3"
+                let geometryPropertiesPTimg = "" + (gameTimeSize/25) + " " + (gameTimeSize/25) + " " +
+                    (gameTimeSize/25)
+                let positionPTimg = 0.33 + (0.0115 * gameTimeObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (gameTimeObj.visible == 'INVISIBLE')
                     visibility = false;
                 gameTimeEntity =
-                    <Entity visible={true} geometry={geometryPropertiesPT} position={'0.31 0.23 -0.3'}
-                            id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textPropertiesPT} visible={visibility}>
+                    <Entity>
+                        <a-plane id={this.state.activeScene.name + 'gametimeIMG'}
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)} position={positionPTimg}
+                        scale={geometryPropertiesPTimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
+                                id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
+                                text={textPropertiesPT} visible={visibility}>
+                        </Entity>
                     </Entity>
             }
             if (scoreObj) //se l'oggetto score esiste genero la Entity
@@ -615,15 +632,24 @@ export default class VRScene extends React.Component {
                     "; width:" + scoreSize +
                     "; value:" + window.scoreValue +
                     ";color: #dbdbdb";
-                let geometryPropertiesSC = "primitive: plane; width: " + (0.05 + scoreSize/10)+
-                    "; height:" + (0.02 + scoreSize/50) +";"
+                let geometryPropertiesSC = "primitive: plane; width: " + (scoreSize/5)+
+                    "; height:" + (scoreSize/22) +";"
+                let positionSC = "-0.31 0.23 -0.3"
+                let geometryPropertiesSCimg = "" + (scoreSize/25) + " " + (scoreSize/25) + " " +
+                    (scoreSize/25)
+                let positionSCimg = -(0.33) - (0.0115 * scoreObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (scoreObj.visible == 'INVISIBLE')
                     visibility = false;
                 scoreEntity =
-                    <Entity visible={true} geometry={geometryPropertiesSC} position={'-0.31 0.23 -0.3'}
-                            id={this.state.activeScene.name + 'score'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textPropertiesSC} visible={visibility}>
+                    <Entity>
+                        <a-plane id={this.state.activeScene.name + 'scoreIMG'}
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.SCORE)} position={positionSCimg}
+                        scale={geometryPropertiesSCimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        <Entity visible={true} geometry={geometryPropertiesSC} position={positionSC}
+                                id={this.state.activeScene.name + 'score'} material={'shader: flat; opacity: 0.8; color: black;'}
+                                text={textPropertiesSC} visible={visibility}>
+                        </Entity>
                     </Entity>
             }
             if (healthObj) //se l'oggetto health esiste genero la Entity
@@ -636,15 +662,24 @@ export default class VRScene extends React.Component {
                     "; width:" + healthSize +
                     "; value:" +window.healthValue +
                     ";color: #dbdbdb";
-                let geometryPropertiesHL = "primitive: plane; width:" + (0.05 + healthSize/10) +
-                    "; height:" + (0.02 + healthSize/50) +";"
+                let geometryPropertiesHL = "primitive: plane; width:" + (healthSize/5) +
+                    "; height:" + (healthSize/22) +";"
+                let positionHL = "-0.31 0.18 -0.3"
+                let geometryPropertiesHLimg = "" + (healthSize/25) + " " + (healthSize/25) + " " +
+                    (healthSize/25)
+                let positionHLimg = -(0.33) - (0.0115 * healthObj.properties.size) +" 0.18 -0.3"
                 let visibility = true;
                 if (healthObj.visible == 'INVISIBLE')
                     visibility = false;
                 healthEntity =
-                    <Entity visible={true} geometry={geometryPropertiesHL} position={'-0.31 0.19 -0.3'}
-                            id={this.state.activeScene.name + 'health'} material={'shader: flat; opacity: 0.85; color: black;'}
-                            text={textPropertiesHL} visible={visibility}>
+                    <Entity>
+                        <a-plane id={this.state.activeScene.name + 'healthIMG'}
+                        src={interface_utils.getObjImg(InteractiveObjectsTypes.HEALTH)} position={positionHLimg}
+                        scale={geometryPropertiesHLimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        <Entity visible={true} geometry={geometryPropertiesHL} position={positionHL}
+                                id={this.state.activeScene.name + 'health'} material={'shader: flat; opacity: 0.85; color: black;'}
+                                text={textPropertiesHL} visible={visibility}>
+                        </Entity>
                     </Entity>
             }
 
@@ -729,13 +764,11 @@ export default class VRScene extends React.Component {
             let scene = this.state.graph.scenes[sceneName];
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
-
             //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'
             //i media non sono tutti presenti nella scena
             //TODO verificare che non generi piu' eventi legati ai video, quelli del click sono gia' verificati
             //TODO [davide] rimosso perche' crea più listener per lo stesso evento
             //this.createRuleListeners();
-            //console.log("genero bolla: " ,scene.uuid)
             //Passo tutti i parametri al componente React Bubble, necessari al componente per la creazione della bolla
             return (
                 <Bubble key={"key" + scene.name}
@@ -762,6 +795,7 @@ export default class VRScene extends React.Component {
     }
 
 
+    //Metodi timer
     static timerStop() {
         window.timerIsRunning = false;
 
@@ -774,29 +808,72 @@ export default class VRScene extends React.Component {
         window.timerTime = time;
     }
 
-    //TODO: finire questi metodi
-    static changeHealthValue(newHealthValue){
-        let healthObj = null;
-        //let healthObj = document.getElementById(this.state.activeScene.name + 'health')
-        window.healthValue = newHealthValue;
-        let textPropertiesHL = "baseline: center; side: double"+
+
+    //Metodi vita
+    static increaseHealthValue(increaseBy, activeSceneName)
+    {
+        let sum = window.playtimeValue + increaseBy;
+        this.changeHealthValue(sum, activeSceneName);
+    }
+
+    static decreaseHealthValue(decreaseBy, activeSceneName)
+    {
+        let sub = window.playtimeValue - decreaseBy;
+        this.changeHealthValue(sub, activeSceneName);
+    }
+
+    static changeHealthValue(newHealthValue, activeSceneName){
+        let healthObj = document.getElementById(activeSceneName + 'health')
+        if (healthObj !=null){
+            window.healthValue = newHealthValue;
+            let textPropertiesHL = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + healthSize +
                 "; value:" + window.healthValue +
                 ";color: #dbdbdb";
-        healthObj.setAttribute('text', textPropertiesHL);
+            healthObj.setAttribute('text', textPropertiesHL);
+        }
     }
 
-    //TODO: finire questi metodi
-    static changeScoreValue(newScoreValue){
-        let scoreObj = null;
-        //let scoreObj = document.getElementById(this.state.activeScene.name + 'score')
-        window.scoreValue = newScoreValue;
-        let textPropertiesSC = "baseline: center; side: double"+
+
+    //Metodi punteggio
+    static increaseScoreValue(increaseBy, activeSceneName)
+    {
+        let sum = window.scoreValue + increaseBy;
+        this.changeScoreValue(sum, activeSceneName);
+    }
+
+    static decreaseScoreValue(decreaseBy, activeSceneName)
+    {
+        let sub = window.scoreValue - decreaseBy;
+        this.changeScoreValue(sub, activeSceneName);
+    }
+
+    static changeScoreValue(newScoreValue, activeSceneName){
+        let scoreObj = document.getElementById(activeSceneName + 'score')
+        if (scoreObj != null){
+            window.scoreValue = newScoreValue;
+            let textPropertiesSC = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + scoreSize +
                 "; value:" + window.scoreValue +
                 ";color: #dbdbdb";
-        scoreObj.setAttribute('text', textPropertiesSC);
+            scoreObj.setAttribute('text', textPropertiesSC);
         }
+    }
+
+
+    //Metodi tempo di gioco
+    static changePlaytimeValue(newPlaytimeValue, activeSceneName){
+        let playtimeObj = document.getElementById(activeSceneName + 'gameTime');
+        if(playtimeObj != null){
+            window.gameTimeValue = newPlaytimeValue;
+            let textPropertiesPT = "baseline: center; side: double"+
+                "; align: center" +
+                "; width:" + gameTimeSize +
+                "; value:" + window.gameTimeValue +
+                ";color: #dbdbdb";
+            playtimeObj.setAttribute('text', textPropertiesPT);
+        }
+    }
 }

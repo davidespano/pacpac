@@ -9,7 +9,8 @@ import InteractiveObjectsTypes from "./InteractiveObjectsTypes";
 const Selector = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.SELECTOR,
     properties : {
-        state : 0,
+        optionsNumber: 0,
+        state : [],
     },
     media : {
         media0 : null,
