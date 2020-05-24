@@ -59,21 +59,6 @@ class EditorStateStore extends ReduceStore {
                 // Saves è ora la mappa state.debugSaves però con il salvataggio corrente aggiunto correttamente
                 state = state.set('debugSaves', saves);
                 return state;
-
-            case ActionTypes.DEBUG_SAVE:
-                // Aggiornamento stato
-                if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
-                    /* debugSaves è una mappa immutabile ordinata
-                            <K, V> = <scene uuid, set di salvataggi relativi a quella scena>  */
-                    state = state.set('debugSaves', new Immutable.OrderedMap()); // Creazione mappa
-                }
-                let saves = state.get('debugSaves'); // Recupero la mappa
-                if(!saves.has(action.response.currentScene)){ // Caso in cui non ci sia un'entrata <K, V> dove K==action.response.currentScene
-                    saves = saves.set(action.response.currentScene, new Immutable.Set()); // Creazione set
-                }
-                saves = saves.update(action.response.currentScene, set => set.add(action.response)); // Aggiungo il salvataggio corrente
-                // Saves è ora la mappa state.debugSaves però con il salvataggio corrente aggiunto correttamente
-                return state.set('debugSaves', saves);
             case ActionTypes.LOAD_DEBUG_SAVES:
                 let debugSaves = action.saves;
                 if(debugSaves){
