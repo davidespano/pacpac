@@ -318,7 +318,7 @@ function highlightAction(props, action) {
                 }
             });
 
-            /*if (props.rules.get(rule).event.obj_uuid === action.uuid || props.rules.get(rule).event.subj_uuid === action.uuid) {
+            /*if (props.rules.get(rule).event.obj_uuid === action.obj_uuid || props.rules.get(rule).event.subj_uuid === action.subj_uuid) {
                 setIdStyle("eudAction", action.uuid, "background: rgba(239, 86, 55, .3)");
                 console.log('e qui ci entro?')
                 if(next !== null && props.currentObject === null)

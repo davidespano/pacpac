@@ -296,7 +296,9 @@ class EudRule extends Component {
                     <div className={"eudNext"}>
                         <button className={"select-file-btn btn btnNext"} id={"btnNext" + rule.uuid} title={"Avanti"}
                                 onClick={() => {
-                                    eventBus.emit('debug-step');
+                                    rule.actions.forEach(action => {
+                                        eventBus.emit('debug-step' + action.uuid);
+                                    });
                                     //alert("Not yet implemented");
 
                                 }}>
