@@ -459,13 +459,12 @@ export default class VRScene extends React.Component {
                         }
                         if (condition) {
                             rule.actions.forEach(action => {
-                                console.log("action", action);
                                 let actionExecution = actionCallback(action);
                                 if (me.props.debug) {
                                     setTimeout(function () {
                                         //interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
                                         interface_utils.highlightAction(me.props, action);
-                                        eventBus.on('debug-step', actionExecution);
+                                        eventBus.on('debug-step' + action.uuid, actionExecution);
                                     }, duration);
                                 } else {
                                     actionExecution();
