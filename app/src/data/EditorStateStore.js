@@ -59,7 +59,6 @@ class EditorStateStore extends ReduceStore {
                 // Saves è ora la mappa state.debugSaves però con il salvataggio corrente aggiunto correttamente
                 state = state.set('debugSaves', saves);
                 return state;
-
             case ActionTypes.LOAD_DEBUG_SAVES:
                 let debugSaves = action.saves;
                 /*if(state.get('debugSaves') == null){ // Caso in cui EditorState.debugSaves sia null (la mappa non è ancora stata creata)
