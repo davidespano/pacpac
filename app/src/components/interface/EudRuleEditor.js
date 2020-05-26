@@ -456,16 +456,20 @@ class EudRule extends Component {
         if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
             buttonBar = "eudAction eudHidden";
             ruleCssClass = "eudRule";
+
+            let actions = [...rule.actions.map(a => a.get("uuid"))];
+            let index=0;
+
             buttonBarRendering =
                 <React.Fragment>
                     <div className={"eudNext"}>
                         <button className={"select-file-btn btn btnNext"} id={"btnNext" + rule.uuid} title={"Avanti"}
                                 onClick={() => {
-                                    rule.actions.forEach(action => {
-                                        eventBus.emit('debug-step' + action.uuid);
-                                    });
-                                    //alert("Not yet implemented");
-
+                                    if(index < actions.length){
+                                        console.log("entra", index, actions.length)
+                                        eventBus.emit('debug-step' + actions[index]);
+                                        index++;
+                                    }
                                 }}>
                             <img className={"action-buttons btn-img"} src={"icons/icons8-play-50.png"}
                                  alt={"Prossima regola"}/>
