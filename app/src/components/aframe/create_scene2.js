@@ -295,6 +295,8 @@ export default class VRScene extends React.Component {
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
                 // senza passarli esplicitamente
                 let closure = function() {
+                    interface_utils.highlightAction(me.props, action);
+
                     setTimeout(function () {
                         executeAction(me, rule, action)
                     }, duration);
@@ -458,12 +460,14 @@ export default class VRScene extends React.Component {
                             condition = evalCondition(rule.condition, me.state.runState);
                         }
                         if (condition) {
+                            console.log("entra anche qua");
                             rule.actions.forEach(action => {
+                                console.log("entra anche kui", action);
+
                                 let actionExecution = actionCallback(action);
                                 if (me.props.debug) {
                                     setTimeout(function () {
                                         //interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
-                                        interface_utils.highlightAction(me.props, action);
                                         eventBus.on('debug-step' + action.uuid, actionExecution);
                                     }, duration);
                                 } else {
