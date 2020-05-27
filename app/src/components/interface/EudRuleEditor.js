@@ -1335,7 +1335,7 @@ export default class EudRuleEditor extends Component {
             if (numNegazioni % 2 === 0) {
                 return "COLLECTED"
             } else {
-                return "NOT COLLECTED"
+                return "NOT_COLLECTED"
             }
         } else return "non trovato";
     }
