@@ -366,9 +366,15 @@ div.rules{
     border-radius: 4px;
 }
 
-#transitionDuration, .button-Value, #combination, #point-of-interest-delay {
+#transitionDuration, #combination, #point-of-interest-delay {
     padding: 5px;
-    width: 50%;
+    width: 100%;
+    min-width: 50%;
+}
+
+.button-Value {
+    padding: 5px;
+    width: 100%;
     min-width: 50%;
 }
 
@@ -624,7 +630,6 @@ div.rules{
     display: flex;
     flex-direction: row;
     height: 100%;
-    background: white;
     width: 100%;
 }
 
@@ -1033,7 +1038,7 @@ figcaption {
     visibility: visible !important;
 }
 
-.media-grid, .options-grid {
+.tri-options-grid, .media-grid, .options-grid {
     display: grid;
     grid-template-rows: 30px;
     width: 100%;
@@ -1048,6 +1053,11 @@ figcaption {
 
 .options-grid {
     grid-template-columns: 35% auto;
+    grid-gap: 10px;
+}
+
+.tri-options-grid {
+    grid-template-columns: 40% 40% 20%;
     grid-gap: 10px;
 }
 
@@ -1538,7 +1548,7 @@ input.eudObjectString[type=text] {
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .accordion:hover {
+.accordion:hover {
     background-color: #ccc;
 }
 

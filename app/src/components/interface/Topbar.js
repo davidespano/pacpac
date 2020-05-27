@@ -373,7 +373,7 @@ function handleDebugMode(props) {
  * @param props
  * @param type
  */
-function createObject(props, type){
+export function createObject(props, type){
     if(props.currentScene != null){
         let scene = props.scenes.get(props.currentScene);
         let name = "";
@@ -423,7 +423,7 @@ function createObject(props, type){
                     name: name,
                 });
                 break;
-            case InteractiveObjectsTypes.KEYPAD: //TODO KEYPAD rivedere questi parametri
+            case InteractiveObjectsTypes.KEYPAD:
                 if (scene.objects.keypads.length == 0){
                     name = scene.name + '_kp' + (scene.objects.keypads.length + 1);
                     obj = Keypad ({

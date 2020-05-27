@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObject from "../../interactives/InteractiveObject";
+import {createObject} from "./Topbar";
 
 
 function ObjectOptions(props){
@@ -93,8 +94,7 @@ function generateProperties(props){
             <button
                 className={"btn select-file-btn rightbar-btn"}
                 onClick={() => props.switchToGeometryMode() }
-                disabled={(currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM) ||
-                (currentObject.type === InteractiveObjectsTypes.TEXTBOX && objectScene.type === Values.TWO_DIM)}
+                disabled={(currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM)}
             >
                 Modifica geometria
             </button>
@@ -331,6 +331,7 @@ function generateSpecificProperties(object, objectScene, props){
                 </div>
             );
         case InteractiveObjectsTypes.KEYPAD:
+            let scene = props.scenes.get(props.currentScene);
             let buttonsValues = object.properties.buttonsValues; //leggo la mappa contenente i riferimenti a pulsanti e valori corrispondenti
             let buttonList = Object.keys(buttonsValues).map(button => {
                 let obj = props.interactiveObjects.get(button);
@@ -356,7 +357,19 @@ function generateSpecificProperties(object, objectScene, props){
                             </div>
 
                         </div>
-
+                        <div>
+                            <img className={"waste-action-buttons"}
+                                 src={"icons/icons8-waste-50.png"}
+                                 alt={'Cancella'}
+                                 onClick={() => {
+                                     let answer = window.confirm("Vuoi cancellare l'oggetto " + obj.name + "?");
+                                     if (answer) {
+                                         InteractiveObjectAPI.removeObject(scene, obj, props);
+                                         props.updateCurrentObject(null);
+                                     }
+                                 }}
+                            />
+                        </div>
                     </React.Fragment>
                 );
             });
@@ -377,7 +390,31 @@ function generateSpecificProperties(object, objectScene, props){
                         </div>
                     </div>
                     <label className={'rightbar-titles'}>Pulsanti:</label>
-                    <div className={"options-grid"}>
+
+                    <div className={'options-grid'}>
+                        <label className={'options-labels'}>Geometria pulsante Invio:</label>
+                        <button
+                            className={"btn select-file-btn rightbar-btn"}
+                            onClick={() => props.switchToGeometryMode()}>
+                            Modifica geometria
+                        </button>
+                    </div>
+
+                    <div className={'options-grid'}>
+                        <label className={'options-labels'}>
+                            <img className={"object-thumbnail"}
+                                 src={interface_utils.getObjImg(InteractiveObjectsTypes.BUTTON)}/>Aggiungi:</label>
+                        <button
+                            className={"btn select-file-btn rightbar-btn"}
+                            onClick={() => createObject(props, InteractiveObjectsTypes.BUTTON)}
+                        >
+                            Nuovo pulsante
+                        </button>
+                    </div>
+
+
+
+                    <div className={"tri-options-grid"}>
                         {buttonList}
                     </div>
                 </React.Fragment>
