@@ -546,6 +546,9 @@ export function createObject(props, type){
                                 }
                             });
                             props.addNewObject(sceneArray[i], obj);
+                            //la vita è l'unico oggetto globale con una regola di default
+                            let defaultRule = rules_utils.generateDefaultRule(obj, scene);
+                            props.addNewRule(scene, defaultRule);
                         }
                     }
                 }
@@ -585,6 +588,8 @@ export function createObject(props, type){
                 return;
         }
 
+        //se gli oggetti non sono globali creo le regole di default
+        //per l'oggetto vita (l'unico che ha una regola di default) la creo nello switch
         if (!creatingGlobal)
         {
             let defaultRule = rules_utils.generateDefaultRule(obj, scene);
@@ -600,6 +605,7 @@ export function createObject(props, type){
                 }
             }
         }
+
 
     } else {
         alert('Nessuna scena selezionata!');
