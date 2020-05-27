@@ -400,16 +400,18 @@ export default class VRScene extends React.Component {
 
                         let condition = evalCondition(rule.condition, me.state.runState);
                         if (condition) {
-                            console.log("entra anche qua");
+                            console.log("dentro l'if condition");
                             rule.actions.forEach(action => {
-                                console.log("entra anche kui", action);
 
                                 let actionExecution = actionCallback(action);
                                 if (me.props.debug) {
+                                    console.log("dentro l'if debug");
                                     setTimeout(function () {
                                         //interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+
                                         eventBus.on('debug-step' + action.uuid, actionExecution);
                                     }, duration);
+                                    console.log("eventbus.on", 'debug-step' + action.uuid);
                                 } else {
                                     actionExecution();
                                 }
