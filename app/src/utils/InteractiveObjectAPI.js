@@ -120,7 +120,8 @@ function saveRule(scene, rule) {
                 event: JSON.stringify(rule.event),
                 condition: JSON.stringify(rule.condition),
                 actions: rule.actions,
-                name: rule.name
+                name: rule.name,
+                global: rule.global
             })
         .end(function (err, response) {
             if (err) {

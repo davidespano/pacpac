@@ -18,6 +18,7 @@ import scene_utils from "../../scene/scene_utils";
 import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
+import RulesStore from "../../data/RulesStore";
 
 let uuid = require('uuid');
 
@@ -31,11 +32,42 @@ export default class EudRuleEditor extends Component {
         let scene = this.props.scenes.get(this.props.currentScene);
 
         if (this.props.currentScene) {
-            let rules = scene.get('rules');
+            let rules = scene.get('rules'); //elenco uuid
             let rulesRendering = rules.map(
                 rule => {
-                    return (
-                        <React.Fragment key={'fragment-' + rule}>
+                    let rule_obj = RulesStore.getState().get(rule);
+                    if(rule_obj.global !== true){
+                        return (
+                            <React.Fragment key={'fragment-' + rule}>
+                                <EudRule
+                                    VRScene={this.props.VRScene}
+                                    editor={this.props.editor}
+                                    interactiveObjects={this.props.interactiveObjects}
+                                    scenes={this.props.scenes}
+                                    assets={this.props.assets}
+                                    audios={this.props.audios}
+                                    currentScene={this.props.currentScene}
+                                    rules={this.props.rules}
+                                    rule={rule}
+                                    ruleEditorCallback={this.props.ruleEditorCallback}
+                                    removeRule={(rule) => {
+                                        this.onRemoveRuleClick(rule)
+                                    }}
+                                    copyRule={(rule) => {
+                                        this.props.copyRule(rule)
+                                    }}
+                                />
+
+                            </React.Fragment>
+                        );
+                    }
+
+            });
+            let globalRulesRendering = rules.map(
+                rule => {
+                    let rule_obj = RulesStore.getState().get(rule);
+                    if(rule_obj.global){
+                        return (<React.Fragment key={'fragment-' + rule}>
                             <EudRule
                                 VRScene={this.props.VRScene}
                                 editor={this.props.editor}
@@ -55,38 +87,10 @@ export default class EudRuleEditor extends Component {
                                 }}
                             />
 
-                        </React.Fragment>
-                    );
+                        </React.Fragment>);
+                    }
                 });
 
-       /*     //let globalr = this.props.globalRules;
-            let globalRules = rules.map(
-                rule => {
-                    return (
-                        <React.Fragment key={'fragment-' + rule}>
-                            <EudRule
-                                VRScene={this.props.VRScene}
-                                editor={this.props.editor}
-                                interactiveObjects={this.props.interactiveObjects}
-                                scenes={this.props.scenes}
-                                assets={this.props.assets}
-                                audios={this.props.audios}
-                                currentScene={this.props.currentScene}
-                                rules={this.props.rules}
-                                rule={rule}
-                                ruleEditorGlobalCallback={this.props.ruleEditorGlobalCallback}
-                                removeRule={(rule) => {
-                                    this.onRemoveRuleClick(rule)
-                                }}
-                                copyRule={(rule) => {
-                                    this.props.copyRule(rule)
-                                }}
-                            />
-
-                        </React.Fragment>
-                    );
-                }
-            );*/
             //in debug posso selezionare le regole quindi distinguo
             if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
                 return <div className={"rules"}>
@@ -114,13 +118,11 @@ export default class EudRuleEditor extends Component {
                     </div>
                 </div>;
             } else {
-              /*  return <div className={"rules"}>
+                return <div className={"rules"}>
                     <div className={"expand-btn"} >
                         <figure className={'expand-btn'}
                                 onClick={() => {
                                     this.props.expandEditor(!this.props.editor.editorExpanded);
-                                    onAccordionClick("accordionScene");
-                                    onAccordionClick("accordionGlobal")
                                 }}>
                             <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
                                  src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
@@ -129,8 +131,14 @@ export default class EudRuleEditor extends Component {
                             />
                         </figure>
                     </div>
-                    <button className="accordion" id={"accordionScene"} onClick={onAccordionClick("accordionScene")}
-                        >Regole di scena</button>
+
+                    <button className="accordion" id={"accordionScene"} onClick={
+                        () => {
+                            onAccordionClick('accordionScene')
+                        }
+                    }
+                    >Regole di scena</button>
+
                     <div className="panel">
                         <div className={"rule-container"}>
                             <div className={"eudBar"}>
@@ -146,7 +154,7 @@ export default class EudRuleEditor extends Component {
                                 </button>
                                     <button className={"btn select-file-btn"}
                                             onClick={() => {
-                                                this.onNewRuleClick();
+                                                this.onNewRuleClick(false);
                                             }}>
                                         <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
                                         Nuova Regola
@@ -163,8 +171,13 @@ export default class EudRuleEditor extends Component {
                         </div>
                     </div>
 
-                    <button className="accordion" id={"accordionGlobal"}  onClick={onAccordionClick("accordionGlobal")}
-                            >Regole globali</button>
+                    <button className="accordion" id={"accordionGlobal"}  onClick={
+                        () =>{
+                            onAccordionClick('accordionGlobal')
+                        }
+                    }
+                    >Regole globali</button>
+
                     <div className="panel">
                         <div className={"rule-container"}>
                             <div className={"eudBar"}>
@@ -181,7 +194,7 @@ export default class EudRuleEditor extends Component {
                                     </button>
                                     <button className={"btn select-file-btn"}
                                             onClick={() => {
-                                                this.onNewRuleClick();
+                                                this.onNewRuleClick(true);
                                             }}>
                                         <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
                                         Nuova Regola
@@ -192,51 +205,10 @@ export default class EudRuleEditor extends Component {
                                  onClick={() => {
                                      this.onOutsideClick();
                                  }}>
-                                {globalRules}
-                                <div className={'rules-footer'}></div>
+                                {globalRulesRendering}
+
+                                <div className={'rules-footer'}/>
                             </div>
-                        </div>
-                    </div>
-                </div>;*/
-                return <div className={"rules"}>
-                    <div className={"rule-container"}>
-                        <div className={"eudBar"}>
-                            <figure className={'expand-btn'}
-                                    onClick={() => {
-                                        this.props.expandEditor(!this.props.editor.editorExpanded);
-                                    }}>
-                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
-                                     src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
-                                         "icons/icons8-expand-arrow-filled-50.png"}
-                                     alt={'Espandi'}
-                                />
-                            </figure>
-                            <h2>Regole della scena</h2>
-                            <div id={'rule-editor-btns'}>
-                                <button
-                                    disabled={this.props.editor.ruleCopy===null}
-                                    onClick={() => {
-                                        this.onCopyRuleClick(scene);
-                                    }}
-                                >
-                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                    Copia qui
-                                </button>
-                                <button className={"btn select-file-btn"}
-                                        onClick={() => {
-                                            this.onNewRuleClick();
-                                        }}>
-                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
-                                    Nuova Regola
-                                </button>
-                            </div>
-                        </div>
-                        <div className={"rule-editor"}
-                             onClick={() => {
-                                 this.onOutsideClick();
-                             }}>
-                            {rulesRendering}
-                            <div className={'rules-footer'}></div>
                         </div>
                     </div>
                 </div>;
@@ -252,11 +224,13 @@ export default class EudRuleEditor extends Component {
         this.props.ruleEditorCallback.eudShowCompletions(null, null)
     }
     //[Vittoria] creazione nuova regola
-    onNewRuleClick() {
+    onNewRuleClick(global) {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
         let event = Action().set("uuid", uuid.v4());    //la popolo con un evento (nb azione)
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
-        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_tx' + (scene.rules.length + 1));
+        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_rl' + (scene.rules.length + 1))
+            .set("global", global);
+        console.log("added rule: ", rule);
         this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
     }
 
@@ -273,24 +247,6 @@ export default class EudRuleEditor extends Component {
     }
 
 
-    /*onAccordionClick(){
-        var acc = document.getElementsByClassName("accordion");
-        var i;
-        console.log("this: ", this)
-        for (i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                }
-            });
-        }
-    }*/
-
 }
 
 /**
@@ -300,18 +256,14 @@ export default class EudRuleEditor extends Component {
  */
 function onAccordionClick(accordionId) {
     let acc = document.getElementById(accordionId);
-    let added; //boolean per aggiungere l'event listener una volta e basta
-    if(acc!= null && added != true){ //ha caricato
-        acc.addEventListener("click", function() {
-                acc.classList.toggle("active");
-                var panel = acc.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                }
-        added=true;
-        });
+    if(acc!= null){ //ha caricato
+        acc.classList.toggle("active");
+        var panel = acc.nextElementSibling;
+        if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+        } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+        }
     }
 
 }
@@ -1438,83 +1390,83 @@ class EudAutoComplete extends Component {
         2-> devo usare il grafo ma con una singola scena e senza altri elementi (es. object) objects scene only
         3-> devo usare il grafo con una singola scena e con altri elementi (es. subject)
         */
+        if(this.props.rule.global !== true){ //regola non globale
+            let  {items: items, graph: graph} = getCompletions({
+                interactiveObjects: this.props.interactiveObjects,
+                subject: this.props.subject,
+                verb: this.props.verb,
+                role: this.props.role,
+                scenes: this.props.scenes,
+                rulePartType: this.props.rulePartType,
+                assets: this.props.assets,
+                audios: this.props.audios,
+                rules: this.props.rules,
+                rule: this.props.rule,
+            });
+            let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
 
-        let  {items: items, graph: graph} = getCompletions({
-            interactiveObjects: this.props.interactiveObjects,
-            subject: this.props.subject,
-            verb: this.props.verb,
-            role: this.props.role,
-            scenes: this.props.scenes,
-            rulePartType: this.props.rulePartType,
-            assets: this.props.assets,
-            audios: this.props.audios,
-            rules: this.props.rules,
-            rule: this.props.rule,
-        });
-        let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
-
-        if(this.props.interactiveObjects.size===0){
-            graph=0;
-        }
-        if (li.toArray()[0]) { //controllo che ci siano elementi da mostrare
-            let info = li.toArray()[0].props.item;
-        }
-        else graph=0;
-        if(graph !=0){ //ho bisogno del grafo
-
-            //in questi due casi gli oggetti fanno tutti parte della scena corrente
-            if(graph===2){
-                //Case object scene/rules object only
-                return <div className={"eudCompletionPopupForGraph"}>
-                    <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
-                    <ul>
-                        {li}
-                    </ul>
-                </div>
+            if(this.props.interactiveObjects.size===0){
+                graph=0;
             }
-
-            //in questi due casi ci sono oggetti che fanno parte della scena corrente e altri (audio, video ...)
-            //aggiungo manualmente gli oggetti della scena
-            if(graph===3){
-                return <div className={"eudCompletionPopupForGraph"}>
-                    <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
-                    <ul>
-                        {listableItems(sceneObjectsOnly(this.props).valueSeq(), this.props)}
-                    </ul>
-
-                    <ul>
-                        <div className={"line"}/>
-                        {li}
-                    </ul>
-                </div>
+            if (li.toArray()[0]) { //controllo che ci siano elementi da mostrare
+                let info = li.toArray()[0].props.item;
             }
+            else graph=0;
+            if(graph !=0){ //ho bisogno del grafo
 
-            //Se ho necessità di un grafo devo scindere gli items in due gruppi: un gruppo con gli Interactive object
-            //che hanno bisogno di un nome della scena, e tutti gli altri
+                //in questi due casi gli oggetti fanno tutti parte della scena corrente
+                if(graph===2){
+                    //Case object scene/rules object only
+                    return <div className={"eudCompletionPopupForGraph"}>
+                        <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
+                        <ul>
+                            {li}
+                        </ul>
+                    </div>
+                }
 
-            //Primo gruppo, TUTTI gli oggetti appartenenti alle scene
-            let sceneObj = this.props.interactiveObjects.filter(x =>
-                x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST);
-            //mi prendo le scene coinvolte
-            let scenes =returnScenes(sceneObj, this.props);
+                //in questi due casi ci sono oggetti che fanno parte della scena corrente e altri (audio, video ...)
+                //aggiungo manualmente gli oggetti della scena
+                if(graph===3){
+                    return <div className={"eudCompletionPopupForGraph"}>
+                        <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
+                        <ul>
+                            {listableItems(sceneObjectsOnly(this.props).valueSeq(), this.props)}
+                        </ul>
 
-            //Secondo gruppo, tutti gli altri oggetti, quindi mi basta filtrare quelli che sono presenti in sceneObj
-            let notSceneObj = items.filter(d => !sceneObj.includes(d));
-            //trasformo in un oggetto che può essere inserito nel dropdown
-            let liNotSceneObj = listableItems(notSceneObj.valueSeq(), this.props);
+                        <ul>
+                            <div className={"line"}/>
+                            {li}
+                        </ul>
+                    </div>
+                }
 
-            let fragment = scenes.map( element => {
-                var obj = mapSceneWithObjects(this.props, element, sceneObj);
-                let objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
-                let scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
+                //Se ho necessità di un grafo devo scindere gli items in due gruppi: un gruppo con gli Interactive object
+                //che hanno bisogno di un nome della scena, e tutti gli altri
+
+                //Primo gruppo, TUTTI gli oggetti appartenenti alle scene
+                let sceneObj = this.props.interactiveObjects.filter(x =>
+                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST);
+                //mi prendo le scene coinvolte
+                let scenes =returnScenes(sceneObj, this.props);
+
+                //Secondo gruppo, tutti gli altri oggetti, quindi mi basta filtrare quelli che sono presenti in sceneObj
+                let notSceneObj = items.filter(d => !sceneObj.includes(d));
+                //trasformo in un oggetto che può essere inserito nel dropdown
+                let liNotSceneObj = listableItems(notSceneObj.valueSeq(), this.props);
+
+                let fragment = scenes.map( element => {
+                    var obj = mapSceneWithObjects(this.props, element, sceneObj);
+                    let objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
+                    let scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
                     return (<React.Fragment>
                         <span> {scene_name} </span>
                         <ul>
                             {objects}
                         </ul>
                     </React.Fragment>)
-            });
-            return (
+                });
+                return (
                     <div className={"eudCompletionPopupForGraph"}>
                         {fragment}
                         <ul>
@@ -1523,9 +1475,30 @@ class EudAutoComplete extends Component {
                         </ul>
 
                     </div>
-            )
+                )
+            }
+            else { //caso di verbi, operatori etc..
+                return <div className={"eudCompletionPopup"}>
+                    <ul>
+                        {li}
+                    </ul>
+                </div>
+            }
         }
-        else { //caso di verbi, operatori etc..
+        else{
+            let  {items: items, graph: graph} = getCompletions({
+                interactiveObjects: this.props.interactiveObjects,
+                subject: this.props.subject,
+                verb: this.props.verb,
+                role: this.props.role,
+                scenes: this.props.scenes,
+                rulePartType: this.props.rulePartType,
+                assets: this.props.assets,
+                audios: this.props.audios,
+                rules: this.props.rules,
+                rule: this.props.rule,
+            });
+            let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
             return <div className={"eudCompletionPopup"}>
                 <ul>
                     {li}
@@ -1533,6 +1506,7 @@ class EudAutoComplete extends Component {
             </div>
         }
     }
+
 }
 
 /**

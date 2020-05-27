@@ -218,6 +218,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
                         }),
                         condition: conditionParser(JSON.parse(rule.condition)),
                         actions: actions,
+                        global: rule.global,
                     });
                     Actions.receiveRule(r);
                 }catch(e){}
@@ -594,6 +595,7 @@ function readScene(gameGraph, raw_scenes) {
                 condition: JSON.parse(rule.condition),
                 actions: rule.actions,
                 name: rule.name,
+                global: rule.global,
             });
         });
 
