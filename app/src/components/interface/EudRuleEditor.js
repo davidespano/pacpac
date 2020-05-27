@@ -394,7 +394,6 @@ export default class EudRuleEditor extends Component {
                 * lo stato di response, usando una variabile d'appoggio "risposta". Il campo mancante prenderà ciò che scriviamo
                 * nell'input, successivamente processiamo ciò che abbiamo scritto in "queryControl". */
                 let risposta = this.state.response;
-
                 /* A seconda di cosa viene settato nel queryControl si esegue uno di questi case. */
                 switch (this.state.elementoMancante) {
                     case "scenaFinale":
@@ -413,10 +412,10 @@ export default class EudRuleEditor extends Component {
                         risposta.statoFinale = newMessage;
                         this.setState({response: risposta});
                         break;
-                    /* Quando la scena non ha transizioni o switch e si tenta di creare una regola con uno di essi
-                    * allora il bot chiede all'utente se vuole creare un oggetto di default. In caso affermativo viene creato e
-                    * posto come oggeto della regola che l'utente sta creando. In caso negativo invece viene resettata
-                    * la regola e viene data la possibilità di crearne una da zero. */
+                    /* Quando la scena non ha l'oggetto che serve per la regola  allora il bot chiede all'utente se
+                    vuole crearlo di default. In caso affermativo viene creato e posto come oggetto della regola
+                    che l'utente sta creando. In caso negativo invece viene resettata la regola e viene data la
+                    possibilità di crearne una da zero. */
                     case "confermaCreazioneOggetto":
                         if (newMessage.trim().toLowerCase() === "si") {
                             switch (risposta.intent) {
@@ -788,15 +787,16 @@ export default class EudRuleEditor extends Component {
         let c = new Condition(uuid.v4(), objectUuid, state, "EQUAL");
 
         if (rule.condition instanceof Condition || rule.condition instanceof SuperCondition) {
-            c = new SuperCondition(uuid.v4(), rule.condition, new Condition(uuid.v4()));
+            c = new SuperCondition(uuid.v4(), rule.condition, new Condition(uuid.v4(), objectUuid, state, "EQUAL"));
         }
 
         rule = rule.set('condition', c);
 
+        console.log(c);
         return rule;
     }
 
-    stampaBottoni(oggetti){
+    stampaBottoni(oggetti) {
         renderCustomComponent(ButtonObjectNames, {
             oggetti: oggetti,
             oggettoCliccato: (o) => this.oggettoCliccato(o)
@@ -811,7 +811,7 @@ export default class EudRuleEditor extends Component {
         let sceneFinali = this.returnFinalScenesNames();
         let scelte = ["Si", "No"];
         let statoTransizione = ["Attivabile", "Non attivabile", "Visibile", "Non visibile"];
-        
+
         /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
          * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
         if (this.state.response.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
@@ -830,7 +830,7 @@ export default class EudRuleEditor extends Component {
             //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
             this.setState({elementoMancante: "scenaFinale"});
             this.stampaBottoni(sceneFinali);
-        } else if (!this.doesObjectExists(this.state.response.oggetto, "TRANSITION") && this.state.response.tipo === "regola") { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
+        } else if (!this.doesObjectExists(this.state.response.oggetto, "TRANSITION") && this.state.response.tipo !== "azione") { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
             if (this.returnObjectNames("TRANSITION").length > 0) { //Se esiste qualche transizione le elenchiamo
 
                 //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
@@ -853,7 +853,7 @@ export default class EudRuleEditor extends Component {
             if (this.state.response.tipo === "condizione") {
                 /* Setto lo stato della chiave in caso l'utente voglia aggiungere una condizione. */
                 let risposta = this.state.response;
-                risposta.statoIniziale = this.getTransitionState(risposta.statoIniziale);
+                risposta.statoIniziale = this.getTransitionState(risposta.statoIniziale, risposta.numNegazioni);
                 this.setState({response: risposta});
             }
 
@@ -935,18 +935,26 @@ export default class EudRuleEditor extends Component {
         return rule;
     }
 
-    getTransitionState(state) {
+    getTransitionState(state, numNegazioni) {
         if (["attivabile"].includes(state.trim().toLowerCase())) {
-            return "ACTIVABLE"
+            if (numNegazioni % 2 === 0) {
+                return "ACTIVABLE";
+            } else return "NOT_ACTIVABLE";
         }
         if (["non attivabile"].includes(state.trim().toLowerCase())) {
-            return "NOT_ACTIVABLE"
+            if (numNegazioni % 2 === 0) {
+                return "NOT_ACTIVABLE";
+            } else return "ACTIVABLE";
         }
         if (["visibile"].includes(state.trim().toLowerCase())) {
-            return "VISIBLE"
+            if (numNegazioni % 2 === 0) {
+                return "VISIBLE";
+            } else return "INVISIBLE";
         }
         if (["non visibile"].includes(state.trim().toLowerCase())) {
-            return "INVISIBLE"
+            if (numNegazioni % 2 === 0) {
+                return "INVISIBLE";
+            } else return "VISIBLE";
         }
         return "non trovato";
     }
@@ -967,12 +975,13 @@ export default class EudRuleEditor extends Component {
             if (!this.doesObjectExists(this.state.response.oggetto, "SWITCH")) {
                 addResponseMessage("Hai inserito il nome di uno switch che non esiste. Perfavore scegli tra uno di questi: ");
                 this.setState({elementoMancante: "oggetto"});
-               this.stampaBottoni(interruttori);
+                this.stampaBottoni(interruttori);
             } else {
                 /* Setto lo stato inziale e quello finale con valore ON o OFF a seconda di cosa contengono. */
                 let risposta = this.state.response;
-                risposta.statoIniziale = this.getSwitchState(risposta.statoIniziale);
-                risposta.statoFinale = this.getSwitchState(risposta.statoFinale);
+
+                risposta.statoIniziale = this.getSwitchState(risposta.statoIniziale, risposta.numNegazioni);
+                risposta.statoFinale = this.getSwitchState(risposta.statoFinale, 0);
                 this.setState({response: risposta});
 
                 //Se non contengono qualcosa riconducibile ad ON o OFF allora chiedo all'utente di specificarlo
@@ -981,12 +990,12 @@ export default class EudRuleEditor extends Component {
                     addResponseMessage("Scrivimi qual'è lo stato inziale dello switch. È acceso o spento?");
                     //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                     this.setState({elementoMancante: "statoIniziale"});
-                   this.stampaBottoni(statoInterruttore);
+                    this.stampaBottoni(statoInterruttore);
                 } else if (this.state.response.statoFinale === "non trovato" && this.state.response.tipo !== "condizione") {  //Controllo STATO FINALE
                     addResponseMessage("Scrivimi quale sarà lo stato finale dello switch. Vuoi che sia acceso o spento?");
                     //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                     this.setState({elementoMancante: "statoFinale"});
-                   this.stampaBottoni(statoInterruttore);
+                    this.stampaBottoni(statoInterruttore);
                 } else {
                     // Se HO TUTTO
                     /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
@@ -1054,12 +1063,16 @@ export default class EudRuleEditor extends Component {
     /* Funzione che controlla se la stringa passata come parametro corrisponde ad uno stato possibile per uno switch.
     * Se lo trova ne restituisce uno di default in modo da sostituirlo anche nella response. Infatti verranno messi ON oppure
     * OFF a seconda di cosa scrive l'utente. */
-    getSwitchState(state) {
+    getSwitchState(state, numNegazioni) {
         if (["on", "acceso", "attivo", "accendilo", "attivalo", "attivato", "attiva"].includes(state.trim().toLowerCase())) {
-            return "ON"
+            if (numNegazioni % 2 === 0) {
+                return "ON"
+            } else return "OFF"
         } else {
             if (["off", "spento", "disattivo", "spegnilo", "disattivalo", "disattivato", "disattiva"].includes(state.trim().toLowerCase())) {
-                return "OFF"
+                if (numNegazioni % 2 === 0) {
+                    return "OFF"
+                } else return "ON"
             } else return "non trovato";
         }
     }
@@ -1095,13 +1108,13 @@ export default class EudRuleEditor extends Component {
             if (!this.doesObjectExists(this.state.response.oggetto, "LOCK")) {
                 addResponseMessage("Hai inserito il nome di un lucchetto che non esiste. Perfavore scegli tra uno di questi: ");
                 this.setState({elementoMancante: "oggetto"});
-              this.stampaBottoni(lucchetti);
+                this.stampaBottoni(lucchetti);
             } else {
                 //Se l'utente sta scrivendo una condizione
                 if (this.state.response.tipo === "condizione") {
                     /* Setto lo stato del lucchetto in caso l'utente voglia aggiungere una condizione. */
                     let risposta = this.state.response;
-                    risposta.statoIniziale = this.getPadlockState(risposta.statoIniziale);
+                    risposta.statoIniziale = this.getPadlockState(risposta.statoIniziale, risposta.numNegazioni);
                     this.setState({response: risposta});
                 }
 
@@ -1131,7 +1144,7 @@ export default class EudRuleEditor extends Component {
                             addResponseMessage("Scrivimi qual'è lo stato che dovrà avere il lucchetto. È aperto o chiuso?");
                             //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                             this.setState({elementoMancante: "statoIniziale"});
-                           this.stampaBottoni(statoLucchetto);
+                            this.stampaBottoni(statoLucchetto);
                         } else {
                             this.setState({elementoMancante: "confermaAggiuntaCondizione"});
                             addResponseMessage("I dati della tua condizione sono questi: Se il lucchetto: " + this.state.response.oggetto
@@ -1190,12 +1203,18 @@ export default class EudRuleEditor extends Component {
         return rule;
     }
 
-    getPadlockState(state) {
+    getPadlockState(state, numNegazioni) {
         if (["aperto"].includes(state.trim().toLowerCase())) {
-            return "UNLOCKED"
+            if (numNegazioni % 2 < 0) {
+                return "UNLOCKED";
+            } else return "LOCKED";
         } else {
             if (["chiuso"].includes(state.trim().toLowerCase())) {
-                return "LOCKED"
+                if (numNegazioni % 2 < 0) {
+                    return "LOCKED";
+                } else {
+                    return "UNLOCKED";
+                }
             } else return "non trovato";
         }
     }
@@ -1222,7 +1241,7 @@ export default class EudRuleEditor extends Component {
                 if (this.state.response.tipo === "condizione") {
                     /* Setto lo stato della chiave in caso l'utente voglia aggiungere una condizione. */
                     let risposta = this.state.response;
-                    risposta.statoIniziale = this.getKeyState(risposta.statoIniziale);
+                    risposta.statoIniziale = this.getKeyState(risposta.statoIniziale, risposta.numNegazioni);
                     this.setState({response: risposta});
                 }
 
@@ -1242,7 +1261,7 @@ export default class EudRuleEditor extends Component {
                     case "azione":
                         this.setState({elementoMancante: "confermaAggiuntaAzione"});
                         addResponseMessage("I dati della tua azione sono questi: Il giocatore raccoglie la chiave: " + this.state.response.oggetto);
-                        addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
+                        addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi andare avanti. ");
                         this.stampaBottoni(scelte);
                         break;
                     case "condizione":
@@ -1257,7 +1276,7 @@ export default class EudRuleEditor extends Component {
                             this.setState({elementoMancante: "confermaAggiuntaCondizione"});
                             addResponseMessage("I dati della tua condizione sono questi: Se la chiave: " + this.state.response.oggetto + " è " +
                                 this.state.response.statoIniziale);
-                            addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta della condizione, oppure \"no\" se vuoi creare una nuova regola. ");
+                            addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta della condizione, oppure \"no\" se vuoi andare avanti. ");
                             this.stampaBottoni(scelte);
                         }
                 }
@@ -1311,14 +1330,14 @@ export default class EudRuleEditor extends Component {
         return rule;
     }
 
-    getKeyState(state) {
+    getKeyState(state, numNegazioni) {
         if (["raccolta"].includes(state.trim().toLowerCase())) {
-            return "COLLECTED"
-        } else {
-            if (["non raccolta"].includes(state.trim().toLowerCase())) {
+            if (numNegazioni % 2 === 0) {
+                return "COLLECTED"
+            } else {
                 return "NOT COLLECTED"
-            } else return "non trovato";
-        }
+            }
+        } else return "non trovato";
     }
 }
 
@@ -2581,7 +2600,8 @@ async function sendRequest(sentence, tipo) {
         statoIniziale: "",
         statoFinale: "",
         oggetto: "",
-        tipo: tipo
+        tipo: tipo,
+        numNegazioni: sentence.split("non").length - 1
     };
 
     const q = encodeURIComponent(sentence);
