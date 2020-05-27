@@ -68,6 +68,8 @@ class ObjectsStore extends ReduceStore {
                 state = state.set(action.obj.uuid, action.obj).sort(stores_utils.alphabetical);
                 return state;
             case ActionTypes.REMOVE_OBJECT:
+
+                console.log("rimozione oggetto: ", action.obj);
                 if (action.obj.type === InteractiveObjectsTypes.BUTTON) {
                     let keypad = action.scene.objects.keypads;
                     if (keypad.length !== 0){

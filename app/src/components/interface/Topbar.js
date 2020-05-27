@@ -623,7 +623,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                 if (scene.objects.playtime.length == 0){ //ammesso un solo oggetto playtime per gioco
                     name = scene.name + '_pt';
                     obj = PlayTime({
-                        uuid: uuid.v4(),
+                        uuid: scene.uuid+"_pt",
                         name: name,
                         properties: {
                             time: 0,
@@ -637,7 +637,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                 if (scene.objects.score.length == 0){ //ammesso un solo oggetto playtime per gioco
                     name = scene.name + '_sc';
                     obj = Score({
-                        uuid: uuid.v4(),
+                        uuid: scene.uuid+"_sc",
                         name: name,
                         properties: {
                             score: 0,
@@ -651,7 +651,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                 if (scene.objects.health.length == 0){ //ammesso un solo oggetto playtime per gioco
                     name = scene.name + '_hl';
                     obj = Health({
-                        uuid: uuid.v4(),
+                        uuid: scene.uuid+"_hl",
                         name: name,
                         properties: {
                             score: 0,
