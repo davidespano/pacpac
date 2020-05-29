@@ -289,7 +289,7 @@ export default class EudRuleEditor extends Component {
                             addResponseMessage("Regola creata!");
                             addResponseMessage("Vuoi aggiungere una nuova azione legata a quest'ultima regola creata?");
                             this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             return;
                         } else if (newMessage.trim().toLowerCase() === "no") {
                             this.resetAll();
@@ -307,7 +307,7 @@ export default class EudRuleEditor extends Component {
                         } else if (newMessage.trim().toLowerCase() === "no") {
                             addResponseMessage("Vuoi aggiungere una nuova condizione legata a quest'ultima regola creata?");
                             this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             return;
                         } else {
                             addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
@@ -343,12 +343,12 @@ export default class EudRuleEditor extends Component {
                             addResponseMessage("Azione corrispondente aggiunta.");
                             addResponseMessage("Vuoi aggiungere una nuova azione?");
                             this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             return;
                         } else if (newMessage.trim().toLowerCase() === "no") {
                             addResponseMessage("Vuoi scriverne una nuova?");
                             this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             return;
                         } else {
                             addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
@@ -396,12 +396,12 @@ export default class EudRuleEditor extends Component {
 
                             addResponseMessage("Vuoi aggiungere una nuova condizione?");
                             this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             return;
                         } else if (newMessage.trim().toLowerCase() === "no") {
                             addResponseMessage("Vuoi aggiungere una nuova condizione?");
                             this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             return;
                         } else {
                             addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
@@ -461,6 +461,7 @@ export default class EudRuleEditor extends Component {
         this.setState({response: risposta});
     }
 
+    /* Setta se la risposta è un'azione o una condizione. */
     responseSetActionOrCondition(state) {
         let risposta = this.state.response;
         risposta.tipo = state;
@@ -468,30 +469,30 @@ export default class EudRuleEditor extends Component {
     }
 
     /* Metodo usato per mandare la query quando viene cliccato il bottone corrispondente. */
-    oggettoCliccato(oggetto) {
-        this.handleNewUserMessage(oggetto);
+    clickedObject(object) {
+        this.handleNewUserMessage(object);
     }
 
     /* Ritorna i nomi delle sceneFinali possibili. */
     returnFinalScenesNames() {
-        let scene = this.props.scenes;
-        let nomeScenaCorrente = this.props.scenes.get(this.props.currentScene).name;
-        let nomiScene = []; // Array che conterrà tutti i nomi delle scene, tranne quello della scena corrente.
+        let scenes = this.props.scenes;
+        let currentNameScene = this.props.scenes.get(this.props.currentScene).name;
+        let sceneNames = []; // Array che conterrà tutti i nomi delle scene, tranne quello della scena corrente.
 
         //Aggiungo i nome di tutte le scene, ma saltando la scena corrente
-        scene.forEach(function (singleScene) {
-            if (singleScene.name !== nomeScenaCorrente)
-                nomiScene.push(singleScene.name);
+        scenes.forEach(function (singleScene) {
+            if (singleScene.name !== currentNameScene)
+                sceneNames.push(singleScene.name);
         });
-        return nomiScene;
+        return sceneNames;
     }
 
     /* Torna true se la scena passsata come parametro (stringa) esiste tra i nomi delle scene nella quale è possibile spostarsi, false altrimenti. */
-    doesFinalSceneExists(scene) {
+    doesFinalSceneExists(scenes) {
         let sceneNames = this.returnFinalScenesNames();
 
         for (var i = 0; i < sceneNames.length; i++) {
-            if (scene === sceneNames[i]) {
+            if (scenes === sceneNames[i]) {
                 return true;
             }
         }
@@ -506,6 +507,7 @@ export default class EudRuleEditor extends Component {
         scene.forEach(function (singleScene) {
             if (singleScene.name === sceneName) {
                 uuid = props.scenes.get(singleScene.uuid).uuid;
+                return uuid;
             }
         });
         return uuid;
@@ -594,26 +596,79 @@ export default class EudRuleEditor extends Component {
         return name;
     }
 
+    /* Trona la regola con una nuova condizione, a seconda dello stato che deve avere l'oggetto in questione
+     e del suo uuid. */
     addObjectCondition(rule, objectUuid, state) {
         let newRule = rules_utils.addEmptyCondition(rule);
         this.props.ruleEditorCallback.eudUpdateRule(newRule);
+
+        /* L'operatore è sempre "è". */
         let c = new Condition(uuid.v4(), objectUuid, state, "EQUAL");
 
+        /* Se la regola contiene già una condizione o una SuperCondizione. */
         if (rule.condition instanceof Condition || rule.condition instanceof SuperCondition) {
             c = new SuperCondition(uuid.v4(), rule.condition, new Condition(uuid.v4(), objectUuid, state, "EQUAL"));
         }
 
         rule = rule.set('condition', c);
 
-        console.log(c);
         return rule;
     }
 
-    stampaBottoni(oggetti) {
+    /* Stampa i bottoni dell'array passato come parametro nella chat. */
+    printButtonsOnChatBot(objects) {
         renderCustomComponent(ButtonObjectNames, {
-            oggetti: oggetti,
-            oggettoCliccato: (o) => this.oggettoCliccato(o)
+            oggetti: objects,
+            clickedObject: (o) => this.clickedObject(o)
         });
+    }
+
+    /* Genera il nome della regola creata tramite chatbot. Siccome i nomi devono essere univoci viene posto il controllo
+    * che se esiste un nome uguale lo continua a modificare finchè non trova un nuovo nome possibile. */
+    generateRuleName(objectType, objectName) {
+        let scenes = this.props.scenes.get(this.props.currentScene);
+        let initialPath, ruleName;
+        let i = 0;
+
+        /* Ogni regola deve avere un nome collegato ad essa a seconda del tipo di oggetto che ne fa parte. La prima parte
+        * del nome è uguale a tutti gli oggetti dello stesso tipo. */
+        switch (objectType) {
+            case "TRANSITION":
+                initialPath = 'regola della transizione ' + objectName + '_';
+                break;
+            case "SWITCH":
+                initialPath = 'regola dell\'interruttore ' + objectName + '_';
+                break;
+            case "LOCK":
+                initialPath = 'regola del lucchetto ' + objectName + '_';
+                break;
+            case "KEY":
+                initialPath = 'regola della chiave ' + objectName + '_';
+                break;
+            default:
+                console.log("Manca il tipo nella generazione del nome della regola");
+        }
+
+        /* Se il nome della regola + il numero delle regole già esistenti esiste già, allora continuo ad aumentare il
+        numero delle regole già esistenti. */
+        do {
+            i = i + 1;
+            ruleName = initialPath + (scenes.rules.length + i);
+        } while (this.doesRuleNameExists(ruleName));
+
+        return ruleName;
+    }
+
+    /* Controlla che il nome passato come parametro non esista già per qualche altra regola, se esiste torna true, se no false.
+    * Controlla su tutte le regole del gioco, non della scena corrente.*/
+    doesRuleNameExists(ruleName) {
+        let isToChange = false;
+        this.props.rules.forEach(function (singleRule) {
+            if (singleRule.name === ruleName) {
+                isToChange = true;
+            }
+        });
+        return isToChange;
     }
 
     /** TRANSITIONS **/
@@ -621,7 +676,7 @@ export default class EudRuleEditor extends Component {
     /* Metodo per controllare se tutti gli elementi della regola transizione che vogliamo creare sono corretti. */
     transitionElementsControl() {
         let transizioni = this.returnObjectNames("TRANSITION");
-        let sceneFinali = this.returnFinalScenesNames();
+        let finalScenes = this.returnFinalScenesNames();
         let scelte = ["Si", "No"];
         let statoTransizione = ["Attivabile", "Non attivabile", "Visibile", "Non visibile"];
 
@@ -642,7 +697,7 @@ export default class EudRuleEditor extends Component {
             }
             //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
             this.setState({elementoMancante: "scenaFinale"});
-            this.stampaBottoni(sceneFinali);
+            this.printButtonsOnChatBot(finalScenes);
         } else if (!this.doesObjectExists(this.state.response.oggetto, "TRANSITION") && this.state.response.tipo !== "azione") { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
             if (this.returnObjectNames("TRANSITION").length > 0) { //Se esiste qualche transizione le elenchiamo
 
@@ -650,16 +705,16 @@ export default class EudRuleEditor extends Component {
                 this.setState({elementoMancante: "oggetto"});
                 if (this.state.response.oggetto === "") {
                     addResponseMessage("Quale transizione vuoi cliccare per effettuare l'azione? Perfavore scegli tra una di queste: ");
-                    this.stampaBottoni(transizioni);
+                    this.printButtonsOnChatBot(transizioni);
                 } else {
                     addResponseMessage("La transizione che hai inserito non esiste. Perfavore scegli tra una di queste: ");
-                    this.stampaBottoni(transizioni);
+                    this.printButtonsOnChatBot(transizioni);
                 }
             } else { //Se non esiste neanche una transizione chiediamo se ne vuole aggiungere una
                 addResponseMessage("Sembra che tu non abbia transizioni per interagire. Vuoi crearne una? " +
                     "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
                 this.setState({elementoMancante: "confermaCreazioneOggetto"});
-                this.stampaBottoni(scelte);
+                this.printButtonsOnChatBot(scelte);
             }
         } else {
             //Se l'utente sta scrivendo una condizione
@@ -679,26 +734,26 @@ export default class EudRuleEditor extends Component {
                     addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
                         " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.oggetto);
                     addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
-                    this.stampaBottoni(scelte);
+                    this.printButtonsOnChatBot(scelte);
                     break;
                 case "azione":
                     this.setState({elementoMancante: "confermaAggiuntaAzione"});
                     addResponseMessage("I dati della tua azione sono questi: Passa alla SCENA FINALE: " + this.state.response.scenaFinale);
                     addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
-                    this.stampaBottoni(scelte);
+                    this.printButtonsOnChatBot(scelte);
                     break;
                 case "condizione":
                     if (this.state.response.statoIniziale === "non trovato") {
                         addResponseMessage("Scrivimi qual'è lo stato che deve avere la transizione. Attivabile, non attivabile, visibile, non visibile?");
                         //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                         this.setState({elementoMancante: "statoIniziale"});
-                        this.stampaBottoni(statoTransizione);
+                        this.printButtonsOnChatBot(statoTransizione);
                     } else {
                         this.setState({elementoMancante: "confermaAggiuntaCondizione"});
                         addResponseMessage("I dati della tua azione sono questi: Se la transizione " + this.state.response.oggetto +
                             " è " + this.state.response.statoIniziale);
                         addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
-                        this.stampaBottoni(scelte);
+                        this.printButtonsOnChatBot(scelte);
                     }
 
                     break;
@@ -712,9 +767,10 @@ export default class EudRuleEditor extends Component {
      * altri campi visto che per la transizione sono sempre li stessi. */
     createTransitionRule(transition, finalSceneUuid) {
         let r;
+
         r = Rule({
             uuid: uuid.v4(),
-            name: 'regola della transizione ' + transition.name,
+            name: this.generateRuleName('TRANSITION', transition.name),
             event: Action({
                 uuid: uuid.v4(),
                 subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -734,6 +790,9 @@ export default class EudRuleEditor extends Component {
         return r;
     }
 
+    /* Permette di aggiungere un'azione riguardo una transizione. Il bot si aspetta dunque un "passa alla 'scena'".
+    * Questo metodo grazie allo uuid della scena e alla regola alla quale aggiungere l'azione ritorna appunto la regola
+    * con l'azione aggiunta. */
     addTransitionAction(rule, finalSceneUuid) {
         let list = rule.get('actions');
         let index = list.size > 0 ? list.get(list.size - 1).get('index') + 1 : 0;
@@ -748,6 +807,9 @@ export default class EudRuleEditor extends Component {
         return rule;
     }
 
+    /* Permette di capire lo stato della transizione per aggiungerlo ad una condizione. Il bot si aspetta dunque un "se la 'transizione' è attiva".
+     * Questo metodo permette di riconoscere "attiva" e di restituire il pezzo corrispondente per la condizione. Da notare
+     * che vengono usate il numero di negazioni nella frase per capire se è positiva o negativa. */
     getTransitionState(state, numNegazioni) {
         if (["attivabile"].includes(state.trim().toLowerCase())) {
             if (numNegazioni % 2 === 0) {
@@ -788,7 +850,7 @@ export default class EudRuleEditor extends Component {
             if (!this.doesObjectExists(this.state.response.oggetto, "SWITCH")) {
                 addResponseMessage("Hai inserito il nome di uno switch che non esiste. Perfavore scegli tra uno di questi: ");
                 this.setState({elementoMancante: "oggetto"});
-                this.stampaBottoni(interruttori);
+                this.printButtonsOnChatBot(interruttori);
             } else {
                 /* Setto lo stato inziale e quello finale con valore ON o OFF a seconda di cosa contengono. */
                 let risposta = this.state.response;
@@ -803,12 +865,12 @@ export default class EudRuleEditor extends Component {
                     addResponseMessage("Scrivimi qual'è lo stato inziale dello switch. È acceso o spento?");
                     //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                     this.setState({elementoMancante: "statoIniziale"});
-                    this.stampaBottoni(statoInterruttore);
+                    this.printButtonsOnChatBot(statoInterruttore);
                 } else if (this.state.response.statoFinale === "non trovato" && this.state.response.tipo !== "condizione") {  //Controllo STATO FINALE
                     addResponseMessage("Scrivimi quale sarà lo stato finale dello switch. Vuoi che sia acceso o spento?");
                     //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                     this.setState({elementoMancante: "statoFinale"});
-                    this.stampaBottoni(statoInterruttore);
+                    this.printButtonsOnChatBot(statoInterruttore);
                 } else {
                     // Se HO TUTTO
                     /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
@@ -820,21 +882,21 @@ export default class EudRuleEditor extends Component {
                             addResponseMessage("I dati della tua regola sono questi: STATO INIZIALE: " + this.state.response.statoIniziale +
                                 " STATO FINALE: " + this.state.response.statoFinale + " NOME SWITCH: " + this.state.response.oggetto);
                             addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             break;
                         case "azione":
                             this.setState({elementoMancante: "confermaAggiuntaAzione"});
                             addResponseMessage("I dati della tua azione sono questi: Lo switch: " + this.state.response.oggetto +
                                 " cambia stato a: " + this.state.response.statoFinale);
                             addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             break;
                         case "condizione":
                             this.setState({elementoMancante: "confermaAggiuntaCondizione"});
                             addResponseMessage("I dati della tua condizione sono questi: Se lo switch: " + this.state.response.oggetto +
                                 " è " + this.state.response.statoIniziale);
                             addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta della condizione, oppure \"no\" se vuoi creare una nuova regola. ");
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                             break;
                     }
                 }
@@ -844,7 +906,7 @@ export default class EudRuleEditor extends Component {
             addResponseMessage("Sembra che tu non abbia switch per interagire. Vuoi crearne uno? " +
                 "Scrivi \"si\" se vuoi crearlo, oppure \"no\" se vuoi scrivere da capo la regola.  ");
             this.setState({elementoMancante: "confermaCreazioneOggetto"});
-            this.stampaBottoni(scelte);
+            this.printButtonsOnChatBot(scelte);
         }
     }
 
@@ -853,7 +915,7 @@ export default class EudRuleEditor extends Component {
         let r;
         r = Rule({
             uuid: uuid.v4(),
-            name: 'regola dell\'interruttore ' + switchObject.name,
+            name: this.generateRuleName('SWITCH', switchObject.name),
             event: Action({
                 uuid: uuid.v4(),
                 subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -890,6 +952,9 @@ export default class EudRuleEditor extends Component {
         }
     }
 
+    /* Permette di aggiungere un'azione riguardo uno switch. Il bot si aspetta dunque un "attiva lo 'switch'".
+     * Questo metodo grazie all'oggetto switch corrispondente, alla regola alla quale aggiungere l'azione e allo stato finale
+     * dello switch ritorna la regola con l'azione corretta. */
     addSwitchAction(rule, switchObject, finalState) {
         let list = rule.get('actions');
         let index = list.size > 0 ? list.get(list.size - 1).get('index') + 1 : 0;
@@ -921,7 +986,7 @@ export default class EudRuleEditor extends Component {
             if (!this.doesObjectExists(this.state.response.oggetto, "LOCK")) {
                 addResponseMessage("Hai inserito il nome di un lucchetto che non esiste. Perfavore scegli tra uno di questi: ");
                 this.setState({elementoMancante: "oggetto"});
-                this.stampaBottoni(lucchetti);
+                this.printButtonsOnChatBot(lucchetti);
             } else {
                 //Se l'utente sta scrivendo una condizione
                 if (this.state.response.tipo === "condizione") {
@@ -942,13 +1007,13 @@ export default class EudRuleEditor extends Component {
                             "Dunque: I dati della tua regola sono questi: STATO FINALE: " + this.state.response.statoFinale +
                             " NOME LUCCHETTO: " + this.state.response.oggetto);
                         addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
-                        this.stampaBottoni(scelte);
+                        this.printButtonsOnChatBot(scelte);
                         break;
                     case "azione":
                         this.setState({elementoMancante: "confermaAggiuntaAzione"});
                         addResponseMessage("I dati della tua azione sono questi: Il giocatore sblocca il lucchetto: " + this.state.response.oggetto);
                         addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
-                        this.stampaBottoni(scelte);
+                        this.printButtonsOnChatBot(scelte);
                         break;
                     case "condizione":
                         //Se non contiene qualcosa riconducibile ad APERTO o CHIUSO allora chiedo all'utente di specificarlo
@@ -957,13 +1022,13 @@ export default class EudRuleEditor extends Component {
                             addResponseMessage("Scrivimi qual'è lo stato che dovrà avere il lucchetto. È aperto o chiuso?");
                             //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                             this.setState({elementoMancante: "statoIniziale"});
-                            this.stampaBottoni(statoLucchetto);
+                            this.printButtonsOnChatBot(statoLucchetto);
                         } else {
                             this.setState({elementoMancante: "confermaAggiuntaCondizione"});
                             addResponseMessage("I dati della tua condizione sono questi: Se il lucchetto: " + this.state.response.oggetto
                                 + " è " + this.state.response.statoIniziale);
                             addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta della condizione, oppure \"no\" se vuoi creare una nuova regola. ");
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                         }
                         break;
                 }
@@ -973,17 +1038,16 @@ export default class EudRuleEditor extends Component {
             addResponseMessage("Sembra che tu non abbia lucchetti per interagire. Vuoi crearne uno? " +
                 "Scrivi \"si\" se vuoi crearlo, oppure \"no\" se vuoi scrivere da capo la regola.  ");
             this.setState({elementoMancante: "confermaCreazioneOggetto"});
-            this.stampaBottoni(scelte);
+            this.printButtonsOnChatBot(scelte);
         }
     }
 
     /* Crea la regola per il lucchetto dato il lucchetto (oggetto). */
     createPadlockRule(lucchetto) {
         let r;
-
         r = Rule({
             uuid: uuid.v4(),
-            name: 'regola del lucchetto ' + lucchetto.name,
+            name: this.generateRuleName('LOCK', lucchetto.name),
             event: Action({
                 uuid: uuid.v4(),
                 subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -1002,6 +1066,9 @@ export default class EudRuleEditor extends Component {
         return r;
     }
 
+    /* Permette di aggiungere un'azione riguardo un lucchetto. Il bot si aspetta dunque un "il lucchetto viene sbloccato".
+     * Questo metodo a prescindere dal bloccato/sbloccato restituisce la regola + l'azione del lucchetto che viene sbloccato visto che
+     * non aveva senso farlo bloccare. */
     addPadlockAction(rule, padlockObject) {
         let list = rule.get('actions');
         let index = list.size > 0 ? list.get(list.size - 1).get('index') + 1 : 0;
@@ -1016,6 +1083,8 @@ export default class EudRuleEditor extends Component {
         return rule;
     }
 
+    /* Permette di ricavare lo stato del lucchetto dalla query analizzata dal bot. Il bot si aspetta un "se il lucchetto è aperto"
+     * o simili. Viene fatto il contorollo sul numero di negazioni. */
     getPadlockState(state, numNegazioni) {
         if (["aperto"].includes(state.trim().toLowerCase())) {
             if (numNegazioni % 2 < 0) {
@@ -1048,7 +1117,7 @@ export default class EudRuleEditor extends Component {
             if (!this.doesObjectExists(this.state.response.oggetto, "KEY")) {
                 addResponseMessage("Hai inserito il nome di una chiave che non esiste. Perfavore scegli tra una di queste: ");
                 this.setState({elementoMancante: "oggetto"});
-                this.stampaBottoni(chiavi);
+                this.printButtonsOnChatBot(chiavi);
             } else {
                 //Se l'utente sta scrivendo una condizione
                 if (this.state.response.tipo === "condizione") {
@@ -1069,13 +1138,13 @@ export default class EudRuleEditor extends Component {
                             "Dunque: I dati della tua regola sono questi: AZIONE: raccogli" +
                             " NOME CHIAVE: " + this.state.response.oggetto);
                         addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
-                        this.stampaBottoni(scelte);
+                        this.printButtonsOnChatBot(scelte);
                         break;
                     case "azione":
                         this.setState({elementoMancante: "confermaAggiuntaAzione"});
                         addResponseMessage("I dati della tua azione sono questi: Il giocatore raccoglie la chiave: " + this.state.response.oggetto);
                         addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi andare avanti. ");
-                        this.stampaBottoni(scelte);
+                        this.printButtonsOnChatBot(scelte);
                         break;
                     case "condizione":
                         //Se non contiene qualcosa riconducibile ad APERTO o CHIUSO allora chiedo all'utente di specificarlo
@@ -1084,13 +1153,13 @@ export default class EudRuleEditor extends Component {
                             addResponseMessage("Scrivimi qual'è lo stato che dovrà avere la chiave. Raccolta o non raccolta?");
                             //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                             this.setState({elementoMancante: "statoIniziale"});
-                            this.stampaBottoni(statoChiave);
+                            this.printButtonsOnChatBot(statoChiave);
                         } else {
                             this.setState({elementoMancante: "confermaAggiuntaCondizione"});
                             addResponseMessage("I dati della tua condizione sono questi: Se la chiave: " + this.state.response.oggetto + " è " +
                                 this.state.response.statoIniziale);
                             addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta della condizione, oppure \"no\" se vuoi andare avanti. ");
-                            this.stampaBottoni(scelte);
+                            this.printButtonsOnChatBot(scelte);
                         }
                 }
             }
@@ -1099,7 +1168,7 @@ export default class EudRuleEditor extends Component {
             addResponseMessage("Sembra che tu non abbia chiavi per interagire. Vuoi crearne una? " +
                 "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
             this.setState({elementoMancante: "confermaCreazioneOggetto"});
-            this.stampaBottoni(scelte);
+            this.printButtonsOnChatBot(scelte);
         }
     }
 
@@ -1109,7 +1178,7 @@ export default class EudRuleEditor extends Component {
 
         r = Rule({
             uuid: uuid.v4(),
-            name: 'regola della chiave ' + chiave.name,
+            name: this.generateRuleName('KEY', chiave.name),
             event: Action({
                 uuid: uuid.v4(),
                 subj_uuid: InteractiveObjectsTypes.PLAYER,
@@ -1129,6 +1198,9 @@ export default class EudRuleEditor extends Component {
         return r;
     }
 
+    /* Permette di aggiungere un'azione riguardo una chiave. Il bot si aspetta dunque un "la chiave viene raccolta".
+     * Questo metodo a prescindere dal raccolta/non raccolta restituisce la regola + l'azione della chiave che viene raccolta visto che
+     * non aveva senso farla "non raccogliere". */
     addKeyAction(rule, keyObject) {
         let list = rule.get('actions');
         let index = list.size > 0 ? list.get(list.size - 1).get('index') + 1 : 0;
@@ -1143,6 +1215,8 @@ export default class EudRuleEditor extends Component {
         return rule;
     }
 
+    /* Permette di ricavare lo stato della chiave dalla query analizzata dal bot. Il bot si aspetta un "se la chiave non è stata raccolta"
+     * o simili. Viene fatto il contorollo sul numero di negazioni. */
     getKeyState(state, numNegazioni) {
         if (["raccolta"].includes(state.trim().toLowerCase())) {
             if (numNegazioni % 2 === 0) {
@@ -2363,7 +2437,7 @@ class ButtonObjectNames extends Component {
         return <div className={"divBottoniOggettoBot"}>
             {nomiOggetti.map(o =>
                 <button className={"bottoniOggettoBot"} key={o}
-                        onClick={() => this.props.oggettoCliccato(o)}>{o}
+                        onClick={() => this.props.clickedObject(o)}>{o}
                 </button>)}
         </div>
     }
