@@ -169,6 +169,20 @@ function generateDefaultRule(object, scene){
                 actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             return [r1, r2];
+        case InteractiveObjectsTypes.HEALTH:
+            r = Rule({
+                uuid : uuid.v4(),
+                name : 'regola della ' + object.name,
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: object.uuid,
+                    action: RuleActionTypes.INCREASE,
+                    obj_uuid: 0,
+                }),
+                actions : Immutable.List([Action({uuid: uuid.v4()})]),
+                global : true
+            });
+            break;
         default:
             return;
     }
