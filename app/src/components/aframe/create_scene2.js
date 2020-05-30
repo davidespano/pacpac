@@ -25,6 +25,7 @@ import interface_utils from "../interface/interface_utils";
 import Timer from "../../interactives/Timer";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import {calculate2DSceneImageBounds} from "./aframe_curved";
+import RuleActionTypes from "../../rules/RuleActionTypes";
 const soundsHub = require('./soundsHub');
 const resonance = require('./Audio/Resonance');
 const THREE = require('three');
@@ -36,6 +37,18 @@ let healthSize;
 let scoreSize;
 let timerSize;
 let timerID;
+let textboxEntity = null;
+let textboxUuid;
+let timerEntity = null;
+let timerUuid;
+let gameTimeEntity = null;
+let gameTimeUuid;
+let scoreEntity = null;
+let scoreUuid;
+let healthEntity = null;
+let healtUuid;
+let keypadUuid;
+window.keypadValue = "undefined";
 window.healthValue = undefined;
 window.playtimeValue = undefined;
 window.scoreValue = undefined;
@@ -167,7 +180,12 @@ export default class VRScene extends React.Component {
                     "; width:" + timerSize +
                     "; value:" + 0;
                 timer.setAttribute('text', textProperties)
-                //eventBus.emit()
+            }
+            if(window.timerTime %  1 == 0)
+            {
+                console.log(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
+                eventBus.emit(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
+
             }
         }
     }
@@ -496,16 +514,18 @@ export default class VRScene extends React.Component {
             sceneUuid = this.state.activeScene.uuid;
         }
 
-        let textboxEntity = null;
-        let textboxUuid = this.state.activeScene.objects.textboxes[0];
-        let timerEntity = null;
-        let timerUuid = this.state.activeScene.objects.timers[0];
-        let gameTimeEntity = null;
-        let gameTimeUuid = this.state.activeScene.objects.playtime[0];
-        let scoreEntity = null;
-        let scoreUuid = this.state.activeScene.objects.score[0];
-        let healthEntity = null;
-        let healtUuid = this.state.activeScene.objects.health[0];
+        textboxEntity = null;
+        textboxUuid = this.state.activeScene.objects.textboxes[0];
+        timerEntity = null;
+        timerUuid = this.state.activeScene.objects.timers[0];
+        gameTimeEntity = null;
+        gameTimeUuid = this.state.activeScene.objects.playtime[0];
+        scoreEntity = null;
+        scoreUuid = this.state.activeScene.objects.score[0];
+        healthEntity = null;
+        healtUuid = this.state.activeScene.objects.health[0];
+        keypadUuid =  this.state.activeScene.objects.keypads[0];
+
 
         let graph = this.state.graph;
 
@@ -538,6 +558,13 @@ export default class VRScene extends React.Component {
             let healthObj = graph.objects.get(healtUuid);
             if (healthObj == undefined)
                 healthObj = healtUuid;
+
+            let keypadObj = graph.objects.get(keypadUuid);
+            if (keypadObj == undefined)
+                keypadObj = keypadUuid;
+
+            if (keypadObj) //reset del valore quando c'è un altro tastierino
+                window.keypadValue = "";
 
 
             if (textObj) //se l'oggetto textbox esiste genero la Entity
@@ -870,6 +897,24 @@ export default class VRScene extends React.Component {
                 "; value:" + window.gameTimeValue +
                 ";color: #dbdbdb";
             playtimeObj.setAttribute('text', textPropertiesPT);
+        }
+    }
+
+    //Metodi tastierino
+    static updateKeypadValue(newNumber){
+        window.keypadValue = window.keypadValue + String(newNumber);
+    }
+
+    static checkKeypadValue(keypadObj){
+        if (keypadObj.combination == window.keypadValue)
+        {
+            window.keypadValue = "";
+            return true;
+        }
+        else
+        {
+            window.keypadValue = "";
+            return false;
         }
     }
 }
