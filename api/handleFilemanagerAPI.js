@@ -126,7 +126,7 @@ function uploadHandler(req, res, next) {
 
 function deleteHandler(req, res, next){
     const dir = path.resolve(__dirname, 'public' + '/' + req.params.gameID);
-    let regex = RegExp('.*\.mp4$');
+    let regex = RegExp('.*\.mp4$|.MOV$');
     let filename = regex.test(req.body.name) ? (req.body.name + '.png') : req.body.name;
     let filePath = "";
 
