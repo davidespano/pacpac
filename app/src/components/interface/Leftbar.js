@@ -73,7 +73,7 @@ function contentLeftbar(props){
  * @returns {any[]}
  */
 function list(props, path) {
-    let regex = RegExp('.*\.mp4$');
+    let regex = RegExp('.*\.mp4$|.MOV$');
 
     return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
         let s;

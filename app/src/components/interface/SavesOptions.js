@@ -27,7 +27,7 @@ function SavesOptions(props) {
  * @returns {any[]}
  */
 function listSaves(props, path) {
-    let regex = RegExp('.*\.mp4$');
+    let regex = RegExp('.*\.mp4$|.MOV$');
 
     return ([...props.scenes.values()].map(child => {
         let s;

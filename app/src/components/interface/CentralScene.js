@@ -10,7 +10,8 @@ import Values from "../../rules/Values";
 const {mediaURL} = settings;
 
 function CentralScene(props){
-    let regex = RegExp('.*\.mp4$');
+    let regex = RegExp('.*\.mp4$|.MOV$');
+
     let currentScene = null;
     let path =`${mediaURL}${window.localStorage.getItem("gameID")}/`;
     let sceneRendering = null;
@@ -21,7 +22,6 @@ function CentralScene(props){
 
     if(currentScene !== null){
         let src = path + '_thumbnails_/' + currentScene.img + (regex.test(currentScene.img)? ".png" : "");
-
         if(currentScene.type === Values.TWO_DIM){
 
         }

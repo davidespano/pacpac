@@ -471,7 +471,7 @@ export default class VRScene extends React.Component {
         //qui faccio partire il video dopo il cambio di scena
         let sceneCanvas = document.getElementById(this.state.activeScene.name)
         //sceneCanvas.components["material"].data.src.play();
-        console.log("scena cambiata")
+        //console.log("scena cambiata")
         sceneLoaded = false;
         if(this.props.debug){
             this.props.updateCurrentScene(this.state.graph.scenes[newActiveScene].uuid);
