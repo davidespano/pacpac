@@ -261,6 +261,7 @@ export default class VRScene extends React.Component {
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
                 // senza passarli esplicitamente
                 let closure = function() {
+                    console.log("closure" + action.uuid);
                     interface_utils.highlightAction(me.props, action);
 
                     setTimeout(function () {
@@ -407,8 +408,8 @@ export default class VRScene extends React.Component {
                                 if (me.props.debug) {
                                     console.log("dentro l'if debug");
                                     setTimeout(function () {
-                                        //interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
-
+                                        interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                        console.log("messa");
                                         eventBus.on('debug-step' + action.uuid, actionExecution);
                                     }, duration);
                                     console.log("eventbus.on", 'debug-step' + action.uuid);

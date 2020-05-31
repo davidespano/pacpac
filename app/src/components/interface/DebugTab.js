@@ -10,6 +10,7 @@ import DebugAPI from "../../utils/DebugAPI";
 import toString from "../../rules/toString";
 import Values from '../../rules/Values';
 import Actions from "../../actions/Actions";
+import eventBus from "../aframe/eventBus";
 let THREE = require('three');
 
 function DebugTab(props) {
@@ -56,7 +57,7 @@ function objPropsView(props) {
     let camera = document.getElementById('camera');
     let objGeometry = null;
 
-    interface_utils.setClassStyle(".btnNext", "visibility: hidden");
+    //interface_utils.setClassStyle(".btnNext", "visibility: hidden");
 
     setTimeout(() => {
         objGeometry = document.getElementById("curv" + currentObject.uuid);
@@ -179,25 +180,26 @@ function listPlayerActions(scene, props) {
                                 <span className={"player-obj"} id={"player-obj" + obj.uuid} onClick={() => {
                                     interface_utils.setIdStyle("obj-name", obj.uuid, "color: rgba(239, 86, 55, 1)");
                                     interface_utils.setIdStyle("player-obj", obj.uuid, "color: rgba(239, 86, 55, 1)");
-                                    interface_utils.setClassStyle(".btnNext", "visibility: hidden");
+                                    //interface_utils.setClassStyle(".btnNext", "visibility: hidden");
 
                                     props.rules.get(rule).actions._tail.array.forEach(function (sub) {
                                         if (sub.subj_uuid === obj.uuid) {
-                                            interface_utils.setIdStyle("eudRule", role, "background: rgba(239, 86, 55, .3)");
+                                            interface_utils.setIdStyle("eudRule", role, "background: rgba(239, 86, 55, .2)");
 
                                             let next = document.getElementById("btnNext" + role);
                                             if (next != null)
-                                                next.style = "visibility: visible";
+                                                next.style.visibility = "visible";
                                         }
                                     });
 
                                     if (props.rules.get(rule).event.obj_uuid === obj.uuid) {
-                                        interface_utils.setIdStyle("eudRule", role, "background: rgba(239, 86, 55, .3)");
+                                        interface_utils.setIdStyle("eudRule", role, "background: rgba(239, 86, 55, .2)");
 
                                         let next = document.getElementById("btnNext" + role);
                                         if (next != null)
-                                            next.style = "visibility: visible";
+                                            next.style.visibility = "visible";
                                     }
+                                    eventBus.emit('PLAYER-click-'+ obj.uuid);
                                 }
                                 }>{objName}</span>
                             </div>
@@ -215,7 +217,7 @@ function listPlayerActions(scene, props) {
  * @param props
  * @return {any[]}
  */
-function listCurrentSceneObjs(scene, props, filter1) {
+function listCurrentSceneObjs(scene, props, filter_string) {
     let objects = Object.values(scene.objects).flat();
 
     if (objects.length === 0) {
@@ -227,7 +229,7 @@ function listCurrentSceneObjs(scene, props, filter1) {
             let obj = props.interactiveObjects.get(obj_uuid);
             let objName = obj.name.length > 20 ? obj.name.substring(0, 16).concat("...") : obj.name;
 
-            if (objName.includes(filter1)) {
+            if (objName.includes(filter_string)) {
                 return (
                     <div className={"rightbar-sections"} key={obj_uuid}>
                         <img className={"icon-obj-left"} alt={obj.name} src={interface_utils.getObjImg(obj.type)}/>
@@ -411,7 +413,8 @@ function handleClickOutside(props) {
         interface_utils.setClassStyle(".player-obj, .obj-name", "color: ");
         if (classTarget !== "select-file-btn btn" && classTarget !== "a-canvas a-grab-cursor" && classTarget !== "action-buttons btn-img" && classTarget !== "saves-list") {
             interface_utils.setClassStyle(".eudRule", "background: ");
-            interface_utils.setClassStyle(".btnNext", "visibility: hidden");
+            console.log("era questo");
+            //interface_utils.setClassStyle(".btnNext", "visibility: hidden");
             interface_utils.setClassStyle(".saves-list", "margin-right: -10%");
             interface_utils.setClassStyle(".load-button", "visibility: hidden");
         }
