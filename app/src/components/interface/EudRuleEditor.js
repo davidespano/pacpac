@@ -510,6 +510,9 @@ class EudRule extends Component {
                                         console.log("entra", actions[index]);
                                         eventBus.emit('debug-step' + actions[index]);
                                         index++;
+                                    } else {
+                                        interface_utils.setClassStyle(".btnNext", "visibility: hidden");
+                                        interface_utils.setClassStyle(".eudAction", "background: ");
                                     }
                                 }}>
                             <img className={"action-buttons btn-img"} src={"icons/icons8-play-50.png"}

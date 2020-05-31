@@ -287,7 +287,7 @@ function setIdStyle(classHighlight, idHighlight, style) {
 function highlightRule(props, obj) {
     let scene = props.scenes.get(props.currentScene);
     setClassStyle(".eudRule", "background: ");
-    setClassStyle(".btnNext", "visibility: hidden");
+    //setClassStyle(".btnNext", "visibility: hidden");
 
     return scene.get('rules').map(
         rule => {
@@ -297,18 +297,17 @@ function highlightRule(props, obj) {
             props.rules.get(rule).actions._tail.array.forEach(function (sub) {
                 if (sub.subj_uuid === obj.uuid) {
 
-                    setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .3)");
+                    setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .2)");
 
                     if(next !== null && props.currentObject === null)
-                        next.style = "visibility: visible";
+                        next.style.visibility = "visible";
                 }
             });
 
             if (props.rules.get(rule).event.obj_uuid === obj.uuid || props.rules.get(rule).event.subj_uuid === obj.uuid) {
-                setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .3)");
-                console.log('e qui ci entro?')
+                setIdStyle("eudRule", item, "background: rgba(239, 86, 55, .2)");
                 if(next !== null && props.currentObject === null)
-                    next.style = "visibility: visible";
+                    next.style.visibility = "visible";
             }
 
         });
@@ -317,7 +316,7 @@ function highlightRule(props, obj) {
 function highlightAction(props, action) {
     let scene = props.scenes.get(props.currentScene);
     setClassStyle(".eudRule", "background: ");
-    setClassStyle(".btnNext", "visibility: hidden");
+    //setClassStyle(".btnNext", "visibility: hidden");
 
     return scene.get('rules').map(
         rule => {
@@ -330,16 +329,15 @@ function highlightAction(props, action) {
                     setIdStyle("eudAction", action.uuid, "background: rgba(239, 86, 55, .3)");
 
                     if(next !== null && props.currentObject === null)
-                        next.style = "visibility: visible";
+                        next.style.visibility = "visible";
                 }
             });
 
-            /*if (props.rules.get(rule).event.obj_uuid === action.obj_uuid || props.rules.get(rule).event.subj_uuid === action.subj_uuid) {
+            if (props.rules.get(rule).event.obj_uuid === action.obj_uuid || props.rules.get(rule).event.subj_uuid === action.subj_uuid) {
                 setIdStyle("eudAction", action.uuid, "background: rgba(239, 86, 55, .3)");
-                console.log('e qui ci entro?')
                 if(next !== null && props.currentObject === null)
-                    next.style = "visibility: visible";
-            }*/
+                    next.style.visibility = "visible";
+            }
 
         });
 }
