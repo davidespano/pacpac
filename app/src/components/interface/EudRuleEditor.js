@@ -376,8 +376,9 @@ export default class EudRuleEditor extends Component {
 
     /* Messaggio di benvenuto. */
     componentDidMount() {
-        addResponseMessage("Benvenuto nel bot delle regole di Pac-Pac, scrivi subito la prima regola! Ricorda che puoi scrivere \"reset\" " +
-            "in qualsiasi momento per resettare tutto e scrivere una regola da capo. ");
+        addResponseMessage("Benvenuto nel bot delle regole di Pac-Pac, scrivi subito la prima regola! Ricorda che puoi scrivere" +
+            "\"help\" se hai bisogno di aiuto per l'utilizzo del bot oppure puoi scrivere \"reset\" in qualsiasi momento per resettare tutto e " +
+            "scrivere una regola da capo. ");
     }
 
     /* Metodo per inviare un messaggio. Capire se il bot ha trovato una transizione, se quella transizione ha tutti i
@@ -385,227 +386,236 @@ export default class EudRuleEditor extends Component {
     handleNewUserMessage = async (newMessage) => {
         let scelte = ["Si", "No"];
         /* Si da l'opportunità all'utente di resettare in ogni momento la regola che sta scrivendo e di scriverne una da capo. */
-        if (newMessage !== "reset") {
-            /* La prima query verrà sempre mandata al bot. */
-            if (this.state.elementoMancante === "") {
-                this.setState({response: await sendRequest(newMessage, this.state.response.tipo)});
-            } else {
-                /* Se dopo aver mandato al bot la prima query ci dovesse mancare qualche elemento per la regola allora risolviamo localmente, modificando
-                * lo stato di response, usando una variabile d'appoggio "risposta". Il campo mancante prenderà ciò che scriviamo
-                * nell'input, successivamente processiamo ciò che abbiamo scritto in "queryControl". */
-                let risposta = this.state.response;
-                /* A seconda di cosa viene settato nel queryControl si esegue uno di questi case. */
-                switch (this.state.elementoMancante) {
-                    case "scenaFinale":
-                        risposta.scenaFinale = newMessage;
-                        this.setState({response: risposta});
-                        break;
-                    case "oggetto": //Nome dell'oggetto
-                        risposta.oggetto = newMessage;
-                        this.setState({response: risposta});
-                        break;
-                    case "statoIniziale":
-                        risposta.statoIniziale = newMessage;
-                        this.setState({response: risposta});
-                        break;
-                    case "statoFinale":
-                        risposta.statoFinale = newMessage;
-                        this.setState({response: risposta});
-                        break;
-                    /* Quando la scena non ha l'oggetto che serve per la regola  allora il bot chiede all'utente se
-                    vuole crearlo di default. In caso affermativo viene creato e posto come oggetto della regola
-                    che l'utente sta creando. In caso negativo invece viene resettata la regola e viene data la
-                    possibilità di crearne una da zero. */
-                    case "confermaCreazioneOggetto":
-                        if (newMessage.trim().toLowerCase() === "si") {
-                            switch (risposta.intent) {
-                                case "transizione":
-                                    risposta.oggetto = await this.createDefaultObject(this.props, "TRANSITION");
-                                    addResponseMessage("Transizione aggiunta");
-                                    break;
-                                case "interazioneSwitch":
-                                    risposta.oggetto = await this.createDefaultObject(this.props, "SWITCH");
-                                    addResponseMessage("Switch aggiunto");
-                                    break;
-                                case "interazioneLucchetto":
-                                    risposta.oggetto = await this.createDefaultObject(this.props, "LOCK");
-                                    addResponseMessage("Lucchetto aggiunto");
-                                    break;
-                                case "interazioneChiave":
-                                    risposta.oggetto = await this.createDefaultObject(this.props, "KEY");
-                                    addResponseMessage("Chiave aggiunta");
-                                    break;
-                                default:
-                                    addResponseMessage("C'è stato qualche problema nella creazione dell'oggetto.")
-                            }
+        if (newMessage.trim().toLowerCase() !== "reset") {
+            if (newMessage.trim().toLowerCase() !== "help") {
+                /* La prima query verrà sempre mandata al bot. */
+                if (this.state.elementoMancante === "") {
+                    this.setState({response: await sendRequest(newMessage, this.state.response.tipo)});
+                } else {
+                    /* Se dopo aver mandato al bot la prima query ci dovesse mancare qualche elemento per la regola allora risolviamo localmente, modificando
+                    * lo stato di response, usando una variabile d'appoggio "risposta". Il campo mancante prenderà ciò che scriviamo
+                    * nell'input, successivamente processiamo ciò che abbiamo scritto in "queryControl". */
+                    let risposta = this.state.response;
+                    /* A seconda di cosa viene settato nel queryControl si esegue uno di questi case. */
+                    switch (this.state.elementoMancante) {
+                        case "scenaFinale":
+                            risposta.scenaFinale = newMessage;
                             this.setState({response: risposta});
-                        } else if (newMessage.trim().toLowerCase() === "no") {
-                            this.resetAll();
-                            return;
-                        } else {
-                            //In caso l'utente non scriva ne si e ne no
-                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
-                            return;
-                        }
-                        break;
-                    case "confermaCreazioneRegola":
-                        if (newMessage.trim().toLowerCase() === "si") {
-                            //Creo la regola
-                            switch (risposta.intent) {
-                                case "transizione":
-                                    let transitionObj = this.returnObjectByName(risposta.oggetto, "TRANSITION");
-                                    let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
-                                    this.state.ultimaRegolaCreata = this.createTransitionRule(transitionObj, finalSceneUuid);
-                                    break;
-                                case "interazioneSwitch":
-                                    let switchObj = this.returnObjectByName(risposta.oggetto, "SWITCH");
-                                    this.state.ultimaRegolaCreata = this.createSwitchRule(switchObj, risposta.statoIniziale, risposta.statoFinale);
-                                    break;
-                                case "interazioneLucchetto":
-                                    let padlockObject = this.returnObjectByName(risposta.oggetto, "LOCK");
-                                    this.state.ultimaRegolaCreata = this.createPadlockRule(padlockObject);
-                                    break;
-                                case "interazioneChiave":
-                                    let keyObject = this.returnObjectByName(risposta.oggetto, "KEY");
-                                    this.state.ultimaRegolaCreata = this.createKeyRule(keyObject);
-                                    break;
-                                default:
-                                    addResponseMessage("C'è stato qualche problema nella creazione della regola.")
+                            break;
+                        case "oggetto": //Nome dell'oggetto
+                            risposta.oggetto = newMessage;
+                            this.setState({response: risposta});
+                            break;
+                        case "statoIniziale":
+                            risposta.statoIniziale = newMessage;
+                            this.setState({response: risposta});
+                            break;
+                        case "statoFinale":
+                            risposta.statoFinale = newMessage;
+                            this.setState({response: risposta});
+                            break;
+                        case "confermaCreazioneOggetto":
+                            /* Quando la scena non ha l'oggetto che serve per la regola  allora il bot chiede all'utente se
+                               vuole crearlo di default. In caso affermativo viene creato e posto come oggetto della regola
+                               che l'utente sta creando. In caso negativo invece viene resettata la regola e viene data la
+                               possibilità di crearne una da zero. */
+                            if (newMessage.trim().toLowerCase() === "si") {
+                                //Creo l'oggetto di default e salvo il suo nome in "risposta.oggetto".
+                                risposta.oggetto = await this.createDefaultObject(this.props, this.getObjectTypeFromIntent(risposta.intent));
+                                addResponseMessage(this.getObjectTypeFromIntent(risposta.intent) + " aggiunta");
+                                this.setState({response: risposta});
+                            } else if (newMessage.trim().toLowerCase() === "no") {
+                                this.resetAll();
+                                return;
+                            } else {
+                                //In caso l'utente non scriva ne si e ne no
+                                addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
+                                return;
                             }
+                            break;
+                        case "confermaCreazioneRegola":
+                            if (newMessage.trim().toLowerCase() === "si") {
+                                //Creo la regola a seconda del suo tipo (trovato tramite bot).
+                                this.createRuleFromResponse(risposta);
 
-                            addResponseMessage("Regola creata!");
-                            addResponseMessage("Vuoi aggiungere una nuova azione legata a quest'ultima regola creata?");
-                            this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
-                            this.printButtonsOnChatBot(scelte);
-                            return;
-                        } else if (newMessage.trim().toLowerCase() === "no") {
-                            this.resetAll();
-                            return;
-                        } else {
-                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
-                            return;
-                        }
-                    case "richiestaAzioneAggiuntiva":
-                        if (newMessage.trim().toLowerCase() === "si") {
-                            addResponseMessage("Scrivi l'azione aggiuntiva.");
-                            this.responseReset();
-                            this.responseSetActionOrCondition("azione"); //Setto che la risposta sarà un azione da aggiungere e non una regola intera;
-                            return;
-                        } else if (newMessage.trim().toLowerCase() === "no") {
-                            addResponseMessage("Vuoi aggiungere una nuova condizione legata a quest'ultima regola creata?");
-                            this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
-                            this.printButtonsOnChatBot(scelte);
-                            return;
-                        } else {
-                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
-                            return;
-                        }
-                    case "confermaAggiuntaAzione":
-                        if (newMessage.trim().toLowerCase() === "si") {
-                            let newRule;
-                            //Aggiungo l'azione
-                            switch (risposta.intent) {
-                                case "transizione":
-                                    let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
-                                    newRule = this.addTransitionAction(this.state.ultimaRegolaCreata, finalSceneUuid);
-                                    break;
-                                case "interazioneSwitch":
-                                    let switchObj = this.returnObjectByName(risposta.oggetto, "SWITCH");
-                                    newRule = this.addSwitchAction(this.state.ultimaRegolaCreata, switchObj, risposta.statoFinale);
-                                    break;
-                                case "interazioneLucchetto":
-                                    let padlockObject = this.returnObjectByName(risposta.oggetto, "LOCK");
-                                    newRule = this.addPadlockAction(this.state.ultimaRegolaCreata, padlockObject, risposta.statoFinale);
-                                    break;
-                                case "interazioneChiave":
-                                    let keyObject = this.returnObjectByName(risposta.oggetto, "KEY");
-                                    newRule = this.addKeyAction(this.state.ultimaRegolaCreata, keyObject, risposta.statoFinale);
-                                    break;
-                                default:
-                                    addResponseMessage("C'è stato qualche problema nell'aggiunta dell'azione.")
+                                //Dopo creata, chiediamo all'utetne se vuole aggiungere un'azione.
+                                addResponseMessage("Vuoi aggiungere una nuova azione legata a quest'ultima regola creata?");
+                                this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
+                                this.printButtonsOnChatBot(scelte); //Stampa "si" o "no" con i bottoni
+                            } else if (newMessage.trim().toLowerCase() === "no") {
+                                this.resetAll();
+                            } else {
+                                addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
                             }
-
-                            this.setState({ultimaRegolaCreata: newRule});
-                            this.props.ruleEditorCallback.eudUpdateRule(newRule);
-                            addResponseMessage("Azione corrispondente aggiunta.");
-                            addResponseMessage("Vuoi aggiungere una nuova azione?");
-                            this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
-                            this.printButtonsOnChatBot(scelte);
-                            return;
-                        } else if (newMessage.trim().toLowerCase() === "no") {
-                            addResponseMessage("Vuoi scriverne una nuova?");
-                            this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
-                            this.printButtonsOnChatBot(scelte);
-                            return;
-                        } else {
-                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
-                            return;
-                        }
-                    case "richiestaCondizioneAggiuntiva":
-                        if (newMessage.trim().toLowerCase() === "si") {
-                            addResponseMessage("Scrivi la condizione aggiuntiva.");
-                            this.responseReset();
-                            this.responseSetActionOrCondition("condizione"); //Setto che la risposta sarà un azione o una condizione da aggiungere e non una regola intera;
-                            return;
-                        } else if (newMessage.trim().toLowerCase() === "no") {
-                            this.resetAll();
-                            return;
-                        } else {
-                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
-                            return;
-                        }
-                    case "confermaAggiuntaCondizione":
-                        if (newMessage.trim().toLowerCase() === "si") {
-                            let newRule;
-                            let object;
-                            //Aggiungo la condizione
-                            switch (risposta.intent) {
-                                case "transizione":
-                                    object = this.returnObjectByName(risposta.oggetto, "TRANSITION");
-                                    break;
-                                case "interazioneSwitch":
-                                    object = this.returnObjectByName(risposta.oggetto, "SWITCH");
-                                    break;
-                                case "interazioneLucchetto":
-                                    object = this.returnObjectByName(risposta.oggetto, "LOCK");
-                                    break;
-                                case "interazioneChiave":
-                                    object = this.returnObjectByName(risposta.oggetto, "KEY");
-                                    break;
-                                default:
-                                    addResponseMessage("C'è stato qualche problema nell'aggiunta della condizione.")
+                            return; //Non devo fare il queryControl
+                        case "richiestaAzioneAggiuntiva":
+                            if (newMessage.trim().toLowerCase() === "si") {
+                                addResponseMessage("Scrivi l'azione aggiuntiva.");
+                                this.responseReset();
+                                this.responseSetActionOrCondition("azione"); //Setto che la risposta sarà un azione da aggiungere e non una regola intera;
+                            } else if (newMessage.trim().toLowerCase() === "no") {
+                                addResponseMessage("Vuoi aggiungere una nuova condizione legata a quest'ultima regola creata?");
+                                this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
+                                this.printButtonsOnChatBot(scelte);
+                            } else {
+                                addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
                             }
+                            return; //Non devo fare il queryControl
+                        case "confermaAggiuntaAzione":
+                            if (newMessage.trim().toLowerCase() === "si") {
+                                this.createActionFromResponse(risposta);
 
-                            newRule = this.addObjectCondition(this.state.ultimaRegolaCreata, object.uuid, this.state.response.statoIniziale);
-                            this.setState({ultimaRegolaCreata: newRule});
-                            this.props.ruleEditorCallback.eudUpdateRule(newRule);
-                            addResponseMessage("Condizione corrispondente aggiunta.");
+                                addResponseMessage("Vuoi aggiungere una nuova azione?");
+                                this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
+                                this.printButtonsOnChatBot(scelte);
+                            } else if (newMessage.trim().toLowerCase() === "no") {
+                                addResponseMessage("Vuoi scriverne una nuova?");
+                                this.setState({elementoMancante: "richiestaAzioneAggiuntiva"});
+                                this.printButtonsOnChatBot(scelte);
+                            } else {
+                                addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
+                            }
+                            return; //Non devo fare il queryControl
+                        case "richiestaCondizioneAggiuntiva":
+                            if (newMessage.trim().toLowerCase() === "si") {
+                                addResponseMessage("Scrivi la condizione aggiuntiva.");
+                                this.responseReset();
+                                this.responseSetActionOrCondition("condizione"); //Setto che la risposta sarà un azione o una condizione da aggiungere e non una regola intera;
+                            } else if (newMessage.trim().toLowerCase() === "no") {
+                                this.resetAll();
+                            } else {
+                                addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
+                            }
+                            return; //Non devo fare il queryControl
+                        case "confermaAggiuntaCondizione":
+                            if (newMessage.trim().toLowerCase() === "si") {
+                                this.createConditionFromResponse(risposta);
 
-                            addResponseMessage("Vuoi aggiungere una nuova condizione?");
-                            this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
-                            this.printButtonsOnChatBot(scelte);
-                            return;
-                        } else if (newMessage.trim().toLowerCase() === "no") {
-                            addResponseMessage("Vuoi aggiungere una nuova condizione?");
-                            this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
-                            this.printButtonsOnChatBot(scelte);
-                            return;
-                        } else {
-                            addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
-                            return;
-                        }
-                    default:
-                        addResponseMessage("Ci dev'essere qualche errore, mancano degli elementi, ma non riesco a capire quali. ")
+                                addResponseMessage("Vuoi aggiungere una nuova condizione?");
+                                this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
+                                this.printButtonsOnChatBot(scelte);
+                            } else if (newMessage.trim().toLowerCase() === "no") {
+                                addResponseMessage("Vuoi aggiungere una nuova condizione?");
+                                this.setState({elementoMancante: "richiestaCondizioneAggiuntiva"});
+                                this.printButtonsOnChatBot(scelte);
+                            } else {
+                                addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
+                            }
+                            return; //Non devo fare il queryControl
+                        default:
+                            addResponseMessage("Ci dev'essere qualche errore, mancano degli elementi, ma non riesco a capire quali. ")
+                    }
                 }
+                /* Controlliamo tutti i dati di response. */
+                this.queryControl(this.state.response);
+            } else {
+                addResponseMessage("Questo bot ti permetterà di scrivere le regole per il tuo gioco usando semplicemente " +
+                    "il linguaggio naturale. Una regola è anche formata da azioni e condizioni. Con il bot potrai aggiungerle dopo aver " +
+                    "scritto la regola generale. Un esempio di regola è questo:\"Passa alla scena1 quando premo la transizione1.\". " +
+                    "Dopodichè ti verrà chiesto se vuoi aggiungere azioni. Un esempio di azione è questo:" +
+                    "\"attiva lo switch1\". Infine dopo le azioni potrai aggiungere le condizioni. Un esempio di condizione è:" +
+                    "\"Se la chiave1 è raccolta\". Ora prova tu a scrivere una regola!");
             }
-            /* Controlliamo tutti i dati di response. */
-            this.queryControl(this.state.response);
         } else {
             this.responseReset();
             this.responseSetActionOrCondition("regola"); //Setto che la risposta non sarà un azione da aggiungere, ma una regola intera;
             addResponseMessage("La regola è stata resettata! Puoi scriverne una da capo quando vuoi.");
         }
     };
+
+    /* Wit.ai restituisce l'intent della regola, cioè se si tratta di una transizione, di un interazione con uno switch,
+    * con un lucchetto o con una chiave. A seconda di questo si manipolano oggetti inerenti, cioè transizioni, switch,
+    * lucchetti o chiavi. Con questo metodo restituiamo appunto il tipo, sottoforma di stringa. */
+    getObjectTypeFromIntent(intent) {
+        switch (intent) {
+            case "transizione":
+                return InteractiveObjectsTypes.TRANSITION;
+            case "interazioneSwitch":
+                return InteractiveObjectsTypes.SWITCH;
+            case "interazioneLucchetto":
+                return InteractiveObjectsTypes.LOCK;
+            case "interazioneChiave":
+                return InteractiveObjectsTypes.KEY;
+            default:
+                addResponseMessage("Errore: nessun tipo di oggetto rilevato.")
+        }
+    }
+
+    /* Metodo utile per creare una regola a seconda degli elementi che abbiamo ricevuto da Wit.ai. */
+    createRuleFromResponse(risposta) {
+        /* Per creare la regola ho bisogno di ricavarmi l'oggetto in se, non mi basta infatti solo il nome.
+        * Dunque richiamo la funzione "returnObjectByName" che grazie al tipo e al nome dell'oggetto mi restituisce
+        * l'oggetto corretto. */
+        let object = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
+        //Creo la regola
+        switch (risposta.intent) {
+            case "transizione":
+                let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
+                this.state.ultimaRegolaCreata = this.createTransitionRule(object, finalSceneUuid);
+                break;
+            case "interazioneSwitch":
+                this.state.ultimaRegolaCreata = this.createSwitchRule(object, risposta.statoIniziale, risposta.statoFinale);
+                break;
+            case "interazioneLucchetto":
+                this.state.ultimaRegolaCreata = this.createPadlockRule(object);
+                break;
+            case "interazioneChiave":
+                this.state.ultimaRegolaCreata = this.createKeyRule(object);
+                break;
+            default:
+                addResponseMessage("C'è stato qualche problema nella creazione della regola.");
+                return;
+        }
+        addResponseMessage("Regola creata!");
+    }
+
+    /* Metodo utile per creare un'azione a seconda degli elementi che abbiamo ricevuto da Wit.ai. */
+    createActionFromResponse(risposta) {
+        let newRule;
+        //Aggiungo l'azione
+        switch (risposta.intent) {
+            case "transizione":
+                /* Le azioni di una transizione corrispondono semplicemente al passaggio da una scena all'altra.
+                 Non vengono coinvolti oggetti transizione */
+                let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
+                newRule = this.addTransitionAction(this.state.ultimaRegolaCreata, finalSceneUuid);
+                break;
+            case "interazioneSwitch":
+                let switchObj = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
+                newRule = this.addSwitchAction(this.state.ultimaRegolaCreata, switchObj, risposta.statoFinale);
+                break;
+            case "interazioneLucchetto":
+                let padlockObject = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
+                newRule = this.addPadlockAction(this.state.ultimaRegolaCreata, padlockObject, risposta.statoFinale);
+                break;
+            case "interazioneChiave":
+                let keyObject = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
+                newRule = this.addKeyAction(this.state.ultimaRegolaCreata, keyObject, risposta.statoFinale);
+                break;
+            default:
+                addResponseMessage("C'è stato qualche problema nell'aggiunta dell'azione.")
+        }
+        this.setState({ultimaRegolaCreata: newRule});
+        this.props.ruleEditorCallback.eudUpdateRule(newRule);
+        addResponseMessage("Azione corrispondente aggiunta.");
+    }
+
+    /* Metodo utile per creare una condizione a seconda degli elementi che abbiamo ricevuto da Wit.ai. */
+    createConditionFromResponse(risposta) {
+        let newRule;
+        let object;
+
+        /* Tutto ciò di cui abbiamo bisogno è l'oggetto a cui controlliamo lo stato, a seconda dellla quale la condizione
+        * è verificata o meno. Una volta ottenuto l'oggetto lo passiamo al metodo che aggiunge effettivamente
+        * (tramite uuid dell'oggetto in questione, la regola generale e lo stato che deve avere l'oggetto)
+        * ad una regola esistente una condizione. */
+        object = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
+        newRule = this.addObjectCondition(this.state.ultimaRegolaCreata, object.uuid, risposta.statoIniziale);
+
+        this.setState({ultimaRegolaCreata: newRule});
+        this.props.ruleEditorCallback.eudUpdateRule(newRule);
+        addResponseMessage("Condizione corrispondente aggiunta.");
+    }
 
     /* Metodo per il controllo dei dati che abbiamo salvato in "response". */
     queryControl() {
@@ -628,6 +638,8 @@ export default class EudRuleEditor extends Component {
         }
     }
 
+    /* Reset più accurato, infatti vengono resettati del tutto tutti i campi anche il tipo, che ritorna ad essere "regola"
+    cioè quello iniziale.*/
     resetAll() {
         addResponseMessage("Va bene!");
         addResponseMessage("Scrivi pure una nuova regola, il bot è sempre qui ad ascoltarti.");
@@ -636,7 +648,8 @@ export default class EudRuleEditor extends Component {
         this.responseSetActionOrCondition("regola"); //Setto che la risposta non sarà un azione da aggiungere, ma una regola intera;
     }
 
-    /* Resetto response per la prossima richiesta di nuova regola. */
+    /* Resetto response per la prossima richiesta di nuova regola. Attenzione, non viene resettato il tipo della regola,
+    * cioè "regola", "azione", "condizione". */
     responseReset() {
         this.setState({elementoMancante: ""});
         let risposta = this.state.response;
@@ -738,7 +751,7 @@ export default class EudRuleEditor extends Component {
     }
 
     /* Crea un oggetto di default quando non esistono oggetti inerenti alla regola che stiamo creando
-    e l'utente vuole creare quest'ultima trarmite bot. */
+    e l'utente vuole creare quest'ultima trarmite bot. Restituisce il nome dell'oggetto */
     createDefaultObject(props, objectType) {
         let scene = props.scenes.get(props.currentScene);
         let name = "";
@@ -1274,12 +1287,12 @@ export default class EudRuleEditor extends Component {
      * o simili. Viene fatto il contorollo sul numero di negazioni. */
     getPadlockState(state, numNegazioni) {
         if (["aperto"].includes(state.trim().toLowerCase())) {
-            if (numNegazioni % 2 < 0) {
+            if (numNegazioni % 2 === 0) {
                 return "UNLOCKED";
             } else return "LOCKED";
         } else {
             if (["chiuso"].includes(state.trim().toLowerCase())) {
-                if (numNegazioni % 2 < 0) {
+                if (numNegazioni % 2 === 0) {
                     return "LOCKED";
                 } else {
                     return "UNLOCKED";
