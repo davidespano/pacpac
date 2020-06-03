@@ -32,6 +32,7 @@ import Transition from "../../interactives/Transition";
 import Switch from "../../interactives/Switch";
 import Lock from "../../interactives/Lock";
 import Key from "../../interactives/Key";
+import Actions from "../../actions/Actions";
 
 let uuid = require('uuid');
 var ghostScene=null;
@@ -40,16 +41,15 @@ export default class EudRuleEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            elementoMancante: "", //Variabile dove scrivo di volta in volta l'elemento che manca al bot per completare la regola
-            queryPrecedente: "",  //Variabile d'appoggio dove salvo la query precedente
+            elementoMancante:  "", //Variabile dove scrivo di volta in volta l'elemento che manca al bot per completare la regola
             response: {
                 intent: "",
-                scenaIniziale: "",
+                scenaIniziale:  "",
                 scenaFinale: "",
-                oggetto: "",
-                tipo: "regola"
+                oggetto:  "",
+                tipo:  "regola",
             },
-            ultimaRegolaCreata: rules_utils.generateDefaultRule("TRANSITION", this.props.scenes.get(this.props.currentScene))
+            ultimaRegolaCreata:  ""
         };
     }
 
@@ -424,13 +424,25 @@ export default class EudRuleEditor extends Component {
                                 risposta.oggetto = await this.createDefaultObject(this.props, this.getObjectTypeFromIntent(risposta.intent));
                                 addResponseMessage(this.getObjectTypeFromIntent(risposta.intent) + " aggiunta");
                                 this.setState({response: risposta});
+                                addResponseMessage("Per poter usare questo oggetto hai bisogno di aggiungergli una geometria. " +
+                                    "Vuoi andare all'editor di geometria?");
+                                this.setState({elementoMancante: "richiestaGeometria"});
+                                this.printButtonsOnChatBot(scelte);
                             } else if (newMessage.trim().toLowerCase() === "no") {
                                 this.resetAll();
-                                return;
                             } else {
                                 //In caso l'utente non scriva ne si e ne no
                                 addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
-                                return;
+                            }
+                            return;
+                        case "richiestaGeometria":
+                            if (newMessage.trim().toLowerCase() === "si") {
+                                Actions.updateCurrentObject(this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent)));
+                                this.props.switchToGeometryMode();
+                            } else if (newMessage.trim().toLowerCase() === "no") {
+
+                            } else {
+                                addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
                             }
                             break;
                         case "confermaCreazioneRegola":
@@ -2700,29 +2712,30 @@ async function sendRequest(sentence, tipo) {
         .then(res => res.json())
         .then(res => {
                 if (res.intents !== undefined) {
-                    risposta.intent = res.intents[0].name;
+                    if (res.intents[0] !== undefined) {
+                        risposta.intent = res.intents[0].name;
 
-                    //Transizione
-                    if (res.entities["scenaIniziale:scenaIniziale"] !== undefined) {
-                        risposta.scenaIniziale = res.entities["scenaIniziale:scenaIniziale"][0].value;
-                    }
-                    if (res.entities["scenaFinale:scenaFinale"] !== undefined) {
-                        risposta.scenaFinale = res.entities["scenaFinale:scenaFinale"][0].value;
-                    }
-                    if (res.entities["oggetto:oggetto"] !== undefined) {
-                        risposta.oggetto = res.entities["oggetto:oggetto"][0].value;
-                    }
-                    if (res.entities["statoIniziale:statoIniziale"] !== undefined) {
-                        risposta.statoIniziale = res.entities["statoIniziale:statoIniziale"][0].value;
-                    }
+                        //Transizione
+                        if (res.entities["scenaIniziale:scenaIniziale"] !== undefined) {
+                            risposta.scenaIniziale = res.entities["scenaIniziale:scenaIniziale"][0].value;
+                        }
+                        if (res.entities["scenaFinale:scenaFinale"] !== undefined) {
+                            risposta.scenaFinale = res.entities["scenaFinale:scenaFinale"][0].value;
+                        }
+                        if (res.entities["oggetto:oggetto"] !== undefined) {
+                            risposta.oggetto = res.entities["oggetto:oggetto"][0].value;
+                        }
+                        if (res.entities["statoIniziale:statoIniziale"] !== undefined) {
+                            risposta.statoIniziale = res.entities["statoIniziale:statoIniziale"][0].value;
+                        }
 
-                    //Switch
-                    if (risposta.intent === "interazioneSwitch") {
-                        if (res.entities["statoFinale:statoFinale"] !== undefined) {
-                            risposta.statoFinale = res.entities["statoFinale:statoFinale"][0].value;
+                        //Switch
+                        if (risposta.intent === "interazioneSwitch") {
+                            if (res.entities["statoFinale:statoFinale"] !== undefined) {
+                                risposta.statoFinale = res.entities["statoFinale:statoFinale"][0].value;
+                            }
                         }
                     }
-
                 } else {
                     console.log("Ricevuto intent sbagliato da Wit.AI");
                 }
