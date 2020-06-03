@@ -1402,7 +1402,7 @@ class EudAutoComplete extends Component {
                 audios: this.props.audios,
                 rules: this.props.rules,
                 rule: this.props.rule,
-            });
+            }, false);
             let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
 
             if(this.props.interactiveObjects.size===0){
@@ -1428,13 +1428,19 @@ class EudAutoComplete extends Component {
                 //in questi due casi ci sono oggetti che fanno parte della scena corrente e altri (audio, video ...)
                 //aggiungo manualmente gli oggetti della scena
                 if(graph===3){
+                    //filtro gli oggetti globali
+                    let items = sceneObjectsOnly(this.props).filter(
+                        x => x.type != InteractiveObjectsTypes.HEALTH &&
+                        x.type != InteractiveObjectsTypes.SCORE &&
+                            x.type != InteractiveObjectsTypes.PLAYTIME
+                    ).valueSeq();
                     return <div className={"eudCompletionPopupForGraph"}>
                         <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
                         <ul>
-                            {listableItems(sceneObjectsOnly(this.props).valueSeq(), this.props)}
+                            {listableItems(items, this.props)}
                         </ul>
 
-                        <ul>
+                        <ul key={li}>
                             <div className={"line"}/>
                             {li}
                         </ul>
@@ -1485,7 +1491,7 @@ class EudAutoComplete extends Component {
                 </div>
             }
         }
-        else{
+        else{ //regola globale
             let  {items: items, graph: graph} = getCompletions({
                 interactiveObjects: this.props.interactiveObjects,
                 subject: this.props.subject,
@@ -1497,7 +1503,7 @@ class EudAutoComplete extends Component {
                 audios: this.props.audios,
                 rules: this.props.rules,
                 rule: this.props.rule,
-            });
+            }, true);
             let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
             return <div className={"eudCompletionPopup"}>
                 <ul>
@@ -1521,6 +1527,7 @@ function listableItems(list, props) {
         return key.includes(word);
         }).map(i => {
             return <EudAutoCompleteItem item={i}
+                                        key={i}
                                         verb={props.verb}
                                         subject={props.subject}
                                         role={props.role}
@@ -1627,185 +1634,265 @@ class EudAutoCompleteItem extends Component {
  *          verb -> the type of action the subject executes
  *          interactiveObjects -> the list of the objects in the game
  *          rulePartType -> type of rule portion we are returning the completions for
+ * @param global is true if the rule is global
  * @returns {the list of possible completions, int that indicates if a graph is necessary}
+ * WARNING: In order to work must return a variable called items and another called graph
  */
-function getCompletions(props) {
+function getCompletions(props, global) {
 
-    let graph=0;
+    if(!global){ //regole non globali
+        let graph=0;
+        switch (props.role) {
+            case "subject":
+                graph=1;
+                if(props.rulePartType === 'event'){ // event subject: player, game, audios videos, scene objects
+                    //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
+                    //il merge delle scene lo faccio nella render con graph
+                    graph=3;
+                    let items = props.assets.filter(x => x.type === 'video').filter(x =>
+                        x.type !== InteractiveObjectsTypes.TIMER &&
+                        x.type !== InteractiveObjectsTypes.HEALTH &&
+                        x.type !== InteractiveObjectsTypes.SCORE &&
+                        x.type !== InteractiveObjectsTypes.PLAYTIME).merge(props.audios).set(
+                        InteractiveObjectsTypes.PLAYER,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.PLAYER,
+                            uuid: InteractiveObjectsTypes.PLAYER,
+                            name: ""
+                        }),
+                    ).sort(function (a) {
+                        if(a.type=== "PLAYER"){
+                            return -1
+                        }
+                        else
+                            return 1;
+                    });
+                    return {items, graph};
+                }
+                else{
+                    //soggetto nella seconda parte della frase
+                    let subjects = props.interactiveObjects.filter(x =>
+                        x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST ).set(
+                        InteractiveObjectsTypes.GAME,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.GAME,
+                            uuid: InteractiveObjectsTypes.GAME,
+                            name: ""
+                        })).set(
+                        InteractiveObjectsTypes.PLAYER,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.PLAYER,
+                            uuid: InteractiveObjectsTypes.PLAYER,
+                            name: ""
+                        })
+                    );
+                    let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
+                    let items= result.sort(function (a) {
+                        //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
+                        // e il player
+                        if(sceneObjectsOnly(props).includes(a)|| a.type=== "PLAYER"){
+                            return -1
+                        }
+                        else
+                            return 1;
+                    });
+                    return {items, graph}
+                }
 
-    switch (props.role) {
-        case "subject":
-            graph=1;
-            if(props.rulePartType === 'event'){ // event subject: player, game, audios videos, scene objects
-                //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
-                //il merge delle scene lo faccio nella render con graph
-                graph=3;
-                let items = props.assets.filter(x => x.type === 'video').merge(props.audios).set(
-                    InteractiveObjectsTypes.PLAYER,
-                    InteractiveObject({
-                        type: InteractiveObjectsTypes.PLAYER,
-                        uuid: InteractiveObjectsTypes.PLAYER,
-                        name: ""
-                    }),
-                ).sort(function (a) {
-                    if(a.type=== "PLAYER"){
-                        return -1
-                    }
-                    else
-                        return 1;
-                });
-                return {items, graph};
-            }
-            else{
-                //soggetto nella seconda parte della frase
-                let subjects = props.interactiveObjects.filter(x =>
-                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
-                    InteractiveObjectsTypes.GAME,
-                    InteractiveObject({
-                        type: InteractiveObjectsTypes.GAME,
-                        uuid: InteractiveObjectsTypes.GAME,
-                        name: ""
-                    })).set(
-                    InteractiveObjectsTypes.PLAYER,
-                    InteractiveObject({
-                        type: InteractiveObjectsTypes.PLAYER,
-                        uuid: InteractiveObjectsTypes.PLAYER,
-                        name: ""
-                    })
-                );
-                let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
-                let items= result.sort(function (a) {
-                    //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
-                    // e il player
-                    if(sceneObjectsOnly(props).includes(a)|| a.type=== "PLAYER"){
-                        return -1
-                    }
-                    else
-                        return 1;
-                });
-                return {items, graph}
-            }
+            case "object":
+                // the CLICK action is restricted to current scene objects only, might move to switch case later
+                if(props.verb.action === RuleActionTypes.CLICK){
+                    console.log("Case object scene object only: ", sceneObjectsOnly(props));
+                    graph = 2;
+                    let items = sceneObjectsOnly(props).filter(x =>
+                        x.type !== InteractiveObjectsTypes.TIMER &&
+                        x.type !== InteractiveObjectsTypes.HEALTH &&
+                        x.type !== InteractiveObjectsTypes.SCORE &&
+                        x.type !== InteractiveObjectsTypes.PLAYTIME
+                    ); //filtro il timer e gli oggetti globali perchè non sono cliccabili
+                    return {items, graph};
+                }
 
-        case "object":
-            // the CLICK action is restricted to current scene objects only, might move to switch case later
-            if(props.verb.action === RuleActionTypes.CLICK){
-                console.log("Case object scene object only: ", sceneObjectsOnly(props));
-                graph = 2;
-                let items = sceneObjectsOnly(props).filter(x =>
-                    x.type !== InteractiveObjectsTypes.TIMER &&
-                    x.type !== InteractiveObjectsTypes.HEALTH &&
-                    x.type !== InteractiveObjectsTypes.SCORE &&
-                    x.type !== InteractiveObjectsTypes.PLAYTIME
-                ); //filtro il timer e gli oggetti globali perchè non sono cliccabili
-                return {items, graph};
-            }
+                //si possono triggerare regole o timers
+                if(props.verb.action === RuleActionTypes.TRIGGERS){
+                    graph = 2;
+                    let items = sceneRulesOnly(props).merge(sceneObjectsOnly(props).filter (
+                        x => x.type ===InteractiveObjectsTypes.TIMER
+                    ));
+                    return {items, graph}
+                }
 
-            //si possono triggerare regole o timers
-            if(props.verb.action === RuleActionTypes.TRIGGERS){
-                graph = 2;
-                let items = sceneRulesOnly(props).merge(sceneObjectsOnly(props).filter (
-                    x => x.type ===InteractiveObjectsTypes.TIMER
-                ));
-                return {items, graph}
-            }
-
-            //stop va bene sia per gli audio sia per i timer, ma se il soggetto è game allora si riferisce solo ai timer
-            if(props.verb.action === RuleActionTypes.STOP_TIMER && props.subject.type === InteractiveObjectsTypes.GAME){
+                //stop va bene sia per gli audio sia per i timer, ma se il soggetto è game allora si riferisce solo ai timer
+                if(props.verb.action === RuleActionTypes.STOP_TIMER && props.subject.type === InteractiveObjectsTypes.GAME){
                     let items = (sceneObjectsOnly(props).filter (
                         x => x.type ===InteractiveObjectsTypes.TIMER
                     ));
                     return {items, graph}
-            }
-
-            //entra nella scena supporta solo il nome della scena corrente
-            if(props.verb.action === RuleActionTypes.ENTER_SCENE){
-                graph=0;
-                let items = (props.scenes.filter( x=> x.uuid === CentralSceneStore.getState())); //scena corrente
-                return {items, graph}
-            }
-
-            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
-            allObjects = allObjects.merge(filterValues(props.subject, props.verb));
-
-            if (props.verb.action) {
-                let objType = RuleActionMap.get(props.verb.action).obj_type;
-                allObjects = allObjects.filter(x => objType.includes(x.type));
-            }
-
-            //complemento oggetto, ordino sempre sulla base degli oggetti nella scena
-            let items= allObjects.sort(function (a) {
-                if(sceneObjectsOnly(props).includes(a)){
-                    return -1
                 }
-                else
-                    return 1;
-            });
 
-            //ulteriore controllo per vedere se nella lista restituita ci sono oggetti
-            if(items.some(a => typeof a == props.interactiveObjects)){
-                graph = 2;
-            }
-
-            //se il verbo è spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
-            // spostare nella scena in cui sono già)
-            if(props.verb.action === RuleActionTypes.TRANSITION){
-                let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
-                items= items.filter(x=>
-                    !x.includes(current_scene_uuid)
-                );
-            }
-
-            return {items, graph};
-
-        case "operation":
-            if(props.rulePartType === 'event'){
-                if(props.subject){
-                    let items = RuleActionMap
-                        //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
-                        .filter(x => x.subj_type.includes(props.subject.type)
-                        && x.uuid !== RuleActionTypes.TRANSITION);
-
+                //entra nella scena supporta solo il nome della scena corrente
+                if(props.verb.action === RuleActionTypes.ENTER_SCENE){
+                    graph=0;
+                    let items = (props.scenes.filter( x=> x.uuid === CentralSceneStore.getState())); //scena corrente
                     return {items, graph}
                 }
-                let items = RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
+
+                let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
+                allObjects = allObjects.merge(filterValues(props.subject, props.verb));
+
+                if (props.verb.action) {
+                    let objType = RuleActionMap.get(props.verb.action).obj_type;
+                    allObjects = allObjects.filter(x => objType.includes(x.type));
+                }
+
+                //complemento oggetto, ordino sempre sulla base degli oggetti nella scena
+                let items= allObjects.sort(function (a) {
+                    if(sceneObjectsOnly(props).includes(a)){
+                        return -1
+                    }
+                    else
+                        return 1;
+                });
+
+                //ulteriore controllo per vedere se nella lista restituita ci sono oggetti
+                if(items.some(a => typeof a == props.interactiveObjects)){
+                    graph = 2;
+                }
+
+                //se il verbo è spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
+                // spostare nella scena in cui sono già)
+                if(props.verb.action === RuleActionTypes.TRANSITION){
+                    let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
+                    items= items.filter(x=>
+                        !x.includes(current_scene_uuid)
+                    );
+                }
+
                 return {items, graph};
-            }
-            if(props.subject){
-                //se ho come soggetto il gioco allora mostro solo avvia come verbo
-                if(props.subject.type === InteractiveObjectsTypes.GAME){
-                    let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS || x.uuid ===RuleActionTypes.STOP_TIMER);
+
+            case "operation":
+                if(props.rulePartType === 'event'){
+                    if(props.subject){
+                        let items = RuleActionMap
+                            //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
+                            .filter(x => x.subj_type.includes(props.subject.type)
+                                && x.uuid !== RuleActionTypes.TRANSITION);
+
+                        return {items, graph}
+                    }
+                    let items = RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
+                    return {items, graph};
+                }
+                if(props.subject){
+                    //se ho come soggetto il gioco allora mostro solo avvia come verbo
+                    if(props.subject.type === InteractiveObjectsTypes.GAME){
+                        let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS || x.uuid ===RuleActionTypes.STOP_TIMER);
+                        return {items, graph};
+                    }
+
+                    /* Decommenta se dà problemi
+                    if(props.subject.type === InteractiveObjectsTypes.TIMER){
+                         let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.REACH_TIMER );
+                         return {items, graph};
+                     }*/
+
+                    //faccio in modo che "entra nella scena" non compaia come azione nella seconda parte della frase
+                    let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)
+                        && x.uuid !== RuleActionTypes.ENTER_SCENE) : RuleActionMap.filter(
+                        x => x.uuid !== RuleActionTypes.ENTER_SCENE
+                    );
+
+                    return {items, graph};
+                }
+                else{
+                    let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
                     return {items, graph};
                 }
 
-               /* Decommenta se dà problemi
-               if(props.subject.type === InteractiveObjectsTypes.TIMER){
-                    let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.REACH_TIMER );
-                    return {items, graph};
-                }*/
-
-                //faccio in modo che "entra nella scena" non compaia come azione nella seconda parte della frase
-                let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)
-                    && x.uuid !== RuleActionTypes.ENTER_SCENE) : RuleActionMap.filter(
-                    x => x.uuid !== RuleActionTypes.ENTER_SCENE
-                );
-
+            case "operator":{
+                let items = props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
                 return {items, graph};
             }
-            else{
-                let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
+            case 'value':{
+                let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
                 return {items, graph};
             }
-
-        case "operator":{
-            let items = props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
-            return {items, graph};
-        }
-        case 'value':{
-            let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
-            return {items, graph};
         }
     }
 
+    else{ //regole globali
+        let globalObjects = props.interactiveObjects.filter(x =>
+            x.type == InteractiveObjectsTypes.HEALTH ||
+            x.type == InteractiveObjectsTypes.SCORE ||
+            x.type == InteractiveObjectsTypes.PLAYTIME);
+        let graph=-1;
+
+        switch (props.role) {
+
+            case "subject":
+                if(props.rulePartType === 'event'){ // mi servono solo gli oggetti globali
+                    let items = globalObjects;
+                    console.log("items operation", items)
+                    return {items, graph};
+                }
+                else{
+                    let items = globalObjects.set(
+                        InteractiveObjectsTypes.PLAYER,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.PLAYER,
+                            uuid: InteractiveObjectsTypes.PLAYER,
+                            name: ""
+                        })
+                    );
+                    console.log("items operation", items)
+
+                    return {items, graph}
+                }
+
+            case "object":
+
+                let items = props.interactiveObjects.merge(props.scenes);
+                items = items.merge(filterValues(props.subject, props.verb));
+
+                if (props.verb.action) {
+                    let objType = RuleActionMap.get(props.verb.action).obj_type;
+                    items = items.filter(x => objType.includes(x.type));
+                }
+
+                //se il verbo è spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
+                // spostare nella scena in cui sono già)
+                if(props.verb.action === RuleActionTypes.TRANSITION){
+                    let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
+                    items= items.filter(x=> !x.includes(current_scene_uuid)
+                    );
+                }
+
+                return {items, graph};
+
+            case "operation":
+                if(props.subject){
+                    let items = RuleActionMap.filter(x => x.subj_type.includes(props.subject.type));
+                    if(props.rulePartType === 'action' && props.subject.type === 'PLAYER'){ //solo in questo caso aggiungo si sposta verso
+                        items = items.filter(x=> x.uuid==RuleActionTypes.TRANSITION);
+                        return {items, graph};
+                    }
+                    return {items, graph};
+                }
+                else { //se l'oggetto non è definito
+                    let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
+                    return {items, graph};
+                }
+
+            case "operator":{
+                let items = props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
+                return {items, graph};
+            }
+            case 'value':{
+                let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
+                return {items, graph};
+            }
+        }
+    }
 }
 
 function filterValues(subject, verb) {
