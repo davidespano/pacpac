@@ -159,7 +159,7 @@ div.rules{
 .expand-btn{
     position: absolute;
     top: 0;
-    left: 5px;
+    left: 49%;
     z-index:20;
 }
 
@@ -1538,13 +1538,13 @@ input.eudObjectString[type=text] {
     background-color: #eee;
     color: #444;
     cursor: pointer;
-    padding: 18px;
+    padding: 7px;
     width: 100%;
     text-align: left;
     border: none;
     outline: none;
     transition: 0.4s;
-    margin-top: 20px;
+    margin-top: 7px;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */

@@ -138,25 +138,32 @@ export default class VRScene extends React.Component {
 
     loadingManager()
     {
-        let sphere = document.getElementById(this.state.activeScene.name)
-        let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-        if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
-        {
-            sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
-            if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
+        if(!sceneLoaded){
+            let sphere = document.getElementById(this.state.activeScene.name)
+            let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
+            if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
             {
-                console.log("sceneLoaded = ", sceneLoaded)
+                sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
+                if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
+                {
+                    //console.log("sceneLoaded = ", sceneLoaded)
+                    loadingsphere.setAttribute('visible', 'false');
+                }
+                if (sphere.components["material"].data.src.currentTime > 1)
+                {
+                    //se la transizione è più lunga di un secondo potrebbe non funzionare
+                    sceneLoaded = true;
+                }
+            }
+            if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
+            {
                 loadingsphere.setAttribute('visible', 'false');
+                // al termine del video sollevo l'evento per essere gestito qualora ci sia una regola per fine video
+                let media = sphere.components["material"].data.src
+                media.onended = function () {
+                    eventBus.emit(media.id + "-is-ENDED");
+                }
             }
-            if (sphere.components["material"].data.src.currentTime > 1)
-            {
-                //se la transizione è più lunga di un secondo potrebbe non funzionare
-                sceneLoaded = true;
-            }
-        }
-        else if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
-        {
-            loadingsphere.setAttribute('visible', 'false');
         }
     }
 
@@ -183,9 +190,8 @@ export default class VRScene extends React.Component {
             }
             if(window.timerTime %  1 == 0)
             {
-                console.log(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
+                //console.log(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
                 eventBus.emit(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
-
             }
         }
     }
@@ -206,6 +212,11 @@ export default class VRScene extends React.Component {
                 "; width:" + gameTimeSize +
                 "; value:" + (new Date(window.gameTimeValue * 1000).toISOString().substr(11, 8));
             gameTime.setAttribute('text', textProperties)
+
+            if(window.gameTimeValue %  1 == 0)
+            {
+                //eventBus.emit(gameTimeUuid + "-"+"reach_timer-" + Math.floor(window.gameTimeValue))
+            }
         }
     }
 
@@ -271,7 +282,7 @@ export default class VRScene extends React.Component {
             let objectVideo;
 
             rule.actions.sort(stores_utils.actionComparator);
-
+            //console.log("creo rule listener");
             //Funzione che si occupa di eseguire le azioni
             let actionCallback = function(action){
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
@@ -292,6 +303,7 @@ export default class VRScene extends React.Component {
                 };
                 return closure;
             };
+            //console.log(rule)
             switch (rule.event.action){
                 // [Vittoria] qua sto aggiungendo un evento click con il suo uuid dell'oggetto,
                 //se volessi creare un evento del counter chiamerei il uuid del contatore
@@ -338,42 +350,46 @@ export default class VRScene extends React.Component {
                 case 'IS':
                     let media;
                     //Controllo se il video è della scena o di un oggetto
-                    //TODO bisognerebbe trovare un ID simile per tutti
                     if(document.getElementById(rule.event.subj_uuid))
+                    {
                         media = document.getElementById(rule.event.subj_uuid)
+                        //console.log(rule.event.subj_uuid)
+                    }
                     if(document.getElementById(rule.event.uuid))
-                        media =  media = document.getElementById('media_' + rule.event.uuid);
+                    {
+                        media = document.getElementById('media_' + rule.event.uuid);
+                        //console.log('media_' + rule.event.uuid)
+                    }
                     if(soundsHub["audios_"+ rule.event.subj_uuid] !== undefined){
-                        media = soundsHub["audios_"+ rule.event.subj_uuid];
+                        //media = soundsHub["audios_"+ rule.event.subj_uuid];
                     }
-
-                    //Gestione evento fine video, controllo che l'evento sia di fine video, e che il media esiste
-                    if(rule.event.obj_uuid === "ENDED" && media){
-                        media.onended = function() {
-                            rule.actions.forEach(action => {
-                                //Creo l'execution per ogni azione, la gestisco sia per in debugmode che in playmode
-                                //Verifico che la condizione sia rispettata
-                                if(evalCondition(rule.condition, me.state.runState)) {
-                                    let actionExecution = actionCallback(action);
-                                    if (me.props.debug) {
-                                        setTimeout(function () {
-                                            let object;
-                                            if(me.props.interactiveObjects.get(rule.event.subj_uuid))
-                                                object = me.props.interactiveObjects.get(rule.event.subj_uuid);
-                                            else
-                                                object = this.state.audios[rule.event.subj_uuid]
-                                            interface_utils.highlightRule(me.props, object);
-                                            eventBus.on('debug-step', actionExecution);
-                                        }, duration);
-                                    } else {
-                                        setTimeout(function () {
-                                            actionExecution();
-                                        }, media.duration);
-                                    }
+                    // creo l'event handler per la fine del video
+                    let eventVideoName = rule.event.action.toLowerCase();
+                    //TODO: trovare un altro ID per questo tipo di eventi, potrebbe accadere che due scene diverse con
+                    // lo stesso media e lo stesso tipo di regola creino un conflitto
+                    let endVideoEvent = `${rule.event.subj_uuid}-${eventVideoName}-${rule.event.obj_uuid}`;
+                    eventBus.on(endVideoEvent, function(){
+                        rule.actions.forEach(action => {
+                            //Creo l'execution per ogni azione, la gestisco sia per in debugmode che in playmode
+                            //Verifico che la condizione sia rispettata
+                            if(evalCondition(rule.condition, me.state.runState)) {
+                                let actionExecution = actionCallback(action);
+                                if (me.props.debug) {
+                                    setTimeout(function () {
+                                        let object;
+                                        if(me.props.interactiveObjects.get(rule.event.subj_uuid))
+                                            object = me.props.interactiveObjects.get(rule.event.subj_uuid);
+                                        else
+                                            object = this.state.audios[rule.event.subj_uuid]
+                                        interface_utils.highlightRule(me.props, object);
+                                        eventBus.on('debug-step', actionExecution);
+                                    }, duration);
+                                } else {
+                                    actionExecution();
                                 }
-                            });
-                        };
-                    }
+                            }
+                        });
+                    })
 
                     if(rule.event.obj_uuid === "STARTED" && media){
                         media.onplay = function() {
@@ -406,6 +422,7 @@ export default class VRScene extends React.Component {
                 default:
                     let eventName = rule.event.action.toLowerCase();
                     let event = `${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`;
+                    console.log(event)
                     eventBus.on(event, function () {
                         let condition = evalCondition(rule.condition, me.state.runState);
                         if (condition) {
@@ -587,7 +604,6 @@ export default class VRScene extends React.Component {
             {
                 timerSize = 0.1 + (timerObj.properties.size/10);
                 if (timerID ==  this.state.activeScene.name + 'timer') {
-
                 }
                 else{
                     window.timerTime = timerObj.properties.time;
@@ -597,6 +613,7 @@ export default class VRScene extends React.Component {
 
                 let textProperties = "baseline: center; side: double"+
                     "; align: center" +
+                    "; width:" + timerSize +
                     "; value:" + window.timerTime;
                 let geometryPropertiesTM = "primitive: plane; width:" + (timerSize/5)+
                     "; height: auto;"
@@ -623,6 +640,7 @@ export default class VRScene extends React.Component {
                 gameTimeSize = 0.1 + (gameTimeObj.properties.size/10);
                 let textPropertiesPT = "baseline: center; side: double"+
                     "; align: center" +
+                    "; width:" + gameTimeSize +
                     "; value:" + window.gameTimeValue +
                     ";color: #dbdbdb";
                 let geometryPropertiesPT = "primitive: plane; width:" + (gameTimeSize/5) +
