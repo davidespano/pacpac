@@ -242,7 +242,7 @@ export default class Bubble extends Component
                                 id={this.props.scene.name + 'loading'} radius={radius}  material={'shader: flat; opacity: 0.5; color: black; side: double'}  >
                             <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
                         </Entity>
-                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
+                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 -90 0'} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
                         {curves}
@@ -253,7 +253,7 @@ export default class Bubble extends Component
         else if(is3Dscene && this.props.editMode){ //genero bolla per scena 3D in geometry mode
             sceneRender = (
                 <Entity>
-                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} primitive={primitive} visible={this.props.isActive}
+                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 -90 0'} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
                         {curves}
