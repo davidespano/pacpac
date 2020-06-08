@@ -34,15 +34,9 @@ export default class EudRuleEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            elementoMancante:  "", //Variabile dove scrivo di volta in volta l'elemento che manca al bot per completare la regola
-            response: {
-                intent: "",
-                scenaIniziale:  "",
-                scenaFinale: "",
-                oggetto:  "",
-                tipo:  "regola",
-            },
-            ultimaRegolaCreata:  ""
+            elementoMancante: this.props.ruleBot.elementoMancante, //Variabile dove scrivo di volta in volta l'elemento che manca al bot per completare la regola
+            response: this.props.ruleBot.response,
+            ultimaRegolaCreata: this.props.ruleBot.ultimaRegolaCreata,
         };
     }
 
@@ -189,9 +183,11 @@ export default class EudRuleEditor extends Component {
 
     /* Messaggio di benvenuto. */
     componentDidMount() {
-        addResponseMessage("Benvenuto nel bot delle regole di Pac-Pac, scrivi subito la prima regola! Ricorda che puoi scrivere" +
-            "\"help\" se hai bisogno di aiuto per l'utilizzo del bot oppure puoi scrivere \"reset\" in qualsiasi momento per resettare tutto e " +
-            "scrivere una regola da capo. ");
+        if (this.state.elementoMancante === "") {
+            addResponseMessage("Benvenuto nel bot delle regole di Pac-Pac, scrivi subito la prima regola! Ricorda che puoi scrivere" +
+                "\"help\" se hai bisogno di aiuto per l'utilizzo del bot oppure puoi scrivere \"reset\" in qualsiasi momento per resettare tutto e " +
+                "scrivere una regola da capo. ");
+        }
     }
 
     /* Metodo per inviare un messaggio. Capire se il bot ha trovato una transizione, se quella transizione ha tutti i
@@ -253,7 +249,7 @@ export default class EudRuleEditor extends Component {
                                 Actions.updateCurrentObject(this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent)));
                                 this.props.switchToGeometryMode();
                             } else if (newMessage.trim().toLowerCase() === "no") {
-
+                                addResponseMessage("Va bene continuiamo con la creazione della regola");
                             } else {
                                 addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
                             }
@@ -328,11 +324,12 @@ export default class EudRuleEditor extends Component {
                             }
                             return; //Non devo fare il queryControl
                         default:
-                            addResponseMessage("Ci dev'essere qualche errore, mancano degli elementi, ma non riesco a capire quali. ")
+                            addResponseMessage("Ci dev'essere qualche errore, l'elemento mancante corrente non esiste. ")
                     }
                 }
                 /* Controlliamo tutti i dati di response. */
                 this.queryControl(this.state.response);
+
             } else {
                 addResponseMessage("Questo bot ti permetterà di scrivere le regole per il tuo gioco usando semplicemente " +
                     "il linguaggio naturale. Una regola è anche formata da azioni e condizioni. Con il bot potrai aggiungerle dopo aver " +
@@ -756,6 +753,7 @@ export default class EudRuleEditor extends Component {
             switch (this.state.response.tipo) {
                 case "regola":
                     this.setState({elementoMancante: "confermaCreazioneRegola"});
+                    Actions.updateBotRule("confermaCreazioneRegola", this.state.response, this.state.ultimaRegolaCreata);
                     addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.state.response.scenaIniziale +
                         " SCENA FINALE: " + this.state.response.scenaFinale + " NOME TRANSIZIONE: " + this.state.response.oggetto);
                     addResponseMessage("Scrivi \"si\" se vuoi confermare la creazione della regola, oppure \"no\" se vuoi creare una nuova regola. ");
@@ -780,7 +778,6 @@ export default class EudRuleEditor extends Component {
                         addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
                         this.printButtonsOnChatBot(scelte);
                     }
-
                     break;
                 default:
                     addResponseMessage("C'è stato qualche errore dopo aver preso tutti i dati.");
