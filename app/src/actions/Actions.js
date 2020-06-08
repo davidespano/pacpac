@@ -110,7 +110,6 @@ const Actions = {
     },
 
 
-
     debugSaves(response){
         AppDispatcher.dispatch({
             type: ActionTypes.DEBUG_SAVES,
@@ -548,8 +547,6 @@ const Actions = {
         })
     },
 
-
-
     /**
      * Dispatch all object selection (rightbar)
      */
@@ -748,8 +745,8 @@ const Actions = {
      * Remove audio from stores and scene, dispatch db update
      * @param audio
      */
-    removeAudio(audio){
-        if(audio.isSpatial){
+    removeAudio(audio) {
+        if (audio.isSpatial) {
             AppDispatcher.dispatch({
                 type: ActionTypes.REMOVE_SPATIAL_AUDIO,
                 scene: ScenesStore.getState().get(audio.scene),

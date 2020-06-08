@@ -19,6 +19,7 @@ import StoryImagesStore from '../data/StoryImagesStore';
 import StoriesStore from '../data/StoriesStore';
 import EditStoriesStore from '../data/EditStoriesStore';
 import FormImagesStore from '../data/FormImagesStore';
+import RuleBotStore from '../data/RuleBotStore';
 
 /**
  * [Vittoria] Quando creo un nuovo store:
@@ -46,6 +47,7 @@ function getStores() {
 		StoryCollectionsStore,
 	    StoryImagesStore,
 		FormImagesStore,
+        RuleBotStore,
     ];
 }
 
@@ -63,6 +65,7 @@ function getState() {
         editor: EditorStateStore.getState(),
         interactiveObjects: ObjectsStore.getState(),
         objectToScene: ObjectToSceneStore.getState(),
+        ruleBot: RuleBotStore.getState(),
         rules: RulesStore.getState(),
         scenes: ScenesStore.getState(),
         scenesNames: ScenesNamesStore.getState(),
@@ -72,7 +75,6 @@ function getState() {
 		storyCollections: StoryCollectionsStore.getState(),
 		storyImages: StoryImagesStore.getState(),	
 		formImages: FormImagesStore.getState(),
-
         //FUNCTIONS
 
         reset: Actions.reset,
