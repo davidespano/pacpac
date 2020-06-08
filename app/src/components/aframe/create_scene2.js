@@ -628,8 +628,8 @@ export default class VRScene extends React.Component {
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'timerIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)} position={timerImgPosition}
-                        scale={geometryPropertiesTMimg} transparent={true} opacity="0.8" visible={visibility}/>
-                        <Entity visible={true} geometry={geometryPropertiesTM} position={timerPosition}
+                                 scale={geometryPropertiesTMimg}  emissive={"#cecece"} emissiveIntensity="0.8"
+                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>                          <Entity visible={true} geometry={geometryPropertiesTM} position={timerPosition}
                                 id={timerID} material={'shader: flat; opacity: 0.85; color: black;'}
                                 text={textProperties} visible={visibility}>
                         </Entity>
@@ -656,8 +656,8 @@ export default class VRScene extends React.Component {
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'gametimeIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)} position={positionPTimg}
-                        scale={geometryPropertiesPTimg} transparent={true} opacity="0.8" visible={visibility}/>
-                        <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
+                                 scale={geometryPropertiesPTimg}  emissive={"#cecece"} emissiveIntensity="0.8"
+                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>                        <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
                                 id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
                                 text={textPropertiesPT} visible={visibility}>
                         </Entity>
@@ -686,7 +686,8 @@ export default class VRScene extends React.Component {
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'scoreIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.SCORE)} position={positionSCimg}
-                        scale={geometryPropertiesSCimg} transparent={true} opacity="0.8" visible={visibility}/>
+                                 scale={geometryPropertiesSCimg}  emissive={"#cecece"} emissiveIntensity="0.8"
+                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>
                         <Entity visible={true} geometry={geometryPropertiesSC} position={positionSC}
                                 id={this.state.activeScene.name + 'score'} material={'shader: flat; opacity: 0.8; color: black;'}
                                 text={textPropertiesSC} visible={visibility}>
@@ -701,7 +702,7 @@ export default class VRScene extends React.Component {
                 let textPropertiesHL = "baseline: center; side: double"+
                     "; align: center" +
                     "; width:" + healthSize +
-                    "; value:" +window.healthValue +
+                    "; value:" + window.healthValue +
                     ";color: #dbdbdb";
                 let geometryPropertiesHL = "primitive: plane; width:" + (healthSize/5) +
                     "; height:" + (healthSize/22) +";"
@@ -716,7 +717,8 @@ export default class VRScene extends React.Component {
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'healthIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.HEALTH)} position={positionHLimg}
-                        scale={geometryPropertiesHLimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        scale={geometryPropertiesHLimg}  emissive={"#cecece"} emissiveIntensity="0.8"
+                        blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>
                         <Entity visible={true} geometry={geometryPropertiesHL} position={positionHL}
                                 id={this.state.activeScene.name + 'health'} material={'shader: flat; opacity: 0.85; color: black;'}
                                 text={textPropertiesHL} visible={visibility}>
