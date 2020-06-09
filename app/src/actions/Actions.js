@@ -555,7 +555,6 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_CURRENT_OBJECT,
             obj: obj,
-
         })
     },
 
@@ -906,12 +905,57 @@ const Actions = {
         })
     },
 
+
+    updateBotResponse(response) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_RESPONSE,
+            intent: response.intent,
+            scenaIniziale: response.scenaIniziale,
+            scenaFinale: response.scenaFinale,
+            oggetto: response.oggetto,
+            tipo: response.tipo
+        })
+    },
+
     updateBotRule(elementoMancante, response, ultimaRegolaCreata) {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_BOT_RULE,
             elementoMancante: elementoMancante,
             response: response,
             ultimaRegolaCreata: ultimaRegolaCreata
+        })
+    },
+
+    updateBotMissingElement(missingElement) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_MISSING_ELEMENT,
+            elementoMancante: missingElement
+        })
+    },
+    updateBotObject(object) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_OBJECT,
+            oggetto: object
+        })
+    },
+    updateBotFinalScene(finalScene) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_FINAL_SCENE,
+            elementoMancante: finalScene
+        })
+    },
+
+    updateBotInitialState(initialState) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_INITIAL_STATE,
+            elementoMancante: initialState
+        })
+    },
+
+    updateBotFinalState(finalState) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_FINAL_STATE,
+            elementoMancante: finalState
         })
     },
 
