@@ -191,15 +191,14 @@ export default class EudRuleEditor extends Component {
             if (newMessage.trim().toLowerCase() !== "help") {
                 /* La prima query verrà sempre mandata al bot. */
                 if (this.props.ruleBot.elementoMancante === "") {
-                    let response = await sendRequest(newMessage, this.props.ruleBot.tipo);
-                    console.log(response);
-                    Actions.updateBotResponse(response);
-                    console.log(this.props.ruleBot.oggetto)
+                    let risposta = await sendRequest(newMessage, this.props.ruleBot.tipoRisposta);
+                    await Actions.updateBotResponse(risposta);
+                    addResponseMessage(risposta.statoFinale + " ---> " + this.props.ruleBot.statoFinale);
                 } else {
                     /* Se dopo aver mandato al bot la prima query ci dovesse mancare qualche elemento per la regola allora risolviamo localmente, modificando
                     * lo stato di response, usando una variabile d'appoggio "risposta". Il campo mancante prenderà ciò che scriviamo
                     * nell'input, successivamente processiamo ciò che abbiamo scritto in "queryControl". */
-                    let risposta = this.getResponseFromRuleBotStore();
+
                     /* A seconda di cosa viene settato nel queryControl si esegue uno di questi case. */
                     switch (this.props.ruleBot.elementoMancante) {
                         case "scenaFinale":
@@ -220,13 +219,12 @@ export default class EudRuleEditor extends Component {
                                che l'utente sta creando. In caso negativo invece viene resettata la regola e viene data la
                                possibilità di crearne una da zero. */
                             if (newMessage.trim().toLowerCase() === "si") {
-                                //Creo l'oggetto di default e salvo il suo nome in "risposta.oggetto".
-                                risposta.oggetto = await this.createDefaultObject(this.props, this.getObjectTypeFromIntent(risposta.intent));
-                                addResponseMessage(this.getObjectTypeFromIntent(risposta.intent) + " aggiunta");
-                                Actions.updateBotResponse(risposta);
+                                //Creo l'oggetto di default e salvo il suo nome in "this.props.ruleBot.oggetto".
+                                Actions.updateBotObject(await this.createDefaultObject(this.props, this.getObjectTypeFromIntent(this.props.ruleBot.intent)));
+                                addResponseMessage(this.getObjectTypeFromIntent(this.props.ruleBot.intent) + " aggiunta");
                                 addResponseMessage("Per poter usare questo oggetto hai bisogno di aggiungergli una geometria. " +
                                     "Vuoi andare all'editor di geometria?");
-                                Actions.updateBotMissingElement( "richiestaGeometria");
+                                Actions.updateBotMissingElement("richiestaGeometria");
                                 this.printButtonsOnChatBot(scelte);
                             } else if (newMessage.trim().toLowerCase() === "no") {
                                 this.resetAll();
@@ -238,7 +236,7 @@ export default class EudRuleEditor extends Component {
                         case "richiestaGeometria":
                             if (newMessage.trim().toLowerCase() === "si") {
                                 console.log(this.props.ruleBot.elementoMancante);
-                                Actions.updateCurrentObject(this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent)));
+                                Actions.updateCurrentObject(this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent)));
                                 this.props.switchToGeometryMode();
                                 console.log(this.props.ruleBot.elementoMancante);
                             } else if (newMessage.trim().toLowerCase() === "no") {
@@ -250,10 +248,9 @@ export default class EudRuleEditor extends Component {
                         case "confermaCreazioneRegola":
                             if (newMessage.trim().toLowerCase() === "si") {
                                 //Creo la regola a seconda del suo tipo (trovato tramite bot).
-                                this.createRuleFromResponse(risposta);
-
-                                Actions.updateBotMissingElement( "richiestaAzioneAggiuntiva");
-                                //Dopo creata, chiediamo all'utetne se vuole aggiungere un'azione.
+                                this.createRuleFromResponse();
+                                Actions.updateBotMissingElement("richiestaAzioneAggiuntiva");
+                                //Dopo creata, chiediamo all'utente se vuole aggiungere un'azione.
                                 addResponseMessage("Vuoi aggiungere una nuova azione legata a quest'ultima regola creata?");
                                 this.printButtonsOnChatBot(scelte); //Stampa "si" o "no" con i bottoni
                             } else if (newMessage.trim().toLowerCase() === "no") {
@@ -269,7 +266,7 @@ export default class EudRuleEditor extends Component {
                                 this.responseSetActionOrCondition("azione"); //Setto che la risposta sarà un azione da aggiungere e non una regola intera;
                             } else if (newMessage.trim().toLowerCase() === "no") {
                                 addResponseMessage("Vuoi aggiungere una nuova condizione legata a quest'ultima regola creata?");
-                                Actions.updateBotMissingElement( "richiestaCondizioneAggiuntiva");
+                                Actions.updateBotMissingElement("richiestaCondizioneAggiuntiva");
                                 this.printButtonsOnChatBot(scelte);
                             } else {
                                 addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
@@ -277,14 +274,14 @@ export default class EudRuleEditor extends Component {
                             return; //Non devo fare il queryControl
                         case "confermaAggiuntaAzione":
                             if (newMessage.trim().toLowerCase() === "si") {
-                                this.createActionFromResponse(risposta);
+                                this.createActionFromResponse();
 
                                 addResponseMessage("Vuoi aggiungere una nuova azione?");
-                                Actions.updateBotMissingElement( "richiestaAzioneAggiuntiva");
+                                Actions.updateBotMissingElement("richiestaAzioneAggiuntiva");
                                 this.printButtonsOnChatBot(scelte);
                             } else if (newMessage.trim().toLowerCase() === "no") {
                                 addResponseMessage("Vuoi scriverne una nuova?");
-                                Actions.updateBotMissingElement( "richiestaAzioneAggiuntiva");
+                                Actions.updateBotMissingElement("richiestaAzioneAggiuntiva");
                                 this.printButtonsOnChatBot(scelte);
                             } else {
                                 addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
@@ -303,14 +300,14 @@ export default class EudRuleEditor extends Component {
                             return; //Non devo fare il queryControl
                         case "confermaAggiuntaCondizione":
                             if (newMessage.trim().toLowerCase() === "si") {
-                                this.createConditionFromResponse(risposta);
+                                this.createConditionFromResponse();
 
                                 addResponseMessage("Vuoi aggiungere una nuova condizione?");
-                                Actions.updateBotMissingElement( "richiestaCondizioneAggiuntiva");
+                                Actions.updateBotMissingElement("richiestaCondizioneAggiuntiva");
                                 this.printButtonsOnChatBot(scelte);
                             } else if (newMessage.trim().toLowerCase() === "no") {
                                 addResponseMessage("Vuoi aggiungere una nuova condizione?");
-                                Actions.updateBotMissingElement( "richiestaCondizioneAggiuntiva");
+                                Actions.updateBotMissingElement("richiestaCondizioneAggiuntiva");
                                 this.printButtonsOnChatBot(scelte);
                             } else {
                                 addResponseMessage("Non ho capito. Per cortesia scrivere solo \"si\" o \"no\".");
@@ -344,7 +341,7 @@ export default class EudRuleEditor extends Component {
             scenaIniziale: this.props.ruleBot.scenaIniziale,
             scenaFinale: this.props.ruleBot.scenaFinale,
             oggetto: this.props.ruleBot.oggetto,
-            tipo: this.props.ruleBot.tipo,
+            tipo: this.props.ruleBot.tipoRisposta,
         };
 
     }
@@ -368,25 +365,25 @@ export default class EudRuleEditor extends Component {
     }
 
     /* Metodo utile per creare una regola a seconda degli elementi che abbiamo ricevuto da Wit.ai. */
-    createRuleFromResponse(risposta) {
+    createRuleFromResponse() {
         /* Per creare la regola ho bisogno di ricavarmi l'oggetto in se, non mi basta infatti solo il nome.
         * Dunque richiamo la funzione "returnObjectByName" che grazie al tipo e al nome dell'oggetto mi restituisce
         * l'oggetto corretto. */
-        let object = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
+        let object = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent));
         //Creo la regola
-        switch (risposta.intent) {
+        switch (this.props.ruleBot.intent) {
             case "transizione":
-                let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
-                this.props.ruleBot.set("ultimaRegolaCreata", this.createTransitionRule(object, finalSceneUuid));
+                let finalSceneUuid = this.returnUuidSceneByName(this.props.ruleBot.scenaFinale, this.props);
+                Actions.updateBotLastRule(this.createTransitionRule(object, finalSceneUuid));
                 break;
             case "interazioneSwitch":
-                this.props.ruleBot.ultimaRegolaCreata = this.createSwitchRule(object, risposta.statoIniziale, risposta.statoFinale);
+                Actions.updateBotLastRule(this.createSwitchRule(object, this.props.ruleBot.statoIniziale, this.props.ruleBot.statoFinale));
                 break;
             case "interazioneLucchetto":
-                this.props.ruleBot.ultimaRegolaCreata = this.createPadlockRule(object);
+                Actions.updateBotLastRule(this.createPadlockRule(object));
                 break;
             case "interazioneChiave":
-                this.props.ruleBot.ultimaRegolaCreata = this.createKeyRule(object);
+                Actions.updateBotLastRule(this.createKeyRule(object));
                 break;
             default:
                 addResponseMessage("C'è stato qualche problema nella creazione della regola.");
@@ -396,38 +393,38 @@ export default class EudRuleEditor extends Component {
     }
 
     /* Metodo utile per creare un'azione a seconda degli elementi che abbiamo ricevuto da Wit.ai. */
-    createActionFromResponse(risposta) {
+    createActionFromResponse() {
         let newRule;
         //Aggiungo l'azione
-        switch (risposta.intent) {
+        switch (this.props.ruleBot.intent) {
             case "transizione":
                 /* Le azioni di una transizione corrispondono semplicemente al passaggio da una scena all'altra.
                  Non vengono coinvolti oggetti transizione */
-                let finalSceneUuid = this.returnUuidSceneByName(risposta.scenaFinale, this.props);
+                let finalSceneUuid = this.returnUuidSceneByName(this.props.ruleBot.scenaFinale, this.props);
                 newRule = this.addTransitionAction(this.props.ruleBot.ultimaRegolaCreata, finalSceneUuid);
                 break;
             case "interazioneSwitch":
-                let switchObj = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
-                newRule = this.addSwitchAction(this.props.ruleBot.ultimaRegolaCreata, switchObj, risposta.statoFinale);
+                let switchObj = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent));
+                newRule = this.addSwitchAction(this.props.ruleBot.ultimaRegolaCreata, switchObj, this.props.ruleBot.statoFinale);
                 break;
             case "interazioneLucchetto":
-                let padlockObject = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
-                newRule = this.addPadlockAction(this.props.ruleBot.ultimaRegolaCreata, padlockObject, risposta.statoFinale);
+                let padlockObject = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent));
+                newRule = this.addPadlockAction(this.props.ruleBot.ultimaRegolaCreata, padlockObject, this.props.ruleBot.statoFinale);
                 break;
             case "interazioneChiave":
-                let keyObject = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
-                newRule = this.addKeyAction(this.props.ruleBot.ultimaRegolaCreata, keyObject, risposta.statoFinale);
+                let keyObject = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent));
+                newRule = this.addKeyAction(this.props.ruleBot.ultimaRegolaCreata, keyObject, this.props.ruleBot.statoFinale);
                 break;
             default:
                 addResponseMessage("C'è stato qualche problema nell'aggiunta dell'azione.")
         }
-        this.setState({ultimaRegolaCreata: newRule});
+        Actions.updateBotLastRule(newRule);
         this.props.ruleEditorCallback.eudUpdateRule(newRule);
         addResponseMessage("Azione corrispondente aggiunta.");
     }
 
     /* Metodo utile per creare una condizione a seconda degli elementi che abbiamo ricevuto da Wit.ai. */
-    createConditionFromResponse(risposta) {
+    createConditionFromResponse() {
         let newRule;
         let object;
 
@@ -435,10 +432,10 @@ export default class EudRuleEditor extends Component {
         * è verificata o meno. Una volta ottenuto l'oggetto lo passiamo al metodo che aggiunge effettivamente
         * (tramite uuid dell'oggetto in questione, la regola generale e lo stato che deve avere l'oggetto)
         * ad una regola esistente una condizione. */
-        object = this.returnObjectByName(risposta.oggetto, this.getObjectTypeFromIntent(risposta.intent));
-        newRule = this.addObjectCondition(this.props.ruleBot.ultimaRegolaCreata, object.uuid, risposta.statoIniziale);
+        object = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent));
+        newRule = this.addObjectCondition(this.props.ruleBot.ultimaRegolaCreata, object.uuid, this.props.ruleBot.statoIniziale);
 
-        this.setState({ultimaRegolaCreata: newRule});
+        Actions.updateBotLastRule(newRule);
         this.props.ruleEditorCallback.eudUpdateRule(newRule);
         addResponseMessage("Condizione corrispondente aggiunta.");
     }
@@ -477,21 +474,16 @@ export default class EudRuleEditor extends Component {
     /* Resetto response per la prossima richiesta di nuova regola. Attenzione, non viene resettato il tipo della regola,
     * cioè "regola", "azione", "condizione". */
     responseReset() {
-        Actions.updateBotMissingElement( "");
-        let risposta = this.getResponseFromRuleBotStore();
-        risposta.intent = "";
-        risposta.scenaIniziale = "";
-        risposta.scenaFinale = "";
-        risposta.oggetto = "";
-        risposta.tipo = this.props.ruleBot.tipo;
-        Actions.updateBotResponse(risposta);
+        Actions.updateBotMissingElement("");
+        Actions.updateBotIntent("");
+        Actions.updateBotInitialScene("");
+        Actions.updateBotFinalScene("");
+        Actions.updateBotObject("");
     }
 
     /* Setta se la risposta è un'azione o una condizione. */
     responseSetActionOrCondition(state) {
-        let risposta = this.getResponseFromRuleBotStore();
-        risposta.tipo = state;
-        Actions.updateBotResponse(risposta);
+        Actions.updateBotResponseType(state);
     }
 
     /* Metodo usato per mandare la query quando viene cliccato il bottone corrispondente. */
@@ -709,22 +701,20 @@ export default class EudRuleEditor extends Component {
         /* Controllo se la scenaIniziale che ha scritto l'utente corrisponde effettivamente con la scena corrente.
          * Se non dovesse corrispondere, do per scontato che sia quella e la aggiungo a response. */
         if (this.props.ruleBot.scenaIniziale !== this.props.scenes.get(this.props.currentScene).name) {
-            let risposta = this.getResponseFromRuleBotStore();
-            risposta.scenaIniziale = this.props.scenes.get(this.props.currentScene).name;
-            Actions.updateBotResponse(risposta);
+            Actions.updateBotInitialScene(this.props.scenes.get(this.props.currentScene).name);
         }
         /* Controllo che la scena finale che ha inserito l'utente esista, cioè che si trovi effettivamente tra le scene del gioco,
         * ma che non sia la scena corrente. */
-        if (!this.doesFinalSceneExists(this.props.ruleBot.scenaFinale) && this.props.ruleBot.tipo !== "condizione") {
+        if (!this.doesFinalSceneExists(this.props.ruleBot.scenaFinale) && this.props.ruleBot.tipoRisposta !== "condizione") {
             if (this.props.ruleBot.scenaFinale === "") {
                 addResponseMessage("Scrivimi qual'è la scena finale alla quale vuoi arrivare. Perfavore scegli tra una di queste: ");
             } else {
                 addResponseMessage("La scena finale che hai inserito non esiste. Perfavore scegli tra una di queste: ");
             }
             //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
-           Actions.updateBotMissingElement("scenaFinale");
+            Actions.updateBotMissingElement("scenaFinale");
             this.printButtonsOnChatBot(finalScenes);
-        } else if (!this.doesObjectExists(this.props.ruleBot.oggetto, "TRANSITION") && this.props.ruleBot.tipo !== "azione") { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
+        } else if (!this.doesObjectExists(this.props.ruleBot.oggetto, "TRANSITION") && this.props.ruleBot.tipoRisposta !== "azione") { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
             if (this.returnObjectNames("TRANSITION").length > 0) { //Se esiste qualche transizione le elenchiamo
 
                 //Serve per far capire al form dove inserisco il messaggio che non deve mandare una richiesta al bot, ma può risolvere in locale.
@@ -739,24 +729,22 @@ export default class EudRuleEditor extends Component {
             } else { //Se non esiste neanche una transizione chiediamo se ne vuole aggiungere una
                 addResponseMessage("Sembra che tu non abbia transizioni per interagire. Vuoi crearne una? " +
                     "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
-                Actions.updateBotMissingElement( "confermaCreazioneOggetto");
+                Actions.updateBotMissingElement("confermaCreazioneOggetto");
                 this.printButtonsOnChatBot(scelte);
             }
         } else {
             //Se l'utente sta scrivendo una condizione
-            if (this.props.ruleBot.tipo === "condizione") {
+            if (this.props.ruleBot.tipoRisposta === "condizione") {
                 /* Setto lo stato della chiave in caso l'utente voglia aggiungere una condizione. */
-                let risposta = this.getResponseFromRuleBotStore();
-                risposta.statoIniziale = this.getTransitionState(risposta.statoIniziale, risposta.numNegazioni);
-                Actions.updateBotResponse(risposta);
+                Actions.updateBotInitialState(this.getTransitionState(this.props.ruleBot.statoIniziale, this.props.ruleBot.numNegazioni));
             }
 
             /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
             addResponseMessage("Ho tutto.");
 
-            switch (this.props.ruleBot.tipo) {
+            switch (this.props.ruleBot.tipoRisposta) {
                 case "regola":
-                    Actions.updateBotMissingElement( "confermaCreazioneRegola");
+                    Actions.updateBotMissingElement("confermaCreazioneRegola");
                     Actions.updateBotRule("confermaCreazioneRegola", this.getResponseFromRuleBotStore(), this.props.ruleBot.ultimaRegolaCreata);
                     addResponseMessage("I dati della tua regola sono questi: SCENA INIZIALE: " + this.props.ruleBot.scenaIniziale +
                         " SCENA FINALE: " + this.props.ruleBot.scenaFinale + " NOME TRANSIZIONE: " + this.props.ruleBot.oggetto);
@@ -764,7 +752,7 @@ export default class EudRuleEditor extends Component {
                     this.printButtonsOnChatBot(scelte);
                     break;
                 case "azione":
-                    Actions.updateBotMissingElement( "confermaAggiuntaAzione");
+                    Actions.updateBotMissingElement("confermaAggiuntaAzione");
                     addResponseMessage("I dati della tua azione sono questi: Passa alla SCENA FINALE: " + this.props.ruleBot.scenaFinale);
                     addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
                     this.printButtonsOnChatBot(scelte);
@@ -773,10 +761,10 @@ export default class EudRuleEditor extends Component {
                     if (this.props.ruleBot.statoIniziale === "non trovato") {
                         addResponseMessage("Scrivimi qual'è lo stato che deve avere la transizione. Attivabile, non attivabile, visibile, non visibile?");
                         //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
-                        Actions.updateBotMissingElement( "statoIniziale");
+                        Actions.updateBotMissingElement("statoIniziale");
                         this.printButtonsOnChatBot(statoTransizione);
                     } else {
-                        Actions.updateBotMissingElement( "confermaAggiuntaCondizione");
+                        Actions.updateBotMissingElement("confermaAggiuntaCondizione");
                         addResponseMessage("I dati della tua azione sono questi: Se la transizione " + this.props.ruleBot.oggetto +
                             " è " + this.props.ruleBot.statoIniziale);
                         addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
@@ -864,7 +852,7 @@ export default class EudRuleEditor extends Component {
 
     /* Metodo per controllare se tutti gli elementi della regola per lo switch che vogliamo creare siano corretti. Se dovesse mancare qualcosa
     * lo settiamo su "elementoMancante" in modo tale da ricavarcelo poi in "handleNewUserMessage" */
-    async switchElementsControl() {
+    switchElementsControl() {
         let interruttori = this.returnObjectNames("SWITCH");
         let statoInterruttore = ["Acceso", "Spento"];
         let scelte = ["Si", "No"];
@@ -879,20 +867,22 @@ export default class EudRuleEditor extends Component {
                 this.printButtonsOnChatBot(interruttori);
             } else {
                 /* Setto lo stato inziale e quello finale con valore ON o OFF a seconda di cosa contengono. */
+                addResponseMessage(this.props.ruleBot.statoFinale);
 
-                await Actions.updateBotInitialState(this.getSwitchState(this.props.ruleBot.statoIniziale, this.props.ruleBot.numNegazioni));
-                await Actions.updateBotFinalState(this.getSwitchState(this.props.ruleBot.statoFinale, 0));
+                Actions.updateBotInitialState(this.getSwitchState(this.props.ruleBot.statoIniziale, this.props.ruleBot.numNegazioni));
+                Actions.updateBotFinalState(this.getSwitchState(this.props.ruleBot.statoFinale, 0));
 
                 console.log(this.props.ruleBot.statoIniziale + " e " + this.props.ruleBot.statoFinale);
                 //Se non contengono qualcosa riconducibile ad ON o OFF allora chiedo all'utente di specificarlo
                 //Controllo STATO INIZIALE
-                if (this.props.ruleBot.statoIniziale === "non trovato" && this.props.ruleBot.tipo !== "azione") {
+                if (this.props.ruleBot.statoIniziale === "non trovato" && this.props.ruleBot.tipoRisposta !== "azione") {
                     addResponseMessage("Scrivimi qual'è lo stato inziale dello switch. È acceso o spento?");
                     //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                     Actions.updateBotMissingElement("statoIniziale");
                     this.printButtonsOnChatBot(statoInterruttore);
-                } else if (this.props.ruleBot.statoFinale === "non trovato" && this.props.ruleBot.tipo !== "condizione") {  //Controllo STATO FINALE
+                } else if (this.props.ruleBot.statoFinale === "non trovato" && this.props.ruleBot.tipoRisposta !== "condizione") {  //Controllo STATO FINALE
                     addResponseMessage("Scrivimi quale sarà lo stato finale dello switch. Vuoi che sia acceso o spento?");
+                    addResponseMessage(this.props.ruleBot.statoFinale);
                     //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                     Actions.updateBotMissingElement("statoFinale");
                     this.printButtonsOnChatBot(statoInterruttore);
@@ -900,8 +890,7 @@ export default class EudRuleEditor extends Component {
                     // Se HO TUTTO
                     /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
                     addResponseMessage("Ho tutto.");
-
-                    switch (this.props.ruleBot.tipo) {
+                    switch (this.props.ruleBot.tipoRisposta) {
                         case "regola":
                             Actions.updateBotMissingElement("confermaCreazioneRegola");
                             addResponseMessage("I dati della tua regola sono questi: STATO INIZIALE: " + this.props.ruleBot.statoIniziale +
@@ -1010,23 +999,20 @@ export default class EudRuleEditor extends Component {
             /* Controllo che il NOME del lucchetto inserito dall'utente esista tra i lucchetti esistenti nel gioco. */
             if (!this.doesObjectExists(this.props.ruleBot.oggetto, "LOCK")) {
                 addResponseMessage("Hai inserito il nome di un lucchetto che non esiste. Perfavore scegli tra uno di questi: ");
-                Actions.updateBotMissingElement( "oggetto");
+                Actions.updateBotMissingElement("oggetto");
                 this.printButtonsOnChatBot(lucchetti);
             } else {
                 //Se l'utente sta scrivendo una condizione
-                if (this.props.ruleBot.tipo === "condizione") {
-                    /* Setto lo stato del lucchetto in caso l'utente voglia aggiungere una condizione. */
-                    let risposta = this.getResponseFromRuleBotStore();
-                    risposta.statoIniziale = this.getPadlockState(risposta.statoIniziale, risposta.numNegazioni);
-                    Actions.updateBotResponse(risposta);
+                if (this.props.ruleBot.tipoRisposta === "condizione") {
+                    Actions.updateBotInitialState(this.getPadlockState(this.props.ruleBot.statoIniziale, this.props.ruleBot.numNegazioni));
                 }
 
                 // Se HO TUTTO
                 /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
                 addResponseMessage("Ho tutto.");
-                switch (this.props.ruleBot.tipo) {
+                switch (this.props.ruleBot.tipoRisposta) {
                     case "regola":
-                        Actions.updateBotMissingElement( "confermaCreazioneRegola");
+                        Actions.updateBotMissingElement("confermaCreazioneRegola");
                         addResponseMessage("Presumo che se stai scrivendo una regola base per il lucchetto il tuo intento è quello di " +
                             "sbloccarlo quando lo clicchi. " +
                             "Dunque: I dati della tua regola sono questi: STATO FINALE: " + this.props.ruleBot.statoFinale +
@@ -1035,7 +1021,7 @@ export default class EudRuleEditor extends Component {
                         this.printButtonsOnChatBot(scelte);
                         break;
                     case "azione":
-                        Actions.updateBotMissingElement( "confermaAggiuntaAzione");
+                        Actions.updateBotMissingElement("confermaAggiuntaAzione");
                         addResponseMessage("I dati della tua azione sono questi: Il giocatore sblocca il lucchetto: " + this.props.ruleBot.oggetto);
                         addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi creare una nuova regola. ");
                         this.printButtonsOnChatBot(scelte);
@@ -1046,10 +1032,10 @@ export default class EudRuleEditor extends Component {
                         if (this.props.ruleBot.statoIniziale === "non trovato") {
                             addResponseMessage("Scrivimi qual'è lo stato che dovrà avere il lucchetto. È aperto o chiuso?");
                             //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
-                            Actions.updateBotMissingElement( "statoIniziale");
+                            Actions.updateBotMissingElement("statoIniziale");
                             this.printButtonsOnChatBot(statoLucchetto);
                         } else {
-                            Actions.updateBotMissingElement( "confermaAggiuntaCondizione");
+                            Actions.updateBotMissingElement("confermaAggiuntaCondizione");
                             addResponseMessage("I dati della tua condizione sono questi: Se il lucchetto: " + this.props.ruleBot.oggetto
                                 + " è " + this.props.ruleBot.statoIniziale);
                             addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta della condizione, oppure \"no\" se vuoi creare una nuova regola. ");
@@ -1062,7 +1048,7 @@ export default class EudRuleEditor extends Component {
             //Se non esistono lucchetti gli propongo di crearne uno di default
             addResponseMessage("Sembra che tu non abbia lucchetti per interagire. Vuoi crearne uno? " +
                 "Scrivi \"si\" se vuoi crearlo, oppure \"no\" se vuoi scrivere da capo la regola.  ");
-            Actions.updateBotMissingElement( "confermaCreazioneOggetto");
+            Actions.updateBotMissingElement("confermaCreazioneOggetto");
             this.printButtonsOnChatBot(scelte);
         }
     }
@@ -1141,23 +1127,21 @@ export default class EudRuleEditor extends Component {
             /* Controllo che il NOME della chiave inserito dall'utente esista tra le chiavi esistenti nel gioco. */
             if (!this.doesObjectExists(this.props.ruleBot.oggetto, "KEY")) {
                 addResponseMessage("Hai inserito il nome di una chiave che non esiste. Perfavore scegli tra una di queste: ");
-                Actions.updateBotMissingElement( "oggetto");
+                Actions.updateBotMissingElement("oggetto");
                 this.printButtonsOnChatBot(chiavi);
             } else {
                 //Se l'utente sta scrivendo una condizione
-                if (this.props.ruleBot.tipo === "condizione") {
+                if (this.props.ruleBot.tipoRisposta === "condizione") {
                     /* Setto lo stato della chiave in caso l'utente voglia aggiungere una condizione. */
-                    let risposta = this.getResponseFromRuleBotStore();
-                    risposta.statoIniziale = this.getKeyState(risposta.statoIniziale, risposta.numNegazioni);
-                    Actions.updateBotResponse(risposta);
+                    Actions.updateBotInitialState(this.getKeyState(this.props.ruleBot.statoIniziale, this.props.ruleBot.numNegazioni));
                 }
 
                 // Se HO TUTTO
                 /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola */
                 addResponseMessage("Ho tutto.");
-                switch (this.props.ruleBot.tipo) {
+                switch (this.props.ruleBot.tipoRisposta) {
                     case "regola":
-                        Actions.updateBotMissingElement( "confermaCreazioneRegola");
+                        Actions.updateBotMissingElement("confermaCreazioneRegola");
                         addResponseMessage("Presumo che se stai scrivendo una regola base per la chiave, il tuo intento è quello di " +
                             "raccoglierla quando la clicchi. " +
                             "Dunque: I dati della tua regola sono questi: AZIONE: raccogli" +
@@ -1166,7 +1150,7 @@ export default class EudRuleEditor extends Component {
                         this.printButtonsOnChatBot(scelte);
                         break;
                     case "azione":
-                        Actions.updateBotMissingElement( "confermaAggiuntaAzione");
+                        Actions.updateBotMissingElement("confermaAggiuntaAzione");
                         addResponseMessage("I dati della tua azione sono questi: Il giocatore raccoglie la chiave: " + this.props.ruleBot.oggetto);
                         addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta dell'azione, oppure \"no\" se vuoi andare avanti. ");
                         this.printButtonsOnChatBot(scelte);
@@ -1177,10 +1161,10 @@ export default class EudRuleEditor extends Component {
                         if (this.props.ruleBot.statoIniziale === "non trovato") {
                             addResponseMessage("Scrivimi qual'è lo stato che dovrà avere la chiave. Raccolta o non raccolta?");
                             //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
-                            Actions.updateBotMissingElement( "statoIniziale");
+                            Actions.updateBotMissingElement("statoIniziale");
                             this.printButtonsOnChatBot(statoChiave);
                         } else {
-                            Actions.updateBotMissingElement( "confermaAggiuntaCondizione");
+                            Actions.updateBotMissingElement("confermaAggiuntaCondizione");
                             addResponseMessage("I dati della tua condizione sono questi: Se la chiave: " + this.props.ruleBot.oggetto + " è " +
                                 this.props.ruleBot.statoIniziale);
                             addResponseMessage("Scrivi \"si\" se vuoi confermare l'aggiunta della condizione, oppure \"no\" se vuoi andare avanti. ");
@@ -1192,7 +1176,7 @@ export default class EudRuleEditor extends Component {
             //Se non esistono chiavi gli propongo di crearne una di default
             addResponseMessage("Sembra che tu non abbia chiavi per interagire. Vuoi crearne una? " +
                 "Scrivi \"si\" se vuoi crearla, oppure \"no\" se vuoi scrivere da capo la regola.  ");
-            Actions.updateBotMissingElement( "confermaCreazioneOggetto");
+            Actions.updateBotMissingElement("confermaCreazioneOggetto");
             this.printButtonsOnChatBot(scelte);
         }
     }
