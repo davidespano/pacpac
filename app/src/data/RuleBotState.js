@@ -9,7 +9,7 @@ const RuleBotState = Immutable.Record({
     oggetto: '',
     statoIniziale: '',
     statoFinale: '',
-    tipo: 'regola',
+    tipoRisposta: 'regola',
     ultimaRegolaCreata: '',
     numNegazioni: 0
 });

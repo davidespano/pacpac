@@ -951,7 +951,9 @@ const Actions = {
             scenaIniziale: response.scenaIniziale,
             scenaFinale: response.scenaFinale,
             oggetto: response.oggetto,
-            tipo: response.tipo
+            tipoRisposta: response.tipo,
+            statoIniziale: response.statoIniziale,
+            statoFinale: response.statoFinale,
         })
     },
 
@@ -979,21 +981,57 @@ const Actions = {
     updateBotFinalScene(finalScene) {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_BOT_FINAL_SCENE,
-            elementoMancante: finalScene
+            scenaFinale: finalScene
         })
     },
 
     updateBotInitialState(initialState) {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_BOT_INITIAL_STATE,
-            elementoMancante: initialState
+            statoIniziale: initialState
         })
     },
 
     updateBotFinalState(finalState) {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_BOT_FINAL_STATE,
-            elementoMancante: finalState
+            statoFinale: finalState
+        })
+    },
+
+    updateBotNegationCount(negationCount) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_NEGATION_NUMBER,
+            numNegazioni: negationCount
+        })
+    },
+
+    updateBotInitialScene(initialScene) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_INITIAL_SCENE,
+            scenaIniziale: initialScene
+        })
+    },
+
+
+    updateBotIntent(intent) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_INTENT,
+            intent: intent
+        })
+    },
+
+    updateBotResponseType(responseType) {
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_RESPONSE_TYPE,
+            tipoRisposta: responseType
+        })
+    },
+
+    updateBotLastRule(lastRule){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_BOT_LAST_RULE,
+            ultimaRegolaCreata: lastRule
         })
     },
 
