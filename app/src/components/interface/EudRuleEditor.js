@@ -366,6 +366,12 @@ export default class EudRuleEditor extends Component {
             addResponseMessage("Benvenuto nel bot delle regole di Pac-Pac, scrivi subito la prima regola! Ricorda che puoi scrivere" +
                 "\"help\" se hai bisogno di aiuto per l'utilizzo del bot oppure puoi scrivere \"reset\" in qualsiasi momento per resettare tutto e " +
                 "scrivere una regola da capo. ");
+        } else {
+            //Delay di millisecondi, si può mettere qualsiasi delay, anche molto più piccolo, è giusto per aspettare un momento prima di entrare in queryControl()
+            setTimeout(() => {
+                addResponseMessage("Bentornato!");
+                this.queryControl();
+            }, 0.0000000001);
         }
     }
 
@@ -380,7 +386,6 @@ export default class EudRuleEditor extends Component {
                 if (this.props.ruleBot.elementoMancante === "") {
                     let risposta = await sendRequest(newMessage, this.props.ruleBot.tipoRisposta);
                     await Actions.updateBotResponse(risposta);
-                    addResponseMessage(risposta.statoFinale + " ---> " + this.props.ruleBot.statoFinale);
                 } else {
                     /* Se dopo aver mandato al bot la prima query ci dovesse mancare qualche elemento per la regola allora risolviamo localmente, modificando
                     * lo stato di response, usando una variabile d'appoggio "risposta". Il campo mancante prenderà ciò che scriviamo
@@ -422,10 +427,9 @@ export default class EudRuleEditor extends Component {
                             return;
                         case "richiestaGeometria":
                             if (newMessage.trim().toLowerCase() === "si") {
-                                console.log(this.props.ruleBot.elementoMancante);
                                 Actions.updateCurrentObject(this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent)));
                                 this.props.switchToGeometryMode();
-                                console.log(this.props.ruleBot.elementoMancante);
+                                return;
                             } else if (newMessage.trim().toLowerCase() === "no") {
                                 addResponseMessage("Va bene continuiamo con la creazione della regola");
                             } else {
@@ -770,7 +774,6 @@ export default class EudRuleEditor extends Component {
                     name: name,
                 });
                 break;
-
             case "SWITCH":
                 name = scene.name + '_sw' + (scene.objects.switches.length + 1);
                 obj = Switch({
