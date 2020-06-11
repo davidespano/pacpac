@@ -916,15 +916,7 @@ const Actions = {
             tipoRisposta: response.tipo,
             statoIniziale: response.statoIniziale,
             statoFinale: response.statoFinale,
-        })
-    },
-
-    updateBotRule(elementoMancante, response, ultimaRegolaCreata) {
-        AppDispatcher.dispatch({
-            type: ActionTypes.UPDATE_BOT_RULE,
-            elementoMancante: elementoMancante,
-            response: response,
-            ultimaRegolaCreata: ultimaRegolaCreata
+            numNegazioni: response.numNegazioni,
         })
     },
 
@@ -975,7 +967,6 @@ const Actions = {
         })
     },
 
-
     updateBotIntent(intent) {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_BOT_INTENT,
@@ -990,7 +981,7 @@ const Actions = {
         })
     },
 
-    updateBotLastRule(lastRule){
+    updateBotLastRule(lastRule) {
         AppDispatcher.dispatch({
             type: ActionTypes.UPDATE_BOT_LAST_RULE,
             ultimaRegolaCreata: lastRule
