@@ -80,7 +80,6 @@ export default class EudRuleEditor extends Component {
             }
             ghostScene = this.props.scenes.get(ghostSceneUuid);
             let ghostSceneRules = ghostScene.get('rules');
-            /// console.log("ghost scene ", ghostScene, "ghostSceneByUuid: ", ghostSceneByUuid, "sceneNamesStore.getState: ", ScenesStore.getState().get('Ghost Scene'));
             let globalRulesRendering = ghostSceneRules.map(
                 rule => {
                     let rule_obj = RulesStore.getState().get(rule);
@@ -1539,7 +1538,6 @@ class EudAutoComplete extends Component {
                 rules: this.props.rules,
                 rule: this.props.rule,
             }, true);
-            console.log("items: ", items)
             let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
             return <div className={"eudCompletionPopup"}>
                 <ul>
@@ -1800,7 +1798,7 @@ function getCompletions(props, global) {
                 if(props.verb.action === RuleActionTypes.TRANSITION){
                     let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
                     items= items.filter(x=>
-                        !x.includes(current_scene_uuid)
+                        !x.includes(current_scene_uuid && x.name != 'Ghost Scene')
                     );
                 }
 
@@ -1857,10 +1855,13 @@ function getCompletions(props, global) {
     }
 
     else{ //regole globali
+        //prendo solo quelli della scena fantasma in modo che non vengano ripetuti
+        //(altrimenti avrei un suggerimento vita per ogni scena che ha la vita etc..)
         let globalObjects = props.interactiveObjects.filter(x =>
-            x.type == InteractiveObjectsTypes.HEALTH ||
-            x.type == InteractiveObjectsTypes.SCORE ||
-            x.type == InteractiveObjectsTypes.PLAYTIME);
+            (x.type == InteractiveObjectsTypes.HEALTH && (ObjectToSceneStore.getState().get(x.uuid) ==='ghostScene')) ||
+            (x.type == InteractiveObjectsTypes.SCORE && (ObjectToSceneStore.getState().get(x.uuid) ==='ghostScene'))||
+            (x.type == InteractiveObjectsTypes.PLAYTIME && (ObjectToSceneStore.getState().get(x.uuid) ==='ghostScene')));
+
         let graph=-1;
 
         switch (props.role) {
@@ -1868,7 +1869,6 @@ function getCompletions(props, global) {
             case "subject":
                 if(props.rulePartType === 'event'){ // mi servono solo gli oggetti globali
                     let items = globalObjects;
-                    console.log("items operation", items)
                     return {items, graph};
                 }
                 else{
@@ -1899,7 +1899,8 @@ function getCompletions(props, global) {
                 // spostare nella scena in cui sono già)
                 if(props.verb.action === RuleActionTypes.TRANSITION){
                     let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
-                    items= items.filter(x=> !x.includes(current_scene_uuid)
+                    //filtro la scena in cui sono e la scena fantasma
+                    items= items.filter(x=> !x.includes(current_scene_uuid && x.uuid!='ghostScene')
                     );
                 }
 
