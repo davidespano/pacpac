@@ -65,7 +65,7 @@ div.rules{
 
 @media screen and (min-width: 1400px) {
     .grid-container {
-    display: grid;
+        display: grid;
         grid-template-columns: 15% auto 20%;
         grid-template-rows: 55% 45%;
         grid-gap: 1px;
@@ -1469,9 +1469,9 @@ li > span {
 }
 
 .eudCompletionPopupForGraph span:hover{
-      text-align: left;
-      list-style: none;
-      cursor: default;
+    text-align: left;
+    list-style: none;
+    cursor: default;
 }
 
 .eudCompletionPopupForGraph li:hover{
@@ -1628,7 +1628,7 @@ button.accordion.active:after {
 }
 
 .eudRule{
-   display: grid;
+    display: grid;
     grid-template-columns: 125px auto 5px 35px 5px;
     width: 100%;
     text-align: left;
@@ -1808,7 +1808,7 @@ h6 {
 }
 
 .game-item {
-    width: 100%;
+    width: 95%;
     border-bottom: solid 1px darkgrey;
     padding: 2px;
 }
@@ -2073,7 +2073,7 @@ textarea {
 }
 
 .loginBackground {
-    //background-image:url(background-pac-base.png);
+//background-image:url(background-pac-base.png);
     background-image:url(pacpac-login-bacground2.png);
     height: 100vh;
     background-repeat: no-repeat;

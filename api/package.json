@@ -35,5 +35,8 @@
     "swagger-jsdoc": "^1.10.3",
     "swagger-node-express": "^2.1.3",
     "mime-types": "^2.1.24"
+  },
+  "devDependencies": {
+    "react-cookie": "^4.0.3"
   }
 }
