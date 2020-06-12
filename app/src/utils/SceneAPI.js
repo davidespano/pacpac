@@ -227,18 +227,18 @@ function getByName(name, order = null, gameId=null, creation = true) {
             });
 
             response.body.audios.map(audio => {
-               audio_uuids.push(audio.uuid);
-               let a = Audio({
-                   uuid: audio.uuid,
-                   name: audio.name,
-                   file: audio.file,
-                   volume: audio.volume,
-                   isSpatial: audio.isSpatial,
-                   scene: audio.scene,
-                   loop: audio.loop,
-                   vertices: audio.vertices,
-               });
-               Actions.receiveAudio(a);
+                audio_uuids.push(audio.uuid);
+                let a = Audio({
+                    uuid: audio.uuid,
+                    name: audio.name,
+                    file: audio.file,
+                    volume: audio.volume,
+                    isSpatial: audio.isSpatial,
+                    scene: audio.scene,
+                    loop: audio.loop,
+                    vertices: audio.vertices,
+                });
+                Actions.receiveAudio(a);
             });
 
 
@@ -295,6 +295,10 @@ function getByName(name, order = null, gameId=null, creation = true) {
  */
 function createScene(name, img, index, type, tag, order, props) {
     let id = uuid.v4();
+    //ci dev'essere una sola ghost scene e deve avere quell'id
+    if(name==='Ghost Scene'){
+        id = 'ghostScene'
+    }
     let newScene = null;
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
@@ -304,7 +308,7 @@ function createScene(name, img, index, type, tag, order, props) {
             if (err) {
                 return console.error(err);
             }
-            
+
             // new Scene object
             newScene = Scene({
                 uuid: id,
@@ -654,7 +658,7 @@ async function getHome(gameId = null) {
 
     const response = await request.get(`${apiBaseURL}/${id}/getHomeScene`)
         .set('Accept', 'application/json');
-    
+
     return response.body.uuid
 }
 

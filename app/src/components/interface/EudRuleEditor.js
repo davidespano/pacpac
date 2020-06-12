@@ -19,8 +19,14 @@ import interface_utils from "./interface_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
 import RulesStore from "../../data/RulesStore";
+import ScenesNamesStore from "../../data/ScenesNamesStore";
+import ObjectsStore from "../../data/ObjectsStore";
+import ScenesStore from "../../data/ScenesStore";
+import SceneAPI from "../../utils/SceneAPI";
+import Orders from "../../data/Orders";
 
 let uuid = require('uuid');
+var ghostScene=null;
 
 export default class EudRuleEditor extends Component {
     constructor(props) {
@@ -29,8 +35,8 @@ export default class EudRuleEditor extends Component {
 
     render() {
 
-        let scene = this.props.scenes.get(this.props.currentScene);
-
+        let scene = this.props.scenes.get(this.props.currentScene); //uuid
+        // console.log("this.props.currentScene. ", this.props.currentScene)
         if (this.props.currentScene) {
             let rules = scene.get('rules'); //elenco uuid
             let rulesRendering = rules.map(
@@ -62,8 +68,20 @@ export default class EudRuleEditor extends Component {
                         );
                     }
 
-            });
-            let globalRulesRendering = rules.map(
+                });
+            //TODO adesso lo uuid della ghostScene dovrebbe essere ghostScene, quindi si può semplificare (attenzione
+            //creazione della ghost scene però)
+            let ghostSceneUuid = this.props.scenes.filter(obj => {
+                return obj.name === 'Ghost Scene'
+            }).keySeq().first(); //uuid della ghost scene
+            if(ghostSceneUuid===undefined){
+                SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default', Orders.CHRONOLOGICAL, this.props);
+                return null;
+            }
+            ghostScene = this.props.scenes.get(ghostSceneUuid);
+            let ghostSceneRules = ghostScene.get('rules');
+            /// console.log("ghost scene ", ghostScene, "ghostSceneByUuid: ", ghostSceneByUuid, "sceneNamesStore.getState: ", ScenesStore.getState().get('Ghost Scene'));
+            let globalRulesRendering = ghostSceneRules.map(
                 rule => {
                     let rule_obj = RulesStore.getState().get(rule);
                     if(rule_obj.global){
@@ -75,15 +93,15 @@ export default class EudRuleEditor extends Component {
                                 scenes={this.props.scenes}
                                 assets={this.props.assets}
                                 audios={this.props.audios}
-                                currentScene={this.props.currentScene}
+                                currentScene={ghostSceneUuid}
                                 rules={this.props.rules}
                                 rule={rule}
                                 ruleEditorCallback={this.props.ruleEditorCallback}
                                 removeRule={(rule) => {
-                                    this.onRemoveRuleClick(rule)
+                                    this.onRemoveRuleClick(rule, true)
                                 }}
                                 copyRule={(rule) => {
-                                    this.props.copyRule(rule)
+                                    this.props.copyRule(rule, true)
                                 }}
                             />
 
@@ -149,9 +167,9 @@ export default class EudRuleEditor extends Component {
                                             this.onCopyRuleClick(scene);
                                         }}
                                     >
-                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                    Copia qui
-                                </button>
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
+                                        Copia qui
+                                    </button>
                                     <button className={"btn select-file-btn"}
                                             onClick={() => {
                                                 this.onNewRuleClick(false);
@@ -186,7 +204,7 @@ export default class EudRuleEditor extends Component {
                                     <button
                                         disabled={this.props.editor.ruleCopy===null}
                                         onClick={() => {
-                                            this.onCopyRuleClick(scene);
+                                            this.onCopyRuleClick(scene, true);
                                         }}
                                     >
                                         <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
@@ -228,22 +246,39 @@ export default class EudRuleEditor extends Component {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
         let event = Action().set("uuid", uuid.v4());    //la popolo con un evento (nb azione)
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
-        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_rl' + (scene.rules.length + 1))
-            .set("global", global);
+        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_rl'
+            + (global ? ghostScene.rules.length+1 : scene.rules.length + 1) + (global ? "_global" : "")).set("global", global);
         console.log("added rule: ", rule);
-        this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
+        if(global){
+            // let ghostScene = scene_utils.returnSceneByName(props,'Scene Ghost');
+            this.props.addNewRule(ghostScene, rule); //se è globale lo aggiungo alla regola fantasma
+        }
+        else {
+            this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
+        }
+
     }
 
-    onRemoveRuleClick(ruleId) {
+    onRemoveRuleClick(ruleId, global=false) {
         let scene = this.props.scenes.get(this.props.currentScene);
         let rule = this.props.rules.get(ruleId);
-        this.props.removeRule(scene, rule);
+        if(global){
+            this.props.removeRule(ghostScene, rule);
+        }
+        else{
+            this.props.removeRule(scene, rule);
+        }
     }
 
-    onCopyRuleClick(scene){
-        let newId = uuid.v4();
+    onCopyRuleClick(scene, global=false){
+        let newId = uuid.v4()+ (global ? "_global" : "");
         let copiedRule = this.props.editor.ruleCopy.set('uuid', newId);
-        this.props.addNewRule(scene, copiedRule);
+
+        if(global){
+        }
+        else{
+            this.props.addNewRule(scene, copiedRule);
+        }
     }
 
 
@@ -1431,7 +1466,7 @@ class EudAutoComplete extends Component {
                     //filtro gli oggetti globali
                     let items = sceneObjectsOnly(this.props).filter(
                         x => x.type != InteractiveObjectsTypes.HEALTH &&
-                        x.type != InteractiveObjectsTypes.SCORE &&
+                            x.type != InteractiveObjectsTypes.SCORE &&
                             x.type != InteractiveObjectsTypes.PLAYTIME
                     ).valueSeq();
                     return <div className={"eudCompletionPopupForGraph"}>
@@ -1504,6 +1539,7 @@ class EudAutoComplete extends Component {
                 rules: this.props.rules,
                 rule: this.props.rule,
             }, true);
+            console.log("items: ", items)
             let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
             return <div className={"eudCompletionPopup"}>
                 <ul>
@@ -1525,17 +1561,17 @@ function listableItems(list, props) {
         let n = (props.input ? props.input : "").split(" ");
         const word = n[n.length - 1];
         return key.includes(word);
-        }).map(i => {
-            return <EudAutoCompleteItem item={i}
-                                        key={i}
-                                        verb={props.verb}
-                                        subject={props.subject}
-                                        role={props.role}
-                                        rules={props.rules}
-                                        changeText={(text, role) => this.changeText(text, role)}
-                                        updateRule={(rule, role) => props.updateRule(rule, role)}
-            />
-        });
+    }).map(i => {
+        return <EudAutoCompleteItem item={i}
+                                    key={i}
+                                    verb={props.verb}
+                                    subject={props.subject}
+                                    role={props.role}
+                                    rules={props.rules}
+                                    changeText={(text, role) => this.changeText(text, role)}
+                                    updateRule={(rule, role) => props.updateRule(rule, role)}
+        />
+    });
     return result
 }
 
@@ -1544,7 +1580,7 @@ function listableItems(list, props) {
  * Se ho quindi [item1 item1 item3 item4] dove i primi due fanno parte di scena1 e gli altri di scena2 e scena3
  * Il risultato della funzione sarà [scena1 scena1 scena2 scena3], per avere un unico risultato per scena1 alla fine
  * della funzione creo un set
-**/
+ **/
 function returnScenes(items, props){
     if(items.size==0){ //se la lista è vuota non restituisco niente
         return "";

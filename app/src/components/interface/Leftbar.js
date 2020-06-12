@@ -75,7 +75,8 @@ function contentLeftbar(props){
 function list(props, path) {
     let regex = RegExp('.*\.mp4$|.MOV$');
 
-    return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter)).map(child => {
+    return ([...props.scenes.values()].filter(scene => scene.name.includes(props.editor.scenesNameFilter))
+        .filter(scene => scene.name !== 'Ghost Scene').map(child => {
         let s;
         if (props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
             s = {border: '2px solid black'};
@@ -94,7 +95,7 @@ function list(props, path) {
                     alt={child.name}
                     title={interface_utils.title(child.name, props.tags.get(child.tag).name)}
                     onClick={() => {
-                            props.updateCurrentScene(child.uuid);
+                        props.updateCurrentScene(child.uuid);
                         Object.values(soundsHub).flat().forEach(a => {
                             a.pause()
                         })
@@ -103,7 +104,7 @@ function list(props, path) {
                 />
                 <div className={'list-labels'}
                      onClick={() => {
-                             props.updateCurrentScene(child.uuid);
+                         props.updateCurrentScene(child.uuid);
 
                      }}
                 >
@@ -113,7 +114,6 @@ function list(props, path) {
                 </div>
             </div>);
     }));
-
 }
 
 /**
