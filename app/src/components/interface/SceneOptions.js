@@ -15,7 +15,7 @@ function SceneOptions(props){
         component : 'rightbar',
     };
 
-    if(props.currentScene){
+    if(props.currentScene && props.currentScene!='ghostScene'){
         let currentScene = props.scenes.get(props.currentScene);
         let sceneOptions = props.editor.sceneOptions;
 

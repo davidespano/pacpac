@@ -67,7 +67,9 @@ class EditorStateStore extends ReduceStore {
  */
             case ActionTypes.RECEIVE_SCENE:
                 state = state.set('rightbarSelection', 'scene');
-                state = state.set('sceneOptions', action.scene);
+                if(action.scene.uuid!='ghostScene'){
+                    state = state.set('sceneOptions', action.scene);
+                }
 
                 if (!state.get('homeScene')) { //if there is no homeScene selected, select the first one
                     state = state.set('homeScene', action.scene.uuid);
