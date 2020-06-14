@@ -505,6 +505,7 @@ export function createObject(props, type){
                 break;
             case InteractiveObjectsTypes.SCORE:
                 creatingGlobal = true;
+                scene = props.scenes.get('ghostScene');
                 if(scene.objects.score.length == 0)
                 {
                     for (let i = 0, len = sceneArray.length; i < len; i++) {
@@ -531,6 +532,7 @@ export function createObject(props, type){
                 break;
             case InteractiveObjectsTypes.HEALTH:
                 creatingGlobal = true;
+                scene = props.scenes.get('ghostScene');
                 if(scene.objects.health.length == 0)
                 {
                     for (let i = 0, len = sceneArray.length; i < len; i++) {
@@ -546,11 +548,13 @@ export function createObject(props, type){
                                 }
                             });
                             props.addNewObject(sceneArray[i], obj);
-                            //la vita è l'unico oggetto globale con una regola di default
-                            let defaultRule = rules_utils.generateDefaultRule(obj, scene);
-                            props.addNewRule(scene, defaultRule);
+
                         }
                     }
+                    //la vita è l'unico oggetto globale con una regola di default,
+                    //questo va fuori dal ciclo perchè deve generarla solo per la ghostScene
+                    let defaultRule = rules_utils.generateDefaultRule(obj, scene);
+                    props.addNewRule(scene, defaultRule);
                 }
                 else
                 {
@@ -560,6 +564,7 @@ export function createObject(props, type){
                 break;
             case InteractiveObjectsTypes.PLAYTIME:
                 creatingGlobal = true;
+                scene = props.scenes.get('ghostScene');
                 if(scene.objects.playtime.length == 0)
                 {
                     for (let i = 0, len = sceneArray.length; i < len; i++) {

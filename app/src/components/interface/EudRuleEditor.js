@@ -42,6 +42,7 @@ export default class EudRuleEditor extends Component {
             let rulesRendering = rules.map(
                 rule => {
                     let rule_obj = RulesStore.getState().get(rule);
+                    console.log("rule: ", rule)
                     if(rule_obj.global !== true){
                         return (
                             <React.Fragment key={'fragment-' + rule}>
@@ -245,16 +246,18 @@ export default class EudRuleEditor extends Component {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
         let event = Action().set("uuid", uuid.v4());    //la popolo con un evento (nb azione)
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
-        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_rl'
-            + (global ? ghostScene.rules.length+1 : scene.rules.length + 1) + (global ? "_global" : "")).set("global", global);
-        console.log("added rule: ", rule);
+        let rule = null;
         if(global){
-            // let ghostScene = scene_utils.returnSceneByName(props,'Scene Ghost');
+            rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name", 'global_rl'
+                +ghostScene.rules.length+ "").set("global", global);
             this.props.addNewRule(ghostScene, rule); //se è globale lo aggiungo alla regola fantasma
         }
         else {
+            rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_rl'
+                +  scene.rules.length + 1 + "").set("global", global);
             this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
         }
+        console.log("added rule: ", rule)
 
     }
 
@@ -262,6 +265,7 @@ export default class EudRuleEditor extends Component {
         let scene = this.props.scenes.get(this.props.currentScene);
         let rule = this.props.rules.get(ruleId);
         if(global){
+            console.log("removed rule from ghostScene")
             this.props.removeRule(ghostScene, rule);
         }
         else{
