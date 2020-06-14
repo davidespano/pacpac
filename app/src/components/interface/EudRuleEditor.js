@@ -1486,7 +1486,10 @@ class EudAutoComplete extends Component {
 
                 //Primo gruppo, TUTTI gli oggetti appartenenti alle scene
                 let sceneObj = this.props.interactiveObjects.filter(x =>
-                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST);
+                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST &&
+                    x.type !== InteractiveObjectsTypes.HEALTH &&
+                    x.type !== InteractiveObjectsTypes.SCORE &&
+                    x.type !== InteractiveObjectsTypes.PLAYTIME);
                 //mi prendo le scene coinvolte
                 let scenes =returnScenes(sceneObj, this.props);
 
@@ -1706,7 +1709,10 @@ function getCompletions(props, global) {
                 else{
                     //soggetto nella seconda parte della frase
                     let subjects = props.interactiveObjects.filter(x =>
-                        x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST ).set(
+                        x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST &&
+                        x.type != InteractiveObjectsTypes.HEALTH &&
+                        x.type != InteractiveObjectsTypes.SCORE &&
+                        x.type != InteractiveObjectsTypes.PLAYTIME).set(
                         InteractiveObjectsTypes.GAME,
                         InteractiveObject({
                             type: InteractiveObjectsTypes.GAME,
@@ -1720,7 +1726,8 @@ function getCompletions(props, global) {
                             name: ""
                         })
                     );
-                    let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
+                    let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes).filter(x=>
+                    x.uuid != 'ghostScene');
                     let items= result.sort(function (a) {
                         //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
                         // e il player
@@ -1771,7 +1778,11 @@ function getCompletions(props, global) {
                     return {items, graph}
                 }
 
-                let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
+                let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios)/*.filter(x =>
+                    x.type !== InteractiveObjectsTypes.HEALTH &&
+                    x.type !== InteractiveObjectsTypes.SCORE &&
+                    x.type !== InteractiveObjectsTypes.PLAYTIME &&
+                    x.uuid !== 'ghostScene')*/;
                 allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
                 if (props.verb.action) {
