@@ -335,8 +335,8 @@ function highlightAction(props, action) {
 
             if (props.rules.get(rule).event.obj_uuid === action.obj_uuid || props.rules.get(rule).event.subj_uuid === action.subj_uuid) {
                 setIdStyle("eudAction", action.uuid, "background: rgba(239, 86, 55, .3)");
-                if(next !== null && props.currentObject === null)
-                    next.style.visibility = "visible";
+                //if(next !== null && props.currentObject === null)
+                    //next.style.visibility = "visible";
             }
 
         });

@@ -507,7 +507,7 @@ class EudRule extends Component {
                         <button className={"select-file-btn btn btnNext"} id={"btnNext" + rule.uuid} title={"Avanti"}
                                 onClick={() => {
                                     if(index < actions.length){
-                                        console.log("entra", actions[index]);
+                                        console.log("entra", index);
                                         eventBus.emit('debug-step' + actions[index]);
                                         index++;
                                     } else {
