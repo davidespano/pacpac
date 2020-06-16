@@ -40,111 +40,15 @@ export default class EudRuleEditor extends Component {
     }
 
     render() {
+        let scene = this.props.scenes.get(this.props.currentScene);
         let icon = "icons/icon_chat-bot.png";
 
-        let scene = this.props.scenes.get(this.props.currentScene); //uuid
-        // console.log("this.props.currentScene. ", this.props.currentScene)
         if (this.props.currentScene) {
-            let rules = scene.get('rules'); //elenco uuid
+            let rules = scene.get('rules');
             let rulesRendering = rules.map(
                 rule => {
-                    let rule_obj = RulesStore.getState().get(rule);
-                    if(rule_obj.global !== true){
-                        return (
-                            <React.Fragment key={'fragment-' + rule}>
-                                <EudRule
-                                    VRScene={this.props.VRScene}
-                                    editor={this.props.editor}
-                                    interactiveObjects={this.props.interactiveObjects}
-                                    scenes={this.props.scenes}
-                                    assets={this.props.assets}
-                                    audios={this.props.audios}
-                                    currentScene={this.props.currentScene}
-                                    rules={this.props.rules}
-                                    rule={rule}
-                                    updateRuleName={this.props.updateRuleName}
-                                    ruleEditorCallback={this.props.ruleEditorCallback}
-                                    removeRule={(rule) => {
-                                        this.onRemoveRuleClick(rule)
-                                    }}
-                                    copyRule={(rule) => {
-                                        this.props.copyRule(rule)
-                                    }}
-                                />
-
-                            </React.Fragment>
-                        );
-                    }
-
-                });
-            //TODO adesso lo uuid della ghostScene dovrebbe essere ghostScene, quindi si può semplificare (attenzione
-            //creazione della ghost scene però)
-            let ghostSceneUuid = this.props.scenes.filter(obj => {
-                return obj.name === 'Ghost Scene'
-            }).keySeq().first(); //uuid della ghost scene
-
-            if(ghostSceneUuid===undefined ){
-                 return (<div className={"rules"}>
-                    <div className={"expand-btn"} >
-                        <figure className={'expand-btn'}
-                                onClick={() => {
-                                    this.props.expandEditor(!this.props.editor.editorExpanded);
-                                }}>
-                            <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
-                                 src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
-                                     "icons/icons8-expand-arrow-filled-50.png"}
-                                 alt={'Espandi'}
-                            />
-                        </figure>
-                    </div>
-
-                    <button className="accordion" id={"accordionScene"} onClick={
-                        () => {
-                            onAccordionClick('accordionScene')
-                        }
-                    }
-                    >Regole di scena</button>
-
-                    <div className="panel">
-                        <div className={"rule-container"}>
-                            <div className={"eudBar"}>
-                                <div id={'rule-editor-btns'}>
-                                    <button
-                                        disabled={this.props.editor.ruleCopy===null}
-                                        onClick={() => {
-                                            this.onCopyRuleClick(scene);
-                                        }}
-                                    >
-                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                        Copia qui
-                                    </button>
-                                    <button className={"btn select-file-btn"}
-                                            onClick={() => {
-                                                this.onNewRuleClick(false);
-                                            }}>
-                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
-                                        Nuova Regola
-                                    </button>
-                                </div>
-                            </div>
-                            <div className={"rule-editor"}
-                                 onClick={() => {
-                                     this.onOutsideClick();
-                                 }}>
-                                {rulesRendering}
-                                <div className={'rules-footer'}></div>
-                            </div>
-                        </div>
-                    </div>
-                 </div>)
-            }
-            ghostScene = this.props.scenes.get(ghostSceneUuid);
-            let ghostSceneRules = ghostScene.get('rules');
-            let globalRulesRendering = ghostSceneRules.map(
-                rule => {
-                    let rule_obj = RulesStore.getState().get(rule);
-                    if(rule_obj.global){
-                        return (<React.Fragment key={'fragment-' + rule}>
+                    return (
+                        <React.Fragment key={'fragment-' + rule}>
                             <EudRule
                                 VRScene={this.props.VRScene}
                                 editor={this.props.editor}
@@ -152,40 +56,27 @@ export default class EudRuleEditor extends Component {
                                 scenes={this.props.scenes}
                                 assets={this.props.assets}
                                 audios={this.props.audios}
-                                currentScene={ghostSceneUuid}
+                                currentScene={this.props.currentScene}
                                 rules={this.props.rules}
-                                updateRuleName={this.props.updateRuleName}
                                 rule={rule}
                                 ruleEditorCallback={this.props.ruleEditorCallback}
                                 removeRule={(rule) => {
-                                    this.onRemoveRuleClick(rule, true)
+                                    this.onRemoveRuleClick(rule)
                                 }}
                                 copyRule={(rule) => {
-                                    this.props.copyRule(rule, true)
+                                    this.props.copyRule(rule)
                                 }}
                             />
 
-                        </React.Fragment>);
-                    }
+                        </React.Fragment>
+                    );
                 });
-
             //in debug posso selezionare le regole quindi distinguo
             if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
                         <div className={'eudBar'}>
                             <h2>Regole della scena</h2>
-                        </div>
-                        <div className={"rule-editor"}
-                             onClick={() => {
-                                 this.onOutsideClick();
-                             }}>
-                            {rulesRendering}
-                        </div>
-                    </div>
-                    <div className={"rule-container"}>
-                        <div className={'eudBar'}>
-                            <h2>Regole oggetti globali</h2>
                         </div>
                         <div className={"rule-editor"}
                              onClick={() => {
@@ -204,101 +95,53 @@ export default class EudRuleEditor extends Component {
                 </div>;
             } else {
                 return <div className={"rules"}>
-                    <div className={"expand-btn"} >
-                        <figure className={'expand-btn'}
-                                onClick={() => {
-                                    this.props.expandEditor(!this.props.editor.editorExpanded);
-                                }}>
-                            <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
-                                 src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
-                                     "icons/icons8-expand-arrow-filled-50.png"}
-                                 alt={'Espandi'}
-                            />
-                        </figure>
-                    </div>
-
-                    <button className="accordion" id={"accordionScene"} onClick={
-                        () => {
-                            onAccordionClick('accordionScene')
-                        }
-                    }
-                    >Regole di scena</button>
-
-                    <div className="panel">
-                        <div className={"rule-container"}>
-                            <div className={"eudBar"}>
-                                <div id={'rule-editor-btns'}>
-                                    <button
-                                        disabled={this.props.editor.ruleCopy===null}
+                    <div className={"rule-container"}>
+                        <div className={"eudBar"}>
+                            <figure className={'expand-btn'}
+                                    onClick={() => {
+                                        this.props.expandEditor(!this.props.editor.editorExpanded);
+                                    }}>
+                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                     src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
+                                         "icons/icons8-expand-arrow-filled-50.png"}
+                                     alt={'Espandi'}
+                                />
+                            </figure>
+                            <h2>Regole della scena</h2>
+                            <div id={'rule-editor-btns'}>
+                                <button
+                                    disabled={this.props.editor.ruleCopy === null}
+                                    onClick={() => {
+                                        this.onCopyRuleClick(scene);
+                                    }}
+                                >
+                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                         src={"icons/icons8-copia-50.png"}/>
+                                    Copia qui
+                                </button>
+                                <button className={"btn select-file-btn"}
                                         onClick={() => {
-                                            this.onCopyRuleClick(scene);
-                                        }}
-                                    >
-                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                        Copia qui
-                                    </button>
-                                    <button className={"btn select-file-btn"}
-                                            onClick={() => {
-                                                this.onNewRuleClick(false);
-                                            }}>
-                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
-                                        Nuova Regola
-                                    </button>
-                                </div>
-                            </div>
-                            <div className={"rule-editor"}
-                                 onClick={() => {
-                                     this.onOutsideClick();
-                                 }}>
-                                {rulesRendering}
+                                            this.onNewRuleClick();
+                                        }}>
+                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                         src={"icons/icons8-plus-white-30.png"}/>
+                                    Nuova Regola
+                                </button>
                             </div>
                         </div>
-                    </div>
-
-                    <button className="accordion" id={"accordionGlobal"}  onClick={
-                        () =>{
-                            onAccordionClick('accordionGlobal')
-                        }
-                    }
-                    >Regole globali</button>
-
-                    <div className="panel">
-                        <div className={"rule-container"}>
-                            <div className={"eudBar"}>
-
-                                <div id={'rule-editor-btns'}>
-                                    <button
-                                        disabled={this.props.editor.ruleCopy===null}
-                                        onClick={() => {
-                                            this.onCopyRuleClick(scene, true);
-                                        }}
-                                    >
-                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                        Copia qui
-                                    </button>
-                                    <button className={"btn select-file-btn"}
-                                            onClick={() => {
-                                                this.onNewRuleClick(true);
-                                            }}>
-                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
-                                        Nuova Regola
-                                    </button>
-                                </div>
-                            </div>
-                            <div className={"rule-editor"}
-                                 onClick={() => {
-                                     this.onOutsideClick();
-                                 }}>
-                                {globalRulesRendering}
-                                <Widget
-                                    title={"PAC-PAC BOT"}
-                                    subtitle={""}
-                                    profileAvatar={icon}
-                                    handleNewUserMessage={this.handleNewUserMessage}
-                                    senderPlaceHolder={"Scrivi qui la regola"}/>
-                                <br/>
-                                <div className={'rules-footer'}/>
-                            </div>
+                        <div className={"rule-editor"}
+                             onClick={() => {
+                                 this.onOutsideClick();
+                             }}>
+                            {rulesRendering}
+                            <Widget
+                                title={"PAC-PAC BOT"}
+                                subtitle={""}
+                                profileAvatar={icon}
+                                handleNewUserMessage={this.handleNewUserMessage}
+                                senderPlaceHolder={"Scrivi qui la regola"}/>
+                            <br/>
+                            <div className={'rules-footer'}></div>
                         </div>
                     </div>
                 </div>;
@@ -314,47 +157,24 @@ export default class EudRuleEditor extends Component {
     }
 
     //[Vittoria] creazione nuova regola
-    onNewRuleClick(global) {
+    onNewRuleClick() {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
         let event = Action().set("uuid", uuid.v4());    //la popolo con un evento (nb azione)
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
-        let rule = null;
-        if(global){
-            rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name", 'global_rl'
-                +ghostScene.rules.length+ "").set("global", global);
-            this.props.addNewRule(ghostScene, rule); //se è globale lo aggiungo alla regola fantasma
-        }
-        else {
-            rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_rl'
-                +  scene.rules.length + 1 + "").set("global", global);
-            this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
-        }
-        console.log("added rule: ", rule)
-
-
+        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name", scene.name + '_tx' + (scene.rules.length + 1));
+        this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
     }
 
-    onRemoveRuleClick(ruleId, global=false) {
+    onRemoveRuleClick(ruleId) {
         let scene = this.props.scenes.get(this.props.currentScene);
         let rule = this.props.rules.get(ruleId);
-        if(global){
-            console.log("removed rule from ghostScene")
-            this.props.removeRule(ghostScene, rule);
-        }
-        else{
-            this.props.removeRule(scene, rule);
-        }
+        this.props.removeRule(scene, rule);
     }
 
-    onCopyRuleClick(scene, global=false){
-        let newId = uuid.v4()+ (global ? "_global" : "");
+    onCopyRuleClick(scene) {
+        let newId = uuid.v4();
         let copiedRule = this.props.editor.ruleCopy.set('uuid', newId);
-
-        if(global){
-        }
-        else{
-            this.props.addNewRule(scene, copiedRule);
-        }
+        this.props.addNewRule(scene, copiedRule);
     }
 
 
@@ -1661,23 +1481,7 @@ class EudRule extends Component {
                         onMouseLeave={() => {
                             this.mouseLeave()
                         }}>
-                <span className={"eudName"}>
-                    <input style={{"width":"80%"}} id={"ruleName"}
-                           className={"propertyForm rightbar-box"}
-                           value={rule.name}
-                           maxLength={50}
-                           onChange={(event =>{
-                               let value = event.target.value; //nuovo nome
-                               let oldValue = rule.name;
-                               rule = rule.set('name', value); //nuova regola con nome aggiornato
-                               this.props.updateRuleName(rule, oldValue)
-
-                           })}
-                           onBlur={()=> {
-
-                           }}
-                    />
-                </span>
+                <span className={"eudName"}>{rule.name}</span>
                 <span className={"eudWhen"}>Quando </span>
                 <EudAction
                     editor={this.props.editor}
@@ -1725,14 +1529,6 @@ class EudCondition extends Component {
         let actionId = this.props.editor.get('actionId');
         let subjectCompletion = this.showCompletion(actionId, "subject");
         let subject = this.getInteractiveObjectReference(this.props.condition.obj_uuid);
-        let originalText = subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name;
-        if(subject){
-            //se è un oggetto globale non voglio che si scriva "la vita Vita", questo non è necessario per gli oggetti flag e numero
-            if(subject.type === InteractiveObjectsTypes.PLAYTIME || subject.type === InteractiveObjectsTypes.SCORE ||
-                subject.type === InteractiveObjectsTypes.HEALTH){
-                originalText = toString.objectTypeToString(subject.type);
-            }
-        }
         let subjectRendering =
             <EudRulePart
                 interactiveObjects={this.props.interactiveObjects}
@@ -1743,7 +1539,7 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={originalText}
+                originalText={subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
@@ -1780,7 +1576,7 @@ class EudCondition extends Component {
 
         let valueRendering = null;
 
-        switch(this.props.condition.operator){
+        switch (this.props.condition.operator) {
             case Operators.EQUAL_NUM:
             case Operators.NOT_EQUAL_NUM:
             case Operators.GREATER_THAN:
@@ -1828,9 +1624,9 @@ class EudCondition extends Component {
         }
 
         return <span className={"eudAction"} key={this.props.condition.uuid}>
-                    {subjectRendering}
-                    {operatorRendering}
-                    {valueRendering}
+                {subjectRendering}
+            {operatorRendering}
+            {valueRendering}
                 </span>;
 
     }
@@ -1841,19 +1637,11 @@ class EudCondition extends Component {
             actionId, role, text)
     }
 
-
     getInteractiveObjectReference(uuid) {
         if (uuid == InteractiveObjectsTypes.PLAYER) {
             return InteractiveObject({
                 type: InteractiveObjectsTypes.PLAYER,
                 uuid: InteractiveObjectsTypes.PLAYER,
-                name: ""
-            });
-        }
-        if (uuid == InteractiveObjectsTypes.COMBINATION) {
-            return InteractiveObject({
-                type: InteractiveObjectsTypes.COMBINATION,
-                uuid: InteractiveObjectsTypes.COMBINATION,
                 name: ""
             });
         }
@@ -1866,7 +1654,7 @@ class EudCondition extends Component {
             return this.props.assets(uuid);
         }
 
-        if (this.props.audios.has(uuid)){
+        if (this.props.audios.has(uuid)) {
             return this.props.audios.get(uuid);
         }
 
