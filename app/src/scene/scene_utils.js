@@ -141,6 +141,20 @@ function allObjects(scene){
     return Object.values(scene.objects).flat();
 }
 
+
+/* [LucaAs] Ritorna l'uuid della scena corrispondente al nome passato. */
+function returnUuidSceneByName(sceneName, scenes) {
+    let uuid = undefined;
+    //Quando trovo il nome della scena corrispondente allora lo restituisco
+    scenes.forEach(function (singleScene) {
+        if (singleScene.name === sceneName) {
+            uuid = scenes.get(singleScene.uuid).uuid;
+            return uuid;
+        }
+    });
+    return uuid;
+}
+
 export default {
     addInteractiveObjectToScene: addInteractiveObjectToScene,
     removeInteractiveObject: removeInteractiveObject,
@@ -151,4 +165,5 @@ export default {
     setProperty: setProperty,
     defineField: defineField,
     allObjects: allObjects,
+    returnUuidSceneByName: returnUuidSceneByName,
 }

@@ -8,26 +8,27 @@ import Condition from "./Condition";
 import SuperCondition from "./SuperCondition";
 import Values from "./Values";
 import {Operators} from "./Operators";
+
 let uuid = require('uuid');
 
 /**
  * Generates a default rule depending on the given object
  * @param object
  */
-function generateDefaultRule(object, scene){
+function generateDefaultRule(object, scene) {
     let r, r1, r2;
-    switch(object.type){
+    switch (object.type) {
         case InteractiveObjectsTypes.TRANSITION:
             r = Rule({
-                uuid : uuid.v4(),
-                name : 'regola della transizione ' + object.name,
-                event : Action({
+                uuid: uuid.v4(),
+                name: 'regola della transizione ' + object.name,
+                event: Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                actions : Immutable.List([Action({
+                actions: Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.TRANSITION,
@@ -36,16 +37,16 @@ function generateDefaultRule(object, scene){
             break;
         case InteractiveObjectsTypes.SWITCH:
             r1 = Rule({
-                uuid : uuid.v4(),
-                name : 'regola dell\'interruttore ' + object.name,
-                event : Action({
+                uuid: uuid.v4(),
+                name: 'regola dell\'interruttore ' + object.name,
+                event: Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                condition : new Condition(uuid.v4(), object.uuid, Values.ON, Operators.EQUAL),
-                actions : Immutable.List([Action({
+                condition: new Condition(uuid.v4(), object.uuid, Values.ON, Operators.EQUAL),
+                actions: Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: object.uuid,
                     action: RuleActionTypes.CHANGE_STATE,
@@ -53,16 +54,16 @@ function generateDefaultRule(object, scene){
                 })]),
             });
             r2 = Rule({
-                uuid : uuid.v4(),
-                name : 'regola dell\'interruttore ' + object.name + '_2',
-                event : Action({
+                uuid: uuid.v4(),
+                name: 'regola dell\'interruttore ' + object.name + '_2',
+                event: Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                condition : new Condition(uuid.v4(), object.uuid, Values.OFF, Operators.EQUAL),
-                actions : Immutable.List([Action({
+                condition: new Condition(uuid.v4(), object.uuid, Values.OFF, Operators.EQUAL),
+                actions: Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: object.uuid,
                     action: RuleActionTypes.CHANGE_STATE,
@@ -72,15 +73,15 @@ function generateDefaultRule(object, scene){
             return [r1, r2];
         case InteractiveObjectsTypes.KEY:
             r = Rule({
-                uuid : uuid.v4(),
-                name : 'regola della chiave ' + object.name,
-                event : Action({
+                uuid: uuid.v4(),
+                name: 'regola della chiave ' + object.name,
+                event: Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                actions : Immutable.List([Action({
+                actions: Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.COLLECT_KEY,
@@ -90,15 +91,15 @@ function generateDefaultRule(object, scene){
             break;
         case InteractiveObjectsTypes.LOCK:
             r = Rule({
-                uuid : uuid.v4(),
-                name : 'regola del lucchetto ' + object.name,
-                event : Action({
+                uuid: uuid.v4(),
+                name: 'regola del lucchetto ' + object.name,
+                event: Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: EventTypes.CLICK,
                     obj_uuid: object.uuid,
                 }),
-                actions : Immutable.List([Action({
+                actions: Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.UNLOCK_LOCK,
@@ -109,9 +110,9 @@ function generateDefaultRule(object, scene){
         case InteractiveObjectsTypes.POINT_OF_INTEREST:
             r = Rule({
                 uuid: uuid.v4(),
-                name : 'regola del punto di interesse ' + object.name,
+                name: 'regola del punto di interesse ' + object.name,
                 event: Action({uuid: uuid.v4()}),
-                actions : Immutable.List([Action({
+                actions: Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: InteractiveObjectsTypes.PLAYER,
                     action: RuleActionTypes.LOOK_AT,
@@ -121,10 +122,10 @@ function generateDefaultRule(object, scene){
             break;
         case InteractiveObjectsTypes.COUNTER:
             r = Rule({
-                uuid : uuid.v4(),
-                name : 'regola del contatore ' + object.name,
-                event : Action({uuid: uuid.v4()}),
-                actions : Immutable.List([Action({
+                uuid: uuid.v4(),
+                name: 'regola del contatore ' + object.name,
+                event: Action({uuid: uuid.v4()}),
+                actions: Immutable.List([Action({
                     uuid: uuid.v4(),
                     subj_uuid: object.uuid,
                     action: RuleActionTypes.INCREASE,
@@ -134,9 +135,9 @@ function generateDefaultRule(object, scene){
         case InteractiveObjectsTypes.KEYPAD:
             r = Rule({
                 uuid: uuid.v4(),
-                name : 'regola del tastierino ' + object.name,
+                name: 'regola del tastierino ' + object.name,
                 event: Action({}),
-                actions : Immutable.List([Action({uuid: uuid.v4()})]),
+                actions: Immutable.List([Action({uuid: uuid.v4()})]),
             });
             break;
         default:
@@ -150,16 +151,16 @@ function generateDefaultRule(object, scene){
  * @param rule
  * @returns {*}
  */
-function addEmptyAction(rule){
-     let list = rule.get('actions');
-     let index = list.size > 0 ? list.get(list.size-1).get('index') + 1 : 0;
-     list = list.push(Action({
-         uuid: uuid.v4(),
-         subj_uuid: InteractiveObjectsTypes.PLAYER,
-         index: index,
-     }));
-     rule = rule.set('actions', list);
-     return rule;
+function addEmptyAction(rule) {
+    let list = rule.get('actions');
+    let index = list.size > 0 ? list.get(list.size - 1).get('index') + 1 : 0;
+    list = list.push(Action({
+        uuid: uuid.v4(),
+        subj_uuid: InteractiveObjectsTypes.PLAYER,
+        index: index,
+    }));
+    rule = rule.set('actions', list);
+    return rule;
 }
 
 /**
@@ -168,9 +169,9 @@ function addEmptyAction(rule){
  * @param action
  * @returns {*}
  */
-function deleteAction(rule, action){
-    for(var i = 0; i < rule.actions.size; i++){
-        if(rule.actions.get(i).uuid === action.uuid){
+function deleteAction(rule, action) {
+    for (var i = 0; i < rule.actions.size; i++) {
+        if (rule.actions.get(i).uuid === action.uuid) {
             let list = rule.get('actions');
             list = list.delete(i);
             rule = rule.set('actions', list);
@@ -186,10 +187,10 @@ function deleteAction(rule, action){
  * @param rule
  * @returns {*}
  */
-function addEmptyCondition(rule){
+function addEmptyCondition(rule) {
     let c = new Condition(uuid.v4());
 
-    if (rule.condition instanceof Condition || rule.condition instanceof SuperCondition){
+    if (rule.condition instanceof Condition || rule.condition instanceof SuperCondition) {
         c = new SuperCondition(uuid.v4(), rule.condition, new Condition(uuid.v4()));
     }
 
@@ -204,10 +205,10 @@ function addEmptyCondition(rule){
  * @param conditionToDelete
  * @returns {rule}
  */
-function deleteCondition(rule, conditionToDelete){
+function deleteCondition(rule, conditionToDelete) {
     let newCondition = {};
 
-    if(rule.condition instanceof SuperCondition){
+    if (rule.condition instanceof SuperCondition) {
         newCondition = findConditionInsideSuperCondition(rule.condition, conditionToDelete)
     }
 
@@ -221,17 +222,17 @@ function deleteCondition(rule, conditionToDelete){
  * @param c condition
  * @returns {*}
  */
-function findConditionInsideSuperCondition(s, c){
-    if(s.condition1 instanceof Condition && s.condition1.uuid === c.uuid){
+function findConditionInsideSuperCondition(s, c) {
+    if (s.condition1 instanceof Condition && s.condition1.uuid === c.uuid) {
         return s.condition2;
     }
-    if(s.condition2 instanceof Condition && s.condition2.uuid === c.uuid){
+    if (s.condition2 instanceof Condition && s.condition2.uuid === c.uuid) {
         return s.condition1;
     }
-    if(s.condition1 instanceof SuperCondition){
+    if (s.condition1 instanceof SuperCondition) {
         s.condition1 = findConditionInsideSuperCondition(s.condition1, c);
     }
-    if(s.condition2 instanceof SuperCondition){
+    if (s.condition2 instanceof SuperCondition) {
         s.condition2 = findConditionInsideSuperCondition(s.condition2, c);
     }
 
@@ -244,16 +245,30 @@ function findConditionInsideSuperCondition(s, c){
  * @param property
  * @param value
  */
-function setProperty(rule, property, value){
+function setProperty(rule, property, value) {
     return rule.set(property, value);
 }
 
 
+/* [LucaAs] Controlla che il nome passato come parametro non esista già per qualche altra regola, se esiste torna true, se no false.
+ * Controlla su tutte le regole del gioco, non della scena corrente.*/
+function doesRuleNameExists(ruleName, rules) {
+    let isToChange = false;
+    rules.forEach(function (singleRule) {
+        if (singleRule.name === ruleName) {
+            isToChange = true;
+        }
+    });
+    return isToChange;
+}
+
+
 export default {
-    generateDefaultRule : generateDefaultRule,
-    setProperty : setProperty,
-    addEmptyAction : addEmptyAction,
-    deleteAction : deleteAction,
-    addEmptyCondition : addEmptyCondition,
-    deleteCondition : deleteCondition,
+    generateDefaultRule: generateDefaultRule,
+    setProperty: setProperty,
+    addEmptyAction: addEmptyAction,
+    deleteAction: deleteAction,
+    addEmptyCondition: addEmptyCondition,
+    deleteCondition: deleteCondition,
+    doesRuleNameExists: doesRuleNameExists,
 };
