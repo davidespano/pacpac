@@ -906,13 +906,32 @@ class EudAction extends Component {
                     />;
                 break;
             case RuleActionTypes.REACH_TIMER:
-            case RuleActionTypes.DECREASE_NUMBER:
-            case RuleActionTypes.INCREASE_NUMBER:
-            case RuleActionTypes.INCREASE:
                 objectRendering =
                     <EudRuleNumericPart
                         interactiveObjects={this.props.interactiveObjects}
                         rules={this.props.rules}
+                        rule={this.props.rule}
+                        seconds={true}
+                        rulePartType={this.props.rulePartType}
+                        subject={subject}
+                        complement={this.props.action.obj_uuid}
+                        verb={this.props.action}
+                        ruleEditorCallback={this.props.ruleEditorCallback}
+                        originalText={this.props.action.obj_uuid}
+                        role={"object"}
+                        updateNumericRule={(props, value) => this.updateNumericRule(props, value)}
+                    />;
+                break;
+            case RuleActionTypes.DECREASE_NUMBER:
+            case RuleActionTypes.INCREASE_NUMBER:
+            case RuleActionTypes.INCREASE:
+                //i secondi li metto solo se si tratta del tempo di gioco
+                let seconds = subject.type===InteractiveObjectsTypes.PLAYTIME ? true : false;
+                objectRendering =
+                    <EudRuleNumericPart
+                        interactiveObjects={this.props.interactiveObjects}
+                        rules={this.props.rules}
+                        seconds = {seconds}
                         rule={this.props.rule}
                         rulePartType={this.props.rulePartType}
                         subject={subject}
@@ -1372,18 +1391,21 @@ class EudRuleNumericPart extends Component {
         let buttonVisible = "eudHide";
         let text = this.props.originalText;
         let css = "eudRulePart eudCompletionRoot eud" + this.props.role;
+        //se è un valore che ha a che fare con i secondi uso la classe css che mette il placeholder
+        let className = (this.props.seconds ? "eudObjectSeconds" : "eudObjectString");
         return <div className={css} key={'numeric-input' + this.props.rule.uuid + this.props.role}>
                 <span>
-                <span className={"eudObjectString"}>
+                <span className={className}>
                 <span>{text == "" ? "[un valore]" : text}</span>
                 <input type={"text"}
-                       className={"eudObjectString"} placeholder={"[digita un numero]"}
+                       className={className} placeholder={"[digita un numero]"}
                        onChange={(e) => {
                            this.onChange(e)
                        }}
                        value={text}
                 />
                 </span>
+
                 <button className={buttonVisible}
                         onClick={(e) => {
                             e.stopPropagation();

@@ -409,7 +409,6 @@ div.rules{
 #topbar-game-title{
     position: absolute;
     right: 10px;
-    z-index: -1;
 }
 
 .navbar-toggler{
@@ -421,7 +420,9 @@ div.rules{
     background-color: #8C9093;
 }
 
-
+.secs{
+    border-left: 0px solid transparent;
+}
 
 .buttonConferm{
     color: #FFFFFF;
@@ -1494,6 +1495,45 @@ span.eudObjectString > span{
 }
 
 input.eudObjectString[type=text] {
+    position: absolute;
+    display:inline-block;
+    left:0px;
+    right:0px;
+    border:0px;
+    overflow: no-display;
+    width: 100%;
+    min-width: 50px;
+    color: #EF562D;
+    background-color: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+/* Nel caso ci siano i secondi */
+span.eudObjectSeconds {
+    position: relative;
+    display: inline-block;
+    min-width: 50px;
+    width:100%;
+}
+
+span.eudObjectSeconds:after {
+    position: absolute;
+    right: 2px;
+    top: 0;
+    content: 'secondi';
+}
+
+span.eudObjectSeconds > span{
+    visibility: hidden;
+    display: inline-block;
+    min-width: 50px;
+    width:100%;
+}
+
+input.eudObjectSeconds[type=text] {
     position: absolute;
     display:inline-block;
     left:0px;
