@@ -70,11 +70,15 @@ class EditorStateStore extends ReduceStore {
                 if(action.scene.uuid!='ghostScene'){
                     state = state.set('sceneOptions', action.scene);
                 }
-
-                if (!state.get('homeScene')) { //if there is no homeScene selected, select the first one
+                //TODO: questo pezzo commentato potrebbe essere obsoleto e causare problemi
+                /*
+                console.log(action.scene.name);
+                if (!state.get('homeScene') && action.scene.uuid != "ghostScene") { //if there is no homeScene selected, select the first one
                     state = state.set('homeScene', action.scene.uuid);
+                    console.log("setting as homescene: ", action.scene.name);
                     SceneAPI.setHomeScene(action.scene.uuid, false);
                 }
+                */
 
                 return state;
             case ActionTypes.RECEIVE_USER:
