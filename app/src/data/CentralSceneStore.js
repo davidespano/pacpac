@@ -20,6 +20,7 @@ class CentralSceneStore extends ReduceStore {
             case ActionTypes.RECEIVE_SCENE:
                 if(action.creation) //se stiamo creando una nuova scena la visualizziamo nell'interfaccia
                 {
+                    if (action.scene.uuid != "ghostScene")
                     return action.scene.uuid;
                 }
                 else //altrimenti stiamo probabilmente caricando le scene e vogliamo la home scene
