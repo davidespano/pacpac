@@ -917,11 +917,11 @@ export default class VRScene extends React.Component {
     static changePlaytimeValue(newPlaytimeValue, activeSceneName){
         let playtimeObj = document.getElementById(activeSceneName + 'gameTime');
         if(playtimeObj != null){
-            window.gameTimeValue = newPlaytimeValue;
+            window.gameTimeValue = newPlaytimeValue *60;
             let textPropertiesPT = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + gameTimeSize +
-                "; value:" + (window.gameTimeValue *60) +
+                "; value:" + (window.gameTimeValue) +
                 ";color: #dbdbdb";
             playtimeObj.setAttribute('text', textPropertiesPT);
         }
