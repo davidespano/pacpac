@@ -42,7 +42,6 @@ export default class EudRuleEditor extends Component {
             let rulesRendering = rules.map(
                 rule => {
                     let rule_obj = RulesStore.getState().get(rule);
-                    console.log("rule: ", rule)
                     if(rule_obj.global !== true){
                         return (
                             <React.Fragment key={'fragment-' + rule}>
@@ -911,7 +910,7 @@ class EudAction extends Component {
                         interactiveObjects={this.props.interactiveObjects}
                         rules={this.props.rules}
                         rule={this.props.rule}
-                        seconds={true}
+                        time={"seconds"}
                         rulePartType={this.props.rulePartType}
                         subject={subject}
                         complement={this.props.action.obj_uuid}
@@ -926,12 +925,12 @@ class EudAction extends Component {
             case RuleActionTypes.INCREASE_NUMBER:
             case RuleActionTypes.INCREASE:
                 //i secondi li metto solo se si tratta del tempo di gioco
-                let seconds = subject.type===InteractiveObjectsTypes.PLAYTIME ? true : false;
+                let time = subject.type===InteractiveObjectsTypes.PLAYTIME ?"minutes" : "";
                 objectRendering =
                     <EudRuleNumericPart
                         interactiveObjects={this.props.interactiveObjects}
                         rules={this.props.rules}
-                        seconds = {seconds}
+                        time = {time}
                         rule={this.props.rule}
                         rulePartType={this.props.rulePartType}
                         subject={subject}
@@ -1392,7 +1391,15 @@ class EudRuleNumericPart extends Component {
         let text = this.props.originalText;
         let css = "eudRulePart eudCompletionRoot eud" + this.props.role;
         //se è un valore che ha a che fare con i secondi uso la classe css che mette il placeholder
-        let className = (this.props.seconds ? "eudObjectSeconds" : "eudObjectString");
+        let className = null;
+        if(this.props.time === "seconds")
+            className = "eudObjectSeconds";
+        else if(this.props.time==="minutes"){
+            className = "eudObjectMinutes"
+        }
+        else{
+            className = "eudObjectString";
+        }
         return <div className={css} key={'numeric-input' + this.props.rule.uuid + this.props.role}>
                 <span>
                 <span className={className}>
@@ -1491,8 +1498,8 @@ class EudAutoComplete extends Component {
                     //filtro gli oggetti globali
                     let items = sceneObjectsOnly(this.props).filter(
                         x => x.type != InteractiveObjectsTypes.HEALTH &&
-                            x.type != InteractiveObjectsTypes.SCORE &&
-                            x.type != InteractiveObjectsTypes.PLAYTIME
+                            x.type != InteractiveObjectsTypes.SCORE
+                          && x.type != InteractiveObjectsTypes.PLAYTIME
                     ).valueSeq();
                     return <div className={"eudCompletionPopupForGraph"}>
                         <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
@@ -1715,8 +1722,9 @@ function getCompletions(props, global) {
                     let items = props.assets.filter(x => x.type === 'video').filter(x =>
                         x.type !== InteractiveObjectsTypes.TIMER &&
                         x.type !== InteractiveObjectsTypes.HEALTH &&
-                        x.type !== InteractiveObjectsTypes.SCORE &&
-                        x.type !== InteractiveObjectsTypes.PLAYTIME).merge(props.audios).set(
+                        x.type !== InteractiveObjectsTypes.SCORE
+                        && x.type !== InteractiveObjectsTypes.PLAYTIME
+                        ).merge(props.audios).set(
                         InteractiveObjectsTypes.PLAYER,
                         InteractiveObject({
                             type: InteractiveObjectsTypes.PLAYER,
@@ -1753,7 +1761,7 @@ function getCompletions(props, global) {
                         })
                     );
                     let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes).filter(x=>
-                    x.uuid != 'ghostScene');
+                        x.uuid != 'ghostScene');
                     let items= result.sort(function (a) {
                         //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
                         // e il player
@@ -1811,6 +1819,16 @@ function getCompletions(props, global) {
                     x.uuid !== 'ghostScene')*/;
                 allObjects = allObjects.merge(filterValues(props.subject, props.verb));
 
+                //se il verbo è spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
+                // spostare nella scena in cui sono già)
+                if(props.verb.action === RuleActionTypes.TRANSITION){
+                    let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
+                    let items = (props.scenes.filter(x=>
+                        !x.includes(current_scene_uuid) && x.name != 'Ghost Scene'
+                    ));
+                    return {items, graph};
+                }
+
                 if (props.verb.action) {
                     let objType = RuleActionMap.get(props.verb.action).obj_type;
                     allObjects = allObjects.filter(x => objType.includes(x.type));
@@ -1830,14 +1848,7 @@ function getCompletions(props, global) {
                     graph = 2;
                 }
 
-                //se il verbo è spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
-                // spostare nella scena in cui sono già)
-                if(props.verb.action === RuleActionTypes.TRANSITION){
-                    let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
-                    items= items.filter(x=>
-                        !x.includes(current_scene_uuid && x.name != 'Ghost Scene')
-                    );
-                }
+
 
                 return {items, graph};
 
