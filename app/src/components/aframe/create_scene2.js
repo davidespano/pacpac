@@ -283,7 +283,6 @@ export default class VRScene extends React.Component {
             let objectVideo;
 
             rule.actions.sort(stores_utils.actionComparator);
-            //console.log("creo rule listener");
             //Funzione che si occupa di eseguire le azioni
             let actionCallback = function(action){
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
@@ -390,7 +389,7 @@ export default class VRScene extends React.Component {
                                 }
                             }
                         });
-                    })
+                    });
 
                     if(rule.event.obj_uuid === "STARTED" && media){
                         media.onplay = function() {
@@ -423,7 +422,24 @@ export default class VRScene extends React.Component {
                 default:
                     let eventName = rule.event.action.toLowerCase();
                     let event = `${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`;
-                    console.log(event)
+                    let object = me.props.interactiveObjects.get(rule.event.subj_uuid);
+                    //caricamento eventi oggetti globali:
+
+                    //tempo di gioco
+                    if( object && object.type === InteractiveObjectsTypes.PLAYTIME){
+                        event = `GameTime-reach_minute-${rule.event.obj_uuid}`;
+                    }
+
+                    //vita
+                    if( object && object.type === InteractiveObjectsTypes.HEALTH){
+                        event = `Health-value_changed_to-${rule.event.obj_uuid}`;
+                    }
+                    //punteggio
+                    if( object && object.type === InteractiveObjectsTypes.SCORE){
+                        event = `Score-value_changed_to-${rule.event.obj_uuid}`;
+                    }
+
+                    console.log("rule ", rule, "event: ", event);
                     eventBus.on(event, function () {
                         let condition = evalCondition(rule.condition, me.state.runState);
                         if (condition) {
@@ -444,7 +460,6 @@ export default class VRScene extends React.Component {
                     if(rule.event.action==="ENTER_SCENE"){
                         eventBus.emit(event);
                     }
-                 //   console.log(eventBus)
                     break;
             }
         })
