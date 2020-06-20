@@ -341,6 +341,11 @@ function createScene(name, img, index, type, tag, order, props) {
 
             Actions.receiveScene(newScene, order);
             updateScene(newScene, tag);
+            //console.log(props.scenes.size);
+            //se è la prima scena del gioco che creo diventa home scene, la ghost scene verrà creata dopo questa prima scena
+            if (props.scenes.size == 0){
+                setHomeScene(id);
+            }
             if(props.scenes.first() !=undefined)
             {
                 if(props.scenes.first().objects.playtime.length > 0) {
