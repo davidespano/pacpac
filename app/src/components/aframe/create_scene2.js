@@ -858,12 +858,14 @@ export default class VRScene extends React.Component {
     {
         let sum = window.playtimeValue + increaseBy;
         this.changeHealthValue(sum, activeSceneName);
+        eventBus.emit("Health-value_changed_to-" + window.healthValue)
     }
 
     static decreaseHealthValue(decreaseBy, activeSceneName)
     {
         let sub = window.playtimeValue - decreaseBy;
         this.changeHealthValue(sub, activeSceneName);
+        eventBus.emit("Health-value_changed_to-" + window.healthValue)
     }
 
     static changeHealthValue(newHealthValue, activeSceneName){
@@ -876,6 +878,7 @@ export default class VRScene extends React.Component {
                 "; value:" + window.healthValue +
                 ";color: #dbdbdb";
             healthObj.setAttribute('text', textPropertiesHL);
+            eventBus.emit("Health-value_changed_to-" + window.healthValue)
         }
     }
 
@@ -885,12 +888,14 @@ export default class VRScene extends React.Component {
     {
         let sum = window.scoreValue + increaseBy;
         this.changeScoreValue(sum, activeSceneName);
+        eventBus.emit("Score-value_changed_to-" + window.scoreValue)
     }
 
     static decreaseScoreValue(decreaseBy, activeSceneName)
     {
         let sub = window.scoreValue - decreaseBy;
         this.changeScoreValue(sub, activeSceneName);
+        eventBus.emit("Score-value_changed_to-" + window.scoreValue)
     }
 
     static changeScoreValue(newScoreValue, activeSceneName){
@@ -903,6 +908,7 @@ export default class VRScene extends React.Component {
                 "; value:" + window.scoreValue +
                 ";color: #dbdbdb";
             scoreObj.setAttribute('text', textPropertiesSC);
+            eventBus.emit("Score-value_changed_to-" + window.scoreValue)
         }
     }
 
