@@ -921,7 +921,7 @@ export default class VRScene extends React.Component {
             let textPropertiesPT = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + gameTimeSize +
-                "; value:" + window.gameTimeValue +
+                "; value:" + (window.gameTimeValue *60) +
                 ";color: #dbdbdb";
             playtimeObj.setAttribute('text', textPropertiesPT);
         }
