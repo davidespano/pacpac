@@ -213,9 +213,10 @@ export default class VRScene extends React.Component {
                 "; value:" + (new Date(window.gameTimeValue * 1000).toISOString().substr(11, 8));
             gameTime.setAttribute('text', textProperties)
 
-            if(window.gameTimeValue %  1 == 0)
+            if(window.gameTimeValue %  60 == 0)
             {
-                //eventBus.emit(gameTimeUuid + "-"+"reach_timer-" + Math.floor(window.gameTimeValue))
+                console.log("GameTime-reach_minute-" + Math.floor(window.gameTimeValue)/60)
+                eventBus.emit("GameTime-reach_minute-" + Math.floor(window.gameTimeValue)/60)
             }
         }
     }
