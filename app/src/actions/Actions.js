@@ -650,7 +650,13 @@ const Actions = {
             type: ActionTypes.UPDATE_RULE,
             rule: rule,
         });
-        let scene = ScenesStore.getState().get(CentralSceneStore.getState());
+        let scene =null;
+        if(rule.global){
+            scene = ScenesStore.getState().get('ghostScene');
+        }
+        else{
+            scene = ScenesStore.getState().get(CentralSceneStore.getState());
+        }
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 
