@@ -28,6 +28,7 @@ import Health from "../interactives/Health";
 import PlayTime from "../interactives/PlayTime";
 import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import {createGlobalObjectForNewScene} from "../components/interface/Topbar";
+import GraphViewContent from "../components/interface/GraphViewContent";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -426,6 +427,52 @@ function deleteScene(scene) {
         });
 }
 
+
+
+async function getNodes(gameId=null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    const response= await request.get(`${apiBaseURL}/${id}/getNodes`)
+        .set('Accept', 'application/json');
+
+    return response.body;
+}
+
+
+function setNodes(nodedata) {
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/setNodes`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send(
+            {
+                nodes: JSON.stringify(nodedata)
+            }
+        )
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+        });
+}
+
+function delNodes(gameId=null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    request.delete(`${apiBaseURL}/${id}/delNodes`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+        });
+
+}
+
+
+
+
+
 /**
  * Sets specific scene as home
  * @param sceneId
@@ -739,6 +786,9 @@ export default {
     deleteScene: deleteScene,
     getAllDetailedScenes: getAllDetailedScenes,
     getDetailedScene: getDetailedScene,
+    setNodes:setNodes,
+    getNodes:getNodes,
+    delNodes:delNodes,
     saveTag: saveTag,
     removeTag: removeTag,
     setHomeScene: setHomeScene,

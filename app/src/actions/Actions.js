@@ -94,6 +94,13 @@ const Actions = {
         })
     },
 
+    graphViewModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.GRAPH_VIEW_MODE_ON
+        })
+    },
+
     audioPositioning(status){
         AppDispatcher.dispatch({
             type: ActionTypes.AUDIO_POSITIONING,

@@ -17,6 +17,7 @@ import GameList from "../components/interface/GameList";
 import EudRuleEditor from "../components/interface/EudRuleEditor";
 import StoryEditor from "../components/interface/StoryEditor";
 import ActionTypes from "../actions/ActionTypes";
+import GraphViewContent from "../components/interface/GraphViewContent";
 
 function AppView(props) {
 
@@ -90,6 +91,13 @@ function AppView(props) {
                     <TopBar {...props} />
                     <StoryEditor {...props} />
 					<FileForm {...props}/>
+                </div>
+            );
+        case ActionTypes.GRAPH_VIEW_MODE_ON:
+            return (
+                <div>
+                    <TopBar {...props}/>
+                    <GraphViewContent {...props} />
                 </div>
             );
         default:

@@ -305,6 +305,72 @@ function setHomeScene(session, sceneID, gameID){
         });
 }
 
+function setNodes(session,nodes,gameID){
+    console.log(nodes);
+    console.log(gameID);
+    return session.run(
+        'MATCH (game:Game {gameID: $gameID}) ' +
+        'MATCH (nodes:Nodes:`' + gameID + '`) ' +
+        'RETURN nodes', {gameID: gameID})
+        .then(result => {
+            if (!_.isEmpty(result.records[0])) {
+                return session.run(
+                    'MATCH (game:Game {gameID: $gameID}) ' +
+                    'MATCH (nodes:Nodes:`' + gameID + '`) ' +
+                    'SET nodes.nodes = $nodes '+
+                    'RETURN nodes', {gameID:gameID, nodes: nodes})
+                    .then(result =>{
+                        if (!result.records[0]) {
+                            throw {message: 'nodes not found', status: 404};
+                        }
+                    })
+            }
+            else {
+                return session.run(
+                    'MATCH (game:Game {gameID: $gameID}) ' +
+                    'CREATE (nodes:Nodes:`' + gameID + '` {nodes:$nodes})'+
+                    'RETURN nodes', {gameID:gameID, nodes: nodes})
+                    .then(result =>{
+                        if (!result.records[0]) {
+                            throw {message: 'nodes not found', status: 404};
+                        }
+                    })
+
+            }
+        })
+}
+
+function getNodes(session, gameID) {
+    return session.run(
+        'MATCH (game:Game {gameID: $gameID}) ' +
+        'MATCH (nodes:Nodes:`' + gameID + '`) ' +
+        'RETURN nodes', {gameID: gameID})
+        .then(result => {
+            if (!_.isEmpty(result.records[0])) {
+                return result.records[0]._fields[0].properties.nodes;
+            }
+            else {
+                return "[]";
+            }
+        })
+}
+
+
+function delNodes(session, gameID) {
+    return session.run(
+        'MATCH (game:Game {gameID: $gameID}) ' +
+        'MATCH (nodes:Nodes:`' + gameID + '`) ' +
+        'DETACH DELETE nodes', {gameID: gameID})
+        .then(result => {
+            if (!_.isEmpty(result.records[0])) {
+                 throw {message: 'nodes not found', status: 404};
+            }
+        })
+}
+
+
+
+
 module.exports = {
     getAll: getAll,
     getByName: getByName,
@@ -314,5 +380,8 @@ module.exports = {
     getHomeScene: getHomeScene,
     deleteScene: deleteScene,
     setHomeScene: setHomeScene,
-    getAllDetailed: getAllDetailed
+    getAllDetailed: getAllDetailed,
+    setNodes:setNodes,
+    getNodes:getNodes,
+    delNodes:delNodes
 };

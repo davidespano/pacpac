@@ -124,6 +124,9 @@ function TopBar(props){
                                      className={'action-buttons'}/>
                     </a>
 
+                    <a className="nav-item nav-link" id="nav-graphpview-tab" href="#nav-graphview" data-toggle="tab" role="tab"
+                       aria-controls="nav-graphview" aria-selected="false" onClick={()=> handleGraphViewMode(props)}>Graph View</a>
+
                     <div id={'topbar-game-title'} className={'navbar-brand'}>
                         {props.editor.gameTitle}
                     </div>
@@ -259,7 +262,7 @@ function TopBar(props){
                 </div>
 
                 <div className={"tab-pane fade"}
-                     id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
+                           id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
                     <div className={"flex-container"}>
                         <figure id ="save-icon" className={'nav-figures'}
                                 data-toggle="modal" data-target="#save-modal">
@@ -274,21 +277,9 @@ function TopBar(props){
                             </ul>
                         </div>
                         <InputSaveForm {...props}/>
-                    </div>
+                     </div>
                 </div>
-
-                <div className={"tab-pane fade"}
-                     id="nav-playoff" role="tabpanel" aria-labelledby="nav-objects-play">
-                    <div className={"flex-container"}>
-                        <p id={"errors"}>Prima di continuare completa le seguenti regole:</p>
-                        <div className="item">
-                            <ul id={"errorsPlay"}>
-
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
+                <div className={"tab-pane fade"} id="nav-graphview" role="tabpanel"> </div>
             </div>
         </div>
     );
@@ -341,7 +332,7 @@ function hideSaveIcon(hide){
     }
 }
 
-function handleNavbarSelection(props){
+export function handleNavbarSelection(props){
    // let items = document.getElementsByClassName("nav-item");
     if(props.editor.mode !== ActionTypes.EDIT_MODE_ON){
         props.switchToEditMode();
@@ -366,6 +357,12 @@ function handleDebugMode(props) {
     }
 }
 
+export function handleGraphViewMode(props){
+    if(props.editor.mode !== ActionTypes.GRAPH_VIEW_MODE_ON) {
+        props.switchToGraphView();
+        document.getElementById("nav-tabContent").hidden = true;
+    }
+}
 
 /**
  * Generates a new InteractiveObject with default values according to the given type and calls the function for stores

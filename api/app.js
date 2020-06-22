@@ -138,10 +138,13 @@ api.get('/:gameID/scenes-all', routes.scenes.detailedList);
 api.get('/:gameID/scenes/:name', routes.scenes.getByName);
 api.get('/:gameID/scenes/uuid/:uuid', routes.scenes.getByUuid);
 api.get('/:gameID/getHomeScene', routes.scenes.getHomeScene);
+api.get('/:gameID/getNodes', routes.scenes.getNodes);
+api.delete('/:gameID/delNodes', routes.scenes.delNodes);
 api.post('/:gameID/scenes/addScene', loginRequired, routes.scenes.addScene);
 api.put('/:gameID/scenes/updateScene', loginRequired, routes.scenes.updateScene);
 api.delete('/:gameID/scenes/:name', loginRequired, routes.scenes.deleteScene);
 api.post('/:gameID/scenes/:name/setHomeScene', loginRequired, routes.scenes.setHomeScene);
+api.post('/:gameID/scenes/setNodes', routes.scenes.setNodes);
 
 /**TAGS**/
 api.get('/:gameID/tags', routes.tags.list);
