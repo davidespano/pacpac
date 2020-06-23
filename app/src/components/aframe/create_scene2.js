@@ -948,14 +948,11 @@ export default class VRScene extends React.Component {
     }
 
     static checkKeypadValue(keypadObj){
-        if (keypadObj.combination == window.keypadValue)
-        {
-            window.keypadValue = "";
+        window.keypadValue = "";
+        if (keypadObj.combination == window.keypadValue) {
             return true;
         }
-        else
-        {
-            window.keypadValue = "";
+        else {
             return false;
         }
     }

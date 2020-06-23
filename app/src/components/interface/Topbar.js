@@ -438,18 +438,18 @@ export function createObject(props, type){
                     return;
                 }
                 break;
-            case InteractiveObjectsTypes.SELECTOR: //TODO SELECTOR rivedere questi parametri
+            case InteractiveObjectsTypes.SELECTOR:
                 name = scene.name + '_sl' + (scene.objects.selectors.length + 1);
                 obj = Selector ({
                     uuid : uuid.v4(),
                     name : name,
                     properties: {
                         optionsNumber: 3,
-                        state: [],
+                        state: 1,
                     }
                 });
                 break;
-            case InteractiveObjectsTypes.BUTTON: //TODO SELECTOR rivedere questi parametri
+            case InteractiveObjectsTypes.BUTTON:
                 name = scene.name + '_bt' + (scene.objects.buttons.length + 1);
                 obj = Button ({
                     uuid : uuid.v4(),
