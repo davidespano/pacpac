@@ -17,7 +17,10 @@ import {createObject} from "./Topbar";
 
 
 function ObjectOptions(props){
-    if(props.currentObject){
+    //faccio in modo che la ghost scene non appaia quando creo un nuovo oggetto globale
+    let scene = props.scenes.get(props.objectToScene.get(props.currentObject));
+
+    if(props.currentObject && scene.uuid !='ghostScene'){
         return generateProperties(props);
     } else {
         return showObjects(props.interactiveObjects, props);
