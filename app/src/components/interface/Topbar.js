@@ -636,7 +636,6 @@ export function createGlobalObjectForNewScene(props, scene, type) {
     if (scene != null) {
         let name = "";
         let obj = null;
-        let sceneArray = props.scenes.toArray()
 
         switch (type) {
             case InteractiveObjectsTypes.PLAYTIME:
@@ -649,7 +648,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                             time: 0,
                             size: 5,
                         }
-                    })
+                    });
                     props.addNewObject(scene, obj);
                 }
                 break;
@@ -663,7 +662,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                             score: 0,
                             size: 5,
                         }
-                    })
+                    });
                     props.addNewObject(scene, obj);
                 }
                 break;
@@ -677,7 +676,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                             score: 0,
                             size: 5,
                         }
-                    })
+                    });
                     props.addNewObject(scene, obj);
                 }
                 break;

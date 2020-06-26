@@ -925,7 +925,9 @@ class EudAction extends Component {
             case RuleActionTypes.INCREASE_NUMBER:
             case RuleActionTypes.INCREASE:
                 //i secondi li metto solo se si tratta del tempo di gioco
-                let time = subject.type===InteractiveObjectsTypes.PLAYTIME ?"minutes" : "";
+                let time ="";
+                if(subject)
+                    time = subject.type===InteractiveObjectsTypes.PLAYTIME ?"minutes" : "";
                 objectRendering =
                     <EudRuleNumericPart
                         interactiveObjects={this.props.interactiveObjects}
@@ -1499,7 +1501,7 @@ class EudAutoComplete extends Component {
                     let items = sceneObjectsOnly(this.props).filter(
                         x => x.type != InteractiveObjectsTypes.HEALTH &&
                             x.type != InteractiveObjectsTypes.SCORE
-                          && x.type != InteractiveObjectsTypes.PLAYTIME
+                            && x.type != InteractiveObjectsTypes.PLAYTIME
                     ).valueSeq();
                     return <div className={"eudCompletionPopupForGraph"}>
                         <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
@@ -1724,7 +1726,7 @@ function getCompletions(props, global) {
                         x.type !== InteractiveObjectsTypes.HEALTH &&
                         x.type !== InteractiveObjectsTypes.SCORE
                         && x.type !== InteractiveObjectsTypes.PLAYTIME
-                        ).merge(props.audios).set(
+                    ).merge(props.audios).set(
                         InteractiveObjectsTypes.PLAYER,
                         InteractiveObject({
                             type: InteractiveObjectsTypes.PLAYER,
@@ -1928,7 +1930,7 @@ function getCompletions(props, global) {
                             name: ""
                         })
                     );
-                    console.log("items operation", items)
+                    console.log("items operation", items);
 
                     return {items, graph}
                 }
@@ -1948,7 +1950,8 @@ function getCompletions(props, global) {
                 if(props.verb.action === RuleActionTypes.TRANSITION){
                     let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
                     //filtro la scena in cui sono e la scena fantasma
-                    items= items.filter(x=> !x.includes(current_scene_uuid && x.uuid!='ghostScene')
+                    items= items.filter(x=> !x.includes(current_scene_uuid) &&
+                        x.uuid!='ghostScene'
                     );
                 }
 
