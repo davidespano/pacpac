@@ -641,7 +641,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
         switch (type) {
             case InteractiveObjectsTypes.PLAYTIME:
                 if (scene.objects.playtime.length == 0){ //ammesso un solo oggetto playtime per gioco
-                    name = scene.name + '_pt';
+                    name = 'Tempo di gioco';
                     obj = PlayTime({
                         uuid: scene.uuid+"_pt",
                         name: name,
@@ -655,7 +655,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                 break;
             case InteractiveObjectsTypes.SCORE:
                 if (scene.objects.score.length == 0){ //ammesso un solo oggetto playtime per gioco
-                    name = scene.name + '_sc';
+                    name = 'Punteggio';
                     obj = Score({
                         uuid: scene.uuid+"_sc",
                         name: name,
@@ -669,7 +669,7 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                 break;
             case InteractiveObjectsTypes.HEALTH:
                 if (scene.objects.health.length == 0){ //ammesso un solo oggetto playtime per gioco
-                    name = scene.name + '_hl';
+                    name = 'Vita';
                     obj = Health({
                         uuid: scene.uuid+"_hl",
                         name: name,
