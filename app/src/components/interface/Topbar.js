@@ -279,6 +279,18 @@ function TopBar(props){
                         <InputSaveForm {...props}/>
                      </div>
                 </div>
+                <div className={"tab-pane fade"}
+                     id="nav-playoff" role="tabpanel" aria-labelledby="nav-objects-play">
+                    <div className={"flex-container"}>
+                        <p id={"errors"}>Prima di continuare completa le seguenti regole:</p>
+                        <div className="item">
+                            <ul id={"errorsPlay"}>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <div className={"tab-pane fade"} id="nav-graphview" role="tabpanel"> </div>
             </div>
         </div>

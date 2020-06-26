@@ -414,8 +414,7 @@ function executeAction(VRScene, rule, action) {
                     break;
             }
             break;
-
-        case RuleActionTypes.TRIGGERS:
+            case RuleActionTypes.TRIGGERS:
             /*
                 Azione che si occupa di avviare una regola o un timer
              */
