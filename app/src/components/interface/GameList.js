@@ -96,13 +96,13 @@ function games(props){
 function sendCookie(a) {
     document.cookie = "usernameToken" + "=" + a.username + "" + "; path=/"
     document.cookie = "uuidToken" + "=" + a.uuid + "" + "; path=/"
-    window.location.href='http://localhost:8000/'
+    window.location.href='https://cg3hci.dmi.unica.it/pacpac-games/'
 }
 
 function setUrltoStore(gameName, gameId, user) {
     document.cookie = "usernameToken" + "=" + user.username + "" + "; path=/"
     document.cookie = "uuidToken" + "=" + user.uuid + "" + "; path=/"
-    window.location.href='http://localhost:8000/PostForm?gameName=' + gameName + '&gameId='+ gameId
+    window.location.href='https://cg3hci.dmi.unica.it/pacpac-games/PostForm?gameName=' + gameName + '&gameId='+ gameId
 }
 
 

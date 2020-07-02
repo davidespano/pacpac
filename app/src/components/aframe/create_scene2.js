@@ -136,8 +136,7 @@ export default class VRScene extends React.Component {
         }
     }
 
-    loadingManager()
-    {
+    loadingManager() {
         if(!sceneLoaded){
             let sphere = document.getElementById(this.state.activeScene.name)
             let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
@@ -167,9 +166,7 @@ export default class VRScene extends React.Component {
         }
     }
 
-    //TODO: alzare l'evento al termine del timer
-    timerManager()
-    {
+    timerManager() {
         let timer = document.getElementById(this.state.activeScene.name + 'timer')
         if (timer != null && window.timerTime > 0 && window.timerIsRunning) //se è presente un timer nella scena
         {
@@ -196,8 +193,7 @@ export default class VRScene extends React.Component {
         }
     }
 
-    gameTimeManager()
-    {
+    gameTimeManager() {
         let gameTime = document.getElementById(this.state.activeScene.name + 'gameTime')
         if (gameTime != null) //se è presente il game timer nella scena
         {
@@ -547,6 +543,7 @@ export default class VRScene extends React.Component {
             sceneUuid = this.state.activeScene.uuid;
         }
 
+        let ghostSceneUuid = 'ghostScene';
         textboxEntity = null;
         textboxUuid = this.state.activeScene.objects.textboxes[0];
         timerEntity = null;
@@ -561,15 +558,16 @@ export default class VRScene extends React.Component {
 
 
         let graph = this.state.graph;
-
+        //TODO: le scene neighbour della ghost scene devono essere renderizzate una sola volta se possibile
         //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
         if (this.state.graph.neighbours !== undefined && graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
             this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
                 //this.state.graph.scenes[sceneUuid]);
-                //se questo sistema non funziona, commentare la riga sopra e decommentare le 2 sotto
+                //se questo sistema non funziona, commentare la riga sopra e decommentare le 3 sotto
                 graph.neighbours[sceneUuid].includes(uuid)
-                || uuid === sceneUuid);
+                || uuid === sceneUuid
+                || graph.neighbours[ghostSceneUuid].includes(uuid)); //includo i vicini della ghostscene
             // console.log("neighbours di sceneUuid: ", this.state.graph.neighbours[sceneUuid])
 
             let textObj = graph.objects.get(textboxUuid); //recupero l'oggetto di testo
@@ -599,9 +597,7 @@ export default class VRScene extends React.Component {
             if (keypadObj) //reset del valore quando c'è un altro tastierino
                 window.keypadValue = "";
 
-
-            if (textObj) //se l'oggetto textbox esiste genero la Entity
-            {
+            if (textObj) {//se l'oggetto textbox esiste genero la Entity
                 let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*4)) +
                     "; align: " + textObj.properties.alignment +
                     "; value:" + textObj.properties.string;
@@ -616,8 +612,7 @@ export default class VRScene extends React.Component {
                             text={textProperties} visible={visibility}>
                     </Entity>
             }
-            if (timerObj) //se l'oggetto timer esiste genero la Entity
-            {
+            if (timerObj) { //se l'oggetto timer esiste genero la Entity
                 timerSize = 0.2 + (timerObj.properties.size/15);
                 if (timerID ==  this.state.activeScene.name + 'timer') {
                 }
@@ -634,7 +629,7 @@ export default class VRScene extends React.Component {
                 let geometryPropertiesTM = "primitive: plane; width:" + (timerSize/8)+
                     "; height: auto;"
                 let timerPosition = '0.13 0.23 -0.3'
-                let timerImgPosition = 0.15 + (0.005 * timerObj.properties.size) +" 0.23 -0.3" //+0.075
+                let timerImgPosition = 0.15 + (0.005 * timerObj.properties.size) +" 0.23 -0.3"
                 let geometryPropertiesTMimg = "" + (timerSize/30) + " " + (timerSize/30) + " " +
                     (timerSize/30)
                 let visibility = true;
@@ -651,8 +646,7 @@ export default class VRScene extends React.Component {
                         </Entity>
                     </Entity>
             }
-            if (gameTimeObj) //se l'oggetto game time esiste genero la Entity
-            {
+            if (gameTimeObj) { //se l'oggetto game time esiste genero la Entity
                 gameTimeSize = 0.2 + (gameTimeObj.properties.size/15);
                 let textPropertiesPT = "baseline: center; side: double"+
                     "; align: center" +
@@ -679,8 +673,7 @@ export default class VRScene extends React.Component {
                         </Entity>
                     </Entity>
             }
-            if (scoreObj) //se l'oggetto score esiste genero la Entity
-            {
+            if (scoreObj) { //se l'oggetto score esiste genero la Entity
                 if (window.scoreValue == undefined)
                     window.scoreValue = 0;
                 scoreSize = 0.2 + (scoreObj.properties.size/15);
@@ -710,8 +703,7 @@ export default class VRScene extends React.Component {
                         </Entity>
                     </Entity>
             }
-            if (healthObj) //se l'oggetto health esiste genero la Entity
-            {
+            if (healthObj) { //se l'oggetto health esiste genero la Entity
                 if (window.healthValue == undefined)
                     window.healthValue = healthObj.properties.health;
                 healthSize = 0.2 + (healthObj.properties.size/15);
@@ -747,6 +739,7 @@ export default class VRScene extends React.Component {
         {
             this.currentLevel = [];
         }
+
         //Richiamo la funzione per la generazione degli assets
         //[Vittoria] gli assets vengono caricati non tutti insieme all'inizio ma quello della scena corrente e dei vicini
         let assets = this.generateAssets(this.props.editor.gameId);
@@ -821,6 +814,7 @@ export default class VRScene extends React.Component {
         //Restituisco il codice React relativo ad ogni bolla da caricare nella scena
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
+            //console.log("render scena ", sceneName)
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
             //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'

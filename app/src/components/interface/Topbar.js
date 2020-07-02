@@ -125,7 +125,7 @@ function TopBar(props){
                     </a>
 
                     <a className="nav-item nav-link" id="nav-graphpview-tab" href="#nav-graphview" data-toggle="tab" role="tab"
-                       aria-controls="nav-graphview" aria-selected="false" onClick={()=> handleGraphViewMode(props)}>Graph View</a>
+                       aria-controls="nav-graphview" aria-selected="false" visible="false" onClick={()=> handleGraphViewMode(props)}>Graph View</a>
 
                     <div id={'topbar-game-title'} className={'navbar-brand'}>
                         {props.editor.gameTitle}
@@ -217,20 +217,7 @@ function TopBar(props){
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.BUTTON)}/>
                             <figcaption>Pulsante</figcaption>
                         </figure>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.KEYPAD);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEYPAD)}/>
-                            <figcaption>Tastierino</figcaption>
-                        </figure>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    //createObject(props, InteractiveObjectsTypes.SELECTOR);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SELECTOR)}/>
-                            <figcaption>Selettore</figcaption>
-                        </figure>
+
                     </div>
                 </div>
 
