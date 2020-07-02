@@ -18,7 +18,10 @@ export default function evalCondition(c, gameState) {
         if(c.obj_uuid == "" || c.obj_uuid == null || !c.operator || c.state == "") return true; //se i campi della condizione semplice
         //sono vuoti non crasha ma restituisce true
 
-        const state = gameState[c.obj_uuid].state;
+        let state = gameState[c.obj_uuid].state;
+        if(state === undefined){
+            state = gameState[c.obj_uuid][c.state.toLowerCase()];
+        }
         switch (c.operator) {
             case Operators.EQUAL:
             case Operators.EQUAL_NUM:
