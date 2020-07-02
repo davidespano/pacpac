@@ -414,7 +414,7 @@ function executeAction(VRScene, rule, action) {
                     break;
             }
             break;
-            case RuleActionTypes.TRIGGERS:
+        case RuleActionTypes.TRIGGERS:
             /*
                 Azione che si occupa di avviare una regola o un timer
              */
@@ -458,8 +458,25 @@ function executeAction(VRScene, rule, action) {
             console.log('not yet implemented');
             console.log(action);
     }
-    console.log(`emit ${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
-    eventBus.emit(`${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
+    let event=null;
+    //tempo di gioco
+    if(subject_obj &&subject_obj.type === InteractiveObjectsTypes.PLAYTIME){
+        event = `GameTime-reach_minute-${action.obj_uuid}`;
+    }
+    //vita
+    else if( subject_obj &&subject_obj.type=== InteractiveObjectsTypes.HEALTH){
+        event = `Health-value_changed_to-${action.obj_uuid}`;
+    }
+    //punteggio
+    else if(subject_obj && subject_obj.type === InteractiveObjectsTypes.SCORE){
+        event = `Score-value_changed_to-${action.obj_uuid}`;
+    }
+    else{
+        event = `${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`;
+    }
+
+    console.log(`emit`, event);
+    eventBus.emit(event);
 }
 
 /**

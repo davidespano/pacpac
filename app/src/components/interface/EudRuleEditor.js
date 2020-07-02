@@ -599,6 +599,15 @@ class EudCondition extends Component {
         let actionId = this.props.editor.get('actionId');
         let subjectCompletion = this.showCompletion(actionId, "subject");
         let subject = this.getInteractiveObjectReference(this.props.condition.obj_uuid);
+        let originalText = subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name;
+
+        if(subject){
+            //se è un oggetto globale non voglio che si scriva "la vita Vita"
+            if(subject.type === InteractiveObjectsTypes.PLAYTIME || subject.type === InteractiveObjectsTypes.SCORE ||
+                subject.type === InteractiveObjectsTypes.HEALTH){
+                originalText = toString.objectTypeToString(subject.type);
+            }
+        }
         let subjectRendering =
             <EudRulePart
                 interactiveObjects={this.props.interactiveObjects}
@@ -609,7 +618,7 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name}
+                originalText={originalText}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
@@ -1498,11 +1507,7 @@ class EudAutoComplete extends Component {
                 //aggiungo manualmente gli oggetti della scena
                 if(graph===3){
                     //filtro gli oggetti globali
-                    let items = sceneObjectsOnly(this.props).filter(
-                        x => x.type != InteractiveObjectsTypes.HEALTH &&
-                            x.type != InteractiveObjectsTypes.SCORE
-                            && x.type != InteractiveObjectsTypes.PLAYTIME
-                    ).valueSeq();
+                    let items = sceneObjectsOnly(this.props).valueSeq();
                     return <div className={"eudCompletionPopupForGraph"}>
                         <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
                         <ul>
@@ -1522,8 +1527,8 @@ class EudAutoComplete extends Component {
                 //Primo gruppo, TUTTI gli oggetti appartenenti alle scene
                 let sceneObj = this.props.interactiveObjects.filter(x =>
                     x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST &&
-                    x.type !== InteractiveObjectsTypes.HEALTH &&
-                    x.type !== InteractiveObjectsTypes.SCORE &&
+                    //x.type !== InteractiveObjectsTypes.HEALTH &&
+                    //x.type !== InteractiveObjectsTypes.SCORE &&
                     x.type !== InteractiveObjectsTypes.PLAYTIME);
                 //mi prendo le scene coinvolte
                 let scenes =returnScenes(sceneObj, this.props);
@@ -1534,9 +1539,20 @@ class EudAutoComplete extends Component {
                 let liNotSceneObj = listableItems(notSceneObj.valueSeq(), this.props);
 
                 let fragment = scenes.map( element => {
+                    let scene_name = null;
                     var obj = mapSceneWithObjects(this.props, element, sceneObj);
-                    let objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
-                    let scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
+                    let objects = null;
+                    if(element.name==='Ghost Scene' ){ //faccio in modo di mostrare gli oggetti globali una volta sola
+                        scene_name = 'Oggetti globali';
+                        objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
+
+                    }
+                    else {
+                        objects = listableItems(obj.filter(x=> x.type !== InteractiveObjectsTypes.HEALTH &&
+                            x.type !== InteractiveObjectsTypes.SCORE), this.props); //filtro gli oggetti globali
+                        scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
+                    }
+
                     return (<React.Fragment>
                         <span> {scene_name} </span>
                         <ul>
@@ -1548,7 +1564,7 @@ class EudAutoComplete extends Component {
                     <div className={"eudCompletionPopupForGraph"}>
                         {fragment}
                         <ul>
-                            <div class={"line"}/>
+                            <div className={"line"}/>
                             {liNotSceneObj}
                         </ul>
 

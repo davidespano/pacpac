@@ -374,6 +374,9 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.KEY,
                 InteractiveObjectsTypes.COUNTER,
+                InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.SCORE,
+                InteractiveObjectsTypes.PLAYTIME
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.VISIBLE),
@@ -425,6 +428,9 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.KEY,
                 InteractiveObjectsTypes.COUNTER,
+                InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.SCORE,
+                InteractiveObjectsTypes.PLAYTIME
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.INVISIBLE),
