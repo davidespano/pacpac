@@ -703,9 +703,9 @@ class EudCondition extends Component {
         }
 
         return <span className={"eudAction"} key={this.props.condition.uuid}>
-                {subjectRendering}
-            {operatorRendering}
-            {valueRendering}
+                    {subjectRendering}
+                    {operatorRendering}
+                    {valueRendering}
                 </span>;
 
     }

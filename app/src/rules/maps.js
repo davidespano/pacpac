@@ -283,6 +283,8 @@ const OperatorsMap = Immutable.Map([
                 InteractiveObjectsTypes.POINT_OF_INTEREST,
                 InteractiveObjectsTypes.COUNTER,
                 InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.PLAYTIME,
+                InteractiveObjectsTypes.SCORE
             ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.EQUAL),
@@ -300,6 +302,8 @@ const OperatorsMap = Immutable.Map([
                 InteractiveObjectsTypes.POINT_OF_INTEREST,
                 InteractiveObjectsTypes.COUNTER,
                 InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.PLAYTIME,
+                InteractiveObjectsTypes.SCORE
             ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.NOT_EQUAL),
@@ -394,6 +398,9 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.KEY,
                 InteractiveObjectsTypes.COUNTER,
+                InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.SCORE,
+                InteractiveObjectsTypes.PLAYTIME
             ],
             verb_type: [RuleActionTypes.CHANGE_ACTIVABILITY],
             name: toString.valueUuidToString(Values.ACTIVABLE),
@@ -411,6 +418,9 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.KEY,
                 InteractiveObjectsTypes.COUNTER,
+                InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.SCORE,
+                InteractiveObjectsTypes.PLAYTIME
             ],
             verb_type: [RuleActionTypes.CHANGE_ACTIVABILITY],
             name: toString.valueUuidToString(Values.NOT_ACTIVABLE),
