@@ -137,9 +137,9 @@ export default class VRScene extends React.Component {
     }
 
     loadingManager() {
+        let sphere = document.getElementById(this.state.activeScene.name)
+        let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
         if(!sceneLoaded){
-            let sphere = document.getElementById(this.state.activeScene.name)
-            let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
             if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
             {
                 sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
@@ -154,8 +154,9 @@ export default class VRScene extends React.Component {
                     sceneLoaded = true;
                 }
             }
-            if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
+            if (sceneLoaded) //quando la scena è caricata, rendo invisibile la bolla di caricamento
             {
+                //console.log(sphere.components["material"].data.src.currentTime)
                 loadingsphere.setAttribute('visible', 'false');
                 // al termine del video sollevo l'evento per essere gestito qualora ci sia una regola per fine video
                 let media = sphere.components["material"].data.src
@@ -163,6 +164,9 @@ export default class VRScene extends React.Component {
                     eventBus.emit(media.id + "-is-ENDED");
                 }
             }
+        }
+        else{ // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
+            loadingsphere.setAttribute('visible', 'false');
         }
     }
 
