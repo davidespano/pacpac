@@ -74,9 +74,61 @@ export default class EudRuleEditor extends Component {
             let ghostSceneUuid = this.props.scenes.filter(obj => {
                 return obj.name === 'Ghost Scene'
             }).keySeq().first(); //uuid della ghost scene
-            if(ghostSceneUuid===undefined){
-                SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default', Orders.CHRONOLOGICAL, this.props);
-                return null;
+
+            if(ghostSceneUuid===undefined ){
+                 return (<div className={"rules"}>
+                    <div className={"expand-btn"} >
+                        <figure className={'expand-btn'}
+                                onClick={() => {
+                                    this.props.expandEditor(!this.props.editor.editorExpanded);
+                                }}>
+                            <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                 src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
+                                     "icons/icons8-expand-arrow-filled-50.png"}
+                                 alt={'Espandi'}
+                            />
+                        </figure>
+                    </div>
+
+                    <button className="accordion" id={"accordionScene"} onClick={
+                        () => {
+                            onAccordionClick('accordionScene')
+                        }
+                    }
+                    >Regole di scena</button>
+
+                    <div className="panel">
+                        <div className={"rule-container"}>
+                            <div className={"eudBar"}>
+                                <div id={'rule-editor-btns'}>
+                                    <button
+                                        disabled={this.props.editor.ruleCopy===null}
+                                        onClick={() => {
+                                            this.onCopyRuleClick(scene);
+                                        }}
+                                    >
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
+                                        Copia qui
+                                    </button>
+                                    <button className={"btn select-file-btn"}
+                                            onClick={() => {
+                                                this.onNewRuleClick(false);
+                                            }}>
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
+                                        Nuova Regola
+                                    </button>
+                                </div>
+                            </div>
+                            <div className={"rule-editor"}
+                                 onClick={() => {
+                                     this.onOutsideClick();
+                                 }}>
+                                {rulesRendering}
+                                <div className={'rules-footer'}></div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>)
             }
             ghostScene = this.props.scenes.get(ghostSceneUuid);
             let ghostSceneRules = ghostScene.get('rules');

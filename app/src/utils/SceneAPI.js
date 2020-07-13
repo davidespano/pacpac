@@ -359,7 +359,14 @@ function createScene(name, img, index, type, tag, order, props) {
                     createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.HEALTH);
                 }
             }
+            //mi serve solo per i nuovi giochi
+            if(props.scenes.size ===0 && props.scenes.get('ghostScene')===undefined){
+                createScene('Ghost Scene', "null", 0, '2D', 'default',
+                    Orders.CHRONOLOGICAL, props);
+                console.log("created ghost scene")
+            }
         });
+
 
 }
 
