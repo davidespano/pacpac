@@ -522,7 +522,7 @@ export function createObject(props, type){
             case InteractiveObjectsTypes.SCORE:
                 creatingGlobal = true;
                 scene = props.scenes.get('ghostScene');
-                if(scene == undefined){
+               /* if(scene == undefined){
                     SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
                         Orders.CHRONOLOGICAL, props);
                     scene = props.scenes.get('ghostScene');
@@ -553,11 +553,31 @@ export function createObject(props, type){
                     alert("Hai già l'oggetto Score nel gioco")
                     return;
                 }
+                break;*/
+                if(scene == undefined){ //la ghost scene non esiste
+                    //la creo
+                    SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
+                        Orders.CHRONOLOGICAL, props);
+
+                    addScoreToScenes(sceneArray, props, obj, name)
+                }
+                //nel caso di nuovi giochi aggiungo l'oggetto globale a tutte le scene comprese la ghost
+                else{
+                    if(scene.objects.score.length == 0)
+                    {
+                        addScoreToScenes(sceneArray, props, obj, name)
+                    }
+                    else
+                    {
+                        alert("Hai già l'oggetto Score nel gioco");
+                        return;
+                    }
+                }
                 break;
             case InteractiveObjectsTypes.HEALTH:
                 creatingGlobal = true;
                 scene = props.scenes.get('ghostScene');
-                if(scene == undefined){
+               /* if(scene == undefined){
                     SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
                         Orders.CHRONOLOGICAL, props);
                     scene = props.scenes.get('ghostScene');
@@ -593,6 +613,31 @@ export function createObject(props, type){
                     alert("Hai già l'oggetto Health nel gioco");
                     return;
                 }
+                break;*/
+                if(scene == undefined){ //la ghost scene non esiste
+                    //la creo
+                    SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
+                        Orders.CHRONOLOGICAL, props);
+
+                    addHealthToScenes(sceneArray, props, obj, name, scene);
+
+                }
+                //nel caso di nuovi giochi aggiungo l'oggetto globale a tutte le scene comprese la ghost
+                else{
+                    if(scene.objects.health.length == 0)
+                    {
+                        addHealthToScenes(sceneArray, props, obj, name);
+                        //la vita è l'unico oggetto globale con una regola di default,
+                        //questo va fuori dal ciclo perchè deve generarla solo per la ghostScene
+                        let defaultRule = rules_utils.generateDefaultRule(obj, scene);
+                        props.addNewRule(scene, defaultRule);
+                    }
+                    else
+                    {
+                        alert("Hai già l'oggetto Health nel gioco");
+                        return;
+                    }
+                }
                 break;
             case InteractiveObjectsTypes.PLAYTIME:
                 creatingGlobal = true;
@@ -604,13 +649,13 @@ export function createObject(props, type){
                         Orders.CHRONOLOGICAL, props);
 
                     //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
-                    addObjectToScenes(sceneArray, props, obj, name)
+                    addPlayTimeToScenes(sceneArray, props, obj, name)
                 }
                 //nel caso di nuovi giochi aggiungo l'oggetto globale a tutte le scene comprese la ghost
                 else{
                     if(scene.objects.playtime.length == 0)
                     {
-                        addObjectToScenes(sceneArray, props, obj, name)
+                        addPlayTimeToScenes(sceneArray, props, obj, name)
                     }
                     else
                     {
@@ -647,7 +692,7 @@ export function createObject(props, type){
     }
 }
 
-function addObjectToScenes(sceneArray, props, obj, name){
+function addPlayTimeToScenes(sceneArray, props, obj, name){
     for (let i = 0, len = sceneArray.length; i < len; i++) {
         if(sceneArray[i].objects.playtime.length == 0)
         {
@@ -664,7 +709,49 @@ function addObjectToScenes(sceneArray, props, obj, name){
         }
     }
 }
+function addHealthToScenes(sceneArray, props, obj, name, scene){
+    //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
+    for (let i = 0, len = sceneArray.length; i < len; i++) {
+        if(sceneArray[i].objects.health.length == 0)
+        {
+            name = 'Vita';
+            obj = Health({
+                uuid: sceneArray[i].uuid+"_hl",
+                name: name,
+                properties: {
+                    health: 100,
+                    size: 5,
+                }
+            });
+            props.addNewObject(sceneArray[i], obj);
 
+        }
+    }
+
+    //la vita è l'unico oggetto globale con una regola di default,
+    //questo va fuori dal ciclo perchè deve generarla solo per la ghostScene
+    let defaultRule = rules_utils.generateDefaultRule(obj, scene);
+    props.addNewRule(scene, defaultRule);
+}
+
+function addScoreToScenes(sceneArray, props, obj, name){
+    //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
+    for (let i = 0, len = sceneArray.length; i < len; i++) {
+        if(sceneArray[i].objects.score.length == 0)
+        {
+            name = 'Punteggio';
+            obj = Score({
+                uuid: sceneArray[i].uuid+"_sc",
+                name: name,
+                properties: {
+                    score: 100,
+                    size: 5,
+                }
+            });
+            props.addNewObject(sceneArray[i], obj);
+        }
+    }
+}
 /**
  * Creates global objects in the new scene if there are any in other scenes
  * @param props
