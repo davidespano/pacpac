@@ -495,7 +495,7 @@ export function createObject(props, type){
                 }
                 else
                 {
-                    alert("Hai già un oggetto textbox in questa scena")
+                    alert("Hai già un oggetto textbox in questa scena");
                     return;
                 }
                 break;
@@ -724,11 +724,13 @@ function addHealthToScenes(sceneArray, props, obj, name, scene){
 
         }
     }
-
-    //la vita è l'unico oggetto globale con una regola di default,
-    //questo va fuori dal ciclo perchè deve generarla solo per la ghostScene
-    let defaultRule = rules_utils.generateDefaultRule(obj, scene);
-    props.addNewRule(scene, defaultRule);
+    //per necessità se la ghost scene non è già stata creata non creo la regola della vita
+    if(scene != undefined){
+        //la vita è l'unico oggetto globale con una regola di default,
+        //questo va fuori dal ciclo perchè deve generarla solo per la ghostScene
+        let defaultRule = rules_utils.generateDefaultRule(obj, scene);
+        props.addNewRule(scene, defaultRule);
+    }
 }
 
 function addScoreToScenes(sceneArray, props, obj, name){
