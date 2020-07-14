@@ -166,7 +166,10 @@ export default class VRScene extends React.Component {
             }
         }
         else{ // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
-            loadingsphere.setAttribute('visible', 'false');
+            if(loadingsphere)//questo previene un crash nella debug mode
+            {
+                loadingsphere.setAttribute('visible', 'false');
+            }
         }
     }
 
