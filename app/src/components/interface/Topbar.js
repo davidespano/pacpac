@@ -626,11 +626,7 @@ export function createObject(props, type){
                 else{
                     if(scene.objects.health.length == 0)
                     {
-                        addHealthToScenes(sceneArray, props, obj, name);
-                        //la vita è l'unico oggetto globale con una regola di default,
-                        //questo va fuori dal ciclo perchè deve generarla solo per la ghostScene
-                        let defaultRule = rules_utils.generateDefaultRule(obj, scene);
-                        props.addNewRule(scene, defaultRule);
+                        addHealthToScenes(sceneArray, props, obj, name, scene);
                     }
                     else
                     {
@@ -709,6 +705,7 @@ function addPlayTimeToScenes(sceneArray, props, obj, name){
         }
     }
 }
+
 function addHealthToScenes(sceneArray, props, obj, name, scene){
     //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
     for (let i = 0, len = sceneArray.length; i < len; i++) {
