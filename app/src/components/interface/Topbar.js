@@ -211,7 +211,29 @@ function TopBar(props){
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)}/>
                             <figcaption>Timer</figcaption>
                         </figure>
-
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.BUTTON);
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.BUTTON)}/>
+                            <figcaption>Pulsante</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.KEYPAD);
+                                    //alert("Oggetto disponibile a breve")
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEYPAD)}/>
+                            <figcaption>Tastierino</figcaption>
+                        </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.SELECTOR);
+                                    //alert("Oggetto disponibile a breve")
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SELECTOR)}/>
+                            <figcaption>Selettore</figcaption>
+                        </figure>
                     </div>
                 </div>
 
