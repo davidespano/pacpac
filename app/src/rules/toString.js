@@ -107,6 +107,9 @@ function objectTypeToString(objectType) {
         case InteractiveObjectsTypes.PLAYTIME:
             type = 'il tempo di gioco';
             break;
+        case InteractiveObjectsTypes.KEYPAD:
+            type = 'il tastierino';
+            break;
         case Values.THREE_DIM:
         case Values.TWO_DIM:
             type = "la scena";
