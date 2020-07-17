@@ -569,13 +569,19 @@ export default class VRScene extends React.Component {
         //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
         if (this.state.graph.neighbours !== undefined && graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
-            this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
-                //this.state.graph.scenes[sceneUuid]);
-                //se questo sistema non funziona, commentare la riga sopra e decommentare le 3 sotto
-                graph.neighbours[sceneUuid].includes(uuid)
-                || uuid === sceneUuid
-                || graph.neighbours[ghostSceneUuid].includes(uuid)); //includo i vicini della ghostscene
-            // console.log("neighbours di sceneUuid: ", this.state.graph.neighbours[sceneUuid])
+            if(graph.neighbours[ghostSceneUuid]){
+                this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
+                    //se questo sistema non funziona, commentare la riga sopra e decommentare le 3 sotto
+                    graph.neighbours[sceneUuid].includes(uuid)
+                    || uuid === sceneUuid
+                    || graph.neighbours[ghostSceneUuid].includes(uuid)); //includo i vicini della ghostscene
+            }
+            else{ //se la ghost scene non è stata ancora creata
+                this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
+                    //se questo sistema non funziona, commentare la riga sopra e decommentare le 3 sotto
+                    graph.neighbours[sceneUuid].includes(uuid)
+                    || uuid === sceneUuid);
+            }
 
             let textObj = graph.objects.get(textboxUuid); //recupero l'oggetto di testo
             if (textObj == undefined)//per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
