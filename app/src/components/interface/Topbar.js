@@ -92,7 +92,6 @@ function TopBar(props){
                     <a className={"nav-item nav-link " + debugCheck(isDebugActive)} id="nav-debug-tab" data-toggle="tab"
                        role="tab" href={'#' + debugLink(isDebugActive)} aria-controls={debugLink(isDebugActive)} aria-selected="false"
                        onClick={() => {
-                           //let  result = rules_utils.checkCompletionsRules(props);
                            let  result = rules_utils.checkCompletionsRules(props);
 
                            if(result.length === 0){

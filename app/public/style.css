@@ -111,7 +111,7 @@ div.rules{
 
 
 .grid-container > .rules {
-    max-height: 40vh;
+    height: 32vh;
 }
 
 .expanded > .rules{
