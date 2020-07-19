@@ -65,6 +65,9 @@ function objectTypeToString(objectType) {
         case InteractiveObjectsTypes.BUTTON:
             type = "il pulsante";
             break;
+        case InteractiveObjectsTypes.COMBINATION:
+            type = "la combinazione";
+            break;
         case InteractiveObjectsTypes.COUNTER:
             type = "il contatore";
             break;
@@ -189,6 +192,8 @@ function valueUuidToString(valueUuid){
             return 'attivabile';
         case Values.NOT_ACTIVABLE:
             return 'non attivabile';
+        case Values.CORRECT:
+            return 'corretta';
         case Values.ON:
             return 'acceso';
         case Values.OFF:

@@ -17,7 +17,8 @@ const RuleActionMap = Immutable.Map([
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.TRANSITION,
                 InteractiveObjectsTypes.COUNTER,
-                InteractiveObjectsTypes.BUTTON
+                InteractiveObjectsTypes.BUTTON,
+                InteractiveObjectsTypes.KEYPAD
             ],
             name: toString.eventTypeToString(RuleActionTypes.CLICK),
             uuid: RuleActionTypes.CLICK
@@ -288,7 +289,9 @@ const OperatorsMap = Immutable.Map([
                 InteractiveObjectsTypes.HEALTH,
                 InteractiveObjectsTypes.PLAYTIME,
                 InteractiveObjectsTypes.SCORE,
-                InteractiveObjectsTypes.BUTTON
+                InteractiveObjectsTypes.BUTTON,
+                InteractiveObjectsTypes.KEYPAD,
+                InteractiveObjectsTypes.COMBINATION
             ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.EQUAL),
@@ -308,7 +311,8 @@ const OperatorsMap = Immutable.Map([
                 InteractiveObjectsTypes.HEALTH,
                 InteractiveObjectsTypes.PLAYTIME,
                 InteractiveObjectsTypes.SCORE,
-                InteractiveObjectsTypes.BUTTON
+                InteractiveObjectsTypes.BUTTON,
+                InteractiveObjectsTypes.KEYPAD
             ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.NOT_EQUAL),
@@ -386,7 +390,8 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.HEALTH,
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.PLAYTIME,
-                InteractiveObjectsTypes.BUTTON
+                InteractiveObjectsTypes.BUTTON,
+                InteractiveObjectsTypes.KEYPAD
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.VISIBLE),
@@ -407,7 +412,9 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.HEALTH,
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.PLAYTIME,
-                InteractiveObjectsTypes.BUTTON
+                InteractiveObjectsTypes.BUTTON,
+                InteractiveObjectsTypes.KEYPAD
+
             ],
             verb_type: [RuleActionTypes.CHANGE_ACTIVABILITY],
             name: toString.valueUuidToString(Values.ACTIVABLE),
@@ -428,7 +435,9 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.HEALTH,
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.PLAYTIME,
-                InteractiveObjectsTypes.BUTTON
+                InteractiveObjectsTypes.BUTTON,
+                InteractiveObjectsTypes.KEYPAD
+
             ],
             verb_type: [RuleActionTypes.CHANGE_ACTIVABILITY],
             name: toString.valueUuidToString(Values.NOT_ACTIVABLE),
@@ -449,7 +458,9 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.HEALTH,
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.PLAYTIME,
-                InteractiveObjectsTypes.BUTTON
+                InteractiveObjectsTypes.BUTTON,
+                InteractiveObjectsTypes.KEYPAD
+
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.INVISIBLE),
@@ -542,6 +553,19 @@ const ValuesMap = Immutable.Map([
             verb_type: [RuleActionTypes.IS],
             name: toString.valueUuidToString(Values.ENDED),
             uuid: Values.ENDED,
+        },
+
+    ],
+    [
+        Values.CORRECT,
+        {
+            type: 'value',
+            subj_type: [
+                InteractiveObjectsTypes.COMBINATION
+            ],
+            verb_type: [Operators.EQUAL],
+            name: toString.valueUuidToString(Values.CORRECT),
+            uuid: Values.CORRECT,
         },
 
     ],

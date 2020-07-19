@@ -2,8 +2,11 @@ import SuperCondition from "./SuperCondition";
 import Condition from './Condition'
 import {Operators} from "./Operators";
 import {SuperOperators} from "./Operators";
+import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
+import create_scene2 from "../components/aframe/create_scene2";
 
-export default function evalCondition(c, gameState) {
+//Se è coinvolto il tastierino passo un parametro aggiuntivo keypad che mi serve per la funzione checkKeypadValue
+export default function evalCondition(c, gameState, keypad=null) {
     if(JSON.stringify(c) == "{}" || c === '{}' || c==='"{}"') return true; //quick fix for conditions saved with wrong format
     if(c instanceof SuperCondition || c.hasOwnProperty("condition1")){
         switch (c.operator) {
@@ -17,6 +20,9 @@ export default function evalCondition(c, gameState) {
     }else if(c instanceof Condition || c.hasOwnProperty("obj_uuid")){
         if(c.obj_uuid == "" || c.obj_uuid == null || !c.operator || c.state == "") return true; //se i campi della condizione semplice
         //sono vuoti non crasha ma restituisce true
+        if(c.obj_uuid===InteractiveObjectsTypes.COMBINATION){
+            return create_scene2.checkKeypadValue(keypad)
+        }
 
         let state = gameState[c.obj_uuid].state;
         if(state === undefined){

@@ -454,7 +454,16 @@ function executeAction(VRScene, rule, action) {
                     break;
             }
             break;
-        default:
+        case "UPDATE_KEYPAD":
+            /*non è un Action Types perchè non è un'azione vera e propria che si vede nelle regole
+            è implicita quando si genera una regola con "se il codice è corretto" e verifica in game
+            quali tasti l'utente ha cliccato*/
+            let uuid_btn_pressed = action_obj_uuid; //uuid btn premuto
+            let keypad = subject_obj; //tastierino di riferimento
+            let btn_value = keypad.properties.buttonsValues[uuid_btn_pressed]; //valore associato al btn premuto
+            create_scene2.updateKeypadValue(btn_value); //aggiorno il valore del tastierino
+            break;
+            default:
             console.log('not yet implemented');
             console.log(action);
     }

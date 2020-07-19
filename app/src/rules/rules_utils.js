@@ -136,7 +136,13 @@ function generateDefaultRule(object, scene){
             r = Rule({
                 uuid: uuid.v4(),
                 name : 'regola del tastierino ' + object.name,
-                event: Action({}),
+                event: Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                condition : new Condition(uuid.v4(), InteractiveObjectsTypes.COMBINATION, Values.CORRECT, Operators.EQUAL),
                 actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             break;

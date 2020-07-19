@@ -1,6 +1,7 @@
 const InteractiveObjectsTypes = {
 
     BUTTON : 'BUTTON',
+    COMBINATION: 'COMBINATION',
     COUNTER : 'COUNTER',
     CUMULABLE : 'CUMULABLE',
     KEY : 'KEY',

@@ -652,7 +652,6 @@ class EudCondition extends Component {
         let subjectCompletion = this.showCompletion(actionId, "subject");
         let subject = this.getInteractiveObjectReference(this.props.condition.obj_uuid);
         let originalText = subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name;
-
         if(subject){
             //se è un oggetto globale non voglio che si scriva "la vita Vita"
             if(subject.type === InteractiveObjectsTypes.PLAYTIME || subject.type === InteractiveObjectsTypes.SCORE ||
@@ -774,6 +773,13 @@ class EudCondition extends Component {
             return InteractiveObject({
                 type: InteractiveObjectsTypes.PLAYER,
                 uuid: InteractiveObjectsTypes.PLAYER,
+                name: ""
+            });
+        }
+        if (uuid == InteractiveObjectsTypes.COMBINATION) {
+            return InteractiveObject({
+                type: InteractiveObjectsTypes.COMBINATION,
+                uuid: InteractiveObjectsTypes.COMBINATION,
                 name: ""
             });
         }
@@ -1830,7 +1836,17 @@ function getCompletions(props, global) {
                             name: ""
                         })
                     );
-                    let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes).filter(x=>
+                    let result = props.rulePartType === 'condition' && props.rule.event //faccio in modo che "se la combinazione è corretta"
+                        && props.interactiveObjects.get(props.rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD //appaia solo se la prima parte della frase è
+                        && props.rule.event.subj_uuid === InteractiveObjectsTypes.PLAYER //"il giocatore ha cliccato il tastierino"
+                        && props.rule.event.action === RuleActionTypes.CLICK
+                        ? subjects.set(InteractiveObjectsTypes.COMBINATION,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.COMBINATION,
+                            uuid: InteractiveObjectsTypes.COMBINATION,
+                            name: ""
+                        }))
+                        : subjects.merge(props.scenes).filter(x=>
                         x.uuid != 'ghostScene');
                     let items= result.sort(function (a) {
                         //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena

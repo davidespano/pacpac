@@ -26,6 +26,8 @@ import Timer from "../../interactives/Timer";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import {calculate2DSceneImageBounds} from "./aframe_curved";
 import RuleActionTypes from "../../rules/RuleActionTypes";
+import ObjectsStore from "../../data/ObjectsStore";
+import Action from "../../rules/Action";
 const soundsHub = require('./soundsHub');
 const resonance = require('./Audio/Resonance');
 const THREE = require('three');
@@ -444,7 +446,14 @@ export default class VRScene extends React.Component {
 
                     console.log("rule ", rule, "event: ", event);
                     eventBus.on(event, function () {
-                        let condition = evalCondition(rule.condition, me.state.runState);
+                        let condition;
+                        //in questo caso mi serve necessariamente passare alla condition il tastierino
+                        if(me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                            rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
+                            condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                        }else{
+                            condition = evalCondition(rule.condition, me.state.runState);
+                        }
                         if (condition) {
                             rule.actions.forEach(action => {
                                 let actionExecution = actionCallback(action);
@@ -462,6 +471,34 @@ export default class VRScene extends React.Component {
                     });
                     if(rule.event.action==="ENTER_SCENE"){
                         eventBus.emit(event);
+                    }
+                    //se la regola è una regola di tastierino devo caricare anche tutti gli eventi relativi alla pressione
+                    //dei pulsanti che fanno parte del tastierino
+                    if(me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                        rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
+                        let buttons = ObjectsStore.getState().get(rule.event.obj_uuid).properties.buttonsValues;
+                        let buttons_objects = []; //elenco oggetti btn presenti nel tastierino
+                        for(var i =0; i<Object.keys(buttons).length;i++){
+                            let uuid = Object.keys(buttons)[i]; //uuid del btn
+                            buttons_objects.push(ObjectsStore.getState().get(uuid));
+                        }
+
+                        for(var i =0; i<buttons_objects.length; i++){
+                            let eventClick = `PLAYER-click-${buttons_objects[i].uuid}`;
+                            let uuid=buttons_objects[i].uuid;
+                            eventBus.on(eventClick, function () {
+                               //qua devo mettere come actions il fatto che quando clicco il btn
+                                // viene aggiornata la variabile con la combinazione cliccata dall'utente
+                                let actionExecution = actionCallback(new Action({
+                                    uuid: null,
+                                    subj_uuid: rule.event.obj_uuid, //come soggetto gli passo il tastierino
+                                    action: "UPDATE_KEYPAD",
+                                    obj_uuid: uuid,
+                                }),);
+                                actionExecution();
+
+                            });
+                        }
                     }
                     break;
             }
@@ -866,6 +903,7 @@ export default class VRScene extends React.Component {
         window.timerIsRunning = false;
 
     }
+
     static timerStart() {
         window.timerIsRunning = true;
     }
@@ -949,17 +987,24 @@ export default class VRScene extends React.Component {
         }
     }
 
+
     //Metodi tastierino
     static updateKeypadValue(newNumber){
+        //valore cliccato
         window.keypadValue = window.keypadValue + String(newNumber);
     }
 
     static checkKeypadValue(keypadObj){
-        window.keypadValue = "";
-        if (keypadObj.combination == window.keypadValue) {
+        //keypadObj.combination contiene la combinazione corretta
+        //window.keypadValue contiene la combinazione cliccata dall'utente
+        if (keypadObj.properties.combination == window.keypadValue) {
+            window.keypadValue = ""; //anche se il codice è giusto resetto la variabile per le prossime combinazioni
+            console.log("codice corretto: ", keypadObj.properties.combination);
             return true;
         }
         else {
+            console.log("il codice che hai inserito è errato: ", window.keypadValue);
+            window.keypadValue = ""; //se il codice è sbagliato resetto il valore inserito dall'utente
             return false;
         }
     }
