@@ -1018,8 +1018,11 @@ export default class VRScene extends React.Component {
         }
     }
 
-    static nextSelectorState(selectorObj){
-        window.selectorState = (window.selectorState + 1) % selectorObj.optionsNumber;
+    static nextSelectorState(selectorObj){ //da chiamare al click del selettore
+        //avanza di 1 lo stato del selettore, se supera gli stati sul numero di opzioni del selettore
+        window.selectorState = (window.selectorState + 1) % (selectorObj.optionsNumber +1);
+        if (window.selectorState == 0) // se supera il numero di opzioni va a 0 e deve diventare 1
+            window.selectorState = 1;
         eventBus.emit(selectorObj.uuid + "-state_changed_to-" + window.selectorState);
     }
 }
