@@ -11,7 +11,7 @@ const Keypad = (defaultValues) => InteractiveObject({
     type : InteractiveObjectsTypes.KEYPAD,
     properties : {
         state: null,
-        combination : null, //must be an array
+        combination : null,
         buttonsValues: {},
     },
     media : {

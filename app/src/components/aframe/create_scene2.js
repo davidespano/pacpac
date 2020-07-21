@@ -50,6 +50,7 @@ let scoreUuid;
 let healthEntity = null;
 let healtUuid;
 let keypadUuid;
+let selectorUuid;
 window.keypadValue = "undefined";
 window.healthValue = undefined;
 window.playtimeValue = undefined;
@@ -599,6 +600,7 @@ export default class VRScene extends React.Component {
         healthEntity = null;
         healtUuid = this.state.activeScene.objects.health[0];
         keypadUuid =  this.state.activeScene.objects.keypads[0];
+        selectorUuid = this.state.activeScene.objects.selectors[0];
 
 
         let graph = this.state.graph;
@@ -646,6 +648,13 @@ export default class VRScene extends React.Component {
 
             if (keypadObj) //reset del valore quando c'è un altro tastierino
                 window.keypadValue = "";
+
+            let selectorObj = graph.objects.get(selectorUuid);
+            if (selectorObj == undefined)
+                selectorObj = selectorUuid;
+
+            if (selectorObj) //reset del valore quando c'è un altro tastierino
+                window.selectorState = 1;
 
             if (textObj) {//se l'oggetto textbox esiste genero la Entity
                 let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*4)) +
@@ -1007,5 +1016,10 @@ export default class VRScene extends React.Component {
             window.keypadValue = ""; //se il codice è sbagliato resetto il valore inserito dall'utente
             return false;
         }
+    }
+
+    static nextSelectorState(selectorObj){
+        window.selectorState = (window.selectorState + 1) % selectorObj.optionsNumber;
+        eventBus.emit(selectorObj.uuid + "-state_changed_to-" + window.selectorState);
     }
 }

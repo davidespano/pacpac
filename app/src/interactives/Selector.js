@@ -23,7 +23,6 @@ const Selector = defaultValues => InteractiveObject({
         media7 : null,
         media8 : null,
         media9 : null,
-
     },
     audio : {
         audio0: null,
