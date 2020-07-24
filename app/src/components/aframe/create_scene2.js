@@ -449,7 +449,7 @@ export default class VRScene extends React.Component {
                     eventBus.on(event, function () {
                         let condition;
                         //in questo caso mi serve necessariamente passare alla condition il tastierino
-                        if(me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                        if(me.props.interactiveObjects.get(rule.event.obj_uuid) && me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
                             rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
                             condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.obj_uuid));
                         }else{
@@ -475,7 +475,7 @@ export default class VRScene extends React.Component {
                     }
                     //se la regola è una regola di tastierino devo caricare anche tutti gli eventi relativi alla pressione
                     //dei pulsanti che fanno parte del tastierino
-                    if(me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                    if(me.props.interactiveObjects.get(rule.event.obj_uuid) && me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
                         rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
                         let buttons = ObjectsStore.getState().get(rule.event.obj_uuid).properties.buttonsValues;
                         let buttons_objects = []; //elenco oggetti btn presenti nel tastierino
@@ -1018,11 +1018,14 @@ export default class VRScene extends React.Component {
         }
     }
 
+    //Metodo selettore
     static nextSelectorState(selectorObj){ //da chiamare al click del selettore
         //avanza di 1 lo stato del selettore, se supera gli stati sul numero di opzioni del selettore
         window.selectorState = (window.selectorState + 1) % (selectorObj.optionsNumber +1);
         if (window.selectorState == 0) // se supera il numero di opzioni va a 0 e deve diventare 1
             window.selectorState = 1;
-        eventBus.emit(selectorObj.uuid + "-state_changed_to-" + window.selectorState);
+        console.log("eventBus.emit",selectorObj.uuid + "-progress-STATE")
+       // eventBus.emit(selectorObj.uuid + "-state_changed_to-" + window.selectorState);
+        eventBus.emit(selectorObj.uuid + "-progress-STATE");
     }
 }

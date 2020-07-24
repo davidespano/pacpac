@@ -53,6 +53,8 @@ function eventTypeToString(eventType) {
             return 'entra nella ';
         case RuleActionTypes.REACH_TIMER:
             return 'arriva a';
+        case RuleActionTypes.PROGRESS:
+            return 'avanza';
         default:
             return "";
     }
@@ -232,6 +234,8 @@ function valueUuidToString(valueUuid){
             return 'sinistra';
         case Values.ZERO:
             return "zero";
+        case Values.STATE:
+            return 'di stato';
         default:
             return 'stato sconosciuto';
     }

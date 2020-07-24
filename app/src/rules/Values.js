@@ -33,6 +33,9 @@ const Values = {
     LEFT : 'LEFT',
     RIGHT : 'RIGHT',
 
+    //selector
+    STATE: 'STATE',
+
     //audio & video
     STARTED: 'STARTED',
     ENDED: 'ENDED',

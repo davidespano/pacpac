@@ -189,6 +189,23 @@ function generateDefaultRule(object, scene){
                 global : true
             });
             break;
+        case InteractiveObjectsTypes.SELECTOR:
+            r = Rule({
+                uuid : uuid.v4(),
+                name : 'regola del ' + object.name,
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: RuleActionTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : Immutable.List([Action({uuid: uuid.v4(),
+                    subj_uuid: object.uuid,
+                    action: RuleActionTypes.PROGRESS,
+                    obj_uuid: InteractiveObjectsTypes.STATE,})]),
+                global : false
+            });
+            break;
         default:
             return;
     }

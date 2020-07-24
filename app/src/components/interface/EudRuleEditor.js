@@ -1837,6 +1837,7 @@ function getCompletions(props, global) {
                         })
                     );
                     let result = props.rulePartType === 'condition' && props.rule.event //faccio in modo che "se la combinazione è corretta"
+                        && props.interactiveObjects.get(props.rule.event.obj_uuid)
                         && props.interactiveObjects.get(props.rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD //appaia solo se la prima parte della frase è
                         && props.rule.event.subj_uuid === InteractiveObjectsTypes.PLAYER //"il giocatore ha cliccato il tastierino"
                         && props.rule.event.action === RuleActionTypes.CLICK
@@ -1915,6 +1916,11 @@ function getCompletions(props, global) {
                     return {items, graph};
                 }
 
+                if(props.verb.action === RuleActionTypes.PROGRESS && props.subject.type === InteractiveObjectsTypes.SELECTOR){
+                    let items = ValuesMap.filter(x => x.subj_type.includes(props.subject.type));
+                    return {items, graph}
+                }
+
                 if (props.verb.action) {
                     let objType = RuleActionMap.get(props.verb.action).obj_type;
                     allObjects = allObjects.filter(x => objType.includes(x.type));
@@ -1933,7 +1939,6 @@ function getCompletions(props, global) {
                 if(items.some(a => typeof a == props.interactiveObjects)){
                     graph = 2;
                 }
-
 
 
                 return {items, graph};
@@ -1982,7 +1987,8 @@ function getCompletions(props, global) {
                 return {items, graph};
             }
             case 'value':{
-                let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
+                let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type) &&
+                    x.uuid !== "STATE") : ValuesMap; //filtro il valore "di stato"
                 return {items, graph};
             }
         }

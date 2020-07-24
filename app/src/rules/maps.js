@@ -18,7 +18,8 @@ const RuleActionMap = Immutable.Map([
                 InteractiveObjectsTypes.TRANSITION,
                 InteractiveObjectsTypes.COUNTER,
                 InteractiveObjectsTypes.BUTTON,
-                InteractiveObjectsTypes.KEYPAD
+                InteractiveObjectsTypes.KEYPAD,
+                InteractiveObjectsTypes.SELECTOR
             ],
             name: toString.eventTypeToString(RuleActionTypes.CLICK),
             uuid: RuleActionTypes.CLICK
@@ -273,6 +274,16 @@ const RuleActionMap = Immutable.Map([
             uuid: RuleActionTypes.DECREASE_NUMBER,
         },
     ],
+    [
+        RuleActionTypes.PROGRESS,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.SELECTOR],
+            obj_type: [Values.STATE],
+            name: toString.eventTypeToString(RuleActionTypes.PROGRESS),
+            uuid: RuleActionTypes.PROGRESS,
+        },
+    ],
 ]);
 
 const OperatorsMap = Immutable.Map([
@@ -291,7 +302,8 @@ const OperatorsMap = Immutable.Map([
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.BUTTON,
                 InteractiveObjectsTypes.KEYPAD,
-                InteractiveObjectsTypes.COMBINATION
+                InteractiveObjectsTypes.COMBINATION,
+                InteractiveObjectsTypes.SELECTOR
             ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.EQUAL),
@@ -391,7 +403,8 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.PLAYTIME,
                 InteractiveObjectsTypes.BUTTON,
-                InteractiveObjectsTypes.KEYPAD
+                InteractiveObjectsTypes.KEYPAD,
+                InteractiveObjectsTypes.SELECTOR
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.VISIBLE),
@@ -413,7 +426,8 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.PLAYTIME,
                 InteractiveObjectsTypes.BUTTON,
-                InteractiveObjectsTypes.KEYPAD
+                InteractiveObjectsTypes.KEYPAD,
+                InteractiveObjectsTypes.SELECTOR
 
             ],
             verb_type: [RuleActionTypes.CHANGE_ACTIVABILITY],
@@ -436,8 +450,8 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.PLAYTIME,
                 InteractiveObjectsTypes.BUTTON,
-                InteractiveObjectsTypes.KEYPAD
-
+                InteractiveObjectsTypes.KEYPAD,
+                InteractiveObjectsTypes.SELECTOR
             ],
             verb_type: [RuleActionTypes.CHANGE_ACTIVABILITY],
             name: toString.valueUuidToString(Values.NOT_ACTIVABLE),
@@ -459,8 +473,8 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.PLAYTIME,
                 InteractiveObjectsTypes.BUTTON,
-                InteractiveObjectsTypes.KEYPAD
-
+                InteractiveObjectsTypes.KEYPAD,
+                InteractiveObjectsTypes.SELECTOR
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.INVISIBLE),
@@ -569,7 +583,19 @@ const ValuesMap = Immutable.Map([
         },
 
     ],
+    [
+        Values.STATE,
+        {
+            type: 'value',
+            subj_type: [
+                InteractiveObjectsTypes.SELECTOR
+            ],
+            verb_type: [RuleActionTypes.PROGRESS],
+            name: toString.valueUuidToString(Values.STATE),
+            uuid: Values.STATE,
+        },
 
+    ],
 ]);
 
 export {

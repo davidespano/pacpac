@@ -433,7 +433,6 @@ function executeAction(VRScene, rule, action) {
             break;
         case RuleActionTypes.INCREASE_NUMBER:
             let numberVal =parseInt(action.obj_uuid); //di quanto aumenta
-
             switch (subject_obj.type) {
                 case InteractiveObjectsTypes.SCORE:
                     create_scene2.increaseScoreValue(numberVal, actual_scene_name);
@@ -453,6 +452,9 @@ function executeAction(VRScene, rule, action) {
                     create_scene2.decreaseHealthValue(numberVale, actual_scene_name);
                     break;
             }
+            break;
+        case RuleActionTypes.PROGRESS:
+            create_scene2.nextSelectorState(subject_obj);
             break;
         case "UPDATE_KEYPAD":
             /*non è un Action Types perchè non è un'azione vera e propria che si vede nelle regole
