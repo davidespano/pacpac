@@ -225,6 +225,14 @@ function TopBar(props){
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEYPAD)}/>
                             <figcaption>Tastierino</figcaption>
                         </figure>
+                        <figure className={'nav-figures'}
+                                onClick={() => {
+                                    createObject(props, InteractiveObjectsTypes.SELECTOR);
+                                    //alert("Oggetto disponibile a breve")
+                                }}>
+                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SELECTOR)}/>
+                            <figcaption>Selettore</figcaption>
+                        </figure>
                     </div>
                 </div>
 
