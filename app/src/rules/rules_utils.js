@@ -202,7 +202,7 @@ function generateDefaultRule(object, scene){
                 actions : Immutable.List([Action({uuid: uuid.v4(),
                     subj_uuid: object.uuid,
                     action: RuleActionTypes.PROGRESS,
-                    obj_uuid: InteractiveObjectsTypes.STATE,})]),
+                    obj_uuid: Values.STATE,})]),
                 global : false
             });
             break;
