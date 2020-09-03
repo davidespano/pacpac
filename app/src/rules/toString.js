@@ -53,6 +53,8 @@ function eventTypeToString(eventType) {
             return 'entra nella ';
         case RuleActionTypes.REACH_TIMER:
             return 'arriva a';
+        case RuleActionTypes.PROGRESS:
+            return 'avanza';
         default:
             return "";
     }
@@ -64,6 +66,9 @@ function objectTypeToString(objectType) {
     switch (objectType) {
         case InteractiveObjectsTypes.BUTTON:
             type = "il pulsante";
+            break;
+        case InteractiveObjectsTypes.COMBINATION:
+            type = "la combinazione";
             break;
         case InteractiveObjectsTypes.COUNTER:
             type = "il contatore";
@@ -106,6 +111,9 @@ function objectTypeToString(objectType) {
             break;
         case InteractiveObjectsTypes.PLAYTIME:
             type = 'il tempo di gioco';
+            break;
+        case InteractiveObjectsTypes.KEYPAD:
+            type = 'il tastierino';
             break;
         case Values.THREE_DIM:
         case Values.TWO_DIM:
@@ -186,6 +194,8 @@ function valueUuidToString(valueUuid){
             return 'attivabile';
         case Values.NOT_ACTIVABLE:
             return 'non attivabile';
+        case Values.CORRECT:
+            return 'corretta';
         case Values.ON:
             return 'acceso';
         case Values.OFF:
@@ -224,6 +234,8 @@ function valueUuidToString(valueUuid){
             return 'sinistra';
         case Values.ZERO:
             return "zero";
+        case Values.STATE:
+            return 'di stato';
         default:
             return 'stato sconosciuto';
     }

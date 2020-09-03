@@ -1,0 +1,17 @@
+#btn-store{
+    width: 90%;
+}
+#div-newGame{
+    width: 50%;
+}
+#btn-newGame{
+    width: 90%;
+}
+#div-store{
+    text-align: right;
+    width: 50%;
+}
+#store-container{
+    text-align: justify;
+    display: flex;
+}

@@ -7,6 +7,8 @@ import StoryAPI from "../../utils/StoryAPI";
 import AudioAPI from "../../utils/AudioAPI";
 import DebugAPI from "../../utils/DebugAPI";
 import SetGameId from "./SetGameId";
+import './../../Store/Store-style.css'
+import Actions from "../../actions/Actions";
 
 
 function GameList(props) {
@@ -21,9 +23,16 @@ function GameList(props) {
                     <div className={"gameList"}>
                         {games(props)}
                     </div>
-                    <div className={'form-group'}>
-                        <button className="btn login-btn" data-toggle="modal" data-target="#add-game-modal">Nuovo gioco</button>
+                    <div id={'store-container'}>
+                        <div id={'div-newGame'} className={'form-group'}>
+                            <button id={'btn-newGame'} className="btn login-btn" data-toggle="modal" data-target="#add-game-modal">Nuovo gioco</button>
+                        </div>
+                        <div id={'div-store'} className={'form-group'}>
+                            <button id={'btn-store'} className="btn login-btn"
+                                    onClick={evt=>sendCookie(props.editor.user)}>Store</button>
+                        </div>
                     </div>
+
                     <div className={'form-group'}>
                         <a id={'logout-link'} onClick={()=> {
                             props.reset();
@@ -46,6 +55,15 @@ function games(props){
             <div className={'game-item-wrapper'}>
                 <div id={g} className="game-item" onClick={evt=>gameSelection(g.gameID, g.name, props)}>{g.name}</div>
                 <div className={'game-btns'}>
+                    <button
+                        title={"Pubblica " + g.name + " sullo store"}
+                        id={g.name + '-upload-button'}
+                        className={"action-buttons-container"}
+                        onClick={() => {setUrltoStore(g.name, g.gameID, props.editor.user);
+                        }}
+                    >
+                        <img className={"action-buttons"} src={"icons/upload-30.png"}/>
+                    </button>
                     <button
                         title={"Visualizza il codice di " + g.name}
                         id={g.name + '-code-button'}
@@ -74,6 +92,19 @@ function games(props){
         );
     });
 }
+
+function sendCookie(a) {
+    document.cookie = "usernameToken" + "=" + a.username + "" + "; path=/"
+    document.cookie = "uuidToken" + "=" + a.uuid + "" + "; path=/"
+    window.location.href='https://cg3hci.dmi.unica.it/pacpac-games/'
+}
+
+function setUrltoStore(gameName, gameId, user) {
+    document.cookie = "usernameToken" + "=" + user.username + "" + "; path=/"
+    document.cookie = "uuidToken" + "=" + user.uuid + "" + "; path=/"
+    window.location.href='https://cg3hci.dmi.unica.it/pacpac-games/PostForm?gameName=' + gameName + '&gameId='+ gameId
+}
+
 
 function gameSelection(gameUuid, gameTitle ,props){
 

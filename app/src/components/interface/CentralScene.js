@@ -10,7 +10,8 @@ import Values from "../../rules/Values";
 const {mediaURL} = settings;
 
 function CentralScene(props){
-    let regex = RegExp('.*\.mp4$');
+    let regex = RegExp('.*\.mp4$|.MOV$');
+
     let currentScene = null;
     let path =`${mediaURL}${window.localStorage.getItem("gameID")}/`;
     let sceneRendering = null;
@@ -21,7 +22,6 @@ function CentralScene(props){
 
     if(currentScene !== null){
         let src = path + '_thumbnails_/' + currentScene.img + (regex.test(currentScene.img)? ".png" : "");
-
         if(currentScene.type === Values.TWO_DIM){
 
         }
@@ -94,13 +94,13 @@ function generateObjectsIcons(props){
                 objStyle = {left: "3%" , top: "7.5%"};
                 break;
             case InteractiveObjectsTypes.SCORE:
-                objStyle = {left: "9%" , top: "7.5%"};
+                objStyle = {left: "33%" , top: "7.5%"};
                 break;
             case InteractiveObjectsTypes.TEXTBOX:
                 objStyle = {left: "50%" , bottom: "1%"};
                 break;
             case InteractiveObjectsTypes.TIMER:
-                objStyle = {left: "50%" , top: "7.5%"};
+                objStyle = {left: "66%" , top: "7.5%"};
                 break;
             default:
                 if(!props.centroids.has(obj_uuid)) return;

@@ -28,6 +28,9 @@ import Health from "../../interactives/Health";
 import PlayTime from "../../interactives/PlayTime";
 import Dropdown from "./Dropdown";
 import FileSelectionBtn from "./FileSelectionBtn";
+import SceneAPI from "../../utils/SceneAPI";
+import Orders from "../../data/Orders";
+import {executeAction} from "../aframe/aframe_actions";
 
 
 
@@ -88,7 +91,6 @@ function TopBar(props){
                     <a className={"nav-item nav-link " + debugCheck(isDebugActive)} id="nav-debug-tab" data-toggle="tab"
                        role="tab" href={'#' + debugLink(isDebugActive)} aria-controls={debugLink(isDebugActive)} aria-selected="false"
                        onClick={() => {
-                           //let  result = rules_utils.checkCompletionsRules(props);
                            let  result = rules_utils.checkCompletionsRules(props);
 
                            if(result.length === 0){
@@ -122,6 +124,7 @@ function TopBar(props){
                                      alt={'avvia gioco'}
                                      className={'action-buttons'}/>
                     </a>
+
 
                     <div id={'topbar-game-title'} className={'navbar-brand'}>
                         {props.editor.gameTitle}
@@ -216,13 +219,15 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.KEYPAD);
+                                    //alert("Oggetto disponibile a breve")
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.KEYPAD)}/>
                             <figcaption>Tastierino</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //createObject(props, InteractiveObjectsTypes.SELECTOR);
+                                    createObject(props, InteractiveObjectsTypes.SELECTOR);
+                                    //alert("Oggetto disponibile a breve")
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SELECTOR)}/>
                             <figcaption>Selettore</figcaption>
@@ -236,6 +241,7 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.HEALTH);
+                                    createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.HEALTH);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.HEALTH)}/>
                             <figcaption>Vita</figcaption>
@@ -243,6 +249,7 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.SCORE);
+                                    createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.SCORE);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SCORE)}/>
                             <figcaption>Punteggio</figcaption>
@@ -250,6 +257,8 @@ function TopBar(props){
                         <figure className={'nav-figures'}
                                 onClick={() => {
                                     createObject(props, InteractiveObjectsTypes.PLAYTIME);
+                                    //TODO trovare un modo migliore per farlo, viene eseguito solo quando non ho la ghost scene
+                                    createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.PLAYTIME);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)}/>
                             <figcaption>Tempo in gioco</figcaption>
@@ -258,7 +267,7 @@ function TopBar(props){
                 </div>
 
                 <div className={"tab-pane fade"}
-                     id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
+                           id="nav-debug" role="tabpanel" aria-labelledby="nav-debug-tab">
                     <div className={"flex-container"}>
                         <figure id ="save-icon" className={'nav-figures'}
                                 data-toggle="modal" data-target="#save-modal">
@@ -273,9 +282,8 @@ function TopBar(props){
                             </ul>
                         </div>
                         <InputSaveForm {...props}/>
-                    </div>
+                     </div>
                 </div>
-
                 <div className={"tab-pane fade"}
                      id="nav-playoff" role="tabpanel" aria-labelledby="nav-objects-play">
                     <div className={"flex-container"}>
@@ -288,6 +296,7 @@ function TopBar(props){
                     </div>
                 </div>
 
+                <div className={"tab-pane fade"} id="nav-graphview" role="tabpanel"> </div>
             </div>
         </div>
     );
@@ -340,7 +349,7 @@ function hideSaveIcon(hide){
     }
 }
 
-function handleNavbarSelection(props){
+export function handleNavbarSelection(props){
    // let items = document.getElementsByClassName("nav-item");
     if(props.editor.mode !== ActionTypes.EDIT_MODE_ON){
         props.switchToEditMode();
@@ -365,13 +374,19 @@ function handleDebugMode(props) {
     }
 }
 
+export function handleGraphViewMode(props){
+    if(props.editor.mode !== ActionTypes.GRAPH_VIEW_MODE_ON) {
+        props.switchToGraphView();
+        document.getElementById("nav-tabContent").hidden = true;
+    }
+}
 /**
  * Generates a new InteractiveObject with default values according to the given type and calls the function for stores
  * update (including association between scene and object and generation of the default rule)
  * @param props
  * @param type
  */
-function createObject(props, type){
+export function createObject(props, type){
     if(props.currentScene != null){
         let scene = props.scenes.get(props.currentScene);
         let name = "";
@@ -422,7 +437,7 @@ function createObject(props, type){
                     name: name,
                 });
                 break;
-            case InteractiveObjectsTypes.KEYPAD: //TODO KEYPAD rivedere questi parametri
+            case InteractiveObjectsTypes.KEYPAD:
                 if (scene.objects.keypads.length == 0){
                     name = scene.name + '_kp' + (scene.objects.keypads.length + 1);
                     obj = Keypad ({
@@ -440,18 +455,18 @@ function createObject(props, type){
                     return;
                 }
                 break;
-            case InteractiveObjectsTypes.SELECTOR: //TODO SELECTOR rivedere questi parametri
+            case InteractiveObjectsTypes.SELECTOR:
                 name = scene.name + '_sl' + (scene.objects.selectors.length + 1);
                 obj = Selector ({
                     uuid : uuid.v4(),
                     name : name,
                     properties: {
                         optionsNumber: 3,
-                        state: [],
+                        state: 1,
                     }
                 });
                 break;
-            case InteractiveObjectsTypes.BUTTON: //TODO SELECTOR rivedere questi parametri
+            case InteractiveObjectsTypes.BUTTON:
                 name = scene.name + '_bt' + (scene.objects.buttons.length + 1);
                 obj = Button ({
                     uuid : uuid.v4(),
@@ -478,7 +493,7 @@ function createObject(props, type){
                 }
                 else
                 {
-                    alert("Hai già un oggetto textbox in questa scena")
+                    alert("Hai già un oggetto textbox in questa scena");
                     return;
                 }
                 break;
@@ -504,6 +519,15 @@ function createObject(props, type){
                 break;
             case InteractiveObjectsTypes.SCORE:
                 creatingGlobal = true;
+                scene = props.scenes.get('ghostScene');
+               /* if(scene == undefined){
+                    SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
+                        Orders.CHRONOLOGICAL, props);
+                    scene = props.scenes.get('ghostScene');
+                    createGlobalObjectForNewScene(props, scene, InteractiveObjectsTypes.SCORE);
+                    createObject(props, InteractiveObjectsTypes.SCORE);
+                    break;
+                }
                 if(scene.objects.score.length == 0)
                 {
                     for (let i = 0, len = sceneArray.length; i < len; i++) {
@@ -527,9 +551,38 @@ function createObject(props, type){
                     alert("Hai già l'oggetto Score nel gioco")
                     return;
                 }
+                break;*/
+                if(scene == undefined){ //la ghost scene non esiste
+                    //la creo
+                    SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
+                        Orders.CHRONOLOGICAL, props);
+
+                    addScoreToScenes(sceneArray, props, obj, name)
+                }
+                //nel caso di nuovi giochi aggiungo l'oggetto globale a tutte le scene comprese la ghost
+                else{
+                    if(scene.objects.score.length == 0)
+                    {
+                        addScoreToScenes(sceneArray, props, obj, name)
+                    }
+                    else
+                    {
+                        alert("Hai già l'oggetto Score nel gioco");
+                        return;
+                    }
+                }
                 break;
             case InteractiveObjectsTypes.HEALTH:
                 creatingGlobal = true;
+                scene = props.scenes.get('ghostScene');
+               /* if(scene == undefined){
+                    SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
+                        Orders.CHRONOLOGICAL, props);
+                    scene = props.scenes.get('ghostScene');
+                    createGlobalObjectForNewScene(props, scene, InteractiveObjectsTypes.HEALTH);
+                    createObject(props, InteractiveObjectsTypes.HEALTH);
+                    break;
+                }
                 if(scene.objects.health.length == 0)
                 {
                     for (let i = 0, len = sceneArray.length; i < len; i++) {
@@ -545,45 +598,72 @@ function createObject(props, type){
                                 }
                             });
                             props.addNewObject(sceneArray[i], obj);
+
                         }
                     }
+                    //la vita è l'unico oggetto globale con una regola di default,
+                    //questo va fuori dal ciclo perchè deve generarla solo per la ghostScene
+                    let defaultRule = rules_utils.generateDefaultRule(obj, scene);
+                    props.addNewRule(scene, defaultRule);
                 }
                 else
                 {
-                    alert("Hai già l'oggetto Health nel gioco")
+                    alert("Hai già l'oggetto Health nel gioco");
                     return;
+                }
+                break;*/
+                if(scene == undefined){ //la ghost scene non esiste
+                    //la creo
+                    SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
+                        Orders.CHRONOLOGICAL, props);
+
+                    addHealthToScenes(sceneArray, props, obj, name, scene);
+
+                }
+                //nel caso di nuovi giochi aggiungo l'oggetto globale a tutte le scene comprese la ghost
+                else{
+                    if(scene.objects.health.length == 0)
+                    {
+                        addHealthToScenes(sceneArray, props, obj, name, scene);
+                    }
+                    else
+                    {
+                        alert("Hai già l'oggetto Health nel gioco");
+                        return;
+                    }
                 }
                 break;
             case InteractiveObjectsTypes.PLAYTIME:
                 creatingGlobal = true;
-                if(scene.objects.playtime.length == 0)
-                {
-                    for (let i = 0, len = sceneArray.length; i < len; i++) {
-                        if(sceneArray[i].objects.playtime.length == 0)
-                        {
-                            name = 'Tempo di gioco';
-                            obj = PlayTime({
-                                uuid: sceneArray[i].uuid+"_pt",
-                                name: name,
-                                properties: {
-                                    time: 0,
-                                    size: 5,
-                                }
-                            });
-                            props.addNewObject(sceneArray[i], obj);
-                        }
-                    }
+                scene = props.scenes.get('ghostScene');
+                //caso di vecchi giochi
+                if(scene == undefined){ //la ghost scene non esiste
+                    //la creo
+                    SceneAPI.createScene('Ghost Scene', "null", 0, '2D', 'default',
+                        Orders.CHRONOLOGICAL, props);
+
+                    //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
+                    addPlayTimeToScenes(sceneArray, props, obj, name)
                 }
-                else
-                {
-                    alert("Hai già l'oggetto Play time nel gioco")
-                    return;
+                //nel caso di nuovi giochi aggiungo l'oggetto globale a tutte le scene comprese la ghost
+                else{
+                    if(scene.objects.playtime.length == 0)
+                    {
+                        addPlayTimeToScenes(sceneArray, props, obj, name)
+                    }
+                    else
+                    {
+                        alert("Hai già l'oggetto Play time nel gioco");
+                        return;
+                    }
                 }
                 break;
             default:
                 return;
         }
 
+        //se gli oggetti non sono globali creo le regole di default
+        //per l'oggetto vita (l'unico che ha una regola di default) la creo nello switch
         if (!creatingGlobal)
         {
             let defaultRule = rules_utils.generateDefaultRule(obj, scene);
@@ -608,11 +688,75 @@ function createObject(props, type){
             });
         }
 
+
     } else {
         alert('Nessuna scena selezionata!');
     }
 }
 
+function addPlayTimeToScenes(sceneArray, props, obj, name){
+    for (let i = 0, len = sceneArray.length; i < len; i++) {
+        if(sceneArray[i].objects.playtime.length == 0)
+        {
+            name = 'Tempo di gioco';
+            obj = PlayTime({
+                uuid: sceneArray[i].uuid+"_pt",
+                name: name,
+                properties: {
+                    time: 0,
+                    size: 5,
+                }
+            });
+            props.addNewObject(sceneArray[i], obj);
+        }
+    }
+}
+
+function addHealthToScenes(sceneArray, props, obj, name, scene){
+    //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
+    for (let i = 0, len = sceneArray.length; i < len; i++) {
+        if(sceneArray[i].objects.health.length == 0)
+        {
+            name = 'Vita';
+            obj = Health({
+                uuid: sceneArray[i].uuid+"_hl",
+                name: name,
+                properties: {
+                    health: 100,
+                    size: 5,
+                }
+            });
+            props.addNewObject(sceneArray[i], obj);
+
+        }
+    }
+    //per necessità se la ghost scene non è già stata creata non creo la regola della vita
+    if(scene != undefined){
+        //la vita è l'unico oggetto globale con una regola di default,
+        //questo va fuori dal ciclo perchè deve generarla solo per la ghostScene
+        let defaultRule = rules_utils.generateDefaultRule(obj, scene);
+        props.addNewRule(scene, defaultRule);
+    }
+}
+
+function addScoreToScenes(sceneArray, props, obj, name){
+    //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
+    for (let i = 0, len = sceneArray.length; i < len; i++) {
+        if(sceneArray[i].objects.score.length == 0)
+        {
+            name = 'Punteggio';
+            obj = Score({
+                uuid: sceneArray[i].uuid+"_sc",
+                name: name,
+                properties: {
+                    score: 100,
+                    size: 5,
+                }
+            });
+            props.addNewObject(sceneArray[i], obj);
+        }
+    }
+}
 /**
  * Creates global objects in the new scene if there are any in other scenes
  * @param props
@@ -623,48 +767,47 @@ export function createGlobalObjectForNewScene(props, scene, type) {
     if (scene != null) {
         let name = "";
         let obj = null;
-        let sceneArray = props.scenes.toArray()
 
         switch (type) {
             case InteractiveObjectsTypes.PLAYTIME:
                 if (scene.objects.playtime.length == 0){ //ammesso un solo oggetto playtime per gioco
-                    name = scene.name + '_pt';
+                    name = 'Tempo di gioco';
                     obj = PlayTime({
-                        uuid: uuid.v4(),
+                        uuid: scene.uuid+"_pt",
                         name: name,
                         properties: {
                             time: 0,
                             size: 5,
                         }
-                    })
+                    });
                     props.addNewObject(scene, obj);
                 }
                 break;
             case InteractiveObjectsTypes.SCORE:
                 if (scene.objects.score.length == 0){ //ammesso un solo oggetto playtime per gioco
-                    name = scene.name + '_sc';
+                    name = 'Punteggio';
                     obj = Score({
-                        uuid: uuid.v4(),
+                        uuid: scene.uuid+"_sc",
                         name: name,
                         properties: {
                             score: 0,
                             size: 5,
                         }
-                    })
+                    });
                     props.addNewObject(scene, obj);
                 }
                 break;
             case InteractiveObjectsTypes.HEALTH:
                 if (scene.objects.health.length == 0){ //ammesso un solo oggetto playtime per gioco
-                    name = scene.name + '_hl';
+                    name = 'Vita';
                     obj = Health({
-                        uuid: uuid.v4(),
+                        uuid: scene.uuid+"_hl",
                         name: name,
                         properties: {
                             score: 0,
                             size: 5,
                         }
-                    })
+                    });
                     props.addNewObject(scene, obj);
                 }
                 break;

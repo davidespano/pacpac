@@ -2,11 +2,16 @@ import React from 'react';
 import AuthenticationAPI from "../../utils/AuthenticationAPI";
 import InputRegisterForm from "./InputRegisterForm";
 import SetGameId from "./SetGameId";
+import SceneAPI from "../../utils/SceneAPI";
+import MediaAPI from "../../utils/MediaAPI";
+import AudioAPI from "../../utils/AudioAPI";
+import Actions from "../../actions/Actions";
 
 function Login(props){
 
         return(
             <React.Fragment>
+                {submitGame()}
                 <div className={"loginBackground"}>
                     <InputRegisterForm {...props}/>
                     <SetGameId {...props}/>
@@ -37,6 +42,27 @@ function Login(props){
                 </div>
             </React.Fragment>
         )
+}
+
+function submitGame(){
+    const gameValues = new URLSearchParams(window.location.search);
+    const gameId = gameValues.get('gameId');
+
+    console.log(gameId);
+    if(gameId != null){
+        if(gameId.length === 32) {
+            SceneAPI.getHomeScene(gameId);
+            SceneAPI.getAllScenesAndTags(gameId);
+            MediaAPI.getAllAssets(gameId);
+            AudioAPI.getAllAudios(gameId);
+            setTimeout(function(){
+                Actions.playModeOn(gameId)
+            }, 3000);
+        } else {
+            alert('Codice non valido!');
+        }
+    }
+
 }
 
 function submitUser(){

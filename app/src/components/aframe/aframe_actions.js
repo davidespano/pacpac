@@ -414,7 +414,6 @@ function executeAction(VRScene, rule, action) {
                     break;
             }
             break;
-
         case RuleActionTypes.TRIGGERS:
             /*
                 Azione che si occupa di avviare una regola o un timer
@@ -434,7 +433,6 @@ function executeAction(VRScene, rule, action) {
             break;
         case RuleActionTypes.INCREASE_NUMBER:
             let numberVal =parseInt(action.obj_uuid); //di quanto aumenta
-
             switch (subject_obj.type) {
                 case InteractiveObjectsTypes.SCORE:
                     create_scene2.increaseScoreValue(numberVal, actual_scene_name);
@@ -455,12 +453,41 @@ function executeAction(VRScene, rule, action) {
                     break;
             }
             break;
-        default:
+        case RuleActionTypes.PROGRESS:
+            create_scene2.nextSelectorState(subject_obj);
+            break;
+        case "UPDATE_KEYPAD":
+            /*non è un Action Types perchè non è un'azione vera e propria che si vede nelle regole
+            è implicita quando si genera una regola con "se il codice è corretto" e verifica in game
+            quali tasti l'utente ha cliccato*/
+            let uuid_btn_pressed = action_obj_uuid; //uuid btn premuto
+            let keypad = subject_obj; //tastierino di riferimento
+            let btn_value = keypad.properties.buttonsValues[uuid_btn_pressed]; //valore associato al btn premuto
+            create_scene2.updateKeypadValue(btn_value); //aggiorno il valore del tastierino
+            break;
+            default:
             console.log('not yet implemented');
             console.log(action);
     }
-    console.log(`emit ${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
-    eventBus.emit(`${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`);
+    let event=null;
+    //tempo di gioco
+    if(subject_obj &&subject_obj.type === InteractiveObjectsTypes.PLAYTIME){
+        event = `GameTime-reach_minute-${action.obj_uuid}`;
+    }
+    //vita
+    else if( subject_obj &&subject_obj.type=== InteractiveObjectsTypes.HEALTH){
+        event = `Health-value_changed_to-${action.obj_uuid}`;
+    }
+    //punteggio
+    else if(subject_obj && subject_obj.type === InteractiveObjectsTypes.SCORE){
+        event = `Score-value_changed_to-${action.obj_uuid}`;
+    }
+    else{
+        event = `${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`;
+    }
+
+    console.log(`emit`, event);
+    eventBus.emit(event);
 }
 
 /**

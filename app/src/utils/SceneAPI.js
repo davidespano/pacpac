@@ -28,6 +28,7 @@ import Health from "../interactives/Health";
 import PlayTime from "../interactives/PlayTime";
 import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import {createGlobalObjectForNewScene} from "../components/interface/Topbar";
+import GraphViewContent from "../components/interface/GraphViewContent";
 let uuid = require('uuid');
 
 const request = require('superagent');
@@ -218,6 +219,7 @@ function getByName(name, order = null, gameId=null, creation = true) {
                         }),
                         condition: conditionParser(JSON.parse(rule.condition)),
                         actions: actions,
+                        global: rule.global,
                     });
                     Actions.receiveRule(r);
                 }catch(e){}
@@ -226,18 +228,18 @@ function getByName(name, order = null, gameId=null, creation = true) {
             });
 
             response.body.audios.map(audio => {
-               audio_uuids.push(audio.uuid);
-               let a = Audio({
-                   uuid: audio.uuid,
-                   name: audio.name,
-                   file: audio.file,
-                   volume: audio.volume,
-                   isSpatial: audio.isSpatial,
-                   scene: audio.scene,
-                   loop: audio.loop,
-                   vertices: audio.vertices,
-               });
-               Actions.receiveAudio(a);
+                audio_uuids.push(audio.uuid);
+                let a = Audio({
+                    uuid: audio.uuid,
+                    name: audio.name,
+                    file: audio.file,
+                    volume: audio.volume,
+                    isSpatial: audio.isSpatial,
+                    scene: audio.scene,
+                    loop: audio.loop,
+                    vertices: audio.vertices,
+                });
+                Actions.receiveAudio(a);
             });
 
 
@@ -294,6 +296,10 @@ function getByName(name, order = null, gameId=null, creation = true) {
  */
 function createScene(name, img, index, type, tag, order, props) {
     let id = uuid.v4();
+    //ci dev'essere una sola ghost scene e deve avere quell'id
+    if(name==='Ghost Scene'){
+        id = 'ghostScene'
+    }
     let newScene = null;
     request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/addScene`)
         .set('Accept', 'application/json')
@@ -303,7 +309,7 @@ function createScene(name, img, index, type, tag, order, props) {
             if (err) {
                 return console.error(err);
             }
-            
+
             // new Scene object
             newScene = Scene({
                 uuid: id,
@@ -336,6 +342,11 @@ function createScene(name, img, index, type, tag, order, props) {
 
             Actions.receiveScene(newScene, order);
             updateScene(newScene, tag);
+
+            //se è la prima scena del gioco che creo diventa home scene, la ghost scene verrà creata dopo questa prima scena
+            if (props.scenes.size < 2 && id != 'ghostScene'){
+                setHomeScene(id);
+            }
             if(props.scenes.first() !=undefined)
             {
                 if(props.scenes.first().objects.playtime.length > 0) {
@@ -348,7 +359,14 @@ function createScene(name, img, index, type, tag, order, props) {
                     createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.HEALTH);
                 }
             }
+            //mi serve solo per i nuovi giochi
+            if(props.scenes.size ===0 && props.scenes.get('ghostScene')===undefined){
+                createScene('Ghost Scene', "null", 0, '2D', 'default',
+                    Orders.CHRONOLOGICAL, props);
+                console.log("created ghost scene")
+            }
         });
+
 
 }
 
@@ -415,6 +433,52 @@ function deleteScene(scene) {
             }
         });
 }
+
+
+
+async function getNodes(gameId=null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    const response= await request.get(`${apiBaseURL}/${id}/getNodes`)
+        .set('Accept', 'application/json');
+
+    return response.body;
+}
+
+
+function setNodes(nodedata) {
+    request.post(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/scenes/setNodes`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .send(
+            {
+                nodes: JSON.stringify(nodedata)
+            }
+        )
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err);
+            }
+        });
+}
+
+function delNodes(gameId=null) {
+    let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+    request.delete(`${apiBaseURL}/${id}/delNodes`)
+        .set('Accept', 'application/json')
+        .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+        .end(function (err, response) {
+            if (err) {
+                return console.error(err)
+            }
+        });
+
+}
+
+
+
+
 
 /**
  * Sets specific scene as home
@@ -594,6 +658,7 @@ function readScene(gameGraph, raw_scenes) {
                 condition: JSON.parse(rule.condition),
                 actions: rule.actions,
                 name: rule.name,
+                global: rule.global,
             });
         });
 
@@ -652,7 +717,7 @@ async function getHome(gameId = null) {
 
     const response = await request.get(`${apiBaseURL}/${id}/getHomeScene`)
         .set('Accept', 'application/json');
-    
+
     return response.body.uuid
 }
 
@@ -728,6 +793,9 @@ export default {
     deleteScene: deleteScene,
     getAllDetailedScenes: getAllDetailedScenes,
     getDetailedScene: getDetailedScene,
+    setNodes:setNodes,
+    getNodes:getNodes,
+    delNodes:delNodes,
     saveTag: saveTag,
     removeTag: removeTag,
     setHomeScene: setHomeScene,

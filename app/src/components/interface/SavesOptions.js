@@ -39,7 +39,12 @@ function SavesOptions(props) {
  * @returns {any[]}
  */
 function listSaves(props, path) {
-    let regex = RegExp('.*\.mp4$');
+    let regex = RegExp('.*\.mp4$|.MOV$');
+
+    /* Controlla che nei salvataggi passati ci sia almeno un salvataggio che nel nome includa la stringa filter */
+    let checkFilter = (saves, filter) => {
+        let names = saves.toArray().map(save => save.saveName);
+
 
     /* Controlla che nei salvataggi passati ci sia almeno un salvataggio che nel nome includa la stringa filter */
     let checkFilter = (saves, filter) => {

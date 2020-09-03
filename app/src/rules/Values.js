@@ -7,18 +7,18 @@ const Values = {
     ACTIVABLE: 'ACTIVABLE',
     NOT_ACTIVABLE: 'NOT_ACTIVABLE',
 
-    //switch
+    //combination
+    CORRECT: 'CORRECT',
 
+    //switch
     ON: 'ON',
     OFF: 'OFF',
 
     //lock
-
     LOCKED: 'LOCKED',
     UNLOCKED: 'UNLOCKED',
 
     //key and collectable items
-
     COLLECTED : 'COLLECTED',
     NOT_COLLECTED : 'NOT_COLLECTED',
 
@@ -32,6 +32,9 @@ const Values = {
     DOWN : 'DOWN',
     LEFT : 'LEFT',
     RIGHT : 'RIGHT',
+
+    //selector
+    STATE: 'STATE',
 
     //audio & video
     STARTED: 'STARTED',

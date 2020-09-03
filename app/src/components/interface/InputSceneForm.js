@@ -107,6 +107,9 @@ function checkFormAndCreateScene(props){
         props.rightbarSelection('scene');
         props.selectFile(null);
     }
+    else{
+        window.alert("Attenzione, esiste già una scena con quel nome");
+    }
 }
 
 function checkGlobalObject(props) {

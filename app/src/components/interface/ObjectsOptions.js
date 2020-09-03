@@ -13,10 +13,14 @@ import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObject from "../../interactives/InteractiveObject";
+import {createObject} from "./Topbar";
 
 
 function ObjectOptions(props){
-    if(props.currentObject){
+    //faccio in modo che la ghost scene non appaia quando creo un nuovo oggetto globale
+    let scene = props.scenes.get(props.objectToScene.get(props.currentObject));
+
+    if(props.currentObject && scene.uuid !='ghostScene'){
         return generateProperties(props);
     } else {
         return showObjects(props.interactiveObjects, props);
@@ -93,8 +97,7 @@ function generateProperties(props){
             <button
                 className={"btn select-file-btn rightbar-btn"}
                 onClick={() => props.switchToGeometryMode() }
-                disabled={(currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM) ||
-                (currentObject.type === InteractiveObjectsTypes.TEXTBOX && objectScene.type === Values.TWO_DIM)}
+                disabled={(currentObject.type === InteractiveObjectsTypes.POINT_OF_INTEREST && objectScene.type === Values.TWO_DIM)}
             >
                 Modifica geometria
             </button>
@@ -177,27 +180,58 @@ function generateProperties(props){
  * @returns {*}
  */
 function mediaProperties(currentObject, props){
-    return <React.Fragment>
-        <label className={'rightbar-titles'}>Media:</label>
-        <div className={'rightbar-audio-media-grid'}>
-            {Object.keys(currentObject.media).map( m => {
-                return(
-                    <React.Fragment key={currentObject.uuid + '-' + m}>
-                        <p className={'rightbar-audio-media-grid-title'}>Media {optionToName(currentObject.type, m)}</p>
-                        <Dropdown props={props}
-                                  component={'assets'}
-                                  property={m}
-                                  defaultValue={currentObject.media[m]} />
-                    </React.Fragment>
-                );
-            })}
-            <p className={'rightbar-audio-media-grid-title'}>Maschera</p>
-            <Dropdown props={props}
-                      component={'assets'}
-                      property={'mask'}
-                      defaultValue={currentObject.mask} />
-        </div>
-    </React.Fragment>
+    if (currentObject.type === InteractiveObjectsTypes.SELECTOR){
+        let n = currentObject.properties.optionsNumber;
+        return <React.Fragment>
+            <label className={'rightbar-titles'}>Media:</label>
+            <div className={'rightbar-audio-media-grid'}>
+                {Object.keys(currentObject.media).map( m => {
+                    n = n -1;
+                    if (n>=0){
+                        return(
+                            <React.Fragment key={currentObject.uuid + '-' + m}>
+                                <p className={'rightbar-audio-media-grid-title'}>Media {optionToName(currentObject.type, m)}</p>
+                                <Dropdown props={props}
+                                          component={'assets'}
+                                          property={m}
+                                          defaultValue={currentObject.media[m]} />
+                            </React.Fragment>
+                        );
+                    }
+                    else
+                        return;
+                })}
+                <p className={'rightbar-audio-media-grid-title'}>Maschera</p>
+                <Dropdown props={props}
+                          component={'assets'}
+                          property={'mask'}
+                          defaultValue={currentObject.mask} />
+            </div>
+        </React.Fragment>
+    }
+    else {
+        return <React.Fragment>
+            <label className={'rightbar-titles'}>Media:</label>
+            <div className={'rightbar-audio-media-grid'}>
+                {Object.keys(currentObject.media).map( m => {
+                    return(
+                        <React.Fragment key={currentObject.uuid + '-' + m}>
+                            <p className={'rightbar-audio-media-grid-title'}>Media {optionToName(currentObject.type, m)}</p>
+                            <Dropdown props={props}
+                                      component={'assets'}
+                                      property={m}
+                                      defaultValue={currentObject.media[m]} />
+                        </React.Fragment>
+                    );
+                })}
+                <p className={'rightbar-audio-media-grid-title'}>Maschera</p>
+                <Dropdown props={props}
+                          component={'assets'}
+                          property={'mask'}
+                          defaultValue={currentObject.mask} />
+            </div>
+        </React.Fragment>
+    }
 }
 
 /**
@@ -331,6 +365,7 @@ function generateSpecificProperties(object, objectScene, props){
                 </div>
             );
         case InteractiveObjectsTypes.KEYPAD:
+            let scene = props.scenes.get(props.currentScene);
             let buttonsValues = object.properties.buttonsValues; //leggo la mappa contenente i riferimenti a pulsanti e valori corrispondenti
             let buttonList = Object.keys(buttonsValues).map(button => {
                 let obj = props.interactiveObjects.get(button);
@@ -356,7 +391,19 @@ function generateSpecificProperties(object, objectScene, props){
                             </div>
 
                         </div>
-
+                        <div>
+                            <img className={"waste-action-buttons"}
+                                 src={"icons/icons8-waste-50.png"}
+                                 alt={'Cancella'}
+                                 onClick={() => {
+                                     let answer = window.confirm("Vuoi cancellare l'oggetto " + obj.name + "?");
+                                     if (answer) {
+                                         InteractiveObjectAPI.removeObject(scene, obj, props);
+                                         props.updateCurrentObject(null);
+                                     }
+                                 }}
+                            />
+                        </div>
                     </React.Fragment>
                 );
             });
@@ -377,7 +424,31 @@ function generateSpecificProperties(object, objectScene, props){
                         </div>
                     </div>
                     <label className={'rightbar-titles'}>Pulsanti:</label>
-                    <div className={"options-grid"}>
+
+                    <div className={'options-grid'}>
+                        <label className={'options-labels'}>Geometria pulsante Invio:</label>
+                        <button
+                            className={"btn select-file-btn rightbar-btn"}
+                            onClick={() => props.switchToGeometryMode()}>
+                            Modifica geometria
+                        </button>
+                    </div>
+
+                    <div className={'options-grid'}>
+                        <label className={'options-labels'}>
+                            <img className={"object-thumbnail"}
+                                 src={interface_utils.getObjImg(InteractiveObjectsTypes.BUTTON)}/>Aggiungi:</label>
+                        <button
+                            className={"btn select-file-btn rightbar-btn"}
+                            onClick={() => createObject(props, InteractiveObjectsTypes.BUTTON)}
+                        >
+                            Nuovo pulsante
+                        </button>
+                    </div>
+
+
+
+                    <div className={"tri-options-grid"}>
                         {buttonList}
                     </div>
                 </React.Fragment>
@@ -704,6 +775,8 @@ function optionToName(objType, option){
     switch(objType){
         case InteractiveObjectsTypes.SWITCH:
             return switchOptionsNames(option);
+        case InteractiveObjectsTypes.SELECTOR:
+            return selectorOptionsNames(option);
         default:
             return '';
     }
@@ -712,13 +785,28 @@ function optionToName(objType, option){
 function switchOptionsNames(option){
     switch(option){
         case 'audio0':
-        case 'media0': return 'on-off';
+        case 'media0': return 'on -> off';
         case 'audio1':
-        case 'media1': return 'off-on';
+        case 'media1': return 'off -> on';
         default: break;
     }
 }
 
+function selectorOptionsNames(option) {
+    switch(option){
+        case 'media0': return 'opzione 1';
+        case 'media1': return 'opzione 2';
+        case 'media2': return 'opzione 3';
+        case 'media3': return 'opzione 4';
+        case 'media4': return 'opzione 5';
+        case 'media5': return 'opzione 6';
+        case 'media6': return 'opzione 7';
+        case 'media7': return 'opzione 8';
+        case 'media8': return 'opzione 9';
+        case 'media9': return 'opzione 10';
+    }
+
+}
 
 function objectTypeToString(objectType) {
     switch (objectType) {

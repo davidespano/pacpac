@@ -15,10 +15,9 @@ function SceneOptions(props){
         component : 'rightbar',
     };
 
-    if(props.currentScene){
+    if(props.currentScene && props.currentScene!='ghostScene'){
         let currentScene = props.scenes.get(props.currentScene);
         let sceneOptions = props.editor.sceneOptions;
-
         return(
             <div className={'currentOptions'}>
                 <div>
@@ -238,11 +237,12 @@ function checkAndRemoveScene(props, scene){
     if(answer){
         props.removeScene(scene);
         let scenes = props.scenes.delete(scene.uuid);
-        let first = scenes.first(); // take the first of the remaining scenes, if valid set as currentScene
-        Actions.updateCurrentScene(first ? first.uuid : null);
-
-        if(props.editor.homeScene === scene.uuid){ // handle deleting homeScene
-            first ? SceneAPI.setHomeScene(first.uuid) : Actions.setHomeScene(null);
+        let last = scenes.last(); // take the first of the remaining scenes, if valid set as currentScene
+        if(last.uuid !="ghostScene"){ //non possiamo rendere la ghostscene a currentscene in nessun caso
+            Actions.updateCurrentScene(last ? last.uuid : null);
+            if(props.editor.homeScene === scene.uuid){ // handle deleting homeScene
+                last ? SceneAPI.setHomeScene(last.uuid) : Actions.setHomeScene(null);
+            }
         }
     }
 }

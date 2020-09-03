@@ -22,6 +22,7 @@ const RuleActionTypes = {
     ON : 'ON',
     PLAY: 'PLAY',
     PLAY_LOOP: 'PLAY_LOOP',
+    PROGRESS: 'PROGRESS',
     REACH_TIMER : 'REACH_TIMER',
     RULES : 'REGOLA',
     STOP: 'STOP',

@@ -26,6 +26,9 @@ import Timer from "../../interactives/Timer";
 import InteractiveObjectAPI from "../../utils/InteractiveObjectAPI";
 import {calculate2DSceneImageBounds} from "./aframe_curved";
 import Actions from "../../actions/Actions";
+import RuleActionTypes from "../../rules/RuleActionTypes";
+import ObjectsStore from "../../data/ObjectsStore";
+import Action from "../../rules/Action";
 const soundsHub = require('./soundsHub');
 const resonance = require('./Audio/Resonance');
 const THREE = require('three');
@@ -37,6 +40,19 @@ let healthSize;
 let scoreSize;
 let timerSize;
 let timerID;
+let textboxEntity = null;
+let textboxUuid;
+let timerEntity = null;
+let timerUuid;
+let gameTimeEntity = null;
+let gameTimeUuid;
+let scoreEntity = null;
+let scoreUuid;
+let healthEntity = null;
+let healtUuid;
+let keypadUuid;
+let selectorUuid;
+window.keypadValue = "undefined";
 window.healthValue = undefined;
 window.playtimeValue = undefined;
 window.scoreValue = undefined;
@@ -124,33 +140,44 @@ export default class VRScene extends React.Component {
         }
     }
 
-    loadingManager()
-    {
+    loadingManager() {
         let sphere = document.getElementById(this.state.activeScene.name)
         let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
-        if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
-        {
-            sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
-            if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
+        if(!sceneLoaded){
+            if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
             {
-                console.log("sceneLoaded = ", sceneLoaded)
-                loadingsphere.setAttribute('visible', 'false');
+                sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
+                if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
+                {
+                    //console.log("sceneLoaded = ", sceneLoaded)
+                    loadingsphere.setAttribute('visible', 'false');
+                }
+                if (sphere.components["material"].data.src.currentTime > 1)
+                {
+                    //se la transizione è più lunga di un secondo potrebbe non funzionare
+                    sceneLoaded = true;
+                }
             }
-            if (sphere.components["material"].data.src.currentTime > 1)
+            if (sceneLoaded) //quando la scena è caricata, rendo invisibile la bolla di caricamento
             {
-                //se la transizione è più lunga di un secondo potrebbe non funzionare
-                sceneLoaded = true;
+                //console.log(sphere.components["material"].data.src.currentTime)
+                loadingsphere.setAttribute('visible', 'false');
+                // al termine del video sollevo l'evento per essere gestito qualora ci sia una regola per fine video
+                let media = sphere.components["material"].data.src
+                media.onended = function () {
+                    eventBus.emit(media.id + "-is-ENDED");
+                }
             }
         }
-        else if (sceneLoaded) // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
-        {
-            loadingsphere.setAttribute('visible', 'false');
+        else{ // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
+            if(loadingsphere)//questo previene un crash nella debug mode
+            {
+                loadingsphere.setAttribute('visible', 'false');
+            }
         }
     }
 
-    //TODO: alzare l'evento al termine del timer
-    timerManager()
-    {
+    timerManager() {
         let timer = document.getElementById(this.state.activeScene.name + 'timer')
         if (timer != null && window.timerTime > 0 && window.timerIsRunning) //se è presente un timer nella scena
         {
@@ -168,13 +195,16 @@ export default class VRScene extends React.Component {
                     "; width:" + timerSize +
                     "; value:" + 0;
                 timer.setAttribute('text', textProperties)
-                //eventBus.emit()
+            }
+            if(window.timerTime %  1 == 0)
+            {
+                //console.log(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
+                eventBus.emit(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
             }
         }
     }
 
-    gameTimeManager()
-    {
+    gameTimeManager() {
         let gameTime = document.getElementById(this.state.activeScene.name + 'gameTime')
         if (gameTime != null) //se è presente il game timer nella scena
         {
@@ -189,6 +219,12 @@ export default class VRScene extends React.Component {
                 "; width:" + gameTimeSize +
                 "; value:" + (new Date(window.gameTimeValue * 1000).toISOString().substr(11, 8));
             gameTime.setAttribute('text', textProperties)
+
+            if(window.gameTimeValue %  60 == 0)
+            {
+                console.log("GameTime-reach_minute-" + Math.floor(window.gameTimeValue)/60)
+                eventBus.emit("GameTime-reach_minute-" + Math.floor(window.gameTimeValue)/60)
+            }
         }
     }
 
@@ -255,7 +291,6 @@ export default class VRScene extends React.Component {
             let objectVideo;
 
             rule.actions.sort(stores_utils.actionComparator);
-
             //Funzione che si occupa di eseguire le azioni
             let actionCallback = function(action){
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
@@ -279,6 +314,7 @@ export default class VRScene extends React.Component {
                 };
                 return closure;
             };
+            //console.log(rule)
             switch (rule.event.action){
                 // [Vittoria] qua sto aggiungendo un evento click con il suo uuid dell'oggetto,
                 //se volessi creare un evento del counter chiamerei il uuid del contatore
@@ -325,43 +361,46 @@ export default class VRScene extends React.Component {
                 case 'IS':
                     let media;
                     //Controllo se il video è della scena o di un oggetto
-                    //TODO bisognerebbe trovare un ID simile per tutti
                     if(document.getElementById(rule.event.subj_uuid))
+                    {
                         media = document.getElementById(rule.event.subj_uuid)
+                        //console.log(rule.event.subj_uuid)
+                    }
                     if(document.getElementById(rule.event.uuid))
-                        media =  media = document.getElementById('media_' + rule.event.uuid);
+                    {
+                        media = document.getElementById('media_' + rule.event.uuid);
+                        //console.log('media_' + rule.event.uuid)
+                    }
                     if(soundsHub["audios_"+ rule.event.subj_uuid] !== undefined){
-                        media = soundsHub["audios_"+ rule.event.subj_uuid];
+                        //media = soundsHub["audios_"+ rule.event.subj_uuid];
                     }
-
-                    //Gestione evento fine video, controllo che l'evento sia di fine video, e che il media esiste
-                    if(rule.event.obj_uuid === "ENDED" && media){
-                        media.onended = function() {
-                            rule.actions.forEach(action => {
-                                //Creo l'execution per ogni azione, la gestisco sia per in debugmode che in playmode
-                                //Verifico che la condizione sia rispettata
-                                if(evalCondition(rule.condition, me.state.runState)) {
-                                    let actionExecution = actionCallback(action);
-                                    if (me.props.debug) {
-                                        setTimeout(function () {
-                                            let object;
-                                            if(me.props.interactiveObjects.get(rule.event.subj_uuid))
-                                                object = me.props.interactiveObjects.get(rule.event.subj_uuid);
-                                            else
-                                                object = this.state.audios[rule.event.subj_uuid]
-                                            interface_utils.highlightRule(me.props, object);
-                                            //interface_utils.highlightAction(me.props, action);
-                                            eventBus.on('debug-step', actionExecution);
-                                        }, duration);
-                                    } else {
-                                        setTimeout(function () {
-                                            actionExecution();
-                                        }, media.duration);
-                                    }
+                    // creo l'event handler per la fine del video
+                    let eventVideoName = rule.event.action.toLowerCase();
+                    //TODO: trovare un altro ID per questo tipo di eventi, potrebbe accadere che due scene diverse con
+                    // lo stesso media e lo stesso tipo di regola creino un conflitto
+                    let endVideoEvent = `${rule.event.subj_uuid}-${eventVideoName}-${rule.event.obj_uuid}`;
+                    eventBus.on(endVideoEvent, function(){
+                        rule.actions.forEach(action => {
+                            //Creo l'execution per ogni azione, la gestisco sia per in debugmode che in playmode
+                            //Verifico che la condizione sia rispettata
+                            if(evalCondition(rule.condition, me.state.runState)) {
+                                let actionExecution = actionCallback(action);
+                                if (me.props.debug) {
+                                    setTimeout(function () {
+                                        let object;
+                                        if(me.props.interactiveObjects.get(rule.event.subj_uuid))
+                                            object = me.props.interactiveObjects.get(rule.event.subj_uuid);
+                                        else
+                                            object = this.state.audios[rule.event.subj_uuid]
+                                        interface_utils.highlightRule(me.props, object);
+                                        eventBus.on('debug-step', actionExecution);
+                                    }, duration);
+                                } else {
+                                    actionExecution();
                                 }
-                            });
-                        };
-                    }
+                            }
+                        });
+                    });
 
                     if(rule.event.obj_uuid === "STARTED" && media){
                         media.onplay = function() {
@@ -395,11 +434,34 @@ export default class VRScene extends React.Component {
                 default:
                     let eventName = rule.event.action.toLowerCase();
                     let event = `${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`;
-                    console.log(event);
-                    eventBus.on(event, function () {
-                        console.log("entra");
 
-                        let condition = evalCondition(rule.condition, me.state.runState);
+                    let object = me.props.interactiveObjects.get(rule.event.subj_uuid);
+                    //caricamento eventi oggetti globali:
+
+                    //tempo di gioco
+                    if( object && object.type === InteractiveObjectsTypes.PLAYTIME){
+                        event = `GameTime-reach_minute-${rule.event.obj_uuid}`;
+                    }
+
+                    //vita
+                    if( object && object.type === InteractiveObjectsTypes.HEALTH){
+                        event = `Health-value_changed_to-${rule.event.obj_uuid}`;
+                    }
+                    //punteggio
+                    if( object && object.type === InteractiveObjectsTypes.SCORE){
+                        event = `Score-value_changed_to-${rule.event.obj_uuid}`;
+                    }
+
+                    console.log("rule ", rule, "event: ", event);
+                    eventBus.on(event, function () {
+                        let condition;
+                        //in questo caso mi serve necessariamente passare alla condition il tastierino
+                        if(me.props.interactiveObjects.get(rule.event.obj_uuid) && me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                            rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
+                            condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                        }else{
+                            condition = evalCondition(rule.condition, me.state.runState);
+                        }
                         if (condition) {
                             console.log("dentro l'if condition");
                             rule.actions.forEach(action => {
@@ -423,7 +485,34 @@ export default class VRScene extends React.Component {
                     if(rule.event.action==="ENTER_SCENE"){
                         eventBus.emit(event);
                     }
-                 //   console.log(eventBus)
+                    //se la regola è una regola di tastierino devo caricare anche tutti gli eventi relativi alla pressione
+                    //dei pulsanti che fanno parte del tastierino
+                    if(me.props.interactiveObjects.get(rule.event.obj_uuid) && me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                        rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
+                        let buttons = ObjectsStore.getState().get(rule.event.obj_uuid).properties.buttonsValues;
+                        let buttons_objects = []; //elenco oggetti btn presenti nel tastierino
+                        for(var i =0; i<Object.keys(buttons).length;i++){
+                            let uuid = Object.keys(buttons)[i]; //uuid del btn
+                            buttons_objects.push(ObjectsStore.getState().get(uuid));
+                        }
+
+                        for(var i =0; i<buttons_objects.length; i++){
+                            let eventClick = `PLAYER-click-${buttons_objects[i].uuid}`;
+                            let uuid=buttons_objects[i].uuid;
+                            eventBus.on(eventClick, function () {
+                               //qua devo mettere come actions il fatto che quando clicco il btn
+                                // viene aggiornata la variabile con la combinazione cliccata dall'utente
+                                let actionExecution = actionCallback(new Action({
+                                    uuid: null,
+                                    subj_uuid: rule.event.obj_uuid, //come soggetto gli passo il tastierino
+                                    action: "UPDATE_KEYPAD",
+                                    obj_uuid: uuid,
+                                }),);
+                                actionExecution();
+
+                            });
+                        }
+                    }
                     break;
             }
         })
@@ -468,7 +557,7 @@ export default class VRScene extends React.Component {
         //qui faccio partire il video dopo il cambio di scena
         let sceneCanvas = document.getElementById(this.state.activeScene.name)
         //sceneCanvas.components["material"].data.src.play();
-        console.log("scena cambiata")
+        //console.log("scena cambiata")
         sceneLoaded = false;
         if(this.props.debug){
             this.props.updateCurrentScene(this.state.graph.scenes[newActiveScene].uuid);
@@ -511,28 +600,39 @@ export default class VRScene extends React.Component {
             sceneUuid = this.state.activeScene.uuid;
         }
 
-        let textboxEntity = null;
-        let textboxUuid = this.state.activeScene.objects.textboxes[0];
-        let timerEntity = null;
-        let timerUuid = this.state.activeScene.objects.timers[0];
-        let gameTimeEntity = null;
-        let gameTimeUuid = this.state.activeScene.objects.playtime[0];
-        let scoreEntity = null;
-        let scoreUuid = this.state.activeScene.objects.score[0];
-        let healthEntity = null;
-        let healtUuid = this.state.activeScene.objects.health[0];
+        let ghostSceneUuid = 'ghostScene';
+        textboxEntity = null;
+        textboxUuid = this.state.activeScene.objects.textboxes[0];
+        timerEntity = null;
+        timerUuid = this.state.activeScene.objects.timers[0];
+        gameTimeEntity = null;
+        gameTimeUuid = this.state.activeScene.objects.playtime[0];
+        scoreEntity = null;
+        scoreUuid = this.state.activeScene.objects.score[0];
+        healthEntity = null;
+        healtUuid = this.state.activeScene.objects.health[0];
+        keypadUuid =  this.state.activeScene.objects.keypads[0];
+        selectorUuid = this.state.activeScene.objects.selectors[0];
+
 
         let graph = this.state.graph;
-
+        //TODO: le scene neighbour della ghost scene devono essere renderizzate una sola volta se possibile
         //Verifico se esistano delle bolle vicina, se esistono le inserisco dentro currentLevel che esero' piu' avanti per popolare la scena
         //filtro eliminando la scena corrente in modo che non venga caricata due volte
         if (this.state.graph.neighbours !== undefined && graph.neighbours[sceneUuid] !== undefined) { //se la scena ha vicini
-            this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
-                //this.state.graph.scenes[sceneUuid]);
-                //se questo sistema non funziona, commentare la riga sopra e decommentare le 2 sotto
-                graph.neighbours[sceneUuid].includes(uuid)
-                || uuid === sceneUuid);
-            // console.log("neighbours di sceneUuid: ", this.state.graph.neighbours[sceneUuid])
+            if(graph.neighbours[ghostSceneUuid]){
+                this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
+                    //se questo sistema non funziona, commentare la riga sopra e decommentare le 3 sotto
+                    graph.neighbours[sceneUuid].includes(uuid)
+                    || uuid === sceneUuid
+                    || graph.neighbours[ghostSceneUuid].includes(uuid)); //includo i vicini della ghostscene
+            }
+            else{ //se la ghost scene non è stata ancora creata
+                this.currentLevel = Object.keys(graph.scenes).filter(uuid =>  //[Vittoria] filtro le scene e le prende tranne se stessa
+                    //se questo sistema non funziona, commentare la riga sopra e decommentare le 3 sotto
+                    graph.neighbours[sceneUuid].includes(uuid)
+                    || uuid === sceneUuid);
+            }
 
             let textObj = graph.objects.get(textboxUuid); //recupero l'oggetto di testo
             if (textObj == undefined)//per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
@@ -554,9 +654,21 @@ export default class VRScene extends React.Component {
             if (healthObj == undefined)
                 healthObj = healtUuid;
 
+            let keypadObj = graph.objects.get(keypadUuid);
+            if (keypadObj == undefined)
+                keypadObj = keypadUuid;
 
-            if (textObj) //se l'oggetto textbox esiste genero la Entity
-            {
+            if (keypadObj) //reset del valore quando c'è un altro tastierino
+                window.keypadValue = "";
+
+            let selectorObj = graph.objects.get(selectorUuid);
+            if (selectorObj == undefined)
+                selectorObj = selectorUuid;
+
+            if (selectorObj) //reset del valore quando c'è un altro tastierino
+                window.selectorState = 1;
+
+            if (textObj) {//se l'oggetto textbox esiste genero la Entity
                 let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*4)) +
                     "; align: " + textObj.properties.alignment +
                     "; value:" + textObj.properties.string;
@@ -571,11 +683,9 @@ export default class VRScene extends React.Component {
                             text={textProperties} visible={visibility}>
                     </Entity>
             }
-            if (timerObj) //se l'oggetto timer esiste genero la Entity
-            {
-                timerSize = 0.1 + (timerObj.properties.size/10);
+            if (timerObj) { //se l'oggetto timer esiste genero la Entity
+                timerSize = 0.2 + (timerObj.properties.size/15);
                 if (timerID ==  this.state.activeScene.name + 'timer') {
-
                 }
                 else{
                     window.timerTime = timerObj.properties.time;
@@ -585,13 +695,14 @@ export default class VRScene extends React.Component {
 
                 let textProperties = "baseline: center; side: double"+
                     "; align: center" +
+                    "; width:" + timerSize +
                     "; value:" + window.timerTime;
-                let geometryPropertiesTM = "primitive: plane; width:" + (timerSize/5)+
+                let geometryPropertiesTM = "primitive: plane; width:" + (timerSize/8)+
                     "; height: auto;"
-                let timerPosition = '0 0.23 -0.3'
-                let timerImgPosition = 0.02 + (0.0115 * timerObj.properties.size) +" 0.23 -0.3" //+0.075
-                let geometryPropertiesTMimg = "" + (timerSize/25) + " " + (timerSize/25) + " " +
-                    (timerSize/25)
+                let timerPosition = '0.13 0.23 -0.3'
+                let timerImgPosition = 0.15 + (0.005 * timerObj.properties.size) +" 0.23 -0.3"
+                let geometryPropertiesTMimg = "" + (timerSize/30) + " " + (timerSize/30) + " " +
+                    (timerSize/30)
                 let visibility = true;
                 if (timerObj.visible == 'INVISIBLE')
                     visibility = false;
@@ -599,26 +710,26 @@ export default class VRScene extends React.Component {
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'timerIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)} position={timerImgPosition}
-                        scale={geometryPropertiesTMimg} transparent={true} opacity="0.8" visible={visibility}/>
-                        <Entity visible={true} geometry={geometryPropertiesTM} position={timerPosition}
+                                 scale={geometryPropertiesTMimg}  emissive={"#cecece"} emissiveIntensity="0.8"
+                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>                          <Entity visible={true} geometry={geometryPropertiesTM} position={timerPosition}
                                 id={timerID} material={'shader: flat; opacity: 0.85; color: black;'}
                                 text={textProperties} visible={visibility}>
                         </Entity>
                     </Entity>
             }
-            if (gameTimeObj) //se l'oggetto game time esiste genero la Entity
-            {
-                gameTimeSize = 0.1 + (gameTimeObj.properties.size/10);
+            if (gameTimeObj) { //se l'oggetto game time esiste genero la Entity
+                gameTimeSize = 0.2 + (gameTimeObj.properties.size/15);
                 let textPropertiesPT = "baseline: center; side: double"+
                     "; align: center" +
+                    "; width:" + gameTimeSize +
                     "; value:" + window.gameTimeValue +
                     ";color: #dbdbdb";
                 let geometryPropertiesPT = "primitive: plane; width:" + (gameTimeSize/5) +
                     "; height: auto;"
-                let positionPT = "0.31 0.23 -0.3"
-                let geometryPropertiesPTimg = "" + (gameTimeSize/25) + " " + (gameTimeSize/25) + " " +
-                    (gameTimeSize/25)
-                let positionPTimg = 0.33 + (0.0115 * gameTimeObj.properties.size) +" 0.23 -0.3"
+                let positionPT = "0.375 0.23 -0.3"
+                let geometryPropertiesPTimg = "" + (gameTimeSize/30) + " " + (gameTimeSize/30) + " " +
+                    (gameTimeSize/30)
+                let positionPTimg = 0.40 + (0.008 * gameTimeObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (gameTimeObj.visible == 'INVISIBLE')
                     visibility = false;
@@ -626,29 +737,28 @@ export default class VRScene extends React.Component {
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'gametimeIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)} position={positionPTimg}
-                        scale={geometryPropertiesPTimg} transparent={true} opacity="0.8" visible={visibility}/>
-                        <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
+                                 scale={geometryPropertiesPTimg}  emissive={"#cecece"} emissiveIntensity="0.8"
+                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>                        <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
                                 id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
                                 text={textPropertiesPT} visible={visibility}>
                         </Entity>
                     </Entity>
             }
-            if (scoreObj) //se l'oggetto score esiste genero la Entity
-            {
+            if (scoreObj) { //se l'oggetto score esiste genero la Entity
                 if (window.scoreValue == undefined)
                     window.scoreValue = 0;
-                scoreSize = 0.1 + (scoreObj.properties.size/10);
+                scoreSize = 0.2 + (scoreObj.properties.size/15);
                 let textPropertiesSC = "baseline: center; side: double"+
                     "; align: center" +
                     "; width:" + scoreSize +
                     "; value:" + window.scoreValue +
                     ";color: #dbdbdb";
-                let geometryPropertiesSC = "primitive: plane; width: " + (scoreSize/5)+
+                let geometryPropertiesSC = "primitive: plane; width: " + (scoreSize/8)+
                     "; height:" + (scoreSize/22) +";"
-                let positionSC = "-0.31 0.23 -0.3"
-                let geometryPropertiesSCimg = "" + (scoreSize/25) + " " + (scoreSize/25) + " " +
-                    (scoreSize/25)
-                let positionSCimg = -(0.33) - (0.0115 * scoreObj.properties.size) +" 0.23 -0.3"
+                let positionSC = "-0.13 0.23 -0.3"
+                let geometryPropertiesSCimg = "" + (scoreSize/30) + " " + (scoreSize/30) + " " +
+                    (scoreSize/30)
+                let positionSCimg = -(0.15) - (0.005 * scoreObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (scoreObj.visible == 'INVISIBLE')
                     visibility = false;
@@ -656,29 +766,29 @@ export default class VRScene extends React.Component {
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'scoreIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.SCORE)} position={positionSCimg}
-                        scale={geometryPropertiesSCimg} transparent={true} opacity="0.8" visible={visibility}/>
+                                 scale={geometryPropertiesSCimg}  emissive={"#cecece"} emissiveIntensity="0.8"
+                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>
                         <Entity visible={true} geometry={geometryPropertiesSC} position={positionSC}
                                 id={this.state.activeScene.name + 'score'} material={'shader: flat; opacity: 0.8; color: black;'}
                                 text={textPropertiesSC} visible={visibility}>
                         </Entity>
                     </Entity>
             }
-            if (healthObj) //se l'oggetto health esiste genero la Entity
-            {
+            if (healthObj) { //se l'oggetto health esiste genero la Entity
                 if (window.healthValue == undefined)
                     window.healthValue = healthObj.properties.health;
-                healthSize = 0.1 + (healthObj.properties.size/10);
+                healthSize = 0.2 + (healthObj.properties.size/15);
                 let textPropertiesHL = "baseline: center; side: double"+
                     "; align: center" +
                     "; width:" + healthSize +
-                    "; value:" +window.healthValue +
+                    "; value:" + window.healthValue +
                     ";color: #dbdbdb";
-                let geometryPropertiesHL = "primitive: plane; width:" + (healthSize/5) +
-                    "; height:" + (healthSize/22) +";"
-                let positionHL = "-0.31 0.18 -0.3"
-                let geometryPropertiesHLimg = "" + (healthSize/25) + " " + (healthSize/25) + " " +
-                    (healthSize/25)
-                let positionHLimg = -(0.33) - (0.0115 * healthObj.properties.size) +" 0.18 -0.3"
+                let geometryPropertiesHL = "primitive: plane; width:" + (healthSize/8) +
+                    "; height:" + (healthSize/25) +";"
+                let positionHL = "-0.375 0.23 -0.3"
+                let geometryPropertiesHLimg = "" + (healthSize/30) + " " + (healthSize/30) + " " +
+                    (healthSize/30)
+                let positionHLimg = -(0.395) - (0.005 * healthObj.properties.size) +" 0.23 -0.3"
                 let visibility = true;
                 if (healthObj.visible == 'INVISIBLE')
                     visibility = false;
@@ -686,7 +796,8 @@ export default class VRScene extends React.Component {
                     <Entity>
                         <a-plane id={this.state.activeScene.name + 'healthIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.HEALTH)} position={positionHLimg}
-                        scale={geometryPropertiesHLimg} transparent={true} opacity="0.8" visible={visibility}/>
+                        scale={geometryPropertiesHLimg}  emissive={"#cecece"} emissiveIntensity="0.8"
+                        blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>
                         <Entity visible={true} geometry={geometryPropertiesHL} position={positionHL}
                                 id={this.state.activeScene.name + 'health'} material={'shader: flat; opacity: 0.85; color: black;'}
                                 text={textPropertiesHL} visible={visibility}>
@@ -699,6 +810,7 @@ export default class VRScene extends React.Component {
         {
             this.currentLevel = [];
         }
+
         //Richiamo la funzione per la generazione degli assets
         //[Vittoria] gli assets vengono caricati non tutti insieme all'inizio ma quello della scena corrente e dei vicini
         let assets = this.generateAssets(this.props.editor.gameId);
@@ -773,6 +885,7 @@ export default class VRScene extends React.Component {
         //Restituisco il codice React relativo ad ogni bolla da caricare nella scena
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
+            //console.log("render scena ", sceneName)
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
             //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'
@@ -811,6 +924,7 @@ export default class VRScene extends React.Component {
         window.timerIsRunning = false;
 
     }
+
     static timerStart() {
         window.timerIsRunning = true;
     }
@@ -825,12 +939,14 @@ export default class VRScene extends React.Component {
     {
         let sum = window.playtimeValue + increaseBy;
         this.changeHealthValue(sum, activeSceneName);
+        eventBus.emit("Health-value_changed_to-" + window.healthValue)
     }
 
     static decreaseHealthValue(decreaseBy, activeSceneName)
     {
         let sub = window.playtimeValue - decreaseBy;
         this.changeHealthValue(sub, activeSceneName);
+        eventBus.emit("Health-value_changed_to-" + window.healthValue)
     }
 
     static changeHealthValue(newHealthValue, activeSceneName){
@@ -843,6 +959,7 @@ export default class VRScene extends React.Component {
                 "; value:" + window.healthValue +
                 ";color: #dbdbdb";
             healthObj.setAttribute('text', textPropertiesHL);
+            eventBus.emit("Health-value_changed_to-" + window.healthValue)
         }
     }
 
@@ -852,12 +969,14 @@ export default class VRScene extends React.Component {
     {
         let sum = window.scoreValue + increaseBy;
         this.changeScoreValue(sum, activeSceneName);
+        eventBus.emit("Score-value_changed_to-" + window.scoreValue)
     }
 
     static decreaseScoreValue(decreaseBy, activeSceneName)
     {
         let sub = window.scoreValue - decreaseBy;
         this.changeScoreValue(sub, activeSceneName);
+        eventBus.emit("Score-value_changed_to-" + window.scoreValue)
     }
 
     static changeScoreValue(newScoreValue, activeSceneName){
@@ -870,6 +989,7 @@ export default class VRScene extends React.Component {
                 "; value:" + window.scoreValue +
                 ";color: #dbdbdb";
             scoreObj.setAttribute('text', textPropertiesSC);
+            eventBus.emit("Score-value_changed_to-" + window.scoreValue)
         }
     }
 
@@ -878,13 +998,46 @@ export default class VRScene extends React.Component {
     static changePlaytimeValue(newPlaytimeValue, activeSceneName){
         let playtimeObj = document.getElementById(activeSceneName + 'gameTime');
         if(playtimeObj != null){
-            window.gameTimeValue = newPlaytimeValue;
+            window.gameTimeValue = newPlaytimeValue *60;
             let textPropertiesPT = "baseline: center; side: double"+
                 "; align: center" +
                 "; width:" + gameTimeSize +
-                "; value:" + window.gameTimeValue +
+                "; value:" + (window.gameTimeValue) +
                 ";color: #dbdbdb";
             playtimeObj.setAttribute('text', textPropertiesPT);
         }
+    }
+
+
+    //Metodi tastierino
+    static updateKeypadValue(newNumber){
+        //valore cliccato
+        window.keypadValue = window.keypadValue + String(newNumber);
+    }
+
+    static checkKeypadValue(keypadObj){
+        //keypadObj.combination contiene la combinazione corretta
+        //window.keypadValue contiene la combinazione cliccata dall'utente
+        if (keypadObj.properties.combination == window.keypadValue) {
+            window.keypadValue = ""; //anche se il codice è giusto resetto la variabile per le prossime combinazioni
+            console.log("codice corretto: ", keypadObj.properties.combination);
+            return true;
+        }
+        else {
+            console.log("il codice che hai inserito è errato: ", window.keypadValue);
+            window.keypadValue = ""; //se il codice è sbagliato resetto il valore inserito dall'utente
+            return false;
+        }
+    }
+
+    //Metodo selettore
+    static nextSelectorState(selectorObj){ //da chiamare al click del selettore
+        //avanza di 1 lo stato del selettore, se supera gli stati sul numero di opzioni del selettore
+        window.selectorState = (window.selectorState + 1) % (selectorObj.optionsNumber +1);
+        if (window.selectorState == 0) // se supera il numero di opzioni va a 0 e deve diventare 1
+            window.selectorState = 1;
+        console.log("eventBus.emit",selectorObj.uuid + "-progress-STATE")
+       // eventBus.emit(selectorObj.uuid + "-state_changed_to-" + window.selectorState);
+        eventBus.emit(selectorObj.uuid + "-progress-STATE");
     }
 }

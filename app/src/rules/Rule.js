@@ -10,6 +10,7 @@ import Action from "./Action";
  * @param condition default empty object
  * @param actions default empty array
  * @param name of the rule
+ * @param global if the rule is global or not
  */
 const Rule = Immutable.Record({
 
@@ -19,6 +20,7 @@ const Rule = Immutable.Record({
     actions : Immutable.List(),
     name: null,
     type: "rule",
+    global : null
 });
 
 export default Rule;

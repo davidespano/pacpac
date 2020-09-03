@@ -11,7 +11,7 @@ const unknownFileIcon = icons.insertDriveFile;
 const defaultFillColor = '#424242';
 const soundFilesExtensions = ['aac', 'aiff', 'flac', 'm4a', 'ogg', 'mp3', 'wav', 'wma'];
 const pictureFilesExtensions = ['gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg'];
-const videoFilesExtensions = ['avi', 'flv', 'wmv', 'mov', 'mp4'];
+const videoFilesExtensions = ['avi', 'flv', 'wmv', 'mov', 'mp4', 'MOV'];
 const archiveFilesExtensions = ['tar', 'zip', 'gz', 'bz2', 'rar'];
 const booksFilesExtensions = ['pdf', 'epub', 'fb2'];
 

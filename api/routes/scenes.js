@@ -380,6 +380,33 @@ function setHomeScene(req, res, next) {
         .catch(next);
 }
 
+
+function setNodes(req,res,next){
+    const nodes = req.body.nodes;
+    const gameID = req.params.gameID;
+    Scenes.setNodes(dbUtils.getSession(req), nodes, gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+
+}
+
+
+function getNodes(req,res,next){
+    const gameID = req.params.gameID;
+    Scenes.getNodes(dbUtils.getSession(req), gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
+
+function delNodes(req,res,next){
+    const gameID = req.params.gameID;
+    Scenes.delNodes(dbUtils.getSession(req), gameID)
+        .then(response => writeResponse(res, response))
+        .catch(next);
+}
+
+
 module.exports = {
     list: list,
     getByName: getByName,
@@ -389,5 +416,8 @@ module.exports = {
     getHomeScene: getHomeScene,
     deleteScene: deleteScene,
     setHomeScene: setHomeScene,
-    detailedList: detailedList
+    detailedList: detailedList,
+    setNodes:setNodes,
+    getNodes:getNodes,
+    delNodes:delNodes
 };

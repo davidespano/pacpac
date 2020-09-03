@@ -95,6 +95,13 @@ const Actions = {
         })
     },
 
+    graphViewModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.GRAPH_VIEW_MODE_ON
+        })
+    },
+
     audioPositioning(status){
         AppDispatcher.dispatch({
             type: ActionTypes.AUDIO_POSITIONING,
@@ -700,7 +707,13 @@ const Actions = {
             type: ActionTypes.UPDATE_RULE,
             rule: rule,
         });
-        let scene = ScenesStore.getState().get(CentralSceneStore.getState());
+        let scene =null;
+        if(rule.global){
+            scene = ScenesStore.getState().get('ghostScene');
+        }
+        else{
+            scene = ScenesStore.getState().get(CentralSceneStore.getState());
+        }
         InteractiveObjectAPI.saveRule(scene, rule);
     },
 

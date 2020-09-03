@@ -136,7 +136,13 @@ function generateDefaultRule(object, scene){
             r = Rule({
                 uuid: uuid.v4(),
                 name : 'regola del tastierino ' + object.name,
-                event: Action({}),
+                event: Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: EventTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                condition : new Condition(uuid.v4(), InteractiveObjectsTypes.COMBINATION, Values.CORRECT, Operators.EQUAL),
                 actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             break;
@@ -169,6 +175,37 @@ function generateDefaultRule(object, scene){
                 actions : Immutable.List([Action({uuid: uuid.v4()})]),
             });
             return [r1, r2];
+        case InteractiveObjectsTypes.HEALTH:
+            r = Rule({
+                uuid : uuid.v4(),
+                name : 'regola della ' + object.name,
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: object.uuid,
+                    action: RuleActionTypes.INCREASE,
+                    obj_uuid: 0,
+                }),
+                actions : Immutable.List([Action({uuid: uuid.v4()})]),
+                global : true
+            });
+            break;
+        case InteractiveObjectsTypes.SELECTOR:
+            r = Rule({
+                uuid : uuid.v4(),
+                name : 'regola del ' + object.name,
+                event : Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: InteractiveObjectsTypes.PLAYER,
+                    action: RuleActionTypes.CLICK,
+                    obj_uuid: object.uuid,
+                }),
+                actions : Immutable.List([Action({uuid: uuid.v4(),
+                    subj_uuid: object.uuid,
+                    action: RuleActionTypes.PROGRESS,
+                    obj_uuid: Values.STATE,})]),
+                global : false
+            });
+            break;
         default:
             return;
     }
