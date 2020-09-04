@@ -423,8 +423,19 @@ function executeAction(VRScene, rule, action) {
                 Azione che si occupa di avviare una regola o un timer
              */
             if (RulesStore.getState().get(action_obj_uuid) !== undefined) {//sto triggerando una regola regola?
+                let objectVideo = document.querySelector('#media_' + rule.event.obj_uuid);
+                if(!objectVideo){
+                    objectVideo = document.querySelector('#media0_' + rule.event.obj_uuid);
+                }
                 let newRule = RulesStore.getState().get(action_obj_uuid);
-                eventBus.emit(`${newRule.event.subj_uuid}-${newRule.event.action.toLowerCase()}-${newRule.event.obj_uuid}`); //Solo per regole
+                if(!objectVideo){
+                    eventBus.emit(`${newRule.event.subj_uuid}-${newRule.event.action.toLowerCase()}-${newRule.event.obj_uuid}`); //Solo per regole
+                }else{
+                    setTimeout(function(){
+                        eventBus.emit(`${newRule.event.subj_uuid}-${newRule.event.action.toLowerCase()}-${newRule.event.obj_uuid}`);
+                    }, objectVideo.duration * 1000)
+                }
+
             } else { //sto triggerando un timer
                 create_scene2.timerStart();
             }
@@ -763,14 +774,21 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
             videoType = current_object.properties.state === 'ON' ? current_object.media.media0 : current_object.media.media1;
         }
         if (store_utils.getFileType(videoType) === 'video') {
-            let aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
+            let aux = "";
             let texture =
             document.getElementById(VRScene.props.scenes.get(VRScene.props.currentScene).name)
                 .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
+            if(texture.valueOld == null){
+                 aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
+            }else{
+                aux = texture.valueOld;
+            }
             texture.valueOld = texture.value;
             texture.value = aux;
             texture.value.needsUpdate = true;
+
             switchVideo.loop = false;
+            switchVideo.currentTime = 0;
             switchVideo.play();
         }
         duration_switch = (parseInt(switchVideo.duration) * 1000);
@@ -788,14 +806,16 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         cursor.setAttribute('material', 'visible: true');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('color', 'black');
+
         let texture =
             document.getElementById(VRScene.props.scenes.get(VRScene.props.currentScene).name)
                 .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
-
+        let aux = texture.value;
         texture.value = texture.valueOld;
+        texture.valueOld = aux;
         texture.value.needsUpdate = true;
         //[Vittoria] l'oggetto cambia stato quindi lo shader dev'essere aggiornato, quindi aggiorno con il nuovo video
-        document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+        //document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
         if(current_object.properties.type == "SWITCH") {
             runState[action.subj_uuid].state = action.obj_uuid;
             VRScene.setState({runState: runState});

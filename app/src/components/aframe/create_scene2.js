@@ -294,20 +294,21 @@ export default class VRScene extends React.Component {
                 // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
                 // senza passarli esplicitamente
                 let closure = function() {
-                    setTimeout(function () {
-                        executeAction(me, rule, action)
-                    }, duration);
                     //Se e' coinvolto un cambio sfondo devo aspettare, in caso sia un video, che finisca, prima di avviare la prossima azione
                     if (action.action === 'CHANGE_BACKGROUND') {
                         objectVideo = document.getElementById(action.obj_uuid);
-                    } else if(action.action === "CHECK_KEYPAD"){
-                        objectVideo = document.querySelector('#media0_' + action.obj_uuid);
+                    //} else if(action.action === "CHECK_KEYPAD"){
+                    //    objectVideo = document.querySelector('#media0_' + action.obj_uuid);
                     } else{
                         objectVideo = document.querySelector('#media_' + action.obj_uuid);
                     }
                     if (objectVideo) {
                         duration = (objectVideo.duration * 1000);
                     }
+                    setTimeout(function () {
+                        executeAction(me, rule, action)
+                    }, duration);
+
                 };
                 return closure;
             };
@@ -1030,6 +1031,7 @@ export default class VRScene extends React.Component {
         else {
             console.log("il codice che hai inserito è errato: ", window.keypadValue);
             window.keypadValue = ""; //se il codice è sbagliato resetto il valore inserito dall'utente
+            window.keypadWrong = true;
             return false;
         }
     }
