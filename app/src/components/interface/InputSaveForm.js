@@ -2,9 +2,8 @@ import React from "react";
 import Immutable from "immutable";
 
 function InputSaveForm(props) {
-    console.clear();
     console.log("props.debugRunState", props.debugRunState);
-    if(props.debugRunState === undefined){
+    if(props.editor.debugRunState === undefined){
         return (
             <div id={"register"}>
                 <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
@@ -76,25 +75,6 @@ function InputSaveForm(props) {
         descriptionField.value = "";
     };
 
-
-    console.clear();
-    console.log("props.debugRunState", props.debugRunState);
-    if(props.debugRunState === undefined){
-        return (
-            <div id={"register"}>
-                <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"
-                     aria-labelledby="register-modal-label" aria-hidden="true">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-body">
-                                <h5 className="modal-title" id="register-modal-label">Non ci sono modifiche</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
     return (
         <div id={"register"}>
             <div className="modal fade" id="save-modal" tabIndex="-1" role="dialog"

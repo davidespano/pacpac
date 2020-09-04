@@ -147,9 +147,9 @@ function LoadDebugSave({sceneName, save, ...props}){
                                     <table className="form-control-plaintext table table-borderless table-hover">
                                         <thead>
                                         <tr className="f">
-                                            <th className="th-sm">Tipo</th>
                                             <th className="th-sm">Nome</th>
                                             <th className="th-sm">Stato</th>
+                                            <th className="th-sm">Tipo</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -158,7 +158,7 @@ function LoadDebugSave({sceneName, save, ...props}){
                                             save.objectStates.map(obj => {
                                                 /* Questo controllo è per evitare bug con eventuali oggetti eliminati in seguito al salvataggio */
                                                 if(props.interactiveObjects.get(obj.uuid) === undefined)
-                                                    return;
+                                                    return null;
 
                                                 let state = obj.state ? toString.valueUuidToString(obj.state) : "" ; // Proprietà di key e switch
                                                 let step = obj.step ? "Valore iniziale: " + obj.step : ""; // Proprietà di counter
@@ -166,11 +166,6 @@ function LoadDebugSave({sceneName, save, ...props}){
                                                 /* 1a col: anteprima oggetto; 2a: nome; 3a col: proprietà */
                                                 return (
                                                     <tr key={obj.uuid}>
-                                                        <td className="col-md-1">
-                                                            <img className="icon-obj-left"
-                                                                 src={interface_utils.getObjImg(props.interactiveObjects.get(obj.uuid).type)}
-                                                            />
-                                                        </td>
                                                         <td>
                                                             {props.interactiveObjects.get(obj.uuid).name}
                                                         </td>
@@ -181,6 +176,11 @@ function LoadDebugSave({sceneName, save, ...props}){
                                                                 <li>{toString.valueUuidToString(obj.visible)}</li>
                                                                 <li>{toString.valueUuidToString(obj.activable)}</li>
                                                             </ul>
+                                                        </td>
+                                                        <td className="col-md-1">
+                                                            <img className="icon-obj-left"
+                                                                 src={interface_utils.getObjImg(props.interactiveObjects.get(obj.uuid).type)}
+                                                            />
                                                         </td>
                                                     </tr>
                                                 )})
