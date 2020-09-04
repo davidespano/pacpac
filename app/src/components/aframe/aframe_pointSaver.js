@@ -3,6 +3,7 @@
  */
 
 var AFRAME = require('aframe');
+var THREE = require('three');
 
 AFRAME.registerComponent('pointsaver',
 {
@@ -45,6 +46,7 @@ function pointSaverAudio(evt) {
     if(!cursor.components.pointsaver.points){
         cursor.components.pointsaver.points = [];
     }
-    cursor.components.pointsaver.points[0] = evt.detail.intersection.point;
+    //let correction = new THREE.Euler(0,   -Math.PI / 2, 0, 'YXZ');
+    cursor.components.pointsaver.points[0] = evt.detail.intersection.point//.applyEuler(correction);
 }
 

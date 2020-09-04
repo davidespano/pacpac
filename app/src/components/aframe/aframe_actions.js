@@ -12,6 +12,7 @@ import create_scene2 from "./create_scene2";
 const eventBus = require('./eventBus');
 const THREE = require('three');
 const soundsHub = require('./soundsHub');
+const {mediaURL} = settings;
 
 //[Vittoria] VRScene è createscene2
 function executeAction(VRScene, rule, action) {
@@ -363,6 +364,9 @@ function executeAction(VRScene, rule, action) {
                 let delay = game_graph['objects'].get(action.obj_uuid).properties.delay;
                 setTimeout(function () {
                     let pointOI = game_graph['objects'].get(action.obj_uuid);
+                    if(pointOI.type == "POINT_OF_INTEREST"){
+
+                    }
                     lookObject('curv' + action.obj_uuid, pointOI.vertices);
                 }, delay)
             }
@@ -419,7 +423,8 @@ function executeAction(VRScene, rule, action) {
                 Azione che si occupa di avviare una regola o un timer
              */
             if (RulesStore.getState().get(action_obj_uuid) !== undefined) {//sto triggerando una regola regola?
-                eventBus.emit(`${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`); //Solo per regole
+                let newRule = RulesStore.getState().get(action_obj_uuid);
+                eventBus.emit(`${newRule.event.subj_uuid}-${newRule.event.action.toLowerCase()}-${newRule.event.obj_uuid}`); //Solo per regole
             } else { //sto triggerando un timer
                 create_scene2.timerStart();
             }
@@ -464,10 +469,19 @@ function executeAction(VRScene, rule, action) {
             let keypad = subject_obj; //tastierino di riferimento
             let btn_value = keypad.properties.buttonsValues[uuid_btn_pressed]; //valore associato al btn premuto
             create_scene2.updateKeypadValue(btn_value); //aggiorno il valore del tastierino
+            current_object = game_graph['objects'].get(uuid_btn_pressed);
+            changeStateSwitch(VRScene, runState, current_object, cursor, action);
             break;
+        case "CHECK_KEYPAD":
+            current_object = game_graph['objects'].get(rule.event.obj_uuid);
+            changeStateSwitch(VRScene, runState, current_object, cursor, action);
+            break;
+
             default:
             console.log('not yet implemented');
             console.log(action);
+
+
     }
     let event=null;
     //tempo di gioco
@@ -593,6 +607,8 @@ function transition(actualScene, targetScene, duration, direction) {
         }
         , parseInt(duration) + 100
     );
+
+    eventBus.emit("PLAYER-enter_scene-"+ targetScene.uuid);
     //if(store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
 }
 
@@ -684,6 +700,8 @@ function lookObject(idObject, pointOI = null) {
             return parseFloat(x);
         });
         let p = new THREE.Vector3(points[0], points[1], points[2]);
+        let correction = new THREE.Euler(0,   Math.PI / 2, 0, 'YXZ');
+        p.applyEuler(correction);
         l = p.normalize();
         quaternion.setFromUnitVectors(v, l);
         euler.setFromQuaternion(quaternion, 'YXZ', false);
@@ -722,7 +740,7 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     runState[current_object.uuid].activable = false;
 
 
-    if (current_object.media0 !== null) {
+    if (current_object.media.media0 !== null) {
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
     }
     VRScene.setState({runState: runState, graph: game_graph});
@@ -733,15 +751,26 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
  */
 function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     console.log("FUNCTION CHANGESTATESWITCH");
-
+    let id = window.localStorage.getItem("gameID");
     let duration_switch = 0;
-    let switchVideo = document.getElementById('media_' + current_object.uuid);
+    let switchVideo = document.getElementById('media0_' + current_object.uuid);
     console.log(switchVideo);
     if (switchVideo != null) {
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
-        let videoType = current_object.properties.state === 'ON' ? current_object.media.media0 : current_object.media.media1;
+        let videoType = current_object.media.media0;
+        if(current_object.properties.type == "SWITCH"){
+            videoType = current_object.properties.state === 'ON' ? current_object.media.media0 : current_object.media.media1;
+        }
         if (store_utils.getFileType(videoType) === 'video') {
+            let aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
+            let texture =
+            document.getElementById(VRScene.props.scenes.get(VRScene.props.currentScene).name)
+                .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
+            texture.valueOld = texture.value;
+            texture.value = aux;
+            texture.value.needsUpdate = true;
+            switchVideo.loop = false;
             switchVideo.play();
         }
         duration_switch = (parseInt(switchVideo.duration) * 1000);
@@ -759,10 +788,18 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         cursor.setAttribute('material', 'visible: true');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('color', 'black');
+        let texture =
+            document.getElementById(VRScene.props.scenes.get(VRScene.props.currentScene).name)
+                .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
+
+        texture.value = texture.valueOld;
+        texture.value.needsUpdate = true;
         //[Vittoria] l'oggetto cambia stato quindi lo shader dev'essere aggiornato, quindi aggiorno con il nuovo video
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
-        runState[action.subj_uuid].state = action.obj_uuid;
-        VRScene.setState({runState: runState});
+        if(current_object.properties.type == "SWITCH") {
+            runState[action.subj_uuid].state = action.obj_uuid;
+            VRScene.setState({runState: runState});
+        }
 
     }, duration_switch)
 

@@ -154,7 +154,7 @@ export default class Bubble extends Component
                 return(
                     <Curved key={"keyC"+ curve.uuid}
                             onDebugMode={this.props.onDebugMode}
-                            mode={'game'}
+                            mode={''}
                             position={positionCurved}
                             object_uuid={this.props.isActive?curve.uuid:""}
                             is3Dscene={is3Dscene}
@@ -245,7 +245,7 @@ export default class Bubble extends Component
                                 id={this.props.scene.name + 'loading'} radius={radius}  material={'shader: flat; opacity: 0.5; color: black; side: double'}  >
                             <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
                         </Entity>
-                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 -90 0'} primitive={primitive} visible={this.props.isActive}
+                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 90 0'} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
                         {curves}
@@ -328,6 +328,7 @@ export default class Bubble extends Component
             let masks = [];
             let aux;
             let dict = ['0'];
+            let nullMask = new THREE.TextureLoader().load("/null-mask.jpg");
             let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img;
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             //Se non ho oggetti resetto lo shader, non serve il nostro
@@ -359,8 +360,14 @@ export default class Bubble extends Component
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
-                let media;
 
+                // TODO controllare questo fix
+                if(asset == null){
+                    asset = document.getElementById("media0_" + obj.uuid);
+                }
+
+                let media;
+                console.log(obj.type);
                 // TODO verificare i media per oggetti diversi da switch
                 //Controllo se l'oggetto corrente e' uno switch, in quel caso quale media devo prendere se da ON a OFF o viceversa
                 if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON"){
@@ -394,11 +401,17 @@ export default class Bubble extends Component
                 video.push(aux);
 
                 //Carico la maschera associata al media dell'oggetto
-                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                if(obj.type === "BUTTON"){
+                    aux = nullMask;
+                }else{
+                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                }
+
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
                 dict.push(obj.uuid.replace(/-/g,'_'));
             });
+
 
             //Controllo se ci sono maschere o no, se non ci sono maschere resetto lo shader, perche' non neccessario
             if (masks.length === 0) {
@@ -432,7 +445,7 @@ export default class Bubble extends Component
             for (i = 0; i < masks.length; i++) {
                 //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
                 skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
-                skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: masks[i]};
+                skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: nullMask};
                 declarations += `
                            uniform sampler2D video${dict[i]};    uniform sampler2D mask${dict[i + 1]};`;
 

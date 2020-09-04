@@ -33,6 +33,10 @@ export default class Asset extends React.Component{
             let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
 
             let currAssets = []; //Variabile che conterra' tutti assets
+            currAssets.push(<img id="null-mask"
+                                 crossOrigin="Anonymous"
+                                 src="/null-mask.jpg"
+            />)
             let sceneBackground;
             //Se non è impostato il loop lo imposto a false
             let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;

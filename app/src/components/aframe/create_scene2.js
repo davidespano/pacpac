@@ -300,7 +300,9 @@ export default class VRScene extends React.Component {
                     //Se e' coinvolto un cambio sfondo devo aspettare, in caso sia un video, che finisca, prima di avviare la prossima azione
                     if (action.action === 'CHANGE_BACKGROUND') {
                         objectVideo = document.getElementById(action.obj_uuid);
-                    } else {
+                    } else if(action.action === "CHECK_KEYPAD"){
+                        objectVideo = document.querySelector('#media0_' + action.obj_uuid);
+                    } else{
                         objectVideo = document.querySelector('#media_' + action.obj_uuid);
                     }
                     if (objectVideo) {
@@ -445,6 +447,47 @@ export default class VRScene extends React.Component {
                         event = `Score-value_changed_to-${rule.event.obj_uuid}`;
                     }
 
+                    //se la regola è una regola di tastierino devo caricare anche tutti gli eventi relativi alla pressione
+                    //dei pulsanti che fanno parte del tastierino
+                    if(me.props.interactiveObjects.get(rule.event.obj_uuid) && me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                        rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
+
+                        eventBus.on(`PLAYER-click-${rule.event.obj_uuid}`, function () {
+                            //qua devo mettere come actions il fatto che quando clicco il btn
+                            // viene aggiornata la variabile con la combinazione cliccata dall'utente
+                            let actionExecution = actionCallback(new Action({
+                                uuid: null,
+                                subj_uuid: "GAME",
+                                action: "CHECK_KEYPAD",
+                                obj_uuid: rule.event.obj_uuid,
+                            }),);
+                            actionExecution();
+                        });
+                        let buttons = ObjectsStore.getState().get(rule.event.obj_uuid).properties.buttonsValues;
+                        let buttons_objects = []; //elenco oggetti btn presenti nel tastierino
+                        for(var i =0; i<Object.keys(buttons).length;i++){
+                            let uuid = Object.keys(buttons)[i]; //uuid del btn
+                            buttons_objects.push(ObjectsStore.getState().get(uuid));
+                        }
+
+                        for(var i =0; i<buttons_objects.length; i++){
+                            let eventClick = `PLAYER-click-${buttons_objects[i].uuid}`;
+                            let uuid=buttons_objects[i].uuid;
+                            eventBus.on(eventClick, function () {
+                                //qua devo mettere come actions il fatto che quando clicco il btn
+                                // viene aggiornata la variabile con la combinazione cliccata dall'utente
+                                let actionExecution = actionCallback(new Action({
+                                    uuid: null,
+                                    subj_uuid: rule.event.obj_uuid, //come soggetto gli passo il tastierino
+                                    action: "UPDATE_KEYPAD",
+                                    obj_uuid: uuid,
+                                }),);
+                                actionExecution();
+
+                            });
+                        }
+                    }
+
                     console.log("rule ", rule, "event: ", event);
                     eventBus.on(event, function () {
                         let condition;
@@ -470,37 +513,10 @@ export default class VRScene extends React.Component {
                             });
                         }
                     });
-                    if(rule.event.action==="ENTER_SCENE"){
+                    if(rule.event.action==="ENTER_SCENE" && me.props.currentScene == rule.event.obj_uuid){
                         eventBus.emit(event);
                     }
-                    //se la regola è una regola di tastierino devo caricare anche tutti gli eventi relativi alla pressione
-                    //dei pulsanti che fanno parte del tastierino
-                    if(me.props.interactiveObjects.get(rule.event.obj_uuid) && me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
-                        rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
-                        let buttons = ObjectsStore.getState().get(rule.event.obj_uuid).properties.buttonsValues;
-                        let buttons_objects = []; //elenco oggetti btn presenti nel tastierino
-                        for(var i =0; i<Object.keys(buttons).length;i++){
-                            let uuid = Object.keys(buttons)[i]; //uuid del btn
-                            buttons_objects.push(ObjectsStore.getState().get(uuid));
-                        }
 
-                        for(var i =0; i<buttons_objects.length; i++){
-                            let eventClick = `PLAYER-click-${buttons_objects[i].uuid}`;
-                            let uuid=buttons_objects[i].uuid;
-                            eventBus.on(eventClick, function () {
-                               //qua devo mettere come actions il fatto che quando clicco il btn
-                                // viene aggiornata la variabile con la combinazione cliccata dall'utente
-                                let actionExecution = actionCallback(new Action({
-                                    uuid: null,
-                                    subj_uuid: rule.event.obj_uuid, //come soggetto gli passo il tastierino
-                                    action: "UPDATE_KEYPAD",
-                                    obj_uuid: uuid,
-                                }),);
-                                actionExecution();
-
-                            });
-                        }
-                    }
                     break;
             }
         })
