@@ -13,6 +13,9 @@
     margin: 0;
 }
 
+html, body, #sceneContainer {
+    max-height: 100vh;
+}
 @font-face {
     font-family: 'playregular';
     src: url('play-regular-webfont.woff2') format('woff2'),
@@ -67,17 +70,18 @@ div.rules{
     .grid-container {
         display: grid;
         grid-template-columns: 15% auto 20%;
-        grid-template-rows: 55% 45%;
+        grid-template-rows: 40vh 60vh;
         grid-gap: 1px;
         padding: 1px;
         background-color: #ADB0B1;
         min-height: 85vh;
+        max-height: 85vh;
         box-sizing: border-box;
     }
 
     body{
         width: 100%;
-        height: 100%;
+
     }
 
 }
@@ -90,7 +94,7 @@ div.rules{
     .grid-container {
         display: grid;
         grid-template-columns: 210px auto 280px;
-        grid-template-rows: 55% 45%;
+        grid-template-rows: 40vh 60vh;
         grid-gap: 1px;
         padding: 1px;
         background-color: #ADB0B1;
@@ -111,7 +115,8 @@ div.rules{
 
 
 .grid-container > .rules {
-    height: 32vh;
+    max-height: 40vh;
+    overflow: scroll;
 }
 
 .expanded > .rules{
@@ -1804,8 +1809,7 @@ h6 {
 
 .rule-editor{
     box-sizing: border-box;
-    height: 300px;
-    overflow-y: scroll;
+
     overflow-x: hidden;
     background-color: white;
 }
