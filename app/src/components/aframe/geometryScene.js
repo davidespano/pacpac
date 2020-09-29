@@ -426,7 +426,7 @@ export default class GeometryScene extends React.Component{
                 <div id="UI" >
                     <div id="keyMap" >
                         <h1>Keys</h1>
-                        <ul class="keyElements">
+                        <ul className="keyElements">
                             <li id="startedit">E: Inizia a disegnare</li>
                             <li> C: Conferma </li>
                             <li id="deletelastpoint"> U: Elimina ultimo punto </li>
@@ -461,8 +461,10 @@ export default class GeometryScene extends React.Component{
      */
     generateAssets(){
         return this.currentLevel.map(sceneName =>{
+            console.log("SceneName", sceneName)
             return (
                 <Asset
+                    key={sceneName.toString()}
                     scene = {this.state.completeScene}
                     srcBackground = {this.state.completeScene.img}
                     runState = {[]}

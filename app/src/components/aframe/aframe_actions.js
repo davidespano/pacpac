@@ -470,6 +470,8 @@ function executeAction(VRScene, rule, action) {
             }
             break;
         case RuleActionTypes.PROGRESS:
+            console.log("progress selector")
+            console.log("subj obj", subject_obj)
             create_scene2.nextSelectorState(subject_obj);
             break;
         case "UPDATE_KEYPAD":
@@ -513,6 +515,7 @@ function executeAction(VRScene, rule, action) {
 
     console.log(`emit`, event);
     eventBus.emit(event);
+    console.log("stato del selettore:", window.selectorState)
 }
 
 /**

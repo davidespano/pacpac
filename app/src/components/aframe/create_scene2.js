@@ -866,6 +866,7 @@ export default class VRScene extends React.Component {
         return this.currentLevel.map(sceneName => {
             return (
                 <Asset
+                    key={sceneName}
                     scene = {this.state.graph.scenes[sceneName]}
                     srcBackground = {this.state.runState[sceneName].background}
                     runState = {this.state.runState}
@@ -1038,12 +1039,11 @@ export default class VRScene extends React.Component {
 
     //Metodo selettore
     static nextSelectorState(selectorObj){ //da chiamare al click del selettore
-        //avanza di 1 lo stato del selettore, se supera gli stati sul numero di opzioni del selettore
-        window.selectorState = (window.selectorState + 1) % (selectorObj.optionsNumber +1);
-        if (window.selectorState == 0) // se supera il numero di opzioni va a 0 e deve diventare 1
-            window.selectorState = 1;
-        console.log("eventBus.emit",selectorObj.uuid + "-progress-STATE")
-       // eventBus.emit(selectorObj.uuid + "-state_changed_to-" + window.selectorState);
-        eventBus.emit(selectorObj.uuid + "-progress-STATE");
+        window.selectorState+=1;
+        if(window.selectorState>selectorObj.properties.optionsNumber)
+            window.selectorState=1; //il primo stato è 1
+        //eventBus.emit(selectorObj.uuid + "-progress-STATE");
+        console.log("Nuovo stato del selettore:", window.selectorState)
+
     }
 }
