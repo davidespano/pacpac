@@ -131,7 +131,7 @@ function generateProperties(props){
             />
             <label className={'rightbar-titles'}>Scena di appartenenza</label>
             <div className={'rightbar-grid'}>
-                <input className={'propertyForm objectName'}
+                <input readOnly className={'propertyForm objectName'}
                        value={objectScene.name}
                 />
                 <button
@@ -289,6 +289,7 @@ function generateSpecificProperties(object, objectScene, props){
                     <div className={'flex'}>
                         <div id={"transitionDuration"}
                              className={"propertyForm-right"}
+                             suppressContentEditableWarning={true}
                              contentEditable={true}
                              onBlur={()=> interface_utils.setPropertyFromId(object,'duration',"transitionDuration", props)}
                              onInput={() => interface_utils.onlyNumbers("transitionDuration")}
@@ -371,7 +372,7 @@ function generateSpecificProperties(object, objectScene, props){
                 let obj = props.interactiveObjects.get(button);
                 let buttonValueID = obj.name +"value"
                 return (
-                    <React.Fragment>
+                    <React.Fragment key={buttonValueID}>
                         <p className={'objectsList-element-delete-button buttonValuesLabels'}
                            onClick={()=> props.updateCurrentObject(obj)}>
                             <img className={"object-thumbnail"} src={interface_utils.getObjImg(obj.type)}/>
@@ -414,6 +415,7 @@ function generateSpecificProperties(object, objectScene, props){
                         <label className={'options-labels'}>Combinazione corretta:</label>
                         <div className={'flex'}>
                             <div id={"combination"}
+                                 suppressContentEditableWarning={true}
                                  className={"propertyForm-right"}
                                  contentEditable={true}
                                  onBlur={()=> interface_utils.setPropertyFromId(object,'combination',"combination", props)}
@@ -498,7 +500,7 @@ function generateSpecificProperties(object, objectScene, props){
                     <label className={'options-labels'}>Numero opzioni:</label>
                     <div className={'flex'}>
                         <Slider
-                            defaultValue={object.properties.optionsNumber}
+                            defaultValue={parseInt(object.properties.optionsNumber)}
                             id="optionsNumber"
                             aria-labelledby="discrete-slider"
                             valueLabelDisplay="auto"
