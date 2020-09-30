@@ -796,16 +796,16 @@ function switchOptionsNames(option){
 
 function selectorOptionsNames(option) {
     switch(option){
-        case 'media0': return 'opzione 1';
-        case 'media1': return 'opzione 2';
-        case 'media2': return 'opzione 3';
-        case 'media3': return 'opzione 4';
-        case 'media4': return 'opzione 5';
-        case 'media5': return 'opzione 6';
-        case 'media6': return 'opzione 7';
-        case 'media7': return 'opzione 8';
-        case 'media8': return 'opzione 9';
-        case 'media9': return 'opzione 10';
+        case 'media1': return 'opzione 1';
+        case 'media2': return 'opzione 2';
+        case 'media3': return 'opzione 3';
+        case 'media4': return 'opzione 4';
+        case 'media5': return 'opzione 5';
+        case 'media6': return 'opzione 6';
+        case 'media7': return 'opzione 7';
+        case 'media8': return 'opzione 8';
+        case 'media9': return 'opzione 9';
+        case 'media10': return 'opzione 10';
     }
 
 }
@@ -834,8 +834,6 @@ function objectTypeToString(objectType) {
             return "Timer";
         case InteractiveObjectsTypes.TEXTBOX:
             return "Testo";
-        case InteractiveObjectsTypes.BUTTON:
-            return "Pulsante";
         case InteractiveObjectsTypes.KEYPAD:
             return "Tastierino";
         case InteractiveObjectsTypes.HEALTH:
