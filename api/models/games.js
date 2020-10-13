@@ -5,7 +5,7 @@ const _ = require('lodash');
 
 
 function create_game(session, user, name) {
-    return session.run('MATCH (user:User {id:{id}})-[:OWN_GAME]->(game:Game {name:{name}}) ' +
+    return session.run('MATCH (user:User {id:$id})-[:OWN_GAME]->(game:Game {name:$name}) ' +
         'RETURN user',{id: user.id, name: name}).then(results => {
 
         if (!_.isEmpty(results.records)) {
@@ -13,8 +13,8 @@ function create_game(session, user, name) {
         }
         const gameId = crypto.randomBytes(16).toString("hex");
         return session.run(
-            'MATCH (user:User {id: {id}}) ' +
-            'CREATE (user)-[:OWN_GAME]->(game:Game {gameID:{gameId}, name:{name}}) ' +
+            'MATCH (user:User {id: $id}) ' +
+            'CREATE (user)-[:OWN_GAME]->(game:Game {gameID:$gameId, name:$name}) ' +
             'RETURN game', {id: user.id, name: name, gameId: gameId}).then(results => {
             if (_.isEmpty(results.records)) {
                 throw {message: 'user not found', status: 404};
@@ -27,7 +27,7 @@ function create_game(session, user, name) {
 }
 
 function delete_game(session, user, gameID) {
-    return session.run('MATCH (user:User {id:{id}})-[:OWN_GAME]->(game:Game {gameID:{gameID}}) ' +
+    return session.run('MATCH (user:User {id:$id})-[:OWN_GAME]->(game:Game {gameID:$gameID}) ' +
         'RETURN user',{id: user.id, gameID: gameID}).then(results => {
 
         if (_.isEmpty(results.records)) {
@@ -35,7 +35,7 @@ function delete_game(session, user, gameID) {
         }
 
         return session.run(
-            'MATCH (user:User {id:{id}})-[:OWN_GAME]->(game:Game {gameID:{gameID}}) ' +
+            'MATCH (user:User {id:$id})-[:OWN_GAME]->(game:Game {gameID:$gameID}) ' +
             'OPTIONAL MATCH (n:`' + gameID + '`)' +
             'DETACH DELETE game, n ' +
             'RETURN COUNT(game)'

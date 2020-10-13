@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const saltRounds = 10;
 
 function register(session, username, password) {
-    return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
+    return session.run('MATCH (user:User {username: $username}) RETURN user', {username: username})
         .then(results => {
             if (!_.isEmpty(results.records)) {
                 throw {username: 'username already in use', status: 400}
@@ -18,7 +18,7 @@ function register(session, username, password) {
                 return bcrypt.hash(password, saltRounds);
             }
         }).then(hash => {
-                return session.run('CREATE (user:User {id: {id}, username: {username}, password: {password}}) RETURN user',
+                return session.run('CREATE (user:User {id: $id, username: $username, password: $password}) RETURN user',
                     {
                         id: uuid.v4(),
                         username: username,
@@ -34,7 +34,7 @@ function register(session, username, password) {
 
 function me(session, token) {
     return session.run(
-        'MATCH (user:User {token: {token}}) ' +
+        'MATCH (user:User {token: $token}) ' +
         'OPTIONAL MATCH (user)-[:OWN_GAME]->(game:Game) ' +
         'RETURN user, ' +
         'collect(DISTINCT game) AS games', {token: token})
@@ -48,8 +48,8 @@ function me(session, token) {
                 throw {message: 'expired authorization', status: 403}
             }
             return session.run(
-                'MATCH (user:User {token: {token}}) ' +
-                'SET user.tokenExpire = {tokenExp} ', {token: token, tokenExp: now + 7200000}).then(res => {
+                'MATCH (user:User {token: $token}) ' +
+                'SET user.tokenExpire = $tokenExp ', {token: token, tokenExp: now + 7200000}).then(res => {
                 u.games = _.map(results.records[0].get('games'), record => {
                     return record.properties;
                 });
@@ -59,7 +59,7 @@ function me(session, token) {
 }
 
 function login(session, username, password) {
-    return session.run('MATCH (user:User {username: {username}}) RETURN user', {username: username})
+    return session.run('MATCH (user:User {username: $username}) RETURN user', {username: username})
         .then(results => {
                 if (_.isEmpty(results.records)) {
                     throw {username: 'Username or password wrong', status: 400}
@@ -80,8 +80,8 @@ function login(session, username, password) {
             const token = buf.toString('hex');
             const tokenExp = new Date().getTime() + 7200000; //2hours in milliseconds
 
-            return session.run('MATCH (user:User {username: {username}})' +
-                'SET user += {token: {token}, tokenExpire: {tokenExp}}' +
+            return session.run('MATCH (user:User {username: $username})' +
+                'SET user += {token: $token, tokenExpire: $tokenExp}' +
                 'RETURN user', {username: username, token: token, tokenExp: tokenExp})
                 .then(results => {
                     if (_.isEmpty(results.records)) {

@@ -72,8 +72,9 @@ function deleteAsset(session, name, gameID) {
 
 function createUpdateAsset(session, asset, gameID){
     console.log("Assets Create", gameID);
+    console.log("[davide] is open "  + session._open)
     return session.run(
-        'MATCH (g:Game {gameID:{gameID}}) ' +
+        'MATCH (g:Game {gameID:$gameID}) ' +
         'MERGE (a:Asset:`' + gameID + '` {path: $asset.path}) ' +
         'SET a += $asset ' +
         'WITH a,g ' +

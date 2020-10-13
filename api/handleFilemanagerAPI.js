@@ -70,7 +70,7 @@ async function createThumbnails(session, files, dir, gameID){
                 return image.metadata().then((metadata) => {
                     //Create or update the media
                     let asset = new Asset({path:filePath,filename: file.filename, width: metadata.width, height: metadata.height});
-                    return Media.createUpdateAsset(session, asset, gameID).then(()=>{
+                    return Media.createUpdateAsset(dbUtils.getSession({}), asset, gameID).then(()=>{
                         //using a buffer to override the old image
                         return image
                             .resize(900)

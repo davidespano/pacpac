@@ -51,11 +51,11 @@ async function createUpdateRule(session, rule, sceneName, gameID){
                 {ruuid: rule.uuid, auuid: act.uuid, act: act, sceneName: act.target}
             );
         }));
-        transaction.commit();
+        await transaction.commit();
         return [return_rule, newObjs];
     } catch (error) {
         console.log(error);
-        transaction.rollback();
+        await transaction.rollback();
         throw ('Error creating the rule');
     }
 }
