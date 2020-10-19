@@ -29,6 +29,8 @@ To execute the project
 - Run neo4j.
 - Open a terminal inside the folder of the project. Move to the folder api, and run
 ``node app.js``.
+(if the execution fails because of the "sharp" module,
+change his version number in api/package.json to ^0.23.2 and rerun npm install)
 - Open a terminal inside the folder of the project. Move to the folder app, and run
 ``npm start``.
 
