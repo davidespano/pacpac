@@ -1916,8 +1916,10 @@ function getCompletions(props, global) {
                     return {items, graph};
                 }
 
+                //deve restituire "di stato"
                 if(props.verb.action === RuleActionTypes.PROGRESS && props.subject.type === InteractiveObjectsTypes.SELECTOR){
-                    let items = ValuesMap.filter(x => x.subj_type.includes(props.subject.type));
+                    let items = ValuesMap.filter(x => x.subj_type.includes(props.subject.type)
+                        && x.verb_type.includes(props.verb.action));
                     return {items, graph}
                 }
 
