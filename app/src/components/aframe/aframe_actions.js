@@ -769,6 +769,7 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     let duration_switch = 0;
     let switchVideo = document.getElementById('media0_' + current_object.uuid);
     console.log(switchVideo);
+    //TODO Controlla per i media che non sono video
     if (switchVideo != null) {
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
@@ -776,31 +777,37 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         if(current_object.properties.type == "SWITCH"){
             videoType = current_object.properties.state === 'ON' ? current_object.media.media0 : current_object.media.media1;
         }
-        if (store_utils.getFileType(videoType) === 'video') {
-            let aux = "";
-            let texture =
+
+        //ASSEGNAMENTO MASCHERA
+        let aux = "";
+        //siccome in Bubble metto nullmask mi serve un campo per memorizzare la vecchia maschera (valueOld)
+        //se c'è un media associato allo switch lo carico
+        let texture =
             document.getElementById(VRScene.props.scenes.get(VRScene.props.currentScene).name)
                 .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
-            if(texture.valueOld == null){
-                 aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
-            }else{
-                aux = texture.valueOld;
-            }
-            texture.valueOld = texture.value;
-            texture.value = aux;
-            texture.value.needsUpdate = true;
+        if(texture.valueOld == null){
+            aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
+        }else{
+            aux = texture.valueOld;
+        }
+        texture.valueOld = texture.value;
+        texture.value = aux;
+        texture.value.needsUpdate = true;
 
+        if (store_utils.getFileType(videoType) === 'video') {
             switchVideo.loop = false;
             switchVideo.currentTime = 0;
             switchVideo.play();
         }
+
         duration_switch = (parseInt(switchVideo.duration) * 1000);
     }
 
-    let audio = current_object.properties.state === 'ON' ? current_object.audio.audio0 : current_object.audio.audio1
+    let audio = current_object.properties.state === 'ON' ? current_object.audio.audio0 : current_object.audio.audio1;
     let idAudio = current_object.properties.state === 'ON' ? 'audio0_' : 'audio1_';
     if (soundsHub[idAudio + audio])
         soundsHub[idAudio + audio].play();
+
 
     setTimeout(function () {
         console.log("SET TIMEOUT");
@@ -810,15 +817,7 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('color', 'black');
 
-        let texture =
-            document.getElementById(VRScene.props.scenes.get(VRScene.props.currentScene).name)
-                .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
-        let aux = texture.value;
-        texture.value = texture.valueOld;
-        texture.valueOld = aux;
-        texture.value.needsUpdate = true;
-        //[Vittoria] l'oggetto cambia stato quindi lo shader dev'essere aggiornato, quindi aggiorno con il nuovo video
-        //document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+
         if(current_object.properties.type == "SWITCH") {
             runState[action.subj_uuid].state = action.obj_uuid;
             VRScene.setState({runState: runState});

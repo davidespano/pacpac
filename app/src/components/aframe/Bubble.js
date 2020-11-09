@@ -362,7 +362,7 @@ export default class Bubble extends Component
                 let asset = document.getElementById("media_" + obj.uuid);
 
                 // TODO controllare questo fix
-                if(asset == null){
+               if(asset == null){
                     asset = document.getElementById("media0_" + obj.uuid);
                 }
 
@@ -448,6 +448,7 @@ export default class Bubble extends Component
             for (i = 0; i < masks.length; i++) {
                 //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
                 skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
+                //lo metto a nullMask salvando però in valueOld la maschera, in modo da ricaricarlo in aframe_actions
                 skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: nullMask};
                 declarations += `
                            uniform sampler2D video${dict[i]};    uniform sampler2D mask${dict[i + 1]};`;
