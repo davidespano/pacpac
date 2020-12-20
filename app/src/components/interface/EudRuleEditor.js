@@ -348,10 +348,10 @@ function onAccordionClick(accordionId) {
     if(acc!= null){ //ha caricato
         acc.classList.toggle("active");
         var panel = acc.nextElementSibling;
-        if (panel.style.minHeight) {
-            panel.style.minHeight = null;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
         } else {
-            panel.style.minHeight = Math.max(panel.scrollHeight, 500) + "px";
+            panel.style.display = "block";
         }
     }
 

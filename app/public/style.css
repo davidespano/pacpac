@@ -115,7 +115,7 @@ div.rules{
 
 
 .grid-container > .rules {
-    max-height: 40vh;
+    max-height: 44vh;
     overflow: scroll;
 }
 
@@ -1401,7 +1401,7 @@ li > span {
 
 .eudCompletionPopup, .eudCompletionPopupForGraph  {
     margin-top: 2px;
-    min-height: 150px;
+    min-height: 120px;
     position: absolute;
     left: 0px;
     right:0px;
@@ -1449,7 +1449,6 @@ li > span {
     list-style: none;
     padding-left: 15px;
     margin-left: 15px;
-    min-height: 300px;
     margin-bottom: auto;
 }
 
@@ -1642,8 +1641,10 @@ input.eudObjectMinutes[type=text] {
 .panel {
     padding: 0 18px;
     background-color: white;
-    max-height: 0;
+    /*max-height: 0;*/
+    display: none;
     overflow: hidden;
+    min-height: 200px;
     transition: max-height 0.2s ease-out;
 }
 
@@ -1798,7 +1799,7 @@ h6 {
 
 
 .rules-footer, .rightbar-footer {
-    height: 10em;
+    height: 8em;
 }
 
 .rule-container{
