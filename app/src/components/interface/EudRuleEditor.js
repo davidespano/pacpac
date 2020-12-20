@@ -351,7 +351,7 @@ function onAccordionClick(accordionId) {
         if (panel.style.minHeight) {
             panel.style.minHeight = null;
         } else {
-            panel.style.height = Math.max(panel.scrollHeight, 500) + "px";
+            panel.style.minHeight = Math.max(panel.scrollHeight, 500) + "px";
         }
     }
 
