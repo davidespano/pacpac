@@ -1401,6 +1401,7 @@ li > span {
 
 .eudCompletionPopup, .eudCompletionPopupForGraph  {
     margin-top: 2px;
+    min-height: 150px;
     position: absolute;
     left: 0px;
     right:0px;
@@ -1448,6 +1449,7 @@ li > span {
     list-style: none;
     padding-left: 15px;
     margin-left: 15px;
+    min-height: 300px;
     margin-bottom: auto;
 }
 
