@@ -782,6 +782,7 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         let aux = "";
         //siccome in Bubble metto nullmask mi serve un campo per memorizzare la vecchia maschera (valueOld)
         //se c'è un media associato allo switch lo carico
+        //PROBLEMA: LA CURRENTSCENE NON VIENE AGGIORNATA DOPO UNA TRANSIZIONE, SI RIMANE ALLA SCENA HOME
         let texture =
             document.getElementById(VRScene.props.scenes.get(VRScene.props.currentScene).name)
                 .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
