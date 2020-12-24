@@ -943,14 +943,14 @@ export default class VRScene extends React.Component {
     //Metodi vita
     static increaseHealthValue(increaseBy, activeSceneName)
     {
-        let sum = window.playtimeValue + increaseBy;
+        let sum = window.healthValue + increaseBy;
         this.changeHealthValue(sum, activeSceneName);
         eventBus.emit("Health-value_changed_to-" + window.healthValue)
     }
 
     static decreaseHealthValue(decreaseBy, activeSceneName)
     {
-        let sub = window.playtimeValue - decreaseBy;
+        let sub = window.healthValue - decreaseBy;
         this.changeHealthValue(sub, activeSceneName);
         eventBus.emit("Health-value_changed_to-" + window.healthValue)
     }

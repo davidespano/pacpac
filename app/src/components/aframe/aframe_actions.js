@@ -515,7 +515,6 @@ function executeAction(VRScene, rule, action) {
 
     console.log(`emit`, event);
     eventBus.emit(event);
-    console.log("stato del selettore:", window.selectorState)
 }
 
 /**
