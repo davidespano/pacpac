@@ -783,7 +783,7 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         //se c'è un media associato allo switch lo carico
         //PROBLEMA: LA CURRENTSCENE NON VIENE AGGIORNATA DOPO UNA TRANSIZIONE, SI RIMANE ALLA SCENA HOME
         let texture =
-            document.getElementById(VRScene.props.scenes.get(VRScene.props.currentScene).name)
+            document.getElementById(VRScene.state.activeScene.name)
                 .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
         if(texture.valueOld == null){
             aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);

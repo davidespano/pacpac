@@ -227,8 +227,8 @@ function TopBar(props){
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    //createObject(props, InteractiveObjectsTypes.SELECTOR);
-                                    alert("Oggetto momentaneamente non disponibile")
+                                    createObject(props, InteractiveObjectsTypes.SELECTOR);
+                                    //alert("Oggetto momentaneamente non disponibile")
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.SELECTOR)}/>
                             <figcaption>Selettore</figcaption>
