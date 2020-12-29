@@ -293,11 +293,13 @@ function executeAction(VRScene, rule, action) {
             console.log("RuleActionTypes.COLLECT_KEY");
             current_object = game_graph['objects'].get(action.obj_uuid);
 
+
             /*
             * Azione che si occupa di raccogliere una chiave, il giocatore raccoglie la chiave: la chiave è sempre
             * l'oggetto di actions
             */
             changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.obj_uuid);
+            //TODO: fare in modo che la geometria della chiave sparisca o non sia comunque cliccabile
             break;
         case RuleActionTypes.UNLOCK_LOCK:
             console.log("RuleActionTypes.UNLOCK_LOCK");
@@ -772,11 +774,13 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     if (switchVideo != null) {
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
-        let videoType = current_object.media.media0;
-        if(current_object.properties.type == "SWITCH"){
-            videoType = current_object.properties.state === 'ON' ? current_object.media.media0 : current_object.media.media1;
-        }
-
+        //Cambio lo stato dello switch
+        current_object.properties.state === 'ON' ? current_object.properties.state = 'OFF' : current_object.properties.state = 'ON';
+        console.log(current_object.properties.state);
+        console.log(current_object.properties.type) //QUESTO DA UNDEFINED, perchè?
+        //Assegno il media in base allo stato dello switch
+        let videoType = current_object.properties.state === 'ON' ? current_object.media.media0 : current_object.media.media1;
+        console.log(videoType);//VIDEOTYPE PRENDE IL MEDIA CORRETTO MA QUESTA VARIABILE VIENE IGNORATA A QUANTO PARE
         //ASSEGNAMENTO MASCHERA
         let aux = "";
         //siccome in Bubble metto nullmask mi serve un campo per memorizzare la vecchia maschera (valueOld)
@@ -787,11 +791,18 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
                 .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
         if(texture.valueOld == null){
             aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
+            console.log("texture.valueOld == null")
+            console.log("AUX =",  aux);
         }else{
+            console.log("texture.valueOld != null")
             aux = texture.valueOld;
+            console.log("AUX =",  aux);
         }
+
         texture.valueOld = texture.value;
         texture.value = aux;
+        console.log(texture.value)
+        console.log(texture.valueOld.image.src)
         texture.value.needsUpdate = true;
 
         if (store_utils.getFileType(videoType) === 'video') {

@@ -426,7 +426,6 @@ export default class Bubble extends Component
             //set the shader
             if(sky.getAttribute('material').shader !== 'multi-video'){
                 sky.setAttribute('material', "shader:multi-video;");
-                console.log("culo")
             }
 
             let children = sky.object3D.children;
