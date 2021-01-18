@@ -776,27 +776,32 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         cursor.setAttribute('raycaster', 'far: 0.1');
         //Cambio lo stato dello switch
         current_object.properties.state === 'ON' ? current_object.properties.state = 'OFF' : current_object.properties.state = 'ON';
-        console.log(current_object.properties.state);
-        console.log(current_object.properties.type) //QUESTO DA UNDEFINED, perchè?
+        //console.log(current_object.properties.state);
+        //console.log(current_object);
         //Assegno il media in base allo stato dello switch
-        let videoType = current_object.properties.state === 'ON' ? current_object.media.media0 : current_object.media.media1;
+        let videoType = current_object.properties.state === 'ON' ? current_object.media.media1 : current_object.media.media0;
         console.log(videoType);//VIDEOTYPE PRENDE IL MEDIA CORRETTO MA QUESTA VARIABILE VIENE IGNORATA A QUANTO PARE
         //ASSEGNAMENTO MASCHERA
         let aux = "";
         //siccome in Bubble metto nullmask mi serve un campo per memorizzare la vecchia maschera (valueOld)
         //se c'è un media associato allo switch lo carico
         //PROBLEMA: LA CURRENTSCENE NON VIENE AGGIORNATA DOPO UNA TRANSIZIONE, SI RIMANE ALLA SCENA HOME
+        //TEXTURE CONTIENE LA MASCHERA, NON IL MEDIA
         let texture =
             document.getElementById(VRScene.state.activeScene.name)
                 .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
+
+        console.log(texture)
         if(texture.valueOld == null){
             aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
-            console.log("texture.valueOld == null")
-            console.log("AUX =",  aux);
+            //console.log("texture.valueOld == null")
+            //console.log(current_object.mask);
+            //console.log("AUX =",  aux);
         }else{
-            console.log("texture.valueOld != null")
+           // console.log("texture.valueOld != null")
+            //console.log(current_object.mask);
             aux = texture.valueOld;
-            console.log("AUX =",  aux);
+            //console.log("AUX (texture.valueOld) =",  aux);
         }
 
         texture.valueOld = texture.value;
@@ -829,7 +834,7 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         cursor.setAttribute('color', 'black');
 
 
-        if(current_object.properties.type == "SWITCH") {
+        if(current_object.type == "SWITCH") {
             runState[action.subj_uuid].state = action.obj_uuid;
             VRScene.setState({runState: runState});
         }

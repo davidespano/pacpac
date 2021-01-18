@@ -371,13 +371,15 @@ export default class Bubble extends Component
                 // TODO verificare i media per oggetti diversi da switch
                 //Controllo se l'oggetto corrente e' uno switch, in quel caso quale media devo prendere se da ON a OFF o viceversa
                 if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON"){
-                    if(obj.media.media1)
-                        media = obj.media.media1;
-                }
-                else{
-                    if(obj.media && obj.media.media0)  //[Vittoria] ha il media OFF -> ON
+                    if(obj.media.media0)
                         media = obj.media.media0;
                 }
+                else{
+                    if(obj.media && obj.media.media1)  //[Vittoria] ha il media OFF -> ON
+                        media = obj.media.media1;
+                }
+
+                console.log(media)
 
                 //se lo stato dell'oggetto esiste e se l'oggetto è invisibile dico allo shader di passare al successivo
                 if(this.props.runState){
