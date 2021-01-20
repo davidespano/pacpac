@@ -82,6 +82,8 @@ function generateProperties(props){
     let objectScene = props.scenes.get(props.objectToScene.get(currentObject.uuid));
     let type = objectTypeToString(currentObject.type);
     let geometryButton = null;
+    let visibilityDropdown = null;
+    let activabilityDropdown = null;
     if(currentObject.type == InteractiveObjectsTypes.PLAYTIME ||
         currentObject.type == InteractiveObjectsTypes.SCORE ||
         currentObject.type == InteractiveObjectsTypes.HEALTH ||
@@ -103,6 +105,29 @@ function generateProperties(props){
             >
                 Modifica geometria
             </button>
+        </div>
+    }
+
+    if(currentObject.type == InteractiveObjectsTypes.FLAG ||
+        currentObject.type == InteractiveObjectsTypes.NUMBER)
+    {}
+    else{
+        visibilityDropdown = <div className={'options-grid'}>
+            <label className={'options-labels'}>Visibilità:</label>
+            <Dropdown
+                props={props}
+                component={'visibility'}
+                property={'visible'}
+                defaultValue={currentObject.visible}/>
+        </div>
+
+        activabilityDropdown = <div className={'options-grid'}>
+            <label className={'options-labels'}>Attivazione:</label>
+            <Dropdown
+                props={props}
+                component={'activability'}
+                property={'activable'}
+                defaultValue={currentObject.activable}/>
         </div>
     }
 
@@ -149,22 +174,8 @@ function generateProperties(props){
                 </button>
             </div>
             <label className={'rightbar-titles'}>Opzioni</label>
-            <div className={'options-grid'}>
-                <label className={'options-labels'}>Visibilità:</label>
-                <Dropdown
-                    props={props}
-                    component={'visibility'}
-                    property={'visible'}
-                    defaultValue={currentObject.visible}/>
-            </div>
-            <div className={'options-grid'}>
-                <label className={'options-labels'}>Attivazione:</label>
-                <Dropdown
-                    props={props}
-                    component={'activability'}
-                    property={'activable'}
-                    defaultValue={currentObject.activable}/>
-            </div>
+            {visibilityDropdown}
+            {activabilityDropdown}
             {geometryButton}
 
             {generateSpecificProperties(currentObject, objectScene, props)}

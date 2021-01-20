@@ -50,6 +50,34 @@ function removeObject(scene, object, props) {
     let objType = null;
     const field = scene_utils.defineField(object);
     switch (object.type){
+        case InteractiveObjectsTypes.FLAG:
+            objType = InteractiveObjectsTypes.FLAG;
+            for (let i = 0, len = sceneArray.length; i < len; i++) {
+                let objUuid = sceneArray[i].uuid +"_fl"
+                request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${sceneArray[i].name}/${field}/${objUuid}`)
+                    .set('Accept', 'application/json')
+                    .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+                    .end(function (err, response) {
+                        if (err) {
+                            return console.error(err)
+                        }
+                        Actions.removeObject(sceneArray[i], ObjectsStore.getState().get(objUuid), objType);
+                    });
+            } break;
+        case InteractiveObjectsTypes.NUMBER:
+            objType = InteractiveObjectsTypes.NUMBER;
+            for (let i = 0, len = sceneArray.length; i < len; i++) {
+                let objUuid = sceneArray[i].uuid +"_nr"
+                request.delete(`${apiBaseURL}/${window.localStorage.getItem("gameID")}/interactives/scenes/${sceneArray[i].name}/${field}/${objUuid}`)
+                    .set('Accept', 'application/json')
+                    .set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+                    .end(function (err, response) {
+                        if (err) {
+                            return console.error(err)
+                        }
+                        Actions.removeObject(sceneArray[i], ObjectsStore.getState().get(objUuid), objType);
+                    });
+            } break;
         case InteractiveObjectsTypes.PLAYTIME:
             objType = InteractiveObjectsTypes.PLAYTIME;
             for (let i = 0, len = sceneArray.length; i < len; i++) {

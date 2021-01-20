@@ -272,7 +272,7 @@ function TopBar(props){
                                     createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.FLAG);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.FLAG)}/>
-                            <figcaption>Dato booleano</figcaption>
+                            <figcaption>Dati booleani</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
@@ -280,7 +280,7 @@ function TopBar(props){
                                     createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.NUMBER);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.NUMBER)}/>
-                            <figcaption>Dato numerico</figcaption>
+                            <figcaption>Dati numerici</figcaption>
                         </figure>
                     </div>
                 </div>
@@ -537,6 +537,7 @@ export function createObject(props, type){
                 }
                 break;
             case InteractiveObjectsTypes.FLAG:
+
                 creatingGlobal = true;
                 scene = props.scenes.get('ghostScene');
                 if(scene == undefined){ //la ghost scene non esiste
@@ -547,8 +548,14 @@ export function createObject(props, type){
                 }
                 //nel caso di nuovi giochi aggiungo l'oggetto globale a tutte le scene comprese la ghost
                 else{
-                    addFlagToScenes(sceneArray, props, obj, name)
+                    if(scene.objects.flags.length == 0) {
+                        addFlagToScenes(sceneArray, props, obj, name)
                     }
+                    else {
+                        alert("Hai già l'oggetto Dati booleani nel gioco");
+                        return;
+                    }
+                }
                 break;
             case InteractiveObjectsTypes.NUMBER:
                 creatingGlobal = true;
@@ -561,7 +568,13 @@ export function createObject(props, type){
                 }
                 //nel caso di nuovi giochi aggiungo l'oggetto globale a tutte le scene comprese la ghost
                 else{
-                    addNumberToScenes(sceneArray, props, obj, name)
+                    if(scene.objects.numbers.length == 0) {
+                        addNumberToScenes(sceneArray, props, obj, name)
+                    }
+                    else {
+                        alert("Hai già l'oggetto Dati numerici nel gioco");
+                        return;
+                    }
                 }
                 break;
             case InteractiveObjectsTypes.SCORE:
@@ -704,12 +717,14 @@ function addHealthToScenes(sceneArray, props, obj, name, scene){
 function addFlagToScenes(sceneArray, props, obj, name, scene){
     //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
     for (let i = 0, len = sceneArray.length; i < len; i++) {
-            name = sceneArray[i].name + '_fl' + (sceneArray[i].objects.flags.length + 1);
+            name = 'Booleani';
             obj = Flag({
-                uuid: sceneArray[i].uuid+"-"+name,
+                uuid: sceneArray[i].uuid+"_fl",
                 name: name,
                 properties: {
-                    value: false,
+                    id: [],
+                    name: [],
+                    value: [],
                 }
             });
             props.addNewObject(sceneArray[i], obj);
@@ -719,12 +734,14 @@ function addFlagToScenes(sceneArray, props, obj, name, scene){
 function addNumberToScenes(sceneArray, props, obj, name, scene){
     //aggiungo l'oggetto a tutte le scene (tranne la ghost scene perchè qui non c'è ancora)
     for (let i = 0, len = sceneArray.length; i < len; i++) {
-        name = sceneArray[i].name + '_nr' + (sceneArray[i].objects.numbers.length + 1);
-        obj = Flag({
-            uuid: sceneArray[i].uuid+"-"+name,
+        name = "Numeri";
+        obj = Number({
+            uuid: sceneArray[i].uuid+"_nr",
             name: name,
             properties: {
-                value: 0,
+                id: [],
+                name: [],
+                value: [],
             }
         });
         props.addNewObject(sceneArray[i], obj);
@@ -804,33 +821,35 @@ export function createGlobalObjectForNewScene(props, scene, type) {
                     props.addNewObject(scene, obj);
                 }
                 break;
-            case InteractiveObjectsTypes.FLAG: //creando una nuova scena gli devo aggiungere tutti i flag esistenti
-                ghost.objects.flags.forEach(el => {
-                        name = scene.name + '_fl' + (scene.objects.flags.length + 1);
-                        obj = Flag({
-                            uuid: scene.uuid+"-"+name,
-                            name: name,
-                            properties: {
-                                value: el.value,
-                            }
-                        });
-                        props.addNewObject(scene, obj);
-                    }
-                )
+            case InteractiveObjectsTypes.FLAG:
+                if (scene.objects.flags.length == 0){ //ammesso un solo oggetto flag per gioco
+                    name = 'Booleani';
+                    obj = Health({
+                        uuid: scene.uuid+"_fl",
+                        name: name,
+                        properties: {
+                            id: [],
+                            name: [],
+                            value: [],
+                        }
+                    });
+                    props.addNewObject(scene, obj);
+                }
                 break;
-            case InteractiveObjectsTypes.NUMBER: //creando una nuova scena gli devo aggiungere tutti i numeri esistenti
-                ghost.objects.numbers.forEach(el => {
-                        name = scene.name + '_nr' + (scene.objects.numbers.length + 1);
-                        obj = Flag({
-                            uuid: scene.uuid+"-"+name,
-                            name: name,
-                            properties: {
-                                value: el.value,
-                            }
-                        });
-                        props.addNewObject(scene, obj);
-                    }
-                )
+            case InteractiveObjectsTypes.NUMBER: //
+                if (scene.objects.numbers.length == 0){ //ammesso un solo oggetto number per gioco
+                    name = 'Numeri';
+                    obj = Health({
+                        uuid: scene.uuid+"_nr",
+                        name: name,
+                        properties: {
+                            id: [],
+                            name: [],
+                            value: [],
+                        }
+                    });
+                    props.addNewObject(scene, obj);
+                }
                 break;
             default:
                 return;
