@@ -345,6 +345,10 @@ function getObjImg(objType) {
             return  "icons/icons8-cronometro-100.png";
         case InteractiveObjectsTypes.HEALTH:
             return  "icons/icons8-health-100.png";
+        case InteractiveObjectsTypes.FLAG:
+            return  "icons/icons8-flag-100.png";
+        case InteractiveObjectsTypes.NUMBER:
+            return  "icons/icons8-number-100.png";
         case InteractiveObjectsTypes.SCORE:
             return  "icons/icons8-score-100.png";
         case InteractiveObjectsTypes.PLAYTIME:

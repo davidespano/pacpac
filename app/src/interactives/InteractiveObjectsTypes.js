@@ -6,6 +6,8 @@ const InteractiveObjectsTypes = {
     CUMULABLE : 'CUMULABLE',
     GAME : 'GAME',
     HEALTH : 'HEALTH',
+    FLAG: 'FLAG',
+    NUMBER: 'NUMBER',
     KEY : 'KEY',
     KEYPAD : 'KEYPAD',
     LOCK : 'LOCK',

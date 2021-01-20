@@ -150,6 +150,10 @@ function defineField(object){
             return "score";
         case InteractiveObjectsTypes.HEALTH:
             return "health";
+        case InteractiveObjectsTypes.FLAG:
+            return "flags";
+        case InteractiveObjectsTypes.NUMBER:
+            return "numbers";
         case InteractiveObjectsTypes.TIMER:
             return "timers";
         case InteractiveObjectsTypes.RULES:

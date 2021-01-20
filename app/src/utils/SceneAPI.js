@@ -25,6 +25,8 @@ import Keypad from "../interactives/Keypad";
 import Timer from "../interactives/Timer";
 import Score from "../interactives/Score";
 import Health from "../interactives/Health";
+import Flag from "../interactives/Flag";
+import Number from "../interactives/Number";
 import PlayTime from "../interactives/PlayTime";
 import InteractiveObjectsTypes from "../interactives/InteractiveObjectsTypes";
 import {createGlobalObjectForNewScene} from "../components/interface/Topbar";
@@ -69,6 +71,8 @@ function getByName(name, order = null, gameId=null, creation = true) {
             let playtime_uuids = [];
             let score_uuids = [];
             let health_uuids = [];
+            let flags_uuids = [];
+            let numbers_uuids = [];
 
             let scene_type = response.body.type;
 
@@ -176,6 +180,22 @@ function getByName(name, order = null, gameId=null, creation = true) {
                 });
             }
 
+            if(response.body.flags) {
+                response.body.flags.map((flag) => {
+                    flags_uuids.push(flag.uuid); //save uuid
+                    let fl = Flag(getProperties(flag));
+                    Actions.receiveObject(fl, scene_type);
+                });
+            }
+
+            if(response.body.numbers) {
+                response.body.numbers.map((number) => {
+                    numbers_uuids.push(number.uuid); //save uuid
+                    let nr = Number(getProperties(number));
+                    Actions.receiveObject(nr, scene_type);
+                });
+            }
+
             if(response.body.playtime) {
                 response.body.playtime.map((playtime) => {
                     playtime_uuids.push(playtime.uuid); //save uuid
@@ -272,6 +292,8 @@ function getByName(name, order = null, gameId=null, creation = true) {
                     timers: timers_uuids,
                     score: score_uuids,
                     health: health_uuids,
+                    flags: flags_uuids,
+                    numbers: numbers_uuids,
                     playtime: playtime_uuids,
                 },
                 rules : rules_uuids,
@@ -336,6 +358,8 @@ function createScene(name, img, index, type, tag, order, props) {
                     playtime: [],
                     score: [],
                     health: [],
+                    flags: [],
+                    numbers: [],
                     timers: [],
                 }
             });
@@ -347,7 +371,7 @@ function createScene(name, img, index, type, tag, order, props) {
             if (props.scenes.size < 2 && id != 'ghostScene'){
                 setHomeScene(id);
             }
-            if(props.scenes.first() !=undefined)
+            if(props.scenes.first() !=undefined) //non dovrebbe essere necessario creare gli oggetti flag e number in questo frangente
             {
                 if(props.scenes.first().objects.playtime.length > 0) {
                     createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.PLAYTIME);
@@ -602,6 +626,18 @@ function readScene(gameGraph, raw_scenes) {
             return h;
         });
 
+        const flags = s.flags.map(fl => {
+            let f = getProperties(fl);
+            gameGraph['objects'].set(f.uuid, f);
+            return f;
+        });
+
+        const numbers = s.flags.map(nr => {
+            let n = getProperties(nr);
+            gameGraph['objects'].set(n.uuid, n);
+            return n;
+        });
+
         const playtime = s.playtime.map(pt => {
             let p = getProperties(pt);
             gameGraph['objects'].set(p.uuid, p);
@@ -702,6 +738,8 @@ function readScene(gameGraph, raw_scenes) {
                 playtime: playtime,
                 health: health,
                 timers: timers,
+                flags: flags,
+                numbers: numbers,
             },
             rules: rules,
             audios: audios,

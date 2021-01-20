@@ -25,6 +25,14 @@ const {mediaURL} = settings;
 export default class Bubble extends Component
 {
 
+    sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+            currentDate = Date.now();
+        } while (currentDate - date < milliseconds);
+    }
+
     constructor(props){
         super(props)
         //console.log(props)
@@ -82,6 +90,7 @@ export default class Bubble extends Component
             })
         }else{ //[Vittoria] se è la scena attiva richiama lo shader
             //if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
+            console.log("chiamo setShader");
             this.setShader();
         }
 
@@ -319,6 +328,7 @@ export default class Bubble extends Component
     }
     //[Vittoria] per ogni oggetto: prende lo sfondo, prende la maschera e fonde, per il secondo oggetto fa lo stesso ma lo fonde con il precedente
     setShader(){
+        console.log("sono in setShader")
         //console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
@@ -336,13 +346,20 @@ export default class Bubble extends Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-
+            console.log("sono in setShader PRIMA della return")
+            //console.log("getting sleepy")
+            //this.sleep(1000)
             //[Vittoria] sky: bolle
             //Verifico se lo shader attuale e' multi-video (quello creato da noi), e se non ha bisogno di essere aggiornato, riproduco il video di sfondo, se e' un video
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
-                return;
+                console.log("culo")
+                    return;
+                //TODO: il problema con lo switch che non prende il media corretto è qui, questo return
             }
+            console.log("sono in setShader DOPO la return")
+            //console.log("getting sleepy")
+            //this.sleep(1000)
             //Imposto la variabile per l'aggiornamento a false
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
 
@@ -380,6 +397,8 @@ export default class Bubble extends Component
                 }
 
                 console.log(media)
+                console.log("sono in setShader")
+
 
                 //se lo stato dell'oggetto esiste e se l'oggetto è invisibile dico allo shader di passare al successivo
                 if(this.props.runState){
@@ -390,6 +409,7 @@ export default class Bubble extends Component
                 if(asset === null){
                     return;
                 }
+                console.log("sono in setShader")
 
 
                 if(asset.nodeName === 'VIDEO'){
@@ -459,7 +479,6 @@ export default class Bubble extends Component
             //the last video is not handled by the previous loop
             skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
             declarations += `   uniform sampler2D video${dict[i]};`;
-
             //now prepare the mixfunction for the fragment shader
             //[Vittoria] la stringa dello shader ha info riguardanti video e maschera ed è fatta così:
             let mixFunction = `mix(texture2D(video0,vUv),texture2D(video${dict[1]}, vUv),texture2D(mask${dict[1]}, vUv).y)`;
@@ -468,7 +487,6 @@ export default class Bubble extends Component
                 mixFunction = `mix(${mixFunction},texture2D(video${dict[i]}, vUv),texture2D(mask${dict[i]}, vUv).y)`
             }
             mixFunction = `vec4(${mixFunction});`;
-
             //now set the fragment shader and other small things
             let fragShader =
                 `

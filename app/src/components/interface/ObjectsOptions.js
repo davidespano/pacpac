@@ -85,6 +85,8 @@ function generateProperties(props){
     if(currentObject.type == InteractiveObjectsTypes.PLAYTIME ||
         currentObject.type == InteractiveObjectsTypes.SCORE ||
         currentObject.type == InteractiveObjectsTypes.HEALTH ||
+        currentObject.type == InteractiveObjectsTypes.FLAG ||
+        currentObject.type == InteractiveObjectsTypes.NUMBER ||
         currentObject.type == InteractiveObjectsTypes.TIMER ||
         currentObject.type == InteractiveObjectsTypes.TEXTBOX ||
         currentObject.type == InteractiveObjectsTypes.KEYPAD)
@@ -661,6 +663,19 @@ function generateSpecificProperties(object, objectScene, props){
                     </div>
                 </React.Fragment>
             );
+        case InteractiveObjectsTypes.FLAG:
+            return(
+                <div className={"options-grid"}>
+                    <label className={'options-labels'}>Valore boolean iniziale:</label>
+                    <Dropdown
+                        props={props}
+                        component={'true-false'}
+                        property={'value'}
+                        defaultValue={object.properties.value}/>
+                </div>
+            );
+
+
         default:
             return(<div>Error!</div>);
     }
@@ -838,6 +853,10 @@ function objectTypeToString(objectType) {
             return "Tastierino";
         case InteractiveObjectsTypes.HEALTH:
             return "Vita";
+        case InteractiveObjectsTypes.FLAG:
+            return "Flag";
+        case InteractiveObjectsTypes.NUMBER:
+            return "Numero";
         case InteractiveObjectsTypes.SCORE:
             return "Punteggio";
         case InteractiveObjectsTypes.PLAYTIME:

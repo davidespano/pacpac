@@ -106,6 +106,12 @@ function objectTypeToString(objectType) {
         case InteractiveObjectsTypes.HEALTH:
             type = 'la vita';
             break;
+        case InteractiveObjectsTypes.FLAG:
+            type = 'il flag';
+            break;
+        case InteractiveObjectsTypes.NUMBER:
+            type = 'il numero';
+            break;
         case InteractiveObjectsTypes.SCORE:
             type = 'il punteggio';
             break;
@@ -236,6 +242,11 @@ function valueUuidToString(valueUuid){
             return "zero";
         case Values.STATE:
             return 'di stato';
+        case Values.TRUE:
+            return 'vero';
+        case Values.FALSE:
+            return 'falso';
+
         default:
             return 'stato sconosciuto';
     }

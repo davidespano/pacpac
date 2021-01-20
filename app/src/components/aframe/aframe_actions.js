@@ -412,6 +412,12 @@ function executeAction(VRScene, rule, action) {
                 case InteractiveObjectsTypes.HEALTH:
                     create_scene2.changeHealthValue(numberValue, actual_scene_name);
                     break;
+                case InteractiveObjectsTypes.FLAG:
+                    create_scene2.changeFlagValue(numberValue, actual_scene_name);
+                    break;
+                case InteractiveObjectsTypes.NUMBER:
+                    create_scene2.changeNumberValue(numberValue, actual_scene_name);
+                    break;
                 case InteractiveObjectsTypes.SCORE:
                     create_scene2.changeScoreValue(numberValue, actual_scene_name);
                     break;
@@ -840,6 +846,7 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         }
 
     }, duration_switch)
+    console.log("fine changeStateSwitch")
 
 }
 

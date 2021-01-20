@@ -50,6 +50,8 @@ function buildScene(record) {
         scene.selectors = [];
         scene.timers = [];
         scene.health = [];
+        scene.flags = [];
+        scene.numbers = [];
         scene.playtime = [];
         scene.score = [];
 
@@ -83,6 +85,10 @@ function buildScene(record) {
                     scene.score.push(obj); break;
                 case "HEALTH":
                     scene.health.push(obj); break;
+                case "FLAG":
+                    scene.flags.push(obj); break;
+                case "NUMBER":
+                    scene.numbers.push(obj); break;
                 case "PLAYTIME":
                     scene.playtime.push(obj); break;
             }

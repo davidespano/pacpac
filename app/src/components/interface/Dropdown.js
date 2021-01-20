@@ -96,6 +96,23 @@ function generateOptions(props, component, property){
                 },
                 customStyle,
             ];
+        case 'true-false':
+            return [
+                [
+                    { value: Values.TRUE, label: toString.valueUuidToString(Values.TRUE)},
+                    { value: Values.FALSE, label: toString.valueUuidToString(Values.FALSE)},
+                ],
+                (e) => {
+                    let obj = props.interactiveObjects.get(props.currentObject);
+                    if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
+                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
+                        Actions.updateObject(obj);
+                    }
+                    else
+                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                },
+                customStyle,
+            ];
         case 'scenes':
             return [
                 [...props.scenes.values()].map( scene => {

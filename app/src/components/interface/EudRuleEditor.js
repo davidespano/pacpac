@@ -653,7 +653,7 @@ class EudCondition extends Component {
         let subject = this.getInteractiveObjectReference(this.props.condition.obj_uuid);
         let originalText = subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name;
         if(subject){
-            //se è un oggetto globale non voglio che si scriva "la vita Vita"
+            //se è un oggetto globale non voglio che si scriva "la vita Vita", questo non è necessario per gli oggetti flag e numero
             if(subject.type === InteractiveObjectsTypes.PLAYTIME || subject.type === InteractiveObjectsTypes.SCORE ||
                 subject.type === InteractiveObjectsTypes.HEALTH){
                 originalText = toString.objectTypeToString(subject.type);
@@ -895,7 +895,7 @@ class EudAction extends Component {
         let originalText = subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name;
 
         if(subject){
-            //se è un oggetto globale non voglio che si scriva "la vita Vita"
+            //se è un oggetto globale non voglio che si scriva "la vita Vita", questo non è necessario per gli oggetti flag e numero
             if(subject.type === InteractiveObjectsTypes.PLAYTIME || subject.type === InteractiveObjectsTypes.SCORE ||
                 subject.type === InteractiveObjectsTypes.HEALTH){
                 originalText = toString.objectTypeToString(subject.type);

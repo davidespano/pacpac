@@ -47,6 +47,8 @@ const Scene = Immutable.Record({
         playtime: [],
         score: [],
         health: [],
+        numbers: [],
+        flags: [],
         timers: [],
     },
     rules : [], // uuid list

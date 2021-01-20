@@ -14,6 +14,10 @@ const Values = {
     ON: 'ON',
     OFF: 'OFF',
 
+    //Flag
+    TRUE: 'TRUE',
+    FALSE: 'FALSE',
+
     //lock
     LOCKED: 'LOCKED',
     UNLOCKED: 'UNLOCKED',
