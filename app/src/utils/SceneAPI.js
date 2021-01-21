@@ -382,6 +382,12 @@ function createScene(name, img, index, type, tag, order, props) {
                 if(props.scenes.first().objects.health.length > 0) {
                     createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.HEALTH);
                 }
+                if(props.scenes.first().objects.flags.length > 0) {
+                    createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.FLAG);
+                }
+                if(props.scenes.first().objects.numbers.length > 0) {
+                    createGlobalObjectForNewScene(props, newScene, InteractiveObjectsTypes.NUMBER);
+                }
             }
             //mi serve solo per i nuovi giochi
             if(props.scenes.size ===0 && props.scenes.get('ghostScene')===undefined){

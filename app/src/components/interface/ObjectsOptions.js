@@ -14,6 +14,7 @@ import Slider from '@material-ui/core/Slider';
 import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObject from "../../interactives/InteractiveObject";
 import {createObject} from "./Topbar";
+import scene_utils from "../../scene/scene_utils";
 
 
 function ObjectOptions(props){
@@ -675,14 +676,39 @@ function generateSpecificProperties(object, objectScene, props){
                 </React.Fragment>
             );
         case InteractiveObjectsTypes.FLAG:
+            let flags = [];
+            for (let i = 0; i< object.properties.id.length; i++){
+                flags.push(
+                    <React.Fragment key={object.uuid +"flag"+i}>
+                        <input type={"text"} className={'rightbar-audio-media-grid-title'}
+                               defaultValue={object.properties.name[i]}
+                               maxLength={50}
+                               onChange={(e) => {
+                                   let value = e.target.value;
+                                   if (value !== ""){
+                                       interface_utils.setPropertyGlobalVariable(object,'name', value, props, i);
+                                   }
+                               }}
+                               onBlur={(e) => {
+                                   let value = e.target.value;
+                                   if(value !== ""){
+                                       object.properties.name[i] = value;
+                                   }
+                               }}/>
+                        <Dropdown props={props}
+                                  component={'true-false'}
+                                  property={"value"}
+                                  defaultValue={object.properties.value[i]}
+                                  index={i}
+                        />
+                    </React.Fragment>
+                )
+            }
             return(
                 <div className={"options-grid"}>
-                    <label className={'options-labels'}>Valore boolean iniziale:</label>
-                    <Dropdown
-                        props={props}
-                        component={'true-false'}
-                        property={'value'}
-                        defaultValue={object.properties.value}/>
+                    <div key={object.uuid + '-flag'}>
+                        {flags}
+                    </div>
                 </div>
             );
 

@@ -11,9 +11,10 @@ import interface_utils from "./interface_utils";
 function Dropdown(properties){
     let props = properties.props,
         component = properties.component,
-        property = properties.property;
+        property = properties.property,
+        index = properties.index;
     let defaultValue = getDefaultValue(props, properties.defaultValue, component);
-    let [options, onChange, style] = generateOptions(props, component, property);
+    let [options, onChange, style] = generateOptions(props, component, property, index);
 
     return(
         <Select
@@ -28,7 +29,7 @@ function Dropdown(properties){
     );
 }
 
-function generateOptions(props, component, property){
+function generateOptions(props, component, property, index){
     switch(component){
         case 'scene-type':
             return [
@@ -105,11 +106,10 @@ function generateOptions(props, component, property){
                 (e) => {
                     let obj = props.interactiveObjects.get(props.currentObject);
                     if(props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
-                        EditorState.debugRunState[obj.uuid.toString()].state = e.value;
-                        Actions.updateObject(obj);
+                        //TODO: da fare
                     }
                     else
-                        interface_utils.setPropertyFromValue(obj, property, e.value, props);
+                        obj.properties.value[index] = e.value;
                 },
                 customStyle,
             ];

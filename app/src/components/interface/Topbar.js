@@ -268,16 +268,18 @@ function TopBar(props){
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.FLAG);
-                                    createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.FLAG);
+                                    alert("Oggetto in fase di sviluppo")
+                                    //createObject(props, InteractiveObjectsTypes.FLAG);
+                                    //createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.FLAG);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.FLAG)}/>
                             <figcaption>Dati booleani</figcaption>
                         </figure>
                         <figure className={'nav-figures'}
                                 onClick={() => {
-                                    createObject(props, InteractiveObjectsTypes.NUMBER);
-                                    createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.NUMBER);
+                                    alert("Oggetto in fase di sviluppo")
+                                    //createObject(props, InteractiveObjectsTypes.NUMBER);
+                                    //createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.NUMBER);
                                 }}>
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.NUMBER)}/>
                             <figcaption>Dati numerici</figcaption>
@@ -722,9 +724,9 @@ function addFlagToScenes(sceneArray, props, obj, name, scene){
                 uuid: sceneArray[i].uuid+"_fl",
                 name: name,
                 properties: {
-                    id: [],
-                    name: [],
-                    value: [],
+                    id: [uuid.v4()],
+                    name: ["flag prova"],
+                    value: [false],
                 }
             });
             props.addNewObject(sceneArray[i], obj);
@@ -824,29 +826,21 @@ export function createGlobalObjectForNewScene(props, scene, type) {
             case InteractiveObjectsTypes.FLAG:
                 if (scene.objects.flags.length == 0){ //ammesso un solo oggetto flag per gioco
                     name = 'Booleani';
-                    obj = Health({
+                    obj = Flag({
                         uuid: scene.uuid+"_fl",
                         name: name,
-                        properties: {
-                            id: [],
-                            name: [],
-                            value: [],
-                        }
+                        properties: props.scenes.first().objects.flags.properties,
                     });
                     props.addNewObject(scene, obj);
                 }
                 break;
-            case InteractiveObjectsTypes.NUMBER: //
+            case InteractiveObjectsTypes.NUMBER:
                 if (scene.objects.numbers.length == 0){ //ammesso un solo oggetto number per gioco
                     name = 'Numeri';
-                    obj = Health({
+                    obj = Number({
                         uuid: scene.uuid+"_nr",
                         name: name,
-                        properties: {
-                            id: [],
-                            name: [],
-                            value: [],
-                        }
+                        properties: props.scenes.first().objects.numbers.properties
                     });
                     props.addNewObject(scene, obj);
                 }

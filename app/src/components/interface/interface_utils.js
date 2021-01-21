@@ -7,6 +7,31 @@ import AssetsStore from "../../data/AssetsStore";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 
 
+function setPropertyGlobalVariable(object, property, value, props, index){
+    //TODO: funzione per cambiare i valori (sia nome che valore) delle variabili globali flag e numeri
+
+    let newObject;
+    console.log(object['properties']['name'][index])
+
+    switch (property) {
+        case "value":
+           newObject = object.setIn(['properties']['value'][index], value);
+            break;
+        case "name":
+            newObject = object.setIn(['properties']['name'][index], value);
+            break;
+        default:
+            console.log('habbiamo un problemah');
+    }
+
+    props.updateObject(newObject);
+
+    let scene = props.scenes.get(props.objectToScene.get(newObject.uuid));
+
+    InteractiveObjectAPI.saveObject(scene, newObject);
+
+}
+
 /**
  * Updates object property with the given value, returns new object
  * @param object
@@ -76,6 +101,7 @@ function setButtonsValues(object, buttonID, value, props){
     properties['buttonsValues'][buttonID] = value; //assegno il valore in base alla chiave del button
     let newObject = object.setIn(['properties'], properties); //sovrascrivo l'oggetto con le proprietà aggiornate
     props.updateObject(newObject);
+    //TODO: le due righe sotto potrebbero essere inutili
     let scene = props.scenes.get(props.objectToScene.get(newObject.uuid));
     InteractiveObjectAPI.saveObject(scene, newObject);
 }
@@ -363,6 +389,7 @@ export default {
     onlyNumbers : onlyNumbers,
     setPropertyFromId : setPropertyFromId,
     setPropertyFromValue : setPropertyFromValue,
+    setPropertyGlobalVariable: setPropertyGlobalVariable,
     title : title,
     centroid: calculateCentroid,
     checkSelection: checkSelection,

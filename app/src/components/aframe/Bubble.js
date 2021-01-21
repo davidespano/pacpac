@@ -353,7 +353,7 @@ export default class Bubble extends Component
             //Verifico se lo shader attuale e' multi-video (quello creato da noi), e se non ha bisogno di essere aggiornato, riproduco il video di sfondo, se e' un video
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
-                console.log("culo")
+                console.log("sono qui")
                     return;
                 //TODO: il problema con lo switch che non prende il media corretto è qui, questo return
             }
