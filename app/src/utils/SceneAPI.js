@@ -299,7 +299,10 @@ function getByName(name, order = null, gameId=null, creation = true) {
                 rules : rules_uuids,
                 audios : audio_uuids,
             });
-
+            console.log(order);
+            if (order == null)
+                order = Orders.ALPHABETICAL;
+            console.log(order);
             Actions.receiveScene(newScene, order, creation);
 
 
@@ -438,7 +441,7 @@ function getAllScenesAndTags(gameId = null) {
                         }
                         if (response.body && response.body !== []) {
                             const scenes_tags = {scenes: response.body, tags: responseT.body};
-                            Actions.loadAllScenes(scenes_tags, Orders.CHRONOLOGICAL, gameId);
+                            Actions.loadAllScenes(scenes_tags, EditorStateStore.getState().get("scenesOrder"), gameId);
                         } else {
                             responseT.body.forEach( tag => {
                                 Actions.receiveTag(tag);

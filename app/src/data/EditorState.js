@@ -32,7 +32,7 @@ const EditorState = Immutable.Record({
     rightbarSelection: 'scene',         //tab selected in rightbar (possible values: 'scene' and 'objects')
     role: null,                         //EudRuleEditor, role of rule portion that the user is modifying
     ruleCopy: null,						//save rule copy in order to replicate it
-    scenesOrder: Orders.CHRONOLOGICAL,  //order of scenes (all orders available in data/Orders)
+    scenesOrder: Orders.ALPHABETICAL,  //order of scenes (all orders available in data/Orders)
     scenesNameFilter: '',               //Leftbar, contains value typed in filter
     sceneOptions: null,                 //saves data of current scene, it's used in SceneOptions to show and update data
     selectedFile: null,                 //file currently selected in FileManager
