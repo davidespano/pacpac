@@ -329,7 +329,7 @@ function checkCompletionsRules(props){
     props.rules.map(item =>  { //per ogni regola
         let event=item.event;
         let condition =item.condition;
-        let actions =item.actions._tail.array[0];
+        let actions =item.get('actions');
 
         //prendo per l'event [nome_regola, event, role (subject, object...)]
         let event_result=returnNullRulesPart(item.name, event, "Quando");
@@ -421,48 +421,58 @@ function returnSimpleCondition(superCondition, result){
  */
 function returnNullRulesPart (ruleName, rulePart, key){
     let results=[];
+    let toPush = [];
+    let subj, action, obj, operator, state;
 
-    if(key === "Se"){ //in caso di condition le parti della regola hanno un altro nome
-        let obj= getValue(rulePart, "obj_uuid");
-        let operator = getValue(rulePart, "operator");
-        let state = getValue(rulePart, "state");
-
-        let toPush = [];
-        //gli spazi sono per non formattarlo successivamente nella lista ul
-        if(obj ===undefined || obj === null || obj ===""){
-            toPush.push([" "+key+ ": soggetto vuoto"])
-        }
-        if(operator ===undefined || operator === null|| operator ===""){
-            toPush.push([" "+key+ ": stato vuoto"])
-        }
-        if(state ===undefined || state === null|| state ===""){
-            toPush.push([" "+key+ ": valore vuoto"])
-        }
-        if(toPush.length>0){ //se non faccio questo controllo aggiunge anche le regole non vuote
-            results.push(toPush)
+    function checkAndPushNullValue(toPush, keyItalian, key, array) {
+        if(toPush ===undefined || toPush === null|| toPush ===""){
+            array.push([" "+key+  keyItalian])
         }
     }
-    else{ //in caso di azioni e eventi si chiamano subj, obj, action
-        let subj = getValue(rulePart, "subj_uuid");
-        let action = getValue(rulePart, "action");
-        let obj = getValue(rulePart, "obj_uuid");
 
-        let toPush = [];
+    switch (key) {
+        case "Se"://in caso di condition le parti della regola hanno un altro nome
+            obj= getValue(rulePart, "obj_uuid");
+            state = getValue(rulePart, "state");
+            operator = getValue(rulePart, "operator");
+            //gli spazi sono per non formattarlo successivamente nella lista ul
+            checkAndPushNullValue(obj, ": soggetto vuoto", key, toPush);
+            checkAndPushNullValue(state, ": stato vuoto", key, toPush);
+            checkAndPushNullValue(operator, ": valore vuoto", key, toPush);
 
-        if(subj ===undefined || subj === null|| subj ===""){
-            toPush.push([" "+key+ ": soggetto vuoto"])
-        }
-        if(action ===undefined || action === null|| action ===""){
-            toPush.push([" "+key+ ": azione vuota"])
-        }
-        if(obj ===undefined || obj === null|| obj ===""){
-            toPush.push([" "+key+ ": oggetto vuoto"])
-        }
+            if(toPush.length>0){ //se non faccio questo controllo aggiunge anche le regole non vuote
+                results.push(toPush)
+            }
+            break;
+        case "Quando":
+            subj = getValue(rulePart, "subj_uuid");
+            action = getValue(rulePart, "action");
+            obj = getValue(rulePart, "obj_uuid");
 
-        if(toPush.length>0){ //se non faccio questo controllo aggiunge anche le regole non vuote
-            results.push(toPush)
-        }
+            checkAndPushNullValue(subj, ": soggetto vuoto", key, toPush);
+            checkAndPushNullValue(action, ": azione vuota", key, toPush);
+            checkAndPushNullValue(obj, ": oggetto vuoto", key, toPush);
 
+            if(toPush.length>0){ //se non faccio questo controllo aggiunge anche le regole non vuote
+                results.push(toPush)
+            }
+            break;
+        case "Allora":
+            rulePart = rulePart.toArray();
+            for(var i=0; i<rulePart.length;i++){ //per tutte le azioni
+                subj = getValue(rulePart[i], "subj_uuid");
+                action = getValue(rulePart[i], "action");
+                obj = getValue(rulePart[i], "obj_uuid");
+
+                checkAndPushNullValue(subj, ": soggetto vuoto", key, toPush);
+                checkAndPushNullValue(action, ": azione vuota", key, toPush);
+                checkAndPushNullValue(obj, ": oggetto vuoto", key, toPush);
+
+                if(toPush.length>0){ //se non faccio questo controllo aggiunge anche le regole non vuote
+                    results.push(toPush)
+                }
+            }
+            break;
     }
 
     return results;
