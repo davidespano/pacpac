@@ -10,6 +10,7 @@ import StoryAPI from '../utils/StoryAPI';
 import Values from "../rules/Values";
 import ObjectsStore from "../data/ObjectsStore";
 import EditorStateStore from "../data/EditorStateStore";
+import Orders from "../data/Orders";
 
 /**[Vittoria]
  * In questo file troviamo le azioni, esse possono essere richiamate tramite props.nomefunzione
@@ -370,7 +371,7 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_SCENE,
             scene: scene,
-            order: order,
+            order: order,  //order of scenes (all orders available in data/Orders)
             objectsToScene: ObjectToSceneStore.getState(),
             objects: ObjectsStore.getState(),
             creation: creation,
