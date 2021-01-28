@@ -29,7 +29,6 @@ export default class Asset extends React.Component{
             let audios = this.props.audios;
             let mode = this.props.mode;
             let gameId = this.props.gameId;
-
             let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
 
             let currAssets = []; //Variabile che conterra' tutti assets
@@ -108,32 +107,6 @@ export default class Asset extends React.Component{
                 }
             });
 
-            //Scorro tutte le regole e carico i media coinvolti nelle regole, come per esempio un cambio sfondo
-            scene.rules.forEach(rule => {
-                rule.actions.forEach(action => {
-                    if (action.action === 'CHANGE_BACKGROUND') {
-                        if (stores_utils.getFileType(action.obj_uuid) === 'video') {
-                            currAssets.push(
-                                <video id={action.obj_uuid} key={"key" + action.obj_uuid}
-                                       src={`${mediaURL}${id}/` + action.obj_uuid}
-                                       preload="auto" loop={'true'} crossOrigin="anonymous" playsInline={true}
-                                       muted={true}
-                                />
-                            )
-                        } else {
-                            currAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid}
-                                                 crossOrigin="Anonymous"
-                                                 src={`${mediaURL}${id}/` + action.obj_uuid}
-                            />)
-                        }
-                    }
-                    /* Non serve
-                    if(action.action === 'PLAY_LOOP' || action.action === 'PLAY_LOOP'){
-                         console.log('ciao sono un adio un po sfortunato')
-                     }*/
-                })
-
-            });
 
             //Creazione traccia audio globali
             //[Vittoria] Tutti gli audio sono dentro soundsHub, le informazioni sono dentro l'oggetto Audio e qua viene fatta questa associazione

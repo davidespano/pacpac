@@ -161,8 +161,26 @@ function getResourceName(apiOptions, resource) {
 
 async function renameResource(options, id, newName) {
     const route = `${options.apiRoot}/files/${id}`;
+    //console.log("file: ", route);
     const method = 'PATCH';
     return request(method, route).type('application/json').send({ name: newName }).set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
+}
+
+//TODO: questa funzione va resa funzionante o eliminata
+async function renameThumbnail(path, oldName, newName) {
+    console.log("rename thumbnail");
+    //const fs = require('fs')
+    //await new Promise((resolve, reject) => fs.rename(path + '/_thumbnails_/'+ oldName,path + '/_thumbnails_/'+ newName,
+        //(err) => {
+        //console.log("creazione _thumbnails_")
+        //if(!err)
+            //resolve();
+        //reject(err);
+    //})).catch(()=>{});
+    //const route = `${options.apiRoot}/_thumbnails_/${id}`;
+    //console.log("thumbnail: ", route);
+    //const method = 'PATCH';
+    //return request(method, route).type('application/json').send({ name: newName }).set('authorization', `Token ${window.localStorage.getItem('authToken')}`)
 }
 
 async function removeResource(options, resource) {
@@ -188,6 +206,7 @@ export default {
     createFolder,
     downloadResources,
     renameResource,
+    renameThumbnail,
     removeResources,
     uploadFileToId
 };

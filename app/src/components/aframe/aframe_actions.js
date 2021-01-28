@@ -213,7 +213,7 @@ function executeAction(VRScene, rule, action) {
             * Azione che si occupa di effettuare un cambio sfondo della scena
             */
             let targetSceneVideo = document.getElementById(action_obj_uuid);
-
+            //console.log(targetSceneVideo);
             //let primitive = targetSceneVideo.nodeName === 'VIDEO'?"a-videosphere":"a-sky";
             //let actualSky = document.querySelector('#' + actual_scene);
             //actualSky.setAttribute('primitive', primitive)
@@ -233,7 +233,9 @@ function executeAction(VRScene, rule, action) {
             }
             //Segnalo allo shader che deve aggiornarsi e poi aggiorno lo stato di VRScene
             document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+            //console.log(runState[sceneName].background);
             runState[sceneName].background = action_obj_uuid;
+            //console.log(runState[sceneName].background);
             VRScene.setState({runState: runState, game_graph: game_graph});
             break;
         case RuleActionTypes.PLAY:
@@ -760,7 +762,7 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     runState[current_object.uuid].visible = false;
     runState[current_object.uuid].activable = false;
 
-
+    //TODO: qua potrebbe essere utile cancellare la geometria della chiave
     if (current_object.media.media0 !== null) {
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
     }

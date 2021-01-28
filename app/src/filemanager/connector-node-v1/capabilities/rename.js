@@ -36,7 +36,20 @@ function handler(apiOptions, actions) {
             return getMessage('fileExist', { name });
           } else {
             hideDialog();
+            console.log("rinomino file");
             const result = await api.renameResource(apiOptions, selectedResources[0].id, name);
+            /*console.log(result);
+            console.log("rinomino thumbnail");
+            console.log("apitOptions: ", apiOptions);
+            console.log("selectedResources[0].id: ", selectedResources[0].id);
+            console.log("selectedResources[0].name: ", selectedResources[0].name);
+            console.log("newName: ", name);
+            console.log("rename thumbnail");
+            const fs = require('fs');
+            console.log(fs);
+            fs.rename(apiOptions.apiRoot + '/_thumbnails_/'+ selectedResources[0].name,apiOptions + '/_thumbnails_/'+ name, () =>{
+              console.log("thumb rinominato")
+            })*/
             const resource = getResource();
             navigateToDir(resource.id, result.body.id, false);
           }

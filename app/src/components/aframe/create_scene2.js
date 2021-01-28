@@ -489,7 +489,7 @@ export default class VRScene extends React.Component {
                         }
                     }
 
-                    console.log("rule ", rule, "event: ", event);
+                    //console.log("rule ", rule, "event: ", event);
                     eventBus.on(event, function () {
                         let condition;
                         //in questo caso mi serve necessariamente passare alla condition il tastierino
@@ -819,6 +819,7 @@ export default class VRScene extends React.Component {
         //Richiamo la funzione per la generazione degli assets
         //[Vittoria] gli assets vengono caricati non tutti insieme all'inizio ma quello della scena corrente e dei vicini
         let assets = this.generateAssets(this.props.editor.gameId);
+        let otherAssets = this.generateOtherAssets(this.props.editor.gameId);
         let is3dScene = this.props.scenes.get(sceneUuid).type ===Values.THREE_DIM; //Variabile per sapere se la scena e' di tipo 2D o 3D
         let embedded = this.props.debug; //Varibile per sapere se siamo in debug mode
         let vr_mode_ui = this.props.debug ? "enabled : false": false;
@@ -833,6 +834,7 @@ export default class VRScene extends React.Component {
             <Scene stats={!this.props.debug && this.state.stats} background="color: black" embedded={embedded} vr-mode-ui={vr_mode_ui}>
                 <a-assets>
                     {assets}
+                    {otherAssets}
                 </a-assets>
                 {this.generateBubbles()}
 
@@ -863,6 +865,7 @@ export default class VRScene extends React.Component {
      */
     generateAssets(gameId){
         //[Vittoria] per ogni scena del current level richiama generateAssets
+        //questo crea l'asset a frame della scena e delle adiacenti
         return this.currentLevel.map(sceneName => {
             return (
                 <Asset
@@ -880,6 +883,43 @@ export default class VRScene extends React.Component {
                 return aframe_utils.generateAsset(this.state.graph.scenes[sceneName],
                 this.state.runState[sceneName].background, this.state.runState, this.state.audios, 'scene', gameId)*/
         }).flat();
+    }
+
+    /**
+     * questa funzione serve a creare gli asset per le regole dei cambi di sfondo
+     * normalmente venivano caricati assieme alla scena contenente la regola e persi subito dopo
+     * può essere resa più efficente se aggiungo solo i media delle regole appartenenti al currentlevel
+     * ma funziona bene anche così, don't fix it until is broken
+     * @param gameId
+     * @returns {[]}
+     */
+    generateOtherAssets(gameId){
+        let otherAssets=[];
+        if (this.state.graph.scenes == undefined)
+            return otherAssets;
+        let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
+
+        Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
+            rule.actions.forEach(action => {
+                if (action.action === 'CHANGE_BACKGROUND') {
+                    if (stores_utils.getFileType(action.obj_uuid) === 'video') {
+                        otherAssets.push(
+                            <video id={action.obj_uuid} key={"key" + action.obj_uuid}
+                                   src={`${mediaURL}${id}/` + action.obj_uuid}
+                                   preload="auto" loop={'true'} crossOrigin="Anonymous" playsInline={true}
+                                   muted={true}
+                            />
+                        )
+                    } else {
+                        otherAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid}
+                                              crossOrigin="Anonymous"
+                                              src={`${mediaURL}${id}/` + action.obj_uuid}
+                        />)
+                    }
+                }
+            })
+        });
+        return otherAssets;
     }
 
     /**

@@ -328,7 +328,7 @@ export default class Bubble extends Component
     }
     //[Vittoria] per ogni oggetto: prende lo sfondo, prende la maschera e fonde, per il secondo oggetto fa lo stesso ma lo fonde con il precedente
     setShader(){
-        console.log("sono in setShader")
+        //console.log("sono in setShader")
         //console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
@@ -346,7 +346,7 @@ export default class Bubble extends Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-            console.log("sono in setShader PRIMA della return")
+            //console.log("sono in setShader PRIMA della return")
             //console.log("getting sleepy")
             //this.sleep(1000)
             //[Vittoria] sky: bolle
@@ -357,7 +357,7 @@ export default class Bubble extends Component
                     return;
                 //TODO: il problema con lo switch che non prende il media corretto è qui, questo return
             }
-            console.log("sono in setShader DOPO la return")
+            //console.log("sono in setShader DOPO la return")
             //console.log("getting sleepy")
             //this.sleep(1000)
             //Imposto la variabile per l'aggiornamento a false
@@ -384,7 +384,7 @@ export default class Bubble extends Component
                 }
 
                 let media;
-                console.log(obj.type);
+                //console.log(obj.type);
                 // TODO verificare i media per oggetti diversi da switch
                 //Controllo se l'oggetto corrente e' uno switch, in quel caso quale media devo prendere se da ON a OFF o viceversa
                 if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON"){
@@ -396,8 +396,8 @@ export default class Bubble extends Component
                         media = obj.media.media1;
                 }
 
-                console.log(media)
-                console.log("sono in setShader")
+                //console.log(media)
+                //console.log("sono in setShader")
 
 
                 //se lo stato dell'oggetto esiste e se l'oggetto è invisibile dico allo shader di passare al successivo
@@ -409,7 +409,7 @@ export default class Bubble extends Component
                 if(asset === null){
                     return;
                 }
-                console.log("sono in setShader")
+                //console.log("sono in setShader")
 
 
                 if(asset.nodeName === 'VIDEO'){
