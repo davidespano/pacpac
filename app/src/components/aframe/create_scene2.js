@@ -51,11 +51,13 @@ let healthEntity = null;
 let healtUuid;
 let keypadUuid;
 let selectorUuid;
+
+//variabili del timer pubbliche perchè accedute da render e tick
 window.keypadValue = "undefined";
 window.healthValue = undefined;
 window.playtimeValue = undefined;
 window.scoreValue = undefined;
-//variabili del timer pubbliche perchè accedute da render e tick
+
 // [davide] teniamo dentro this.props.debug traccia del fatto che la scena sia creata
 // da motore di gioco o per debug
 // Ho l'impressione che l'attributo this.props.currentScene che viene dalla vecchia
@@ -438,7 +440,6 @@ export default class VRScene extends React.Component {
                     if( object && object.type === InteractiveObjectsTypes.PLAYTIME){
                         event = `GameTime-reach_minute-${rule.event.obj_uuid}`;
                     }
-
                     //vita
                     if( object && object.type === InteractiveObjectsTypes.HEALTH){
                         event = `Health-value_changed_to-${rule.event.obj_uuid}`;
@@ -450,7 +451,8 @@ export default class VRScene extends React.Component {
 
                     //se la regola è una regola di tastierino devo caricare anche tutti gli eventi relativi alla pressione
                     //dei pulsanti che fanno parte del tastierino
-                    if(me.props.interactiveObjects.get(rule.event.obj_uuid) && me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                    if(me.props.interactiveObjects.get(rule.event.obj_uuid) &&
+                        me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
                         rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
 
                         eventBus.on(`PLAYER-click-${rule.event.obj_uuid}`, function () {
@@ -489,11 +491,12 @@ export default class VRScene extends React.Component {
                         }
                     }
 
-                    //console.log("rule ", rule, "event: ", event);
+
                     eventBus.on(event, function () {
                         let condition;
                         //in questo caso mi serve necessariamente passare alla condition il tastierino
-                        if(me.props.interactiveObjects.get(rule.event.obj_uuid) && me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                        if(me.props.interactiveObjects.get(rule.event.obj_uuid) &&
+                            me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
                             rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
                             condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.obj_uuid));
                         }else{
@@ -507,7 +510,8 @@ export default class VRScene extends React.Component {
                                         interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
                                         eventBus.on('debug-step', actionExecution);
                                     }, duration);
-                                } else {
+                                }
+                                else {
                                     actionExecution();
                                 }
 

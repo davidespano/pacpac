@@ -1,13 +1,18 @@
 /**
- * Componente A-Frame che gestise l'interazione con la geometria degli oggetti, la cattura del clickl e le animazioni del cursor
+ * Componente A-Frame che gestisce l'interazione con la geometria degli oggetti, la cattura del click
+ * e le animazioni del cursor
  */
 
 import settings from "../../utils/settings";
 import stores_utils from "../../data/stores_utils";
+import ObjectsStore from "../../data/ObjectsStore";
+import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 
 const {mediaURL} = settings;
 const AFRAME = require('aframe');
 const eventBus = require('./eventBus');
+const soundsHub = require('./soundsHub');
+
 
 AFRAME.registerComponent('selectable', {
     schema: {
@@ -172,9 +177,20 @@ function setMouseLeave() {
 function setClick(event) {
     event.detail.cursorEl.components.raycaster.intersectedEls.forEach(
         obj => {
-            eventBus.emit('PLAYER-click-'+ obj.object_uuid)
+            eventBus.emit('PLAYER-click-'+ obj.object_uuid);
+            //Il button è l'unico oggetto che appena viene premuto, se ha un audio associato, lo esegue
+            let obj_obj = ObjectsStore.getState().get(obj.object_uuid);
+            if(obj_obj.type==InteractiveObjectsTypes.BUTTON){
+                if(obj_obj.audio.audio0){
+                    if (soundsHub['audio0_' + obj_obj.audio.audio0])
+                        soundsHub['audio0_' + obj_obj.audio.audio0].play();
+                }
+
+            }
         }
+
     );
+
 }
 
 /**
