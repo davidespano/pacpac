@@ -145,6 +145,7 @@ function getState() {
         copyRule: Actions.copyRule,
         removeRule: Actions.removeRule,
         updateRule: Actions.updateRule,
+        updateRuleName: Actions.updateRuleName,
         ruleEditorCallback: {
             eudShowCompletions: Actions.eudShowCompletions,
             eudSaveOriginalObject: Actions.eudSaveOriginalObject,

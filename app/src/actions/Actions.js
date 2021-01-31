@@ -20,7 +20,7 @@ import Orders from "../data/Orders";
  *     props.azione2; -> Questa verrà sempre gestita dopo, quindi conviene evitare questo comportamento perchè sono due
  *                      render diverse e ci sarà un aggiornamento. La cosa migliore è mettere un'azione per volta oppure
  * se voglio gestire più azioni di seguito conviene accorparle
- * Prendono un type (costante che ritroviamo su ActionType.js) ed eventuali altri campi
+ * Prendono un type (costante che ritroviamo su ActionTypes.js) ed eventuali altri campi
  */
 const Actions = {
 
@@ -667,6 +667,30 @@ const Actions = {
         }
         InteractiveObjectAPI.saveRule(scene, rule);
     },
+
+
+    /**
+     * Dispatch rule name update
+     * @param rule
+     * @param rule oldName
+     */
+    updateRuleName(rule, oldName){
+        AppDispatcher.dispatch({
+            type: ActionTypes.UPDATE_RULE_NAME,
+            rule: rule,
+            oldName : oldName,
+            name: rule.name
+        });
+        let scene =null;
+        console.log(rule.global)
+        if(rule.global){
+            scene = ScenesStore.getState().get('ghostScene');
+        }
+        else{
+            scene = ScenesStore.getState().get(CentralSceneStore.getState());
+        }
+        InteractiveObjectAPI.saveRule(scene, rule);
+        },
 
 
     // [davide] eud editor state

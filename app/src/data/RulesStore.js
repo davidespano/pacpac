@@ -27,6 +27,8 @@ class RulesStore extends ReduceStore {
             case ActionTypes.UPDATE_RULE:
                 state = state.set(action.rule.uuid, action.rule);
                 return state;
+            case ActionTypes.UPDATE_RULE_NAME:
+                return state.set(action.rule.uuid, action.rule);
             case ActionTypes.REMOVE_OBJECT:
                 state = state.map(rule => {
                     let event = rule.get('event');

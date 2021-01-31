@@ -55,6 +55,7 @@ export default class EudRuleEditor extends Component {
                                     currentScene={this.props.currentScene}
                                     rules={this.props.rules}
                                     rule={rule}
+                                    updateRuleName={this.props.updateRuleName}
                                     ruleEditorCallback={this.props.ruleEditorCallback}
                                     removeRule={(rule) => {
                                         this.onRemoveRuleClick(rule)
@@ -146,6 +147,7 @@ export default class EudRuleEditor extends Component {
                                 audios={this.props.audios}
                                 currentScene={ghostSceneUuid}
                                 rules={this.props.rules}
+                                updateRuleName={this.props.updateRuleName}
                                 rule={rule}
                                 ruleEditorCallback={this.props.ruleEditorCallback}
                                 removeRule={(rule) => {
@@ -603,7 +605,24 @@ class EudRule extends Component {
                         onMouseLeave={() => {
                             this.mouseLeave()
                         }}>
-                <span className={"eudName"}>{rule.name}</span>
+                <span className={"eudName"}>
+                    <input style={{"width":"80%"}} id={"ruleName"}
+                           className={"propertyForm rightbar-box"}
+                           value={rule.name}
+                           maxLength={50}
+                           onChange={(event =>{
+                               console.log(this.props.updateRuleName)
+                               let value = event.target.value; //nuovo nome
+                               let oldValue = rule.name;
+                               rule = rule.set('name', value); //nuova regola con nome aggiornato
+                               this.props.updateRuleName(rule, oldValue)
+
+                           })}
+                           onBlur={()=> {
+
+                           }}
+                    />
+                </span>
                 <span className={"eudWhen"}>Quando </span>
                 <EudAction
                     editor={this.props.editor}
