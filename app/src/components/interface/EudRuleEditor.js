@@ -611,7 +611,6 @@ class EudRule extends Component {
                            value={rule.name}
                            maxLength={50}
                            onChange={(event =>{
-                               console.log(this.props.updateRuleName)
                                let value = event.target.value; //nuovo nome
                                let oldValue = rule.name;
                                rule = rule.set('name', value); //nuova regola con nome aggiornato

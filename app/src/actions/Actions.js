@@ -682,7 +682,6 @@ const Actions = {
             name: rule.name
         });
         let scene =null;
-        console.log(rule.global)
         if(rule.global){
             scene = ScenesStore.getState().get('ghostScene');
         }
