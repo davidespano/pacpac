@@ -369,16 +369,13 @@ function executeAction(VRScene, rule, action) {
             /*
             * Azione che si occupa di girare la camera verso un punto ben preciso impostato dall'utente
             */
-            if (VRScene.state.activeScene.type === '3D') {
                 let delay = game_graph['objects'].get(action.obj_uuid).properties.delay;
                 setTimeout(function () {
+                    //TODO: sarebbe opportuno controllare che la scena di destinazione sia 3D
                     let pointOI = game_graph['objects'].get(action.obj_uuid);
-                    if(pointOI.type == "POINT_OF_INTEREST"){
-
-                    }
                     lookObject('curv' + action.obj_uuid, pointOI.vertices);
                 }, delay)
-            }
+
             break;
         case RuleActionTypes.DECREASE_STEP:
             console.log("RuleActionTypes.DECREASE_STEP");
@@ -526,7 +523,6 @@ function executeAction(VRScene, rule, action) {
     else{
         event = `${action.subj_uuid}-${action.action.toLowerCase()}-${action.obj_uuid}`;
     }
-
     console.log(`emit`, event);
     eventBus.emit(event);
 }
@@ -688,8 +684,12 @@ function transition2D(actualScene, targetScene, duration) {
     if (!is3dScene) {
         sceneMovement.dispatchEvent(movement);
     }
+    eventBus.emit("PLAYER-enter_scene-"+ targetScene.uuid);
+
     setTimeout(function () {
-        lookObject(targetSky.id); //[Vittoria] serve per rimettere al suo posto il cursore passando da una scena 3D a 2D
+        if(targetScene.type === Values.TWO_DIM){
+            lookObject(targetSky.id); //[Vittoria] serve per rimettere al suo posto il cursore passando da una scena 3D a 2D
+        }
         targetSky.dispatchEvent(appear);
         sceneMovement.dispatchEvent(movement);
         if (store_utils.getFileType(targetScene.img) === 'video') targetSceneVideo.play();
