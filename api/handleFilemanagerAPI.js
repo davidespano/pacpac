@@ -97,7 +97,7 @@ function uploadHandler(req, res, next) {
 
     let promises = [];
     console.log("upload handler", req)
-    if(req.files) {
+    if (req.files) {
         req.files.forEach((file) => {
             //relative path of the file
             let filePath = path.resolve(__dirname, file.path).replace(/(^.*?[\\/]public[\\/].*?[\\/])/, "");
@@ -106,20 +106,42 @@ function uploadHandler(req, res, next) {
             promises.push(Media.createUpdateAsset(dbUtils.getSession({}), asset, gameID));
         });
     }
-        console.log("uploadHandler",req.params.gameID);
-//override send function, used to check when the file is uploaded completely
-        res.send = function (body) {
-            if(req.files) {
-                //Creation of the thumbnails and call of the former send fuction
-                createThumbnails(session, req.files, dir, gameID)
-                    .then(() => {
-                        send.call(this, body);
-                        return Promise.all(promises);
-                    }).catch(err => console.error("uploadHandler", err));
-            }
-            else
-                send.call(this, body);
-        };
+    console.log("uploadHandler", req.params.gameID);
+    //override send function, used to check when the file is uploaded completely
+    res.send = function (body) {
+        if (req.files) {
+            //Creation of the thumbnails and call of the former send fuction
+            createThumbnails(session, req.files, dir, gameID)
+                .then(() => {
+                    send.call(this, body);
+                    return Promise.all(promises);
+                }).catch(err => console.error("uploadHandler", err));
+        } else
+            send.call(this, body);
+    };
+
+    next();
+}
+
+async function changeThumbnailName(req, res, next) {
+    let regex = RegExp('.*\.mp4$|.MOV$');
+    //se è mp4 aggiungere png, altrimenti lascia .jpg o quello che è
+    let oldfilename = regex.test(req.body.oldName) ? (req.body.oldName + '.png') : req.body.oldName;
+    let newfilename = regex.test(req.body.name) ? (req.body.name + '.png') : req.body.name;
+
+    let regexPath = RegExp('[^/]+(?=/$|$)');
+    let pathCut = req.body.path.match(regexPath);
+
+    await new Promise((resolve, reject) => fs.rename(__dirname +'\\public\\' + pathCut[0] + '/_thumbnails_/' + oldfilename,
+        __dirname +'\\public\\' + pathCut[0] + '/_thumbnails_/' + newfilename,
+        (err) => {
+            console.log("rinominazione _thumbnails_");
+            if(!err)
+                resolve();
+            reject(err);
+        })).catch(()=>{
+
+    });
 
     next();
 }
@@ -156,6 +178,7 @@ function handleFilemanagerAPI(api)
 {
     api.post('/filemanager/:gameID/files', uploadHandler);
     api.delete('/filemanager/:gameID/files/*', deleteHandler);
+    api.patch('/filemanager/:gameID/_thumbnails_/*', changeThumbnailName);
     api.use('/filemanager/:gameID', loginRequired, (req, res, next) => {
         fileManagerConfig.fsRoot = path.resolve(__dirname, 'public') + '/' + req.params.gameID;
         const router = filemanagerMiddleware(fileManagerConfig);

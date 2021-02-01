@@ -37,21 +37,17 @@ function handler(apiOptions, actions) {
           } else {
             hideDialog();
             console.log("rinomino file");
-            const result = await api.renameResource(apiOptions, selectedResources[0].id, name);
-            /*console.log(result);
-            console.log("rinomino thumbnail");
-            console.log("apitOptions: ", apiOptions);
-            console.log("selectedResources[0].id: ", selectedResources[0].id);
-            console.log("selectedResources[0].name: ", selectedResources[0].name);
-            console.log("newName: ", name);
-            console.log("rename thumbnail");
-            const fs = require('fs');
-            console.log(fs);
-            fs.rename(apiOptions.apiRoot + '/_thumbnails_/'+ selectedResources[0].name,apiOptions + '/_thumbnails_/'+ name, () =>{
-              console.log("thumb rinominato")
-            })*/
+            const result = await api.renameResource(apiOptions, selectedResources[0].id, name, selectedResources[0].name, selectedResources[0].parentId);
+
             const resource = getResource();
             navigateToDir(resource.id, result.body.id, false);
+          }
+          try {
+            //[Vittoria] questa try darà sempre un error
+            await api.renameThumbnail(apiOptions, selectedResources[0].id, selectedResources[0].name, name, selectedResources[0].parentId)
+          }catch (e) {
+            //nascondo il dialog perchè anche quando da errore lo fa
+            hideDialog();
           }
           return null;
         } catch (err) {
@@ -65,6 +61,8 @@ function handler(apiOptions, actions) {
           console.log(err);
           return null
         }
+
+
       },
       onValidate: async (name) => {
         if (!name) {
