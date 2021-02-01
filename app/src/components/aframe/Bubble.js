@@ -337,6 +337,7 @@ export default class Bubble extends Component
             let video = [];
             let masks = [];
             let aux;
+            let altAux;
             let dict = ['0'];
             let nullMask = new THREE.TextureLoader().load("/null-mask.jpg");
             let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img;
@@ -353,7 +354,6 @@ export default class Bubble extends Component
             //Verifico se lo shader attuale e' multi-video (quello creato da noi), e se non ha bisogno di essere aggiornato, riproduco il video di sfondo, se e' un video
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
-                console.log("sono qui")
                     return;
                 //TODO: il problema con lo switch che non prende il media corretto è qui, questo return
             }
@@ -383,17 +383,25 @@ export default class Bubble extends Component
                     asset = document.getElementById("media0_" + obj.uuid);
                 }
 
-                let media;
+               let media;
+               let altMedia;
                 //console.log(obj.type);
                 // TODO verificare i media per oggetti diversi da switch
                 //Controllo se l'oggetto corrente e' uno switch, in quel caso quale media devo prendere se da ON a OFF o viceversa
-                if(this.props.runState && obj.type === "SWITCH" && this.props.runState[obj.uuid].state === "ON"){
-                    if(obj.media.media0)
+                if(this.props.runState && obj.type === "SWITCH"){
+                    if(obj.media.media0){
                         media = obj.media.media0;
-                }
-                else{
-                    if(obj.media && obj.media.media1)  //[Vittoria] ha il media OFF -> ON
+                        if(obj.media.media1){
+                            altMedia = obj.media.media1;
+                        }
+                    }
+
+                    if(obj.media.media1){
                         media = obj.media.media1;
+                        if(obj.media.media0){
+                            altMedia = obj.media.media0;
+                        }
+                    }  //[Vittoria] ha il media OFF -> ON
                 }
 
                 //console.log(media)
@@ -415,6 +423,7 @@ export default class Bubble extends Component
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
                 } else {
+                    altAux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + altMedia);
                     aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
                 }
 
@@ -423,6 +432,11 @@ export default class Bubble extends Component
                 //Aggiungo il media alla lista video
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
+
+                if(altAux){
+                    altAux.minFilter = THREE.NearestFilter;
+                    video.push(altAux);
+                }
 
                 //Carico la maschera associata al media dell'oggetto
                 if(obj.type === "BUTTON"){
@@ -433,6 +447,12 @@ export default class Bubble extends Component
 
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
+
+                if(altAux){
+                    altAux.minFilter = THREE.NearestFilter;
+                    masks.push(altAux);
+                }
+
                 dict.push(obj.uuid.replace(/-/g,'_'));
             });
 

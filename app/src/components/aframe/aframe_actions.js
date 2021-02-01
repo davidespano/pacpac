@@ -772,19 +772,18 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     Cambio stato per l'oggetto Switch
  */
 function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
-    console.log("FUNCTION CHANGESTATESWITCH");
     let id = window.localStorage.getItem("gameID");
     let duration_switch = 0;
+    //TODO: questo switchVideo prende arbitrariamente media0.... perchè?
     let switchVideo = document.getElementById('media0_' + current_object.uuid);
     console.log(switchVideo);
     //TODO Controlla per i media che non sono video
+    //TODO: controlla se funziona in contemporanea anche con 2 oggetti con maschere diverse
     if (switchVideo != null) {
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
         //Cambio lo stato dello switch
         current_object.properties.state === 'ON' ? current_object.properties.state = 'OFF' : current_object.properties.state = 'ON';
-        //console.log(current_object.properties.state);
-        //console.log(current_object);
         //Assegno il media in base allo stato dello switch
         let videoType = current_object.properties.state === 'ON' ? current_object.media.media1 : current_object.media.media0;
         console.log(videoType);//VIDEOTYPE PRENDE IL MEDIA CORRETTO MA QUESTA VARIABILE VIENE IGNORATA A QUANTO PARE
@@ -798,23 +797,22 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
             document.getElementById(VRScene.state.activeScene.name)
                 .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
 
+        console.log(document.getElementById(VRScene.state.activeScene.name)
+            .components.material.shader.uniforms)
         console.log(texture)
+        //console.log(current_object)
+        aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
+        //aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + videoType);
+
+        console.log(aux);
         if(texture.valueOld == null){
-            aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
-            //console.log("texture.valueOld == null")
-            //console.log(current_object.mask);
-            //console.log("AUX =",  aux);
+            //aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
         }else{
-           // console.log("texture.valueOld != null")
-            //console.log(current_object.mask);
-            aux = texture.valueOld;
-            //console.log("AUX (texture.valueOld) =",  aux);
+            //aux = texture.valueOld;
         }
 
-        texture.valueOld = texture.value;
+        //texture.valueOld = texture.value;
         texture.value = aux;
-        console.log(texture.value)
-        console.log(texture.valueOld.image.src)
         texture.value.needsUpdate = true;
 
         if (store_utils.getFileType(videoType) === 'video') {
@@ -847,8 +845,6 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
         }
 
     }, duration_switch)
-    console.log("fine changeStateSwitch")
-
 }
 
 
