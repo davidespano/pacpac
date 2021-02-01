@@ -57,7 +57,12 @@ function executeAction(VRScene, rule, action) {
             cursor.setAttribute('material', 'visible: false');
             cursor.setAttribute('raycaster', 'far: 0.1');
 
-            //Se la transizione ha un video associato lo riproduco e salvo la durata,
+            //Se la transizione ha un video associato lo riproduco e salvo la durata
+            if(current_object===undefined){//se non lo dovessi trovare
+                // current_object in questo caso è la transizione, in una regola generalmente è
+                // nella parte dell'oggetto dell'event (quando il giocatore clicca la transizione)
+                current_object = game_graph['objects'].get(rule.event.obj_uuid); // lo cerco con lo store
+            }
             if (current_object && current_object.type === 'TRANSITION') {
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if (objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
@@ -77,7 +82,7 @@ function executeAction(VRScene, rule, action) {
                     soundsHub['audio0_' + audioTransition].play();
             }
 
-            //[Vittoria] se la musica di sottofondo o un altro audio tra due scene è la stesso allora non smette di riprodurlo, altrimenti
+            // se la musica di sottofondo o un altro audio tra due scene è la stesso allora non smette di riprodurlo, altrimenti
             // il primo finisce e parte l'altro
             setTimeout(function () {
                 //Set di controlli per la cotinuita' dei file audio, musica di sottofondo, effetti audio di sottofondo, audio integrato del video
@@ -105,7 +110,7 @@ function executeAction(VRScene, rule, action) {
                     soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
                 }
 
-                //[Vittoria] se la scena di destinazione e di arrivo sono dello stesso tipo (2D e 2D es.) lancia una transizione normale,
+                // se la scena di destinazione e di arrivo sono dello stesso tipo (2D e 2D es.) lancia una transizione normale,
                 // se sono di tipo diverso invece lancia la transizione 2D
                 if (objectVideo_transition !== 0 && objectVideo_transition !== null &&
                     (store_utils.getFileType(objectVideo_transition.img) === 'video')) objectVideo_transition.pause();
@@ -549,7 +554,7 @@ function transition(actualScene, targetScene, duration, direction) {
     let positionActual;
     let canvasWidth = document.documentElement.clientWidth / 100;
     let canvasHeight = document.documentElement.clientHeight;
-    //[Vittoria] se ha una direzione imposta la posizione di conseguenza
+    //se ha una direzione imposta la posizione di conseguenza
     switch (direction) {
         case 'RIGHT':
             positionTarget = canvasWidth + ', 1.6, -6';

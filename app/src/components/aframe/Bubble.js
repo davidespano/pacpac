@@ -26,9 +26,9 @@ export default class Bubble extends Component
 {
 
     sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
+        const date = Date.now();
+        let currentDate = null;
+        do {
             currentDate = Date.now();
         } while (currentDate - date < milliseconds);
     }
@@ -90,7 +90,6 @@ export default class Bubble extends Component
             })
         }else{ //[Vittoria] se è la scena attiva richiama lo shader
             //if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
-            console.log("chiamo setShader");
             this.setShader();
         }
 
@@ -111,7 +110,7 @@ export default class Bubble extends Component
             let state = this.props.runState?this.props.runState[s.uuid].state:s.state;
             if(s.media.media0 === null && s.media.media1 === null) return;
             if((state === "ON"  && s.media.media1 === null )||
-               (state === "OFF" && s.media.media0 === null )){
+                (state === "OFF" && s.media.media0 === null )){
                 let asset = document.getElementById("media_"+s.uuid);
                 asset.addEventListener('durationchange', function (ev) {
                     asset.currentTime = asset.duration - 0.00005; //TODO test with longer video
@@ -148,14 +147,14 @@ export default class Bubble extends Component
                 return(
                     //Qua era CurvedGeometry
                     <Curved key={"keyC"+ curve.uuid}
-                                    position={positionCurved}
-                                    vertices={curve.vertices}
-                                    mode={'edit'}
-                                    id={curve.uuid}
-                                    is3Dscene={is3Dscene}
-                                    color={color}
-                                    type={pointOfinterest}
-                                    assetsDimention = {this.props.assetsDimention}
+                            position={positionCurved}
+                            vertices={curve.vertices}
+                            mode={'edit'}
+                            id={curve.uuid}
+                            is3Dscene={is3Dscene}
+                            color={color}
+                            type={pointOfinterest}
+                            assetsDimention = {this.props.assetsDimention}
                     />
                 );
             } else {
@@ -250,10 +249,10 @@ export default class Bubble extends Component
         if(is3Dscene && !this.props.editMode){
             sceneRender = (
                 <Entity>
-                        <Entity visible={isLoadingSphereVisible} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
-                                id={this.props.scene.name + 'loading'} radius={radius}  material={'shader: flat; opacity: 0.5; color: black; side: double'}  >
-                            <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
-                        </Entity>
+                    <Entity visible={isLoadingSphereVisible} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
+                            id={this.props.scene.name + 'loading'} radius={radius}  material={'shader: flat; opacity: 0.5; color: black; side: double'}  >
+                        <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
+                    </Entity>
                     <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 -90 0'} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
@@ -292,10 +291,10 @@ export default class Bubble extends Component
             positionPlane = "0, 1.6, -6";
             sceneRender = (
                 <Entity>
-                        <Entity visible={isLoadingSphereVisible} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
-                                id={this.props.scene.name + 'loading'} radius={radius}  material={'shader: flat; opacity: 0.5; color: black; side: double'}  >
-                            <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
-                        </Entity>
+                    <Entity visible={isLoadingSphereVisible} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
+                            id={this.props.scene.name + 'loading'} radius={radius}  material={'shader: flat; opacity: 0.5; color: black; side: double'}  >
+                        <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
+                    </Entity>
                     <Entity _ref={elem => this.nv = elem} primitive={'a-plane'} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} height={canvasHeight.toString()} width={canvasWidth.toString()}
                             material={material} play_video={active} position={positionPlane} >
@@ -328,18 +327,15 @@ export default class Bubble extends Component
     }
     //[Vittoria] per ogni oggetto: prende lo sfondo, prende la maschera e fonde, per il secondo oggetto fa lo stesso ma lo fonde con il precedente
     setShader(){
-        //console.log("sono in setShader")
         //console.log('set shader');
         setTimeout(() => { //timeout to wait the render of the bubble
             let scene = this.props.scene;
             let sky = document.getElementById(scene.name);
             let id = this.props.gameId ? this.props.gameId : `${window.localStorage.getItem("gameID")}`;
             let video = [];
-            let masks = [];
+            let masks = []; //contiene la texture che ha come img l'immagine dell'oggetto
             let aux;
-            let altAux;
             let dict = ['0'];
-            let nullMask = new THREE.TextureLoader().load("/null-mask.jpg");
             let background = this.props.runState?this.props.runState[scene.uuid].background:scene.img;
             const objs = Object.values(scene.objects).flat(); //all the objects, whatever type
             //Se non ho oggetti resetto lo shader, non serve il nostro
@@ -347,29 +343,23 @@ export default class Bubble extends Component
                 this.resetShader(sky);
                 return; //shader not necessary
             }
-            //console.log("sono in setShader PRIMA della return")
-            //console.log("getting sleepy")
-            //this.sleep(1000)
-            //[Vittoria] sky: bolle
+
+            //sky: bolle
             //Verifico se lo shader attuale e' multi-video (quello creato da noi), e se non ha bisogno di essere aggiornato, riproduco il video di sfondo, se e' un video
             if(sky && sky.getAttribute('material').shader === 'multi-video' && !(this.nv !== undefined && this.nv.needShaderUpdate === true)) {
                 if (this.props.isActive && stores_utils.getFileType(scene.img) === 'video') document.getElementById(scene.img).play();
-                    return;
-                //TODO: il problema con lo switch che non prende il media corretto è qui, questo return
+                return;
             }
-            //console.log("sono in setShader DOPO la return")
-            //console.log("getting sleepy")
-            //this.sleep(1000)
             //Imposto la variabile per l'aggiornamento a false
             if((this.nv !== undefined && this.nv.needShaderUpdate === true)) this.nv.needShaderUpdate = false;
 
             //Creo il la texture in base al tipo di media dello sfondo
-            if(stores_utils.getFileType(scene.img) === 'video'){  //[Vittoria]se lo sfondo è un video
-                aux = new THREE.VideoTexture(document.getElementById(scene.img));  //[Vittoria] creo un THREE.VideoTexture
+            if(stores_utils.getFileType(scene.img) === 'video'){  //se lo sfondo è un video
+                aux = new THREE.VideoTexture(document.getElementById(scene.img));  // creo un THREE.VideoTexture
             } else {
-                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + background);  //[Vittoria] se è un img creo un THREE.TextureLoader
+                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + background);  // se è un img creo un THREE.TextureLoader
             }
-            aux.minFilter = THREE.NearestFilter;  //[Vittoria] adesso aux ha lo sfondo
+            aux.minFilter = THREE.NearestFilter;  // adesso aux ha lo sfondo
             //Aggiungo alla lista di media lo sfondo, questa lista sara' utilizzata per fondere i media in essa contenuiti
             video.push(aux);
 
@@ -377,36 +367,25 @@ export default class Bubble extends Component
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
+                let media;
 
-                // TODO controllare questo fix
-               if(asset == null){
-                    asset = document.getElementById("media0_" + obj.uuid);
-                }
-
-               let media;
-               let altMedia;
-                //console.log(obj.type);
-                // TODO verificare i media per oggetti diversi da switch
+                // TODO verificare i media per switch
                 //Controllo se l'oggetto corrente e' uno switch, in quel caso quale media devo prendere se da ON a OFF o viceversa
                 if(this.props.runState && obj.type === "SWITCH"){
-                    if(obj.media.media0){
-                        media = obj.media.media0;
-                        if(obj.media.media1){
-                            altMedia = obj.media.media1;
-                        }
+                    if(this.props.runState[obj.uuid].state === "ON"){ //off-> on
+                        if(obj.media.media1)
+                            media = obj.media.media1;
+                    }
+                    else{
+                        if(obj.media && obj.media.media0)  //[Vittoria] ha il media OFF -> ON
+                            media = obj.media.media0;
                     }
 
-                    if(obj.media.media1){
-                        media = obj.media.media1;
-                        if(obj.media.media0){
-                            altMedia = obj.media.media0;
-                        }
-                    }  //[Vittoria] ha il media OFF -> ON
                 }
-
-                //console.log(media)
-                //console.log("sono in setShader")
-
+                else{ //se non è uno switch
+                    if(obj.media && obj.media.media0)
+                        media = obj.media.media0;
+                }
 
                 //se lo stato dell'oggetto esiste e se l'oggetto è invisibile dico allo shader di passare al successivo
                 if(this.props.runState){
@@ -417,45 +396,32 @@ export default class Bubble extends Component
                 if(asset === null){
                     return;
                 }
-                //console.log("sono in setShader")
-
 
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
                 } else {
-                    altAux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + altMedia);
                     aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
                 }
-
-                console.log(aux);
 
                 //Aggiungo il media alla lista video
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
 
-                if(altAux){
+                /*if(altAux){
                     altAux.minFilter = THREE.NearestFilter;
                     video.push(altAux);
                 }
+                //TODO chiedere a richi perchè
+                if(obj.type==="BUTTON"){
+                    aux = nullMask;
+                }*/
 
                 //Carico la maschera associata al media dell'oggetto
-                if(obj.type === "BUTTON"){
-                    aux = nullMask;
-                }else{
-                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
-                }
-
+                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
-
-                if(altAux){
-                    altAux.minFilter = THREE.NearestFilter;
-                    masks.push(altAux);
-                }
-
                 dict.push(obj.uuid.replace(/-/g,'_'));
             });
-
 
             //Controllo se ci sono maschere o no, se non ci sono maschere resetto lo shader, perche' non neccessario
             if (masks.length === 0) {
@@ -489,8 +455,7 @@ export default class Bubble extends Component
             for (i = 0; i < masks.length; i++) {
                 //for each of the mask and video add the variables in the uniforms field, and prepare a string for the fragment shader
                 skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
-                //lo metto a nullMask salvando però in valueOld la maschera, in modo da ricaricarlo in aframe_actions
-                skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: nullMask};
+                skyMesh.material.uniforms[`mask${dict[i + 1]}`] = {type: "t", value: masks[i]};
                 declarations += `
                            uniform sampler2D video${dict[i]};    uniform sampler2D mask${dict[i + 1]};`;
 
@@ -499,6 +464,7 @@ export default class Bubble extends Component
             //the last video is not handled by the previous loop
             skyMesh.material.uniforms[`video${dict[i]}`] = {type: "t", value: video[i]};
             declarations += `   uniform sampler2D video${dict[i]};`;
+
             //now prepare the mixfunction for the fragment shader
             //[Vittoria] la stringa dello shader ha info riguardanti video e maschera ed è fatta così:
             let mixFunction = `mix(texture2D(video0,vUv),texture2D(video${dict[1]}, vUv),texture2D(mask${dict[1]}, vUv).y)`;
@@ -507,6 +473,7 @@ export default class Bubble extends Component
                 mixFunction = `mix(${mixFunction},texture2D(video${dict[i]}, vUv),texture2D(mask${dict[i]}, vUv).y)`
             }
             mixFunction = `vec4(${mixFunction});`;
+
             //now set the fragment shader and other small things
             let fragShader =
                 `
