@@ -574,7 +574,7 @@ function transition(actualScene, targetScene, duration, direction) {
             sceneMovement = false;
             break;
     }
-    //[Vittoria] se è 2D non sono al centro e posiziono il target
+    // se è 2D non sono al centro e posiziono il target
     if (targetScene.type === Values.TWO_DIM)
         targetSky.setAttribute('position', positionTarget);
 
@@ -653,12 +653,12 @@ function transition2D(actualScene, targetScene, duration) {
     let is3dScene = actualScene.type === Values.THREE_DIM;
     // se è una scena 3D a muoversi sarà la scena di arrivo (2D), altrimenti a muoversi sarà la scena dove siamo (2D)
     let sceneMovement = is3dScene ? targetSky : actualSky;
-    //[Vittoria] custom events per la posizione della bolla
+    // custom events per la posizione della bolla
     let disappear = new CustomEvent(actualSky.id + "dis");
     let appear = new CustomEvent(targetSky.id + "app");
     let movement = new CustomEvent(sceneMovement.id + "move");
 
-    //[Vittoria] attributi per sparire (actualsky) e apparire (targetSky)
+    // attributi per sparire (actualsky) e apparire (targetSky)
     actualSky.setAttribute('animation__disappear', 'property: material.opacity; dur: ' + duration +
         '; easing: linear; from: 1; to: 0; startEvents: ' + actualSky.id + "dis");
     targetSky.setAttribute('animation__appear', 'property: material.opacity; dur: ' + duration +
@@ -688,7 +688,7 @@ function transition2D(actualScene, targetScene, duration) {
 
     setTimeout(function () {
         if(targetScene.type === Values.TWO_DIM){
-            lookObject(targetSky.id); //[Vittoria] serve per rimettere al suo posto il cursore passando da una scena 3D a 2D
+            lookObject(targetSky.id); // serve per rimettere al suo posto il cursore passando da una scena 3D a 2D
         }
         targetSky.dispatchEvent(appear);
         sceneMovement.dispatchEvent(movement);
@@ -766,8 +766,23 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     runState[current_object.uuid].visible = false;
     runState[current_object.uuid].activable = false;
 
+    //se la chiave ha un video associato al media lo devo eseguire
+    let objectVideo_transition, duration_transition;
+    if (current_object && current_object.type === 'KEY') {
+        objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
+        if (objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
+            duration_transition = (parseInt(objectVideo_transition.duration) * 1000); //una volta che il video finisce (durata del media)
+            objectVideo_transition.play();
+            setTimeout(function () {
+                //dovrò eseguire questo solo dopo che ho finito il play, altrimenti l'animazione non si vede
+                document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+            }, duration_transition);
+        }
+    }
+
     //TODO: qua potrebbe essere utile cancellare la geometria della chiave
-    if (current_object.media.media0 !== null) {
+    //se è un video lo faccio prima
+    if (current_object.media.media0 !== null && objectVideo_transition.nodeName !== 'VIDEO') {
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
     }
     VRScene.setState({runState: runState, graph: game_graph});
