@@ -367,6 +367,10 @@ export default class Bubble extends Component
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
+                if(asset===null){
+                    //per qualche motivo a volte è media_ altre media0_
+                    asset = document.getElementById("media0_" + obj.uuid);
+                }
                 let media;
 
                 // TODO verificare i media per switch

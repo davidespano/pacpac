@@ -758,6 +758,10 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
 
     runState[action_uuid].state = state;
 
+    if(current_object===undefined){
+        current_object = game_graph['objects'].get(action_uuid);
+    }
+
     let audioKey = current_object.audio.audio0;
     if (soundsHub['audio0_' + audioKey])
         soundsHub['audio0_' + audioKey].play();
@@ -767,22 +771,28 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     runState[current_object.uuid].activable = false;
 
     //se la chiave ha un video associato al media lo devo eseguire
-    let objectVideo_transition, duration_transition;
-    if (current_object && current_object.type === 'KEY') {
-        objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
-        if (objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
-            duration_transition = (parseInt(objectVideo_transition.duration) * 1000); //una volta che il video finisce (durata del media)
-            objectVideo_transition.play();
+    let objectVideo, duration_video;
+    //credo che per le chiavi le salvi così
+    objectVideo = document.querySelector('#media_' + current_object.uuid);
+    // e per i lucchetti così, ma non ne sono sicurissima
+    if(objectVideo===null){
+        objectVideo = document.querySelector('#media0_' + current_object.uuid);
+    }
+    //la chiave collezionata
+    if (current_object && state === 'COLLECTED') {
+        if (objectVideo != null && objectVideo.nodeName === 'VIDEO') {
+            duration_video = (parseInt(objectVideo.duration) * 1000); //una volta che il video finisce (durata del media)
+            objectVideo.play();
             setTimeout(function () {
                 //dovrò eseguire questo solo dopo che ho finito il play, altrimenti l'animazione non si vede
                 document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
-            }, duration_transition);
+            }, duration_video);
         }
     }
 
     //TODO: qua potrebbe essere utile cancellare la geometria della chiave
     //se è un video lo faccio prima
-    if (current_object.media.media0 !== null && objectVideo_transition.nodeName !== 'VIDEO') {
+    if (current_object.media.media0 !== null && objectVideo.nodeName !== 'VIDEO') {
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
     }
     VRScene.setState({runState: runState, graph: game_graph});
