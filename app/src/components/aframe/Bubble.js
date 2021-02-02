@@ -447,7 +447,7 @@ export default class Bubble extends Component
                     skyMesh = obj;
             });
 
-            if (skyMesh == null) return;  //[Vittoria] in questo caso è un oggetto mesh
+            if (skyMesh == null) return;  // in questo caso è un oggetto mesh
 
             let i;
             let declarations = "";
@@ -498,8 +498,10 @@ export default class Bubble extends Component
             skyMesh.material.fragmentShader = fragShader;
             setTimeout(()=>skyMesh.material.needsUpdate = true, 50);
 
-            //[Vittoria] una volta fatto tutto questo se è un video lo mando in play, altrimenti è un'immagine
-            if (this.props.isActive && stores_utils.getFileType(this.props.scene.img) === 'video') {document.getElementById(scene.img).play()};
+            // una volta fatto tutto questo se è un video lo mando in play, altrimenti è un'immagine
+            if (this.props.isActive && stores_utils.getFileType(this.props.scene.img) === 'video') {
+                document.getElementById(scene.img).play()
+            };
 
             this.videoTextures = video;
             this.masksTextures = masks;

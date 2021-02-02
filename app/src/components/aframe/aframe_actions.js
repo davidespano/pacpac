@@ -778,23 +778,30 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     if(objectVideo===null){
         objectVideo = document.querySelector('#media0_' + current_object.uuid);
     }
+
     //la chiave collezionata
-    if (current_object && state === 'COLLECTED') {
+    if (current_object && (state === 'COLLECTED' || state === 'UNLOCKED')) {
         if (objectVideo != null && objectVideo.nodeName === 'VIDEO') {
-            duration_video = (parseInt(objectVideo.duration) * 1000); //una volta che il video finisce (durata del media)
+            duration_video = (parseFloat(objectVideo.duration)*1000 ); //una volta che il video finisce (durata del media)
             objectVideo.play();
+
             setTimeout(function () {
                 //dovrò eseguire questo solo dopo che ho finito il play, altrimenti l'animazione non si vede
                 document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+                //[Vittoria] per qualche motivo i lucchetti li devo mettere in pausa altrimenti vanno in loop
+                if(state === 'UNLOCKED'){
+                    objectVideo.pause()
+                }
             }, duration_video);
+
         }
     }
-
     //TODO: qua potrebbe essere utile cancellare la geometria della chiave
     //se è un video lo faccio prima
     if (current_object.media.media0 !== null && objectVideo.nodeName !== 'VIDEO') {
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
     }
+
     VRScene.setState({runState: runState, graph: game_graph});
 }
 
