@@ -121,6 +121,9 @@ function objectTypeToString(objectType) {
         case InteractiveObjectsTypes.KEYPAD:
             type = 'il tastierino';
             break;
+        case InteractiveObjectsTypes.TEXTBOX:
+            type = 'il testo';
+            break;
         case Values.THREE_DIM:
         case Values.TWO_DIM:
             type = "la scena";
