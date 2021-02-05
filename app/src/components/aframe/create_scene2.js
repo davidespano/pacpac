@@ -687,7 +687,7 @@ export default class VRScene extends React.Component {
                 if (textObj.visible == 'INVISIBLE')
                     visibility = false;
                 textboxEntity =
-                    <Entity visible={true} geometry={geometryProperties} position={'0 -0.20 -0.3'}
+                    <Entity geometry={geometryProperties} position={'0 -0.20 -0.3'}
                             id={this.state.activeScene.name + 'textbox'} material={'shader: flat; opacity: 0.85; color: black;'}
                             text={textProperties} visible={visibility}>
                     </Entity>
@@ -966,6 +966,32 @@ export default class VRScene extends React.Component {
     updateAngles() {
         let cameraMatrix4 = document.querySelector('#camera').object3D.matrixWorld;
         resonance.default.setListenerFromMatrix(cameraMatrix4)
+    }
+
+    //Metodi visibilità UI
+    static textboxChangeVisibility(activeSceneName, visibility){
+        let textboxObj = document.getElementById(activeSceneName + 'textbox');
+        textboxObj.setAttribute('visibility', visibility);
+    }
+
+    static timerChangeVisibility(activeSceneName, visibility){
+        let textboxObj = document.getElementById(activeSceneName + 'timer');
+        textboxObj.setAttribute('visibility', visibility);
+    }
+
+    static healthChangeVisibility(activeSceneName, visibility){
+        let healthObj = document.getElementById(activeSceneName + 'health')
+        healthObj.setAttribute('visibility', visibility);
+    }
+
+    static scoreChangeVisibility(activeSceneName, visibility){
+        let scoreObj = document.getElementById(activeSceneName + 'score')
+        scoreObj.setAttribute('visibility', visibility);
+    }
+
+    static scoreChangeVisibility(activeSceneName, visibility){
+        let playtimeObj = document.getElementById(activeSceneName + 'gameTime');
+        playtimeObj.setAttribute('visibility', visibility);
     }
 
 

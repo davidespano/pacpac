@@ -476,6 +476,9 @@ div.rules{
     border-color: grey;
 }
 
+#store-container {
+    margin-top: 10px;
+}
 
 .custom-select{
     border-color: #EF562D;
@@ -1878,7 +1881,7 @@ h6 {
     padding: 20px;
     width: 450px;
     height: 500px;
-    border: solid 1.5px #EF562D;
+    border: solid 2px #EF562D;
     border-radius: 25px;
 }
 

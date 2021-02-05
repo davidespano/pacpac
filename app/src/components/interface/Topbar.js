@@ -157,6 +157,10 @@ function TopBar(props){
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
                         </figure>
+                        <figure className={'nav-figures'} onClick={()=> window.open("www.google.it", "_blank")}>
+                            <img src={"icons/icons8-manuale-100.png"}/>
+                            <figcaption>Video guida</figcaption>
+                        </figure>
                     </div>
                 </div>
                 <div className={"tab-pane fade"}
