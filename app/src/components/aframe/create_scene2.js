@@ -972,27 +972,27 @@ export default class VRScene extends React.Component {
     //Metodi visibilità UI
     static textboxChangeVisibility(activeSceneName, visibility){
         let textboxObj = document.getElementById(activeSceneName + 'textbox');
-        textboxObj.setAttribute('visibility', visibility);
+        textboxObj.setAttribute('visible', visibility);
     }
 
     static timerChangeVisibility(activeSceneName, visibility){
         let textboxObj = document.getElementById(activeSceneName + 'timer');
-        textboxObj.setAttribute('visibility', visibility);
+        textboxObj.setAttribute('visible', visibility);
     }
 
     static healthChangeVisibility(activeSceneName, visibility){
         let healthObj = document.getElementById(activeSceneName + 'health')
-        healthObj.setAttribute('visibility', visibility);
+        healthObj.setAttribute('visible', visibility);
     }
 
     static scoreChangeVisibility(activeSceneName, visibility){
         let scoreObj = document.getElementById(activeSceneName + 'score')
-        scoreObj.setAttribute('visibility', visibility);
+        scoreObj.setAttribute('visible', visibility);
     }
 
-    static scoreChangeVisibility(activeSceneName, visibility){
+    static playTimeChangeVisibility(activeSceneName, visibility){
         let playtimeObj = document.getElementById(activeSceneName + 'gameTime');
-        playtimeObj.setAttribute('visibility', visibility);
+        playtimeObj.setAttribute('visible', visibility);
     }
 
 

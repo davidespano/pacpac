@@ -1602,10 +1602,10 @@ class EudAutoComplete extends Component {
 
                 //Primo gruppo, TUTTI gli oggetti appartenenti alle scene
                 let sceneObj = this.props.interactiveObjects.filter(x =>
-                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST &&
+                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST );//&&
                     //x.type !== InteractiveObjectsTypes.HEALTH &&
                     //x.type !== InteractiveObjectsTypes.SCORE &&
-                    x.type !== InteractiveObjectsTypes.PLAYTIME);
+                    //x.type !== InteractiveObjectsTypes.PLAYTIME);
                 //mi prendo le scene coinvolte
                 let scenes =returnScenes(sceneObj, this.props);
 
@@ -1625,7 +1625,8 @@ class EudAutoComplete extends Component {
                     }
                     else {
                         objects = listableItems(obj.filter(x=> x.type !== InteractiveObjectsTypes.HEALTH &&
-                            x.type !== InteractiveObjectsTypes.SCORE), this.props); //filtro gli oggetti globali
+                            x.type !== InteractiveObjectsTypes.SCORE &&
+                        x.type !== InteractiveObjectsTypes.PLAYTIME), this.props); //filtro gli oggetti globali
                         scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
                     }
 

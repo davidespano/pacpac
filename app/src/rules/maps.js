@@ -108,9 +108,13 @@ const RuleActionMap = Immutable.Map([
                 InteractiveObjectsTypes.KEY,
                 InteractiveObjectsTypes.LOCK,
                 InteractiveObjectsTypes.TRANSITION,
+                InteractiveObjectsTypes.PLAYTIME,
                 InteractiveObjectsTypes.COUNTER,
                 InteractiveObjectsTypes.BUTTON,
-                InteractiveObjectsTypes.TEXTBOX
+                InteractiveObjectsTypes.TEXTBOX,
+                InteractiveObjectsTypes.TIMER,
+                InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.SCORE
             ],
             obj_type: ['value'],
             name: toString.eventTypeToString(RuleActionTypes.CHANGE_VISIBILITY),
@@ -128,7 +132,8 @@ const RuleActionMap = Immutable.Map([
                 InteractiveObjectsTypes.TRANSITION,
                 InteractiveObjectsTypes.COUNTER,
                 InteractiveObjectsTypes.BUTTON,
-                InteractiveObjectsTypes.TEXTBOX
+                InteractiveObjectsTypes.TEXTBOX,
+                InteractiveObjectsTypes.TIMER
             ],
             obj_type: ['value'],
             name: toString.eventTypeToString(RuleActionTypes.CHANGE_ACTIVABILITY),
@@ -411,7 +416,10 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.BUTTON,
                 InteractiveObjectsTypes.KEYPAD,
                 InteractiveObjectsTypes.SELECTOR,
-                InteractiveObjectsTypes.TEXTBOX
+                InteractiveObjectsTypes.TEXTBOX,
+                InteractiveObjectsTypes.TIMER,
+                InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.SCORE
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.VISIBLE),
@@ -484,7 +492,10 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.BUTTON,
                 InteractiveObjectsTypes.KEYPAD,
                 InteractiveObjectsTypes.SELECTOR,
-                InteractiveObjectsTypes.TEXTBOX
+                InteractiveObjectsTypes.TEXTBOX,
+                InteractiveObjectsTypes.TIMER,
+                InteractiveObjectsTypes.HEALTH,
+                InteractiveObjectsTypes.SCORE
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.INVISIBLE),

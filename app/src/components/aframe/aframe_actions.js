@@ -22,7 +22,7 @@ function executeAction(VRScene, rule, action) {
     let actual_scene_img = VRScene.state.activeScene.img;
     let actual_scene_Uuid = VRScene.state.activeScene.uuid;
     let game_graph = VRScene.state.graph;
-    let current_object = game_graph['objects'].get(rule.actions.obj_uuid);
+    let current_object = game_graph['objects'].get(action.obj_uuid);
     let sceneName = action.subj_uuid;
     let action_obj_uuid = action.obj_uuid;
     let cursor = document.querySelector('#cursor');
@@ -327,8 +327,30 @@ function executeAction(VRScene, rule, action) {
                 obj.setAttribute('selectable', {visible: action.obj_uuid});
             }
 
+            //il soggetto della frase sarà quello che cambierà visibilità
             runState[action.subj_uuid].visible = action.obj_uuid;
             VRScene.setState({runState: runState, graph: game_graph});
+            //ci sono tutta una serie di oggetti UI che cambiano visibilità modificando non solo il cursore
+            // ma venendo anche nascosti
+            let bool = action_obj_uuid === 'VISIBLE'; //true se è visibile, false altrimenti
+            switch(subject_obj.type){
+                case InteractiveObjectsTypes.TEXTBOX:
+                    create_scene2.textboxChangeVisibility(actual_scene_name, bool);
+                    break;
+                case InteractiveObjectsTypes.TIMER:
+                    create_scene2.timerChangeVisibility(actual_scene_name, bool);
+                    break;
+                case InteractiveObjectsTypes.HEALTH:
+                    create_scene2.healthChangeVisibility(actual_scene_name, bool);
+                    break;
+                case InteractiveObjectsTypes.SCORE:
+                    create_scene2.scoreChangeVisibility(actual_scene_name, bool);
+                    break;
+                case InteractiveObjectsTypes.PLAYTIME:
+                    create_scene2.playTimeChangeVisibility(actual_scene_name, bool);
+                    break;
+            }
+
             break;
         case RuleActionTypes.CHANGE_ACTIVABILITY:
             console.log("RuleActionTypes.CHANGE_ACTIVABILITY");
