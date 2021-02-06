@@ -44,44 +44,58 @@ AFRAME.registerComponent('selectable', {
         let elem = this.el;
 
         //Se in fasi di gioco cambia l'interaggibilita' di un oggetto la aggiorno aggiungendo o rimuovendo i listeners
-        //se l'elemento non è visibile non gli aggiungo il listener e il cursore non ci può interagire
-        if(this.data.visible === 'VISIBLE'){
+        //se l'elemento non è attivabile non gli aggiungo il listener e il cursore non ci può interagire
+        if(this.data.activable==='ACTIVABLE'){
             if(this.data.object_type === 'TRANSITION'){ //transizioni
-                if(this.data.activable==='ACTIVABLE'){
+                if(this.data.visible === 'VISIBLE'){
+                    //transizioni visibili attivabili
                     elem.addEventListener('mouseenter', setMouseEnterTransition); //transizioni visibili e attivabili
                     elem.addEventListener('mouseleave', setMouseLeaveTransition);
-                    elem.removeEventListener('mouseenter', setMouseEnterTransitionNotActive); //rimuovo l'event listener altrimenti collidono
                }
                 else{
-                    elem.addEventListener('mouseenter', setMouseEnterTransitionNotActive);//transizioni visibili e non attivabili
+                   //transizioni non visibili e attivabili
                     elem.addEventListener('mouseleave', setMouseLeaveTransition);
                     elem.removeEventListener('mouseenter', setMouseEnterTransition);
                 }
                 elem.addEventListener('click', setClick);
             }
             else { //oggetti generici
-                if(this.data.activable==='ACTIVABLE'){
+                if(this.data.visible === 'VISIBLE'){
+                    //oggetti generici visibili e attivabili
                     elem.addEventListener('mouseenter', setMouseEnter); //oggetti generici visibili e attivabili
                     elem.addEventListener('mouseleave', setMouseLeave);
                     elem.removeEventListener('mouseenter', setMouseEnterNotActive);
                 }
                 else {
-                    elem.addEventListener('mouseenter', setMouseEnterNotActive); //oggetti generici visibili e non attivabili
-                    elem.addEventListener('mouseleave', setMouseLeave);
-                    elem.removeEventListener('mouseenter', setMouseEnter); //oggetti generici visibili e attivabili
+                    //oggetti generici non visibili e attivabili
+                    elem.emit('mouseleave');
+                    elem.removeEventListener('mouseenter', setMouseEnter); //oggetti generici non attivabili
+                    elem.removeEventListener('mouseleave', setMouseLeave);
 
                 }
                 elem.addEventListener('click', setClick);
             }
 
-        } else { //oggetti non visibili
+        } else { //oggetti non attivabili
             if(this.data.object_type === 'TRANSITION'){
-                elem.removeEventListener('mouseenter', setMouseEnterTransition); //transizioni non visibili
+                //transizioni non attivabili
+                elem.removeEventListener('mouseenter', setMouseEnterTransition); //transizioni non attivabili
                 elem.removeEventListener('mouseleave', setMouseLeaveTransition);
+
+                if(this.data.visible === 'VISIBLE'){
+                    //lo faccio rosso solo se è visibile
+                    elem.addEventListener('mouseenter', setMouseEnterTransitionNotActive);
+                }
+
             } else {
-                elem.emit('mouseleave');
-                elem.removeEventListener('mouseenter', setMouseEnter); //oggetti generici non visibili
-                elem.removeEventListener('mouseleave', setMouseLeave);
+                //oggetti generici non attivabili
+                if(this.data.visible === 'VISIBLE'){
+                    //lo faccio rosso solo se è visibile
+                    elem.addEventListener('mouseenter', setMouseEnterNotActive);
+                }
+                elem.addEventListener('mouseleave', setMouseLeave);
+                elem.removeEventListener('mouseenter', setMouseEnter);
+
             }
             elem.removeEventListener('click', setClick);
         }
