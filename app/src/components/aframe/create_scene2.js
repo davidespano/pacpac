@@ -303,10 +303,11 @@ export default class VRScene extends React.Component {
                     //    objectVideo = document.querySelector('#media0_' + action.obj_uuid);
                     } else{
                         objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                        if (objectVideo) {
+                            duration = (objectVideo.duration * 1000);
+                        }
                     }
-                    if (objectVideo) {
-                        duration = (objectVideo.duration * 1000);
-                    }
+                    duration = 100;
                     setTimeout(function () {
                         executeAction(me, rule, action)
                     }, duration);
