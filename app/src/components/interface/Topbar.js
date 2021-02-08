@@ -157,7 +157,8 @@ function TopBar(props){
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
                         </figure>
-                        <figure className={'nav-figures'} onClick={()=> window.open("www.google.it", "_blank")}>
+                        <figure className={'nav-figures'}
+                                onClick={()=> window.open("https://www.youtube.com/playlist?list=PLW0GF_T7ZSihCDERY0ZCwud7KhY2mNp2a", "_blank")}>
                             <img src={"icons/icons8-manuale-100.png"}/>
                             <figcaption>Video guida</figcaption>
                         </figure>
@@ -270,24 +271,7 @@ function TopBar(props){
                             <img src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)}/>
                             <figcaption>Tempo in gioco</figcaption>
                         </figure>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    alert("Oggetto in fase di sviluppo")
-                                    //createObject(props, InteractiveObjectsTypes.FLAG);
-                                    //createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.FLAG);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.FLAG)}/>
-                            <figcaption>Dati booleani</figcaption>
-                        </figure>
-                        <figure className={'nav-figures'}
-                                onClick={() => {
-                                    alert("Oggetto in fase di sviluppo")
-                                    //createObject(props, InteractiveObjectsTypes.NUMBER);
-                                    //createGlobalObjectForNewScene(props, props.scenes.get('ghostScene'), InteractiveObjectsTypes.NUMBER);
-                                }}>
-                            <img src={interface_utils.getObjImg(InteractiveObjectsTypes.NUMBER)}/>
-                            <figcaption>Dati numerici</figcaption>
-                        </figure>
+                        
                     </div>
                 </div>
 
