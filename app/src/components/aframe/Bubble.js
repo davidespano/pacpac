@@ -64,7 +64,8 @@ export default class Bubble extends Component
         }
 
         //Chiamo la funzione setShader che si occupera' della creazione della shader, nel caso in sui sia necessario
-        this.setShader();
+        //gli passo false per dirgli che la chiamo da componentDidMount
+        this.setShader(false);
 
         //dobbiamo eliminare gli ultimi millisecondi dal video per evitare frame neri
         if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setVideoFrame(); //[Vittoria] lasciare così
@@ -88,9 +89,10 @@ export default class Bubble extends Component
                     });
                 }
             })
-        }else{ //[Vittoria] se è la scena attiva richiama lo shader
+        }else{ // se è la scena attiva richiama lo shader
             //if(stores_utils.getFileType(this.props.scene.img) === 'video') this.setShader();
-            this.setShader();
+            //gli passo true per dirgli che la chiamo da componentDidUpdate
+            this.setShader(true);
         }
 
         // Check forzare l'aggiornamento della camera nella nuova scena se passo da 2D a 3D o viceverse
@@ -325,10 +327,14 @@ export default class Bubble extends Component
         }
         return(sceneRender);
     }
-    //[Vittoria] per ogni oggetto: prende lo sfondo, prende la maschera e fonde, per il secondo oggetto fa lo stesso ma lo fonde con il precedente
-    setShader(){
-        //console.log('set shader');
+    // per ogni oggetto: prende lo sfondo, prende la maschera e fonde, per il secondo oggetto fa lo stesso ma lo fonde con il precedente
+    setShader(bool){
+        //[Vittoria] boolino ci dice se la funzione è stata chiamata da componentDidMount (false) o componentDidUpdate (true)
+        this.boolino = bool;
+
+
         setTimeout(() => { //timeout to wait the render of the bubble
+
             let scene = this.props.scene;
             let sky = document.getElementById(scene.name);
             let id = this.props.gameId ? this.props.gameId : `${window.localStorage.getItem("gameID")}`;
@@ -367,25 +373,36 @@ export default class Bubble extends Component
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
                 let asset = document.getElementById("media_" + obj.uuid);
-                if(asset===null){
+                if (asset === null) {
                     //per qualche motivo a volte è media_ altre media0_
                     asset = document.getElementById("media0_" + obj.uuid);
                 }
                 let media;
 
-                // TODO verificare i media per switch
-                //Controllo se l'oggetto corrente e' uno switch, in quel caso quale media devo prendere se da ON a OFF o viceversa
-                if(this.props.runState && obj.type === "SWITCH"){
-                    if(this.props.runState[obj.uuid].state === "ON"){ //off-> on
-                        if(obj.media.media1)
-                            media = obj.media.media1;
-                    }
-                    else{
-                        if(obj.media && obj.media.media0)  //[Vittoria] ha il media OFF -> ON
-                            media = obj.media.media0;
-                    }
 
+                //Controllo se l'oggetto corrente è uno switch
+                if (this.props.runState && obj.type === "SWITCH"){
+                    //se è true la sto chiamando da componentDidUpdate, in quel caso devo prendere media0 o media1 a
+                    //seconda dello stato. In questo caso infatti ho aggiornato lo stato dello switch
+                    if (this.boolino) {
+                        if(this.props.runState[obj.uuid].state === "ON"){ //off-> on, media1
+                            if(obj.media.media1) {
+                                media = obj.media.media1;
+                                asset = document.getElementById("media1_" + obj.uuid); //se sono passato al media1 ricarico l'asset
+                            }
+                        }
+                        else{
+                            if(obj.media && obj.media.media0){//on -> off, media0
+                                media = obj.media.media0;
+                                asset = document.getElementById("media0_" + obj.uuid); //per sicurezza
+                            }
+                        }
+                    }
+                    else //sto chiamando la setShader da componentDidMount, quindi è la prima volta che carico lo switch
+                        //quindi non voglio media, solo quando la aggiorno
+                        media = null;
                 }
+
                 else{ //se non è uno switch
                     if(obj.media && obj.media.media0)
                         media = obj.media.media0;
@@ -403,7 +420,8 @@ export default class Bubble extends Component
 
                 if(asset.nodeName === 'VIDEO'){
                     aux = new THREE.VideoTexture(asset);
-                } else {
+                } else if(media) {
+                    //se media è null è perchè è uno switch e nello switch il media iniziale non viene caricato (solo al passaggio on/off)
                     aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
                 }
 

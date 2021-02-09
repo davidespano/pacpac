@@ -55,7 +55,7 @@ export default class Asset extends React.Component{
             let objAssetMedia;
 
             //second, push the media of the interactive objs
-            //[Vittoria] K è media[0], media[1]...
+            // K è media[0], media[1]...
             //Quando ho uno switch ho due media: uno per lo spento (es. media[0]) e uno per l'acceso (es. media[1]) e quello che
             // cambia è che media prende media[0] e media[1]
             Object.values(scene.objects).flat().forEach(obj => {
@@ -154,14 +154,15 @@ function generateCurrentAsset(obj, runState, id){
             let i;
             //A seconda del momento dell'esecuzione, runstate potrebbe essere non popolato
             if(runState.length === 0){
-                i = (obj.properties.state !== "OFF")?0:1;
+                //Se sono nello stato off carico il media1 (off-> on), altrimenti media0 (on -> off)
+                i = (obj.properties.state === "OFF")?1:0;
             } else {
-                i = (runState[obj.uuid].state !== "OFF")?0:1;
+                i = (runState[obj.uuid].state === "OFF")?1:0;
             }
 
-            //I media hanno come identificatore   media0 o media1, a seconda che sia ON o OFF, il controllo precedente mi dice quale devo caricare
+            //I media hanno come identificatore media0 o media1, a seconda che sia ON o OFF, il controllo precedente mi dice quale devo caricare
             if(obj.media["media"+i] !== null){
-                if(stores_utils.getFileType(obj.media.media0) === 'video'){
+                if(stores_utils.getFileType(obj.media["media"+i]) === 'video'){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
                                src={`${mediaURL}${id}/` + obj.media["media"+i] + "#t=0.1"}
@@ -174,7 +175,7 @@ function generateCurrentAsset(obj, runState, id){
                 return(currentAsset)
             }
             else if (obj.media["media"+((i+1)%2)] !== null){
-                if(stores_utils.getFileType(obj.media.media0) === 'video'){
+                if(stores_utils.getFileType(obj.media["media"+i]) === 'video'){
                     currentAsset = (
                         <video id={"media_" + obj.uuid} key={"media_" + obj.uuid}
                                src={`${mediaURL}${id}/` + obj.media["media"+((i+1)%2)] + "#t=0.1"}

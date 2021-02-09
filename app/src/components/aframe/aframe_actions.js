@@ -833,56 +833,33 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
 function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
     let id = window.localStorage.getItem("gameID");
     let duration_switch = 0;
-    //TODO: questo switchVideo prende arbitrariamente media0.... perchè?
-    let switchVideo = document.getElementById('media0_' + current_object.uuid);
-    console.log(switchVideo);
-    //TODO Controlla per i media che non sono video
-    //TODO: controlla se funziona in contemporanea anche con 2 oggetti con maschere diverse
-    if (switchVideo != null) {
+
+    let prevState = current_object.properties.state; //ON o OFF
+    let newState = action.obj_uuid; //ON o OFF
+
+    //Cambio lo stato dello switch
+    current_object.properties.state = newState;
+
+    //media da caricare: se sto passando al media OFF allora prendo media0, altrimenti media 1
+    let media = newState === 'OFF' ? current_object.media.media0 : current_object.media.media1;
+
+    let indexMedia = newState === 'OFF' ? 0 : 1; //media0 o media1
+
+    let mediaObject =  document.getElementById( 'media'+ indexMedia+ '_' + current_object.uuid);
+
+    if(mediaObject!= null){
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
-        //Cambio lo stato dello switch
-        current_object.properties.state === 'ON' ? current_object.properties.state = 'OFF' : current_object.properties.state = 'ON';
-        //Assegno il media in base allo stato dello switch
-        let videoType = current_object.properties.state === 'ON' ? current_object.media.media1 : current_object.media.media0;
-        console.log(videoType);//VIDEOTYPE PRENDE IL MEDIA CORRETTO MA QUESTA VARIABILE VIENE IGNORATA A QUANTO PARE
-        //ASSEGNAMENTO MASCHERA
-        let aux = "";
-        //siccome in Bubble metto nullmask mi serve un campo per memorizzare la vecchia maschera (valueOld)
-        //se c'è un media associato allo switch lo carico
-        //PROBLEMA: LA CURRENTSCENE NON VIENE AGGIORNATA DOPO UNA TRANSIZIONE, SI RIMANE ALLA SCENA HOME
-        //TEXTURE CONTIENE LA MASCHERA, NON IL MEDIA
-        let texture =
-            document.getElementById(VRScene.state.activeScene.name)
-                .components.material.shader.uniforms["mask" + current_object.uuid.replace(/-/g,'_')];
 
-        console.log(document.getElementById(VRScene.state.activeScene.name)
-            .components.material.shader.uniforms)
-        console.log(texture)
-        //console.log(current_object)
-        aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
-        //aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + videoType);
-
-        console.log(aux);
-        if(texture.valueOld == null){
-            //aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
-        }else{
-            //aux = texture.valueOld;
+        if (store_utils.getFileType(media) === 'video') {
+            mediaObject.loop = false;
+            mediaObject.currentTime = 0;
+            mediaObject.play();
         }
-
-        //texture.valueOld = texture.value;
-        texture.value = aux;
-        texture.value.needsUpdate = true;
-
-        if (store_utils.getFileType(videoType) === 'video') {
-            switchVideo.loop = false;
-            switchVideo.currentTime = 0;
-            switchVideo.play();
-        }
-
-        duration_switch = (parseInt(switchVideo.duration) * 1000);
+        duration_switch = (parseInt(mediaObject.duration) * 1000);
     }
 
+    //TODO controlla audio
     let audio = current_object.properties.state === 'ON' ? current_object.audio.audio0 : current_object.audio.audio1;
     let idAudio = current_object.properties.state === 'ON' ? 'audio0_' : 'audio1_';
     if (soundsHub[idAudio + audio])
@@ -890,18 +867,16 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
 
 
     setTimeout(function () {
-        console.log("SET TIMEOUT");
-
         cursor.setAttribute('raycaster', 'far: 10000');
         cursor.setAttribute('material', 'visible: true');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('color', 'black');
 
+        //l'oggetto cambia stato e aggiorno lo shader
+        document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+        runState[action.subj_uuid].state = newState;
+        VRScene.setState({runState: runState});
 
-        if(current_object.type == "SWITCH") {
-            runState[action.subj_uuid].state = action.obj_uuid;
-            VRScene.setState({runState: runState});
-        }
 
     }, duration_switch)
 }
