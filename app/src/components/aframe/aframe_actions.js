@@ -856,7 +856,10 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
             mediaObject.currentTime = 0;
             mediaObject.play();
         }
-        duration_switch = (parseInt(mediaObject.duration) * 1000);
+        /*questa durata è quella che ritarda la partenza di un eventuale media video
+        servirebbe a non far fare altro al giocatore mentre è in play, ma per ora lo lasciamo così*/
+        //duration_switch = (parseInt(mediaObject.duration) * 1000);
+        duration_switch = (parseInt(mediaObject.duration) * 1);
     }
 
     //TODO controlla audio
