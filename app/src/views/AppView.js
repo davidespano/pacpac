@@ -18,7 +18,6 @@ import EudRuleEditor from "../components/interface/EudRuleEditor";
 import StoryEditor from "../components/interface/StoryEditor";
 import ActionTypes from "../actions/ActionTypes";
 import RuleBotWidget from "../components/interface/RuleBotWidget";
-import RuleBotWidget from "../components/interface/RuleBotWidget";
 import GraphViewContent from "../components/interface/GraphViewContent";
 
 function AppView(props) {

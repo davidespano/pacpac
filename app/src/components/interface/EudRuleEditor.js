@@ -16,7 +16,6 @@ import CentralSceneStore from "../../data/CentralSceneStore";
 import scene_utils from "../../scene/scene_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
-import {addResponseMessage, renderCustomComponent, Widget} from 'react-chat-widget';
 import 'react-chat-widget/lib/styles.css';
 import EventTypes from "../../rules/EventTypes";
 import Transition from "../../interactives/Transition";

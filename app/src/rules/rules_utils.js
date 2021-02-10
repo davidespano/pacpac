@@ -505,18 +505,6 @@ function doesRuleNameExists(ruleName, rules) {
 }
 
 
-/* [LucaAs] Controlla che il nome passato come parametro non esista già per qualche altra regola, se esiste torna true, se no false.
- * Controlla su tutte le regole del gioco, non della scena corrente.*/
-function doesRuleNameExists(ruleName, rules) {
-    let isToChange = false;
-    rules.forEach(function (singleRule) {
-        if (singleRule.name === ruleName) {
-            isToChange = true;
-        }
-    });
-    return isToChange;
-}
-
 
 export default {
     generateDefaultRule: generateDefaultRule,
