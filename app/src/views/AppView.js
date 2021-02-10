@@ -18,6 +18,7 @@ import EudRuleEditor from "../components/interface/EudRuleEditor";
 import StoryEditor from "../components/interface/StoryEditor";
 import ActionTypes from "../actions/ActionTypes";
 import RuleBotWidget from "../components/interface/RuleBotWidget";
+import RuleBotWidget from "../components/interface/RuleBotWidget";
 import GraphViewContent from "../components/interface/GraphViewContent";
 
 function AppView(props) {
@@ -42,6 +43,7 @@ function AppView(props) {
                         <RightBar {...props} />
                         {scene}
                         <EudRuleEditor {...props} />
+                        <RuleBotWidget {...props} />
                     </div>
                 </div>
             );
@@ -83,6 +85,7 @@ function AppView(props) {
                             {vrScene}
                         </div>
                         <EudRuleEditor {...props} VRScene={vrScene}/>
+                        <RuleBotWidget {...props} />
                     </div>
                 </div>
             );

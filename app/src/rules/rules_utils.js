@@ -9,6 +9,7 @@ import Condition from "./Condition";
 import SuperCondition from "./SuperCondition";
 import Values from "./Values";
 import {Operators} from "./Operators";
+
 let uuid = require('uuid');
 
 /**
@@ -311,7 +312,7 @@ function findConditionInsideSuperCondition(s, c){
  * @param property
  * @param value
  */
-function setProperty(rule, property, value) {
+function setProperty(rule, property, value){
     return rule.set(property, value);
 }
 
@@ -488,6 +489,19 @@ function returnNullRulesPart (ruleName, rulePart, key){
 function getValue (object, key) {
     return key.split(".").reduce(function (obj, val) {
         return (typeof obj == "undefined" || obj === null || obj === "") ? obj : (_.isString(obj[val]) ? obj[val].trim() : obj[val]);}, object);
+}
+
+
+/* [LucaAs] Controlla che il nome passato come parametro non esista già per qualche altra regola, se esiste torna true, se no false.
+ * Controlla su tutte le regole del gioco, non della scena corrente.*/
+function doesRuleNameExists(ruleName, rules) {
+    let isToChange = false;
+    rules.forEach(function (singleRule) {
+        if (singleRule.name === ruleName) {
+            isToChange = true;
+        }
+    });
+    return isToChange;
 }
 
 
