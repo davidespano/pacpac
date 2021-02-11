@@ -516,7 +516,7 @@ function executeAction(VRScene, rule, action) {
             let btn_value = keypad.properties.buttonsValues[uuid_btn_pressed]; //valore associato al btn premuto
             create_scene2.updateKeypadValue(btn_value); //aggiorno il valore del tastierino
             current_object = game_graph['objects'].get(uuid_btn_pressed);
-            changeStateSwitch(VRScene, runState, current_object, cursor, action);
+            //changeStateSwitch(VRScene, runState, current_object, cursor, action);
             break;
         case "CHECK_KEYPAD":
             current_object = game_graph['objects'].get(rule.event.obj_uuid);

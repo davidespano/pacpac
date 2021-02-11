@@ -668,8 +668,10 @@ export default class VRScene extends React.Component {
             if (keypadObj == undefined)
                 keypadObj = keypadUuid;
 
-            if (keypadObj) //reset del valore quando c'è un altro tastierino
+            if (keypadObj){
                 window.keypadValue = "";
+                console.log("reset tastierino")
+            } //reset del valore quando c'è un altro tastierino
 
             let selectorObj = graph.objects.get(selectorUuid);
             if (selectorObj == undefined)
@@ -1089,10 +1091,11 @@ export default class VRScene extends React.Component {
     //Metodi tastierino
     static updateKeypadValue(newNumber){
         //valore cliccato
-        window.keypadValue = window.keypadValue + String(newNumber);
+        window.keypadValue = window.keypadValue.concat(newNumber);
     }
 
     static checkKeypadValue(keypadObj){
+        console.log(window.keypadValue);
         //keypadObj.combination contiene la combinazione corretta
         //window.keypadValue contiene la combinazione cliccata dall'utente
         if (keypadObj.properties.combination == window.keypadValue) {
