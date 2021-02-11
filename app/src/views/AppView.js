@@ -96,6 +96,13 @@ function AppView(props) {
 					<FileForm {...props}/>
                 </div>
             );
+        case ActionTypes.GRAPH_VIEW_MODE_ON:
+            return (
+                <div>
+                    <TopBar {...props}/>
+                    <GraphViewContent {...props} />
+                </div>
+            );
         default:
             return (
                 <div>SOMETHING WENT WRONG!</div>

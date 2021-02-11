@@ -16,6 +16,12 @@ import CentralSceneStore from "../../data/CentralSceneStore";
 import scene_utils from "../../scene/scene_utils";
 import eventBus from "../aframe/eventBus";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
+import RulesStore from "../../data/RulesStore";
+import ScenesNamesStore from "../../data/ScenesNamesStore";
+import ObjectsStore from "../../data/ObjectsStore";
+import ScenesStore from "../../data/ScenesStore";
+import SceneAPI from "../../utils/SceneAPI";
+import Orders from "../../data/Orders";
 import 'react-chat-widget/lib/styles.css';
 import EventTypes from "../../rules/EventTypes";
 import Transition from "../../interactives/Transition";
@@ -35,15 +41,109 @@ export default class EudRuleEditor extends Component {
     }
 
     render() {
-        let scene = this.props.scenes.get(this.props.currentScene);
-        let icon = "icons/icon_chat-bot.png";
-
+        let scene = this.props.scenes.get(this.props.currentScene); //uuid
+        let icon = "icons/icon_chat-bot.png"; //icona bot
         if (this.props.currentScene) {
-            let rules = scene.get('rules');
+            let rules = scene.get('rules'); //elenco uuid
             let rulesRendering = rules.map(
                 rule => {
-                    return (
-                        <React.Fragment key={'fragment-' + rule}>
+                    let rule_obj = RulesStore.getState().get(rule);
+                    if(rule_obj.global !== true){
+                        return (
+                            <React.Fragment key={'fragment-' + rule}>
+                                <EudRule
+                                    VRScene={this.props.VRScene}
+                                    editor={this.props.editor}
+                                    interactiveObjects={this.props.interactiveObjects}
+                                    scenes={this.props.scenes}
+                                    assets={this.props.assets}
+                                    audios={this.props.audios}
+                                    currentScene={this.props.currentScene}
+                                    rules={this.props.rules}
+                                    rule={rule}
+                                    updateRuleName={this.props.updateRuleName}
+                                    ruleEditorCallback={this.props.ruleEditorCallback}
+                                    removeRule={(rule) => {
+                                        this.onRemoveRuleClick(rule)
+                                    }}
+                                    copyRule={(rule) => {
+                                        this.props.copyRule(rule)
+                                    }}
+                                />
+
+                            </React.Fragment>
+                        );
+                    }
+
+                });
+            //TODO adesso lo uuid della ghostScene dovrebbe essere ghostScene, quindi si può semplificare (attenzione
+            //creazione della ghost scene però
+            let ghostSceneUuid = this.props.scenes.filter(obj => {
+                return obj.name === 'Ghost Scene'
+            }).keySeq().first(); //uuid della ghost scene
+
+            if(ghostSceneUuid===undefined ){
+                return (<div className={"rules"}>
+                    <div className={"expand-btn"} >
+                        <figure className={'expand-btn'}
+                                onClick={() => {
+                                    this.props.expandEditor(!this.props.editor.editorExpanded);
+                                }}>
+                            <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                 src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
+                                     "icons/icons8-expand-arrow-filled-50.png"}
+                                 alt={'Espandi'}
+                            />
+                        </figure>
+                    </div>
+
+                    <button className="accordion" id={"accordionScene"} onClick={
+                        () => {
+                            onAccordionClick('accordionScene')
+                        }
+                    }
+                    >Regole di scena</button>
+
+                    <div className="panel">
+                        <div className={"rule-container"}>
+                            <div className={"eudBar"}>
+                                <div id={'rule-editor-btns'}>
+                                    <button
+                                        disabled={this.props.editor.ruleCopy===null}
+                                        onClick={() => {
+                                            this.onCopyRuleClick(scene);
+                                        }}
+                                    >
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
+                                        Copia qui
+                                    </button>
+                                    <button className={"btn select-file-btn"}
+                                            onClick={() => {
+                                                this.onNewRuleClick(false);
+                                            }}>
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
+                                        Nuova Regola
+                                    </button>
+                                </div>
+                            </div>
+                            <div className={"rule-editor"}
+                                 onClick={() => {
+                                     this.onOutsideClick();
+                                 }}>
+                                {rulesRendering}
+                                <div className={'rules-footer'}></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>)
+            }
+            ghostScene = this.props.scenes.get(ghostSceneUuid);
+            let ghostSceneRules = ghostScene.get('rules');
+            let globalRulesRendering = ghostSceneRules.map(
+                rule => {
+                    let rule_obj = RulesStore.getState().get(rule);
+                    if(rule_obj.global){
+                        return (<React.Fragment key={'fragment-' + rule}>
                             <EudRule
                                 VRScene={this.props.VRScene}
                                 editor={this.props.editor}
@@ -51,27 +151,40 @@ export default class EudRuleEditor extends Component {
                                 scenes={this.props.scenes}
                                 assets={this.props.assets}
                                 audios={this.props.audios}
-                                currentScene={this.props.currentScene}
+                                currentScene={ghostSceneUuid}
                                 rules={this.props.rules}
+                                updateRuleName={this.props.updateRuleName}
                                 rule={rule}
                                 ruleEditorCallback={this.props.ruleEditorCallback}
                                 removeRule={(rule) => {
-                                    this.onRemoveRuleClick(rule)
+                                    this.onRemoveRuleClick(rule, true)
                                 }}
                                 copyRule={(rule) => {
-                                    this.props.copyRule(rule)
+                                    this.props.copyRule(rule, true)
                                 }}
                             />
 
-                        </React.Fragment>
-                    );
+                        </React.Fragment>);
+                    }
                 });
+            //in debug posso selezionare le regole quindi distinguo
             //in debug posso selezionare le regole quindi distinguo
             if (this.props.editor.mode === ActionTypes.DEBUG_MODE_ON) {
                 return <div className={"rules"}>
                     <div className={"rule-container"}>
                         <div className={'eudBar'}>
                             <h2>Regole della scena</h2>
+                        </div>
+                        <div className={"rule-editor"}
+                             onClick={() => {
+                                 this.onOutsideClick();
+                             }}>
+                            {rulesRendering}
+                        </div>
+                    </div>
+                    <div className={"rule-container"}>
+                        <div className={'eudBar'}>
+                            <h2>Regole oggetti globali</h2>
                         </div>
                         <div className={"rule-editor"}
                              onClick={() => {
@@ -90,51 +203,102 @@ export default class EudRuleEditor extends Component {
                 </div>;
             } else {
                 return <div className={"rules"}>
-                    <div className={"rule-container"}>
-                        <div className={"eudBar"}>
-                            <figure className={'expand-btn'}
-                                    onClick={() => {
-                                        this.props.expandEditor(!this.props.editor.editorExpanded);
-                                    }}>
-                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
-                                     src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
-                                         "icons/icons8-expand-arrow-filled-50.png"}
-                                     alt={'Espandi'}
-                                />
-                            </figure>
-                            <h2>Regole della scena</h2>
-                            <div id={'rule-editor-btns'}>
-                                <button
-                                    disabled={this.props.editor.ruleCopy===null}
-                                    onClick={() => {
-                                        this.onCopyRuleClick(scene);
-                                    }}
-                                >
-                                <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
-                                Copia qui
-                            </button>
-                                <button className={"btn select-file-btn"}
+                    <div className={"expand-btn"} >
+                        <figure className={'expand-btn'}
+                                onClick={() => {
+                                    this.props.expandEditor(!this.props.editor.editorExpanded);
+                                }}>
+                            <img className={"action-buttons dropdown-tags-btn-topbar btn-img"}
+                                 src={this.props.editor.editorExpanded ? "icons/icons8-reduce-arrow-filled-50.png" :
+                                     "icons/icons8-expand-arrow-filled-50.png"}
+                                 alt={'Espandi'}
+                            />
+                        </figure>
+                    </div>
+
+                    <button className="accordion" id={"accordionScene"} onClick={
+                        () => {
+                            onAccordionClick('accordionScene')
+                        }
+                    }>Regole di scena</button>
+
+                    <div className="panel">
+                        <div className={"rule-container"}>
+                            <div className={"eudBar"}>
+                                <div id={'rule-editor-btns'}>
+                                    <button
+                                        disabled={this.props.editor.ruleCopy===null}
                                         onClick={() => {
-                                            this.onNewRuleClick();
-                                        }}>
-                                    <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
-                                    Nuova Regola
-                                </button>
+                                            this.onCopyRuleClick(scene);
+                                        }}
+                                    >
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
+                                        Copia qui
+                                    </button>
+                                    <button className={"btn select-file-btn"}
+                                            onClick={() => {
+                                                this.onNewRuleClick(false);
+                                            }}>
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
+                                        Nuova Regola
+                                    </button>
+                                </div>
+                            </div>
+                            <div className={"rule-editor"}
+                                 onClick={() => {
+                                     this.onOutsideClick();
+                                 }}>
+                                {rulesRendering}
+                                <Widget
+                                    title={"PAC-PAC BOT"}
+                                    subtitle={""}
+                                    profileAvatar={icon}
+                                    handleNewUserMessage={this.handleNewUserMessage}
+                                    senderPlaceHolder={"Scrivi qui la regola"}/>
+                                <br/>
+                                <div className={'rules-footer'}></div>
                             </div>
                         </div>
-                        <div className={"rule-editor"}
-                             onClick={() => {
-                                 this.onOutsideClick();
-                             }}>
-                            {rulesRendering}
-                            <Widget
-                                title={"PAC-PAC BOT"}
-                                subtitle={""}
-                                profileAvatar={icon}
-                                handleNewUserMessage={this.handleNewUserMessage}
-                                senderPlaceHolder={"Scrivi qui la regola"}/>
-                            <br/>
-                            <div className={'rules-footer'}></div>
+                    </div>
+
+                    <button className="accordion" id={"accordionGlobal"}  onClick={
+                        () =>{
+                            onAccordionClick('accordionGlobal')
+                        }
+                    }
+                    >Regole globali</button>
+
+                    <div className="panel">
+                        <div className={"rule-container"}>
+                            <div className={"eudBar"}>
+
+                                <div id={'rule-editor-btns'}>
+                                    <button
+                                        disabled={this.props.editor.ruleCopy===null}
+                                        onClick={() => {
+                                            this.onCopyRuleClick(scene, true);
+                                        }}
+                                    >
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-copia-50.png"}/>
+                                        Copia qui
+                                    </button>
+                                    <button className={"btn select-file-btn"}
+                                            onClick={() => {
+                                                this.onNewRuleClick(true);
+                                            }}>
+                                        <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-plus-white-30.png"}/>
+                                        Nuova Regola
+                                    </button>
+                                </div>
+                            </div>
+                            <div className={"rule-editor"}
+                                 onClick={() => {
+                                     this.onOutsideClick();
+                                 }}>
+                                {globalRulesRendering}
+
+                                <div className={'rules-footer'}/>
+                            </div>
                         </div>
                     </div>
                 </div>;
@@ -143,6 +307,7 @@ export default class EudRuleEditor extends Component {
         } else {
             return <p>Nessuna scena selezionata</p>
         }
+
     }
 
     onOutsideClick() {
@@ -150,25 +315,48 @@ export default class EudRuleEditor extends Component {
     }
 
     //[Vittoria] creazione nuova regola
-    onNewRuleClick() {
+    onNewRuleClick(global) {
         let scene = this.props.scenes.get(this.props.currentScene); //prendo la scena corrente
         let event = Action().set("uuid", uuid.v4());    //la popolo con un evento (nb azione)
         let acts = Immutable.List([Action({uuid: uuid.v4()})]);
-        let rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_tx' + (scene.rules.length + 1));
-        this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
+        let rule = null;
+        if(global){
+            rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name", 'global_rl'
+                +ghostScene.rules.length+ "").set("global", global);
+            this.props.addNewRule(ghostScene, rule); //se Ã¨ globale lo aggiungo alla regola fantasma
+        }
+        else {
+            rule = Rule().set("uuid", uuid.v4()).set("event", event).set("actions", acts).set("name",  scene.name + '_rl'
+                +  scene.rules.length + 1 + "").set("global", global);
+            this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
+        }
+        console.log("added rule: ", rule)
+
     }
 
-    onRemoveRuleClick(ruleId) {
+    onRemoveRuleClick(ruleId, global=false) {
         let scene = this.props.scenes.get(this.props.currentScene);
         let rule = this.props.rules.get(ruleId);
-        this.props.removeRule(scene, rule);
+        if(global){
+            console.log("removed rule from ghostScene")
+            this.props.removeRule(ghostScene, rule);
+        }
+        else{
+            this.props.removeRule(scene, rule);
+        }
     }
 
-    onCopyRuleClick(scene){
-        let newId = uuid.v4();
+    onCopyRuleClick(scene, global=false){
+        let newId = uuid.v4()+ (global ? "_global" : "");
         let copiedRule = this.props.editor.ruleCopy.set('uuid', newId);
-        this.props.addNewRule(scene, copiedRule);
+
+        if(global){
+        }
+        else{
+            this.props.addNewRule(scene, copiedRule);
+        }
     }
+
 
 
     /** Luca - Widget Bot */
@@ -1227,6 +1415,25 @@ export default class EudRuleEditor extends Component {
     }
 }
 
+/**
+ * Funzione per aggiungere i listener all'accordion, viene chiamata al click del button accordion
+ * passando come parametro l'accordionId
+ * e quando clicco il button per espandere le regole altrimenti gli accordion non funzionano
+ */
+function onAccordionClick(accordionId) {
+    let acc = document.getElementById(accordionId);
+    if(acc!= null){ //ha caricato
+        acc.classList.toggle("active");
+        var panel = acc.nextElementSibling;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+        } else {
+            panel.style.display = "block";
+        }
+    }
+
+}
+
 class EudRule extends Component {
     /**
      *
@@ -1473,7 +1680,23 @@ class EudRule extends Component {
                         onMouseLeave={() => {
                             this.mouseLeave()
                         }}>
-                <span className={"eudName"}>{rule.name}</span>
+                <span className={"eudName"}>
+                    <input style={{"width":"80%"}} id={"ruleName"}
+                           className={"propertyForm rightbar-box"}
+                           value={rule.name}
+                           maxLength={50}
+                           onChange={(event =>{
+                               let value = event.target.value; //nuovo nome
+                               let oldValue = rule.name;
+                               rule = rule.set('name', value); //nuova regola con nome aggiornato
+                               this.props.updateRuleName(rule, oldValue)
+
+                           })}
+                           onBlur={()=> {
+
+                           }}
+                    />
+                </span>
                 <span className={"eudWhen"}>Quando </span>
                 <EudAction
                     editor={this.props.editor}
@@ -1521,6 +1744,14 @@ class EudCondition extends Component {
         let actionId = this.props.editor.get('actionId');
         let subjectCompletion = this.showCompletion(actionId, "subject");
         let subject = this.getInteractiveObjectReference(this.props.condition.obj_uuid);
+        let originalText = subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name;
+        if(subject){
+            //se Ã¨ un oggetto globale non voglio che si scriva "la vita Vita", questo non Ã¨ necessario per gli oggetti flag e numero
+            if(subject.type === InteractiveObjectsTypes.PLAYTIME || subject.type === InteractiveObjectsTypes.SCORE ||
+                subject.type === InteractiveObjectsTypes.HEALTH){
+                originalText = toString.objectTypeToString(subject.type);
+            }
+        }
         let subjectRendering =
             <EudRulePart
                 interactiveObjects={this.props.interactiveObjects}
@@ -1531,7 +1762,7 @@ class EudCondition extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.condition}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name}
+                originalText={originalText}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
@@ -1617,9 +1848,9 @@ class EudCondition extends Component {
 
         return <span className={"eudAction"} key={this.props.condition.uuid}>
                 {subjectRendering}
-            {operatorRendering}
-            {valueRendering}
-                </span>;
+                {operatorRendering}
+                {valueRendering}
+        </span>;
 
     }
 
@@ -1635,6 +1866,14 @@ class EudCondition extends Component {
             return InteractiveObject({
                 type: InteractiveObjectsTypes.PLAYER,
                 uuid: InteractiveObjectsTypes.PLAYER,
+                name: ""
+            });
+        }
+
+        if (uuid == InteractiveObjectsTypes.COMBINATION) {
+            return InteractiveObject({
+                type: InteractiveObjectsTypes.COMBINATION,
+                uuid: InteractiveObjectsTypes.COMBINATION,
                 name: ""
             });
         }
@@ -1748,7 +1987,15 @@ class EudAction extends Component {
         let actionId = this.props.editor.get('actionId');
         let subjectCompletion = this.showCompletion(actionId, "subject");
         let subject = this.getInteractiveObjectReference(this.props.action.subj_uuid);
+        let originalText = subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name;
 
+        if(subject){
+            //se Ã¨ un oggetto globale non voglio che si scriva "la vita Vita", questo non Ã¨ necessario per gli oggetti flag e numero
+            if(subject.type === InteractiveObjectsTypes.PLAYTIME || subject.type === InteractiveObjectsTypes.SCORE ||
+                subject.type === InteractiveObjectsTypes.HEALTH){
+                originalText = toString.objectTypeToString(subject.type);
+            }
+        }
         let actionRendering =
             <EudRulePart
                 VRScene={this.props.VRScene}
@@ -1760,7 +2007,7 @@ class EudAction extends Component {
                 complement={this.props.rule.object_uuid}
                 verb={this.props.action}
                 ruleEditorCallback={this.props.ruleEditorCallback}
-                originalText={subject == null ? "" : toString.objectTypeToString(subject.type) + subject.name}
+                originalText={originalText}
                 inputText={this.props.editor.get('completionInput')}
                 showCompletion={subjectCompletion}
                 changeText={(text, role) => this.changeText(text, role)}
@@ -1818,11 +2065,35 @@ class EudAction extends Component {
                         role={"object"}
                     />;
                 break;
-            case RuleActionTypes.INCREASE:
+            case RuleActionTypes.REACH_TIMER:
                 objectRendering =
                     <EudRuleNumericPart
                         interactiveObjects={this.props.interactiveObjects}
                         rules={this.props.rules}
+                        rule={this.props.rule}
+                        time={"seconds"}
+                        rulePartType={this.props.rulePartType}
+                        subject={subject}
+                        complement={this.props.action.obj_uuid}
+                        verb={this.props.action}
+                        ruleEditorCallback={this.props.ruleEditorCallback}
+                        originalText={this.props.action.obj_uuid}
+                        role={"object"}
+                        updateNumericRule={(props, value) => this.updateNumericRule(props, value)}
+                    />;
+                break;
+            case RuleActionTypes.DECREASE_NUMBER:
+            case RuleActionTypes.INCREASE_NUMBER:
+            case RuleActionTypes.INCREASE:
+                //i secondi li metto solo se si tratta del tempo di gioco
+                let time ="";
+                if(subject)
+                    time = subject.type===InteractiveObjectsTypes.PLAYTIME ?"minutes" : "";
+                objectRendering =
+                    <EudRuleNumericPart
+                        interactiveObjects={this.props.interactiveObjects}
+                        rules={this.props.rules}
+                        time = {time}
                         rule={this.props.rule}
                         rulePartType={this.props.rulePartType}
                         subject={subject}
@@ -1835,7 +2106,17 @@ class EudAction extends Component {
                     />;
                 break;
             case RuleActionTypes.TRIGGERS:
-                let rule = sceneRulesOnly(this.props).get(this.props.action.obj_uuid); //riferimento alla regola
+                //Ã¨ possibile avviare una regola o un timer
+                let object_t = this.getInteractiveObjectReference(this.props.action.obj_uuid); //Ã¨ un oggetto
+                let rule=false; //se Ã¨ una regola e non un timer
+                if(object_t===undefined){ //Ã¨ una regola
+                    rule=true;
+                    object_t = sceneRulesOnly(this.props).get(this.props.action.obj_uuid); //riferimento alla regola
+                }
+                let originalText = rule? (object_t == null ? "" : toString.objectTypeToString(object_t.type) + object_t.name) : (
+                    object_t == null ? "" : "il timer "+ object_t.name);
+
+
                 let objectCompletionRule = this.showCompletion(actionId, "object"); //prendi completion della regola
                 objectRendering =
                     <EudRulePart
@@ -1847,7 +2128,7 @@ class EudAction extends Component {
                         complement={this.props.rule.object_uuid}
                         verb={this.props.action}
                         ruleEditorCallback={this.props.ruleEditorCallback}
-                        originalText={rule == null ? "" : rule.name}
+                        originalText={ originalText }
                         inputText={this.props.editor.get('completionInput')}
                         showCompletion={objectCompletionRule}
                         changeText={(text, role) => this.changeText(text, role)}
@@ -1861,6 +2142,7 @@ class EudAction extends Component {
             default:
                 object = this.getInteractiveObjectReference(this.props.action.obj_uuid); //riferimento alla regola
                 let objectCompletion = this.showCompletion(actionId, "object"); //prendi completion della regola
+
                 objectRendering =
                     <EudRulePart
                         interactiveObjects={this.props.interactiveObjects}
@@ -1887,8 +2169,8 @@ class EudAction extends Component {
 
         return <span className={"eudAction"} key={this.props.action.uuid}>
                 {actionRendering}
-            {operationRendering}
-            {objectRendering}
+                {operationRendering}
+                {objectRendering}
                 </span>;
 
     }
@@ -2271,18 +2553,29 @@ class EudRuleNumericPart extends Component {
         let buttonVisible = "eudHide";
         let text = this.props.originalText;
         let css = "eudRulePart eudCompletionRoot eud" + this.props.role;
+        //se è un valore che ha a che fare con i secondi uso la classe css che mette il placeholder
+        let className = null;
+        if(this.props.time === "seconds")
+            className = "eudObjectSeconds";
+        else if(this.props.time==="minutes"){
+            className = "eudObjectMinutes"
+        }
+        else{
+            className = "eudObjectString";
+        }
         return <div className={css} key={'numeric-input' + this.props.rule.uuid + this.props.role}>
                 <span>
-                <span className={"eudObjectString"}>
+                <span className={className}>
                 <span>{text == "" ? "[un valore]" : text}</span>
                 <input type={"text"}
-                       className={"eudObjectString"} placeholder={"[digita un numero]"}
+                       className={className} placeholder={"[digita un numero]"}
                        onChange={(e) => {
                            this.onChange(e)
                        }}
                        value={text}
                 />
                 </span>
+
                 <button className={buttonVisible}
                         onClick={(e) => {
                             e.stopPropagation();
@@ -2327,94 +2620,132 @@ class EudAutoComplete extends Component {
         2-> devo usare il grafo ma con una singola scena e senza altri elementi (es. object) objects scene only
         3-> devo usare il grafo con una singola scena e con altri elementi (es. subject)
         */
+        if(this.props.rule.global !== true){ //regola non globale
+            let  {items: items, graph: graph} = getCompletions({
+                interactiveObjects: this.props.interactiveObjects,
+                subject: this.props.subject,
+                verb: this.props.verb,
+                role: this.props.role,
+                scenes: this.props.scenes,
+                rulePartType: this.props.rulePartType,
+                assets: this.props.assets,
+                audios: this.props.audios,
+                rules: this.props.rules,
+                rule: this.props.rule,
+            }, false);
+            let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che puÃ² essere inserito nel dropdown
 
-        let  {items: items, graph: graph} = getCompletions({
-            interactiveObjects: this.props.interactiveObjects,
-            subject: this.props.subject,
-            verb: this.props.verb,
-            role: this.props.role,
-            scenes: this.props.scenes,
-            rulePartType: this.props.rulePartType,
-            assets: this.props.assets,
-            audios: this.props.audios,
-            rules: this.props.rules,
-            rule: this.props.rule,
-        });
-        let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che può essere inserito nel dropdown
-
-        if(this.props.interactiveObjects.size===0){
-            graph=0;
-        }
-        if (li.toArray()[0]) { //controllo che ci siano elementi da mostrare
-            let info = li.toArray()[0].props.item;
-        }
-        else graph=0;
-        if(graph !=0){ //ho bisogno del grafo
-
-            //in questi due casi gli oggetti fanno tutti parte della scena corrente
-            if(graph===2){
-                //Case object scene/rules object only
-                return <div className={"eudCompletionPopupForGraph"}>
-                    <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
-                    <ul>
-                        {li}
-                    </ul>
-                </div>
+            if(this.props.interactiveObjects.size===0){
+                graph=0;
             }
-
-            //in questi due casi ci sono oggetti che fanno parte della scena corrente e altri (audio, video ...)
-            //aggiungo manualmente gli oggetti della scena
-            if(graph===3){
-                return <div className={"eudCompletionPopupForGraph"}>
-                    <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
-                    <ul>
-                        {listableItems(sceneObjectsOnly(this.props).valueSeq(), this.props)}
-                    </ul>
-
-                    <ul>
-                        <div className={"line"}/>
-                        {li}
-                    </ul>
-                </div>
+            if (li.toArray()[0]) { //controllo che ci siano elementi da mostrare
+                let info = li.toArray()[0].props.item;
             }
+            else graph=0;
+            if(graph !=0){ //ho bisogno del grafo
 
-            //Se ho necessità di un grafo devo scindere gli items in due gruppi: un gruppo con gli Interactive object
-            //che hanno bisogno di un nome della scena, e tutti gli altri
+                //in questi due casi gli oggetti fanno tutti parte della scena corrente
+                if(graph===2){
+                    //Case object scene/rules object only
+                    return <div className={"eudCompletionPopupForGraph"}>
+                        <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
+                        <ul>
+                            {li}
+                        </ul>
+                    </div>
+                }
 
-            //Primo gruppo, TUTTI gli oggetti appartenenti alle scene
-            let sceneObj = this.props.interactiveObjects.filter(x =>
-                x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST);
-            //mi prendo le scene coinvolte
-            let scenes =returnScenes(sceneObj, this.props);
+                //in questi due casi ci sono oggetti che fanno parte della scena corrente e altri (audio, video ...)
+                //aggiungo manualmente gli oggetti della scena
+                if(graph===3){
+                    //filtro gli oggetti globali
+                    let items = sceneObjectsOnly(this.props).valueSeq();
+                    return <div className={"eudCompletionPopupForGraph"}>
+                        <span>{this.props.scenes.get(CentralSceneStore.getState()).name}</span>
+                        <ul>
+                            {listableItems(items, this.props)}
+                        </ul>
 
-            //Secondo gruppo, tutti gli altri oggetti, quindi mi basta filtrare quelli che sono presenti in sceneObj
-            let notSceneObj = items.filter(d => !sceneObj.includes(d));
-            //trasformo in un oggetto che può essere inserito nel dropdown
-            let liNotSceneObj = listableItems(notSceneObj.valueSeq(), this.props);
+                        <ul key={li}>
+                            <div className={"line"}/>
+                            {li}
+                        </ul>
+                    </div>
+                }
 
-            let fragment = scenes.map( element => {
-                var obj = mapSceneWithObjects(this.props, element, sceneObj);
-                let objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
-                let scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
+                //Se ho necessitÃ  di un grafo devo scindere gli items in due gruppi: un gruppo con gli Interactive object
+                //che hanno bisogno di un nome della scena, e tutti gli altri
+
+                //Primo gruppo, TUTTI gli oggetti appartenenti alle scene
+                let sceneObj = this.props.interactiveObjects.filter(x =>
+                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST );//&&
+                //x.type !== InteractiveObjectsTypes.HEALTH &&
+                //x.type !== InteractiveObjectsTypes.SCORE &&
+                //x.type !== InteractiveObjectsTypes.PLAYTIME);
+                //mi prendo le scene coinvolte
+                let scenes =returnScenes(sceneObj, this.props);
+
+                //Secondo gruppo, tutti gli altri oggetti, quindi mi basta filtrare quelli che sono presenti in sceneObj
+                let notSceneObj = items.filter(d => !sceneObj.includes(d));
+                //trasformo in un oggetto che puÃ² essere inserito nel dropdown
+                let liNotSceneObj = listableItems(notSceneObj.valueSeq(), this.props);
+
+                let fragment = scenes.map( element => {
+                    let scene_name = null;
+                    var obj = mapSceneWithObjects(this.props, element, sceneObj);
+                    let objects = null;
+                    if(element.name==='Ghost Scene' ){ //faccio in modo di mostrare gli oggetti globali una volta sola
+                        scene_name = 'Oggetti globali';
+                        objects = listableItems(obj, this.props); //trasformo in un oggetto inseribile nel dropdown
+
+                    }
+                    else {
+                        objects = listableItems(obj.filter(x=> x.type !== InteractiveObjectsTypes.HEALTH &&
+                            x.type !== InteractiveObjectsTypes.SCORE &&
+                            x.type !== InteractiveObjectsTypes.PLAYTIME), this.props); //filtro gli oggetti globali
+                        scene_name = objects!="" ? element.name : ""; //se ho risultati metto il nome della scena, altrimenti nulla
+                    }
+
                     return (<React.Fragment>
                         <span> {scene_name} </span>
                         <ul>
                             {objects}
                         </ul>
                     </React.Fragment>)
-            });
-            return (
+                });
+                return (
                     <div className={"eudCompletionPopupForGraph"}>
                         {fragment}
                         <ul>
-                            <div class={"line"}/>
+                            <div className={"line"}/>
                             {liNotSceneObj}
                         </ul>
 
                     </div>
-            )
+                )
+            }
+            else { //caso di verbi, operatori etc..
+                return <div className={"eudCompletionPopup"}>
+                    <ul>
+                        {li}
+                    </ul>
+                </div>
+            }
         }
-        else { //caso di verbi, operatori etc..
+        else{ //regola globale
+            let  {items: items, graph: graph} = getCompletions({
+                interactiveObjects: this.props.interactiveObjects,
+                subject: this.props.subject,
+                verb: this.props.verb,
+                role: this.props.role,
+                scenes: this.props.scenes,
+                rulePartType: this.props.rulePartType,
+                assets: this.props.assets,
+                audios: this.props.audios,
+                rules: this.props.rules,
+                rule: this.props.rule,
+            }, true);
+            let li = listableItems(items.valueSeq(), this.props);  //trasformo in un oggetto che puÃ² essere inserito nel dropdown
             return <div className={"eudCompletionPopup"}>
                 <ul>
                     {li}
@@ -2507,19 +2838,21 @@ async function sendRequest(sentence, tipo) {
 function listableItems(list, props) {
     let result = list.filter(i => {
         let key = toString.objectTypeToString(i.type) + i.name;
+
         let n = (props.input ? props.input : "").split(" ");
         const word = n[n.length - 1];
         return key.includes(word);
-        }).map(i => {
-            return <EudAutoCompleteItem item={i}
-                                        verb={props.verb}
-                                        subject={props.subject}
-                                        role={props.role}
-                                        rules={props.rules}
-                                        changeText={(text, role) => this.changeText(text, role)}
-                                        updateRule={(rule, role) => props.updateRule(rule, role)}
-            />
-        });
+    }).map(i => {
+        return <EudAutoCompleteItem item={i}
+                                    key={i}
+                                    verb={props.verb}
+                                    subject={props.subject}
+                                    role={props.role}
+                                    rules={props.rules}
+                                    changeText={(text, role) => this.changeText(text, role)}
+                                    updateRule={(rule, role) => props.updateRule(rule, role)}
+        />
+    });
     return result
 }
 
@@ -2580,7 +2913,16 @@ class EudAutoCompleteItem extends Component {
     }
 
     render() {
-        let text = toString.objectTypeToString(this.props.item.type) + this.props.item.name;
+        let text;
+        if(this.props.item.type === InteractiveObjectsTypes.HEALTH ||
+            this.props.item.type === InteractiveObjectsTypes.SCORE ||
+            this.props.item.type === InteractiveObjectsTypes.PLAYTIME
+        ){
+            text = toString.objectTypeToString(this.props.item.type);
+        }
+        else {
+            text = toString.objectTypeToString(this.props.item.type) + this.props.item.name;
+        }
 
         return <li
             key={this.props.item.name}
@@ -2611,147 +2953,306 @@ class EudAutoCompleteItem extends Component {
  *          rulePartType -> type of rule portion we are returning the completions for
  * @returns {the list of possible completions, int that indicates if a graph is necessary}
  */
-function getCompletions(props) {
-    let graph=0;
-    switch (props.role) {
-        case "subject":
-            graph=1;
-            if(props.rulePartType === 'event'){ // event subject: player, game, audios videos, scene objects
-                //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
-                //il merge delle scene lo faccio nella render con graph
-                graph=3;
-                let items = props.assets.filter(x => x.type === 'video').merge(props.audios).set(
-                    InteractiveObjectsTypes.PLAYER,
-                    InteractiveObject({
-                        type: InteractiveObjectsTypes.PLAYER,
-                        uuid: InteractiveObjectsTypes.PLAYER,
-                        name: ""
-                    }),
-                ).sort(function (a) {
-                    if(a.type=== "PLAYER"){
-                        return -1
-                    }
-                    else
-                        return 1;
-                });
-                return {items, graph};
-            }
-            else{
-                //soggetto nella seconda parte della frase
-                let subjects = props.interactiveObjects.filter(x =>
-                    x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST).set(
-                    InteractiveObjectsTypes.GAME,
-                    InteractiveObject({
-                        type: InteractiveObjectsTypes.GAME,
-                        uuid: InteractiveObjectsTypes.GAME,
-                        name: ""
-                    })).set(
-                    InteractiveObjectsTypes.PLAYER,
-                    InteractiveObject({
-                        type: InteractiveObjectsTypes.PLAYER,
-                        uuid: InteractiveObjectsTypes.PLAYER,
-                        name: ""
-                    })
-                );
-                let result = props.rulePartType === 'condition' ? subjects : subjects.merge(props.scenes);
-                let items= result.sort(function (a) {
-                    //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
-                    // e il player
-                    if(sceneObjectsOnly(props).includes(a)|| a.type=== "PLAYER"){
-                        return -1
-                    }
-                    else
-                        return 1;
-                });
-                return {items, graph}
-            }
+/**
+ * Retrieves the set of the possible completions, given a subject and action type
+ * @param props
+ *          subject-> the subject that executes the action
+ *          verb -> the type of action the subject executes
+ *          interactiveObjects -> the list of the objects in the game
+ *          rulePartType -> type of rule portion we are returning the completions for
+ * @param global is true if the rule is global
+ * @returns {the list of possible completions, int that indicates if a graph is necessary}
+ * WARNING: In order to work must return a variable called items and another called graph
+ */
+function getCompletions(props, global) {
 
-
-        case "object":
-            // the CLICK action is restricted to current scene objects only, might move to switch case later
-            if(props.verb.action === RuleActionTypes.CLICK){
-                console.log("Case object scene object only: ", sceneObjectsOnly(props));
-                graph = 2;
-                let items = sceneObjectsOnly(props);
-                return {items, graph};
-            }
-
-
-            if(props.verb.action === RuleActionTypes.TRIGGERS){
-                graph = 2;
-                let items = sceneRulesOnly(props);
-                return {items, graph}
-            }
-            
-            let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios);
-            allObjects = allObjects.merge(filterValues(props.subject, props.verb));
-
-            if (props.verb.action) {
-                let objType = RuleActionMap.get(props.verb.action).obj_type;
-                allObjects = allObjects.filter(x => objType.includes(x.type));
-            }
-
-            //complemento oggetto, ordino sempre sulla base degli oggetti nella scena
-            let items= allObjects.sort(function (a) {
-                if(sceneObjectsOnly(props).includes(a)){
-                    return -1
-                }
-                else
-                    return 1;
-            });
-
-            //ulteriore controllo per vedere se nella lista restituita ci sono oggetti
-            if(items.some(a => typeof a == props.interactiveObjects)){
-                graph = 2;
-            }
-
-            //se il verbo è spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
-            // spostare nella scena in cui sono già)
-            if(props.verb.action === RuleActionTypes.TRANSITION){
-                let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
-                items= items.filter(x=>
-                    !x.includes(current_scene_uuid)
-                );
-            }
-
-            return {items, graph};
-
-        case "operation":
-            if(props.rulePartType === 'event'){
-                if(props.subject){
-                    let items = RuleActionMap
-                        //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
-                        .filter(x => x.subj_type.includes(props.subject.type));
-
-                    return {items, graph}
-                }
-                let items = RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
-                return {items, graph};
-            }
-            if(props.subject){
-                //se ho come soggetto il gioco allora mostro solo avvia come verbo
-                if(props.subject.type === InteractiveObjectsTypes.GAME){
-                    let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS);
+    if(!global){ //regole non globali
+        let graph=0;
+        switch (props.role) {
+            case "subject":
+                graph=1;
+                if(props.rulePartType === 'event'){ // event subject: player, game, audios videos, scene objects
+                    //[Vittoria] ordino in modo tale che il player sia sempre in cima alla lista
+                    //il merge delle scene lo faccio nella render con graph
+                    graph=3;
+                    let items = props.assets.filter(x => x.type === 'video').filter(x =>
+                        x.type !== InteractiveObjectsTypes.TIMER &&
+                        x.type !== InteractiveObjectsTypes.HEALTH &&
+                        x.type !== InteractiveObjectsTypes.SCORE
+                        && x.type !== InteractiveObjectsTypes.PLAYTIME
+                    ).merge(props.audios).set(
+                        InteractiveObjectsTypes.PLAYER,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.PLAYER,
+                            uuid: InteractiveObjectsTypes.PLAYER,
+                            name: ""
+                        }),
+                    ).sort(function (a) {
+                        if(a.type=== "PLAYER"){
+                            return -1
+                        }
+                        else
+                            return 1;
+                    });
                     return {items, graph};
                 }
-                let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
-                return {items, graph};
-            }
-            else{
-                let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
-                return {items, graph};
-            }
+                else{
+                    //soggetto nella seconda parte della frase
+                    let subjects = props.interactiveObjects.filter(x =>
+                        x.type !== InteractiveObjectsTypes.POINT_OF_INTEREST &&
+                        x.type != InteractiveObjectsTypes.HEALTH &&
+                        x.type != InteractiveObjectsTypes.SCORE &&
+                        x.type != InteractiveObjectsTypes.PLAYTIME).set(
+                        InteractiveObjectsTypes.GAME,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.GAME,
+                            uuid: InteractiveObjectsTypes.GAME,
+                            name: ""
+                        })).set(
+                        InteractiveObjectsTypes.PLAYER,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.PLAYER,
+                            uuid: InteractiveObjectsTypes.PLAYER,
+                            name: ""
+                        })
+                    );
+                    let result = props.rulePartType === 'condition' && props.rule.event //faccio in modo che "se la combinazione Ã¨ corretta"
+                    && props.interactiveObjects.get(props.rule.event.obj_uuid)
+                    && props.interactiveObjects.get(props.rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD //appaia solo se la prima parte della frase Ã¨
+                    && props.rule.event.subj_uuid === InteractiveObjectsTypes.PLAYER //"il giocatore ha cliccato il tastierino"
+                    && props.rule.event.action === RuleActionTypes.CLICK
+                        ? subjects.set(InteractiveObjectsTypes.COMBINATION,
+                            InteractiveObject({
+                                type: InteractiveObjectsTypes.COMBINATION,
+                                uuid: InteractiveObjectsTypes.COMBINATION,
+                                name: ""
+                            }))
+                        : subjects.merge(props.scenes).filter(x=>
+                            x.uuid != 'ghostScene');
+                    let items= result.sort(function (a) {
+                        //ordino il soggetto della seconda parte della frase in modo tale che mi mostri prima gli oggetti della scena
+                        // e il player
+                        if(sceneObjectsOnly(props).includes(a)|| a.type=== "PLAYER"){
+                            return -1
+                        }
+                        else
+                            return 1;
+                    });
+                    return {items, graph}
+                }
 
-        case "operator":{
-            let items = props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
-            return {items, graph};
-        }
-        case 'value':{
-            let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
-            return {items, graph};
+            case "object":
+                // the CLICK action is restricted to current scene objects only, might move to switch case later
+                if(props.verb.action === RuleActionTypes.CLICK){
+                    console.log("Case object scene object only: ", sceneObjectsOnly(props));
+                    graph = 2;
+                    let items = sceneObjectsOnly(props).filter(x =>
+                        x.type !== InteractiveObjectsTypes.TIMER &&
+                        x.type !== InteractiveObjectsTypes.HEALTH &&
+                        x.type !== InteractiveObjectsTypes.SCORE &&
+                        x.type !== InteractiveObjectsTypes.PLAYTIME
+                    ); //filtro il timer e gli oggetti globali perchÃ¨ non sono cliccabili
+                    return {items, graph};
+                }
+
+                //si possono triggerare regole o timers
+                if(props.verb.action === RuleActionTypes.TRIGGERS){
+                    graph = 2;
+                    let items = sceneRulesOnly(props).merge(sceneObjectsOnly(props).filter (
+                        x => x.type ===InteractiveObjectsTypes.TIMER
+                    ));
+                    return {items, graph}
+                }
+
+                //stop va bene sia per gli audio sia per i timer, ma se il soggetto Ã¨ game allora si riferisce solo ai timer
+                if(props.verb.action === RuleActionTypes.STOP_TIMER && props.subject.type === InteractiveObjectsTypes.GAME){
+                    let items = (sceneObjectsOnly(props).filter (
+                        x => x.type ===InteractiveObjectsTypes.TIMER
+                    ));
+                    return {items, graph}
+                }
+
+                //entra nella scena supporta solo il nome della scena corrente
+                if(props.verb.action === RuleActionTypes.ENTER_SCENE){
+                    graph=0;
+                    let items = (props.scenes.filter( x=> x.uuid === CentralSceneStore.getState())); //scena corrente
+                    return {items, graph}
+                }
+
+                let allObjects = props.interactiveObjects.merge(props.scenes).merge(props.assets).merge(props.audios)/*.filter(x =>
+                    x.type !== InteractiveObjectsTypes.HEALTH &&
+                    x.type !== InteractiveObjectsTypes.SCORE &&
+                    x.type !== InteractiveObjectsTypes.PLAYTIME &&
+                    x.uuid !== 'ghostScene')*/;
+                allObjects = allObjects.merge(filterValues(props.subject, props.verb));
+
+                //se il verbo Ã¨ spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
+                // spostare nella scena in cui sono giÃ )
+                if(props.verb.action === RuleActionTypes.TRANSITION){
+                    let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
+                    let items = (props.scenes.filter(x=>
+                        !x.includes(current_scene_uuid) && x.name != 'Ghost Scene'
+                    ));
+                    return {items, graph};
+                }
+
+                //deve restituire "di stato"
+                if(props.verb.action === RuleActionTypes.PROGRESS && props.subject.type === InteractiveObjectsTypes.SELECTOR){
+                    let items = ValuesMap.filter(x => x.subj_type.includes(props.subject.type)
+                        && x.verb_type.includes(props.verb.action));
+                    return {items, graph}
+                }
+
+                if (props.verb.action) {
+                    let objType = RuleActionMap.get(props.verb.action).obj_type;
+                    allObjects = allObjects.filter(x => objType.includes(x.type));
+                }
+
+                //complemento oggetto, ordino sempre sulla base degli oggetti nella scena
+                let items= allObjects.sort(function (a) {
+                    if(sceneObjectsOnly(props).includes(a)){
+                        return -1
+                    }
+                    else
+                        return 1;
+                });
+
+                //ulteriore controllo per vedere se nella lista restituita ci sono oggetti
+                if(items.some(a => typeof a == props.interactiveObjects)){
+                    graph = 2;
+                }
+
+
+                return {items, graph};
+
+            case "operation":
+                if(props.rulePartType === 'event'){
+                    if(props.subject){
+                        let items = RuleActionMap
+                            //.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS)
+                            .filter(x => x.subj_type.includes(props.subject.type)
+                                && x.uuid !== RuleActionTypes.TRANSITION);
+
+                        return {items, graph}
+                    }
+                    let items = RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
+                    return {items, graph};
+                }
+                if(props.subject){
+                    //se ho come soggetto il gioco allora mostro solo avvia come verbo
+                    if(props.subject.type === InteractiveObjectsTypes.GAME){
+                        let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.TRIGGERS || x.uuid ===RuleActionTypes.STOP_TIMER);
+                        return {items, graph};
+                    }
+
+                    /* Decommenta se dÃ  problemi
+                    if(props.subject.type === InteractiveObjectsTypes.TIMER){
+                         let items =RuleActionMap.filter(x => x.uuid === RuleActionTypes.REACH_TIMER );
+                         return {items, graph};
+                     }*/
+
+                    //faccio in modo che "entra nella scena" non compaia come azione nella seconda parte della frase
+                    let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)
+                        && x.uuid !== RuleActionTypes.ENTER_SCENE) : RuleActionMap.filter(
+                        x => x.uuid !== RuleActionTypes.ENTER_SCENE
+                    );
+
+                    return {items, graph};
+                }
+                else{
+                    let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
+                    return {items, graph};
+                }
+
+            case "operator":{
+                let items = props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
+                return {items, graph};
+            }
+            case 'value':{
+                let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type) &&
+                    x.uuid !== "STATE") : ValuesMap; //filtro il valore "di stato"
+                return {items, graph};
+            }
         }
     }
 
+    else{ //regole globali
+        //prendo solo quelli della scena fantasma in modo che non vengano ripetuti
+        //(altrimenti avrei un suggerimento vita per ogni scena che ha la vita etc..)
+        let globalObjects = props.interactiveObjects.filter(x =>
+            (x.type == InteractiveObjectsTypes.HEALTH && (ObjectToSceneStore.getState().get(x.uuid) ==='ghostScene')) ||
+            (x.type == InteractiveObjectsTypes.SCORE && (ObjectToSceneStore.getState().get(x.uuid) ==='ghostScene'))||
+            (x.type == InteractiveObjectsTypes.PLAYTIME && (ObjectToSceneStore.getState().get(x.uuid) ==='ghostScene')));
+
+        let graph=-1;
+
+        switch (props.role) {
+
+            case "subject":
+                if(props.rulePartType === 'event'){ // mi servono solo gli oggetti globali
+                    let items = globalObjects;
+                    return {items, graph};
+                }
+                else{
+                    let items = globalObjects.set(
+                        InteractiveObjectsTypes.PLAYER,
+                        InteractiveObject({
+                            type: InteractiveObjectsTypes.PLAYER,
+                            uuid: InteractiveObjectsTypes.PLAYER,
+                            name: ""
+                        })
+                    );
+                    console.log("items operation", items);
+
+                    return {items, graph}
+                }
+
+            case "object":
+
+                let items = props.interactiveObjects.merge(props.scenes);
+                items = items.merge(filterValues(props.subject, props.verb));
+
+                if (props.verb.action) {
+                    let objType = RuleActionMap.get(props.verb.action).obj_type;
+                    items = items.filter(x => objType.includes(x.type));
+                }
+
+                //se il verbo Ã¨ spostarsi verso allora faccio in modo che non appaia la scena corrente (non mi posso
+                // spostare nella scena in cui sono giÃ )
+                if(props.verb.action === RuleActionTypes.TRANSITION){
+                    let current_scene_uuid = props.scenes.get(CentralSceneStore.getState()).uuid;
+                    //filtro la scena in cui sono e la scena fantasma
+                    items= items.filter(x=> !x.includes(current_scene_uuid) &&
+                        x.uuid!='ghostScene'
+                    );
+                }
+
+                return {items, graph};
+
+            case "operation":
+                if(props.subject){
+                    let items = RuleActionMap.filter(x => x.subj_type.includes(props.subject.type));
+                    if(props.rulePartType === 'action' && props.subject.type === 'PLAYER'){ //solo in questo caso aggiungo si sposta verso
+                        items = items.filter(x=> x.uuid==RuleActionTypes.TRANSITION);
+                        return {items, graph};
+                    }
+                    return {items, graph};
+                }
+                else { //se l'oggetto non Ã¨ definito
+                    let items = props.subject ? RuleActionMap.filter(x => x.subj_type.includes(props.subject.type)) : RuleActionMap;
+                    return {items, graph};
+                }
+
+            case "operator":{
+                let items = props.subject ? OperatorsMap.filter(x => x.subj_type.includes(props.subject.type)) : OperatorsMap;
+                return {items, graph};
+            }
+            case 'value':{
+                let items = props.subject ? ValuesMap.filter(x => x.subj_type.includes(props.subject.type)) : ValuesMap;
+                return {items, graph};
+            }
+        }
+    }
 }
 
 function filterValues(subject, verb) {

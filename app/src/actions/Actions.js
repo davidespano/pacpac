@@ -370,7 +370,7 @@ const Actions = {
         AppDispatcher.dispatch({
             type: ActionTypes.RECEIVE_SCENE,
             scene: scene,
-            order: order,
+            order: order,//order of scenes (all orders available in data/Orders)
             objectsToScene: ObjectToSceneStore.getState(),
             objects: ObjectsStore.getState(),
             creation: creation,
@@ -538,11 +538,12 @@ const Actions = {
      * @param scene
      * @param object
      */
-    removeObject(scene, object){
+    removeObject(scene, object, objType){
         AppDispatcher.dispatch({
             type: ActionTypes.REMOVE_OBJECT,
             scene: scene,
             obj: object,
+            objType: objType,
         })
     },
 
