@@ -357,7 +357,7 @@ export default class RuleBotWidget extends Component {
 
         //Aggiungo i nome di tutte le scene, ma saltando la scena corrente
         scenes.forEach(function (singleScene) {
-            if (singleScene.name !== currentNameScene)
+            if (singleScene.name !== currentNameScene && singleScene.uuid !== 'ghostScene')
                 sceneNames.push(singleScene.name);
         });
         return sceneNames;
@@ -538,7 +538,7 @@ export default class RuleBotWidget extends Component {
              * al bot, ma può risolvere in locale. */
             Actions.updateBotMissingElement("scenaFinale"); //Manca il nome della scenaFinale
             if (this.props.ruleBot.scenaFinale === "") {
-                addResponseMessage("Scrivi qual'è la scena finale alla quale vuoi arrivare. Perfavore scegli tra una di queste: ");
+                addResponseMessage("Scrivi qual è la scena finale alla quale vuoi arrivare. Perfavore scegli tra una di queste: ");
             } else {
                 addResponseMessage("La scena finale che hai inserito non esiste. Perfavore scegli tra una di queste: ");
             }
@@ -587,7 +587,7 @@ export default class RuleBotWidget extends Component {
                     break;
                 case "condizione":
                     if (this.props.ruleBot.statoIniziale === "non trovato") {
-                        addResponseMessage("Scrivimi qual'è lo stato che deve avere la transizione. Attivabile, non attivabile, visibile, non visibile?");
+                        addResponseMessage("Scrivimi qual è lo stato che deve avere la transizione. Attivabile, non attivabile, visibile, non visibile?");
                         Actions.updateBotMissingElement("statoIniziale");
                         this.printButtonsOnChatBot(statoTransizione);
                     } else {
@@ -701,7 +701,7 @@ export default class RuleBotWidget extends Component {
                 //Se non contengono qualcosa riconducibile ad ON o OFF allora chiedo all'utente di specificarlo
                 //Controllo STATO INIZIALE
                 if (this.props.ruleBot.statoIniziale === "non trovato" && this.props.ruleBot.tipoRisposta !== "azione") {
-                    addResponseMessage("Scrivimi qual'è lo stato inziale dello switch. È acceso o spento?");
+                    addResponseMessage("Scrivimi qual è lo stato inziale dello switch. È acceso o spento?");
                     Actions.updateBotMissingElement("statoIniziale");
                     this.printButtonsOnChatBot(statoInterruttore);
                 } else if (this.props.ruleBot.statoFinale === "non trovato" && this.props.ruleBot.tipoRisposta !== "condizione") {  //Controllo STATO FINALE
@@ -713,6 +713,7 @@ export default class RuleBotWidget extends Component {
                     /* Se non ci sono più errori allora comunico che ho tutto, e chiedo conferma per la creazione della regola,
                     * dell'azione o della condizione. */
                     addResponseMessage("Ho tutto.");
+
                     switch (this.props.ruleBot.tipoRisposta) {
                         case "regola":
                             Actions.updateBotMissingElement("confermaCreazioneRegola");
@@ -855,7 +856,7 @@ export default class RuleBotWidget extends Component {
                         //Se non contiene qualcosa riconducibile ad APERTO o CHIUSO allora chiedo all'utente di specificarlo
                         //Controllo STATO INIZIALE
                         if (this.props.ruleBot.statoIniziale === "non trovato") {
-                            addResponseMessage("Scrivimi qual'è lo stato che dovrà avere il lucchetto. È aperto o chiuso?");
+                            addResponseMessage("Scrivimi qual è lo stato che dovrà avere il lucchetto. È aperto o chiuso?");
                             //Serve per far capire quale elemento manca, senza dover mandare al bot un'altra richiesta, ma si può risolvere in locale.
                             Actions.updateBotMissingElement("statoIniziale");
                             this.printButtonsOnChatBot(statoLucchetto);
@@ -988,7 +989,7 @@ export default class RuleBotWidget extends Component {
                         //Se non contiene qualcosa riconducibile ad APERTO o CHIUSO allora chiedo all'utente di specificarlo
                         //Controllo STATO INIZIALE
                         if (this.props.ruleBot.statoIniziale === "non trovato") {
-                            addResponseMessage("Scrivimi qual'è lo stato che dovrà avere la chiave. Raccolta o non raccolta?");
+                            addResponseMessage("Scrivimi qual è lo stato che dovrà avere la chiave. Raccolta o non raccolta?");
                             Actions.updateBotMissingElement("statoIniziale");
                             this.printButtonsOnChatBot(statoChiave);
                         } else {
