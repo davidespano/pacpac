@@ -253,7 +253,10 @@ export default class Bubble extends Component
                 <Entity>
                     <Entity visible={isLoadingSphereVisible} geometry="primitive: sphere"  position={'-0.27 1.394 -1'} scale={'2 2 2 '}
                             id={this.props.scene.name + 'loading'} radius={radius}  material={'shader: flat; opacity: 0.5; color: black; side: double'}  >
-                        <Entity text="align: center; wrapCount: 30; value:LOADING"></Entity>
+                        <Entity position={'0 0 0'} text="align: center; wrapCount: 30; value:LOADING"></Entity>
+                        <Entity position={'0 0 1'} scale={'-1 1 1'} text="align: center; side: double; wrapCount: 30; value:LOADING"></Entity>
+                        <Entity position={'0.5 0 0.5'} scale={'-1 1 1'} rotation={'0 90 0'} text="align: center; side: double; wrapCount: 30; value:LOADING"></Entity>
+                        <Entity position={'-0.5 0 0.5'} rotation={'0 90 0'} text="align: center; side: double; wrapCount: 30; value:LOADING"></Entity>
                     </Entity>
                     <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 100 0'} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
