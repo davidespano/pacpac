@@ -670,7 +670,6 @@ export default class VRScene extends React.Component {
 
             if (keypadObj){
                 window.keypadValue = "";
-                console.log("reset tastierino")
             } //reset del valore quando c'è un altro tastierino
 
             let selectorObj = graph.objects.get(selectorUuid);
