@@ -53,7 +53,7 @@ let keypadUuid;
 let selectorUuid;
 
 //variabili del timer pubbliche perchè accedute da render e tick
-window.keypadValue = "undefined";
+window.keypadValue = {};
 window.healthValue = undefined;
 window.playtimeValue = undefined;
 window.scoreValue = undefined;
@@ -669,8 +669,10 @@ export default class VRScene extends React.Component {
                 keypadObj = keypadUuid;
 
             if (keypadObj){
-                window.keypadValue = "";
-            } //reset del valore quando c'è un altro tastierino
+                if(!window.keypadValue[keypadUuid]){
+                    window.keypadValue[keypadUuid] = "";
+                }
+            } //inizializzo il valore del tastierino se è la prima volta che lo incontro
 
             let selectorObj = graph.objects.get(selectorUuid);
             if (selectorObj == undefined)
@@ -1088,24 +1090,36 @@ export default class VRScene extends React.Component {
 
 
     //Metodi tastierino
-    static updateKeypadValue(newNumber){
+    static updateKeypadValue(newNumber, keypadUuid){
+        if(!window.keypadValue[keypadUuid]){
+            window.keypadValue[keypadUuid] = "";
+        }
         //valore cliccato
-        window.keypadValue = window.keypadValue.concat(newNumber);
+        window.keypadValue[keypadUuid] = window.keypadValue[keypadUuid].concat(newNumber);
     }
 
     static checkKeypadValue(keypadObj){
-        console.log(window.keypadValue);
         //keypadObj.combination contiene la combinazione corretta
         //window.keypadValue contiene la combinazione cliccata dall'utente
-        if (keypadObj.properties.combination == window.keypadValue) {
-            window.keypadValue = ""; //anche se il codice è giusto resetto la variabile per le prossime combinazioni
+        if (keypadObj.properties.combination == window.keypadValue[keypadObj.uuid]) {
+            window.keypadValue[keypadUuid] = ""; //anche se il codice è giusto resetto la variabile per le prossime combinazioni
             console.log("codice corretto: ", keypadObj.properties.combination);
             return true;
         }
         else {
-            console.log("il codice che hai inserito è errato: ", window.keypadValue);
-            window.keypadValue = ""; //se il codice è sbagliato resetto il valore inserito dall'utente
+            console.log("il codice che hai inserito è errato: ", window.keypadValue[keypadObj.uuid]);
+            window.keypadValue[keypadObj.uuid] = ""; //se il codice è sbagliato resetto il valore inserito dall'utente
             window.keypadWrong = true;
+            return false;
+        }
+    }
+
+    static checkKeypadValueLength(keypadObj){
+        if(keypadObj.properties.combination.length == window.keypadValue[keypadObj.uuid].length){
+            return true
+        }
+        else
+        {
             return false;
         }
     }
