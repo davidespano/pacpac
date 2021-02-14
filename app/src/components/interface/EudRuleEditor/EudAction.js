@@ -119,7 +119,7 @@ export default class EudAction extends Component {
                         interactiveObjects={this.props.interactiveObjects}
                         rules={this.props.rules}
                         rule={this.props.rule}
-                        time={"seconds"}
+                        placeholder={"seconds"}
                         rulePartType={this.props.rulePartType}
                         subject={subject}
                         complement={this.props.action.obj_uuid}
@@ -134,14 +134,14 @@ export default class EudAction extends Component {
             case RuleActionTypes.INCREASE_NUMBER:
             case RuleActionTypes.INCREASE:
                 //i secondi li metto solo se si tratta del tempo di gioco
-                let time ="";
+                let placeholder ="";
                 if(subject)
-                    time = subject.type===InteractiveObjectsTypes.PLAYTIME ?"minutes" : "";
+                    placeholder = subject.type===InteractiveObjectsTypes.PLAYTIME ?"minutes" : "";
                 objectRendering =
                     <EudRuleNumericPart
                         interactiveObjects={this.props.interactiveObjects}
                         rules={this.props.rules}
-                        time = {time}
+                        placeholder = {placeholder}
                         rule={this.props.rule}
                         rulePartType={this.props.rulePartType}
                         subject={subject}
@@ -204,11 +204,16 @@ export default class EudAction extends Component {
                     />;
                 break;
             case RuleActionTypes.REACH_KEYPAD:
+                //se il soggetto è il keypad allora arriverà a n cifre, non semplicemente numerico
+                let cifre ="";
+                if(subject)
+                    cifre = subject.type===InteractiveObjectsTypes.KEYPAD ?"digits" : "";
                 objectRendering =
                     <EudRuleNumericPart
                         interactiveObjects={this.props.interactiveObjects}
                         rules={this.props.rules}
                         rule={this.props.rule}
+                        placeholder={cifre}
                         rulePartType={this.props.rulePartType}
                         subject={subject}
                         complement={this.props.action.obj_uuid}

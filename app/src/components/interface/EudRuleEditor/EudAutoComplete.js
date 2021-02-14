@@ -463,8 +463,8 @@ function getCompletions(props, global) {
 
                         if(props.subject.type ===InteractiveObjectsTypes.KEYPAD){ //se siamo nell'event e il soggetto è il tastierino
                             items = RuleActionMap
-                                .filter(x => x.subj_type.includes(props.subject.type) //lascio solo la action
-                                    &&  x.uuid === RuleActionTypes.REACH_KEYPAD) //"arriva a", perchè aggiunge alla combinazione non lo gestiamo come evento
+                                .filter(x => //lascio solo la action
+                                   x.uuid === RuleActionTypes.REACH_KEYPAD) //"arriva a", perchè aggiunge alla combinazione non lo gestiamo come evento
                         }
                         return {items, graph}
                     }

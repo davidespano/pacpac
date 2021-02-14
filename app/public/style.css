@@ -1599,6 +1599,45 @@ input.eudObjectMinutes[type=text] {
     padding-right: 5px;
 }
 
+/* Nel caso di cifre */
+span.eudObjectDigits {
+    position: relative;
+    display: inline-block;
+    min-width: 50px;
+    width:100%;
+}
+
+span.eudObjectDigits:after {
+    position: absolute;
+    right: 2px;
+    top: 0;
+    content: 'cifre';
+}
+
+span.eudObjectDigits > span{
+    visibility: hidden;
+    display: inline-block;
+    min-width: 50px;
+    width:100%;
+}
+
+input.eudObjectDigits[type=text] {
+    position: absolute;
+    display:inline-block;
+    left:0px;
+    right:0px;
+    border:0px;
+    overflow: no-display;
+    width: 100%;
+    min-width: 50px;
+    color: #EF562D;
+    background-color: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 .eudObjectButton{
     display: inline-block;
     position: absolute;

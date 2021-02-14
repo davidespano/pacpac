@@ -25,12 +25,15 @@ export default class EudRuleNumericPart extends Component {
         let buttonVisible = "eudHide";
         let text = this.props.originalText;
         let css = "eudRulePart eudCompletionRoot eud" + this.props.role;
-        //se è un valore che ha a che fare con i secondi uso la classe css che mette il placeholder
+        //se è un valore che ha a che fare con i secondi/minuti/cifre uso la classe css che mette il placeholder
         let className = null;
-        if(this.props.time === "seconds")
+        if(this.props.placeholder === "seconds")
             className = "eudObjectSeconds";
-        else if(this.props.time==="minutes"){
+        else if(this.props.placeholder==="minutes"){
             className = "eudObjectMinutes"
+        }
+        else if(this.props.placeholder==="digits"){
+            className = "eudObjectDigits"
         }
         else{
             className = "eudObjectString";
