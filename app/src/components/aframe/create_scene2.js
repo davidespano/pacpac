@@ -495,11 +495,24 @@ export default class VRScene extends React.Component {
 
                     eventBus.on(event, function () {
                         let condition;
-                        //in questo caso mi serve necessariamente passare alla condition il tastierino
-                        if(me.props.interactiveObjects.get(rule.event.obj_uuid) &&
-                            me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
-                            rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
-                            condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.obj_uuid));
+
+                        //ci sono due casi in cui mi serve necessariamente passare alla condition il tastierino:
+                        // il giocatore clicca il tastierino, se la combinazione è giusta, allora ...
+                        // il tastierino arriva a n cifre, se la combinazione è giusta, allora ...
+                        // hanno in comune la condizione
+                        if(rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
+                            //però in un caso il tastierino è l'oggetto dell'evento
+                            if(me.props.interactiveObjects.get(rule.event.obj_uuid)){
+                                if(me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD){
+                                    condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                }
+                            }
+                            //nell'altro è il soggetto
+                            else if (me.props.interactiveObjects.get(rule.event.subj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                                rule.event.action === RuleActionTypes.REACH_KEYPAD) {
+                                condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.subj_uuid));
+                            }
+
                         }else{
                             condition = evalCondition(rule.condition, me.state.runState);
                         }

@@ -291,6 +291,26 @@ const RuleActionMap = Immutable.Map([
             uuid: RuleActionTypes.PROGRESS,
         },
     ],
+    [
+        RuleActionTypes.INSERT,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.KEYPAD],
+            obj_type: 'number',
+            name: toString.eventTypeToString(RuleActionTypes.INSERT),
+            uuid: RuleActionTypes.INSERT,
+        },
+    ],
+    [
+        RuleActionTypes.REACH_KEYPAD,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.KEYPAD],
+            obj_type: 'number',
+            name: toString.eventTypeToString(RuleActionTypes.REACH_KEYPAD),
+            uuid: RuleActionTypes.REACH_KEYPAD,
+        },
+    ],
 ]);
 
 const OperatorsMap = Immutable.Map([
@@ -335,7 +355,8 @@ const OperatorsMap = Immutable.Map([
                 InteractiveObjectsTypes.PLAYTIME,
                 InteractiveObjectsTypes.SCORE,
                 InteractiveObjectsTypes.BUTTON,
-                InteractiveObjectsTypes.KEYPAD
+                InteractiveObjectsTypes.KEYPAD,
+                InteractiveObjectsTypes.COMBINATION
             ],
             type: "operator",
             name: toString.operatorUuidToString(Operators.NOT_EQUAL),
@@ -598,7 +619,7 @@ const ValuesMap = Immutable.Map([
             subj_type: [
                 InteractiveObjectsTypes.COMBINATION
             ],
-            verb_type: [Operators.EQUAL],
+            verb_type: [Operators.EQUAL, Operators.NOT_EQUAL],
             name: toString.valueUuidToString(Values.CORRECT),
             uuid: Values.CORRECT,
         },

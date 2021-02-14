@@ -55,6 +55,10 @@ function eventTypeToString(eventType) {
             return 'arriva a';
         case RuleActionTypes.PROGRESS:
             return 'avanza';
+        case RuleActionTypes.INSERT:
+            return 'aggiunge alla combinazione';
+        case RuleActionTypes.REACH_KEYPAD:
+            return 'arriva a';
         default:
             return "";
     }

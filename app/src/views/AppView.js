@@ -14,7 +14,7 @@ import FileForm from "../components/interface/FileForm";
 import MediaEditingform from "../components/interface/MediaEditingForm";
 import Login from "../components/interface/Login";
 import GameList from "../components/interface/GameList";
-import EudRuleEditor from "../components/interface/EudRuleEditor";
+import EudRuleEditor from "../components/interface/EudRuleEditor/EudRuleEditor";
 import StoryEditor from "../components/interface/StoryEditor";
 import ActionTypes from "../actions/ActionTypes";
 import GraphViewContent from "../components/interface/GraphViewContent";

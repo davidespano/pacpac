@@ -516,12 +516,23 @@ function executeAction(VRScene, rule, action) {
             let btn_value = keypad.properties.buttonsValues[uuid_btn_pressed]; //valore associato al btn premuto
             create_scene2.updateKeypadValue(btn_value, keypad.uuid); //aggiorno il valore del tastierino
             current_object = game_graph['objects'].get(uuid_btn_pressed);
-            //changeStateSwitch(VRScene, runState, current_object, cursor, action);
             break;
         case "CHECK_KEYPAD":
             current_object = game_graph['objects'].get(rule.event.obj_uuid);
             changeStateSwitch(VRScene, runState, current_object, cursor, action);
             break;
+
+        case RuleActionTypes.INSERT: //aggiunge alla combinazione
+            //subject_object: il tastierino
+            current_object = action.obj_uuid; //valore da inserire
+            create_scene2.updateKeypadValue(current_object, action.subj_uuid); //aggiorno il valore del tastierino
+            // alza l'evento che il keypad è arrivato alla lunghezza n
+            let length = window.keypadValue[subject_obj.uuid].length;
+
+            let event = `${subject_obj.uuid}-reach_keypad-${length}`;
+            console.log(`emit`, event);
+            eventBus.emit(event);
+            return;
 
             default:
             console.log('not yet implemented');

@@ -21,6 +21,10 @@ export default function evalCondition(c, gameState, keypad=null) {
         if(c.obj_uuid == "" || c.obj_uuid == null || !c.operator || c.state == "") return true; //se i campi della condizione semplice
         //sono vuoti non crasha ma restituisce true
         if(c.obj_uuid===InteractiveObjectsTypes.COMBINATION){
+            //se controllo che la combinazione non sia corretta la funzione deve restituire il contrario
+            if(c.operator=== Operators.NOT_EQUAL){
+                return !create_scene2.checkKeypadValue(keypad)
+            }
             return create_scene2.checkKeypadValue(keypad)
         }
 
