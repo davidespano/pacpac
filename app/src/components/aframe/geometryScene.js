@@ -22,6 +22,8 @@ import SceneAPI from "../../utils/SceneAPI";
 import Values from "../../rules/Values";
 import {calculate2DSceneImageBounds} from "./aframe_curved";
 import Actions from "../../actions/Actions";
+window.linesVisibility = 'true';
+
 
 /**
  * Dati i punti presi da pointSaver viene aggiornato l'oggetto corrente
@@ -68,6 +70,56 @@ export function givePoints(props) {
 
 }
 
+/**
+ * Funzione per cambiare la visibilità delle linee nella geometria
+ * viene chiamata 2 volte:
+ * 1.al mousedown, prima del raycast per la creazione del punto, per cancellare le linee
+ * 2.alla fine dell'inserimento del punto nella geometria, per ripristinare le linee
+ */
+export function changeLinesVisibility(){
+    let scene;
+    let scale;
+    if(document.querySelector('a-sky')){
+        scene = document.querySelector('a-sky');
+        scale = "-1 1 1";
+    } else {
+        if(document.querySelector('a-videosphere')) {
+            scene = document.querySelector('a-videosphere');
+            scale = "-1 1 1";
+        } else {
+            scene = document.querySelector('a-scene');
+            scale = "1 1 1";
+        }
+    }
+
+    let lines = scene.querySelectorAll('.line');
+    if (window.linesVisibility == 'true'){
+        window.linesVisibility = 'false';
+        if(lines){
+            lines.forEach(l =>{
+                scene.removeChild(l);
+            })
+        }
+    }else{
+        window.linesVisibility = 'true';
+        let point_saver = document.querySelector('#cursor').components.pointsaver;
+        let a_point = point_saver.points;
+        let lengthLine = a_point.length;
+        if (lengthLine >= 2) {
+
+            for(let n = lengthLine -2 ; n >= 0 ; n--){
+                let tmp = document.createElement('a-entity');
+                tmp.setAttribute('scale', scale);
+                tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2 - n)].toArray().join(" "));
+                tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1 - n)].toArray().join(" "));
+                tmp.setAttribute('class', 'line');
+                tmp.setAttribute('visible',window.linesVisibility.toString())
+                scene.appendChild(tmp);
+            }
+        }
+    }
+}
+
 export default class GeometryScene extends React.Component{
 
     constructor(props)
@@ -88,6 +140,14 @@ export default class GeometryScene extends React.Component{
         //console.log(this.state.scenes)
         //console.log(props.editor.selectedAudioToEdit)
     }
+
+
+    changeLineVisibilityEvent(){
+        console.log("mousedown");
+        changeLinesVisibility();
+    }
+
+
 
     /**
      * Questa funzione si occupa di aggiornare la scena una volta che l'utente ha confermato quindi premuto il tasto C
@@ -117,7 +177,7 @@ export default class GeometryScene extends React.Component{
         // If thare are more the two points draw a line among them
         if (lengthLine >= 2) {
             let tmp = document.createElement('a-entity');
-            tmp.setAttribute('scale', scale);
+            tmp.setAttribute('scale', '0 0 0');
             tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 1)].toArray().join(" "));
             tmp.setAttribute('line', 'end: ' + a_point[(0)].toArray().join(" "));
             tmp.setAttribute('class', 'line');
@@ -138,18 +198,21 @@ export default class GeometryScene extends React.Component{
         })
     }
 
+
+
     /**
      * Funzione che si occupa di aggiornare la scena dopo ogni inserimento dei punti della geometria
      */
     handleFeedbackChange() {
         if(document.querySelector('a-cursor').components.pointsaver != null) {
+
             let point_saver = document.querySelector('#cursor').components.pointsaver;
+            console.log(point_saver)
             let a_point = point_saver.points;
             let isCurved = point_saver.attrValue.isCurved === 'true';
             let isPoint = point_saver.attrValue.isPoint === 'true';
             //Punti
-            let length = a_point.length;
-            let idPoint = "point" + (length - 1).toString();
+
             let tmp = document.createElement('a-entity');
             let scene, scale, moltiplier; //Moltiplicatore mi serve per le scene 2D, la coordinata della x e' invertita
 
@@ -162,6 +225,7 @@ export default class GeometryScene extends React.Component{
                     scene = document.querySelector('a-videosphere');
                     scale = "-1 1 1";
                     moltiplier = -1;
+
                 } else {
                     scene = document.querySelector('a-scene');
                     scale = "1 1 1";
@@ -169,29 +233,36 @@ export default class GeometryScene extends React.Component{
                 }
             }
 
+            let length = a_point.length;
+            console.log(length)
+            let idPoint = "point" + (length - 1).toString();
             //Se e' una geometria e non un punto posso aggiungere punti e collegarli con della linee
             if(isCurved && !isPoint){
-                //console.log(a_point)
-                tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.09');
+
+                tmp.setAttribute('geometry', 'primitive: sphere; radius: 0.08');
                 a_point[(length-1)].x *= moltiplier;
                 tmp.setAttribute('position',  a_point[(length - 1)].toArray().join(" "));
                 a_point[(length-1)].x *= moltiplier;
                 tmp.setAttribute('id', idPoint);
                 tmp.setAttribute('material', 'color: green; shader: flat');
                 tmp.setAttribute('class', 'points');
+
                 scene.appendChild(tmp);
 
                 // se sono presenti più di due punti allora disegno le linee
                 let lengthLine = a_point.length;
                 if (lengthLine >= 2) {
                     let tmp = document.createElement('a-entity');
+                    //TODO: i problemi con i punti che impazziscono derivano dalla scale delle linee, se impostate a 0 saranno invisibili ma i problemi spariscono
                     tmp.setAttribute('scale', scale);
                     tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
                     tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
                     tmp.setAttribute('class', 'line');
+                    tmp.setAttribute('visible',window.linesVisibility.toString())
                     scene.appendChild(tmp);
                 }
             } else {
+
                 //Se sto editando un oggetto che prevede solo un punto, elimino dalla scena il punto precedentemente inserito
                 let lastChild = scene.querySelector('#point0');
                 if(lastChild) {
@@ -208,11 +279,11 @@ export default class GeometryScene extends React.Component{
                 tmp.setAttribute('class', 'points');
                 scene.appendChild(tmp);
             }
+            changeLinesVisibility();
         }
     }
 
     componentDidMount() {
-
         //Creo la scena corrente
         this.createScene();
         let is3dScene = this.state.scenes.type===Values.THREE_DIM;
@@ -299,7 +370,8 @@ export default class GeometryScene extends React.Component{
                         document.querySelector('a-scene').removeChild(document.getElementById("audio"+this.props.editor.audioToEdit.uuid));
                 }
                 cursor.components.pointsaver.points = [];
-                cursor.addEventListener('click', this.handleFeedbackChange);   //[Vittoria] gestisce l'inserimento dei punti e aggiorna la scena
+                cursor.addEventListener('mousedown', this.changeLineVisibilityEvent)
+                cursor.addEventListener('mouseup', this.handleFeedbackChange);   //[Vittoria] gestisce l'inserimento dei punti e aggiorna la scena
             }
 
             //Tasto U rimuovo l'ultimo punto inserito se ho sbagliato

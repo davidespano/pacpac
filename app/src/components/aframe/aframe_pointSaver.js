@@ -4,6 +4,7 @@
 
 var AFRAME = require('aframe');
 var THREE = require('three');
+var clickMethod = "mouseup"
 
 AFRAME.registerComponent('pointsaver',
 {
@@ -18,16 +19,16 @@ AFRAME.registerComponent('pointsaver',
 
         //Se e' un oggetto audio mi serve solo un punto, la funzione sara' diversa
         if(!this.data.isCurved || this.data.isPoint){
-            this.el.addEventListener('click', pointSaverAudio);
+            this.el.addEventListener(clickMethod, pointSaverAudio);
         } else {
-            this.el.addEventListener('click', pointSaverCurved);
+            this.el.addEventListener(clickMethod, pointSaverCurved);
         }
     },
     
     remove: function () {
         let cursor = document.querySelector('a-cursor');
         if(cursor)
-            cursor.removeEventListener('click', pointSaverCurved);
+            cursor.removeEventListener(clickMethod, pointSaverCurved);
     }
 });
 

@@ -182,6 +182,7 @@ export default class Bubble extends Component
         let music;
         let sfx;
         let audioVideo = {};
+        //TODO: assegnare una rotazione a scelta dell'utente agli oggetti audio
         //creazione musica sottofondo
         if(this.props.scene.music !== undefined && this.props.audios){
             music = this.props.audios[this.props.scene.music]
