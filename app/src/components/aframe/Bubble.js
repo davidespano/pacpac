@@ -421,7 +421,21 @@ export default class Bubble extends Component
                 }*/
 
                 //Carico la maschera associata al media dell'oggetto
-                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                //[Vittoria] FIX PER EUD:
+                //se ho un media nella transizione e non ha maschera gli metto la white mask
+                let eud=true; //TODO METTERE A FALSE
+                if(eud){
+                    let whiteMask = new THREE.TextureLoader().load("https://i.ibb.co/BqMr8j6/white-mask.png");
+                    if(obj.type===InteractiveObjectsTypes.TRANSITION && obj.media.media0 !== null){
+                        aux =  whiteMask;
+                    }
+                    else{
+                        aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                    }
+                }else{
+                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                }
+
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
                 dict.push(obj.uuid.replace(/-/g,'_'));

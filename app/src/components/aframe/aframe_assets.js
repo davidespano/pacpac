@@ -36,6 +36,10 @@ export default class Asset extends React.Component{
                                  crossOrigin="Anonymous"
                                  src="/null-mask.jpg"
             />)
+            currAssets.push(<img id="white-mask"
+                                 crossOrigin="Anonymous"
+                                 src="https://i.ibb.co/BqMr8j6/white-mask.png"
+            />)
             let sceneBackground;
             //Se non è impostato il loop lo imposto a false
             let loop = scene.isVideoInALoop !== undefined ? scene.isVideoInALoop : false;
