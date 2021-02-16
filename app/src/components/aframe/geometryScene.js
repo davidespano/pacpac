@@ -58,8 +58,6 @@ export function givePoints(props) {
         punto.toArray().join(" ")
     );
 
-    //console.log(props.scenes.get(props.currentScene))
-    //console.log(puntisalvati.join())
 
     //Chiamo le funzioni relative all'aggiornamento dell'oggetto, in base al tipo di oggetto, geometria o punto
     if(isCurved){
@@ -113,7 +111,6 @@ export function changeLinesVisibility(){
                 tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2 - n)].toArray().join(" "));
                 tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1 - n)].toArray().join(" "));
                 tmp.setAttribute('class', 'line');
-                tmp.setAttribute('visible',window.linesVisibility.toString())
                 scene.appendChild(tmp);
             }
         }
@@ -143,7 +140,6 @@ export default class GeometryScene extends React.Component{
 
 
     changeLineVisibilityEvent(){
-        console.log("mousedown");
         changeLinesVisibility();
     }
 
@@ -207,7 +203,6 @@ export default class GeometryScene extends React.Component{
         if(document.querySelector('a-cursor').components.pointsaver != null) {
 
             let point_saver = document.querySelector('#cursor').components.pointsaver;
-            console.log(point_saver)
             let a_point = point_saver.points;
             let isCurved = point_saver.attrValue.isCurved === 'true';
             let isPoint = point_saver.attrValue.isPoint === 'true';
@@ -234,7 +229,6 @@ export default class GeometryScene extends React.Component{
             }
 
             let length = a_point.length;
-            console.log(length)
             let idPoint = "point" + (length - 1).toString();
             //Se e' una geometria e non un punto posso aggiungere punti e collegarli con della linee
             if(isCurved && !isPoint){
@@ -253,7 +247,6 @@ export default class GeometryScene extends React.Component{
                 let lengthLine = a_point.length;
                 if (lengthLine >= 2) {
                     let tmp = document.createElement('a-entity');
-                    //TODO: i problemi con i punti che impazziscono derivano dalla scale delle linee, se impostate a 0 saranno invisibili ma i problemi spariscono
                     tmp.setAttribute('scale', scale);
                     tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
                     tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
@@ -402,18 +395,12 @@ export default class GeometryScene extends React.Component{
 
             //Salvo le modifiche dell'oggetto e torno all'editor
             if(keyName === 'q' || keyName === 'Q') {
-                //console.log("currentObect", this.props.currentObject)
                 if(this.props.currentObject !== null){
                     InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
                         this.props.interactiveObjects.get(this.props.currentObject));
                 }
-                //console.log("props:  ",this.props.currentScene);
-                //this.props.currentScene.reload();
-                //window.location.reload();
-                //document.querySelector('a-assets').load();
+
                 Actions.editModeOn();
-                //this.props.switchToEditMode();
-                /*document.location.reload();*/
 
             }
             //[Vittoria] nasconde e mostra il menù

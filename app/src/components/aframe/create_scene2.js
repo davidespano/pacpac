@@ -150,7 +150,6 @@ export default class VRScene extends React.Component {
                 sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
                 if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
                 {
-                    //console.log("sceneLoaded = ", sceneLoaded)
                     loadingsphere.setAttribute('visible', 'false');
                 }
                 if (sphere.components["material"].data.src.currentTime > 1)
@@ -161,7 +160,6 @@ export default class VRScene extends React.Component {
             }
             if (sceneLoaded) //quando la scena è caricata, rendo invisibile la bolla di caricamento
             {
-                //console.log(sphere.components["material"].data.src.currentTime)
                 loadingsphere.setAttribute('visible', 'false');
                 // al termine del video sollevo l'evento per essere gestito qualora ci sia una regola per fine video
                 let media = sphere.components["material"].data.src
@@ -199,7 +197,6 @@ export default class VRScene extends React.Component {
             }
             if(window.timerTime %  1 == 0)
             {
-                //console.log(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
                 eventBus.emit(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
             }
         }
@@ -693,7 +690,7 @@ export default class VRScene extends React.Component {
 
             if (selectorObj) //reset del valore quando c'è un altro tastierino
                 window.selectorState = 1;
-
+            //TODO: i caratteri accentati non vengono visualizzati, cambiare font non sembra funzionare
             if (textObj) {//se l'oggetto textbox esiste genero la Entity
                 let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*4)) +
                     "; align: " + textObj.properties.alignment +
@@ -952,7 +949,6 @@ export default class VRScene extends React.Component {
         //Restituisco il codice React relativo ad ogni bolla da caricare nella scena
         return this.currentLevel.map(sceneName =>{
             let scene = this.state.graph.scenes[sceneName];
-            //console.log("render scena ", sceneName)
             let currentScene = this.props.debug ? this.props.currentScene : false;
             let isActive = this.props.debug? scene.uuid === this.props.currentScene : scene.name === this.state.activeScene.name;
             //Richiamo createRuleListeners per caricare gli eventi legati ai video, non posso farlo solo all'inizio perche'

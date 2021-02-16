@@ -124,7 +124,6 @@ function getByName(name, order = null, gameId=null, creation = true) {
 
             // generates textboxes and saves them to the objects store
             if(response.body.textboxes) {
-                //console.log("response textbox")
                 response.body.textboxes.map((textbox) => {
                     textboxes_uuids.push(textbox.uuid); //save uuid
                     let tx = Textbox(getProperties(textbox));

@@ -5,7 +5,7 @@ import Values from "../rules/Values";
 const PlayTime = defaultValues => InteractiveObject({
     type : InteractiveObjectsTypes.PLAYTIME,
     properties : {
-        time : 0, //TODO: bisognerà convertire i secondi in ore:minuti:secondi
+        time : 0,
         size: 5,
     },
     ...defaultValues

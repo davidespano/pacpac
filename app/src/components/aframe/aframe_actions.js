@@ -37,7 +37,6 @@ function executeAction(VRScene, rule, action) {
             * Azione che si occupa di gestire la transizione, se la transizione ha un video associato avvia la transizione
             * avvia la transizione solo dopo aver riprodotto il video
             */
-            //TODO al momento e' possibile effettuare transizione anche senza un oggetto, decidere se eliminarlo o tenerlo
             let objectVideo_transition = 0;
             let duration_transition = 0;
             let duration = (current_object && current_object.properties.duration) ? parseInt(current_object.properties.duration) : 0;

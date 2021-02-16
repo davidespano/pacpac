@@ -93,7 +93,7 @@ class ScenesStore extends ReduceStore {
                 newScene = scene_utils.addInteractiveObjectToScene(action.scene, action.obj);
                 state = state.set(newScene.uuid, newScene);
                 return state;
-            case ActionTypes.REMOVE_OBJECT://TODO: la parte commentata rimuove solo dagli array, rimane nel db...
+            case ActionTypes.REMOVE_OBJECT:
                 //TODO: action.obj arriva come uuid e non come map nel caso di oggetti globali, fixare
                 if (action.objType == InteractiveObjectsTypes.PLAYTIME ||
                     action.objType == InteractiveObjectsTypes.SCORE ||
