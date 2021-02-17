@@ -180,23 +180,46 @@ export default class Bubble extends Component
         let active = 'active: false;';
         let radius = 9.9;
         let music;
+        let spatialSounds = [];
         let sfx;
         let audioVideo = {};
+        let spatialContainer;
         //TODO: assegnare una rotazione a scelta dell'utente agli oggetti audio
+        console.log(this.props.scene)
+
+        //creazione degli audio spaziali
+        if(this.props.audios){
+            spatialContainer = Object.values(this.props.audios).flat().map(a => {
+                if (a.isSpatial && a.scene === this.props.scene.uuid){
+                    console.log(a.name, " is spatial")
+                    console.log(a)
+                    spatialSounds.push(a);
+                    let volume = this.props.onDebugMode?0:a.volume;
+                    let position = a.vertices.split(' ');
+                    soundsHub["audios_"+ a.uuid] = AudioManager.generateAudio(a,
+                        position, volume);
+
+                    //TODO: in aframe_actions chiama la pausa anche su questi audio spaziali
+                }
+            })
+        }
+
         //creazione musica sottofondo
         if(this.props.scene.music !== undefined && this.props.audios){
             music = this.props.audios[this.props.scene.music]
             let volume = this.props.onDebugMode?0:music.volume;
-            if(soundsHub["audios_"+ music.uuid] === undefined)
-                soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0], volume);
+            if(soundsHub["audios_"+ music.uuid] === undefined){
+                let position = music.vertices.split(' ');
+                soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, position, volume);
+            }
         }
         //creazione effetti sottofondo
         if(this.props.scene.sfx !== undefined && this.props.audios){
             sfx = this.props.audios[this.props.scene.sfx]
             let volume = this.props.onDebugMode?0:sfx.volume;
             if(soundsHub["audios_"+ sfx.uuid] === undefined){
-                //sfx.volume = 50;
-                soundsHub["audios_"+ sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0], volume);
+                let position = music.vertices.split(' ');
+                soundsHub["audios_"+ sfx.uuid] = AudioManager.generateAudio(sfx, position, volume);
             }
         }
         //Carico audio incorporato nel video
@@ -232,6 +255,15 @@ export default class Bubble extends Component
                 isLoadingSphereVisible = false;
             }
             if(!this.props.editMode){
+                //play audio spaziali
+                console.log(spatialSounds)
+                if (spatialSounds){
+                    spatialSounds.forEach(a =>{
+                        console.log(a)
+                        soundsHub["audios_"+ a.uuid].play();
+                    })
+                }
+
                 //play musica sottofondo
                 if(music && soundsHub["audios_"+ music.uuid])
                     soundsHub["audios_"+ music.uuid].play();
@@ -259,7 +291,7 @@ export default class Bubble extends Component
                         <Entity position={'0.5 0 0.5'} scale={'-1 1 1'} rotation={'0 90 0'} text="align: center; side: double; wrapCount: 30; value:LOADING"></Entity>
                         <Entity position={'-0.5 0 0.5'} rotation={'0 90 0'} text="align: center; side: double; wrapCount: 30; value:LOADING"></Entity>
                     </Entity>
-                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 100 0'} primitive={primitive} visible={this.props.isActive}
+                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 0 0'} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
                         {curves}

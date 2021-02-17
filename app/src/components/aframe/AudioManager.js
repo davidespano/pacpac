@@ -19,7 +19,13 @@ function generateAudio(audio, position=null, volume) {
     let audioElementSource = resonanceee.default._context.createMediaElementSource(audioElement);
     let source = resonanceee.default.createSource();
     audioElementSource.connect(source.input);
-    source.setPosition(audioPosition);
+    if (Array.isArray(audioPosition)){
+        source.setPosition(audioPosition[0], audioPosition[1],audioPosition[2]);
+    }
+    else
+    {
+        source.setPosition(audioPosition);
+    }
     if(volume == undefined)
         volume=audio.volume
     source.setGain(parseInt(volume)/100)
