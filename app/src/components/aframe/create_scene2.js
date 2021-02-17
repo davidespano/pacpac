@@ -688,8 +688,6 @@ export default class VRScene extends React.Component {
             if (selectorObj == undefined)
                 selectorObj = selectorUuid;
 
-            if (selectorObj) //reset del valore quando c'è un altro tastierino
-                window.selectorState = 1;
             //TODO: i caratteri accentati non vengono visualizzati, cambiare font non sembra funzionare
             if (textObj) {//se l'oggetto textbox esiste genero la Entity
                 let textProperties = "baseline: center; side: double; wrapCount: "+ (100 - (textObj.properties.fontSize*4)) +
@@ -1134,12 +1132,15 @@ export default class VRScene extends React.Component {
     }
 
     //Metodo selettore
-    static nextSelectorState(selectorObj){ //da chiamare al click del selettore
-        window.selectorState+=1;
-        if(window.selectorState>selectorObj.properties.optionsNumber)
-            window.selectorState=1; //il primo stato è 1
-        //eventBus.emit(selectorObj.uuid + "-progress-STATE");
-        console.log("Nuovo stato del selettore:", window.selectorState)
+    static nextSelectorState(VRScene, runState, game_graph, selectorObj, activeSceneName){ //da chiamare al click del selettore
+        selectorObj.properties.state+=1;
+        if(selectorObj.properties.state>selectorObj.properties.optionsNumber)
+            selectorObj.properties.state=1; //il primo stato è 1
+        console.log("Nuovo stato del selettore:",selectorObj.properties.state)
+
+        document.getElementById(activeSceneName).needShaderUpdate = true;
+
+        VRScene.setState({runState: runState, graph: game_graph});
 
     }
 }

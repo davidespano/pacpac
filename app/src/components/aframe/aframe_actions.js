@@ -515,7 +515,7 @@ function executeAction(VRScene, rule, action) {
             break;
         case RuleActionTypes.PROGRESS:
             console.log("progress selector");
-            create_scene2.nextSelectorState(subject_obj);
+            create_scene2.nextSelectorState(VRScene, runState, game_graph, subject_obj, actual_scene_name);
             break;
         case "UPDATE_KEYPAD":
             /*non è un Action Types perchè non è un'azione vera e propria che si vede nelle regole
@@ -910,6 +910,19 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
 
     }, duration_switch)
 }
+
+/*function nextSelectorState (runState, game_graph, selectorObj, activeSceneName){ //da chiamare al click del selettore
+    window.selectorState+=1;
+    if(window.selectorState>selectorObj.properties.optionsNumber)
+        window.selectorState=1; //il primo stato è 1
+    console.log("Nuovo stato del selettore:", window.selectorState)
+
+    document.getElementById(activeSceneName).needShaderUpdate = true;
+
+    VRScene.setState({runState: runState, graph: game_graph});
+
+    console.log(selectorObj)
+}*/
 
 
 

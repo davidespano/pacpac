@@ -82,7 +82,7 @@ export default class Bubble extends Component
             Object.values(this.props.scene.objects).flat().forEach(obj => {
                 if(obj.media) {
                     Object.values(obj.media).forEach(media => {
-                        if (media !== null)
+                        if (media !== null && stores_utils.getFileType(media) === 'video')
                         {
                             document.getElementById("media_" + obj.uuid).currentTime = 0; //[Vittoria] riavvolge il video
                         }
@@ -185,7 +185,6 @@ export default class Bubble extends Component
         let audioVideo = {};
         let spatialContainer;
         //TODO: assegnare una rotazione a scelta dell'utente agli oggetti audio
-        console.log(this.props.scene)
 
         //creazione degli audio spaziali
         if(this.props.audios){
@@ -196,8 +195,6 @@ export default class Bubble extends Component
                     let position = a.vertices.split(' ');
                     soundsHub["audios_"+ a.uuid] = AudioManager.generateAudio(a,
                         position, volume);
-
-                    //TODO: in aframe_actions chiama la pausa anche su questi audio spaziali
                 }
             })
         }
@@ -434,8 +431,19 @@ export default class Bubble extends Component
                         //quindi non voglio media, solo quando la aggiorno
                         media = null;
                 }
+                else if(this.props.runState && obj.type === InteractiveObjectsTypes.SELECTOR){
+                    if(this.boolino){
+                        console.log(obj)
+                        let numberMedia = obj.properties.state;
+                        asset = document.getElementById("media" + numberMedia+"_" + obj.uuid);
+                        media = obj.media["media"+numberMedia];                    }
+                    else {
+                        asset = document.getElementById("media1_" + obj.uuid);
+                        media = obj.media.media1;
+                    }
+                }
 
-                else{ //se non è uno switch
+                else{ //se non è uno switch o selettore
                     if(obj.media && obj.media.media0)
                         media = obj.media.media0;
                 }
