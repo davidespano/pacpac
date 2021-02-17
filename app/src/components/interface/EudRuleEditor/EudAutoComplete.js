@@ -600,10 +600,13 @@ function combinationSubject(props){
             props.rule.event.subj_uuid === InteractiveObjectsTypes.PLAYER &&
             props.rule.event.action === RuleActionTypes.CLICK) {
             return true;
-        } else if (props.interactiveObjects.get(props.rule.event.subj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
-            props.rule.event.action === RuleActionTypes.REACH_KEYPAD) {
-            return true;
+        } else if (props.interactiveObjects.get(props.rule.event.subj_uuid)){
+            if(props.interactiveObjects.get(props.rule.event.subj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                props.rule.event.action === RuleActionTypes.REACH_KEYPAD) {
+                return true;
+            }
         }
+
     }
     return false;
 }

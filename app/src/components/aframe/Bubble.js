@@ -433,7 +433,6 @@ export default class Bubble extends Component
                 }
                 else if(this.props.runState && obj.type === InteractiveObjectsTypes.SELECTOR){
                     if(this.boolino){
-                        console.log(obj)
                         let numberMedia = obj.properties.state;
                         asset = document.getElementById("media" + numberMedia+"_" + obj.uuid);
                         media = obj.media["media"+numberMedia];                    }

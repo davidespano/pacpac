@@ -19,6 +19,7 @@ import ObjectToSceneStore from "../../../data/ObjectToSceneStore";
 import RulesStore from "../../../data/RulesStore";
 import EudRule from "./EudRule";
 import EventTypes from "../../../rules/EventTypes";
+import Values from "../../../rules/Values";
 
 let uuid = require('uuid');
 var ghostScene = null;
@@ -333,32 +334,45 @@ export default class EudRuleEditor extends Component {
 
     onCopyRuleClick(scene, global = false) {
         let newId = uuid.v4() + (global ? "_global" : "");
-        console.log(this.props.editor.ruleCopy)
 
         let copiedRule = this.props.editor.ruleCopy.set('uuid', newId);
+
+        //purtroppo devo farlo a mano perchè lo uuid è immutable
+        //evento
         let event = Action({
             uuid: uuid.v4(),
             subj_uuid: copiedRule.event.subj_uuid,
             action: copiedRule.event.action,
             obj_uuid: copiedRule.event.obj_uuid,
         });
-        //TODO condizione
+
+        //lista di azioni
         let listOfActions =[];
         copiedRule.actions.forEach(
-            action =>{
-                action.uuid=uuid.v4();
-                listOfActions.push(action);
+            a =>{
+                let newAction = Action({
+                    uuid: uuid.v4(),
+                    subj_uuid: a.subj_uuid,
+                    action: a.action,
+                    obj_uuid : a.obj_uuid
+                })
+                listOfActions.push(newAction);
             }
         )
-        console.log(copiedRule.conditions)
-        let actions = listOfActions;
-
         let rule = Rule({
             uuid: newId,
             name: copiedRule.name + '_copia',
             event: event,
-            actions: actions,
+            actions: listOfActions,
         });
+
+        //se c'è anche la condizione la aggiungo
+        if(Object.keys(copiedRule.condition).length !== 0){
+            let condition =  new Condition(uuid.v4(), copiedRule.condition.obj_uuid, copiedRule.condition.state,
+                copiedRule.condition.operator);
+            rule = rule.set('condition', condition)
+        }
+
 
         if(!global){
             this.props.addNewRule(scene, rule); //aggiungo la regola alla scena
