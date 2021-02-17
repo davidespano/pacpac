@@ -109,6 +109,18 @@ function executeAction(VRScene, rule, action) {
                     soundsHub['audios_' + VRScene.state.activeScene.uuid].currentTime = 0;
                 }
 
+                //cambio audio scena spaziale
+                let audioSpatialActiveScene = VRScene.state.activeScene.audios;
+                for(var i =0; i<audioSpatialActiveScene.length;i++){
+                    let audioSpatial =  VRScene.state.activeScene.audios[i];
+                    if(VRScene.state.audios[audioSpatial].isSpatial ){
+                        if (soundsHub['audios_' + audioSpatial]) {
+                            soundsHub['audios_' + audioSpatial].pause();
+                            soundsHub['audios_' + audioSpatial].currentTime = 0;
+                        }
+                    }
+                }
+
                 // se la scena di destinazione e di arrivo sono dello stesso tipo (2D e 2D es.) lancia una transizione normale,
                 // se sono di tipo diverso invece lancia la transizione 2D
                 if (objectVideo_transition !== 0 && objectVideo_transition !== null &&
@@ -140,7 +152,6 @@ function executeAction(VRScene, rule, action) {
                     changeStateSwitch(VRScene, runState, current_object, cursor, action);
                     break;
                 case 'COLLECTED':
-                 //   console.log(current_object.name + " collected");
                     changeStateObject(VRScene, runState, game_graph, 'COLLECTED', current_object, action.subj_uuid);
                     break;
                 case 'UNLOCKED':
@@ -390,12 +401,12 @@ function executeAction(VRScene, rule, action) {
             /*
             * Azione che si occupa di girare la camera verso un punto ben preciso impostato dall'utente
             */
-                let delay = game_graph['objects'].get(action.obj_uuid).properties.delay;
-                setTimeout(function () {
-                    //TODO: sarebbe opportuno controllare che la scena di destinazione sia 3D
-                    let pointOI = game_graph['objects'].get(action.obj_uuid);
-                    lookObject('curv' + action.obj_uuid, pointOI.vertices);
-                }, delay)
+            let delay = game_graph['objects'].get(action.obj_uuid).properties.delay;
+            setTimeout(function () {
+                //TODO: sarebbe opportuno controllare che la scena di destinazione sia 3D
+                let pointOI = game_graph['objects'].get(action.obj_uuid);
+                lookObject('curv' + action.obj_uuid, pointOI.vertices);
+            }, delay)
 
             break;
         case RuleActionTypes.DECREASE_STEP:
@@ -533,7 +544,7 @@ function executeAction(VRScene, rule, action) {
             eventBus.emit(event);
             return;
 
-            default:
+        default:
             console.log('not yet implemented');
             console.log(action);
 

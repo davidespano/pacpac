@@ -191,8 +191,6 @@ export default class Bubble extends Component
         if(this.props.audios){
             spatialContainer = Object.values(this.props.audios).flat().map(a => {
                 if (a.isSpatial && a.scene === this.props.scene.uuid){
-                    console.log(a.name, " is spatial")
-                    console.log(a)
                     spatialSounds.push(a);
                     let volume = this.props.onDebugMode?0:a.volume;
                     let position = a.vertices.split(' ');
@@ -209,8 +207,7 @@ export default class Bubble extends Component
             music = this.props.audios[this.props.scene.music]
             let volume = this.props.onDebugMode?0:music.volume;
             if(soundsHub["audios_"+ music.uuid] === undefined){
-                let position = music.vertices.split(' ');
-                soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, position, volume);
+                soundsHub["audios_"+ music.uuid] = AudioManager.generateAudio(music, [0,0,0], volume);
             }
         }
         //creazione effetti sottofondo
@@ -218,8 +215,7 @@ export default class Bubble extends Component
             sfx = this.props.audios[this.props.scene.sfx]
             let volume = this.props.onDebugMode?0:sfx.volume;
             if(soundsHub["audios_"+ sfx.uuid] === undefined){
-                let position = music.vertices.split(' ');
-                soundsHub["audios_"+ sfx.uuid] = AudioManager.generateAudio(sfx, position, volume);
+                soundsHub["audios_"+ sfx.uuid] = AudioManager.generateAudio(sfx, [0,0,0], volume);
             }
         }
         //Carico audio incorporato nel video
