@@ -186,6 +186,7 @@ function spatialAudioList(props, scene){
                     className={"select-file-btn btn"}
                     data-toggle="modal"
                     data-target="#manage-audio-modal"
+                    data-backdrop="false"
                 >
                     <img className={"action-buttons dropdown-tags-btn-topbar btn-img"} src={"icons/icons8-white-audio-50.png"}/>
                 </button>
@@ -194,6 +195,7 @@ function spatialAudioList(props, scene){
                     className={"action-buttons-container"}
                     data-toggle="modal"
                     data-target="#audio-form-modal"
+                    data-backdrop="false"
                     disabled={props.editor.audioToEdit == null}
                     onClick={() => {
                         props.isItNew(false);
