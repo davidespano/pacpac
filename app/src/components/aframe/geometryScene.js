@@ -303,7 +303,9 @@ export default class GeometryScene extends React.Component{
                     //Aggiorno le proprieta' del cursor
                     cursor.setAttribute('color', 'black');
                     cursor.removeEventListener('click', function pointSaver(evt) {});
-                    cursor.removeEventListener('click', this.handleFeedbackChange(), true);
+                    cursor.removeEventListener('mousedown', this.changeLineVisibilityEvent)
+                    cursor.removeEventListener('mouseup', this.handleFeedbackChange);   //[Vittoria] gestisce l'inserimento dei punti e aggiorna la scena
+
                     cursor.components.pointsaver.points = []; //Svuoto i punti dentro point saver
                     let points = scene.querySelectorAll(".points");
 
@@ -331,6 +333,7 @@ export default class GeometryScene extends React.Component{
             //[Vittoria] iniziamo a disegnare i punti, ripremendo E una volta che hai già disegnato, rimuove tutto quelo che è già stato
             // disegnato per rifarlo
             if(keyName === 'e' || keyName === 'E') {
+                window.linesVisibility = "true"
                 document.getElementById("startedit").style.color = 'red';
                 document.getElementById("deletelastpoint").style.color = 'white';
                 let lines = scene.querySelectorAll(".line");

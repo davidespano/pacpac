@@ -1098,7 +1098,7 @@ export default class VRScene extends React.Component {
 
     //Metodi tastierino
     static updateKeypadValue(newNumber, keypadUuid){
-        if(!window.keypadValue[keypadUuid]){
+        if(!window.keypadValue[keypadUuid] || window.keypadValue[keypadUuid] == null){
             window.keypadValue[keypadUuid] = "";
         }
         //valore cliccato
