@@ -51,6 +51,7 @@ let healthEntity = null;
 let healtUuid;
 let keypadUuid;
 let selectorUuid;
+let keypadList; //variabile utilizzata per la creazione delle regole del tastierino
 
 //variabili del timer pubbliche perchè accedute da render e tick
 window.keypadValue = {};
@@ -280,6 +281,7 @@ export default class VRScene extends React.Component {
      */
     createRuleListeners(){
         let me = this;
+        keypadList = [];
 
         //[Vittoria] ogni volta che c'è una scena fa tutte le regole del gioco
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
@@ -464,31 +466,36 @@ export default class VRScene extends React.Component {
                             }),);
                             actionExecution();
                         });
-                        let buttons = ObjectsStore.getState().get(rule.event.obj_uuid).properties.buttonsValues;
-                        let buttons_objects = []; //elenco oggetti btn presenti nel tastierino
-                        for(var i =0; i<Object.keys(buttons).length;i++){
-                            let uuid = Object.keys(buttons)[i]; //uuid del btn
-                            buttons_objects.push(ObjectsStore.getState().get(uuid));
-                        }
 
-                        for(var i =0; i<buttons_objects.length; i++){
-                            let eventClick = `PLAYER-click-${buttons_objects[i].uuid}`;
-                            let uuid=buttons_objects[i].uuid;
-                            eventBus.on(eventClick, function () {
-                                //qua devo mettere come actions il fatto che quando clicco il btn
-                                // viene aggiornata la variabile con la combinazione cliccata dall'utente
-                                let actionExecution = actionCallback(new Action({
-                                    uuid: null,
-                                    subj_uuid: rule.event.obj_uuid, //come soggetto gli passo il tastierino
-                                    action: "UPDATE_KEYPAD",
-                                    obj_uuid: uuid,
-                                }),);
-                                actionExecution();
+                        //inserisco nella keypadList ogni tastierino una sola volta e creo i suoi listener per i pulsanti
+                        if(!keypadList.includes(rule.event.obj_uuid)){
+                            keypadList.push(rule.event.obj_uuid);
 
-                            });
+                            let buttons = ObjectsStore.getState().get(rule.event.obj_uuid).properties.buttonsValues;
+                            let buttons_objects = []; //elenco oggetti btn presenti nel tastierino
+                            for(var i =0; i<Object.keys(buttons).length;i++){
+                                let uuid = Object.keys(buttons)[i]; //uuid del btn
+                                buttons_objects.push(ObjectsStore.getState().get(uuid));
+                            }
+
+                            for(var i =0; i<buttons_objects.length; i++){
+                                let eventClick = `PLAYER-click-${buttons_objects[i].uuid}`;
+                                let uuid=buttons_objects[i].uuid;
+                                eventBus.on(eventClick, function () {
+                                    //qua devo mettere come actions il fatto che quando clicco il btn
+                                    // viene aggiornata la variabile con la combinazione cliccata dall'utente
+                                    let actionExecution = actionCallback(new Action({
+                                        uuid: null,
+                                        subj_uuid: rule.event.obj_uuid, //come soggetto gli passo il tastierino
+                                        action: "UPDATE_KEYPAD",
+                                        obj_uuid: uuid,
+                                    }),);
+                                    actionExecution();
+
+                                });
+                            }
                         }
                     }
-
 
                     eventBus.on(event, function () {
                         let condition;
@@ -1098,24 +1105,41 @@ export default class VRScene extends React.Component {
 
     //Metodi tastierino
     static updateKeypadValue(newNumber, keypadUuid){
-        if(!window.keypadValue[keypadUuid] || window.keypadValue[keypadUuid] == null){
+        if(!window.keypadValue[keypadUuid] || window.keypadValue[keypadUuid] == null ||
+            window.keypadValue[keypadUuid] == "t" || window.keypadValue[keypadUuid] == "f"){
             window.keypadValue[keypadUuid] = "";
         }
         //valore cliccato
         window.keypadValue[keypadUuid] = window.keypadValue[keypadUuid].concat(newNumber);
+        //console.log("nuovo valore tastierino: ", window.keypadValue[keypadUuid])
+
     }
 
     static checkKeypadValue(keypadObj){
         //keypadObj.combination contiene la combinazione corretta
         //window.keypadValue contiene la combinazione cliccata dall'utente
-        if (keypadObj.properties.combination == window.keypadValue[keypadObj.uuid]) {
-            window.keypadValue[keypadUuid] = ""; //anche se il codice è giusto resetto la variabile per le prossime combinazioni
+        //TODO: se si hanno due regole di check sul tastierino, dopo la prima, il valore viene resettato, quindi il secondo controllo fallisce
+        let k;
+        //A seconda della regola, lo uuid potrebbe essere nella obj_uuid o nella uuid
+        console.log("check value ", window.keypadValue[keypadObj.uuid])
+        if(keypadObj.uuid == null){
+            k = keypadObj.obj_uuid;
+        }
+        else
+        {
+            k = keypadObj.uuid
+        }
+        //Controllo se il codice inserito corrisponde o se arrivo da uno stato di codice corretto ("t"), o errato ("f")
+        //il reset del codice inserito è stato spostato nella updateKeypadValue solo quando trovo "t" o "f" come stringa
+        //Altrimenti mettendo il reset qui, se ci sono due regole di fila che usano il check, la seconda darà sempre esito errato
+        if (keypadObj.properties.combination == window.keypadValue[k] || window.keypadValue[k] == "t") {
+            window.keypadValue[k] = "t"; //anche se il codice è giusto resetto la variabile per le prossime combinazioni
             console.log("codice corretto: ", keypadObj.properties.combination);
             return true;
         }
         else {
-            console.log("il codice che hai inserito è errato: ", window.keypadValue[keypadObj.uuid]);
-            window.keypadValue[keypadObj.uuid] = ""; //se il codice è sbagliato resetto il valore inserito dall'utente
+            console.log("il codice che hai inserito è errato: ", window.keypadValue[k]);
+            window.keypadValue[k] = "f"; //se il codice è sbagliato resetto il valore inserito dall'utente
             window.keypadWrong = true;
             return false;
         }
