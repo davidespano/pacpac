@@ -526,6 +526,7 @@ function executeAction(VRScene, rule, action) {
             let btn_value = keypad.properties.buttonsValues[uuid_btn_pressed]; //valore associato al btn premuto
             create_scene2.updateKeypadValue(btn_value, keypad.uuid); //aggiorno il valore del tastierino
             current_object = game_graph['objects'].get(uuid_btn_pressed);
+            //TODO: aggiungere il play del media del pulsante quando viene premuto
             break;
         case "CHECK_KEYPAD":
             current_object = game_graph['objects'].get(rule.event.obj_uuid);

@@ -249,10 +249,8 @@ export default class Bubble extends Component
             }
             if(!this.props.editMode){
                 //play audio spaziali
-                console.log(spatialSounds)
                 if (spatialSounds){
                     spatialSounds.forEach(a =>{
-                        console.log(a)
                         soundsHub["audios_"+ a.uuid].play();
                     })
                 }
