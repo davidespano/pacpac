@@ -899,8 +899,7 @@ function changeStateSwitch(VRScene, runState, current_object, cursor, action) {
 
         //l'oggetto cambia stato e aggiorno lo shader
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
-        console.log(action)
-        console.log(runState)
+
         if(action.action == "CHECK_KEYPAD")
         {
             runState[action.obj_uuid].state = newState;
