@@ -60,6 +60,21 @@ export default class RuleBotWidget extends Component {
     campi corretti allora creo la scena con tutto corretto, se no risolvo i conflitti in locale. */
     handleNewUserMessage = async (newMessage) => {
         let scelte = ["Si", "No"];
+        if (newMessage === "Nuovo oggetto") {
+            /* Creazione nuovo oggetto quando premo il tasto "nuovo oggetto" (caso di oggetti di quel tipo già presenti
+            * ma me ne serve uno nuovo */
+
+            //Creo l'oggetto di default e salvo il suo nome in "this.props.ruleBot.oggetto".
+            Actions.updateBotObject(await this.createDefaultObject(this.props, this.getObjectTypeFromIntent(this.props.ruleBot.intent)));
+            addResponseMessage("Creazione nuovo oggetto " + this.getObjectTypeFromIntent(this.props.ruleBot.intent).toLowerCase());
+            /* Dopo aver aggiunto l'oggetto mancante, viene richiesto se gli si vuole aggiungere la geometria. */
+            addResponseMessage("Per poter usare questo oggetto hai bisogno di aggiungergli una geometria. " +
+                "Vuoi andare all'editor di geometria?");
+            Actions.updateBotMissingElement("richiestaGeometria");
+            this.printButtonsOnChatBot(scelte);
+
+            return;
+        }
         /* Si da l'opportunità all'utente di resettare in ogni momento la regola che sta scrivendo e di scriverne una da capo. */
         if (newMessage.trim().toLowerCase() !== "reset") {
             /* Si da l'opportunità all'utente di richiedere un messaggio di help in ogni momento della creazione della regola. */
@@ -522,6 +537,8 @@ export default class RuleBotWidget extends Component {
     /* Metodo per controllare se tutti gli elementi della regola transizione che vogliamo creare sono corretti. */
     transitionElementsControl() {
         let transizioni = this.returnObjectNames("TRANSITION");
+        transizioni.push("Nuovo oggetto");
+        console.log("transizioni", transizioni)
         let finalScenes = this.returnFinalScenesNames();
         let scelte = ["Si", "No"];
         let statoTransizione = ["Attivabile", "Non attivabile", "Visibile", "Non visibile"];
@@ -543,7 +560,8 @@ export default class RuleBotWidget extends Component {
                 addResponseMessage("La scena finale che hai inserito non esiste. Perfavore scegli tra una di queste: ");
             }
             this.printButtonsOnChatBot(finalScenes);
-        } else if (!this.doesObjectExists(this.props.ruleBot.oggetto, "TRANSITION") && this.props.ruleBot.tipoRisposta !== "azione") { //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
+        } else if (!this.doesObjectExists(this.props.ruleBot.oggetto, "TRANSITION") && this.props.ruleBot.tipoRisposta !== "azione") {
+            //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
             if (this.returnObjectNames("TRANSITION").length > 0) { //Se esiste qualche transizione le elenchiamo
 
                 Actions.updateBotMissingElement('oggetto'); //Manca il nome dell'oggetto oppure è inesistente
@@ -682,6 +700,7 @@ export default class RuleBotWidget extends Component {
     * della transizione, solo che è adattato all'oggetto switch. */
     switchElementsControl() {
         let interruttori = this.returnObjectNames("SWITCH");
+        interruttori.push("Nuovo oggetto")
         let statoInterruttore = ["Acceso", "Spento"];
         let scelte = ["Si", "No"];
 
@@ -947,6 +966,7 @@ export default class RuleBotWidget extends Component {
     * l'unica azione che si può fare è raccoglierla. */
     keyElementControl() {
         let chiavi = this.returnObjectNames("KEY");
+        chiavi.push("Nuovo oggetto")
         let scelte = ["Si", "No"];
         let statoChiave = ["Raccolta", "Non raccolta"];
 
