@@ -251,7 +251,7 @@ export default class RuleBotWidget extends Component {
         /* Per creare la regola ho bisogno di ricavarmi l'oggetto in se, non mi basta infatti solo il nome.
         * Dunque richiamo la funzione "returnObjectByName" che grazie al tipo e al nome dell'oggetto mi restituisce
         * l'oggetto corretto. */
-        let object = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent));
+        let object = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent), false);
         //Creo la regola
         switch (this.props.ruleBot.intent) {
             case "transizione":
@@ -294,7 +294,7 @@ export default class RuleBotWidget extends Component {
                 newRule = this.addPadlockAction(this.props.ruleBot.ultimaRegolaCreata, padlockObject, this.props.ruleBot.statoFinale);
                 break;
             case "interazioneChiave":
-                let keyObject = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent));
+                let keyObject = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent), false);
                 newRule = this.addKeyAction(this.props.ruleBot.ultimaRegolaCreata, keyObject, this.props.ruleBot.statoFinale);
                 break;
             default:
@@ -314,7 +314,7 @@ export default class RuleBotWidget extends Component {
         * è verificata o meno. Una volta ottenuto l'oggetto lo passiamo al metodo che aggiunge effettivamente
         * (tramite uuid dell'oggetto in questione, la regola generale e lo stato che deve avere l'oggetto)
         * ad una regola esistente una condizione. */
-        object = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent));
+        object = this.returnObjectByName(this.props.ruleBot.oggetto, this.getObjectTypeFromIntent(this.props.ruleBot.intent), false);
         newRule = this.addObjectCondition(this.props.ruleBot.ultimaRegolaCreata, object.uuid, this.props.ruleBot.statoIniziale);
 
         Actions.updateBotLastRule(newRule);
@@ -393,7 +393,7 @@ export default class RuleBotWidget extends Component {
     /* [LucaAs] Torna true se il nome dell'oggetto passato come parametro (stringa) esiste, false altrimenti. Bisogna passare
        anche il tipo dell'oggetto, in modo tale da usare la stessa funzione per tutti gli oggetti. */
     doesObjectExists(objectName, objectType) {
-        let objectNames = this.returnObjectNames(objectType);
+        let objectNames = this.returnObjectNames(objectType, false);
         for (var i = 0; i < objectNames.length; i++) {
             if (objectName === objectNames[i]) {
                 return true;
@@ -402,29 +402,56 @@ export default class RuleBotWidget extends Component {
         return false;
     }
 
-    /* [LucaAs] Ritorna i nomi degli oggetti della scena corrente che hanno il tipo passato come parametro. */
-    returnObjectNames(objectType) {
+    /* [LucaAs] Ritorna i nomi degli oggetti della scena corrente che hanno il tipo passato come parametro.
+    * se il parametro scene è true restituisce gli oggetti della scena, altrimenti tutti gli oggetti */
+    returnObjectNames(objectType, scene=true) {
         let sceneObjects = this.props.interactiveObjects.filter(x => x.type === objectType);
-
-        let objects = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneObjects);
-        for (var i = 0; i < objects.length; i++) {
-            objects[i] = objects[i].name;
+        //TODO [Vittoria] metti scene a true per avere solo gli oggetti di scena
+        if(scene){
+            let objects = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneObjects);
+            for (var i = 0; i < objects.length; i++) {
+                objects[i] = objects[i].name;
+            }
+            return objects;
         }
-        return objects;
+        else{
+            let objects = [];
+            sceneObjects.forEach((value, key) => {
+                    objects.push(value.name);
+                }
+            );
+            return objects;
+        }
+
     }
 
-    /* [LucaAs] Ritorna l'oggetto corrispondente al nome e al tipo passato. */
-    returnObjectByName(objectName, objectType) {
+    /* [LucaAs] Ritorna l'oggetto corrispondente al nome e al tipo passato.
+    * se il parametro scene è true restituisce gli oggetti della scena, altrimenti tutti gli oggetti */
+    returnObjectByName(objectName, objectType,  scene=true) {
         let sceneObjects = this.props.interactiveObjects.filter(x =>
             x.type === objectType);
 
-        let objects = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneObjects);
-        for (var i = 0; i < objects.length; i++) {
-            if (objectName === objects[i].name) {
-                return objects[i];
+        //TODO [Vittoria] metti scene a true per avere solo gli oggetti di scena
+        if(scene){
+            let objects = mapSceneWithObjects(this.props, this.props.scenes.get(this.props.currentScene), sceneObjects);
+            for (var i = 0; i < objects.length; i++) {
+                if (objectName === objects[i].name) {
+                    return objects[i];
+                }
             }
         }
-        return undefined;
+        else{
+            let result=undefined;
+            sceneObjects.forEach((value, key) => {
+                    if(value.name === objectName){
+                        result= value;
+                    }
+                }
+            );
+            return result;
+        }
+
+        //return undefined;
     }
 
     /* Crea un oggetto di default quando non esistono oggetti inerenti alla regola che stiamo creando
@@ -536,9 +563,8 @@ export default class RuleBotWidget extends Component {
 
     /* Metodo per controllare se tutti gli elementi della regola transizione che vogliamo creare sono corretti. */
     transitionElementsControl() {
-        let transizioni = this.returnObjectNames("TRANSITION");
+        let transizioni = this.returnObjectNames("TRANSITION", false);
         transizioni.push("Nuovo oggetto");
-        console.log("transizioni", transizioni)
         let finalScenes = this.returnFinalScenesNames();
         let scelte = ["Si", "No"];
         let statoTransizione = ["Attivabile", "Non attivabile", "Visibile", "Non visibile"];
@@ -562,7 +588,7 @@ export default class RuleBotWidget extends Component {
             this.printButtonsOnChatBot(finalScenes);
         } else if (!this.doesObjectExists(this.props.ruleBot.oggetto, "TRANSITION") && this.props.ruleBot.tipoRisposta !== "azione") {
             //Faccio la stessa cosa per il nome della transizione, ma dopo aver inserito la scena finale corretta.
-            if (this.returnObjectNames("TRANSITION").length > 0) { //Se esiste qualche transizione le elenchiamo
+            if (transizioni.length > 0) { //Se esiste qualche transizione le elenchiamo
 
                 Actions.updateBotMissingElement('oggetto'); //Manca il nome dell'oggetto oppure è inesistente
                 if (this.props.ruleBot.oggetto === "") {
@@ -699,7 +725,7 @@ export default class RuleBotWidget extends Component {
     * lo settiamo su "elementoMancante" in modo tale da ricavarcelo poi in "handleNewUserMessage". Nota: è simile a quello
     * della transizione, solo che è adattato all'oggetto switch. */
     switchElementsControl() {
-        let interruttori = this.returnObjectNames("SWITCH");
+        let interruttori = this.returnObjectNames("SWITCH",false);
         interruttori.push("Nuovo oggetto")
         let statoInterruttore = ["Acceso", "Spento"];
         let scelte = ["Si", "No"];
@@ -965,13 +991,13 @@ export default class RuleBotWidget extends Component {
     * In realtà per la chiave basta controllare se ne esistono o se quella che ha inserito l'utente esista. Questo perchè
     * l'unica azione che si può fare è raccoglierla. */
     keyElementControl() {
-        let chiavi = this.returnObjectNames("KEY");
+        let chiavi = this.returnObjectNames("KEY", false);
         chiavi.push("Nuovo oggetto")
         let scelte = ["Si", "No"];
         let statoChiave = ["Raccolta", "Non raccolta"];
 
         //Controllo se nella scena esistono chiavi se no chiedo all'utente se ne vuole creare una di default.
-        if (this.returnObjectNames("KEY").length > 0) {
+        if (chiavi.length > 0) {
 
             /* Controllo che il NOME della chiave inserito dall'utente esista tra le chiavi esistenti nel gioco. */
             if (!this.doesObjectExists(this.props.ruleBot.oggetto, "KEY")) {
