@@ -124,6 +124,7 @@ export function convertRelativeCoordinates (verticesP,assetsDimention) {
     return vertices;
 }
 
+//TODO: i video verticali vengono stretchati e ruotati
 export function calculate2DSceneImageBounds(sourceWidth, sourceHeight){
     // [davide] altezza del piano che contiene l'immagine nel sistema di riferimento aframe.
     // valore stabilito in modo empirico
@@ -131,6 +132,11 @@ export function calculate2DSceneImageBounds(sourceWidth, sourceHeight){
     let destWidth = (destHeight/document.documentElement.clientHeight) * document.documentElement.clientWidth;
     let scaleX = destWidth / sourceWidth;
     let scaleY = destHeight / sourceHeight;
+    /*if(scaleX>scaleY)
+        console.log("scena verticale")
+    elseF
+        console.log("scena orizzontale")*/
+
     let scale = scaleX > scaleY ? scaleY : scaleX;
     sourceWidth *= scale;
     sourceHeight *= scale;

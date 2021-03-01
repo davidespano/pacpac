@@ -22,7 +22,7 @@ import SceneAPI from "../../utils/SceneAPI";
 import Values from "../../rules/Values";
 import {calculate2DSceneImageBounds} from "./aframe_curved";
 import Actions from "../../actions/Actions";
-window.linesVisibility = 'true';
+window.linesVisibility = true;
 
 
 /**
@@ -75,6 +75,7 @@ export function givePoints(props) {
  * 2.alla fine dell'inserimento del punto nella geometria, per ripristinare le linee
  */
 export function changeLinesVisibility(){
+    console.log("visibilità " + window.linesVisibility + " passa a " + !window.linesVisibility)
     let scene;
     let scale;
     if(document.querySelector('a-sky')){
@@ -91,15 +92,15 @@ export function changeLinesVisibility(){
     }
 
     let lines = scene.querySelectorAll('.line');
-    if (window.linesVisibility == 'true'){
-        window.linesVisibility = 'false';
+    if (window.linesVisibility == true){
+        window.linesVisibility = false;
         if(lines){
             lines.forEach(l =>{
                 scene.removeChild(l);
             })
         }
     }else{
-        window.linesVisibility = 'true';
+        window.linesVisibility = true;
         let point_saver = document.querySelector('#cursor').components.pointsaver;
         let a_point = point_saver.points;
         let lengthLine = a_point.length;
@@ -251,7 +252,6 @@ export default class GeometryScene extends React.Component{
                     tmp.setAttribute('line', 'start: ' + a_point[(lengthLine - 2)].toArray().join(" "));
                     tmp.setAttribute('line', 'end: ' + a_point[(lengthLine - 1)].toArray().join(" "));
                     tmp.setAttribute('class', 'line');
-                    tmp.setAttribute('visible',window.linesVisibility.toString())
                     scene.appendChild(tmp);
                 }
             } else {
@@ -333,7 +333,9 @@ export default class GeometryScene extends React.Component{
             //[Vittoria] iniziamo a disegnare i punti, ripremendo E una volta che hai già disegnato, rimuove tutto quelo che è già stato
             // disegnato per rifarlo
             if(keyName === 'e' || keyName === 'E') {
-                window.linesVisibility = "true"
+                if (!window.linesVisibility){
+                    changeLinesVisibility()
+                }
                 document.getElementById("startedit").style.color = 'red';
                 document.getElementById("deletelastpoint").style.color = 'white';
                 let lines = scene.querySelectorAll(".line");
@@ -402,6 +404,8 @@ export default class GeometryScene extends React.Component{
                     InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
                         this.props.interactiveObjects.get(this.props.currentObject));
                 }
+                //TODO: QUESTO changeLinesVisibility FORSE VA TOLTO
+                //changeLinesVisibility();
 
                 Actions.editModeOn();
 

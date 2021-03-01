@@ -911,8 +911,6 @@ export default class VRScene extends React.Component {
     /**
      * questa funzione serve a creare gli asset per le regole dei cambi di sfondo
      * normalmente venivano caricati assieme alla scena contenente la regola e persi subito dopo
-     * può essere resa più efficente se aggiungo solo i media delle regole appartenenti al currentlevel
-     * ma funziona bene anche così, don't fix it until is broken
      * @param gameId
      * @returns {[]}
      */

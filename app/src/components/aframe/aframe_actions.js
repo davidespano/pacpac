@@ -526,7 +526,9 @@ function executeAction(VRScene, rule, action) {
             let btn_value = keypad.properties.buttonsValues[uuid_btn_pressed]; //valore associato al btn premuto
             create_scene2.updateKeypadValue(btn_value, keypad.uuid); //aggiorno il valore del tastierino
             current_object = game_graph['objects'].get(uuid_btn_pressed);
-            //TODO: aggiungere il play del media del pulsante quando viene premuto
+            //TODO: aggiunto il play del media del pulsante quando viene premuto, però ricarica anche la scena, portare anche nel caso non sia legato ad un tastierino
+            buttonMedia(VRScene, runState, current_object, cursor);
+
             break;
         case "CHECK_KEYPAD":
             current_object = game_graph['objects'].get(rule.event.obj_uuid);
@@ -847,6 +849,52 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     }
 
     VRScene.setState({runState: runState, graph: game_graph});
+}
+
+//TODO: funzione per far partire il media di un pulsante, da finire
+function buttonMedia(VRScene, runState, current_object, cursor){
+    let duration_switch = 0;
+
+    //media da caricare: se sto passando al media OFF allora prendo media0, altrimenti media 1
+    let media = current_object.media.media0;
+
+    let mediaObject =  document.getElementById( 'media0'+ '_' + current_object.uuid);
+
+    if(mediaObject!= null){
+        cursor.setAttribute('material', 'visible: false');
+        cursor.setAttribute('raycaster', 'far: 0.1');
+
+        if (store_utils.getFileType(media) === 'video') {
+            mediaObject.loop = false;
+            mediaObject.currentTime = 0;
+            mediaObject.play();
+        }
+        /*questa durata è quella che ritarda la partenza di un eventuale media video
+        servirebbe a non far fare altro al giocatore mentre è in play, ma per ora lo lasciamo così*/
+        //duration_switch = (parseInt(mediaObject.duration) * 1000);
+        duration_switch = (parseInt(mediaObject.duration) * 1);
+    }
+
+    //TODO controlla audio
+    let audio = current_object.audio.audio0;
+    let idAudio = 'audio0_';
+    if (soundsHub[idAudio + audio])
+        soundsHub[idAudio + audio].play();
+
+
+    setTimeout(function () {
+        cursor.setAttribute('raycaster', 'far: 10000');
+        cursor.setAttribute('material', 'visible: true');
+        cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+        cursor.setAttribute('color', 'black');
+
+        //l'oggetto cambia stato e aggiorno lo shader
+        document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+
+
+        VRScene.setState({runState: runState});
+
+    }, duration_switch)
 }
 
 /*
