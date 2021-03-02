@@ -19,6 +19,7 @@ import StoryEditor from "../components/interface/StoryEditor";
 import ActionTypes from "../actions/ActionTypes";
 import RuleBotWidget from "../components/interface/RuleBotWidget";
 import GraphViewContent from "../components/interface/GraphViewContent";
+import IndexTutorial from "../components/interface/IndexTutorial";
 
 function AppView(props) {
 
@@ -101,6 +102,13 @@ function AppView(props) {
                 <div>
                     <TopBar {...props}/>
                     <GraphViewContent {...props} />
+                </div>
+            );
+        case ActionTypes.HELP_MODE_ON:
+            return (
+                <div>
+                    <TopBar {...props}/>
+                    <IndexTutorial {...propsAssets}/>
                 </div>
             );
         default:

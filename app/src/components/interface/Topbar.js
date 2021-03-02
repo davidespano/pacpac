@@ -128,6 +128,12 @@ function TopBar(props){
                                      className={'action-buttons'}/>
                     </a>
 
+                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-help"
+                       aria-controls="nav-playoff" aria-selected="false"
+                       onClick={() => {
+                                handleHelpMode(props)
+                       }} >Video Tutorial
+                    </a>
 
                     <div id={'topbar-game-title'} className={'navbar-brand'}>
                         {props.editor.gameTitle}
@@ -157,10 +163,7 @@ function TopBar(props){
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
                         </figure>
-                        <figure className={'nav-figures'} onClick={()=> window.open("www.google.it", "_blank")}>
-                            <img src={"icons/icons8-manuale-100.png"}/>
-                            <figcaption>Video guida</figcaption>
-                        </figure>
+
                     </div>
                 </div>
                 <div className={"tab-pane fade"}
@@ -385,6 +388,13 @@ export function handleNavbarSelection(props){
 function handleAssetsMode(props){
     if(props.editor.mode !== ActionTypes.FILE_MANAGER_MODE_ON){
         props.switchToFileManager();
+        document.getElementById("nav-tabContent").hidden = true;
+    }
+}
+
+function handleHelpMode(props){
+    if(props.editor.mode !== ActionTypes.HELP_MODE_ON){
+        props.switchToHelpMode();
         document.getElementById("nav-tabContent").hidden = true;
     }
 }
