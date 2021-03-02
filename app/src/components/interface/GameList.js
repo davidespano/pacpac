@@ -10,40 +10,77 @@ import SetGameId from "./SetGameId";
 import './../../Store/Store-style.css'
 import Actions from "../../actions/Actions";
 
+const guestUsername = "ospite";
 
 function GameList(props) {
+    let gamesDiv;
+    if(props.editor.user.username === guestUsername)
+    {
+        gamesDiv =
+            <div className="list-group login-home">
+                <h4 className={"loginlabel"}>Benvenuto Ospite</h4>
+                <div className={"gameList"}>
+                    <h5 className={"loginlabel"}>Caricamento in corso</h5>
+                </div>
+                <div id={'store-container'}>
+                    <div id={'div-newGame'} className={'form-group'}>
+                        <button disabled={true} id={'btn-newGame'} className="btn login-btn" data-toggle="modal" data-target="#add-game-modal">Nuovo gioco</button>
+                    </div>
+                    <div id={'div-store'} className={'form-group'}>
+                        <button id={'btn-store'} className="btn login-btn"
+                                onClick={evt=>sendCookie(props.editor.user)}>Store</button>
+                    </div>
+                </div>
+
+                <div className={'form-group'}>
+                    <a id={'logout-link'} onClick={()=> {
+                        props.reset();
+                        window.localStorage.clear();
+                        props.switchToLoginMode();
+                    }}>Logout</a>
+                </div>
+                <div className={'form-group'}>
+                    <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
+                </div>
+            </div>
+    }
+    else
+    {
+        gamesDiv =
+            <div className="list-group login-home">
+                <h4 className={"loginlabel"}>I tuoi giochi</h4>
+                <div className={"gameList"}>
+                    {games(props)}
+                </div>
+                <div id={'store-container'}>
+                    <div id={'div-newGame'} className={'form-group'}>
+                        <button id={'btn-newGame'} className="btn login-btn" data-toggle="modal" data-target="#add-game-modal">Nuovo gioco</button>
+                    </div>
+                    <div id={'div-store'} className={'form-group'}>
+                        <button id={'btn-store'} className="btn login-btn"
+                                onClick={evt=>sendCookie(props.editor.user)}>Store</button>
+                    </div>
+                </div>
+
+                <div className={'form-group'}>
+                    <a id={'logout-link'} onClick={()=> {
+                        props.reset();
+                        window.localStorage.clear();
+                        props.switchToLoginMode();
+                    }}>Logout</a>
+                </div>
+                <div className={'form-group'}>
+                    <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
+                </div>
+            </div>
+    }
 
     return (
         <React.Fragment>
             <div className={"loginBackground"}>
                 <InputGameForm {...props} />
                 <SetGameId {...props}/>
-                <div className="list-group login-home">
-                    <h4 className={"loginlabel"}>I tuoi giochi</h4>
-                    <div className={"gameList"}>
-                        {games(props)}
-                    </div>
-                    <div id={'store-container'}>
-                        <div id={'div-newGame'} className={'form-group'}>
-                            <button id={'btn-newGame'} className="btn login-btn" data-toggle="modal" data-target="#add-game-modal">Nuovo gioco</button>
-                        </div>
-                        <div id={'div-store'} className={'form-group'}>
-                            <button id={'btn-store'} className="btn login-btn"
-                                    onClick={evt=>sendCookie(props.editor.user)}>Store</button>
-                        </div>
-                    </div>
-
-                    <div className={'form-group'}>
-                        <a id={'logout-link'} onClick={()=> {
-                            props.reset();
-                            window.localStorage.clear();
-                            props.switchToLoginMode();
-                        }}>Logout</a>
-                    </div>
-                    <div className={'form-group'}>
-                        <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
-                    </div>
-                </div>
+                {gamesDiv}
             </div>
         </React.Fragment>
     );
