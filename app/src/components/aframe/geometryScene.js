@@ -75,7 +75,7 @@ export function givePoints(props) {
  * 2.alla fine dell'inserimento del punto nella geometria, per ripristinare le linee
  */
 export function changeLinesVisibility(){
-    console.log("visibilità " + window.linesVisibility + " passa a " + !window.linesVisibility)
+    //console.log("visibilità " + window.linesVisibility + " passa a " + !window.linesVisibility)
     let scene;
     let scale;
     if(document.querySelector('a-sky')){
@@ -527,7 +527,6 @@ export default class GeometryScene extends React.Component{
      */
     generateAssets(){
         return this.currentLevel.map(sceneName =>{
-            console.log("SceneName", sceneName)
             return (
                 <Asset
                     key={sceneName.toString()}

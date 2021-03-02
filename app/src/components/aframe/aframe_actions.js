@@ -872,7 +872,7 @@ function buttonMedia(VRScene, runState, current_object, cursor){
         /*questa durata è quella che ritarda la partenza di un eventuale media video
         servirebbe a non far fare altro al giocatore mentre è in play, ma per ora lo lasciamo così*/
         //duration_switch = (parseInt(mediaObject.duration) * 1000);
-        duration_switch = (parseInt(mediaObject.duration) * 1);
+        duration_switch = (parseInt(mediaObject.duration) * 1000);
     }
 
     //TODO controlla audio
@@ -891,8 +891,11 @@ function buttonMedia(VRScene, runState, current_object, cursor){
         //l'oggetto cambia stato e aggiorno lo shader
         document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
 
-
         VRScene.setState({runState: runState});
+        //Qui faccio tornare il media al primo frame
+        mediaObject.pause();
+        mediaObject.currentTime = 0;
+
 
     }, duration_switch)
 }
