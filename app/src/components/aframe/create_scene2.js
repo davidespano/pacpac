@@ -1167,6 +1167,7 @@ export default class VRScene extends React.Component {
         if(selectorObj.properties.state>selectorObj.properties.optionsNumber)
             selectorObj.properties.state=1; //il primo stato è 1
         console.log("Nuovo stato del selettore:",selectorObj.properties.state)
+        runState[selectorObj.uuid].state =  selectorObj.properties.state;
 
         document.getElementById(activeSceneName).needShaderUpdate = true;
 

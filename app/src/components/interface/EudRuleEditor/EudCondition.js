@@ -92,6 +92,7 @@ export default class EudCondition extends Component {
             case Operators.NOT_EQUAL_NUM:
             case Operators.GREATER_THAN:
             case Operators.GREATER_EQUAL:
+            case Operators.IS_SELECTOR_STATE:
             case Operators.LESS_THAN:
             case Operators.LESS_EQUAL:
                 valueRendering =

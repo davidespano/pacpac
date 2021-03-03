@@ -181,6 +181,8 @@ function operatorUuidToString(operatorUuid) {
             return "\>";
         case Operators.GREATER_EQUAL:
             return "\>=";
+        case Operators.IS_SELECTOR_STATE:
+            return "è nello stato"
         default:
             return "";
     }

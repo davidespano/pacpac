@@ -417,6 +417,16 @@ const OperatorsMap = Immutable.Map([
             uuid: Operators.GREATER_THAN,
         },
     ],
+    [
+        Operators.IS_SELECTOR_STATE,
+        {
+            subj_type: [InteractiveObjectsTypes.SELECTOR],
+            type: "operator",
+            name: toString.operatorUuidToString(Operators.IS_SELECTOR_STATE),
+            uuid: Operators.IS_SELECTOR_STATE,
+
+        },
+    ],
 
 ]);
 
@@ -638,6 +648,7 @@ const ValuesMap = Immutable.Map([
         },
 
     ],
+
 ]);
 
 export {

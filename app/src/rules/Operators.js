@@ -7,6 +7,7 @@ const Operators = {
     LESS_EQUAL : 'LESS_EQUAL',
     GREATER_THAN : 'GREATER_THAN',
     GREATER_EQUAL : 'GREATER_EQUAL',
+    IS_SELECTOR_STATE: 'IS_SELECTOR_STATE',
     IN : 'IN',
 };
 
