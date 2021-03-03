@@ -2350,3 +2350,33 @@ textarea {
 
 
 /* End Graph css */
+
+/* Video Tutorial css*/
+
+.grid_video{
+    margin-left: 11%;
+    margin-top: 3%;
+}
+.grid_video p{
+    color: #D38042;
+    text-align: center;
+    font-size: 18px;
+}
+
+.grid_video img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#video_assets{
+    margin-left: 12%;
+    margin-right: 1%;
+}
+
+#video_first_row{
+    margin-left: 13%;
+    margin-bottom: 3%;
+}
+
+/* End Video Tutorial css*/

@@ -102,6 +102,13 @@ const Actions = {
         })
     },
 
+    helpModeOn(){
+        AppDispatcher.dispatch({
+            type: ActionTypes.SET_INTERFACE_MODE,
+            mode: ActionTypes.HELP_MODE_ON
+        })
+    },
+    
     audioPositioning(status){
         AppDispatcher.dispatch({
             type: ActionTypes.AUDIO_POSITIONING,

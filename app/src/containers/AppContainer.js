@@ -89,6 +89,7 @@ function getState() {
         switchToStoryEditorMode: Actions.storyEditorModeOn,
         switchToGameList: Actions.gameSelectionModeOn,
         switchToGraphView: Actions.graphViewModeOn,
+        switchToHelpMode: Actions.helpModeOn,
 
         audioPositioning: Actions.audioPositioning,
         debugSaves: Actions.debugSaves,
