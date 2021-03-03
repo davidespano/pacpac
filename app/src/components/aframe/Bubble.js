@@ -282,7 +282,7 @@ export default class Bubble extends Component
                         <Entity position={'0.5 0 0.5'} scale={'-1 1 1'} rotation={'0 90 0'} text="align: center; side: double; wrapCount: 30; value:LOADING"></Entity>
                         <Entity position={'-0.5 0 0.5'} rotation={'0 90 0'} text="align: center; side: double; wrapCount: 30; value:LOADING"></Entity>
                     </Entity>
-                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 0 0'} primitive={primitive} visible={this.props.isActive}
+                    <Entity _ref={elem => this.nv = elem} geometry="primitive: sphere"  scale={'-1 1 1 '} rotation={'0 90 0'} primitive={primitive} visible={this.props.isActive}
                             id={this.props.scene.name} src={'#' + background} radius={radius}
                             material={material} play_video={active}>
                         {curves}
@@ -465,15 +465,6 @@ export default class Bubble extends Component
                 //Aggiungo il media alla lista video
                 aux.minFilter = THREE.NearestFilter;
                 video.push(aux);
-
-                /*if(altAux){
-                    altAux.minFilter = THREE.NearestFilter;
-                    video.push(altAux);
-                }
-                //TODO chiedere a richi perchè
-                if(obj.type==="BUTTON"){
-                    aux = nullMask;
-                }*/
 
                 //Carico la maschera associata al media dell'oggetto
                 //[Vittoria] FIX PER EUD:

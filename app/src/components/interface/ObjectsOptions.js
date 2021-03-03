@@ -521,7 +521,7 @@ function generateSpecificProperties(object, objectScene, props){
                             step={1}
                             marks
                             min={3}
-                            max={10}//TODO selettore, assegnare uno pseudonimo ad ogni opzione?
+                            max={10}
                             onChange={()=> interface_utils.setPropertyFromId(object,'optionsNumber',"optionsNumber", props)}
                             onBlur={()=> interface_utils.setPropertyFromId(object,'optionsNumber',"optionsNumber", props)}
                         />

@@ -404,8 +404,6 @@ export default class GeometryScene extends React.Component{
                     InteractiveObjectAPI.saveObject(this.props.scenes.get(this.props.objectToScene.get(this.props.currentObject)),
                         this.props.interactiveObjects.get(this.props.currentObject));
                 }
-                //TODO: QUESTO changeLinesVisibility FORSE VA TOLTO
-                //changeLinesVisibility();
 
                 Actions.editModeOn();
 
