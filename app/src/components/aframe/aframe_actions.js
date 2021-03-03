@@ -526,8 +526,6 @@ function executeAction(VRScene, rule, action) {
             let btn_value = keypad.properties.buttonsValues[uuid_btn_pressed]; //valore associato al btn premuto
             create_scene2.updateKeypadValue(btn_value, keypad.uuid); //aggiorno il valore del tastierino
             current_object = game_graph['objects'].get(uuid_btn_pressed);
-            //TODO: aggiunto il play del media del pulsante quando viene premuto, però ricarica anche la scena, portare anche nel caso non sia legato ad un tastierino
-            buttonMedia(VRScene, runState, current_object, cursor);
 
             break;
         case "CHECK_KEYPAD":
@@ -852,7 +850,7 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
 }
 
 //TODO: funzione per far partire il media di un pulsante, da finire
-function buttonMedia(VRScene, runState, current_object, cursor){
+export function buttonMedia( current_object, cursor){
     let duration_switch = 0;
 
     //media da caricare: se sto passando al media OFF allora prendo media0, altrimenti media 1
@@ -889,9 +887,9 @@ function buttonMedia(VRScene, runState, current_object, cursor){
         cursor.setAttribute('color', 'black');
 
         //l'oggetto cambia stato e aggiorno lo shader
-        document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
+        //document.getElementById(VRScene.state.activeScene.name).needShaderUpdate = true;
 
-        VRScene.setState({runState: runState});
+        //VRScene.setState({runState: runState});
         //Qui faccio tornare il media al primo frame
         mediaObject.pause();
         mediaObject.currentTime = 0;
