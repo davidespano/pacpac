@@ -28,6 +28,17 @@ export default function evalCondition(c, gameState, keypad=null) {
             return create_scene2.checkKeypadValue(keypad)
         }
 
+        //devo controllare lo stato del selettore
+        if(c.operator===Operators.IS_SELECTOR_STATE){
+            let selector = gameState[c.obj_uuid];
+            let selectorState = selector.state; //stato effettivo del selettore
+            let ruleState = c.state; //stato richiesto dalla regola
+            if(ruleState==selectorState){
+                return true
+            }
+            return false
+        }
+
         let state = gameState[c.obj_uuid].state;
         if(state === undefined){
             state = gameState[c.obj_uuid][c.state.toLowerCase()];
