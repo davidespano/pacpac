@@ -450,7 +450,8 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.TEXTBOX,
                 InteractiveObjectsTypes.TIMER,
                 InteractiveObjectsTypes.HEALTH,
-                InteractiveObjectsTypes.SCORE
+                InteractiveObjectsTypes.SCORE,
+                InteractiveObjectsTypes.TEXTBOX
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.VISIBLE),
@@ -526,7 +527,8 @@ const ValuesMap = Immutable.Map([
                 InteractiveObjectsTypes.TEXTBOX,
                 InteractiveObjectsTypes.TIMER,
                 InteractiveObjectsTypes.HEALTH,
-                InteractiveObjectsTypes.SCORE
+                InteractiveObjectsTypes.SCORE,
+                InteractiveObjectsTypes.TEXTBOX
             ],
             verb_type: [RuleActionTypes.CHANGE_VISIBILITY],
             name: toString.valueUuidToString(Values.INVISIBLE),
