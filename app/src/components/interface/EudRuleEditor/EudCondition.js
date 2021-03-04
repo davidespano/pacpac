@@ -110,6 +110,7 @@ export default class EudCondition extends Component {
                         updateNumericRule={(props, value) => this.updateNumericRule(props, value)}
                     />;
                 break;
+                //TODO Per il selettore sarebbe meglio mettere un controllo affinchè non inserisca uno stato che non esiste
             default:
                 let valueCompletion = this.showCompletion(actionId, "value");
                 let value = this.getValuesReference(this.props.condition.state);

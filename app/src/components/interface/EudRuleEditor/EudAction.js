@@ -100,17 +100,18 @@ export default class EudAction extends Component {
                     step = this.props.interactiveObjects.get(subj).properties.step;
                 }
                 objectRendering =
-                    <EudRuleStaticPart
+                    <EudRuleNumericPart
                         interactiveObjects={this.props.interactiveObjects}
                         rules={this.props.rules}
                         rule={this.props.rule}
                         rulePartType={this.props.rulePartType}
                         subject={subject}
-                        complement={this.props.action.object_uuid}
+                        complement={this.props.action.obj_uuid}
                         verb={this.props.action}
                         ruleEditorCallback={this.props.ruleEditorCallback}
-                        originalText={step}
+                        originalText={this.props.action.obj_uuid}
                         role={"object"}
+                        updateNumericRule={(props, value) => this.updateNumericRule(props, value)}
                     />;
                 break;
             case RuleActionTypes.REACH_TIMER:
