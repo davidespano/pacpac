@@ -466,6 +466,14 @@ function getCompletions(props, global) {
                                 .filter(x => //lascio solo la action
                                    x.uuid === RuleActionTypes.REACH_KEYPAD) //"arriva a", perchè aggiunge alla combinazione non lo gestiamo come evento
                         }
+                        if(props.subject.type ===InteractiveObjectsTypes.COUNTER){ //se siamo nell'event e il soggetto è il contatore
+                            items = RuleActionMap
+                                .filter(x => //tolgo queste azioni dall'evento
+                                    x.subj_type.includes(props.subject.type) //quelle del contatore sì ma tolgo
+                                    && x.uuid !== RuleActionTypes.INCREASE_STEP //queste ci saranno nell'action
+                                    && x.uuid !== RuleActionTypes.DECREASE_STEP
+                                    && x.uuid !== RuleActionTypes.INCREASE)
+                        }
                         return {items, graph}
                     }
                     let items = RuleActionMap.filter(x => x.uuid === RuleActionTypes.CLICK || x.uuid === RuleActionTypes.IS);
@@ -489,6 +497,12 @@ function getCompletions(props, global) {
                         && x.uuid !== RuleActionTypes.ENTER_SCENE) : RuleActionMap.filter(
                         x => x.uuid !== RuleActionTypes.ENTER_SCENE
                     );
+                    if(props.subject.type ===InteractiveObjectsTypes.COUNTER){ //se siamo nell'action e il soggetto è il contatore
+                        items = RuleActionMap
+                            .filter(x => //tolgo "arriva a " che sarà usato solo nell'evento
+                                x.subj_type.includes(props.subject.type)
+                                && x.uuid !== RuleActionTypes.REACH_COUNTER )
+                    }
 
                     return {items, graph};
                 }

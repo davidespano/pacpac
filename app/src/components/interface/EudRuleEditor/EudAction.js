@@ -92,6 +92,7 @@ export default class EudAction extends Component {
         let objectRendering = null;
 
         switch(this.props.action.action){
+            case RuleActionTypes.REACH_COUNTER:
             case RuleActionTypes.INCREASE_STEP:
             case RuleActionTypes.DECREASE_STEP:
                 let subj = this.props.action.subj_uuid;

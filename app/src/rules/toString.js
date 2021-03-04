@@ -59,6 +59,8 @@ function eventTypeToString(eventType) {
             return 'aggiunge alla combinazione';
         case RuleActionTypes.REACH_KEYPAD:
             return 'arriva a';
+        case RuleActionTypes.REACH_COUNTER:
+            return 'arriva a';
         default:
             return "";
     }

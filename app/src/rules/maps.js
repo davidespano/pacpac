@@ -311,6 +311,16 @@ const RuleActionMap = Immutable.Map([
             uuid: RuleActionTypes.REACH_KEYPAD,
         },
     ],
+    [
+        RuleActionTypes.REACH_COUNTER,
+        {
+            type: "operation",
+            subj_type: [InteractiveObjectsTypes.COUNTER],
+            obj_type: 'number',
+            name: toString.eventTypeToString(RuleActionTypes.REACH_COUNTER),
+            uuid: RuleActionTypes.REACH_COUNTER,
+        },
+    ]
 ]);
 
 const OperatorsMap = Immutable.Map([

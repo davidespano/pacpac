@@ -539,7 +539,6 @@ export default class VRScene extends React.Component {
                     if(rule.event.action==="ENTER_SCENE" && me.props.currentScene == rule.event.obj_uuid){
                         eventBus.emit(event);
                     }
-
                     break;
             }
         })
@@ -739,7 +738,8 @@ export default class VRScene extends React.Component {
                         <a-plane id={this.state.activeScene.name + 'timerIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.TIMER)} position={timerImgPosition}
                                  scale={geometryPropertiesTMimg}  emissive={"#cecece"} emissiveIntensity="0.8"
-                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>                          <Entity visible={true} geometry={geometryPropertiesTM} position={timerPosition}
+                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>
+                                 <Entity visible={true} geometry={geometryPropertiesTM} position={timerPosition}
                                 id={timerID} material={'shader: flat; opacity: 0.85; color: black;'}
                                 text={textProperties} visible={visibility}>
                         </Entity>
@@ -766,7 +766,8 @@ export default class VRScene extends React.Component {
                         <a-plane id={this.state.activeScene.name + 'gametimeIMG'}
                         src={interface_utils.getObjImg(InteractiveObjectsTypes.PLAYTIME)} position={positionPTimg}
                                  scale={geometryPropertiesPTimg}  emissive={"#cecece"} emissiveIntensity="0.8"
-                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>                        <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
+                                 blending={"subtractive"} color={"#000000"} opacity="0.8" visible={visibility}/>
+                                 <Entity visible={true} geometry={geometryPropertiesPT} position={positionPT}
                                 id={this.state.activeScene.name + 'gameTime'} material={'shader: flat; opacity: 0.85; color: black;'}
                                 text={textPropertiesPT} visible={visibility}>
                         </Entity>

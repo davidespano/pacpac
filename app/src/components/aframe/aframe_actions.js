@@ -421,6 +421,7 @@ function executeAction(VRScene, rule, action) {
             }
 
             VRScene.setState({runState: runState, graph: game_graph});
+            eventBus.emit(`${action.subj_uuid}-reach_counter-${runState[action.subj_uuid].state}`);
             break;
         case RuleActionTypes.INCREASE_STEP:
             console.log("RuleActionTypes.INCREASE_STEP");
@@ -431,6 +432,8 @@ function executeAction(VRScene, rule, action) {
             runState[action.subj_uuid].state = parseInt(runState[action.subj_uuid].state);
             runState[action.subj_uuid].state += parseInt(game_graph['objects'].get(action.subj_uuid).properties.step);
             VRScene.setState({runState: runState, graph: game_graph});
+            let myevent = `${action.subj_uuid}-reach_counter-${runState[action.subj_uuid].state}`
+            eventBus.emit(myevent);
             break;
         case RuleActionTypes.INCREASE:
             console.log("RuleActionTypes.INCREASE", sceneName, "type: ", sceneName.type);
@@ -444,6 +447,7 @@ function executeAction(VRScene, rule, action) {
                 case InteractiveObjectsTypes.COUNTER:
                     runState[action.subj_uuid].state = numberValue;
                     VRScene.setState({runState: runState, graph: game_graph});
+                    eventBus.emit(`${rule.event.subj_uuid}-reach_counter-${numberValue}`);
                     break;
                 case InteractiveObjectsTypes.HEALTH:
                     create_scene2.changeHealthValue(numberValue, actual_scene_name);
