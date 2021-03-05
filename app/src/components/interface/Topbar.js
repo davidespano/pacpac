@@ -128,7 +128,12 @@ function TopBar(props){
                                      className={'action-buttons'}/>
                     </a>
 
-
+                    <a className="nav-item nav-link" id="nav-objects-play" data-toggle="tab" role="tab" href="#nav-help"
+                       aria-controls="nav-playoff" aria-selected="false"
+                       onClick={() => {
+                           handleHelpMode(props)
+                       }} >Video Tutorial
+                    </a>
 
                     <div id={'topbar-game-title'} className={'navbar-brand'}>
                         {props.editor.gameTitle}
@@ -158,7 +163,7 @@ function TopBar(props){
                             <img src={"icons/icons8-audio-100.png"}/>
                             <figcaption>Gestisci audio</figcaption>
                         </figure>
-                        <figure hidden={false} className={'nav-figures'}
+                        <figure hidden={"true"} className={'nav-figures'}
                                 onClick={()=> window.open("https://www.youtube.com/playlist?list=PLW0GF_T7ZSihCDERY0ZCwud7KhY2mNp2a", "_blank")}>
                             <img src={"icons/icons8-manuale-100.png"}/>
                             <figcaption>Video guida</figcaption>
