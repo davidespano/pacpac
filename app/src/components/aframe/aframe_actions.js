@@ -854,7 +854,7 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
 }
 
 //TODO: funzione per far partire il media di un pulsante, da finire
-export function buttonMedia( current_object, cursor){
+export function buttonMedia(current_object, cursor){
     let duration_switch = 0;
     //media da caricare: se sto passando al media OFF allora prendo media0, altrimenti media 1
     let media = current_object.media.media0;
@@ -863,7 +863,10 @@ export function buttonMedia( current_object, cursor){
     if(mediaObject!= null){
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
+        //let id = this.props.gameId ? this.props.gameId : `${window.localStorage.getItem("gameID")}`;
 
+        //let aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
+        //aux.minFilter = THREE.NearestFilter;
         if (store_utils.getFileType(media) === 'video') {
             mediaObject.loop = false;
             mediaObject.currentTime = 0;

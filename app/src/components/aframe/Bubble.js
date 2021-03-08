@@ -433,7 +433,9 @@ export default class Bubble extends Component
                     if(this.boolino){
                         let numberMedia = obj.properties.state;
                         asset = document.getElementById("media" + numberMedia+"_" + obj.uuid);
-                        media = obj.media["media"+numberMedia];                    }
+                        media = obj.media["media"+numberMedia];
+                        if (stores_utils.getFileType(media) === 'video') asset.play();
+                    }
                     else {
                         asset = document.getElementById("media1_" + obj.uuid);
                         media = obj.media.media1;
@@ -480,6 +482,9 @@ export default class Bubble extends Component
                     }
                 }else{
                     aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                }
+                if (obj.type === InteractiveObjectsTypes.BUTTON){
+                    aux = new THREE.TextureLoader().load(`/null-mask.jpg`);
                 }
 
                 aux.minFilter = THREE.NearestFilter;
