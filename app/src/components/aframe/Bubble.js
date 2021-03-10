@@ -84,7 +84,16 @@ export default class Bubble extends Component
                     Object.values(obj.media).forEach(media => {
                         if (media !== null && stores_utils.getFileType(media) === 'video')
                         {
-                            document.getElementById("media_" + obj.uuid).currentTime = 0; //[Vittoria] riavvolge il video
+                            if(document.getElementById("media_" + obj.uuid) != null){
+                                document.getElementById("media_" + obj.uuid).currentTime = 0; //[Vittoria] riavvolge il video
+                            }
+                            else if(document.getElementById("media0_" + obj.uuid) != null){
+                                document.getElementById("media0_" + obj.uuid).currentTime = 0; //[Vittoria] riavvolge il video
+                            }
+                            else if(document.getElementById("media1_" + obj.uuid) != null) {
+                                document.getElementById("media1_" + obj.uuid).currentTime = 0; //[Vittoria] riavvolge il video
+                            }
+                            console.log(media);
                         }
                     });
                 }
