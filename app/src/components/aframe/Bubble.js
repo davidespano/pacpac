@@ -438,6 +438,7 @@ export default class Bubble extends Component
                         //quindi non voglio media, solo quando la aggiorno
                         media = null;
                 }
+
                 else if(this.props.runState && obj.type === InteractiveObjectsTypes.SELECTOR){
                     if(this.boolino){
                         let numberMedia = obj.properties.state;
@@ -466,11 +467,23 @@ export default class Bubble extends Component
                     return;
                 }
 
-                if(asset.nodeName === 'VIDEO'){
+                if(asset.nodeName === 'VIDEO' && obj.type !== InteractiveObjectsTypes.BUTTON){
                     aux = new THREE.VideoTexture(asset);
-                } else if(media) {
-                    //se media è null è perchè è uno switch e nello switch il media iniziale non viene caricato (solo al passaggio on/off)
-                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
+                }
+                if(media) {
+                    if (obj.type === InteractiveObjectsTypes.BUTTON && media){
+                        if(this.boolino){
+                            aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
+
+                        }
+                        else{
+
+                        }
+                    }else{
+                        //se media è null è perchè è uno switch e nello switch il media iniziale non viene caricato (solo al passaggio on/off)
+                        aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
+                    }
+
                 }
 
                 //Aggiungo il media alla lista video
@@ -492,9 +505,7 @@ export default class Bubble extends Component
                 }else{
                     aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
                 }
-                if (obj.type === InteractiveObjectsTypes.BUTTON){
-                    aux = new THREE.TextureLoader().load(`/null-mask.jpg`);
-                }
+
 
                 aux.minFilter = THREE.NearestFilter;
                 masks.push(aux);
