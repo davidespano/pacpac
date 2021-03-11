@@ -198,6 +198,8 @@ export default class VRScene extends React.Component {
             }
             if(window.timerTime %  1 == 0)
             {
+                console.log(timerUuid)
+                console.log(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
                 eventBus.emit(timerUuid + "-"+"reach_timer-" + Math.floor(window.timerTime))
             }
         }
@@ -630,7 +632,14 @@ export default class VRScene extends React.Component {
         textboxEntity = null;
         textboxUuid = this.state.activeScene.objects.textboxes[0];
         timerEntity = null;
-        timerUuid = this.state.activeScene.objects.timers[0];
+        if(typeof this.state.activeScene.objects.timers[0] == "object"){
+            timerUuid = this.state.activeScene.objects.timers[0].uuid;
+        }
+        else
+        {
+            timerUuid = this.state.activeScene.objects.timers[0];
+        }
+
         gameTimeEntity = null;
         gameTimeUuid = this.state.activeScene.objects.playtime[0];
         scoreEntity = null;
@@ -664,6 +673,7 @@ export default class VRScene extends React.Component {
             if (textObj == undefined)//per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
                 textObj = textboxUuid;
 
+            console.log(timerUuid)
             let timerObj = graph.objects.get(timerUuid); //recupero l'oggetto timer
             if (timerObj == undefined)
                 timerObj = timerUuid;
@@ -1024,7 +1034,6 @@ export default class VRScene extends React.Component {
     //Metodi timer
     static timerStop() {
         window.timerIsRunning = false;
-
     }
 
     static timerStart() {

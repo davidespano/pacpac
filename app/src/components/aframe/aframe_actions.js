@@ -891,8 +891,10 @@ export function buttonMedia(current_object, cursor){
         cursor.setAttribute('color', 'black');
 
         //Qui faccio tornare il media al primo frame
-        mediaObject.pause();
-        mediaObject.currentTime = 0;
+        if (store_utils.getFileType(media) === 'video') {
+            mediaObject.pause();
+            mediaObject.currentTime = 0;
+        }
     }, duration_switch)
 }
 
