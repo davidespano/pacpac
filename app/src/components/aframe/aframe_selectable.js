@@ -8,6 +8,7 @@ import stores_utils from "../../data/stores_utils";
 import ObjectsStore from "../../data/ObjectsStore";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import {buttonMedia} from "./aframe_actions";
+import VRScene from "./create_scene2";
 
 const {mediaURL} = settings;
 const AFRAME = require('aframe');
@@ -201,7 +202,7 @@ function setClick(event) {
                         soundsHub['audio0_' + obj_obj.audio.audio0].play();
                 }
                 let cursor = document.querySelector('#cursor');
-                buttonMedia( obj_obj, cursor);
+                buttonMedia(obj_obj, cursor);
 
             }
         }

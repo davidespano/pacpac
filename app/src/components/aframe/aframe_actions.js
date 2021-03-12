@@ -8,6 +8,8 @@ import SceneAPI from "../../utils/SceneAPI";
 import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes";
 import RulesStore from "../../data/RulesStore";
 import create_scene2 from "./create_scene2";
+import ObjectToSceneStore from "../../data/ObjectToSceneStore";
+import ScenesStore from "../../data/ScenesStore";
 
 const eventBus = require('./eventBus');
 const THREE = require('three');
@@ -860,6 +862,7 @@ export function buttonMedia(current_object, cursor){
     let media = current_object.media.media0;
     let mediaObject =  document.getElementById( 'media0'+ '_' + current_object.uuid);
 
+    console.log("media: ", media, "media obj: ", mediaObject)
     if(mediaObject!= null){
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
@@ -889,6 +892,12 @@ export function buttonMedia(current_object, cursor){
         cursor.setAttribute('material', 'visible: true');
         cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
         cursor.setAttribute('color', 'black');
+
+        let scene_uuid= ObjectToSceneStore.getState().get(current_object.uuid);
+        let scene_name = ScenesStore.getState().get(scene_uuid).name;
+
+        console.log(scene_name, scene_uuid, ScenesStore.getState())
+        document.getElementById(scene_name).needShaderUpdate = true;
 
         //Qui faccio tornare il media al primo frame
         if (store_utils.getFileType(media) === 'video') {
