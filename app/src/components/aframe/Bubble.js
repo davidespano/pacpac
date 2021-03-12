@@ -77,6 +77,7 @@ export default class Bubble extends Component
     }
 
     componentDidUpdate(){
+        console.log("sono dentro la component update")
         //Riavolgo i video delle bolle adiacenti, se sono gia' stati avviati in precedenza non partono in automatico dall'inizio
         if(!this.props.isActive) { //[Vittoria] se non è la scena attiva se ci sono dei video li riporta a zero
             Object.values(this.props.scene.objects).flat().forEach(obj => {
@@ -471,7 +472,8 @@ export default class Bubble extends Component
                     aux = new THREE.VideoTexture(asset);
                 }
                 if(media) {
-                    if (obj.type === InteractiveObjectsTypes.BUTTON && media){
+                    if (obj.type === InteractiveObjectsTypes.BUTTON){
+                        //[Vittoria] boolino ci dice se la funzione è stata chiamata da componentDidMount (false) o componentDidUpdate (true)
                         if(this.boolino){
                             aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
 
