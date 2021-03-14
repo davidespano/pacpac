@@ -481,7 +481,10 @@ export default class Bubble extends Component
                         else{
 
                         }
-                    }else{
+                        //[Vittoria] FIX PER EUD:
+                        //se ho un media nella transizione e non ha maschera gli metto la white mask
+                        var eud=true; //TODO METTERE A FALSE e controllare questo if qua sotto
+                    }else if(asset.nodeName != 'VIDEO' && eud){
                         //se media è null è perchè è uno switch e nello switch il media iniziale non viene caricato (solo al passaggio on/off)
                         aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
                     }
@@ -493,9 +496,7 @@ export default class Bubble extends Component
                 video.push(aux);
 
                 //Carico la maschera associata al media dell'oggetto
-                //[Vittoria] FIX PER EUD:
-                //se ho un media nella transizione e non ha maschera gli metto la white mask
-                let eud=false; //TODO METTERE A FALSE
+
                 if(eud){
                     let whiteMask = new THREE.TextureLoader().load("https://i.ibb.co/BqMr8j6/white-mask.png");
                     if(obj.type===InteractiveObjectsTypes.TRANSITION && obj.media.media0 !== null){
