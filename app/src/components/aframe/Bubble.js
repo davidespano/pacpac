@@ -471,6 +471,9 @@ export default class Bubble extends Component
                 if(asset.nodeName === 'VIDEO' && obj.type !== InteractiveObjectsTypes.BUTTON){
                     aux = new THREE.VideoTexture(asset);
                 }
+                //[Vittoria] FIX PER EUD:
+                //se ho un media nella transizione e non ha maschera gli metto la white mask
+                var eud=true; //TODO METTERE A FALSE e controllare questo if qua sotto
                 if(media) {
                     if (obj.type === InteractiveObjectsTypes.BUTTON){
                         //[Vittoria] boolino ci dice se la funzione è stata chiamata da componentDidMount (false) o componentDidUpdate (true)
@@ -481,9 +484,7 @@ export default class Bubble extends Component
                         else{
 
                         }
-                        //[Vittoria] FIX PER EUD:
-                        //se ho un media nella transizione e non ha maschera gli metto la white mask
-                        var eud=true; //TODO METTERE A FALSE e controllare questo if qua sotto
+
                     }else if(asset.nodeName != 'VIDEO' && eud){
                         //se media è null è perchè è uno switch e nello switch il media iniziale non viene caricato (solo al passaggio on/off)
                         aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
