@@ -145,6 +145,9 @@ export default class VRScene extends React.Component {
     loadingManager() {
         let sphere = document.getElementById(this.state.activeScene.name)
         let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
+        if (stores_utils.getFileType(this.state.activeScene.img) === 'img'){
+            sceneLoaded = true;
+        }
         if(!sceneLoaded){
             //ora la loading sphere è spenta di default, prima era il contrario
             //questo set visibile serve a fare in modo che appaia solo se la scena non è caricata
@@ -162,6 +165,7 @@ export default class VRScene extends React.Component {
                     sceneLoaded = true;
                 }
             }
+
             if (sceneLoaded) //quando la scena è caricata, rendo invisibile la bolla di caricamento
             {
                 loadingsphere.setAttribute('visible', 'false');
