@@ -1,3 +1,11 @@
+:root {
+    --pacOrange:#EF562D;
+    --pacBorder:#DD4124;
+    --pacHover: #ff4500;
+    --pacRuleHighlight: #FFD8AC;
+    --pacItemHover: #FFD8AC;
+}
+
 .leftbar { grid-area: leftbar; }
 .rightbar { grid-area: rightbar; }
 .scene { grid-area: scene; }
@@ -406,7 +414,7 @@ div.rules{
     border: none;
     background: none;
     background-color: #FFFFFF;
-    color: #EF562D !important;
+    color: var(--pacOrange) !important;
     font-family: playregular;
     cursor: pointer;
 }
@@ -417,7 +425,7 @@ div.rules{
 }
 
 .navbar-toggler{
-    background-color: #EF562D;
+    background-color: var(--pacOrange);
     color: #FFFFFF !important;
 
 }
@@ -431,8 +439,8 @@ div.rules{
 
 .buttonConferm{
     color: #FFFFFF;
-    border-color: #DD4124;
-    background-color: #EF562D;
+    border-color: var(--pacBorder);
+    background-color: var(--pacOrange);
     width: 40%;
 }
 
@@ -459,14 +467,14 @@ div.rules{
 
 .btn{
     color: #FFFFFF;
-    border-color: #EF562D;
-    background-color: #EF562D;
+    border-color: var(--pacOrange);
+    background-color: var(--pacOrange);
 }
 
 
 .btn:enabled:hover{
-    background-color: #ff724f;
-    border-color: #ff724f;
+    background-color: var(--pacHover);
+    border-color: var(--pacBorder);
 }
 
 
@@ -481,7 +489,7 @@ div.rules{
 }
 
 .custom-select{
-    border-color: #EF562D;
+    border-color: var(--pacOrange);
 }
 
 .hidden-inputs {
@@ -532,7 +540,7 @@ div.rules{
 .debug-disabled, .debug-disabled.active{
     opacity: 0.5;
     cursor: auto;
-    background-color: #EF562D !important;
+    background-color: var(--pacOrange) !important;
     color: white !important;
 }
 
@@ -541,7 +549,7 @@ div.rules{
 }
 
 .nav-link{
-    background-color: #EF562D;
+    background-color: var(--pacOrange);
     color: #FFFFFF;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
@@ -557,7 +565,7 @@ div.rules{
 }
 
 #ruleObjSelection{
-    border: 1px solid #EF562D;
+    border: 1px solid var(--pacOrange);
     border-radius: 5px;
     width: 30%;
 }
@@ -674,7 +682,7 @@ div.rules{
 }
 
 .nav-figures:hover{
-    color: orangered;
+    color: var(--pacHover);
 }
 
 .nav-figures > img {
@@ -775,7 +783,7 @@ figcaption {
 .objectsList-element:hover, .objectsList-element-delete-button:hover {
     background-color: rgba(0, 0, 0, .1);
     cursor: pointer;
-    color: orangered;
+    color: var(--pacHover);
     border-radius: 5px;
 }
 
@@ -875,7 +883,7 @@ figcaption {
     position: absolute;
     background-color: #f1f1f1;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-    border: 1px #DD4124 solid;
+    border: 1px var(--pacBorder) solid;
     z-index: 2;
     cursor: pointer;
 }
@@ -905,14 +913,14 @@ figcaption {
 
 .tag-manager-btn {
     color: white;
-    background-color: #EF562D;
-    border-color: #DD4124;
+    background-color: var(--pacOrange);
+    border-color: var(--pacBorder);
     margin-right: 1%;
 }
 
 .tag-manager-btn:hover {
-    background-color: #EF562D;
-    border-color: #DD4124;
+    background-color: var(--pacOrange);
+    border-color: var(--pacBorder);
 }
 
 
@@ -960,7 +968,7 @@ figcaption {
 }
 
 .tag-remove-button, .tag-form-button {
-    background-color: #EF562D;
+    background-color: var(--pacOrange);
     border: 1px solid white;
     border-radius: 5px;
     position:absolute;
@@ -1036,7 +1044,7 @@ figcaption {
 }
 
 .audio-list-element:hover{
-    background-color: #FFD8AC;
+    background-color: var(--pacRuleHighlight);
 }
 
 .no-audio{
@@ -1175,7 +1183,7 @@ figcaption {
 }
 
 .audio-names:hover, .selected-audio{
-    background-color: #FFD8AC;
+    background-color: var(--pacItemHover);
 }
 
 .audio-names {
@@ -1445,7 +1453,7 @@ li > span {
 }
 
 .eudCompletionPopup li:hover{
-    background-color: #FFD8AC;
+    background-color: var(--pacItemHover);
 }
 
 .eudCompletionPopupForGraph ul{
@@ -1486,7 +1494,7 @@ li > span {
 }
 
 .eudCompletionPopupForGraph li:hover{
-    background-color: #FFD8AC;
+    background-color: var(--pacItemHover);
 }
 
 
@@ -1513,7 +1521,7 @@ input.eudObjectString[type=text] {
     overflow: no-display;
     width: 100%;
     min-width: 50px;
-    color: #EF562D;
+    color: var(--pacOrange);
     background-color: transparent;
     cursor: pointer;
     box-sizing: border-box;
@@ -1552,7 +1560,7 @@ input.eudObjectSeconds[type=text] {
     overflow: no-display;
     width: 100%;
     min-width: 50px;
-    color: #EF562D;
+    color: var(--pacOrange);
     background-color: transparent;
     cursor: pointer;
     box-sizing: border-box;
@@ -1591,7 +1599,7 @@ input.eudObjectMinutes[type=text] {
     overflow: no-display;
     width: 100%;
     min-width: 50px;
-    color: #EF562D;
+    color: var(--pacOrange);
     background-color: transparent;
     cursor: pointer;
     box-sizing: border-box;
@@ -1630,7 +1638,7 @@ input.eudObjectDigits[type=text] {
     overflow: no-display;
     width: 100%;
     min-width: 50px;
-    color: #EF562D;
+    color: var(--pacOrange);
     background-color: transparent;
     cursor: pointer;
     box-sizing: border-box;
@@ -1861,7 +1869,7 @@ h6 {
 }
 
 .eudHighlight{
-    background-color: #FFD8AC;
+    background-color: var(--pacRuleHighlight);
 }
 
 .eudAction > button{
@@ -1888,7 +1896,7 @@ h6 {
     border: 1px solid black;
     border-radius: 5px;
     background-color: white;
-    color: #ef562d;
+    color: var(--pacOrange);
 }
 
 /* LOGIN FORM */
@@ -1898,8 +1906,8 @@ h6 {
 }
 
 #register-link, #logout-link, #gameId-link {
-    color: #EF562D;
-    text-decoration: underline #EF562D;
+    color: var(--pacOrange);
+    text-decoration: underline var(--pacOrange);
 }
 
 #register-link:hover, #logout-link:hover, #gameId-link:hover{
@@ -1908,7 +1916,7 @@ h6 {
 
 .loginlabel{
     text-align: center;
-    color: #EF562D;
+    color: var(--pacOrange);
 }
 
 .login-home{
@@ -1920,7 +1928,7 @@ h6 {
     padding: 20px;
     width: 450px;
     height: 500px;
-    border: solid 2px #EF562D;
+    border: solid 2px var(--pacOrange);
     border-radius: 25px;
 }
 
@@ -1944,7 +1952,7 @@ h6 {
 }
 
 .game-item:hover{
-    background-color: #FFD8AC;
+    background-color: var(--pacItemHover);
     cursor: pointer;
 }
 
@@ -2147,7 +2155,7 @@ h6 {
 }
 
 .saves-list:hover {
-    color: #EF562D;
+    color: var(--pacOrange);
 }
 
 .load-button {
@@ -2180,7 +2188,7 @@ textarea {
 }
 
 .rich-text-buttons-active {
-    border-color: #ef562d;
+    border-color: var(--pacOrange);
 }
 
 .modal-backdrop {background: none;}
@@ -2324,7 +2332,7 @@ textarea {
 #saveBtn{
     width: 94%;
     color: white;
-    background-color:#EF562D;
+    background-color:var(--pacOrange);
     border: 1px solid transparent;
     padding: .375rem ;
     font-size: 1rem;
@@ -2336,7 +2344,7 @@ textarea {
 #saveBtn2{
     width: 94%;
     color: white;
-    background-color:#EF562D;
+    background-color:var(--pacOrange);
     border: 1px solid transparent;
     padding: .375rem .200rem;
     font-size: 1rem;

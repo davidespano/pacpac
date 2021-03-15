@@ -146,6 +146,9 @@ export default class VRScene extends React.Component {
         let sphere = document.getElementById(this.state.activeScene.name)
         let loadingsphere = document.getElementById(this.state.activeScene.name + 'loading');
         if(!sceneLoaded){
+            //ora la loading sphere è spenta di default, prima era il contrario
+            //questo set visibile serve a fare in modo che appaia solo se la scena non è caricata
+            loadingsphere.setAttribute('visible', 'true');
             if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
             {
                 sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
@@ -630,7 +633,6 @@ export default class VRScene extends React.Component {
         //qui faccio partire il video dopo il cambio di scena
         let sceneCanvas = document.getElementById(this.state.activeScene.name)
         //sceneCanvas.components["material"].data.src.play();
-        //console.log("scena cambiata")
         sceneLoaded = false;
         if(this.props.debug){
             this.props.updateCurrentScene(this.state.graph.scenes[newActiveScene].uuid);
@@ -718,7 +720,6 @@ export default class VRScene extends React.Component {
             if (textObj == undefined)//per qualche motivo a volte è textboxUuid a contenere le proprietà dell'oggetto
                 textObj = textboxUuid;
 
-            console.log(timerUuid)
             let timerObj = graph.objects.get(timerUuid); //recupero l'oggetto timer
             if (timerObj == undefined)
                 timerObj = timerUuid;
