@@ -21,6 +21,7 @@ import InteractiveObjectsTypes from "../../interactives/InteractiveObjectsTypes"
 const soundsHub = require('./soundsHub');
 const THREE = require('three');
 const {mediaURL} = settings;
+let fromComponentUpdate = false;
 
 
 export default class Bubble extends Component
@@ -77,7 +78,6 @@ export default class Bubble extends Component
     }
 
     componentDidUpdate(){
-        console.log("sono dentro la component update")
         //Riavolgo i video delle bolle adiacenti, se sono gia' stati avviati in precedenza non partono in automatico dall'inizio
         if(!this.props.isActive) { //[Vittoria] se non è la scena attiva se ci sono dei video li riporta a zero
             Object.values(this.props.scene.objects).flat().forEach(obj => {
@@ -238,6 +238,8 @@ export default class Bubble extends Component
                 }
             }
         }
+        // isLoadingSphereVisible veniva usato per visualizzare di default il caricamento e spegnerlo dopo, ora invece
+        //è spento di default e lo rendo visibile quando serve
         let isLoadingSphereVisible = false;
         //Se la scena e' quella attiva imposto i parametri neccessari in modo che sia visibile, se e' una bolla vicina larendo invisibile
         if (this.props.isActive) {
@@ -247,7 +249,8 @@ export default class Bubble extends Component
             //se la scena è un video visualizzo il caricamento, per le immagini no
             if (stores_utils.getFileType(scene.img) === 'video')
             {
-                isLoadingSphereVisible = true;
+                isLoadingSphereVisible = false;
+                //isLoadingSphereVisible = true;
             }
             else
             {
