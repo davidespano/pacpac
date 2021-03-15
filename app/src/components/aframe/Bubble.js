@@ -22,7 +22,6 @@ const soundsHub = require('./soundsHub');
 const THREE = require('three');
 const {mediaURL} = settings;
 
-
 export default class Bubble extends Component
 {
 
@@ -77,8 +76,7 @@ export default class Bubble extends Component
     }
 
     componentDidUpdate(){
-        console.log("sono dentro la component update")
-        //Riavolgo i video delle bolle adiacenti, se sono gia' stati avviati in precedenza non partono in automatico dall'inizio
+       //Riavolgo i video delle bolle adiacenti, se sono gia' stati avviati in precedenza non partono in automatico dall'inizio
         if(!this.props.isActive) { //[Vittoria] se non è la scena attiva se ci sono dei video li riporta a zero
             Object.values(this.props.scene.objects).flat().forEach(obj => {
                 if(obj.media) {
@@ -94,7 +92,7 @@ export default class Bubble extends Component
                             else if(document.getElementById("media1_" + obj.uuid) != null) {
                                 document.getElementById("media1_" + obj.uuid).currentTime = 0; //[Vittoria] riavvolge il video
                             }
-                            console.log(media);
+
                         }
                     });
                 }
@@ -406,6 +404,11 @@ export default class Bubble extends Component
             //Aggiungo alla lista di media lo sfondo, questa lista sara' utilizzata per fondere i media in essa contenuiti
             video.push(aux);
 
+            //variabili per riprodurre il media del button
+            let toplay=false;
+            let buttonVideoToPlay=null;
+            let objVideoButton = null;
+
             //Scorro tutti gli oggetti, se hanno un media associato lo aggiungo alla lista video
             objs.forEach(obj => {
                 //each object with both a media and a mask must be used in the shader
@@ -473,12 +476,18 @@ export default class Bubble extends Component
                 }
                 //[Vittoria] FIX PER EUD:
                 //se ho un media nella transizione e non ha maschera gli metto la white mask
-                var eud=true; //TODO METTERE A FALSE e controllare questo if qua sotto
+                var eud=false; //TODO METTERE A FALSE e controllare questo if qua sotto
+
                 if(media) {
                     if (obj.type === InteractiveObjectsTypes.BUTTON){
                         //[Vittoria] boolino ci dice se la funzione è stata chiamata da componentDidMount (false) o componentDidUpdate (true)
                         if(this.boolino){
-                            aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
+                            aux = new THREE.VideoTexture(asset);
+                            if (stores_utils.getFileType(media) === 'video') {
+                                toplay=true;
+                                buttonVideoToPlay=asset;
+                                objVideoButton = obj;
+                            }
 
                         }
                         else{
@@ -594,6 +603,51 @@ export default class Bubble extends Component
 
             this.videoTextures = video;
             this.masksTextures = masks;
+
+            //unicamente per pulsanti con video
+            if(toplay){
+                /*[Vittoria] questa funzione mi serve per gestire il cambiamento di media dei pulsanti, in particolare
+                voglio che all'avvio non venga visualizzato il media, quando invece premo il pulsante venga riprodotto il video
+                e quando finisce il video scompaia il media
+                */
+                buttonVideoToPlay.loop = false;
+                buttonVideoToPlay.currentTime = 0;
+                buttonVideoToPlay.play();
+
+                let duration_video = (parseInt(buttonVideoToPlay.duration) * 1000);
+
+                //TODO controlla audio
+                let audio = objVideoButton.audio.audio0;
+                let idAudio = 'audio0_';
+                if (soundsHub[idAudio + audio])
+                    soundsHub[idAudio + audio].play();
+                setTimeout(function () {
+                    let cursor = document.querySelector('#cursor');
+                    cursor.setAttribute('raycaster', 'far: 10000');
+                    cursor.setAttribute('material', 'visible: true');
+                    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                    cursor.setAttribute('color', 'black');
+
+
+                    //Qui faccio tornare il media al primo frame
+                    buttonVideoToPlay.pause();
+                    buttonVideoToPlay.currentTime = 0;
+
+                    //ricarico per fare in modo che una volta finito il video scompaia
+                    //questa sarebbe la funzione this.resetShader ma chiamata nella setTimeout così non funziona
+                    if(sky && sky.getAttribute('material').shader !== 'multi-video'){
+                        return;
+                    }
+                    if(sky){
+                        sky.setAttribute('material', "shader:flat;");
+                    }
+                    return;
+
+                }, duration_video)
+
+            }
+
+
         }, 50);
         //let loadingSphere = document.getElementById('loading');
         //loadingSphere.setAttribute('visible', 'false')
@@ -621,6 +675,7 @@ export default class Bubble extends Component
         (this.videoTextures?this.videoTextures:[]).forEach(t => t.dispose());
         (this.masksTextures?this.masksTextures:[]).forEach(t => t.dispose());
     }
+
 
 }
 

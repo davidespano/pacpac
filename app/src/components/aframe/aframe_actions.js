@@ -855,29 +855,29 @@ function changeStateObject(VRScene, runState, game_graph, state, current_object,
     VRScene.setState({runState: runState, graph: game_graph});
 }
 
-//TODO: funzione per far partire il media di un pulsante, da finire
-export function buttonMedia(current_object, cursor){
-    let duration_switch = 0;
-    //media da caricare: se sto passando al media OFF allora prendo media0, altrimenti media 1
-    let media = current_object.media.media0;
-    let mediaObject =  document.getElementById( 'media0'+ '_' + current_object.uuid);
+export function buttonMedia(VRScene, current_object){
+    let cursor = document.querySelector('#cursor');
 
-    console.log("media: ", media, "media obj: ", mediaObject)
-    if(mediaObject!= null){
+    let scene_uuid= ObjectToSceneStore.getState().get(current_object.uuid);
+    let scene_name = ScenesStore.getState().get(scene_uuid).name;
+    //se media obj è diverso da null
+    cursor.setAttribute('material', 'visible: false');
+    cursor.setAttribute('raycaster', 'far: 0.1');
+    document.getElementById(scene_name).needShaderUpdate = true;
+    let runState = VRScene.state.runState;
+    VRScene.setState({runState: runState});
+    /*if(mediaObject!= null){
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');
-        //let id = this.props.gameId ? this.props.gameId : `${window.localStorage.getItem("gameID")}`;
 
-        //let aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + current_object.mask);
-        //aux.minFilter = THREE.NearestFilter;
+
         if (store_utils.getFileType(media) === 'video') {
             mediaObject.loop = false;
             mediaObject.currentTime = 0;
             mediaObject.play();
         }
-        /*questa durata è quella che ritarda la partenza di un eventuale media video
-        servirebbe a non far fare altro al giocatore mentre è in play, ma per ora lo lasciamo così*/
-        //duration_switch = (parseInt(mediaObject.duration) * 1000);
+        //questa durata è quella che ritarda la partenza di un eventuale media video
+        servirebbe a non far fare altro al giocatore mentre è in play, ma per ora lo lasciamo così
         duration_switch = (parseInt(mediaObject.duration) * 1000);
     }
 
@@ -904,7 +904,7 @@ export function buttonMedia(current_object, cursor){
             mediaObject.pause();
             mediaObject.currentTime = 0;
         }
-    }, duration_switch)
+    }, duration_switch)*/
 }
 
 /*

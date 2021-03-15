@@ -201,8 +201,6 @@ function setClick(event) {
                     if (soundsHub['audio0_' + obj_obj.audio.audio0])
                         soundsHub['audio0_' + obj_obj.audio.audio0].play();
                 }
-                let cursor = document.querySelector('#cursor');
-                buttonMedia(obj_obj, cursor);
 
             }
         }

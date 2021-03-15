@@ -8,7 +8,7 @@ import Bubble from './Bubble';
 import SceneAPI from "../../utils/SceneAPI";
 import Asset from "./aframe_assets";
 import evalCondition from "../../rules/ConditionUtils";
-import {executeAction} from "./aframe_actions";
+import {buttonMedia, executeAction} from "./aframe_actions";
 import settings from "../../utils/settings";
 import InteractiveObjectsTypes from '../../interactives/InteractiveObjectsTypes'
 import "../../data/stores_utils";
@@ -435,26 +435,27 @@ export default class VRScene extends React.Component {
                 default:
                     let eventName = rule.event.action.toLowerCase();
                     let event = `${rule.event.subj_uuid}-${eventName}-${rule.event.obj_uuid}`;
-                    let object = me.props.interactiveObjects.get(rule.event.subj_uuid);
+                    let event_subj = me.props.interactiveObjects.get(rule.event.subj_uuid);
+                    let event_obj = me.props.interactiveObjects.get(rule.event.obj_uuid);
+
                     //caricamento eventi oggetti globali:
 
                     //tempo di gioco
-                    if( object && object.type === InteractiveObjectsTypes.PLAYTIME){
+                    if( event_subj && event_subj.type === InteractiveObjectsTypes.PLAYTIME){
                         event = `GameTime-reach_minute-${rule.event.obj_uuid}`;
                     }
                     //vita
-                    if( object && object.type === InteractiveObjectsTypes.HEALTH){
+                    if( event_subj && event_subj.type === InteractiveObjectsTypes.HEALTH){
                         event = `Health-value_changed_to-${rule.event.obj_uuid}`;
                     }
                     //punteggio
-                    if( object && object.type === InteractiveObjectsTypes.SCORE){
+                    if( event_subj && event_subj.type === InteractiveObjectsTypes.SCORE){
                         event = `Score-value_changed_to-${rule.event.obj_uuid}`;
                     }
 
                     //se la regola è una regola di tastierino devo caricare anche tutti gli eventi relativi alla pressione
                     //dei pulsanti che fanno parte del tastierino
-                    if(me.props.interactiveObjects.get(rule.event.obj_uuid) &&
-                        me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                    if(event_obj && event_obj.type === InteractiveObjectsTypes.KEYPAD &&
                         rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
 
                         eventBus.on(`PLAYER-click-${rule.event.obj_uuid}`, function () {
@@ -508,15 +509,15 @@ export default class VRScene extends React.Component {
                         // hanno in comune la condizione
                         if(rule.condition.obj_uuid === InteractiveObjectsTypes.COMBINATION){
                             //però in un caso il tastierino è l'oggetto dell'evento
-                            if(me.props.interactiveObjects.get(rule.event.obj_uuid)){
-                                if(me.props.interactiveObjects.get(rule.event.obj_uuid).type === InteractiveObjectsTypes.KEYPAD){
-                                    condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                            if(event_obj){
+                                if(event_obj.type === InteractiveObjectsTypes.KEYPAD){
+                                    condition = evalCondition(rule.condition, me.state.runState, event_obj);
                                 }
                             }
                             //nell'altro è il soggetto
-                            else if (me.props.interactiveObjects.get(rule.event.subj_uuid).type === InteractiveObjectsTypes.KEYPAD &&
+                            else if (event_subj.type === InteractiveObjectsTypes.KEYPAD &&
                                 rule.event.action === RuleActionTypes.REACH_KEYPAD) {
-                                condition = evalCondition(rule.condition, me.state.runState, me.props.interactiveObjects.get(rule.event.subj_uuid));
+                                condition = evalCondition(rule.condition, me.state.runState, event_subj);
                             }
 
                         }else{
@@ -527,7 +528,7 @@ export default class VRScene extends React.Component {
                                 let actionExecution = actionCallback(action);
                                 if (me.props.debug) {
                                     setTimeout(function () {
-                                        interface_utils.highlightRule(me.props, me.props.interactiveObjects.get(rule.event.obj_uuid));
+                                        interface_utils.highlightRule(me.props, event_obj);
                                         eventBus.on('debug-step', actionExecution);
                                     }, duration);
                                 }
@@ -541,8 +542,52 @@ export default class VRScene extends React.Component {
                     if(rule.event.action==="ENTER_SCENE" && me.props.currentScene == rule.event.obj_uuid){
                         eventBus.emit(event);
                     }
+
                     break;
             }
+        })
+        //Per ogni pulsante nel gioco devo creare un evento nell'event bus altrimenti non carica il media
+
+        this.state.graph.objects.forEach(obj => {
+            let duration = 0;
+            let objectVideo;
+
+            //Funzione che si occupa di eseguire le azioni
+            let actionCallback = function(action){
+                // chiudo i parametri in modo che possa essere utilizzata come callback dal debug
+                // senza passarli esplicitamente
+                let closure = function() {
+                    //Se e' coinvolto un cambio sfondo devo aspettare, in caso sia un video, che finisca, prima di avviare la prossima azione
+
+                    objectVideo = document.querySelector('#media_' + action.obj_uuid);
+                    if (objectVideo) {
+                        duration = (objectVideo.duration * 1000);
+                    }
+
+                    duration = 100;
+                    setTimeout(function () {
+                        buttonMedia(me, obj)
+                    }, duration);
+
+                };
+                return closure;
+            };
+            if(obj.type === InteractiveObjectsTypes.BUTTON){
+
+                eventBus.on(`PLAYER-click-${obj.uuid}`,function () {
+                        //qua devo mettere come actions il fatto che quando clicco il btn
+                        // viene aggiornata la variabile con la combinazione cliccata dall'utente
+                        let actionExecution = actionCallback(new Action({
+                            uuid: null,
+                            subj_uuid: "PLAYER",
+                            action: "CLICK_BUTTON_CHANGE_MEDIA",
+                            obj_uuid: obj.uuid,
+                        }),);
+                        actionExecution();
+                    }
+                )
+            }
+
         })
     }
 
