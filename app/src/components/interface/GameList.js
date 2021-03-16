@@ -72,6 +72,31 @@ function GameList(props) {
                 <div className={'form-group'}>
                     <a id={'gameId-link'} data-toggle="modal" data-target="#gameId-modal">Inserisci un codice</a>
                 </div>
+                <div id={'store-container'}>
+                    <div id={'div-newGame'} hidden={true} className={'form-group'}>
+                        <button id={'btn-newGame'} className="btn login-btn"
+                                onClick={()=>{
+                                    document.documentElement.style.setProperty('--pacMain', '#EF562D');
+                                    document.documentElement.style.setProperty('--pacBorder', '#DD4124');
+                                    document.documentElement.style.setProperty('--pacHover', '#ff4500');
+                                    document.documentElement.style.setProperty('--pacRuleHighlight', '#FFD8AC');
+                                    document.documentElement.style.setProperty('--pacItemHover', '#FFD8AC');
+                                }
+                                }>Arancione</button>
+                    </div>
+                    <div id={'div-store'} hidden={true} className={'form-group'}>
+                        <button id={'btn-store'} className="btn login-btn"
+                                onClick={()=>{
+                                    document.documentElement.style.setProperty('--pacMain', '#2d64ef');
+                                    document.documentElement.style.setProperty('--pacBorder', '#243ddd');
+                                    document.documentElement.style.setProperty('--pacHover', '#0099ff');
+                                    document.documentElement.style.setProperty('--pacRuleHighlight', '#acf3ff');
+                                    document.documentElement.style.setProperty('--pacItemHover', '#acfff5');
+                                }
+                                }>Blu</button>
+                    </div>
+                </div>
+
             </div>
     }
 
