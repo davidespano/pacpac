@@ -455,11 +455,40 @@ export default class Bubble extends Component
                         let numberMedia = obj.properties.state;
                         asset = document.getElementById("media" + numberMedia+"_" + obj.uuid);
                         media = obj.media["media"+numberMedia];
-                        if (stores_utils.getFileType(media) === 'video') asset.play();
+                        if (stores_utils.getFileType(media) === 'video'){
+                            asset.play();
+                            let duration_media =(parseFloat(asset.duration) * 1000)
+                            setTimeout(function () {
+                                //Qui faccio tornare il media al primo frame
+                                asset.pause();
+                                asset.currentTime = asset.duration-0.00005;
+
+                            }, duration_media)
+                        }
                     }
                     else {
                         asset = document.getElementById("media1_" + obj.uuid);
                         media = obj.media.media1;
+                        if (stores_utils.getFileType(media) === 'video') {
+                            asset.play();
+                            let duration_media =(parseInt(asset.duration) * 1000);
+                            /*if(duration_media===NaN){ //se duration media la prima volta è nan
+                                let numberMedia2 = obj.properties.state; //lo cerco così
+                                let assets2= document.getElementById("media" + numberMedia2+"_" + obj.uuid);
+                                duration_media =(parseFloat(assets2.duration) * 1000)
+                            }*/
+                            setTimeout(function () {
+                                //Qui faccio tornare il media al primo frame
+                                asset.pause();
+                                if(duration_media===NaN){
+                                    asset.currentTime = 0;
+                                }
+                                else{
+                                    asset.currentTime = asset.duration-0.00005;
+                                }
+
+                            }, duration_media)
+                        }
                     }
                 }
 
@@ -486,11 +515,12 @@ export default class Bubble extends Component
                 var eud=false; //TODO METTERE A FALSE e controllare questo if qua sotto
 
                 //Pulsanti e video
+                //se non è un pulsante o è un pulsante con immagine o è un pulsante con video ma provengo dalla component didUpdate
+
+                //boolino ci dice se la funzione è stata chiamata da componentDidMount (false) o componentDidUpdate (true)
                 if(!this.boolino &&  obj.type ===InteractiveObjectsTypes.BUTTON){
                     console.log("pulsante con video, niente media e maschera")
                 }
-                    //se non è un pulsante o è un pulsante con immagine o è un pulsante con video ma provengo dalla component didUpdate
-                //boolino ci dice se la funzione è stata chiamata da componentDidMount (false) o componentDidUpdate (true)
                 else{
                     if(media) {
                         if(obj.type === InteractiveObjectsTypes.BUTTON && stores_utils.getFileType(media) === 'video'){
