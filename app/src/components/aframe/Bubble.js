@@ -22,6 +22,7 @@ const soundsHub = require('./soundsHub');
 const THREE = require('three');
 const {mediaURL} = settings;
 let fromComponentUpdate = false;
+var buttonsUpdate;
 
 export default class Bubble extends Component
 {
@@ -77,7 +78,7 @@ export default class Bubble extends Component
     }
 
     componentDidUpdate(){
-       //Riavolgo i video delle bolle adiacenti, se sono gia' stati avviati in precedenza non partono in automatico dall'inizio
+        //Riavolgo i video delle bolle adiacenti, se sono gia' stati avviati in precedenza non partono in automatico dall'inizio
         if(!this.props.isActive) { //[Vittoria] se non è la scena attiva se ci sono dei video li riporta a zero
             Object.values(this.props.scene.objects).flat().forEach(obj => {
                 if(obj.media) {
@@ -409,9 +410,11 @@ export default class Bubble extends Component
             video.push(aux);
 
             //variabili per riprodurre il media del button
-            let toplay=false;
-            let buttonVideoToPlay=null;
+            let toplay=[];
+            let buttonVideoToPlay=[];
             let objVideoButton = null;
+            let buttonVideoON=false; //Se sto analizzando un button con video lo metto a true e non faccio altro
+            let buttonVideoOFF=false;
 
             //Scorro tutti gli oggetti, se hanno un media associato lo aggiungo alla lista video
             objs.forEach(obj => {
@@ -482,51 +485,85 @@ export default class Bubble extends Component
                 //se ho un media nella transizione e non ha maschera gli metto la white mask
                 var eud=false; //TODO METTERE A FALSE e controllare questo if qua sotto
 
-                if(media) {
-                    if (obj.type === InteractiveObjectsTypes.BUTTON){
-                        //[Vittoria] boolino ci dice se la funzione è stata chiamata da componentDidMount (false) o componentDidUpdate (true)
-                        if(this.boolino){
-                            aux = new THREE.VideoTexture(asset);
-                            if (stores_utils.getFileType(media) === 'video') {
-                                toplay=true;
-                                buttonVideoToPlay=asset;
-                                objVideoButton = obj;
+                //Pulsanti e video
+                if(!this.boolino &&  obj.type ===InteractiveObjectsTypes.BUTTON){
+                    console.log("pulsante con video, niente media e maschera")
+                }
+                    //se non è un pulsante o è un pulsante con immagine o è un pulsante con video ma provengo dalla component didUpdate
+                //boolino ci dice se la funzione è stata chiamata da componentDidMount (false) o componentDidUpdate (true)
+                else{
+                    if(media) {
+                        if(obj.type === InteractiveObjectsTypes.BUTTON && stores_utils.getFileType(media) === 'video'){
+                            toplay.push(obj.uuid);
+                            //pulsante con video da riprodurre
+                             if(obj.properties.state==="ON"){
+                                 toplay[obj.uuid]=true; //questa variabile ci dice se è pulsante con video da riprodurre
+                                 buttonVideoON=true;
+                                 obj.properties.state="OFF";
+                                 //video:
+                                 aux = new THREE.VideoTexture(asset);
+                                 aux.minFilter = THREE.NearestFilter;
+                                 buttonVideoToPlay.push(obj.uuid)
+                                 buttonVideoToPlay[obj.uuid]=asset;
+                                 objVideoButton = obj;
+                                 video.push(aux);
+
+                                 //maschera:
+                                 aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                                 aux.minFilter = THREE.NearestFilter;
+                                 masks.push(aux);
+                                 dict.push(obj.uuid.replace(/-/g,'_'));
+                             }else{ //pulsante off: non devo caricare nè maschera nè video
+                                 buttonVideoToPlay.push(obj.uuid)
+                                 buttonVideoToPlay[obj.uuid]=asset;
+                                 objVideoButton = obj;
+                                 buttonVideoOFF=true;
+                                 toplay[obj.uuid]=false;
+                             }
+
+                        }
+
+                    }
+
+                    if(!buttonVideoON && !buttonVideoOFF){ //non devo essere nel caso del button ON o OFF
+                        //media pulsanti con boolino true
+                        aux = new THREE.VideoTexture(asset);
+
+
+                        if(asset.nodeName != 'VIDEO'){
+                            //se media è null è perchè è uno switch e nello switch il media iniziale non viene caricato (solo al passaggio on/off)
+                            aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
+                        }
+
+                        //Aggiungo il media alla lista video
+                        aux.minFilter = THREE.NearestFilter;
+
+                        video.push(aux);
+
+
+
+                        //Carico la maschera associata al media dell'oggetto
+                        if(eud){
+                            let whiteMask = new THREE.TextureLoader().load("https://i.ibb.co/BqMr8j6/white-mask.png");
+                            if(obj.type===InteractiveObjectsTypes.TRANSITION && obj.media.media0 !== null){
+                                aux =  whiteMask;
                             }
-
+                            else{
+                                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                            }
+                            //non devo caricare la maschera quando boolino è true e siamo nel caso di un button
                         }
-                        else{
 
+                        else {
+                            aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
                         }
 
-                    }else if(asset.nodeName != 'VIDEO' && eud){
-                        //se media è null è perchè è uno switch e nello switch il media iniziale non viene caricato (solo al passaggio on/off)
-                        aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + media);
+                        aux.minFilter = THREE.NearestFilter;
+                        masks.push(aux);
+                        dict.push(obj.uuid.replace(/-/g,'_'));
                     }
-
                 }
 
-                //Aggiungo il media alla lista video
-                aux.minFilter = THREE.NearestFilter;
-                video.push(aux);
-
-                //Carico la maschera associata al media dell'oggetto
-
-                if(eud){
-                    let whiteMask = new THREE.TextureLoader().load("https://i.ibb.co/BqMr8j6/white-mask.png");
-                    if(obj.type===InteractiveObjectsTypes.TRANSITION && obj.media.media0 !== null){
-                        aux =  whiteMask;
-                    }
-                    else{
-                        aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
-                    }
-                }else{
-                    aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
-                }
-
-
-                aux.minFilter = THREE.NearestFilter;
-                masks.push(aux);
-                dict.push(obj.uuid.replace(/-/g,'_'));
             });
 
             //Controllo se ci sono maschere o no, se non ci sono maschere resetto lo shader, perche' non neccessario
@@ -609,47 +646,60 @@ export default class Bubble extends Component
             this.masksTextures = masks;
 
             //unicamente per pulsanti con video
-            if(toplay){
-                /*[Vittoria] questa funzione mi serve per gestire il cambiamento di media dei pulsanti, in particolare
+            /*[Vittoria] questa funzione mi serve per gestire il cambiamento di media dei pulsanti, in particolare
                 voglio che all'avvio non venga visualizzato il media, quando invece premo il pulsante venga riprodotto il video
                 e quando finisce il video scompaia il media
                 */
-                buttonVideoToPlay.loop = false;
-                buttonVideoToPlay.currentTime = 0;
-                buttonVideoToPlay.play();
+            for(let i=0; i<buttonVideoToPlay.length; i++){
 
-                let duration_video = (parseInt(buttonVideoToPlay.duration) * 1000);
+                let uuid =buttonVideoToPlay[i]
+                if(toplay[uuid]){
+                    let obj_video = buttonVideoToPlay[uuid];
 
-                //TODO controlla audio
-                let audio = objVideoButton.audio.audio0;
-                let idAudio = 'audio0_';
-                if (soundsHub[idAudio + audio])
-                    soundsHub[idAudio + audio].play();
-                setTimeout(function () {
-                    let cursor = document.querySelector('#cursor');
-                    cursor.setAttribute('raycaster', 'far: 10000');
-                    cursor.setAttribute('material', 'visible: true');
-                    cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
-                    cursor.setAttribute('color', 'black');
+                    console.log(buttonVideoToPlay, toplay)
+
+                    obj_video.loop = false;
+                    obj_video.currentTime = 0;
+                    obj_video.play();
+
+                    let duration_video = (parseInt(obj_video.duration) * 1000);
+
+                    //TODO controlla audio
+                    let audio = objVideoButton.audio.audio0;
+                    let idAudio = 'audio0_';
+                    if (soundsHub[idAudio + audio])
+                        soundsHub[idAudio + audio].play();
+                    setTimeout(function () {
+                        let cursor = document.querySelector('#cursor');
+                        cursor.setAttribute('raycaster', 'far: 10000');
+                        cursor.setAttribute('material', 'visible: true');
+                        cursor.setAttribute('animation__circlelarge', 'property: scale; dur:200; from:2 2 2; to:1 1 1;');
+                        cursor.setAttribute('color', 'black');
 
 
-                    //Qui faccio tornare il media al primo frame
-                    buttonVideoToPlay.pause();
-                    buttonVideoToPlay.currentTime = 0;
+                        //Qui faccio tornare il media al primo frame
+                        obj_video.pause();
+                        obj_video.currentTime = 0;
 
-                    //ricarico per fare in modo che una volta finito il video scompaia
-                    //questa sarebbe la funzione this.resetShader ma chiamata nella setTimeout così non funziona
-                    if(sky && sky.getAttribute('material').shader !== 'multi-video'){
+                        //ricarico per fare in modo che una volta finito il video scompaia
+                        //questa sarebbe la funzione this.resetShader ma chiamata nella setTimeout così non funziona
+                        if(sky && sky.getAttribute('material').shader !== 'multi-video'){
+                            return;
+                        }
+                        if(sky){
+                            sky.setAttribute('material', "shader:flat;");
+                        }
                         return;
-                    }
-                    if(sky){
-                        sky.setAttribute('material', "shader:flat;");
-                    }
-                    return;
 
-                }, duration_video)
+                    }, duration_video)
+                }
 
             }
+
+
+
+
+
 
 
         }, 50);

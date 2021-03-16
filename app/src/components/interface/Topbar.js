@@ -495,6 +495,7 @@ export function createObject(props, type){
                     name : name,
                     properties: {
                         keypadUuid: null,
+                        state: 'OFF'
                     }
                 });
                 break;

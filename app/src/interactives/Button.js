@@ -11,6 +11,7 @@ const Button = (defaultValues) => InteractiveObject({
     type : InteractiveObjectsTypes.BUTTON,
     properties : {
         keypadUuid: null,
+        state: 'OFF',
     },
     media : {
         media0 : null,

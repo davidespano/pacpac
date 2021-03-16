@@ -863,9 +863,14 @@ export function buttonMedia(VRScene, current_object){
     //se media obj è diverso da null
     cursor.setAttribute('material', 'visible: false');
     cursor.setAttribute('raycaster', 'far: 0.1');
-    document.getElementById(scene_name).needShaderUpdate = true;
+
+    //cambio momentaneamente lo stato del button (poi tornerà a OFF alla fine del video)
+    current_object.properties.state="ON";
     let runState = VRScene.state.runState;
+    runState[current_object.uuid].state = "ON";
     VRScene.setState({runState: runState});
+    document.getElementById(scene_name).needShaderUpdate = true;
+
     /*if(mediaObject!= null){
         cursor.setAttribute('material', 'visible: false');
         cursor.setAttribute('raycaster', 'far: 0.1');

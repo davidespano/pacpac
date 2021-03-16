@@ -552,9 +552,9 @@ export default class VRScene extends React.Component {
 
                     break;
             }
-        })
-        //Per ogni pulsante nel gioco devo creare un evento nell'event bus altrimenti non carica il media
+        });
 
+        //Per ogni pulsante nel gioco devo creare un evento nell'event bus altrimenti non carica il media
         this.state.graph.objects.forEach(obj => {
             let duration = 0;
             let objectVideo;
@@ -565,7 +565,6 @@ export default class VRScene extends React.Component {
                 // senza passarli esplicitamente
                 let closure = function() {
                     //Se e' coinvolto un cambio sfondo devo aspettare, in caso sia un video, che finisca, prima di avviare la prossima azione
-
                     objectVideo = document.querySelector('#media_' + action.obj_uuid);
                     if (objectVideo) {
                         duration = (objectVideo.duration * 1000);
@@ -580,8 +579,8 @@ export default class VRScene extends React.Component {
                 return closure;
             };
             if(obj.type === InteractiveObjectsTypes.BUTTON){
-
-                eventBus.on(`PLAYER-click-${obj.uuid}`,function () {
+                let event = `PLAYER-click-${obj.uuid}`;
+                eventBus.on(event,function () {
                         //qua devo mettere come actions il fatto che quando clicco il btn
                         // viene aggiornata la variabile con la combinazione cliccata dall'utente
                         let actionExecution = actionCallback(new Action({
@@ -592,7 +591,8 @@ export default class VRScene extends React.Component {
                         }),);
                         actionExecution();
                     }
-                )
+                );
+                console.log("ho caricato l'evento relativo al button: ", event)
             }
 
         })
