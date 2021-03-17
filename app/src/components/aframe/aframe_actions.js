@@ -230,7 +230,7 @@ function executeAction(VRScene, rule, action) {
             * Azione che si occupa di effettuare un cambio sfondo della scena
             */
             let targetSceneVideo = document.getElementById(action_obj_uuid);
-            //console.log(targetSceneVideo);
+
             //let primitive = targetSceneVideo.nodeName === 'VIDEO'?"a-videosphere":"a-sky";
             //let actualSky = document.querySelector('#' + actual_scene);
             //actualSky.setAttribute('primitive', primitive)
@@ -245,7 +245,7 @@ function executeAction(VRScene, rule, action) {
                 soundsHub["audios_" + actual_scene_Uuid].play()
             }
             //Se il nuovo sfondo e' un video lo mando in riproduzione
-            if (targetSceneVideo.nodeName === 'VIDEO') {
+            if (targetSceneVideo!= null && targetSceneVideo.nodeName === 'VIDEO') {
                 targetSceneVideo.play();
             }
             //Segnalo allo shader che deve aggiornarsi e poi aggiorno lo stato di VRScene
