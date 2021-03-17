@@ -69,6 +69,8 @@ function executeAction(VRScene, rule, action) {
                 objectVideo_transition = document.querySelector('#media_' + current_object.uuid);
                 if (objectVideo_transition != null && objectVideo_transition.nodeName === 'VIDEO') {
                     objectVideo_transition.play();
+                    if(stores_utils.getFileType(current_object.media["media0"]) === 'video')
+                        soundsHub["mediaAudio_"+ current_object.media["media0"]].play();
                     duration_transition = (parseInt(objectVideo_transition.duration) * 1000); //una volta che il video finisce (durata del media)
                 }
             }
@@ -871,7 +873,6 @@ export function buttonMedia(VRScene, current_object){
     runState[current_object.uuid].state = "ON";
     VRScene.setState({runState: runState});
     document.getElementById(scene_name).needShaderUpdate = true;
-    console.log(current_object)
     if(stores_utils.getFileType(current_object.media["media0"]) === 'video')
         soundsHub["mediaAudio_"+ current_object.media["media0"]].play();
 
