@@ -987,35 +987,27 @@ export default class VRScene extends React.Component {
      */
     generateOtherAssets(gameId){
         let otherAssets=[];
-        let newAsset;
+        let currentScene = this.props.currentScene;
         if (this.state.graph.scenes == undefined)
             return otherAssets;
         let id = gameId ? gameId : `${window.localStorage.getItem("gameID")}`;
-        let currentScene = this.props.currentScene;
-        //per ogni regola del gioco, scelgo quelle relative al cambio di sfondo della currentscene
+
         Object.values(this.state.graph.scenes).flatMap(s => s.rules).forEach(rule => {
             rule.actions.forEach(action => {
                 if (action.action === 'CHANGE_BACKGROUND' && action.subj_uuid === currentScene) {
                     if (stores_utils.getFileType(action.obj_uuid) === 'video') {
-                        newAsset = <video id={action.obj_uuid} key={"key" + action.obj_uuid}
-                                              src={`${mediaURL}${id}/` + action.obj_uuid}
-                                              preload="auto" loop={'true'} crossOrigin="Anonymous" playsInline={true}
-                                              muted={true}/>
+                        otherAssets.push(
+                            <video id={action.obj_uuid} key={"key" + action.obj_uuid}
+                                   src={`${mediaURL}${id}/` + action.obj_uuid}
+                                   preload="auto" loop={'true'} crossOrigin="Anonymous" playsInline={true}
+                                   muted={true}
+                            />
+                        )
                     } else {
-                        newAsset = <img id={action.obj_uuid} key={"key" + action.obj_uuid}
+                        otherAssets.push(<img id={action.obj_uuid} key={"key" + action.obj_uuid}
                                               crossOrigin="Anonymous"
-                                              src={`${mediaURL}${id}/` + action.obj_uuid}/>
-                    }
-                    //verifico di non caricare doppioni dei media
-                    // (es. se ci sono due regole diverse con lo stesso cambio di sfondo)
-                    let alreadyIncluded = false
-                    otherAssets.forEach(asset =>{
-                        if (asset.key === newAsset.key){
-                            alreadyIncluded = true;
-                        }
-                    })
-                    if (!alreadyIncluded){
-                        otherAssets.push(newAsset)
+                                              src={`${mediaURL}${id}/` + action.obj_uuid}
+                        />)
                     }
                 }
             })
