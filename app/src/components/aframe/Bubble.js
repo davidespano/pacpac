@@ -241,7 +241,6 @@ export default class Bubble extends Component
         }
 
         //Caricamento audio dei media degli oggetti
-        console.log(this.props.scene);
         Object.values(this.props.scene.objects).flat().forEach(obj => {
             if(obj.media) {
                 Object.values(obj.media).forEach(media => {
@@ -459,12 +458,24 @@ export default class Bubble extends Component
                             if(obj.media.media1) {
                                 media = obj.media.media1;
                                 asset = document.getElementById("media1_" + obj.uuid); //se sono passato al media1 ricarico l'asset
+                                if(stores_utils.getFileType(obj.media.media1) === 'video')
+                                    soundsHub["mediaAudio_"+ obj.media.media1].play();
+                                if(stores_utils.getFileType(obj.media.media0) === 'video'){
+                                    soundsHub["mediaAudio_"+ obj.media.media0].pause();
+                                    soundsHub["mediaAudio_"+ obj.media.media0].currentTime = 0;
+                                }
                             }
                         }
                         else{
                             if(obj.media && obj.media.media0){//on -> off, media0
                                 media = obj.media.media0;
                                 asset = document.getElementById("media0_" + obj.uuid); //per sicurezza
+                                if(stores_utils.getFileType(obj.media.media0) === 'video')
+                                    soundsHub["mediaAudio_"+ obj.media.media0].play();
+                                if(stores_utils.getFileType(obj.media.media1) === 'video'){
+                                    soundsHub["mediaAudio_"+ obj.media.media1].pause();
+                                    soundsHub["mediaAudio_"+ obj.media.media1].currentTime = 0;
+                                }
                             }
                         }
                     }

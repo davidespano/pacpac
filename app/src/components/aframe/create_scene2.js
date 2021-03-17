@@ -155,8 +155,20 @@ export default class VRScene extends React.Component {
             if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
             {
                 //controllo che sia sempre un video, potrebbe esserci stato un cambio di sfondo
-                if(stores_utils.getFileType(sphere.components["material"].data.src.id) === 'video'){
+                try {
+                    sphere.components["material"].data.src.play();
+                } catch (error){};
+                if(stores_utils.getFileType(sphere.components["material"].data.src) === 'video'){
                     sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
+                    if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
+                    {
+                        loadingsphere.setAttribute('visible', 'false');
+                    }
+                    if (sphere.components["material"].data.src.currentTime > 1)
+                    {
+                        //se la transizione è più lunga di un secondo potrebbe non funzionare
+                        sceneLoaded = true;
+                    }
                 }
             else
                 {
@@ -164,22 +176,14 @@ export default class VRScene extends React.Component {
                     sceneLoaded = true;
                 }
 
-                if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
-                {
-                    loadingsphere.setAttribute('visible', 'false');
-                }
-                if (sphere.components["material"].data.src.currentTime > 1)
-                {
-                    //se la transizione è più lunga di un secondo potrebbe non funzionare
-                    sceneLoaded = true;
-                }
-            }
 
-            if (sceneLoaded) //quando la scena è caricata, rendo invisibile la bolla di caricamento
+            }
+            let media = sphere.components["material"].data.src
+
+            if (sceneLoaded && media != null) //quando la scena è caricata, rendo invisibile la bolla di caricamento
             {
                 loadingsphere.setAttribute('visible', 'false');
                 // al termine del video sollevo l'evento per essere gestito qualora ci sia una regola per fine video
-                let media = sphere.components["material"].data.src
                 media.onended = function () {
                     eventBus.emit(media.id + "-is-ENDED");
                 }
