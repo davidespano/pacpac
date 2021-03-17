@@ -154,7 +154,16 @@ export default class VRScene extends React.Component {
             loadingsphere.setAttribute('visible', 'true');
             if (!sceneLoaded && stores_utils.getFileType(this.state.activeScene.img) === 'video') //sceneLoaded è impostato a false nella handleSceneChange
             {
-                sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
+                //controllo che sia sempre un video, potrebbe esserci stato un cambio di sfondo
+                if(stores_utils.getFileType(sphere.components["material"].data.src.id) === 'video'){
+                    sphere.components["material"].data.src.play();//avvio il video della scena in cui sono entrato
+                }
+            else
+                {
+                    loadingsphere.setAttribute('visible', 'false');
+                    sceneLoaded = true;
+                }
+
                 if (loadingsphere !=null && sphere.components["material"].data.src.currentTime > 0)
                 {
                     loadingsphere.setAttribute('visible', 'false');
@@ -177,6 +186,7 @@ export default class VRScene extends React.Component {
             }
         }
         else{ // se la scena viene aggiornata perchè si utilizza un oggetto in scena, questo fa sparire la loading screen
+
             if(loadingsphere)//questo previene un crash nella debug mode
             {
                 loadingsphere.setAttribute('visible', 'false');
