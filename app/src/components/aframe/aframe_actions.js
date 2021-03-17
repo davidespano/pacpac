@@ -10,6 +10,7 @@ import RulesStore from "../../data/RulesStore";
 import create_scene2 from "./create_scene2";
 import ObjectToSceneStore from "../../data/ObjectToSceneStore";
 import ScenesStore from "../../data/ScenesStore";
+import stores_utils from "../../data/stores_utils";
 
 const eventBus = require('./eventBus');
 const THREE = require('three');
@@ -870,6 +871,9 @@ export function buttonMedia(VRScene, current_object){
     runState[current_object.uuid].state = "ON";
     VRScene.setState({runState: runState});
     document.getElementById(scene_name).needShaderUpdate = true;
+    console.log(current_object)
+    if(stores_utils.getFileType(current_object.media["media0"]) === 'video')
+        soundsHub["mediaAudio_"+ current_object.media["media0"]].play();
 
     /*if(mediaObject!= null){
         cursor.setAttribute('material', 'visible: false');
