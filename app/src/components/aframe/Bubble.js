@@ -193,6 +193,7 @@ export default class Bubble extends Component
         let spatialSounds = [];
         let sfx;
         let audioVideo = {};
+        let audioMedia = {};
         let spatialContainer;
         //TODO: assegnare una rotazione a scelta dell'utente agli oggetti audio
 
@@ -238,6 +239,28 @@ export default class Bubble extends Component
                 }
             }
         }
+
+        //Caricamento audio dei media degli oggetti
+        console.log(this.props.scene);
+        Object.values(this.props.scene.objects).flat().forEach(obj => {
+            if(obj.media) {
+                Object.values(obj.media).forEach(media => {
+                    if (media !== null && stores_utils.getFileType(media) === 'video') {
+                        if(soundsHub["mediaAudio_"+ media.toString()] === undefined){
+                            if(stores_utils.getFileType(media) === 'video'){
+                                let volume = this.props.onDebugMode?0:50;
+                                let loop = false;
+                                audioMedia.file = media;
+                                audioMedia.loop = loop;
+                                audioMedia.volume = volume;
+                                soundsHub["mediaAudio_"+ media.toString()] = AudioManager.generateAudio(audioMedia, [0,0,0], volume);
+                            }
+                        }
+                    }
+                });
+            }
+        })
+
         // isLoadingSphereVisible veniva usato per visualizzare di default il caricamento e spegnerlo dopo, ora invece
         //è spento di default e lo rendo visibile quando serve
         let isLoadingSphereVisible = false;
@@ -526,30 +549,30 @@ export default class Bubble extends Component
                         if(obj.type === InteractiveObjectsTypes.BUTTON && stores_utils.getFileType(media) === 'video'){
                             toplay.push(obj.uuid);
                             //pulsante con video da riprodurre
-                             if(obj.properties.state==="ON"){
-                                 toplay[obj.uuid]=true; //questa variabile ci dice se è pulsante con video da riprodurre
-                                 buttonVideoON=true;
-                                 obj.properties.state="OFF";
-                                 //video:
-                                 aux = new THREE.VideoTexture(asset);
-                                 aux.minFilter = THREE.NearestFilter;
-                                 buttonVideoToPlay.push(obj.uuid)
-                                 buttonVideoToPlay[obj.uuid]=asset;
-                                 objVideoButton = obj;
-                                 video.push(aux);
+                            if(obj.properties.state==="ON"){
+                                toplay[obj.uuid]=true; //questa variabile ci dice se è pulsante con video da riprodurre
+                                buttonVideoON=true;
+                                obj.properties.state="OFF";
+                                //video:
+                                aux = new THREE.VideoTexture(asset);
+                                aux.minFilter = THREE.NearestFilter;
+                                buttonVideoToPlay.push(obj.uuid)
+                                buttonVideoToPlay[obj.uuid]=asset;
+                                objVideoButton = obj;
+                                video.push(aux);
 
-                                 //maschera:
-                                 aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
-                                 aux.minFilter = THREE.NearestFilter;
-                                 masks.push(aux);
-                                 dict.push(obj.uuid.replace(/-/g,'_'));
-                             }else{ //pulsante off: non devo caricare nè maschera nè video
-                                 buttonVideoToPlay.push(obj.uuid)
-                                 buttonVideoToPlay[obj.uuid]=asset;
-                                 objVideoButton = obj;
-                                 buttonVideoOFF=true;
-                                 toplay[obj.uuid]=false;
-                             }
+                                //maschera:
+                                aux = new THREE.TextureLoader().load(`${mediaURL}${id}/` + obj.mask);
+                                aux.minFilter = THREE.NearestFilter;
+                                masks.push(aux);
+                                dict.push(obj.uuid.replace(/-/g,'_'));
+                            }else{ //pulsante off: non devo caricare nè maschera nè video
+                                buttonVideoToPlay.push(obj.uuid)
+                                buttonVideoToPlay[obj.uuid]=asset;
+                                objVideoButton = obj;
+                                buttonVideoOFF=true;
+                                toplay[obj.uuid]=false;
+                            }
 
                         }
 
