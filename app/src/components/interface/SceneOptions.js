@@ -46,7 +46,10 @@ function SceneOptions(props){
                            }}
                            onBlur={() => {
                                if(sceneOptions.name !== currentScene.name && sceneOptions.name !== ''){
-                                   scene_utils.setProperty(currentScene, 'name', sceneOptions.name, props);
+                                   let updatedName = sceneOptions.name.split(' ').join('_').split('.').join('_'); //remove spaces and dots
+                                   scene_utils.setProperty(currentScene, 'name', updatedName, props);
+                                   sceneOptions = sceneOptions.set('name', updatedName);
+                                   props.updateSceneOptions(sceneOptions);
                                }
                            }}
                     />

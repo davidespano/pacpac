@@ -33,6 +33,9 @@ function InputSceneForm(props){
                                        minLength={1}
                                        onChange={() => {
                                            let name = document.getElementById("scene_name").value;
+                                           console.log(name);
+                                           name.split(' ').join('_');
+                                           console.log(name);
                                            props.newSceneNameTyped(name != "");
                                        }}
                                 />
@@ -90,7 +93,7 @@ function checkIfDisabled(props){
 
 function checkFormAndCreateScene(props){
     let name = document.getElementById("scene_name").value;
-    name = name.trim().replace(' ', '_').replace('.', '_'); //remove spaces and dots
+    name = name.split(' ').join('_').split('.').join('_'); //remove spaces and dots
     if(name.match(/^\d/)){
         name = "num" + name;
     }
