@@ -33,9 +33,7 @@ function InputSceneForm(props){
                                        minLength={1}
                                        onChange={() => {
                                            let name = document.getElementById("scene_name").value;
-                                           console.log(name);
                                            name.split(' ').join('_');
-                                           console.log(name);
                                            props.newSceneNameTyped(name != "");
                                        }}
                                 />
