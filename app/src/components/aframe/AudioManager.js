@@ -7,11 +7,17 @@ const {mediaURL} = settings;
 const resonanceee = require('./Audio/Resonance');
 //[Vittoria] per vedere cosa succede qua nell'editor vai in un oggetto e crea un oggetto Audio
 
-function generateAudio(audio, position=null, volume) {
+function generateAudio(audio, position=null, volume, uuidGame=null) {
     let audioPosition = position===null?audio.vertices:position;
     let audioElement = document.createElement('audio');
 
-    audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + audio.file;
+    if(uuidGame){ //nei giochi pubblicati altrimenti sbaglia la url
+        audioElement.src = `${mediaURL}${uuidGame}/` + audio.file;
+    }
+    else {
+        audioElement.src = `${mediaURL}${window.localStorage.getItem("gameID")}/` + audio.file;
+    }
+    console.log("src: ", audioElement.src)
     audioElement.crossOrigin = 'anonymous';
     audioElement.load();
     audioElement.loop = audio.loop;

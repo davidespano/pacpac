@@ -235,7 +235,7 @@ export default class Bubble extends Component
                     audioVideo.file = this.props.scene.img;
                     audioVideo.loop = loop;
                     audioVideo.volume = volume;
-                    soundsHub["audios_"+ this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0], volume);
+                    soundsHub["audios_"+ this.props.scene.uuid] = AudioManager.generateAudio(audioVideo, [0,0,0], volume, this.props.gameId);
                 }
             }
         }
